@@ -1,22 +1,12 @@
 package com.cyberpeace.oj.demo;
 
 import com.cyberpeace.oj.common.model.BaseRsp;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import javax.validation.constraints.Max;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "接口demo")
 @RestController
@@ -30,19 +20,6 @@ public class DemoController {
 
 		BaseRsp<String> ret = new BaseRsp<>();
 		ret.setData(result);
-
-		Map<String, String> map = Maps.newHashMap();
-		map.put("ket1","v");
-		String v1 = map.get("key1");
-		v1.toLowerCase();
-
-		List<String> lists = new ArrayList<>();
-		Map<String, String> map2 = new HashMap<>();
-
-
-
-		HashMap<String, String> map1 = Maps.newHashMap();
-
 		return ret;
 	}
 
@@ -100,7 +77,7 @@ public class DemoController {
 	@ApiOperation("delete方法的demo1")
 	@DeleteMapping("/delete1")
 	public BaseRsp<OutputDemoModel>
-			delete1(@Validated @RequestBody InputDemoModel2 inputDemoModel) {
+	delete1(@Validated @RequestBody InputDemoModel2 inputDemoModel) {
 		OutputDemoModel model = new OutputDemoModel();
 		model.setResourceId("delete1");
 		model.setName("delete1接口的返回");

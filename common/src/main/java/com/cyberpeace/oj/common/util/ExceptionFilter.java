@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cyberpeace.oj.common.constant.ErrorCode;
 import com.cyberpeace.oj.common.constant.WebConstant;
+import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -62,9 +63,20 @@ public class ExceptionFilter implements Filter {
 			parseArgumentNotValidException(servletRequest, servletResponse, e);
 		} else if (e instanceof UnauthorizedException) {
 			parseUnauthorizedException(servletRequest, servletResponse, e);
+		} else if (e instanceof ResourceNotFoundException) {
+			parseResourceNotFoundException(servletRequest, servletResponse,
+					(ResourceNotFoundException) e);
 		} else {
 			dealDefaultError(servletResponse);
 		}
+	}
+
+	private void parseResourceNotFoundException(HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse, ResourceNotFoundException e) {
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setMessage(e.getMessage());
+		errorInfo.setCode(getErrorCode(ErrorCode.RESOURCE_NOT_FOUND));
+		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
 	/**

@@ -11,7 +11,7 @@ public class BaseRsp<T> {
 
 	public T data;
 
-	public String code = "success";
+	public String code = "0";
 
 	public String message;
 

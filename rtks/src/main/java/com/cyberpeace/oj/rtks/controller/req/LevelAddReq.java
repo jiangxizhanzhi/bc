@@ -1,20 +1,27 @@
 package com.cyberpeace.oj.rtks.controller.req;
 
-import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-
-import io.swagger.annotations.ApiModel;
-import lombok.Data;
+import java.io.Serializable;
 
 @Data
 @ApiModel
 public class LevelAddReq implements Serializable {
 
-	@NotBlank
-	private String name;
+    @ApiModelProperty()
+    private String resourceId;
 
-	private String description;
+    @NotBlank
+    private String name;
 
-	private String parent;
+    private String description;
+
+    @NotBlank
+    private String parent;
+
+    @NotBlank
+    private String frame;
 }

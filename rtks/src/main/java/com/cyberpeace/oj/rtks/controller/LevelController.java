@@ -1,58 +1,93 @@
 package com.cyberpeace.oj.rtks.controller;
 
+import com.cyberpeace.oj.common.model.BaseRsp;
+import com.cyberpeace.oj.rtks.controller.req.FrameAddReq;
+import com.cyberpeace.oj.rtks.controller.req.LevelAddReq;
+import com.cyberpeace.oj.rtks.dao.entity.Level;
+import com.cyberpeace.oj.rtks.service.LevelService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.cyberpeace.oj.common.model.BaseRsp;
-import com.cyberpeace.oj.rtks.controller.req.LevelAddReq;
-import com.cyberpeace.oj.rtks.dao.entity.Level;
-import com.cyberpeace.oj.rtks.service.LevelService;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
 
 @Api(tags = "TRKS-框架管理")
 @RestController
-@RequestMapping("/rtks/level")
+@RequestMapping("/rtks/frame")
 public class LevelController {
 
-	@Autowired
-	private LevelService levelService;
+    @Autowired
+    private LevelService levelService;
 
-	@ApiOperation("查询单条")
-	@GetMapping()
-	public BaseRsp<Level> get(@ApiParam(name = "id", value = "查询id", required = true) String id) {
-		// ApiParam中的name和java参数String id的两个id必须同名
-		Level level = levelService.getById(id);
-		return new BaseRsp<>(level);
-	}
+    @ApiOperation("新增框架")
+    @PostMapping()
+    public BaseRsp<String> addFrame(@RequestBody @Validated FrameAddReq frameAddReq) {
+        Level frame = new Level();
+        BeanUtils.copyProperties(frameAddReq, frame);
+        levelService.save(frame);
+        return new BaseRsp<>();
+    }
 
-	@ApiOperation("新增单条")
-	@PostMapping()
-	public BaseRsp<String> add(@RequestBody @Validated LevelAddReq levelAddReq) {
-		Level level = new Level();
-		BeanUtils.copyProperties(levelAddReq, level);
-		levelService.validateLevelId(level.getParent());
-		levelService.save(level);
-		return new BaseRsp<>();
-	}
-	// 指定框架新增层级
-	// 指定框架修改层级
-	// 指定框架删除层级
-	// 指定框架层级数据的树形展示
-	// 新增框架
-	// 框架列表查询
-	// 删除框架
-	// 修改框架
-	// 根据岗位名的模糊列表查询
-	// 批量删除岗位
-	// 编排岗位基础课
-	// 编排岗位专业课
-	// 修改岗位数据
-	// 返回岗位所有的T数据
-	// 返回岗位所有的K数据
-	// 新增岗位
+    @ApiOperation("修改框架")
+    @PutMapping()
+    public BaseRsp<String> modifyTask(@RequestBody @Validated FrameAddReq frameAddReq) {
+        Level frame = new Level();
+        BeanUtils.copyProperties(frameAddReq, frame);
+        levelService.updateById(frame);
+        return new BaseRsp<>();
+    }
+
+    @ApiOperation("删除框架")
+    @DeleteMapping()
+    public BaseRsp<Level>
+    deleteFrame(@ApiParam(name = "resource_id", value = "框架id", required = true) String resource_id) {
+        levelService.removeFrame(resource_id);
+        return new BaseRsp<>();
+    }
+
+    @ApiOperation("框架列表查询")
+    @GetMapping()
+    public BaseRsp<List<Level>> getFrames() {
+        List<Level> frames = levelService.getFrames();
+        return new BaseRsp<>(frames);
+    }
+
+    @ApiOperation("指定框架层级数据的全量树形展示")
+    @GetMapping("/tree")
+    public BaseRsp<Level> get(@ApiParam(name = "resource_id", value = "框架id", required = true) String resource_id) {
+        Level frame = levelService.getLevelTree(resource_id);
+        return new BaseRsp<>(frame);
+    }
+
+
+    @ApiOperation("新增层级")
+    @PostMapping("/level")
+    public BaseRsp<String> addLevel(@RequestBody @Validated LevelAddReq levelAddReq) {
+        Level level = new Level();
+        BeanUtils.copyProperties(levelAddReq, level);
+        levelService.addLevel(level);
+        return new BaseRsp<>();
+    }
+
+    @ApiOperation("修改层级")
+    @PutMapping("/level")
+    public BaseRsp<String> modifyLevel(@RequestBody @Validated LevelAddReq levelAddReq) {
+        Level level = new Level();
+        BeanUtils.copyProperties(levelAddReq, level);
+        levelService.modifyLevel(level);
+        return new BaseRsp<>();
+    }
+
+    @ApiOperation("删除层级")
+    @DeleteMapping("/level")
+    public BaseRsp<String>
+    deleteLevel(@ApiParam(name = "resource_id", value = "层级id", required = true) String resource_id) {
+        levelService.removeById(resource_id);
+        return new BaseRsp<>();
+    }
+
 }

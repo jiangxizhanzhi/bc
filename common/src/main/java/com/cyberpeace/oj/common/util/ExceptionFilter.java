@@ -2,6 +2,7 @@ package com.cyberpeace.oj.common.util;
 
 import com.cyberpeace.oj.common.constant.ErrorCode;
 import com.cyberpeace.oj.common.constant.WebConstant;
+import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.UserInfoContext;
@@ -64,7 +65,9 @@ public class ExceptionFilter implements Filter {
             parseUnauthorizedException(servletRequest, servletResponse, e);
         } else if (e instanceof ResourceNotFoundException) {
             parseResourceNotFoundException(servletResponse, (ResourceNotFoundException) e);
-        } else {
+        } else if (e instanceof InvalidParamException) {
+			parseInvalidParamException(servletResponse, (InvalidParamException) e);
+		} else {
             dealDefaultError(servletResponse);
         }
     }
@@ -79,6 +82,17 @@ public class ExceptionFilter implements Filter {
         errorInfo.setCode(getErrorCode(ErrorCode.RESOURCE_NOT_FOUND));
         flushErrorInfo(httpServletResponse, errorInfo);
     }
+
+	/**
+	 * 处理用户输入参数异常
+	 * **/
+	private void parseInvalidParamException(HttpServletResponse httpServletResponse,
+			InvalidParamException e) {
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setMessage(e.getMessage());
+		errorInfo.setCode(getErrorCode(ErrorCode.METHOD_ARG_NOT_VALID));
+		flushErrorInfo(httpServletResponse, errorInfo);
+	}
 
     /**
      * 处理权限相关的异常

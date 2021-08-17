@@ -24,7 +24,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
     @Override
     public Level getFrameById(String resource_id) {
-        Level level = this.getById(resource_id);
+        Level level = getById(resource_id);
         if (level == null) {
             throw new ResourceNotFoundException("Frame");
         }
@@ -37,36 +37,30 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
         return level;
     }
 
-    @Override
-    public void removeFrame(String resource_id) {
-        Level level = this.getFrameById(resource_id);
-
-        this.removeById(level.getResourceId());
-    }
 
     @Override
     public List<Level> getFrames() {
         Map<String, Object> columnMap = new HashMap<>(1);
         columnMap.put("parent", null);
-        return this.listByMap(columnMap);
+        return listByMap(columnMap);
     }
 
     @Override
     public List<Level> getLevelsByFrameId(String frameId) {
         Map<String, Object> columnMap = new HashMap<>(1);
         columnMap.put("frame", frameId);
-        return this.listByMap(columnMap);
+        return listByMap(columnMap);
     }
 
     private void checkLevel(Level level) {
         String parentId = level.getParent();
-        Level parentLevel = this.getById(parentId);
+        Level parentLevel = getById(parentId);
         if (parentLevel == null) {
             throw new ResourceNotFoundException("parent");
         }
 
         String frameId = level.getFrame();
-        Level frame = this.getFrameById(frameId);
+        Level frame = getFrameById(frameId);
         if (frame == null) {
             throw new ResourceNotFoundException("frame");
         }
@@ -74,23 +68,23 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
     @Override
     public void addLevel(Level level) {
-        this.checkLevel(level);
+        checkLevel(level);
 
-        this.save(level);
+        save(level);
     }
 
     @Override
     public void modifyLevel(Level level) {
-        this.checkLevel(level);
+        checkLevel(level);
 
-        this.updateById(level);
+        updateById(level);
     }
 
     @Override
     public Level getLevelTree(String frameId) {
         Map<String, List<Level>> levelMap = new HashMap<>();
 
-        List<Level> levels = this.getLevelsByFrameId(frameId);
+        List<Level> levels = getLevelsByFrameId(frameId);
         for (Level level : levels) {
             String parentId = level.getParent();
             if (StringUtils.isBlank(parentId)) {
@@ -103,7 +97,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
             levelMap.get(parentId).add(level);
         }
 
-        Level frame = this.getFrameById(frameId);
+        Level frame = getFrameById(frameId);
         List<Level> childLevels = levelMap.getOrDefault(frame.getResourceId(), null);
         if (childLevels != null) {
             frame.setChildren(childLevels);

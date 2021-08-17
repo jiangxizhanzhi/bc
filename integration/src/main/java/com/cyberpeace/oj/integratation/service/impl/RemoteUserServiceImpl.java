@@ -39,14 +39,14 @@ public class RemoteUserServiceImpl implements RemoteUserService {
         } catch (HttpClientException e) {
             throw new RemoteUserAuthticationException();
         }
-        return this.userInfoFromJsonObject(jsonObject);
+        return userInfoFromJsonObject(jsonObject);
     }
 
     @Override
     public UserInfo getById(String userId) {
         HttpClient httpClient = new HttpClient();
         JSONObject jsonObject = httpClient.get("/api/mp/auth/users/" + userId);
-        return this.userInfoFromJsonObject(jsonObject);
+        return userInfoFromJsonObject(jsonObject);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
         JSONArray jsonArray = httpClient.getList("/api/mp/auth/org_users/page/byorg");
         List<UserInfo> userInfoList = new ArrayList<>();
         for (Object object : jsonArray) {
-            userInfoList.add(this.userInfoFromJsonObject((JSONObject) object));
+            userInfoList.add(userInfoFromJsonObject((JSONObject) object));
         }
         return userInfoList;
     }

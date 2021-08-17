@@ -12,10 +12,6 @@ public interface LevelService extends IService<Level> {
      */
     Level getFrameById(String resource_id);
 
-    /**
-     * 给定一个resource_id，先校验其是否为框架(Frame)，如果不是，抛出异常，如果是则删除该框架
-     */
-    void removeFrame(String resource_id);
 
     /**
      * 获取所有的框架对象

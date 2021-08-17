@@ -26,12 +26,12 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
     public Level getFrameById(String resource_id) {
         Level level = getById(resource_id);
         if (level == null) {
-            throw new ResourceNotFoundException("Frame");
+            throw new ResourceNotFoundException("找不到" + resource_id + "对应的框架");
         }
 
         if (level.getParent() != null) {
             // level有父级，不是Frame
-            throw new InvalidParamException("错误的框架id");
+            throw new InvalidParamException(resource_id + "不是框架id");
         }
 
         return level;
@@ -56,14 +56,11 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
         String parentId = level.getParent();
         Level parentLevel = getById(parentId);
         if (parentLevel == null) {
-            throw new ResourceNotFoundException("parent");
+            throw new ResourceNotFoundException("parent字段对应的框架/层级不存在");
         }
 
         String frameId = level.getFrame();
         Level frame = getFrameById(frameId);
-        if (frame == null) {
-            throw new ResourceNotFoundException("frame");
-        }
     }
 
     @Override

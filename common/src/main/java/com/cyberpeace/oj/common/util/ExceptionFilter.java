@@ -10,7 +10,6 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.core.env.Environment;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -156,9 +155,7 @@ public class ExceptionFilter implements Filter {
 
     private String getErrorCode(String code) {
         if (!cache.containsKey(code)) {
-            Environment env = SpringContextUtil.getBeanByClass(Environment.class);
-
-            cache.put(code, env.getProperty("errorPrefix") + code);
+            cache.put(code, ConfigUtil.getContextProperty("errorPrefix") + code);
         }
 
         return cache.get(code);

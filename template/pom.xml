@@ -13,7 +13,7 @@
     <artifactId>template</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>template</name>
+    <name>ojj</name>
     <description>靶场</description>
 
     <properties>

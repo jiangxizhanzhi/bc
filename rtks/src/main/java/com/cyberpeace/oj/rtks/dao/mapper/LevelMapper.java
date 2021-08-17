@@ -4,10 +4,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.rtks.dao.entity.Frame;
+import com.cyberpeace.oj.rtks.dao.entity.Level;
 
 @Mapper
 @Repository
-public interface FrameMapper extends BaseMapper<Frame> {
+public interface LevelMapper extends BaseMapper<Level> {
 
 }

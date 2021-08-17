@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @ApiModel
-public class FrameAddReq implements Serializable {
+public class LevelAddReq implements Serializable {
 
 	@NotBlank
 	private String name;

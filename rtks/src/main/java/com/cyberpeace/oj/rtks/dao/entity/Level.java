@@ -8,8 +8,8 @@ import com.cyberpeace.oj.common.model.BaseTable;
 import lombok.Data;
 
 @Data
-@TableName("rtks_frame")
-public class Frame extends BaseTable {
+@TableName("rtks_level")
+public class Level extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;

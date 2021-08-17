@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.oj.common.model.BaseTable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class Level extends BaseTable {
     /**
      * 当前层级所属的框架(Frame)的resourceId
      */
+    @JsonIgnore
     private String frame;
 
     @TableField(exist = false)

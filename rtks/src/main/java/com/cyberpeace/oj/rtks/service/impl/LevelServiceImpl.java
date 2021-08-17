@@ -52,27 +52,42 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
         return listByMap(columnMap);
     }
 
-    private void checkLevel(Level level) {
-        String parentId = level.getParent();
-        Level parentLevel = getById(parentId);
+    /**
+     * 给定层级对象(非框架)，设定其frame字段
+     */
+    private void setFrame(Level level) {
+        Level parentLevel = getParent(level);
         if (parentLevel == null) {
             throw new ResourceNotFoundException("parent字段对应的框架/层级不存在");
         }
+        level.setFrame(getFrame(level, 10).getResourceId());
+    }
 
-        String frameId = level.getFrame();
-        Level frame = getFrameById(frameId);
+    private Level getParent(Level level) {
+        String parentId = level.getParent();
+        return getById(parentId);
+    }
+
+    private Level getFrame(Level level, int maxLoop) {
+        if (maxLoop <= 0) {
+            throw new InvalidParamException("层级层数超限");
+        }
+        if (StringUtils.isBlank(level.getParent()) && StringUtils.isBlank(level.getFrame())) {
+            return level;
+        }
+        return getFrame(getParent(level), maxLoop - 1);
     }
 
     @Override
     public void addLevel(Level level) {
-        checkLevel(level);
+        setFrame(level);
 
         save(level);
     }
 
     @Override
     public void modifyLevel(Level level) {
-        checkLevel(level);
+        setFrame(level);
 
         updateById(level);
     }

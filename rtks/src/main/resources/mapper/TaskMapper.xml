@@ -3,7 +3,17 @@
 
 <mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.TaskMapper">
     <select id="listTask" resultType="com.cyberpeace.oj.rtks.dao.entity.Task">
-        select *
-        from task
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+        </if>
+        select t.resource_id,t.content
+        from task t
+        <where>
+            <if test="pattern != null and pattern != ''">
+                t.resource_id LIKE #{pattern}
+                OR t.content LIKE #{pattern}
+            </if>
+        </where>
     </select>
+
 </mapper>

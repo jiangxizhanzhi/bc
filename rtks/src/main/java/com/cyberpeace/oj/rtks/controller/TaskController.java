@@ -1,12 +1,5 @@
 package com.cyberpeace.oj.rtks.controller;
 
-import java.util.List;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
@@ -14,10 +7,15 @@ import com.cyberpeace.oj.rtks.controller.req.TaskAddReq;
 import com.cyberpeace.oj.rtks.controller.req.TaskListReq;
 import com.cyberpeace.oj.rtks.dao.entity.Task;
 import com.cyberpeace.oj.rtks.service.TaskService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "TRKS-任务管理")
 @RestController
@@ -67,7 +65,7 @@ public class TaskController {
 	}
 
 	@ApiOperation("分页查询")
-	@GetMapping("/list")
+	@GetMapping("/task/list")
 	public BaseRsp<List<Task>> list(@Validated TaskListReq taskListReq) {
 		ListRsp<Task> data = taskService.page(taskListReq);
 

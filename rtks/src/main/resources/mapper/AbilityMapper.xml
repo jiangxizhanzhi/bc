@@ -6,7 +6,7 @@
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
         </if>
-        select t.resource_id,t.content
+        select t.resource_id,t.content,t.create_Time,t.update_Time
         from ability t
         <where>
             <if test="pattern != null and pattern != ''">

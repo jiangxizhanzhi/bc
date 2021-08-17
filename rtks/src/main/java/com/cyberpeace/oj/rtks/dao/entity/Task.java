@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.oj.common.model.BaseTable;
-
 import lombok.Data;
 
 @Data
-@TableName("task")
+@TableName("rtks_task")
 public class Task extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

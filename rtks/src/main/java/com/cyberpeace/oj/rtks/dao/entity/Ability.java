@@ -7,7 +7,7 @@ import com.cyberpeace.oj.common.model.BaseTable;
 import lombok.Data;
 
 @Data
-@TableName("ability")
+@TableName("rtks_ability")
 public class Ability extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

@@ -64,15 +64,17 @@ public class ExceptionFilter implements Filter {
 		} else if (e instanceof UnauthorizedException) {
 			parseUnauthorizedException(servletRequest, servletResponse, e);
 		} else if (e instanceof ResourceNotFoundException) {
-			parseResourceNotFoundException(servletRequest, servletResponse,
-					(ResourceNotFoundException) e);
+			parseResourceNotFoundException(servletResponse, (ResourceNotFoundException) e);
 		} else {
 			dealDefaultError(servletResponse);
 		}
 	}
 
-	private void parseResourceNotFoundException(HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse, ResourceNotFoundException e) {
+	/**
+	 * 处理根据resource_id找不到对应资源时的异常
+	 * **/
+	private void parseResourceNotFoundException(HttpServletResponse httpServletResponse,
+			ResourceNotFoundException e) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setMessage(e.getMessage());
 		errorInfo.setCode(getErrorCode(ErrorCode.RESOURCE_NOT_FOUND));

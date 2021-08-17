@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.rtks.controller;
 
 import com.cyberpeace.oj.common.model.BaseRsp;
+import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
 import com.cyberpeace.oj.rtks.controller.req.FrameAddReq;
 import com.cyberpeace.oj.rtks.controller.req.LevelAddReq;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
@@ -43,9 +44,8 @@ public class LevelController {
 
     @ApiOperation("删除框架")
     @DeleteMapping()
-    public BaseRsp<Level>
-    deleteFrame(@ApiParam(name = "resource_id", value = "框架id", required = true) String resource_id) {
-        levelService.removeFrame(resource_id);
+    public BaseRsp<Level> deleteFrame(@RequestBody @Validated DeleteReq deleteReq) {
+        levelService.removeByIds(deleteReq.getIds());
         return new BaseRsp<>();
     }
 
@@ -84,9 +84,8 @@ public class LevelController {
 
     @ApiOperation("删除层级")
     @DeleteMapping("/level")
-    public BaseRsp<String>
-    deleteLevel(@ApiParam(name = "resource_id", value = "层级id", required = true) String resource_id) {
-        levelService.removeById(resource_id);
+    public BaseRsp<String> deleteLevel(@RequestBody @Validated DeleteReq deleteReq) {
+        levelService.removeByIds(deleteReq.getIds());
         return new BaseRsp<>();
     }
 

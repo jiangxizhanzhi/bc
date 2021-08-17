@@ -16,7 +16,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	private LevelMapper levelMapper;
 
 	@Override
-	public void validateFrameId(String frameId) {
+	public void validateLevelId(String frameId) {
 		if (frameId == null) {
 			return;
 		}

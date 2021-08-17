@@ -35,7 +35,7 @@ public class LevelController {
 	public BaseRsp<String> add(@RequestBody @Validated LevelAddReq levelAddReq) {
 		Level level = new Level();
 		BeanUtils.copyProperties(levelAddReq, level);
-		levelService.validateFrameId(level.getParent());
+		levelService.validateLevelId(level.getParent());
 		levelService.save(level);
 		return new BaseRsp<>();
 	}

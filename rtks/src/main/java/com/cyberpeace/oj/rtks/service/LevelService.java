@@ -8,6 +8,6 @@ public interface LevelService extends IService<Level> {
 	/**
 	 * 给定一个resource_id，校验该Frame是否存在，如果不存在则抛出异常
 	 * */
-	void validateFrameId(String frameId);
+	void validateLevelId(String frameId);
 
 }

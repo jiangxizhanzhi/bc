@@ -6,12 +6,12 @@
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
         </if>
-        select t.resource_id,t.content
-        from task t
+        select resource_id,content
+        from rtks_task
         <where>
             <if test="pattern != null and pattern != ''">
-                t.resource_id LIKE #{pattern}
-                OR t.content LIKE #{pattern}
+                resource_id LIKE #{pattern}
+                OR content LIKE #{pattern}
             </if>
         </where>
     </select>

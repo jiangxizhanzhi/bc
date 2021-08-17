@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "TRKS-能力库管理")
+@Api(tags = "RTKS-能力库管理")
 @RestController
 @RequestMapping("/rtks")
 public class AbilityController {
@@ -27,7 +27,7 @@ public class AbilityController {
 
     @ApiOperation("查询单条能力")
     @GetMapping("/ability")
-    public BaseRsp<Ability> get1(
+    public BaseRsp<Ability> getAbility(
             @ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
         Ability ability = abilityService.getById(resource_id);
 

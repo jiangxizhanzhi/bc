@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "TRKS-任务管理")
+@Api(tags = "RTKS-任务管理")
 @RestController
 @RequestMapping("/rtks")
 public class TaskController {
@@ -27,7 +27,7 @@ public class TaskController {
 
 	@ApiOperation("查询单条任务")
 	@GetMapping("/task")
-	public BaseRsp<Task> get1(
+	public BaseRsp<Task> getTask(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		Task task = taskService.getById(resource_id);
 

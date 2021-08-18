@@ -2,9 +2,9 @@ package com.cyberpeace.oj.rtks.controller;
 
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.common.model.PageReqBase;
 import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
 import com.cyberpeace.oj.rtks.controller.req.TaskAddReq;
-import com.cyberpeace.oj.rtks.controller.req.TaskListReq;
 import com.cyberpeace.oj.rtks.dao.entity.Task;
 import com.cyberpeace.oj.rtks.service.TaskService;
 import io.swagger.annotations.Api;
@@ -66,8 +66,8 @@ public class TaskController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/task/list")
-	public BaseRsp<List<Task>> list(@Validated TaskListReq taskListReq) {
-		ListRsp<Task> data = taskService.page(taskListReq);
+	public BaseRsp<List<Task>> list(@Validated PageReqBase pageReqBase) {
+		ListRsp<Task> data = taskService.page(pageReqBase);
 
 		return new BaseRsp(data);
 	}

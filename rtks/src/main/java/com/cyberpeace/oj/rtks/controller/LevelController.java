@@ -26,20 +26,20 @@ public class LevelController {
 
     @ApiOperation("新增框架")
     @PostMapping()
-    public BaseRsp<String> addFrame(@RequestBody @Validated FrameAddReq frameAddReq) {
+    public BaseRsp<Level> addFrame(@RequestBody @Validated FrameAddReq frameAddReq) {
         Level frame = new Level();
         BeanUtils.copyProperties(frameAddReq, frame);
         levelService.save(frame);
-        return new BaseRsp<>();
+        return new BaseRsp<>(frame);
     }
 
     @ApiOperation("修改框架")
     @PutMapping()
-    public BaseRsp<String> modifyTask(@RequestBody @Validated FrameAddReq frameAddReq) {
+    public BaseRsp<Level> modifyTask(@RequestBody @Validated FrameAddReq frameAddReq) {
         Level frame = new Level();
         BeanUtils.copyProperties(frameAddReq, frame);
         levelService.updateById(frame);
-        return new BaseRsp<>();
+        return new BaseRsp<>(frame);
     }
 
     @ApiOperation("删除框架")
@@ -66,20 +66,20 @@ public class LevelController {
 
     @ApiOperation("新增层级")
     @PostMapping("/level")
-    public BaseRsp<String> addLevel(@RequestBody @Validated LevelAddReq levelAddReq) {
+    public BaseRsp<Level> addLevel(@RequestBody @Validated LevelAddReq levelAddReq) {
         Level level = new Level();
         BeanUtils.copyProperties(levelAddReq, level);
         levelService.addLevel(level);
-        return new BaseRsp<>();
+        return new BaseRsp<>(level);
     }
 
     @ApiOperation("修改层级")
     @PutMapping("/level")
-    public BaseRsp<String> modifyLevel(@RequestBody @Validated LevelAddReq levelAddReq) {
+    public BaseRsp<Level> modifyLevel(@RequestBody @Validated LevelAddReq levelAddReq) {
         Level level = new Level();
         BeanUtils.copyProperties(levelAddReq, level);
         levelService.modifyLevel(level);
-        return new BaseRsp<>();
+        return new BaseRsp<>(level);
     }
 
     @ApiOperation("删除层级")

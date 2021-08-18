@@ -22,6 +22,4 @@ public class LevelAddReq implements Serializable {
     @NotBlank
     private String parent;
 
-    @NotBlank
-    private String frame;
 }

@@ -8,4 +8,6 @@ import com.cyberpeace.oj.rtks.dao.entity.Task;
 public interface TaskService extends IService<Task> {
 
     ListRsp<Task> page(PageReqBase pageReqBase);
+
+    void ensureTaskExists(String taskId);
 }

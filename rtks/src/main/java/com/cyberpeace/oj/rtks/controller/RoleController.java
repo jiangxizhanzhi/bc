@@ -7,9 +7,10 @@ import com.cyberpeace.oj.rtks.controller.req.ListReq;
 import com.cyberpeace.oj.rtks.controller.req.RoleAddReq;
 import com.cyberpeace.oj.rtks.controller.req.RoleRelatedAddReq;
 import com.cyberpeace.oj.rtks.dao.entity.Role;
-import com.cyberpeace.oj.rtks.dao.entity.RoleRelated;
+import com.cyberpeace.oj.rtks.dao.entity.Task;
 import com.cyberpeace.oj.rtks.service.RoleRelatedService;
 import com.cyberpeace.oj.rtks.service.RoleService;
+import com.cyberpeace.oj.rtks.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Api(tags = "TRKS-岗位管理")
 @RestController
@@ -29,6 +29,9 @@ public class RoleController {
 
     @Autowired
     private RoleRelatedService roleRelatedService;
+
+    @Autowired
+    private TaskService taskService;
 
 
     @ApiOperation("新增岗位")
@@ -59,12 +62,6 @@ public class RoleController {
         return new BaseRsp<>(data);
     }
 
-    @ApiOperation("添加岗位职责/知识点/职责/能力清单")
-    @PostMapping("/related")
-    public BaseRsp<String> addRoleRelated(@RequestBody @Validated RoleRelatedAddReq roleRelatedAddReq) {
-        roleRelatedService.addRoleRelated(roleRelatedAddReq.getRole_id(), roleRelatedAddReq.getItems());
-        return new BaseRsp<>();
-    }
 
     @ApiOperation("批量删除岗位职责/知识点/职责/能力清单")
     @DeleteMapping("/related")
@@ -73,16 +70,29 @@ public class RoleController {
         return new BaseRsp<>();
     }
 
-    @ApiOperation("获取删除岗位职责/知识点/职责/能力清单")
-    @GetMapping("/related")
-    public BaseRsp<Map<Integer, List<RoleRelated>>> getRoleRelated(String roleId) {
-        return new BaseRsp<>(roleRelatedService.getByRoleId(roleId));
+    @ApiOperation("新增岗位职责清单")
+    @PostMapping("/related/task")
+    public BaseRsp<String> addTaskNameList(@RequestBody @Validated RoleRelatedAddReq req) {
+        List<String> taskIds = req.getRelated_ids();
+        String roleId = req.getRole_id();
+        roleService.ensureRoleExists(roleId);
+        for (String taskId : taskIds) {
+            taskService.ensureTaskExists(taskId);
+        }
+        roleRelatedService.addRoleRelated(roleId, RoleRelatedType.TASK, taskIds);
+        return new BaseRsp<>();
+    }
+
+    @ApiOperation("获取岗位职责清单")
+    @GetMapping("/related/task")
+    public BaseRsp<List<Task>> getTaskNameList(String roleId) {
+        List<String> taskIds = roleRelatedService.getRelatedIds(roleId, RoleRelatedType.TASK);
+        List<Task> tasks = taskService.listByIds(taskIds);
+        return new BaseRsp<>(tasks);
     }
 
 
     // todo
     //编排岗位基础课
     //编排岗位专业课
-    //返回岗位所有的T数据
-    //返回岗位所有的K数据
 }

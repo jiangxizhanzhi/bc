@@ -56,6 +56,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         return role;
     }
 
+    @Override
+    public void ensureRoleExists(String roleId) {
+        Role role = getById(roleId);
+        if (role == null) {
+            throw new ResourceNotFoundException("岗位" + roleId + "未找到");
+        }
+    }
+
     /**
      * 检查输入的level_id是否合法
      */

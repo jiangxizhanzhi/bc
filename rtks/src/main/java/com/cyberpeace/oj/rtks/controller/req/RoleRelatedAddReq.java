@@ -11,10 +11,9 @@ import java.util.List;
 @Data
 @ApiModel
 public class RoleRelatedAddReq implements Serializable {
-
     @NotBlank
     private String role_id;
-
     @NotNull
-    private List<RoleRelatedInput> items;
+    private List<String> related_ids;
+
 }

@@ -1,8 +1,10 @@
 package com.cyberpeace.oj.rtks.controller;
 
 import com.cyberpeace.oj.common.model.BaseRsp;
+import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
 import com.cyberpeace.oj.rtks.controller.req.RoleAddReq;
+import com.cyberpeace.oj.rtks.controller.req.ListReq;
 import com.cyberpeace.oj.rtks.dao.entity.Role;
 import com.cyberpeace.oj.rtks.service.RoleService;
 import io.swagger.annotations.Api;
@@ -25,7 +27,7 @@ public class RoleController {
     public BaseRsp<Role> addRole(@RequestBody @Validated RoleAddReq roleAddReq) {
         Role role = new Role();
         BeanUtils.copyProperties(roleAddReq, role);
-        roleService.save(role);
+        roleService.save(role); // todo check levelId
         return new BaseRsp<>(role);
     }
 
@@ -44,4 +46,16 @@ public class RoleController {
         roleService.removeByIds(deleteReq.getIds());
         return new BaseRsp<>();
     }
+
+    @ApiOperation("根据岗位名的模糊列表查询")
+    @GetMapping()
+    public BaseRsp<ListRsp<Role>> searchRoles(ListReq<Role> listReq) {
+        ListRsp<Role> data = roleService.searchRolesByName(listReq);
+        return new BaseRsp<>(data);
+    }
+    // todo
+    //编排岗位基础课
+    //编排岗位专业课
+    //返回岗位所有的T数据
+    //返回岗位所有的K数据
 }

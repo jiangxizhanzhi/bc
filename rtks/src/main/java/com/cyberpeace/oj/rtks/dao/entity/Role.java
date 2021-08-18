@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.rtks.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.oj.common.model.BaseTable;
@@ -20,8 +21,12 @@ public class Role extends BaseTable {
     /**
      * 岗位所属层级的id
      */
-    @TableId(value = "level_id")
+    @TableField(value = "level_id")
     private String levelId;
 
+    /**
+     * 技能体系
+     */
+    private int category;
 
 }

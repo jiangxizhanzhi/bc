@@ -16,6 +16,4 @@ public class TaskAddReq implements Serializable {
 
     @NotBlank
     private String content;
-
-    private String frame;
 }

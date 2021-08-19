@@ -50,6 +50,11 @@
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
+            <artifactId>course</artifactId>
+            <version>${module.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.oj</groupId>
             <artifactId>integration</artifactId>
             <version>${module.version}</version>
         </dependency>

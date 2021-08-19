@@ -26,4 +26,9 @@ public interface LevelService extends IService<Level> {
 	 * 给定框架id, 返回树状层级结构
 	 */
 	Level getLevelTree(String frameId);
+
+	/**
+	 * 检查输入的level_id是否合法
+	 */
+	void ensureLevelIdValid(String levelId);
 }

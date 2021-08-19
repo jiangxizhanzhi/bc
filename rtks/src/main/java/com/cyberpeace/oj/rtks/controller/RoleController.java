@@ -2,6 +2,7 @@ package com.cyberpeace.oj.rtks.controller;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import com.cyberpeace.oj.rtks.controller.req.RoleAddReq;
 import com.cyberpeace.oj.rtks.controller.req.RoleRelatedAddReq;
 import com.cyberpeace.oj.rtks.dao.entity.Role;
 import com.cyberpeace.oj.rtks.dao.entity.Task;
+import com.cyberpeace.oj.rtks.service.LevelService;
 import com.cyberpeace.oj.rtks.service.RoleRelatedService;
 import com.cyberpeace.oj.rtks.service.RoleService;
 import com.cyberpeace.oj.rtks.service.TaskService;
@@ -35,17 +37,34 @@ public class RoleController {
 	@Autowired
 	private TaskService taskService;
 
+	@Autowired
+	private LevelService levelService;
+
 	@ApiOperation("新增岗位")
 	@PostMapping()
 	public BaseRsp<Role> addRole(@RequestBody @Validated RoleAddReq roleAddReq) {
-		Role role = roleService.addRole(roleAddReq);
+		roleAddReq.setResourceId(null);
+
+		levelService.ensureLevelIdValid(roleAddReq.getLevelId());
+
+		Role role = new Role();
+		BeanUtils.copyProperties(roleAddReq, role);
+
+		roleService.save(role);
+
 		return new BaseRsp<>(role);
 	}
 
 	@ApiOperation("修改岗位")
 	@PutMapping()
 	public BaseRsp<Role> modifyTask(@RequestBody @Validated RoleAddReq roleAddReq) {
-		Role role = roleService.modifyRole(roleAddReq);
+		levelService.ensureLevelIdValid(roleAddReq.getLevelId());
+
+		Role role = new Role();
+		BeanUtils.copyProperties(roleAddReq, role);
+
+		roleService.updateById(role);
+
 		return new BaseRsp<>(role);
 	}
 

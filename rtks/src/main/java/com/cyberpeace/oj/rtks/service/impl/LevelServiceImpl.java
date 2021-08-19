@@ -69,6 +69,14 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return frame;
 	}
 
+	@Override
+	public void ensureLevelIdValid(String levelId) {
+		Level level = getById(levelId);
+		if (level == null) {
+			throw new ResourceNotFoundException("层级" + levelId + "未找到");
+		}
+	}
+
 	/**
 	 * 指定框架id 获取所属所有层级
 	 */

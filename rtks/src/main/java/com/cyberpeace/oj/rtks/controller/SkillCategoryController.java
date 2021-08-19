@@ -60,7 +60,7 @@ public class SkillCategoryController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
-	public BaseRsp<String> deleteTask(@RequestBody @Validated DeleteReq deleteReq) {
+	public BaseRsp<String> deleteSkillCategory(@RequestBody @Validated DeleteReq deleteReq) {
 		skillCategoryService.removeByIds(deleteReq.getIds());
 
 		return new BaseRsp<>();

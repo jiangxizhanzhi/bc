@@ -60,7 +60,7 @@ public class SkillSystemController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
-	public BaseRsp<String> deleteTask(@RequestBody @Validated DeleteReq deleteReq) {
+	public BaseRsp<String> deleteSkillSystem(@RequestBody @Validated DeleteReq deleteReq) {
 		skillSystemService.removeByIds(deleteReq.getIds());
 
 		return new BaseRsp<>();

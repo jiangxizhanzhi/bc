@@ -25,8 +25,7 @@
         <fastjson.version>1.2.68</fastjson.version>
         <shiro.version>1.5.3</shiro.version>
         <mybatis.plus.version>3.4.1</mybatis.plus.version>
-        <log4j.version>1.7.28</log4j.version>
-<!--        <log4j.version>1.7.28-cp1</log4j.version>-->
+        <log4j.version>1.7.28-cp1</log4j.version>
     </properties>
 
     <modules>

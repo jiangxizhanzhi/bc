@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.config.filter;
 
+import com.cyberpeace.oj.config.auth.MyFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,14 +20,14 @@ public class FilterConfig {
 		return filterRegistrationBean;
 	}
 
-	// @Bean
-	// public FilterRegistrationBean myFilter() {
-	// FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-	// filterRegistrationBean.setOrder(105);
-	// filterRegistrationBean.setFilter(new MyFilter());
-	// filterRegistrationBean.setName("myFilter");
-	// filterRegistrationBean.addUrlPatterns("/*");
-	// return filterRegistrationBean;
-	// }
+	 @Bean
+	 public FilterRegistrationBean myFilter() {
+	 FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+	 filterRegistrationBean.setOrder(105);
+	 filterRegistrationBean.setFilter(new MyFilter());
+	 filterRegistrationBean.setName("myFilter");
+	 filterRegistrationBean.addUrlPatterns("/*");
+	 return filterRegistrationBean;
+	 }
 
 }

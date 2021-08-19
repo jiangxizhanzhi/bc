@@ -7,5 +7,5 @@ import com.cyberpeace.oj.rtks.dao.entity.Ability;
 
 public interface AbilityService extends IService<Ability> {
 
-    ListRsp<Ability> page(AbilityListReq abilityListReq);
+	ListRsp<Ability> page(AbilityListReq abilityListReq);
 }

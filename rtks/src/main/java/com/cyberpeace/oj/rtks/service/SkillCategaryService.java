@@ -9,5 +9,6 @@ import com.cyberpeace.oj.rtks.dao.entity.SkillCategary;
  *
  */
 public interface SkillCategaryService extends IService<SkillCategary> {
-    ListRsp<SkillCategary> page(PageReqBase pageReqBase);
+
+	ListRsp<SkillCategary> page(PageReqBase pageReqBase);
 }

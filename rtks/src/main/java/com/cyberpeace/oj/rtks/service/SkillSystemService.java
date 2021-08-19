@@ -9,6 +9,7 @@ import com.cyberpeace.oj.rtks.dao.entity.SkillSystem;
  *
  */
 public interface SkillSystemService extends IService<SkillSystem> {
-    ListRsp<SkillSystem> page(PageReqBase pageReqBase);
+
+	ListRsp<SkillSystem> page(PageReqBase pageReqBase);
 
 }

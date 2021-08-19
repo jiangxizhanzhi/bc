@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.common.util.PageUtil2;
 import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
 import com.cyberpeace.oj.rtks.controller.req.ListReq;
 import com.cyberpeace.oj.rtks.controller.req.RoleAddReq;
@@ -78,8 +80,10 @@ public class RoleController {
 	@ApiOperation("根据岗位名的模糊列表查询")
 	@GetMapping()
 	public BaseRsp<ListRsp<Role>> searchRoles(ListReq<Role> listReq) {
-		ListRsp<Role> data = roleService.searchRolesByName(listReq);
-		return new BaseRsp<>(data);
+		IPage<Role> iPage = roleService.searchRolesByName(listReq.toPageParam(),
+				listReq.getKeyword());
+		ListRsp<Role> listRsp = PageUtil2.getListResult(iPage);
+		return new BaseRsp<>(listRsp);
 	}
 
 	@ApiOperation("批量删除岗位职责/知识点/职责/能力清单")

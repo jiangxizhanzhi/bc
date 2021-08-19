@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.KnowledgeMapper">
+
+    <select id="listKnowledge" resultType="com.cyberpeace.oj.rtks.controller.res.KnowledgeRes">
+        <if test="knowledgeListReq.pattern != null and knowledgeListReq.pattern != ''">
+            <bind name="pattern" value="'%' + knowledgeListReq.pattern + '%'"/>
+        </if>
+        select
+        rtks_knowledge.id,
+        rtks_knowledge.resource_id,
+        rtks_knowledge.category_id,
+        rtks_knowledge.content,
+        rtks_knowledge.courses,
+        rtks_knowledge.create_time,
+        rtks_knowledge.update_time,
+        rtks_knowledge_category.content category
+        from
+        rtks_knowledge
+        left join rtks_knowledge_category on rtks_knowledge.category_id = rtks_knowledge_category.resource_id
+        <where>
+            1=1
+            <if test="knowledgeListReq.pattern != null and knowledgeListReq.pattern != ''">
+                and ( rtks_knowledge.resource_id like #{pattern}
+                or rtks_knowledge.content like #{pattern} )
+            </if>
+            <if test="knowledgeListReq.categoryId != null and knowledgeListReq.categoryId != ''">
+                and rtks_knowledge.category_id = #{knowledgeListReq.categoryId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getKnowledgeByResourceId" resultType="com.cyberpeace.oj.rtks.controller.res.KnowledgeRes">
+        select
+        rtks_knowledge.id,
+        rtks_knowledge.resource_id,
+        rtks_knowledge.category_id,
+        rtks_knowledge.content,
+        rtks_knowledge.courses,
+        rtks_knowledge.create_time,
+        rtks_knowledge.update_time,
+        rtks_knowledge_category.content category
+        from
+        rtks_knowledge
+        left join rtks_knowledge_category on rtks_knowledge.category_id = rtks_knowledge_category.resource_id
+        <where>
+            rtks_knowledge.resource_id = #{id}
+        </where>
+    </select>
+
+</mapper>

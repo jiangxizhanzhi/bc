@@ -3,7 +3,7 @@ package com.cyberpeace.oj.rtks.dao.entity;
 import lombok.Data;
 
 @Data
-public class SkillCourse {
+public class RelatedCourse {
 
 	private String courseId;
 

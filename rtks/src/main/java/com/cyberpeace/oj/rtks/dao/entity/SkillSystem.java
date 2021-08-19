@@ -10,9 +10,8 @@ import lombok.Data;
 /**
  * @TableName rtks_skill_system
  */
-@TableName(value = "rtks_skill_system")
-
 @Data
+@TableName(value = "rtks_skill_system")
 public class SkillSystem extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

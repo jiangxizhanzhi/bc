@@ -1,6 +1,6 @@
 package com.cyberpeace.oj.rtks.controller.req;
 
-import com.cyberpeace.oj.rtks.dao.entity.SkillCourse;
+import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,5 +26,5 @@ public class SkillAddReq implements Serializable {
 	private String categoryId;
 
 	@ApiModelProperty
-	private List<SkillCourse> courseList;
+	private List<RelatedCourse> courseList;
 }

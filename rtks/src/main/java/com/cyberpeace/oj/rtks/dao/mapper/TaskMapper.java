@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TaskMapper extends BaseMapper<Task> {
 
-    IPage<Task> listTask(Page page, @Param("pattern") String pattern);
+	IPage<Task> listTask(Page page, @Param("pattern") String pattern);
 
 }

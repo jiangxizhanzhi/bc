@@ -44,9 +44,9 @@ public class SkillController {
 		BeanUtils.copyProperties(skillAddReq, skill);
 		skill.setCourses(JsonUtil.toJsonString(skillAddReq.getCourseList()));
 		skillService.save(skill);
-		// List<SkillCourse> skillCourses = Lists.newArrayList();
+		// List<RelatedCourse> skillCourses = Lists.newArrayList();
 		// for (String courseId : skillAddReq.getCourseList()) {
-		// SkillCourse sc = new SkillCourse();
+		// RelatedCourse sc = new RelatedCourse();
 		// sc.setSkillId(skillAddReq.getResourceId());
 		// sc.setCourseId(courseId);
 		// skillCourses.add(sc);

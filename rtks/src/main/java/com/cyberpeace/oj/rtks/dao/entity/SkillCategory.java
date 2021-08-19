@@ -11,7 +11,6 @@ import lombok.Data;
  * @TableName rtks_skill_category
  */
 @TableName(value = "rtks_skill_category")
-
 @Data
 public class SkillCategory extends BaseTable {
 

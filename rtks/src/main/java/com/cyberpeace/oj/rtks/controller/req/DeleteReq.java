@@ -11,6 +11,6 @@ import java.util.List;
 @ApiModel
 public class DeleteReq implements Serializable {
 
-    @ApiModelProperty
-    private List<String> ids;
+	@ApiModelProperty
+	private List<String> ids;
 }

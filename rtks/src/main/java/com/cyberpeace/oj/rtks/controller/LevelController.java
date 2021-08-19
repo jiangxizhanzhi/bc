@@ -27,9 +27,13 @@ public class LevelController {
     @ApiOperation("新增框架")
     @PostMapping()
     public BaseRsp<Level> addFrame(@RequestBody @Validated FrameAddReq frameAddReq) {
+        frameAddReq.setResourceId(null);
+
         Level frame = new Level();
         BeanUtils.copyProperties(frameAddReq, frame);
+
         levelService.save(frame);
+
         return new BaseRsp<>(frame);
     }
 
@@ -67,9 +71,13 @@ public class LevelController {
     @ApiOperation("新增层级")
     @PostMapping("/level")
     public BaseRsp<Level> addLevel(@RequestBody @Validated LevelAddReq levelAddReq) {
+        levelAddReq.setResourceId(null);
+
         Level level = new Level();
         BeanUtils.copyProperties(levelAddReq, level);
+
         levelService.addLevel(level);
+
         return new BaseRsp<>(level);
     }
 

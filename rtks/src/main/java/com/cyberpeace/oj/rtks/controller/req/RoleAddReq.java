@@ -1,27 +1,28 @@
 package com.cyberpeace.oj.rtks.controller.req;
 
-import io.swagger.annotations.ApiModel;
-import lombok.Data;
+import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+
+import io.swagger.annotations.ApiModel;
+import lombok.Data;
 
 @Data
 @ApiModel
 public class RoleAddReq implements Serializable {
 
-    private String resourceId;
+	private String resourceId;
 
-    @NotBlank
-    private String name;
+	@NotBlank
+	private String name;
 
-    private String description;
+	private String description;
 
-    @NotBlank
-    private String levelId;
+	@NotBlank
+	private String levelId;
 
-    @NotNull
-    private int category;
+	@NotNull
+	private int category;
 
 }

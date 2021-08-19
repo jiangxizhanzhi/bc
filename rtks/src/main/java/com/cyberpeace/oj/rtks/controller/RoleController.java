@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.rtks.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -108,9 +109,14 @@ public class RoleController {
 
 	@ApiOperation("获取岗位职责清单")
 	@GetMapping("/related/task")
-	public BaseRsp<List<Task>> getTaskNameList(String roleId) {
-		List<String> taskIds = roleRelatedService.getRelatedIds(roleId, RoleRelatedType.TASK);
-		List<Task> tasks = taskService.listByIds(taskIds);
+	public BaseRsp<List<Task>> getTaskNameList(String role_id) {
+		List<String> taskIds = roleRelatedService.getRelatedIds(role_id, RoleRelatedType.TASK);
+		List<Task> tasks;
+		if (taskIds.size() == 0) {
+			tasks = new ArrayList<>();
+		} else {
+			tasks = taskService.listByIds(taskIds);
+		}
 		return new BaseRsp<>(tasks);
 	}
 

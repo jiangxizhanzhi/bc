@@ -7,4 +7,6 @@ public interface WebConstant {
 	Integer HTTP_200 = 200;
 
 	String AUTHORIZATION_HEADER = "Authorization";
+
+	String TRACE_HEADER = "X-Request-Id";
 }

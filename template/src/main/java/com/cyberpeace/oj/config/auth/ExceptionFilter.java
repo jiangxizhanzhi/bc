@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.slf4j.impl.TraceIdContext;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -54,7 +53,7 @@ public class ExceptionFilter implements Filter {
 		} finally {
 			UserInfoContext.removeUserContext();
 
-			TraceIdContext.removeTraceId();
+			// TraceIdContext.removeTraceId();
 		}
 	}
 

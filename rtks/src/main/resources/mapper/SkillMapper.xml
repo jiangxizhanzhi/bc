@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.SkillMapper">
+
+    <resultMap id="BaseResultMap" type="com.cyberpeace.oj.rtks.dao.entity.Skill">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+        <result property="systemId" column="system_id" jdbcType="VARCHAR"/>
+        <result property="categaryId" column="categary_id" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_Time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_Time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--
+    //一对多关联查询
+    <collection property="courseList" resultMap="SkillCourseResultMap"/>
+
+    <resultMap id="SkillCourseResultMap" type="com.cyberpeace.oj.rtks.dao.entity.SkillCourse">
+        <result property="courseId" column="course_id" jdbcType="VARCHAR"/>
+        <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
+
+    </resultMap>-->
+
+    <sql id="Base_Column_List">
+        id
+        ,resource_id,system_id,
+        categary_id,content,create_Time,
+        update_Time
+    </sql>
+
+    <select id="listSkill" resultMap="BaseResultMap">
+        <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
+            <bind name="pattern" value="'%' + skillListReq.pattern + '%'"/>
+        </if>
+        SELECT
+        rtks_skill.id,
+        rtks_skill.resource_id,
+        rtks_skill.system_id,
+        rtks_skill.categary_id,
+        rtks_skill.content,
+        rtks_skill.courses,
+        rtks_skill.create_Time,
+        rtks_skill.update_Time,
+        rtks_skill_categary.content categary,
+        rtks_skill_system.content system
+        FROM
+        rtks_skill
+        LEFT JOIN rtks_skill_categary ON rtks_skill.categary_id = rtks_skill_categary.resource_id
+        LEFT JOIN rtks_skill_system ON rtks_skill.system_id = rtks_skill_system.resource_id
+        <where>
+            1=1
+            <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
+                AND ( rtks_skill.resource_id LIKE #{pattern}
+                OR rtks_skill.content LIKE #{pattern} )
+            </if>
+            <if test="skillListReq.systemId != null and skillListReq.systemId != ''">
+                AND rtks_skill.system_id = #{skillListReq.systemId}
+            </if>
+            <if test="skillListReq.categaryId != null and skillListReq.categaryId != ''">
+                AND rtks_skill.categary_id = #{skillListReq.categaryId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getSkillByResourceId" resultMap="BaseResultMap">
+        SELECT
+        rtks_skill.id,
+        rtks_skill.resource_id,
+        rtks_skill.system_id,
+        rtks_skill.categary_id,
+        rtks_skill.content,
+        rtks_skill.courses,
+        rtks_skill.create_Time,
+        rtks_skill.update_Time,
+        rtks_skill_categary.content categary,
+        rtks_skill_system.content system
+        FROM
+        rtks_skill
+        LEFT JOIN rtks_skill_categary ON rtks_skill.categary_id = rtks_skill_categary.resource_id
+        LEFT JOIN rtks_skill_system ON rtks_skill.system_id = rtks_skill_system.resource_id
+        <where>
+            rtks_skill.resource_id = #{id}
+        </where>
+    </select>
+
+</mapper>

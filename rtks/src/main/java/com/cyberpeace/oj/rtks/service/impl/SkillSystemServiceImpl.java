@@ -1,10 +1,5 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,6 +9,8 @@ import com.cyberpeace.oj.common.util.PageUtil;
 import com.cyberpeace.oj.rtks.dao.entity.SkillSystem;
 import com.cyberpeace.oj.rtks.dao.mapper.SkillSystemMapper;
 import com.cyberpeace.oj.rtks.service.SkillSystemService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
@@ -27,10 +24,9 @@ public class SkillSystemServiceImpl extends ServiceImpl<SkillSystemMapper, Skill
 	@Override
 	public ListRsp<SkillSystem> page(PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
-		IPage<SkillSystem> result = skillSystemMapper.selectPage(page,
-				new QueryWrapper<SkillSystem>().like(
-						StringUtils.isNotEmpty(pageReqBase.getPattern()), "content",
-						pageReqBase.getPattern()));
+		IPage<SkillSystem> result = skillSystemMapper.listSkillSystem(page,
+				pageReqBase.getPattern());
+
 		return PageUtil.getListResult(result);
 	}
 }

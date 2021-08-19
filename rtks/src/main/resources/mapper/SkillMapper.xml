@@ -10,26 +10,9 @@
         <result property="systemId" column="system_id" jdbcType="VARCHAR"/>
         <result property="categaryId" column="categary_id" jdbcType="VARCHAR"/>
         <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="createTime" column="create_Time" jdbcType="TIMESTAMP"/>
-        <result property="updateTime" column="update_Time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
-
-    <!--
-    //一对多关联查询
-    <collection property="courseList" resultMap="SkillCourseResultMap"/>
-
-    <resultMap id="SkillCourseResultMap" type="com.cyberpeace.oj.rtks.dao.entity.SkillCourse">
-        <result property="courseId" column="course_id" jdbcType="VARCHAR"/>
-        <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
-
-    </resultMap>-->
-
-    <sql id="Base_Column_List">
-        id
-        ,resource_id,system_id,
-        categary_id,content,create_Time,
-        update_Time
-    </sql>
 
     <select id="listSkill" resultMap="BaseResultMap">
         <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
@@ -42,8 +25,8 @@
         rtks_skill.categary_id,
         rtks_skill.content,
         rtks_skill.courses,
-        rtks_skill.create_Time,
-        rtks_skill.update_Time,
+        rtks_skill.create_time,
+        rtks_skill.update_time,
         rtks_skill_categary.content categary,
         rtks_skill_system.content system
         FROM
@@ -73,8 +56,8 @@
         rtks_skill.categary_id,
         rtks_skill.content,
         rtks_skill.courses,
-        rtks_skill.create_Time,
-        rtks_skill.update_Time,
+        rtks_skill.create_time,
+        rtks_skill.update_time,
         rtks_skill_categary.content categary,
         rtks_skill_system.content system
         FROM

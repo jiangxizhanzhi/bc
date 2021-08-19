@@ -6,7 +6,7 @@
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
         </if>
-        select resource_id,content,create_Time,update_Time
+        select resource_id,content,create_time,update_time
         from rtks_ability
         <where>
             <if test="pattern != null and pattern != ''">

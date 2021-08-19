@@ -2,19 +2,19 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyberpeace.oj.rtks.mapper.SkillCategaryMapper">
+<mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.SkillCategaryMapper">
 
-    <resultMap id="BaseResultMap" type="com.cyberpeace.oj.rtks.dao.entity.SkillCategary">
-        <id property="id" column="id" jdbcType="INTEGER"/>
-        <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-        <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="createTime" column="create_Time" jdbcType="TIMESTAMP"/>
-        <result property="updateTime" column="update_Time" jdbcType="TIMESTAMP"/>
-    </resultMap>
+    <select id="listSkillCategary" resultType="com.cyberpeace.oj.rtks.dao.entity.SkillCategary">
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+        </if>
+        select resource_id,content
+        from rtks_skill_categary
+        <where>
+            <if test="pattern != null and pattern != ''">
+                content LIKE #{pattern}
+            </if>
+        </where>
+    </select>
 
-    <sql id="Base_Column_List">
-        id
-        ,resource_id,content,
-        create_Time,update_Time
-    </sql>
 </mapper>

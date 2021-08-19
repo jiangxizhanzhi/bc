@@ -31,7 +31,7 @@ public class HttpClient {
     }
 
     public HttpClient() {
-        this("http://10.96.96.240:28001|84261d495c414e|2112f4b855264ad7b1a4209737fc7836");
+        this("http://10.100.0.103:28001|84261d495c414e|2112f4b855264ad7b1a4209737fc7836");
     }
 
     /**

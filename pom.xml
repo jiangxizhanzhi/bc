@@ -33,6 +33,7 @@
         <module>integration</module>
         <module>template</module>
         <module>gateway</module>
+        <module>course</module>
     </modules>
 
     <dependencyManagement>

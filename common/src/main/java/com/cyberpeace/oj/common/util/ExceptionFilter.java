@@ -9,6 +9,8 @@ import com.cyberpeace.oj.common.model.UserInfoContext;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -53,7 +55,7 @@ public class ExceptionFilter implements Filter {
                                HttpServletResponse servletResponse, Exception e) {
         log.error("exceptionfilter catch error", e);
 
-        if (e instanceof NestedServletException) {
+        if (e instanceof NestedServletException || e instanceof ServletException) {
             // 如果拦截到的是spring封装过的异常，获取原始异常信息
             e = (Exception) e.getCause();
         }
@@ -65,10 +67,21 @@ public class ExceptionFilter implements Filter {
         } else if (e instanceof ResourceNotFoundException) {
             parseResourceNotFoundException(servletResponse, (ResourceNotFoundException) e);
         } else if (e instanceof InvalidParamException) {
-			parseInvalidParamException(servletResponse, (InvalidParamException) e);
-		} else {
+            parseInvalidParamException(servletResponse, (InvalidParamException) e);
+        } else if (e instanceof AuthenticationException || e instanceof UnauthenticatedException) {
+            parseAuthenticationException(servletResponse);
+        } else {
             dealDefaultError(servletResponse);
         }
+    }
+
+    /**
+     * 登陆失败返回401
+     *
+     * @param httpServletResponse
+     */
+    private void parseAuthenticationException(HttpServletResponse httpServletResponse) {
+        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     /**
@@ -82,16 +95,16 @@ public class ExceptionFilter implements Filter {
         flushErrorInfo(httpServletResponse, errorInfo);
     }
 
-	/**
-	 * 处理用户输入参数异常
-	 * **/
-	private void parseInvalidParamException(HttpServletResponse httpServletResponse,
-			InvalidParamException e) {
-		BaseRsp<String> errorInfo = new BaseRsp<>();
-		errorInfo.setMessage(e.getMessage());
-		errorInfo.setCode(getErrorCode(ErrorCode.METHOD_ARG_NOT_VALID));
-		flushErrorInfo(httpServletResponse, errorInfo);
-	}
+    /**
+     * 处理用户输入参数异常
+     **/
+    private void parseInvalidParamException(HttpServletResponse httpServletResponse,
+                                            InvalidParamException e) {
+        BaseRsp<String> errorInfo = new BaseRsp<>();
+        errorInfo.setMessage(e.getMessage());
+        errorInfo.setCode(getErrorCode(ErrorCode.METHOD_ARG_NOT_VALID));
+        flushErrorInfo(httpServletResponse, errorInfo);
+    }
 
     /**
      * 处理权限相关的异常

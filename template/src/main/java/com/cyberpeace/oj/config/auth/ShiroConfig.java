@@ -1,10 +1,5 @@
 package com.cyberpeace.oj.config.auth;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.Filter;
-
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -16,61 +11,68 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
+import javax.servlet.Filter;
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 public class ShiroConfig {
 
-	@Bean("securityManager")
-	public DefaultWebSecurityManager getManager(BasicValidationRealm realm) {
-		DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
-		// 使用自己的realm
-		manager.setRealm(realm);
+    @Bean("securityManager")
+    public DefaultWebSecurityManager getManager(BasicValidationRealm realm) {
+        DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
+        // 使用自己的realm
+        manager.setRealm(realm);
 
-		DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
-		DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
-		defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
-		subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
-		manager.setSubjectDAO(subjectDAO);
+        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
+        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+        manager.setSubjectDAO(subjectDAO);
 
-		return manager;
-	}
+        return manager;
+    }
 
-	@Bean("shiroFilter")
-	public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
-		ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
+    @Bean("shiroFilter")
+    public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
+        ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
 
-		Map<String, Filter> filterMap = new HashMap<>();
-		filterMap.put("jwt", new JwtFilter());
-		factoryBean.setFilters(filterMap);
+        Map<String, Filter> filterMap = new HashMap<>();
+//        filterMap.put("anon", new AnonymousFilter());
+        filterMap.put("jwt", new JwtFilter());
+        factoryBean.setFilters(filterMap);
 
-		factoryBean.setSecurityManager(securityManager);
-		factoryBean.setUnauthorizedUrl("/401");
+        factoryBean.setSecurityManager(securityManager);
+        factoryBean.setUnauthorizedUrl("/401");
 
-		Map<String, String> filterRuleMap = new HashMap<>();
-		filterRuleMap.put("/**", "jwt");
+        Map<String, String> filterRuleMap = new HashMap<>();
+        // 不需要校验登陆态的接口在这边配置
+//        filterRuleMap.put("/swagger-ui", "anon");
+        filterRuleMap.put("/**", "jwt");
 
-		factoryBean.setFilterChainDefinitionMap(filterRuleMap);
-		return factoryBean;
-	}
+        factoryBean.setFilterChainDefinitionMap(filterRuleMap);
+        return factoryBean;
+    }
 
-	@Bean
-	@DependsOn("lifecycleBeanPostProcessor")
-	public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-		DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator;
-		defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-		defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
-		return defaultAdvisorAutoProxyCreator;
-	}
+    @Bean
+    @DependsOn("lifecycleBeanPostProcessor")
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator;
+        defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+        return defaultAdvisorAutoProxyCreator;
+    }
 
-	@Bean
-	public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-		return new LifecycleBeanPostProcessor();
-	}
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
 
-	@Bean
-	public AuthorizationAttributeSourceAdvisor
-			authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
-		AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
-		advisor.setSecurityManager(securityManager);
-		return advisor;
-	}
+    @Bean
+    public AuthorizationAttributeSourceAdvisor
+    authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager);
+        return advisor;
+    }
 }

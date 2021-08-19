@@ -39,6 +39,7 @@ public class HttpClient {
      */
     public JSONObject get(String url) {
         url = domain + url;
+
         String message = request(new HttpGet(url));
         return fromJson(message);
     }

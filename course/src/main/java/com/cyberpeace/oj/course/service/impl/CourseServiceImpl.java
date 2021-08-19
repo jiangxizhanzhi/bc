@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.common.util.PageUtil;
+import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.dao.entity.Lesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import org.springframework.beans.BeanUtils;
@@ -19,7 +24,7 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 
 @Service
-public class CourseServiceImpl implements CourseService {
+public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> implements CourseService {
 
 	@Autowired
 	private CourseMapper courseMapper;
@@ -69,5 +74,15 @@ public class CourseServiceImpl implements CourseService {
 				.collect(Collectors.toList());
 		return infoBos;
 	}
+
+	@Override
+	public ListRsp<CourseInfoBo> selectPage(CourseListReq listReq) {
+		Page page = listReq.toPageParam();
+		IPage<Course> courses = courseMapper.listByPage(page, listReq.getEBook(),
+				listReq.getDirection(), listReq.getDifficulty(), listReq.getPattern());
+
+		return PageUtil.getListResult(courses);
+	}
+
 
 }

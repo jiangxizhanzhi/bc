@@ -4,10 +4,13 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.google.common.collect.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +39,16 @@ public class CourseController {
 			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
 		Course course = courseService.selectById(resourceId);
 		BaseRsp rsp = new BaseRsp(course);
+		return rsp;
+	}
+
+	@GetMapping("/list")
+	@ApiOperation("分页查询课程信息")
+	public BaseRsp<List<CourseInfoBo>>
+			getList(@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
+
+		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(listReq);
+		BaseRsp rsp = new BaseRsp(courseInfos);
 		return rsp;
 	}
 

@@ -3,8 +3,34 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseMapper">
 
+    <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.Course">
+        <result property="coursePublic" column="public"/>
+    </resultMap>
+
     <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">
-        select * from course_course where resource_id = #{courseId}
+        select * from course_course where resource_id = #{courseId} and status = 1
+    </select>
+
+    <select id="listByPage" resultMap="baseResultMap">
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+        </if>
+        select * from course_course
+        <where>
+            and status = 1
+            <if test="null != eBook">
+                and e_book = #{eBook}
+            </if>
+            <if test="null != direction and direction != ''">
+                and direction = #{direction}
+            </if>
+            <if test="null != difficulty">
+                and difficulty = #{difficulty}
+            </if>
+            <if test="null != pattern and pattern != ''">
+                and `name` like #{pattern}
+            </if>
+        </where>
     </select>
 
 </mapper>

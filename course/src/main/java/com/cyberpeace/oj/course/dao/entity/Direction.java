@@ -6,9 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.oj.common.model.BaseTable;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @TableName("course_direction")
-public class Direction extends BaseTable {
+public class Direction {
+
+    private Integer id;
 
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
@@ -18,5 +22,7 @@ public class Direction extends BaseTable {
     private Integer status;
 
     private Integer eBook;
+
+    private Date updateTime;
 
 }

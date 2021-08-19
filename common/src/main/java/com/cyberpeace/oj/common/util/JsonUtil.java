@@ -15,8 +15,9 @@ public class JsonUtil {
 	public static String toJsonString(Object obj) {
 		return JSON.toJSONString(obj);
 	}
-	public static <T> List<T> toJsonObjectArray(String text, Class<T> clazz){
-		return JSONObject.parseArray(text,clazz);
+
+	public static <T> List<T> toJsonObjectArray(String text, Class<T> clazz) {
+		return JSONObject.parseArray(text, clazz);
 	}
- 	}
+
 }

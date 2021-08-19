@@ -1,24 +1,22 @@
 package com.cyberpeace.oj.rtks.controller;
 
-import java.util.List;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.model.PageReqBase;
 import com.cyberpeace.oj.rtks.controller.req.AbilityAddReq;
 import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
-import com.cyberpeace.oj.rtks.controller.req.SkillCategaryOrSystemAddReq;
+import com.cyberpeace.oj.rtks.controller.req.SkillCategoryOrSystemAddReq;
 import com.cyberpeace.oj.rtks.dao.entity.SkillSystem;
 import com.cyberpeace.oj.rtks.service.SkillSystemService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "RTKS-技能体系管理")
 @RestController
@@ -41,7 +39,7 @@ public class SkillSystemController {
 	@ApiOperation("新增单条")
 	@PostMapping()
 	public BaseRsp<String> addSkill(
-			@RequestBody @Validated SkillCategaryOrSystemAddReq skillCatagaryOrSystemAddReq) {
+			@RequestBody @Validated SkillCategoryOrSystemAddReq skillCatagaryOrSystemAddReq) {
 		SkillSystem skillSystem = new SkillSystem();
 		BeanUtils.copyProperties(skillCatagaryOrSystemAddReq, skillSystem);
 		skillSystemService.save(skillSystem);

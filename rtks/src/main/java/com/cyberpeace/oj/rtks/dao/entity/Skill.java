@@ -19,15 +19,9 @@ public class Skill extends BaseTable {
 
 	private String systemId;
 
-	private String system;
-
-	private String categaryId;
-
-	private String categary;
+	private String categoryId;
 
 	private String content;
 
 	private String courses;
-
-	// private List<SkillCourse> courseList;
 }

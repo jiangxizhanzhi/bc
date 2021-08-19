@@ -3,12 +3,12 @@ package com.cyberpeace.oj.rtks.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.model.PageReqBase;
-import com.cyberpeace.oj.rtks.dao.entity.SkillCategary;
+import com.cyberpeace.oj.rtks.dao.entity.SkillCategory;
 
 /**
  *
  */
-public interface SkillCategaryService extends IService<SkillCategary> {
+public interface SkillCategoryService extends IService<SkillCategory> {
 
-	ListRsp<SkillCategary> page(PageReqBase pageReqBase);
+	ListRsp<SkillCategory> page(PageReqBase pageReqBase);
 }

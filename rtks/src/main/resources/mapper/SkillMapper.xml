@@ -4,17 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.SkillMapper">
 
-    <resultMap id="BaseResultMap" type="com.cyberpeace.oj.rtks.dao.entity.Skill">
-        <id property="id" column="id" jdbcType="INTEGER"/>
-        <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-        <result property="systemId" column="system_id" jdbcType="VARCHAR"/>
-        <result property="categaryId" column="categary_id" jdbcType="VARCHAR"/>
-        <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <select id="listSkill" resultMap="BaseResultMap">
+    <select id="listSkill" resultType="com.cyberpeace.oj.rtks.controller.res.SkillRes">
         <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
             <bind name="pattern" value="'%' + skillListReq.pattern + '%'"/>
         </if>
@@ -22,16 +12,16 @@
         rtks_skill.id,
         rtks_skill.resource_id,
         rtks_skill.system_id,
-        rtks_skill.categary_id,
+        rtks_skill.category_id,
         rtks_skill.content,
         rtks_skill.courses,
         rtks_skill.create_time,
         rtks_skill.update_time,
-        rtks_skill_categary.content categary,
+        rtks_skill_category.content category,
         rtks_skill_system.content system
         FROM
         rtks_skill
-        LEFT JOIN rtks_skill_categary ON rtks_skill.categary_id = rtks_skill_categary.resource_id
+        LEFT JOIN rtks_skill_category ON rtks_skill.category_id = rtks_skill_category.resource_id
         LEFT JOIN rtks_skill_system ON rtks_skill.system_id = rtks_skill_system.resource_id
         <where>
             1=1
@@ -42,27 +32,27 @@
             <if test="skillListReq.systemId != null and skillListReq.systemId != ''">
                 AND rtks_skill.system_id = #{skillListReq.systemId}
             </if>
-            <if test="skillListReq.categaryId != null and skillListReq.categaryId != ''">
-                AND rtks_skill.categary_id = #{skillListReq.categaryId}
+            <if test="skillListReq.categoryId != null and skillListReq.categoryId != ''">
+                AND rtks_skill.category_id = #{skillListReq.categoryId}
             </if>
         </where>
     </select>
 
-    <select id="getSkillByResourceId" resultMap="BaseResultMap">
+    <select id="getSkillByResourceId" resultType="com.cyberpeace.oj.rtks.controller.res.SkillRes">
         SELECT
         rtks_skill.id,
         rtks_skill.resource_id,
         rtks_skill.system_id,
-        rtks_skill.categary_id,
+        rtks_skill.category_id,
         rtks_skill.content,
         rtks_skill.courses,
         rtks_skill.create_time,
         rtks_skill.update_time,
-        rtks_skill_categary.content categary,
+        rtks_skill_category.content category,
         rtks_skill_system.content system
         FROM
         rtks_skill
-        LEFT JOIN rtks_skill_categary ON rtks_skill.categary_id = rtks_skill_categary.resource_id
+        LEFT JOIN rtks_skill_category ON rtks_skill.category_id = rtks_skill_category.resource_id
         LEFT JOIN rtks_skill_system ON rtks_skill.system_id = rtks_skill_system.resource_id
         <where>
             rtks_skill.resource_id = #{id}

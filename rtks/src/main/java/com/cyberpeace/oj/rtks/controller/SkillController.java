@@ -1,12 +1,5 @@
 package com.cyberpeace.oj.rtks.controller;
 
-import java.util.List;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.JsonUtil;
@@ -14,11 +7,17 @@ import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
 import com.cyberpeace.oj.rtks.controller.req.SkillAddReq;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.dao.entity.Skill;
+import com.cyberpeace.oj.rtks.controller.res.SkillRes;
 import com.cyberpeace.oj.rtks.service.SkillService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "RTKS-技能管理")
 @RestController
@@ -78,8 +77,8 @@ public class SkillController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
-	public BaseRsp<List<Skill>> list(@Validated SkillListReq skillListReq) {
-		ListRsp<Skill> data = skillService.page(skillListReq);
+	public BaseRsp<List<SkillRes>> list(@Validated SkillListReq skillListReq) {
+		ListRsp<SkillRes> data = skillService.page(skillListReq);
 
 		return new BaseRsp(data);
 	}

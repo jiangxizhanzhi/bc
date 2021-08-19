@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.dao.entity.Skill;
+import com.cyberpeace.oj.rtks.controller.res.SkillRes;
 
 /**
  *
@@ -14,11 +15,11 @@ public interface SkillService extends IService<Skill> {
 	 * @param  skillListReq
 	 * @return 分页查询结果
 	 */
-	ListRsp<Skill> page(SkillListReq skillListReq);
+	ListRsp<SkillRes> page(SkillListReq skillListReq);
 
 	/**通过id获取查询结果
 	 * @param id 技能id
 	 * @return 分页查询结果
 	 */
-	Skill getSkillByResourceId(String id);
+	SkillRes getSkillByResourceId(String id);
 }

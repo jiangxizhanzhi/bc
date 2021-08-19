@@ -14,9 +14,9 @@ public class SkillListReq extends PageReqBase {
 	@Getter
 	private String systemId;
 
-	@ApiModelProperty(name = "categary_id", value = "类别ID")
+	@ApiModelProperty(name = "category_id", value = "类别ID")
 	@Getter
-	private String categaryId;
+	private String categoryId;
 
 	@ApiModelProperty(value = "检索参数")
 	@Getter
@@ -27,8 +27,8 @@ public class SkillListReq extends PageReqBase {
 		this.systemId = systemId;
 	}
 
-	public void setCategary_id(String categaryId) {
-		this.categaryId = categaryId;
+	public void setCategory_id(String categoryId) {
+		this.categoryId = categoryId;
 	}
 
 }

@@ -1,15 +1,13 @@
 package com.cyberpeace.oj.rtks.controller.req;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
 import com.cyberpeace.oj.rtks.dao.entity.SkillCourse;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ApiModel
@@ -25,7 +23,7 @@ public class SkillAddReq implements Serializable {
 	private String systemId;
 
 	@NotBlank
-	private String categaryId;
+	private String categoryId;
 
 	@ApiModelProperty
 	private List<SkillCourse> courseList;

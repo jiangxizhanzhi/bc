@@ -8,12 +8,12 @@ import com.cyberpeace.oj.common.model.BaseTable;
 import lombok.Data;
 
 /**
- * @TableName rtks_skill_categary
+ * @TableName rtks_skill_category
  */
-@TableName(value = "rtks_skill_categary")
+@TableName(value = "rtks_skill_category")
 
 @Data
-public class SkillCategary extends BaseTable {
+public class SkillCategory extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;

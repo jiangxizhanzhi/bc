@@ -8,12 +8,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.dao.entity.Skill;
+import com.cyberpeace.oj.rtks.controller.res.SkillRes;
 
 @Mapper
 @Repository
 public interface SkillMapper extends BaseMapper<Skill> {
 
-	IPage<Skill> listSkill(Page page, SkillListReq skillListReq);
+	IPage<SkillRes> listSkill(Page page, SkillListReq skillListReq);
 
-	Skill getSkillByResourceId(String id);
+	SkillRes getSkillByResourceId(String id);
 }

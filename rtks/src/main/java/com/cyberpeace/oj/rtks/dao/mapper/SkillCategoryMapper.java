@@ -7,12 +7,12 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.rtks.dao.entity.SkillCategary;
+import com.cyberpeace.oj.rtks.dao.entity.SkillCategory;
 
 @Mapper
 @Repository
-public interface SkillCategaryMapper extends BaseMapper<SkillCategary> {
+public interface SkillCategoryMapper extends BaseMapper<SkillCategory> {
 
-	IPage<SkillCategary> listSkillCategary(Page page, @Param("pattern") String pattern);
+	IPage<SkillCategory> listSkillCategory(Page page, @Param("pattern") String pattern);
 
 }

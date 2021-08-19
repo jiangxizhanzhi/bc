@@ -3,7 +3,8 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseMapper">
 
-    <select id="selfSelect" resultType="com.cyberpeace.oj.course.dao.entity.Course">
-        select * from course where resource_id like #{self}
+    <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">
+        select * from course_course where resource_id = #{courseId}
     </select>
+
 </mapper>

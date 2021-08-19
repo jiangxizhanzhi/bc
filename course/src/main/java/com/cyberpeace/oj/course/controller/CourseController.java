@@ -2,10 +2,15 @@ package com.cyberpeace.oj.course.controller;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
+import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.google.common.collect.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.oj.common.model.BaseRsp;
@@ -25,13 +30,13 @@ public class CourseController {
 	@Autowired
 	private CourseService courseService;
 
-	@GetMapping
+	@GetMapping()
 	@ApiOperation("单条查询")
-	public BaseRsp<Course> test(
-			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
-		Course course = courseService.getById(resource_id);
-
-		List<Course> result = courseService.self(resource_id);
-		return null;
+	public BaseRsp<Course> getCourse(@ApiParam(name = "resource_id", value = "查询id",
+			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
+		Course course = courseService.selectById(resourceId);
+		BaseRsp rsp = new BaseRsp(course);
+		return rsp;
 	}
+
 }

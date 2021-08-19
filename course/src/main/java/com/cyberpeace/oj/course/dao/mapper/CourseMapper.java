@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface CourseMapper extends BaseMapper<Course> {
 
-    List<Course> selfSelect(@Param("self") String self);
+    Course selectByCourse(@Param("courseId") String courseId);
+
 }

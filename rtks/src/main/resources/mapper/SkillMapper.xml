@@ -8,7 +8,7 @@
         <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
             <bind name="pattern" value="'%' + skillListReq.pattern + '%'"/>
         </if>
-        SELECT
+        select
         rtks_skill.id,
         rtks_skill.resource_id,
         rtks_skill.system_id,
@@ -19,27 +19,27 @@
         rtks_skill.update_time,
         rtks_skill_category.content category,
         rtks_skill_system.content system
-        FROM
+        from
         rtks_skill
-        LEFT JOIN rtks_skill_category ON rtks_skill.category_id = rtks_skill_category.resource_id
-        LEFT JOIN rtks_skill_system ON rtks_skill.system_id = rtks_skill_system.resource_id
+        left join rtks_skill_category on rtks_skill.category_id = rtks_skill_category.resource_id
+        left join rtks_skill_system on rtks_skill.system_id = rtks_skill_system.resource_id
         <where>
             1=1
             <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
-                AND ( rtks_skill.resource_id LIKE #{pattern}
-                OR rtks_skill.content LIKE #{pattern} )
+                and ( rtks_skill.resource_id like #{pattern}
+                or rtks_skill.content like #{pattern} )
             </if>
             <if test="skillListReq.systemId != null and skillListReq.systemId != ''">
-                AND rtks_skill.system_id = #{skillListReq.systemId}
+                and rtks_skill.system_id = #{skillListReq.systemId}
             </if>
             <if test="skillListReq.categoryId != null and skillListReq.categoryId != ''">
-                AND rtks_skill.category_id = #{skillListReq.categoryId}
+                and rtks_skill.category_id = #{skillListReq.categoryId}
             </if>
         </where>
     </select>
 
     <select id="getSkillByResourceId" resultType="com.cyberpeace.oj.rtks.controller.res.SkillRes">
-        SELECT
+        select
         rtks_skill.id,
         rtks_skill.resource_id,
         rtks_skill.system_id,
@@ -50,10 +50,10 @@
         rtks_skill.update_time,
         rtks_skill_category.content category,
         rtks_skill_system.content system
-        FROM
+        from
         rtks_skill
-        LEFT JOIN rtks_skill_category ON rtks_skill.category_id = rtks_skill_category.resource_id
-        LEFT JOIN rtks_skill_system ON rtks_skill.system_id = rtks_skill_system.resource_id
+        left join rtks_skill_category on rtks_skill.category_id = rtks_skill_category.resource_id
+        left join rtks_skill_system on rtks_skill.system_id = rtks_skill_system.resource_id
         <where>
             rtks_skill.resource_id = #{id}
         </where>

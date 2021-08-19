@@ -12,7 +12,7 @@
         from rtks_skill_system
         <where>
             <if test="pattern != null and pattern != ''">
-                content LIKE #{pattern}
+                content like #{pattern}
             </if>
         </where>
     </select>

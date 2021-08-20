@@ -8,9 +8,12 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
+import com.cyberpeace.oj.rtks.controller.res.LevelTreeOutput;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
 import com.cyberpeace.oj.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.oj.rtks.service.LevelService;
@@ -19,10 +22,8 @@ import com.cyberpeace.oj.rtks.service.LevelService;
 public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements LevelService {
 
 	@Override
-	public List<Level> getFrames() {
-		Map<String, Object> columnMap = new HashMap<>();
-		columnMap.put("parent", null);
-		return listByMap(columnMap);
+	public IPage<Level> getFrames(Page<Level> page, String keyword) {
+		return this.getBaseMapper().listFrame(page, keyword);
 	}
 
 	@Override
@@ -40,9 +41,11 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
-	public Level getLevelTree(String frameId) {
+	public LevelTreeOutput getLevelTree(String frameId) {
 		// {父级层级id:[子层级对象]}
-		Map<String, List<Level>> levelMap = new HashMap<>();
+		Map<String, List<LevelTreeOutput>> levelTreeOutputMap = new HashMap<>();
+		// 所有层级输出对象
+		List<LevelTreeOutput> levelTreeOutputs = new ArrayList<>();
 
 		// 当前框架下所有的层级(不包括框架本身)
 		List<Level> levels = getLevelsByFrameId(frameId);
@@ -50,23 +53,28 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 			String parentId = level.getParent();
 			ensureNotFrame(level);
 
-			if (!levelMap.containsKey(parentId)) {
-				levelMap.put(parentId, new ArrayList<>());
+			if (!levelTreeOutputMap.containsKey(parentId)) {
+				levelTreeOutputMap.put(parentId, new ArrayList<>());
 			}
-			levelMap.get(parentId).add(level);
+
+			LevelTreeOutput levelTreeOutput = new LevelTreeOutput(level);
+			levelTreeOutputMap.get(parentId).add(levelTreeOutput);
+			levelTreeOutputs.add(levelTreeOutput);
 		}
 
 		// 加入框架本身
 		Level frame = getFrameById(frameId);
-		levels.add(frame);
+		LevelTreeOutput frameTree = new LevelTreeOutput(frame);
+		levelTreeOutputs.add(frameTree);
 
 		// 遍历框架+层级，赋予children值
-		for (Level level : levels) {
-			List<Level> childLevels = levelMap.getOrDefault(level.getResourceId(), null);
-			level.setChildren(childLevels);
+		for (LevelTreeOutput levelTreeOutput : levelTreeOutputs) {
+			List<LevelTreeOutput> childLevels = levelTreeOutputMap
+					.getOrDefault(levelTreeOutput.getResourceId(), null);
+			levelTreeOutput.setChildren(childLevels);
 		}
 
-		return frame;
+		return frameTree;
 	}
 
 	@Override

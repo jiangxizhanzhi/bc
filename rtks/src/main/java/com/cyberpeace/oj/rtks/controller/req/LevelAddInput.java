@@ -4,16 +4,10 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel
-public class LevelAddReq implements Serializable {
-
-	@ApiModelProperty()
-	private String resourceId;
+public class LevelAddInput implements Serializable {
 
 	@NotBlank
 	private String name;

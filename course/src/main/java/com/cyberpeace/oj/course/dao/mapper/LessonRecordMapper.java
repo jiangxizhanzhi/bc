@@ -10,9 +10,8 @@ import java.util.List;
 @Mapper
 public interface LessonRecordMapper extends BaseMapper<LessonRecord> {
 
-    List<LessonRecord> selectByCourseAndUser(@Param("courseId") String courseId,
-                                             @Param("userId") String userId);
+    List<LessonRecord> selectByUser(@Param("userId") String userId);
 
-    List<String> idsByCoursesAndUser(@Param("userId") String userId,
-                                            @Param("courseIds") List<String> courseIds);
+    List<LessonRecord> listByLessonAndUser(@Param("userId") String userId,
+                                            @Param("lessonIds") List<String> lessonIds);
 }

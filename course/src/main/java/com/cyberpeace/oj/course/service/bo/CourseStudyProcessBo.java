@@ -23,8 +23,12 @@ public class CourseStudyProcessBo {
 
     private Integer lessonCount;
 
+    private Integer completeCount;
+
     private Integer process;
 
     private Integer suggestDuration;
+
+    private Integer completeDuration;
 
 }

@@ -2,10 +2,13 @@ package com.cyberpeace.oj.course.controller;
 
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.common.model.UserInfoContext;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +33,9 @@ public class CourseController {
 	@Autowired
 	private CourseService courseService;
 
+	@Autowired
+	private CourseStatisticsService courseStatisticsService;
+
 	@GetMapping()
 	@ApiOperation("单条查询")
 	public BaseRsp<Course> getCourse(@ApiParam(name = "resource_id", value = "查询id",
@@ -53,15 +59,9 @@ public class CourseController {
 	@ApiOperation("测试调用service代码")
 	public BaseRsp test() {
 		List<String> ids = Lists.newArrayList();
-		ids.add("c73ec991cff9ba147b8e5a224cec379c");
-		ids.add("ded39c03161f4763f2d24a2b2cbd957d");
-		ids.add("574230c97d8b8ec75ed411ee68baf6f5");
-		ids.add("8ebc93399ac6e384a26f51090e582f09");
-		ids.add("62e21666d4e5ecd60ee7023f513e365b");
-		ids.add("70597a642644d4b5f11abcf8b1f126c7");
-		ids.add("f0ecb2bf5b898503f6a0f9756f40cdd3");
-		List<String> idsNoDelete = courseService.idsByNotDeleteIds(ids);
-		BaseRsp rsp = new BaseRsp(idsNoDelete);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(ids, userId);
+		BaseRsp rsp = new BaseRsp(processBos);
 		return rsp;
 	}
 

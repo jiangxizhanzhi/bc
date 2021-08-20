@@ -22,9 +22,8 @@ public class DemoController {
 	@ApiOperation("get方法的demo1")
 	@GetMapping("/get1")
 	public BaseRsp<String> get1(@ApiParam(value = "查询id", required = true) String resourceId) {
-		String result = resourceId + "success1234";
-
 		BaseRsp<String> ret = new BaseRsp<>();
+		String result = "key: " + resourceId + " value: " + System.getProperty(resourceId);
 		ret.setData(result);
 		return ret;
 	}

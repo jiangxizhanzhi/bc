@@ -15,14 +15,14 @@ import java.util.List;
 @ApiModel
 public class PageReqBase2<T> implements Serializable {
 
-    @ApiModelProperty(name = "per_page", value = "每页大小", required = true)
+    @ApiModelProperty(name = "per_page", value = "每页大小，默认10")
     @Getter
-    private Integer perPage;
+    private Integer perPage = 10;
 
-    @ApiModelProperty(value = "页号，从1开始", required = true)
+    @ApiModelProperty(value = "页号，默认1")
     @Getter
     @Setter
-    private Integer page;
+    private Integer page = 1;
 
     @ApiModelProperty(value = "排序参数")
     @Getter

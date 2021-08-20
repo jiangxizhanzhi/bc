@@ -8,7 +8,7 @@ import lombok.Setter;
 
 
 @ApiModel
-public class ListReq<Role> extends PageReqBase2<Role> {
+public class ListReq<T> extends PageReqBase2<T> {
     @ApiModelProperty(value = "模糊查询关键词")
     @Getter
     @Setter

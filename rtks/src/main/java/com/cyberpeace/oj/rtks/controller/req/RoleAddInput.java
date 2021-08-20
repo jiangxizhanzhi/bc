@@ -5,14 +5,10 @@ import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 @Data
-@ApiModel
-public class RoleAddReq implements Serializable {
-
-	private String resourceId;
+public class RoleAddInput implements Serializable {
 
 	@NotBlank
 	private String name;

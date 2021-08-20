@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
-public interface RolerelatedMapper extends BaseMapper<RoleRelated> {
+public interface RoleRelatedMapper extends BaseMapper<RoleRelated> {
 
 }

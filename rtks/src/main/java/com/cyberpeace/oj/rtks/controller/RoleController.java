@@ -13,11 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
-import com.cyberpeace.oj.common.util.PageUtil2;
-import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
-import com.cyberpeace.oj.rtks.controller.req.ListReq;
-import com.cyberpeace.oj.rtks.controller.req.RoleAddReq;
-import com.cyberpeace.oj.rtks.controller.req.RoleRelatedAddReq;
+import com.cyberpeace.oj.rtks.controller.req.*;
+import com.cyberpeace.oj.rtks.controller.res.RoleOutput;
 import com.cyberpeace.oj.rtks.dao.entity.Ability;
 import com.cyberpeace.oj.rtks.dao.entity.Role;
 import com.cyberpeace.oj.rtks.dao.entity.Task;
@@ -48,46 +45,46 @@ public class RoleController {
 
 	@ApiOperation("新增岗位")
 	@PostMapping()
-	public BaseRsp<Role> addRole(@RequestBody @Validated RoleAddReq roleAddReq) {
-		roleAddReq.setResourceId(null);
-
-		levelService.ensureLevelIdValid(roleAddReq.getLevelId());
+	public BaseRsp<RoleOutput> addRole(@RequestBody @Validated RoleAddInput roleAddInput) {
+		levelService.ensureLevelIdValid(roleAddInput.getLevelId());
 
 		Role role = new Role();
-		BeanUtils.copyProperties(roleAddReq, role);
+		BeanUtils.copyProperties(roleAddInput, role);
 
 		roleService.save(role);
 
-		return new BaseRsp<>(role);
+		return new BaseRsp<>(RoleOutput.fromRole(role));
 	}
 
 	@ApiOperation("修改岗位")
 	@PutMapping()
-	public BaseRsp<Role> modifyTask(@RequestBody @Validated RoleAddReq roleAddReq) {
-		levelService.ensureLevelIdValid(roleAddReq.getLevelId());
+	public BaseRsp<RoleOutput> modifyTask(@RequestBody @Validated RoleModifyInput roleModifyInput) {
+		levelService.ensureLevelIdValid(roleModifyInput.getLevelId());
 
 		Role role = new Role();
-		BeanUtils.copyProperties(roleAddReq, role);
+		BeanUtils.copyProperties(roleModifyInput, role);
 
 		roleService.updateById(role);
 
-		return new BaseRsp<>(role);
+		return new BaseRsp<>(RoleOutput.fromRole(role));
 	}
 
 	@ApiOperation("删除岗位")
 	@DeleteMapping()
-	public BaseRsp<Role> deleteFrame(@RequestBody @Validated DeleteReq deleteReq) {
+	public BaseRsp<String> deleteFrame(@RequestBody @Validated DeleteReq deleteReq) {
 		roleService.removeByIds(deleteReq.getIds());
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("根据岗位名的模糊列表查询")
 	@GetMapping()
-	public BaseRsp<ListRsp<Role>> searchRoles(ListReq<Role> listReq) {
-		IPage<Role> iPage = roleService.searchRolesByName(listReq.toPageParam(),
+	public BaseRsp<ListRsp<RoleOutput>> searchRoles(ListReq<Role> listReq) {
+		IPage<Role> page = roleService.searchRolesByName(listReq.toPageParam(),
 				listReq.getKeyword());
-		ListRsp<Role> listRsp = PageUtil2.getListResult(iPage);
-		return new BaseRsp<>(listRsp);
+		ListRsp<RoleOutput> ret = new ListRsp<>();
+		ret.setList(RoleOutput.listFromRoles(page.getRecords()));
+		ret.setTotal(page.getTotal());
+		return new BaseRsp<>(ret);
 	}
 
 	@ApiOperation("批量删除岗位职责/知识点/职责/能力清单")

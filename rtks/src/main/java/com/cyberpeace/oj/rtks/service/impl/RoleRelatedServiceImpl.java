@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.oj.rtks.dao.entity.RoleRelated;
-import com.cyberpeace.oj.rtks.dao.mapper.RolerelatedMapper;
+import com.cyberpeace.oj.rtks.dao.mapper.RoleRelatedMapper;
 import com.cyberpeace.oj.rtks.service.RoleRelatedService;
 
 @Service
-public class RoleRelatedServiceImpl extends ServiceImpl<RolerelatedMapper, RoleRelated> implements RoleRelatedService {
+public class RoleRelatedServiceImpl extends ServiceImpl<RoleRelatedMapper, RoleRelated> implements RoleRelatedService {
 
 	@Override
 	public void addRoleRelated(String roleId, int type, List<String> relatedIds) {

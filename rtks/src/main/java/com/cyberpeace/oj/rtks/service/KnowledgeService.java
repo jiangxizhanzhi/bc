@@ -18,7 +18,7 @@ public interface KnowledgeService extends IService<Knowledge> {
 	ListRsp<KnowledgeRes> page(KnowledgeListReq skillListReq);
 
 	/**通过id获取查询结果
-	 * @param id 技能id
+	 * @param id
 	 * @return 分页查询结果
 	 */
 	KnowledgeRes getKnowledgeByResourceId(String id);

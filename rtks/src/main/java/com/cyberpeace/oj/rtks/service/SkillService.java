@@ -18,7 +18,7 @@ public interface SkillService extends IService<Skill> {
 	ListRsp<SkillRes> page(SkillListReq skillListReq);
 
 	/**通过id获取查询结果
-	 * @param id 技能id
+	 * @param id
 	 * @return 分页查询结果
 	 */
 	SkillRes getSkillByResourceId(String id);

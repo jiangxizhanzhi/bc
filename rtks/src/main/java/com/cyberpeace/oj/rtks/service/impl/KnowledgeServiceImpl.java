@@ -6,21 +6,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.common.util.PageUtil;
-import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.oj.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.oj.rtks.dao.RelatedCourseDao;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.oj.rtks.service.KnowledgeService;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -32,7 +30,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	private KnowledgeMapper knowledgeMapper;
 
 	@Autowired
-	private CourseService courseService;
+	private RelatedCourseDao relatedCourseDao;
 
 	@Override
 	public ListRsp<KnowledgeRes> page(KnowledgeListReq knowledgeListReq) {
@@ -41,44 +39,38 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		IPage<KnowledgeRes> result = knowledgeMapper.listKnowledge(page, knowledgeListReq);
 
 		List<KnowledgeRes> knowledgeResList = result.getRecords();
+		List<Knowledge> knowledgeList = Lists.newArrayList();
+
 		for (KnowledgeRes knowledgeRes : knowledgeResList) {
-			setCourseName(knowledgeRes);
+			String courses = knowledgeRes.getCourses();
+
+			List<RelatedCourse> relatedCourseList = relatedCourseDao.setCourseResult(courses);
+
+			knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			knowledgeRes.setCourseList(relatedCourseList);
+
+			Knowledge knowledge = new Knowledge();
+			BeanUtils.copyProperties(knowledgeRes, knowledge);
+			knowledgeList.add(knowledge);
 		}
+		updateBatchById(knowledgeList);
 
 		return PageUtil.getListResult(result);
-	}
-
-	private void setCourseName(KnowledgeRes knowledgeRes) {
-		String courses = knowledgeRes.getCourses();
-
-		List<RelatedCourse> relatedCourseList = JsonUtil.toJsonObjectArray(courses,
-				RelatedCourse.class);
-		List ids = Lists.newArrayList();
-
-		for (RelatedCourse relatedCourse : relatedCourseList) {
-			ids.add(relatedCourse.getCourseId());
-		}
-		Map<String, String> courseMap = getAllCourseNameByIds(ids);
-		for (RelatedCourse knowledgeCourse : relatedCourseList) {
-			knowledgeCourse.setCourseName(courseMap.get(knowledgeCourse.getCourseId()));
-		}
-		knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-		knowledgeRes.setCourseList(relatedCourseList);
-	}
-
-	private Map<String, String> getAllCourseNameByIds(List<String> ids) {
-		Map<String, String> map = Maps.newHashMap();
-		List<CourseInfoBo> courseList = courseService.selectByIds(ids);
-		for (CourseInfoBo courseInfoBo : courseList) {
-			map.put(courseInfoBo.getResourceId(), courseInfoBo.getName());
-		}
-		return map;
 	}
 
 	@Override
 	public KnowledgeRes getKnowledgeByResourceId(String id) {
 		KnowledgeRes knowledgeRes = knowledgeMapper.getKnowledgeByResourceId(id);
-		setCourseName(knowledgeRes);
+
+		List<RelatedCourse> relatedCourseList = relatedCourseDao
+				.setCourseResult(knowledgeRes.getCourses());
+		knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+		knowledgeRes.setCourseList(relatedCourseList);
+
+		Knowledge knowledge = new Knowledge();
+		BeanUtils.copyProperties(knowledgeRes, knowledge);
+		updateById(knowledge);
+
 		return knowledgeRes;
 	}
 }

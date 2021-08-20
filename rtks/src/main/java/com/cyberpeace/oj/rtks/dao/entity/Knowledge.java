@@ -18,8 +18,6 @@ public class Knowledge extends BaseTable {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	private String systemId;
-
 	private String categoryId;
 
 	private String content;

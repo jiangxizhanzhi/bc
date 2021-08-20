@@ -9,5 +9,7 @@ public class RelatedCourse {
 
 	private String courseName;
 
+	private Integer eBook;
+
 	private Integer weight;
 }

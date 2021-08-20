@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.RoleRelatedMapper">
+    <select id="listRoleRelated" resultType="com.cyberpeace.oj.rtks.dao.entity.RoleRelated">
+        select * from rtks_role_related
+        <where>role_id = #{roleId} and type = #{type}</where>
+    </select>
+</mapper>

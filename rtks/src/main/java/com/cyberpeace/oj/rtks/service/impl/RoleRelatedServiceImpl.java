@@ -1,9 +1,7 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -17,21 +15,20 @@ public class RoleRelatedServiceImpl extends ServiceImpl<RoleRelatedMapper, RoleR
 
 	@Override
 	public void addRoleRelated(String roleId, int type, List<String> relatedIds) {
+		List<RoleRelated> toSaveList = new ArrayList<>();
 		for (String relatedId : relatedIds) {
 			RoleRelated roleRelated = new RoleRelated();
 			roleRelated.setRoleId(roleId);
 			roleRelated.setRelatedId(relatedId);
 			roleRelated.setType(type);
-			save(roleRelated);
+			toSaveList.add(roleRelated);
 		}
+		saveBatch(toSaveList);
 	}
 
 	@Override
 	public List<String> getRelatedIds(String roleId, int type) {
-		Map<String, Object> columnMap = new HashMap<>();
-		columnMap.put("role_id", roleId);
-		columnMap.put("type", type);
-		List<RoleRelated> roleRelatedList = listByMap(columnMap);
+		List<RoleRelated> roleRelatedList = this.getBaseMapper().listRoleRelated(roleId, type);
 		List<String> ret = new ArrayList<>();
 		for (RoleRelated roleRelated : roleRelatedList) {
 			ret.add(roleRelated.getRelatedId());

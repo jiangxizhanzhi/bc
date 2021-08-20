@@ -6,7 +6,6 @@ import org.apache.ibatis.reflection.MetaObject;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 
-// @Component
 public class MybatisFillHandler implements MetaObjectHandler {
 
 	@Override

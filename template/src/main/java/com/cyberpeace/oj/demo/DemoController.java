@@ -1,17 +1,23 @@
 package com.cyberpeace.oj.demo;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.oj.common.model.BaseRsp;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "接口demo")
 @RestController
 @RequestMapping("/test")
 public class DemoController {
+
+	@Autowired
+	private DemoService demoService;
 
 	@ApiOperation("get方法的demo1")
 	@GetMapping("/get1")
@@ -77,7 +83,7 @@ public class DemoController {
 	@ApiOperation("delete方法的demo1")
 	@DeleteMapping("/delete1")
 	public BaseRsp<OutputDemoModel>
-	delete1(@Validated @RequestBody InputDemoModel2 inputDemoModel) {
+			delete1(@Validated @RequestBody InputDemoModel2 inputDemoModel) {
 		OutputDemoModel model = new OutputDemoModel();
 		model.setResourceId("delete1");
 		model.setName("delete1接口的返回");
@@ -88,4 +94,11 @@ public class DemoController {
 		return ret;
 	}
 
+	@ApiOperation("事务的demo")
+	@GetMapping("/transaction")
+	public BaseRsp transaction() {
+		demoService.transactionDemo();
+
+		return new BaseRsp();
+	}
 }

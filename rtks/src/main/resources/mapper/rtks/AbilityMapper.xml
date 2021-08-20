@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.AbilityMapper">
+    <select id="listAbility" resultType="com.cyberpeace.oj.rtks.dao.entity.Ability">
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+        </if>
+        select resource_id,content,create_time,update_time
+        from rtks_ability
+        <where>
+            <if test="pattern != null and pattern != ''">
+                resource_id like #{pattern}
+                or content like #{pattern}
+            </if>
+        </where>
+    </select>
+</mapper>

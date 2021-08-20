@@ -49,7 +49,7 @@ public class MybatisConfigOJ {
         sqlSessionFactory.setConfiguration(configuration);
         sqlSessionFactory.setGlobalConfig(ojGlobalConfig());
         sqlSessionFactory.setMapperLocations(
-                new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*.xml"));
+                new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/oj/*.xml"));
         return sqlSessionFactory.getObject();
     }
 

@@ -24,65 +24,65 @@ import javax.sql.DataSource;
 
 @Configuration
 @MapperScan(basePackages = "com.cyberpeace.oj.rtks.**.mapper",
-        sqlSessionFactoryRef = "rtksSqlSessionFactory")
+		sqlSessionFactoryRef = "rtksSqlSessionFactory")
 public class MybatisConfigRTKS {
 
-    @Autowired
-    @Qualifier("rtks")
-    private DataSource dataSource;
+	@Autowired
+	@Qualifier("rtks")
+	private DataSource dataSource;
 
-    @Bean(name = "rtksSqlSessionFactory")
-    public SqlSessionFactory rtksSqlSessionFactory() throws Exception {
-        MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
-        sqlSessionFactory.setDataSource(dataSource);
-        MybatisConfiguration configuration = new MybatisConfiguration();
-        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-        configuration.setJdbcTypeForNull(JdbcType.NULL);
-        // 自定义session，需要手动添加拦截器
-        configuration.addInterceptor(rtksPaginationInterceptor());
-        sqlSessionFactory.setConfiguration(configuration);
-        sqlSessionFactory.setGlobalConfig(rtksGlobalConfig());
-        sqlSessionFactory.setMapperLocations(
-                new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*.xml"));
-        return sqlSessionFactory.getObject();
-    }
+	@Bean(name = "rtksSqlSessionFactory")
+	public SqlSessionFactory rtksSqlSessionFactory() throws Exception {
+		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
+		sqlSessionFactory.setDataSource(dataSource);
+		MybatisConfiguration configuration = new MybatisConfiguration();
+		configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+		configuration.setJdbcTypeForNull(JdbcType.NULL);
+		// 自定义session，需要手动添加拦截器
+		configuration.addInterceptor(rtksPaginationInterceptor());
+		sqlSessionFactory.setConfiguration(configuration);
+		sqlSessionFactory.setGlobalConfig(rtksGlobalConfig());
+		sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
+				.getResources("classpath*:mapper/rtks/*.xml"));
+		return sqlSessionFactory.getObject();
+	}
 
-    @Bean(name = "rtksPaginationInterceptor")
-    public MybatisPlusInterceptor rtksPaginationInterceptor() {
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        // 指定数据库方言为 MYSQL
-        PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
-        // 单页分页条数限制
-        pageInterceptor.setMaxLimit(100L);
-        interceptor.addInnerInterceptor(pageInterceptor);
-        return interceptor;
-    }
+	@Bean(name = "rtksPaginationInterceptor")
+	public MybatisPlusInterceptor rtksPaginationInterceptor() {
+		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+		// 指定数据库方言为 MYSQL
+		PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
+		// 单页分页条数限制
+		pageInterceptor.setMaxLimit(100L);
+		interceptor.addInnerInterceptor(pageInterceptor);
+		return interceptor;
+	}
 
-    @Bean(name = "rtksGlobalConfig")
-    public GlobalConfig rtksGlobalConfig() {
-        GlobalConfig globalConfig = new GlobalConfig();
-        globalConfig.setMetaObjectHandler(rtksMetaObjectHandler());
+	@Bean(name = "rtksGlobalConfig")
+	public GlobalConfig rtksGlobalConfig() {
+		GlobalConfig globalConfig = new GlobalConfig();
+		globalConfig.setMetaObjectHandler(rtksMetaObjectHandler());
 
-        return globalConfig;
-    }
+		return globalConfig;
+	}
 
-    @Bean(name = "rtksSqlSessionTemplate")
-    public SqlSessionTemplate rtksSqlSessionTemplate() throws Exception {
-        return new SqlSessionTemplate(rtksSqlSessionFactory());
-    }
+	@Bean(name = "rtksSqlSessionTemplate")
+	public SqlSessionTemplate rtksSqlSessionTemplate() throws Exception {
+		return new SqlSessionTemplate(rtksSqlSessionFactory());
+	}
 
-    @Bean(name = "rtksMetaObjectHandler")
-    public MetaObjectHandler rtksMetaObjectHandler() {
-        return new MybatisFillHandler();
-    }
+	@Bean(name = "rtksMetaObjectHandler")
+	public MetaObjectHandler rtksMetaObjectHandler() {
+		return new MybatisFillHandler();
+	}
 
-    @Bean(name = "rtksTransactionManager")
-    public DataSourceTransactionManager rtksTransactionManager() {
-        return new DataSourceTransactionManager(dataSource);
-    }
+	@Bean(name = "rtksTransactionManager")
+	public DataSourceTransactionManager rtksTransactionManager() {
+		return new DataSourceTransactionManager(dataSource);
+	}
 
-    @Bean(name = "rtksTransactionTemplate")
-    public TransactionTemplate rtksTransactionTemplate() {
-        return new TransactionTemplate(rtksTransactionManager());
-    }
+	@Bean(name = "rtksTransactionTemplate")
+	public TransactionTemplate rtksTransactionTemplate() {
+		return new TransactionTemplate(rtksTransactionManager());
+	}
 }

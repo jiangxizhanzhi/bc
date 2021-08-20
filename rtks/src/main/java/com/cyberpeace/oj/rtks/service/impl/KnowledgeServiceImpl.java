@@ -53,6 +53,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 			BeanUtils.copyProperties(knowledgeRes, knowledge);
 			knowledgeList.add(knowledge);
 		}
+//		knowledgeMapper.updateById(knowledgeList.get(0));
 		updateBatchById(knowledgeList);
 
 		return PageUtil.getListResult(result);

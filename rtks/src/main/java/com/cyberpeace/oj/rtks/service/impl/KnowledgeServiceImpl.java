@@ -1,5 +1,11 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,11 +20,6 @@ import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.oj.rtks.service.KnowledgeService;
 import com.google.common.collect.Lists;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  *
@@ -53,7 +54,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 			BeanUtils.copyProperties(knowledgeRes, knowledge);
 			knowledgeList.add(knowledge);
 		}
-//		knowledgeMapper.updateById(knowledgeList.get(0));
+
 		updateBatchById(knowledgeList);
 
 		return PageUtil.getListResult(result);

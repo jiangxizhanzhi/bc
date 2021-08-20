@@ -23,7 +23,8 @@ public class DemoController {
 	@GetMapping("/get1")
 	public BaseRsp<String> get1(@ApiParam(value = "查询id", required = true) String resourceId) {
 		BaseRsp<String> ret = new BaseRsp<>();
-		String result = "key: " + resourceId + " value: " + System.getProperty(resourceId);
+		String result = "key: " + resourceId + " property: " + System.getProperty(resourceId)
+				+ " env: " + System.getenv().getOrDefault(resourceId, null);
 		ret.setData(result);
 		return ret;
 	}

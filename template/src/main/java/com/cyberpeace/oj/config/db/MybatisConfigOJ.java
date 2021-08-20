@@ -31,6 +31,12 @@ public class MybatisConfigOJ {
     @Qualifier("oj")
     private DataSource dataSource;
 
+    /** 逻辑删除*/
+    private String DELETE_VALUE = "0";
+
+    /** 非删除*/
+    private String NOT_DELETE = "1";
+
     @Bean(name = "ojSqlSessionFactory")
     public SqlSessionFactory ojSqlSessionFactory() throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
@@ -62,7 +68,11 @@ public class MybatisConfigOJ {
     public GlobalConfig ojGlobalConfig() {
         GlobalConfig globalConfig = new GlobalConfig();
         globalConfig.setMetaObjectHandler(ojMetaObjectHandler());
-
+        GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
+        dbConfig.setLogicDeleteField("status");
+        dbConfig.setLogicDeleteValue(DELETE_VALUE);
+        dbConfig.setLogicNotDeleteValue(NOT_DELETE);
+        globalConfig.setDbConfig(dbConfig);
         return globalConfig;
     }
 

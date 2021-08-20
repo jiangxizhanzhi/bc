@@ -84,5 +84,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		return PageUtil.getListResult(courses);
 	}
 
-
+	@Override
+	public List<String> idsByNotDeleteIds(List<String> courseIds) {
+		List<String> ids = courseMapper.notDeleteIdsByIds(courseIds);
+		return ids;
+	}
 }

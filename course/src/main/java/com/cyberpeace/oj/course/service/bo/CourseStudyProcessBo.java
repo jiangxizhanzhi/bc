@@ -2,6 +2,8 @@ package com.cyberpeace.oj.course.service.bo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class CourseStudyProcessBo {
 
@@ -11,9 +13,13 @@ public class CourseStudyProcessBo {
 
     private Integer theoryCount;
 
+    private Integer completeTheory;
+
     private Integer exerciseCount;
 
-    private String lastStudyTime;
+    private Integer completeExercise;
+
+    private Date lastStudyTime;
 
     private Integer lessonCount;
 

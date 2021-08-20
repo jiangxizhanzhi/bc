@@ -32,4 +32,11 @@ public interface CourseService extends IService<Course> {
      */
     ListRsp<CourseInfoBo> selectPage(CourseListReq listReq);
 
+    /**
+     * 筛选未被删除的课程编号
+     * @param courseIds
+     * @return
+     */
+    List<String> idsByNotDeleteIds(List<String> courseIds);
+
 }

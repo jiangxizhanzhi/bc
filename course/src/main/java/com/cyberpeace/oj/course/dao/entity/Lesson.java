@@ -11,6 +11,12 @@ import lombok.Data;
 @TableName("course_lesson")
 public class Lesson extends BaseTable {
 
+    /** 理论课*/
+    public static final int TYPE_THEORY = 0;
+
+    /** 实验课*/
+    public static final int TYPE_EXPERIMENT = 1;
+
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 

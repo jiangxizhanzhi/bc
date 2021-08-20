@@ -4,7 +4,22 @@
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper">
 
     <select id="selectByCourseAndUser" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
-        select * from course_direction where resource_id = #{direction}
+        select * from course_lessonrecord
+        <where>
+            <if test="null != userId and userId != ''">
+                user = #{userId}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="idsByCoursesAndUser" resultType="java.lang.String">
+        select lesson from course_lessonrecord
+        <where>
+            <if test="null != userId and userId != ''">
+                user = #{userId}
+            </if>
+        </where>
     </select>
 
 </mapper>

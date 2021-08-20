@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface CourseStatisticsService {
 
-    List<CourseStudyProcessBo> statisticByIds(List<String> courseIds);
+    List<CourseStudyProcessBo> statisticByIds(List<String> courseIds, String userId);
 
 }

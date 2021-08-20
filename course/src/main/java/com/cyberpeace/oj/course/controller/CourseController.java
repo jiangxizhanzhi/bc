@@ -4,7 +4,10 @@ import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.model.UserInfoContext;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
+import com.cyberpeace.oj.course.controller.res.DirectionOutPut;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.Direction;
+import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
@@ -14,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "实训-课程相关")
 @RestController
@@ -36,11 +41,14 @@ public class CourseController {
 	@Autowired
 	private CourseStatisticsService courseStatisticsService;
 
+	@Autowired
+	private DirectionMapper directionMapper;
+
 	@GetMapping()
 	@ApiOperation("单条查询")
 	public BaseRsp<Course> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
-		Course course = courseService.selectById(resourceId);
+		CourseInfoBo course = courseService.selectById(resourceId);
 		BaseRsp rsp = new BaseRsp(course);
 		return rsp;
 	}
@@ -52,6 +60,19 @@ public class CourseController {
 
 		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(listReq);
 		BaseRsp rsp = new BaseRsp(courseInfos);
+		return rsp;
+	}
+
+	@GetMapping("/direction")
+	@ApiOperation("课程分类")
+	public BaseRsp<List<Direction>> listDirection() {
+		List<Direction> directions = directionMapper.selectList(null);
+		List<DirectionOutPut> outPuts = directions.stream().map(direction -> {
+			DirectionOutPut outPut = new DirectionOutPut();
+			BeanUtils.copyProperties(direction, outPut);
+			return outPut;
+		}).collect(Collectors.toList());
+		BaseRsp rsp = new BaseRsp(outPuts);
 		return rsp;
 	}
 

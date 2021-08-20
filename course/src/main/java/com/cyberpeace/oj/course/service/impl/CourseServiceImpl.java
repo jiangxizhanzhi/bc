@@ -1,16 +1,20 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.PageUtil;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.dao.entity.Lesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,7 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 
 @Service
+@Slf4j
 public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> implements CourseService {
 
 	@Autowired
@@ -38,7 +43,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Override
 	public CourseInfoBo selectById(String courseId) {
 		Course course = courseMapper.selectByCourse(courseId);
-
+		if (null == course) {
+			throw new InvalidParamException("课程不存在！");
+		}
 		return courseToBo(course);
 	}
 
@@ -56,8 +63,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		courseInfoBo.setDirectionName(direction.getName());
 
 		// 计算课时数量
-		List<Lesson> lessons = courseLessonMapper
-				.selectList(new QueryWrapper<Lesson>().eq("course", course.getResourceId()));
+		List<Lesson> lessons = courseLessonMapper.listByCourses(Arrays.asList(course.getResourceId()));
 		courseInfoBo.setLessonCount(lessons.size());
 
 		// 计算课程时长
@@ -78,10 +84,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Override
 	public ListRsp<CourseInfoBo> selectPage(CourseListReq listReq) {
 		Page page = listReq.toPageParam();
-		IPage<Course> courses = courseMapper.listByPage(page, listReq.getEBook(),
+		IPage<Course> iPage = courseMapper.listByPage(page, listReq.getEBook(),
 				listReq.getDirection(), listReq.getDifficulty(), listReq.getPattern());
 
-		return PageUtil.getListResult(courses);
+		iPage.convert(course -> courseToBo(course));
+		return PageUtil.getListResult(iPage);
 	}
 
 	@Override

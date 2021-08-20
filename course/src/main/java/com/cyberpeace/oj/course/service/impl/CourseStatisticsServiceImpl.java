@@ -36,14 +36,14 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
     public List<CourseStudyProcessBo> statisticByIds(@NotEmpty List<String> courseIds, String userId) {
 
         if ( CollectionUtils.isEmpty(courseIds)) {
-            throw new InvalidParamException("课程编号不能为空！");
+            return null;
         }
 
         // 过滤删除的课程
         List<Course> courses = courseMapper.selectBatchIds(courseIds);
         List<String> ids = courses.stream().map(Course::getResourceId).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(ids)) {
-            throw new InvalidParamException("课程全部失效！");
+            return null;
         }
 
         // 课程数量 以课程编号进行分组

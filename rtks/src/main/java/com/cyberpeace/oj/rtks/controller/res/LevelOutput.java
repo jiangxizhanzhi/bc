@@ -22,8 +22,4 @@ public class LevelOutput {
 		this.parent = level.getParent();
 	}
 
-	public static LevelOutput fromLevel(Level level) {
-		return new LevelOutput(level);
-	}
-
 }

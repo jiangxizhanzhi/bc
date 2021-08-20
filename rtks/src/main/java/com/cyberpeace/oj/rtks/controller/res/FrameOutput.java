@@ -1,8 +1,5 @@
 package com.cyberpeace.oj.rtks.controller.res;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.cyberpeace.oj.rtks.dao.entity.Level;
 
 import lombok.Data;
@@ -22,15 +19,4 @@ public class FrameOutput {
 		this.description = level.getDescription();
 	}
 
-	public static FrameOutput fromLevel(Level level) {
-		return new FrameOutput(level);
-	}
-
-	public static List<FrameOutput> listFromLevels(List<Level> levels) {
-		List<FrameOutput> frameOutputs = new ArrayList<>();
-		for (Level level : levels) {
-			frameOutputs.add(fromLevel(level));
-		}
-		return frameOutputs;
-	}
 }

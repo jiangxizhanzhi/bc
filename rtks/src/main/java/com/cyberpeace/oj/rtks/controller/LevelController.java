@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.common.util.PageUtil2;
 import com.cyberpeace.oj.rtks.controller.req.*;
 import com.cyberpeace.oj.rtks.controller.res.FrameOutput;
 import com.cyberpeace.oj.rtks.controller.res.LevelOutput;
@@ -35,7 +36,7 @@ public class LevelController {
 
 		levelService.save(frame);
 
-		return new BaseRsp<>(FrameOutput.fromLevel(frame));
+		return new BaseRsp<>(new FrameOutput(frame));
 	}
 
 	@ApiOperation("修改框架")
@@ -45,7 +46,7 @@ public class LevelController {
 		Level frame = new Level();
 		BeanUtils.copyProperties(frameModifyInput, frame);
 		levelService.updateById(frame);
-		return new BaseRsp<>(FrameOutput.fromLevel(frame));
+		return new BaseRsp<>(new FrameOutput(frame));
 	}
 
 	@ApiOperation("删除框架")
@@ -59,10 +60,7 @@ public class LevelController {
 	@GetMapping()
 	public BaseRsp<ListRsp<FrameOutput>> getFrames(ListReq<Level> listReq) {
 		IPage<Level> page = levelService.getFrames(listReq.toPageParam(), listReq.getKeyword());
-		ListRsp<FrameOutput> ret = new ListRsp<>();
-		ret.setList(FrameOutput.listFromLevels(page.getRecords()));
-		ret.setTotal(page.getTotal());
-		return new BaseRsp<>(ret);
+		return PageUtil2.getListResult(page, FrameOutput::new);
 	}
 
 	@ApiOperation("指定框架层级数据的全量树形展示")
@@ -81,7 +79,7 @@ public class LevelController {
 
 		levelService.addLevel(level);
 
-		return new BaseRsp<>(LevelOutput.fromLevel(level));
+		return new BaseRsp<>(new LevelOutput(level));
 	}
 
 	@ApiOperation("修改层级")
@@ -91,7 +89,7 @@ public class LevelController {
 		Level level = new Level();
 		BeanUtils.copyProperties(levelModifyInput, level);
 		levelService.modifyLevel(level);
-		return new BaseRsp<>(LevelOutput.fromLevel(level));
+		return new BaseRsp<>(new LevelOutput(level));
 	}
 
 	@ApiOperation("删除层级")

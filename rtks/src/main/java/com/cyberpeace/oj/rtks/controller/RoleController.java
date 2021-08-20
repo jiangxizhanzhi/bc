@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.common.util.PageUtil2;
 import com.cyberpeace.oj.rtks.controller.req.*;
 import com.cyberpeace.oj.rtks.controller.res.RoleOutput;
 import com.cyberpeace.oj.rtks.dao.entity.Ability;
@@ -53,7 +54,7 @@ public class RoleController {
 
 		roleService.save(role);
 
-		return new BaseRsp<>(RoleOutput.fromRole(role));
+		return new BaseRsp<>(new RoleOutput(role));
 	}
 
 	@ApiOperation("修改岗位")
@@ -66,7 +67,7 @@ public class RoleController {
 
 		roleService.updateById(role);
 
-		return new BaseRsp<>(RoleOutput.fromRole(role));
+		return new BaseRsp<>(new RoleOutput(role));
 	}
 
 	@ApiOperation("删除岗位")
@@ -81,10 +82,7 @@ public class RoleController {
 	public BaseRsp<ListRsp<RoleOutput>> searchRoles(ListReq<Role> listReq) {
 		IPage<Role> page = roleService.searchRolesByName(listReq.toPageParam(),
 				listReq.getKeyword());
-		ListRsp<RoleOutput> ret = new ListRsp<>();
-		ret.setList(RoleOutput.listFromRoles(page.getRecords()));
-		ret.setTotal(page.getTotal());
-		return new BaseRsp<>(ret);
+		return PageUtil2.getListResult(page, RoleOutput::new);
 	}
 
 	@ApiOperation("批量删除岗位职责/知识点/职责/能力清单")

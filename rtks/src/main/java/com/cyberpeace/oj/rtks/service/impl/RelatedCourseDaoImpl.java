@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class RelatedCourseDaoImpl implements RelatedCourseService {
 		boolean isDeleted = false;
 
 		try {
-			relatedCourseList = JsonUtil.toJsonObjectArray(courses, RelatedCourse.class);
+			relatedCourseList.addAll(JsonUtil.toJsonObjectArray(courses, RelatedCourse.class));
 		} catch (Exception e) {
 			log.info("json转换错误：" + courses);
 		}

@@ -50,7 +50,7 @@ public class RoleController {
 
 	@ApiOperation("新增岗位")
 	@PostMapping()
-	public BaseRsp<RoleOutput> addRole(@RequestBody @Validated RoleAddInput roleAddInput) {
+	public BaseRsp<RoleOutput> create(@RequestBody @Validated RoleAddInput roleAddInput) {
 		levelService.ensureLevelIdValid(roleAddInput.getLevelId());
 
 		Role role = new Role();
@@ -63,7 +63,7 @@ public class RoleController {
 
 	@ApiOperation("修改岗位")
 	@PutMapping()
-	public BaseRsp<RoleOutput> modifyTask(@RequestBody @Validated RoleModifyInput roleModifyInput) {
+	public BaseRsp<RoleOutput> update(@RequestBody @Validated RoleModifyInput roleModifyInput) {
 		levelService.ensureLevelIdValid(roleModifyInput.getLevelId());
 
 		Role role = new Role();
@@ -76,14 +76,14 @@ public class RoleController {
 
 	@ApiOperation("删除岗位")
 	@DeleteMapping()
-	public BaseRsp<String> deleteFrame(@RequestBody @Validated DeleteReq deleteReq) {
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		roleService.removeByIds(deleteReq.getIds());
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("根据岗位名的模糊列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<RoleOutput>> searchRoles(ListReq<Role> listReq) {
+	public BaseRsp<ListRsp<RoleOutput>> list(ListReq<Role> listReq) {
 		IPage<Role> page = roleService.searchRolesByName(listReq.toPageParam(),
 				listReq.getKeyword());
 		return PageUtil2.getListResult(page, RoleOutput::new);

@@ -16,9 +16,7 @@ import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.PageUtil2;
 import com.cyberpeace.oj.rtks.controller.req.*;
 import com.cyberpeace.oj.rtks.controller.res.RoleOutput;
-import com.cyberpeace.oj.rtks.dao.entity.Ability;
-import com.cyberpeace.oj.rtks.dao.entity.Role;
-import com.cyberpeace.oj.rtks.dao.entity.Task;
+import com.cyberpeace.oj.rtks.dao.entity.*;
 import com.cyberpeace.oj.rtks.service.*;
 
 import io.swagger.annotations.Api;
@@ -37,6 +35,12 @@ public class RoleController {
 
 	@Autowired
 	private TaskService taskService;
+
+	@Autowired
+	private KnowledgeService knowledgeService;
+
+	@Autowired
+	private SkillService skillService;
 
 	@Autowired
 	private AbilityService abilityService;
@@ -104,31 +108,29 @@ public class RoleController {
 		return getNameList(role_id, taskService, RoleRelatedType.TASK);
 	}
 
-	// @ApiOperation("新增知识清单")
-	// @PostMapping("/related/knowledge")
-	// public BaseRsp<String> addKnowledgeNameList(@RequestBody @Validated
-	// RoleRelatedAddReq req) {
-	// return addNameList(req, taskService, RoleRelatedType.KNOWLEDGE);
-	// }
-	//
-	// @ApiOperation("获取知识清单")
-	// @GetMapping("/related/knowledge")
-	// public BaseRsp<List<Task>> getKnowledgeNameList(String role_id) {
-	// return getNameList(role_id, taskService, RoleRelatedType.KNOWLEDGE);
-	// }
-	//
-	// @ApiOperation("新增技能清单")
-	// @PostMapping("/related/skill")
-	// public BaseRsp<String> addSkillNameList(@RequestBody @Validated
-	// RoleRelatedAddReq req) {
-	// return addNameList(req, taskService, RoleRelatedType.SKILL);
-	// }
-	//
-	// @ApiOperation("获取技能清单")
-	// @GetMapping("/related/skill")
-	// public BaseRsp<List<Task>> getSkillNameList(String role_id) {
-	// return getNameList(role_id, taskService, RoleRelatedType.SKILL);
-	// }
+	@ApiOperation("新增知识清单")
+	@PostMapping("/related/knowledge")
+	public BaseRsp<String> addKnowledgeNameList(@RequestBody @Validated RoleRelatedAddReq req) {
+		return addNameList(req, knowledgeService, RoleRelatedType.KNOWLEDGE);
+	}
+
+	@ApiOperation("获取知识清单")
+	@GetMapping("/related/knowledge")
+	public BaseRsp<List<Knowledge>> getKnowledgeNameList(String role_id) {
+		return getNameList(role_id, knowledgeService, RoleRelatedType.KNOWLEDGE);
+	}
+
+	@ApiOperation("新增技能清单")
+	@PostMapping("/related/skill")
+	public BaseRsp<String> addSkillNameList(@RequestBody @Validated RoleRelatedAddReq req) {
+		return addNameList(req, skillService, RoleRelatedType.SKILL);
+	}
+
+	@ApiOperation("获取技能清单")
+	@GetMapping("/related/skill")
+	public BaseRsp<List<Skill>> getSkillNameList(String role_id) {
+		return getNameList(role_id, skillService, RoleRelatedType.SKILL);
+	}
 
 	@ApiOperation("新增能力清单")
 	@PostMapping("/related/ability")

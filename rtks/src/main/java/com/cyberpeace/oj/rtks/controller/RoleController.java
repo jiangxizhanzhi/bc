@@ -1,23 +1,18 @@
 package com.cyberpeace.oj.rtks.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.PageUtil2;
-import com.cyberpeace.oj.rtks.controller.req.*;
-import com.cyberpeace.oj.rtks.controller.res.RoleOutput;
-import com.cyberpeace.oj.rtks.dao.entity.*;
-import com.cyberpeace.oj.rtks.service.*;
+import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
+import com.cyberpeace.oj.rtks.controller.req.ListReq;
+import com.cyberpeace.oj.rtks.controller.role.*;
+import com.cyberpeace.oj.rtks.dao.entity.Role;
+import com.cyberpeace.oj.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,47 +26,37 @@ public class RoleController {
 	private RoleService roleService;
 
 	@Autowired
-	private RoleRelatedService roleRelatedService;
-
-	@Autowired
-	private TaskService taskService;
-
-	@Autowired
-	private KnowledgeService knowledgeService;
-
-	@Autowired
-	private SkillService skillService;
-
-	@Autowired
-	private AbilityService abilityService;
-
-	@Autowired
-	private LevelService levelService;
+	private RolePorter rolePorter;
 
 	@ApiOperation("新增岗位")
 	@PostMapping()
-	public BaseRsp<RoleOutput> create(@RequestBody @Validated RoleAddInput roleAddInput) {
-		levelService.ensureLevelIdValid(roleAddInput.getLevelId());
-
-		Role role = new Role();
-		BeanUtils.copyProperties(roleAddInput, role);
+	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
+		Role role = rolePorter.getRoleFromInput(input, false);
 
 		roleService.save(role);
 
-		return new BaseRsp<>(new RoleOutput(role));
+		return retrieve(role.getResourceId());
 	}
 
 	@ApiOperation("修改岗位")
 	@PutMapping()
-	public BaseRsp<RoleOutput> update(@RequestBody @Validated RoleModifyInput roleModifyInput) {
-		levelService.ensureLevelIdValid(roleModifyInput.getLevelId());
+	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
+		String resourceId = input.getResourceId();
 
-		Role role = new Role();
-		BeanUtils.copyProperties(roleModifyInput, role);
+		roleService.getOr404(resourceId);
+
+		Role role = rolePorter.getRoleFromInput(input, true);
 
 		roleService.updateById(role);
 
-		return new BaseRsp<>(new RoleOutput(role));
+		return retrieve(resourceId);
+	}
+
+	@ApiOperation("查询单条")
+	@GetMapping()
+	public BaseRsp<RoleDetailOutput> retrieve(String resource_id) {
+		Role role = roleService.getOr404(resource_id);
+		return new BaseRsp<>(rolePorter.getDetailOutputFromRole(role));
 	}
 
 	@ApiOperation("删除岗位")
@@ -86,103 +71,8 @@ public class RoleController {
 	public BaseRsp<ListRsp<RoleOutput>> list(ListReq<Role> listReq) {
 		IPage<Role> page = roleService.searchRolesByName(listReq.toPageParam(),
 				listReq.getKeyword());
-		return PageUtil2.getListResult(page, RoleOutput::new);
+		return PageUtil2.getListResult(page, rolePorter::getBasicOutputFromRole);
 	}
 
-	@ApiOperation("批量删除岗位职责/知识点/职责/能力清单")
-	@DeleteMapping("/related")
-	public BaseRsp<String> batchDeleteRoleRelated(@RequestBody @Validated DeleteReq deleteReq) {
-		roleRelatedService.removeByIds(deleteReq.getIds());
-		return new BaseRsp<>();
-	}
-
-	@ApiOperation("新增岗位职责清单")
-	@PostMapping("/related/task")
-	public BaseRsp<String> addTaskNameList(@RequestBody @Validated RoleRelatedAddReq req) {
-		return addNameList(req, taskService, RoleRelatedType.TASK);
-	}
-
-	@ApiOperation("获取岗位职责清单")
-	@GetMapping("/related/task")
-	public BaseRsp<List<Task>> getTaskNameList(String role_id) {
-		return getNameList(role_id, taskService, RoleRelatedType.TASK);
-	}
-
-	@ApiOperation("新增知识清单")
-	@PostMapping("/related/knowledge")
-	public BaseRsp<String> addKnowledgeNameList(@RequestBody @Validated RoleRelatedAddReq req) {
-		return addNameList(req, knowledgeService, RoleRelatedType.KNOWLEDGE);
-	}
-
-	@ApiOperation("获取知识清单")
-	@GetMapping("/related/knowledge")
-	public BaseRsp<List<Knowledge>> getKnowledgeNameList(String role_id) {
-		return getNameList(role_id, knowledgeService, RoleRelatedType.KNOWLEDGE);
-	}
-
-	@ApiOperation("新增技能清单")
-	@PostMapping("/related/skill")
-	public BaseRsp<String> addSkillNameList(@RequestBody @Validated RoleRelatedAddReq req) {
-		return addNameList(req, skillService, RoleRelatedType.SKILL);
-	}
-
-	@ApiOperation("获取技能清单")
-	@GetMapping("/related/skill")
-	public BaseRsp<List<Skill>> getSkillNameList(String role_id) {
-		return getNameList(role_id, skillService, RoleRelatedType.SKILL);
-	}
-
-	@ApiOperation("新增能力清单")
-	@PostMapping("/related/ability")
-	public BaseRsp<String> addAbilityNameList(@RequestBody @Validated RoleRelatedAddReq req) {
-		return addNameList(req, abilityService, RoleRelatedType.ABILITY);
-	}
-
-	@ApiOperation("获取能力清单")
-	@GetMapping("/related/ability")
-	public BaseRsp<List<Ability>> getAbilityNameList(String role_id) {
-		return getNameList(role_id, abilityService, RoleRelatedType.ABILITY);
-	}
-
-	private <T> BaseRsp<String> addNameList(RoleRelatedAddReq req, IService<T> service, int type) {
-		List<String> relatedIds = req.getRelated_ids();
-		String roleId = req.getRole_id();
-
-		roleService.ensureRoleExists(roleId);
-		for (String taskId : relatedIds) {
-			T relatedObject = service.getById(taskId);
-			if (relatedObject == null) {
-				throw new ResourceNotFoundException(taskId + "未找到");
-			}
-		}
-
-		roleRelatedService.addRoleRelated(roleId, type, relatedIds);
-
-		return new BaseRsp<>();
-	}
-
-	private <T> BaseRsp<List<T>> getNameList(String role_id, IService<T> service, int type) {
-		List<String> relatedIds = roleRelatedService.getRelatedIds(role_id, type);
-
-		List<T> relatedObjects;
-		if (relatedIds.size() == 0) {
-			relatedObjects = new ArrayList<>();
-		} else {
-			relatedObjects = service.listByIds(relatedIds);
-		}
-
-		return new BaseRsp<>(relatedObjects);
-	}
-
-	private interface RoleRelatedType {
-
-		int TASK = 1;
-
-		int KNOWLEDGE = 2;
-
-		int SKILL = 3;
-
-		int ABILITY = 4;
-	}
-
+	// todo 相关课程编排 修改技能/知识时课程的联动
 }

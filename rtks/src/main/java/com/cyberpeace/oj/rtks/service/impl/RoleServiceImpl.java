@@ -19,11 +19,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	}
 
 	@Override
-	public void ensureRoleExists(String roleId) {
+	public Role getOr404(String roleId) {
 		Role role = getById(roleId);
 		if (role == null) {
 			throw new ResourceNotFoundException("岗位" + roleId + "未找到");
 		}
+		return role;
 	}
 
 }

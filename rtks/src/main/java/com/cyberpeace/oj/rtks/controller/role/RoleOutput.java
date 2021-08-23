@@ -1,6 +1,6 @@
-package com.cyberpeace.oj.rtks.controller.res;
+package com.cyberpeace.oj.rtks.controller.role;
 
-import com.cyberpeace.oj.rtks.dao.entity.Role;
+import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,12 +22,20 @@ public class RoleOutput {
 	@ApiModelProperty(value = "技能体系")
 	private int category;
 
-	public RoleOutput(Role role) {
-		this.resourceId = role.getResourceId();
-		this.name = role.getName();
-		this.description = role.getDescription();
-		this.levelId = role.getLevelId();
-		this.category = role.getCategory();
-	}
+	private List<String> taskIds;
+
+	private Integer taskCount;
+
+	private List<String> knowledgeIds;
+
+	private Integer knowledgeCount;
+
+	private List<String> skillIds;
+
+	private Integer skillCount;
+
+	private List<String> abilityIds;
+
+	private Integer abilityCount;
 
 }

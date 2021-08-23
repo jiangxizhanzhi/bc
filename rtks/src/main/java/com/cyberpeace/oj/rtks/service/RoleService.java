@@ -13,8 +13,8 @@ public interface RoleService extends IService<Role> {
 	IPage<Role> searchRolesByName(Page<Role> page, String keyword);
 
 	/**
-	 * 给定一个id，确保对应的岗位存在，否则报错
+	 * 给定一个id，返回对应的岗位，否则报错
 	 * */
-	void ensureRoleExists(String roleId);
+	Role getOr404(String resourceId);
 
 }

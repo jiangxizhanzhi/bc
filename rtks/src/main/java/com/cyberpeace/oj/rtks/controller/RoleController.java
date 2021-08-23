@@ -78,7 +78,7 @@ public class RoleController {
 	}
 
 	@ApiOperation("根据岗位名的模糊列表查询")
-	@GetMapping()
+	@GetMapping("/list")
 	public BaseRsp<ListRsp<RoleOutput>> searchRoles(ListReq<Role> listReq) {
 		IPage<Role> page = roleService.searchRolesByName(listReq.toPageParam(),
 				listReq.getKeyword());

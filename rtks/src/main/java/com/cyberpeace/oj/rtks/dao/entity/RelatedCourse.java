@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class RelatedCourse {
 
-	private String courseId;
+	private String resource_id;
 
-	private String courseName;
+	private String name;
 
 	private Integer eBook;
 

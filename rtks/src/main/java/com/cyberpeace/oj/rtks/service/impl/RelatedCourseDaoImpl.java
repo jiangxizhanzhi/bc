@@ -3,15 +3,14 @@ package com.cyberpeace.oj.rtks.service.impl;
 import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.cyberpeace.oj.rtks.service.RelatedCourseService;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
+import com.cyberpeace.oj.rtks.service.RelatedCourseService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class RelatedCourseDaoImpl implements RelatedCourseService {
 		List ids = Lists.newArrayList();
 
 		for (RelatedCourse relatedCourse : relatedCourseList) {
-			ids.add(relatedCourse.getCourseId());
+			ids.add(relatedCourse.getResource_id());
 		}
 
 		if (ids.size() > 0) {
@@ -46,7 +45,7 @@ public class RelatedCourseDaoImpl implements RelatedCourseService {
 				Iterator<RelatedCourse> iterator = relatedCourseList.iterator();
 				while (iterator.hasNext()) {
 					RelatedCourse relatedCourse = iterator.next();
-					if (existIds.indexOf(relatedCourse.getCourseId()) == -1) {
+					if (existIds.indexOf(relatedCourse.getResource_id()) == -1) {
 						iterator.remove();
 					}
 				}
@@ -60,8 +59,8 @@ public class RelatedCourseDaoImpl implements RelatedCourseService {
 				Map<String, Integer> courseEbookMap = getAllCourseEbookByIds(courseList);
 
 				for (RelatedCourse knowledgeCourse : relatedCourseList) {
-					knowledgeCourse.setCourseName(courseNameMap.get(knowledgeCourse.getCourseId()));
-					knowledgeCourse.setEBook(courseEbookMap.get(knowledgeCourse.getCourseId()));
+					knowledgeCourse.setName(courseNameMap.get(knowledgeCourse.getResource_id()));
+					knowledgeCourse.setEBook(courseEbookMap.get(knowledgeCourse.getResource_id()));
 
 				}
 			}

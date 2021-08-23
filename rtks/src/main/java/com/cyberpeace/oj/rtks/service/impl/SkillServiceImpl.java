@@ -8,11 +8,13 @@ import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.common.util.PageUtil;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.controller.res.SkillRes;
-import com.cyberpeace.oj.rtks.dao.RelatedCourseDao;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.entity.Skill;
 import com.cyberpeace.oj.rtks.dao.mapper.SkillMapper;
+import com.cyberpeace.oj.rtks.service.RelatedCourseService;
 import com.cyberpeace.oj.rtks.service.SkillService;
+import com.google.common.collect.Lists;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	private SkillMapper skillMapper;
 
 	@Autowired
-	private RelatedCourseDao relatedCourseDao;
+	private RelatedCourseService relatedCourseDao;
 
 	@Override
 	public ListRsp<SkillRes> page(SkillListReq skillListReq) {
@@ -37,13 +39,22 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
 
 		List<SkillRes> skillResList = result.getRecords();
+		List<Skill> skillList = Lists.newArrayList();
+
 		for (SkillRes skillRes : skillResList) {
 			String courses = skillRes.getCourses();
 
-			List<RelatedCourse> relatedCourseList = relatedCourseDao.setCourseResult(courses);
+			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
+			if (relatedCourseDao.setCourseResult(courses, relatedCourseList)) {
+				Skill skill = new Skill();
+				BeanUtils.copyProperties(skillRes, skill);
+				skillList.add(skill);
+			}
 			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
+
 		}
+		updateBatchById(skillList);
 
 		return PageUtil.getListResult(result);
 	}
@@ -51,9 +62,14 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	@Override
 	public SkillRes getSkillByResourceId(String id) {
 		SkillRes skillRes = skillMapper.getSkillByResourceId(id);
+		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 
-		List<RelatedCourse> relatedCourseList = relatedCourseDao
-				.setCourseResult(skillRes.getCourses());
+		if (relatedCourseDao.setCourseResult(skillRes.getCourses(), relatedCourseList)) {
+			Skill skill = new Skill();
+			BeanUtils.copyProperties(skillRes, skill);
+			updateById(skill);
+		} ;
+
 		skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 		skillRes.setCourseList(relatedCourseList);
 

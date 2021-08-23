@@ -6,12 +6,13 @@ import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
 import com.cyberpeace.oj.rtks.controller.req.SkillAddReq;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
-import com.cyberpeace.oj.rtks.dao.entity.Skill;
 import com.cyberpeace.oj.rtks.controller.res.SkillRes;
+import com.cyberpeace.oj.rtks.dao.entity.Skill;
 import com.cyberpeace.oj.rtks.service.SkillService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,7 @@ import java.util.List;
 @Api(tags = "RTKS-技能管理")
 @RestController
 @RequestMapping("/rtks/skill")
+@RequiresAuthentication
 public class SkillController {
 
 	@Autowired

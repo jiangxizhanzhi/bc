@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.rtks.dao.entity.Role;
@@ -33,9 +32,9 @@ public class RolePorter {
 
 	public Role getRoleFromInput(RoleInput input, Boolean isModify) {
 		Role role = new Role();
-		role.setName(notEmptyString(input.getName(), "name"));
+		role.setName(input.getName());
 		role.setDescription(input.getDescription());
-		role.setLevelId(notEmptyString(input.getLevelId(), "level_id"));
+		role.setLevelId(input.getLevelId());
 		role.setCategory(input.getCategory());
 		if (input instanceof RoleModifyInput) {
 			role.setResourceId(((RoleModifyInput) input).getResourceId());
@@ -99,21 +98,6 @@ public class RolePorter {
 		output.setAbilityCount(abilityIds.size());
 
 		return output;
-	}
-
-	/**
-	 * 允许为null但不允许为空字符串
-	 * 如果是null返回null，如果是字符串先去掉头尾的空字符再返回，如果是空字符串则报错
-	 * */
-	private String notEmptyString(String s, String fieldName) {
-		if (s == null) {
-			return null;
-		}
-		s = s.trim();
-		if (s.isEmpty()) {
-			throw new InvalidParamException(fieldName);
-		}
-		return s;
 	}
 
 	/**

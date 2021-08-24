@@ -1,13 +1,16 @@
 package com.cyberpeace.oj.config.auth;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.cyberpeace.oj.common.constant.ErrorCode;
+import com.cyberpeace.oj.common.constant.WebConstant;
+import com.cyberpeace.oj.common.exception.InvalidParamException;
+import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
+import com.cyberpeace.oj.common.model.BaseRsp;
+import com.cyberpeace.oj.common.model.UserInfoContext;
+import com.cyberpeace.oj.common.util.ConfigUtil;
+import com.cyberpeace.oj.common.util.JsonUtil;
+import com.cyberpeace.oj.common.util.LocalStringUtil;
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -20,18 +23,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.util.NestedServletException;
 
-import com.cyberpeace.oj.common.constant.ErrorCode;
-import com.cyberpeace.oj.common.constant.WebConstant;
-import com.cyberpeace.oj.common.exception.InvalidParamException;
-import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
-import com.cyberpeace.oj.common.model.BaseRsp;
-import com.cyberpeace.oj.common.model.UserInfoContext;
-import com.cyberpeace.oj.common.util.ConfigUtil;
-import com.cyberpeace.oj.common.util.JsonUtil;
-import com.cyberpeace.oj.common.util.LocalStringUtil;
-import com.google.common.collect.Maps;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
@@ -91,7 +90,7 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void parseDuplicateKeyException(HttpServletResponse httpServletResponse,
 			DuplicateKeyException e) {
-		String errorMsg = e.getMessage();
+		String errorMsg = e.getCause().getMessage();
 		String duplicateKey = getDuplicateKey(errorMsg);
 
 		BaseRsp<String> errorInfo = new BaseRsp<>();
@@ -102,8 +101,16 @@ public class ExceptionFilter implements Filter {
 	}
 
 	private String getDuplicateKey(String errorMsg) {
-		// TODO
-		return null;
+		String duplicateKey = "";
+		String rgex = "key '(.*?)'";
+		Pattern pattern = Pattern.compile(rgex);
+		Matcher matcher = pattern.matcher(errorMsg);
+		while (matcher.find()) {
+			duplicateKey = matcher.group(0);
+			duplicateKey = StringUtils.substring(duplicateKey, 5, duplicateKey.length() - 1)
+					.concat("不能重复");
+		}
+		return duplicateKey;
 	}
 
 	/**

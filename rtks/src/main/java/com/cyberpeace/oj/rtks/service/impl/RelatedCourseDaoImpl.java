@@ -8,6 +8,7 @@ import com.cyberpeace.oj.rtks.service.RelatedCourseService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -35,7 +36,7 @@ public class RelatedCourseDaoImpl implements RelatedCourseService {
 		List ids = Lists.newArrayList();
 
 		for (RelatedCourse relatedCourse : relatedCourseList) {
-			ids.add(relatedCourse.getResource_id());
+			ids.add(relatedCourse.getResourceId());
 		}
 
 		if (ids.size() > 0) {
@@ -45,7 +46,7 @@ public class RelatedCourseDaoImpl implements RelatedCourseService {
 				Iterator<RelatedCourse> iterator = relatedCourseList.iterator();
 				while (iterator.hasNext()) {
 					RelatedCourse relatedCourse = iterator.next();
-					if (existIds.indexOf(relatedCourse.getResource_id()) == -1) {
+					if (existIds.indexOf(relatedCourse.getResourceId()) == -1) {
 						iterator.remove();
 					}
 				}
@@ -55,13 +56,13 @@ public class RelatedCourseDaoImpl implements RelatedCourseService {
 			if (existIds.size() > 0) {
 				List<CourseInfoBo> courseList = courseService.selectByIds(existIds);
 
-				Map<String, String> courseNameMap = getAllCourseNameByIds(courseList);
-				Map<String, Integer> courseEbookMap = getAllCourseEbookByIds(courseList);
+				Map<String, CourseInfoBo> allCourseMap = getAllCourseMap(courseList);
 
-				for (RelatedCourse knowledgeCourse : relatedCourseList) {
-					knowledgeCourse.setName(courseNameMap.get(knowledgeCourse.getResource_id()));
-					knowledgeCourse.setEBook(courseEbookMap.get(knowledgeCourse.getResource_id()));
-
+				for (RelatedCourse relatedCourse : relatedCourseList) {
+					Integer weight = relatedCourse.getWeight();
+					BeanUtils.copyProperties(allCourseMap.get(relatedCourse.getResourceId()),
+							relatedCourse);
+					relatedCourse.setWeight(weight);
 				}
 			}
 		}
@@ -69,23 +70,14 @@ public class RelatedCourseDaoImpl implements RelatedCourseService {
 		return isDeleted;
 	}
 
-	private Map<String, String> getAllCourseNameByIds(List<CourseInfoBo> courseList) {
-		Map<String, String> map = Maps.newHashMap();
+	private Map<String, CourseInfoBo> getAllCourseMap(List<CourseInfoBo> courseList) {
+		Map<String, CourseInfoBo> map = Maps.newHashMap();
 
 		for (CourseInfoBo courseInfoBo : courseList) {
-			map.put(courseInfoBo.getResourceId(), courseInfoBo.getName());
+			map.put(courseInfoBo.getResourceId(), courseInfoBo);
 		}
 
 		return map;
 	}
 
-	private Map<String, Integer> getAllCourseEbookByIds(List<CourseInfoBo> courseList) {
-		Map<String, Integer> map = Maps.newHashMap();
-
-		for (CourseInfoBo courseInfoBo : courseList) {
-			map.put(courseInfoBo.getResourceId(), courseInfoBo.getEBook());
-		}
-
-		return map;
-	}
 }

@@ -17,4 +17,9 @@ public interface RoleService extends IService<Role> {
 	 * */
 	Role getOr404(String resourceId);
 
+	/**
+	 * 确保没有绑定在给定层级id下的岗位，否则报错
+	 * */
+	void ensureLevelNotChildRole(String levelId);
+
 }

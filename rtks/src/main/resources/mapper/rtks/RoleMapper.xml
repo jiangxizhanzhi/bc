@@ -9,4 +9,9 @@
             <where>name LIKE #{pattern}</where>
         </if>
     </select>
+
+    <select id="getRolesUnderLevel" resultType="com.cyberpeace.oj.rtks.dao.entity.Role">
+        select * from rtks_role
+        <where>level_id = #{levelId}</where>
+    </select>
 </mapper>

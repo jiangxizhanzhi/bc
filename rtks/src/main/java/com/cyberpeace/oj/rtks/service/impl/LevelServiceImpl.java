@@ -78,10 +78,14 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
-	public void ensureLevelIdValid(String levelId) {
+	public void ensureLevelNoChild(String levelId) {
 		Level level = getById(levelId);
 		if (level == null) {
 			throw new ResourceNotFoundException("层级" + levelId + "未找到");
+		}
+		List<Level> childLevels = getBaseMapper().getChildLevels(levelId);
+		if (childLevels.size() > 0) {
+			throw new InvalidParamException("层级" + levelId + "有子层级");
 		}
 	}
 

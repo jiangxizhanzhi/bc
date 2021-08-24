@@ -43,7 +43,7 @@ public class RolePorter {
 
 		String levelId = input.getLevelId();
 		if (levelId != null) {
-			levelService.ensureLevelIdValid(levelId);
+			levelService.ensureLevelNoChild(levelId);
 		}
 
 		role.setTaskIds(checkIds(input.getTaskIds(), taskService, isModify));

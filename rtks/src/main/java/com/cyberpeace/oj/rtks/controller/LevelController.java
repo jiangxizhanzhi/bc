@@ -15,6 +15,7 @@ import com.cyberpeace.oj.rtks.controller.res.LevelOutput;
 import com.cyberpeace.oj.rtks.controller.res.LevelTreeOutput;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
 import com.cyberpeace.oj.rtks.service.LevelService;
+import com.cyberpeace.oj.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +28,9 @@ public class LevelController {
 
 	@Autowired
 	private LevelService levelService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@ApiOperation("新增框架")
 	@PostMapping()
@@ -77,6 +81,8 @@ public class LevelController {
 		Level level = new Level();
 		BeanUtils.copyProperties(levelAddInput, level);
 
+		// 已经绑定了岗位的层级不允许新增子层级
+		roleService.ensureLevelNotChildRole(level.getParent());
 		levelService.addLevel(level);
 
 		return new BaseRsp<>(new LevelOutput(level));

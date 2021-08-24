@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.rtks.dao.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,6 @@ import com.cyberpeace.oj.rtks.dao.entity.Level;
 public interface LevelMapper extends BaseMapper<Level> {
 
 	IPage<Level> listFrame(Page<Level> page, String keyword);
+
+	List<Level> getChildLevels(String levelId);
 }

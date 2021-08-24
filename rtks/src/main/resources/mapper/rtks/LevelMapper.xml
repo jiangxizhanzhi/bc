@@ -12,4 +12,11 @@
             frame is null
         </where>
     </select>
+
+    <select id="getChildLevels" resultType="com.cyberpeace.oj.rtks.dao.entity.Level">
+        select * from rtks_level
+        <where>
+            parent = #{levelId}
+        </where>
+    </select>
 </mapper>

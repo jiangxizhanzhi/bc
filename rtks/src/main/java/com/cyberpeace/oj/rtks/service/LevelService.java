@@ -29,7 +29,7 @@ public interface LevelService extends IService<Level> {
 	LevelTreeOutput getLevelTree(String frameId);
 
 	/**
-	 * 检查输入的level_id是否合法
+	 * 检查输入的level_id是否合法(存在且没有子层级)
 	 */
-	void ensureLevelIdValid(String levelId);
+	void ensureLevelNoChild(String levelId);
 }

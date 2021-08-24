@@ -20,6 +20,8 @@ public class BaseRsp<T> {
 	 */
 	public String detail;
 
+	public long timestamp = System.currentTimeMillis();
+
 	public BaseRsp(T data) {
 		this.data = data;
 	}

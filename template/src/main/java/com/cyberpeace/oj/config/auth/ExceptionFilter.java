@@ -13,6 +13,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.impl.TraceIdContext;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -77,9 +78,32 @@ public class ExceptionFilter implements Filter {
 			parseInvalidParamException(servletResponse, (InvalidParamException) e);
 		} else if (e instanceof AuthenticationException || e instanceof UnauthenticatedException) {
 			parseAuthenticationException(servletResponse);
+		} else if (e instanceof DuplicateKeyException) {
+			parseDuplicateKeyException(servletResponse, (DuplicateKeyException) e);
 		} else {
 			dealDefaultError(servletResponse);
 		}
+	}
+
+	/**
+	 * 处理主键重复异常
+	 * @param httpServletResponse
+	 */
+	private void parseDuplicateKeyException(HttpServletResponse httpServletResponse,
+			DuplicateKeyException e) {
+		String errorMsg = e.getMessage();
+		String duplicateKey = getDuplicateKey(errorMsg);
+
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setMessage(duplicateKey);
+		errorInfo.setCode(getErrorCode(ErrorCode.DUPLICATE_KEY));
+
+		flushErrorInfo(httpServletResponse, errorInfo);
+	}
+
+	private String getDuplicateKey(String errorMsg) {
+		// TODO
+		return null;
 	}
 
 	/**

@@ -11,8 +11,14 @@ import org.springframework.context.annotation.DependsOn;
 
 import com.cyberpeace.oj.common.util.SystemPropUtil;
 
-@DependsOn("dataSourceConfig")
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * @author yinqingrong
+ */
+@Slf4j
 @Configuration
+@DependsOn({ "dataSourceConfig", "oj", "rtks" })
 public class FlywayConfig {
 
 	@Autowired
@@ -34,28 +40,41 @@ public class FlywayConfig {
 		// 格式dbname1,dbname2
 		String needMigrateDbs = SystemPropUtil.getProp("MIGRATE_DB");
 
-		String[] schemaNames = StringUtils.split(needMigrateDbs, ",");
+		String[] configs = StringUtils.split(needMigrateDbs, "|");
 
-		if (null == schemaNames || schemaNames.length == 0) {
+		if (null == configs || configs.length == 0) {
 			return;
 		}
 
-		for (String schemaName : schemaNames) {
-//			migrateDb(schemaName);
+		for (String config : configs) {
+			migrateDb(config);
 		}
 	}
 
 	/**
 	 * 执行实际刷库
-	 * @param schemaName
+	 * @param config
 	 */
-	private void migrateDb(String schemaName) {
-		DataSource dataSource = dataSourceConfig.getDataSource(schemaName);
-		String locations = "static/sql/" + schemaName;
+	private void migrateDb(String config) {
+		String[] ss = StringUtils.split(config, "&");
+
+		String datasourceName = ss[0];
+		String schemaName = ss[1];
+
+		DataSource dataSource = dataSourceConfig.getDataSource(datasourceName);
+		String sqlLocations = "static/sql/" + datasourceName;
+
+		log.info(
+				"config loaded! prepare to migrateDb, datasourceName=[{}], schemaName=[{}], sqlLocation=[{}]",
+				new Object[] { datasourceName, schemaName, sqlLocations });
 
 		Flyway flyway = Flyway.configure().baselineOnMigrate(true).dataSource(dataSource)
 				.schemas(schemaName).validateOnMigrate(false).ignoreFutureMigrations(false)
-				.locations(locations).load();
+				.locations(sqlLocations).load();
+
+		log.info(
+				"config loaded! migrateDb, datasourceName=[{}], schemaName=[{}], sqlLocation=[{}] success!",
+				new Object[] { datasourceName, schemaName, sqlLocations });
 
 		flyway.migrate();
 	}

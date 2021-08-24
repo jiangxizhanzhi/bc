@@ -1,6 +1,5 @@
 package com.cyberpeace.oj.rtks.controller;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -9,17 +8,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.PageUtil2;
-import com.cyberpeace.oj.rtks.controller.req.*;
-import com.cyberpeace.oj.rtks.controller.res.FrameOutput;
-import com.cyberpeace.oj.rtks.controller.res.LevelOutput;
-import com.cyberpeace.oj.rtks.controller.res.LevelTreeOutput;
+import com.cyberpeace.oj.rtks.controller.frame.*;
+import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
+import com.cyberpeace.oj.rtks.controller.req.ListReq;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
 import com.cyberpeace.oj.rtks.service.LevelService;
 import com.cyberpeace.oj.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @Api(tags = "TRKS-框架管理")
 @RestController
@@ -32,75 +29,83 @@ public class LevelController {
 	@Autowired
 	private RoleService roleService;
 
+	@Autowired
+	private FramePorter porter;
+
 	@ApiOperation("新增框架")
 	@PostMapping()
-	public BaseRsp<FrameOutput> addFrame(@RequestBody @Validated FrameAddInput frameAddInput) {
-		Level frame = new Level();
-		BeanUtils.copyProperties(frameAddInput, frame);
+	public BaseRsp<FrameOutput> create(@RequestBody @Validated FrameAddInput input) {
+		Level frame = porter.getFrameFromInput(input);
 
 		levelService.save(frame);
 
-		return new BaseRsp<>(new FrameOutput(frame));
+		return retrieve(frame.getResourceId());
 	}
 
 	@ApiOperation("修改框架")
 	@PutMapping()
-	public BaseRsp<FrameOutput>
-			modifyTask(@RequestBody @Validated FrameModifyInput frameModifyInput) {
-		Level frame = new Level();
-		BeanUtils.copyProperties(frameModifyInput, frame);
+	public BaseRsp<FrameOutput> update(@RequestBody @Validated FrameModifyInput input) {
+		String resourceId = input.getResourceId();
+
+		levelService.getFrameById(resourceId);
+
+		Level frame = porter.getFrameFromInput(input);
+
 		levelService.updateById(frame);
-		return new BaseRsp<>(new FrameOutput(frame));
+
+		return retrieve(resourceId);
+	}
+
+	@ApiOperation("查询单条框架")
+	@GetMapping()
+	public BaseRsp<FrameOutput> retrieve(String resource_id) {
+		Level frame = levelService.getFrameById(resource_id);
+		return new BaseRsp<>(porter.getFrameOutput(frame));
 	}
 
 	@ApiOperation("删除框架")
 	@DeleteMapping()
-	public BaseRsp<String> deleteFrame(@RequestBody @Validated DeleteReq deleteReq) {
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		levelService.removeByIds(deleteReq.getIds());
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("框架列表查询")
-	@GetMapping()
-	public BaseRsp<ListRsp<FrameOutput>> getFrames(ListReq<Level> listReq) {
+	@GetMapping("/list")
+	public BaseRsp<ListRsp<FrameOutput>> list(ListReq<Level> listReq) {
 		IPage<Level> page = levelService.getFrames(listReq.toPageParam(), listReq.getKeyword());
-		return PageUtil2.getListResult(page, FrameOutput::new);
+		return PageUtil2.getListResult(page, porter::getFrameOutput);
 	}
 
 	@ApiOperation("指定框架层级数据的全量树形展示")
 	@GetMapping("/tree")
-	public BaseRsp<LevelTreeOutput> get(
-			@ApiParam(name = "resource_id", value = "框架id", required = true) String resource_id) {
-		LevelTreeOutput frame = levelService.getLevelTree(resource_id);
-		return new BaseRsp<>(frame);
+	public BaseRsp<LevelTreeOutput> getTree(String resource_id) {
+		return new BaseRsp<>(porter.getLevelTree(resource_id));
 	}
 
 	@ApiOperation("新增层级")
 	@PostMapping("/level")
-	public BaseRsp<LevelOutput> addLevel(@RequestBody @Validated LevelAddInput levelAddInput) {
-		Level level = new Level();
-		BeanUtils.copyProperties(levelAddInput, level);
+	public BaseRsp<LevelOutput> createLevel(@RequestBody @Validated LevelAddInput input) {
+		Level level = porter.getLevelFromInput(input);
 
-		// 已经绑定了岗位的层级不允许新增子层级
-		roleService.ensureLevelNotChildRole(level.getParent());
 		levelService.addLevel(level);
 
-		return new BaseRsp<>(new LevelOutput(level));
+		return new BaseRsp<>(porter.getLevelOutput(level));
 	}
 
 	@ApiOperation("修改层级")
 	@PutMapping("/level")
-	public BaseRsp<LevelOutput>
-			modifyLevel(@RequestBody @Validated LevelModifyInput levelModifyInput) {
-		Level level = new Level();
-		BeanUtils.copyProperties(levelModifyInput, level);
+	public BaseRsp<LevelOutput> updateLevel(@RequestBody @Validated LevelModifyInput input) {
+		Level level = porter.getLevelFromInput(input);
+
 		levelService.modifyLevel(level);
-		return new BaseRsp<>(new LevelOutput(level));
+
+		return new BaseRsp<>(porter.getLevelOutput(level));
 	}
 
 	@ApiOperation("删除层级")
 	@DeleteMapping("/level")
-	public BaseRsp<String> deleteLevel(@RequestBody @Validated DeleteReq deleteReq) {
+	public BaseRsp<String> batchDeleteLevel(@RequestBody @Validated DeleteReq deleteReq) {
 		levelService.removeByIds(deleteReq.getIds());
 		return new BaseRsp<>();
 	}

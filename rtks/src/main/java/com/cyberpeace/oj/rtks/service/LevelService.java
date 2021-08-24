@@ -1,9 +1,10 @@
 package com.cyberpeace.oj.rtks.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.rtks.controller.res.LevelTreeOutput;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
 
 public interface LevelService extends IService<Level> {
@@ -24,12 +25,22 @@ public interface LevelService extends IService<Level> {
 	void modifyLevel(Level level);
 
 	/**
-	 * 给定框架id, 返回树状层级结构
-	 */
-	LevelTreeOutput getLevelTree(String frameId);
-
-	/**
 	 * 检查输入的level_id是否合法(存在且没有子层级)
 	 */
 	void ensureLevelNoChild(String levelId);
+
+	/**
+	 * 指定框架id 获取所属所有层级
+	 */
+	List<Level> getLevelsByFrameId(String frameId);
+
+	/**
+	 * 指定框架id 如果不是框架(Frame)，抛出异常，如果是则返回该框架
+	 */
+	Level getFrameById(String frameId);
+
+	/**
+	 * 层级(非框架)的parent和frame均不为空
+	 */
+	void ensureNotFrame(Level level);
 }

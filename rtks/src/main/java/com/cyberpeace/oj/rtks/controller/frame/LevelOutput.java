@@ -1,6 +1,4 @@
-package com.cyberpeace.oj.rtks.controller.res;
-
-import com.cyberpeace.oj.rtks.dao.entity.Level;
+package com.cyberpeace.oj.rtks.controller.frame;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,12 +16,5 @@ public class LevelOutput {
 
 	@ApiModelProperty(value = "层级的父级层级/框架的id")
 	private String parent;
-
-	public LevelOutput(Level level) {
-		this.resourceId = level.getResourceId();
-		this.name = level.getName();
-		this.description = level.getDescription();
-		this.parent = level.getParent();
-	}
 
 }

@@ -1,8 +1,6 @@
-package com.cyberpeace.oj.rtks.controller.res;
+package com.cyberpeace.oj.rtks.controller.frame;
 
 import java.util.List;
-
-import com.cyberpeace.oj.rtks.dao.entity.Level;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,11 +18,5 @@ public class LevelTreeOutput {
 
 	@ApiModelProperty(value = "子层级列表，不存在则为null")
 	private List<LevelTreeOutput> children;
-
-	public LevelTreeOutput(Level level) {
-		this.resourceId = level.getResourceId();
-		this.name = level.getName();
-		this.description = level.getDescription();
-	}
 
 }

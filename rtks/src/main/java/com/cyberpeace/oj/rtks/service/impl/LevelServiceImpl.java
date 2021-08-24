@@ -1,6 +1,5 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
-import com.cyberpeace.oj.rtks.controller.res.LevelTreeOutput;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
 import com.cyberpeace.oj.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.oj.rtks.service.LevelService;
@@ -41,43 +39,6 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
-	public LevelTreeOutput getLevelTree(String frameId) {
-		// {父级层级id:[子层级对象]}
-		Map<String, List<LevelTreeOutput>> levelTreeOutputMap = new HashMap<>();
-		// 所有层级输出对象
-		List<LevelTreeOutput> levelTreeOutputs = new ArrayList<>();
-
-		// 当前框架下所有的层级(不包括框架本身)
-		List<Level> levels = getLevelsByFrameId(frameId);
-		for (Level level : levels) {
-			String parentId = level.getParent();
-			ensureNotFrame(level);
-
-			if (!levelTreeOutputMap.containsKey(parentId)) {
-				levelTreeOutputMap.put(parentId, new ArrayList<>());
-			}
-
-			LevelTreeOutput levelTreeOutput = new LevelTreeOutput(level);
-			levelTreeOutputMap.get(parentId).add(levelTreeOutput);
-			levelTreeOutputs.add(levelTreeOutput);
-		}
-
-		// 加入框架本身
-		Level frame = getFrameById(frameId);
-		LevelTreeOutput frameTree = new LevelTreeOutput(frame);
-		levelTreeOutputs.add(frameTree);
-
-		// 遍历框架+层级，赋予children值
-		for (LevelTreeOutput levelTreeOutput : levelTreeOutputs) {
-			List<LevelTreeOutput> childLevels = levelTreeOutputMap
-					.getOrDefault(levelTreeOutput.getResourceId(), null);
-			levelTreeOutput.setChildren(childLevels);
-		}
-
-		return frameTree;
-	}
-
-	@Override
 	public void ensureLevelNoChild(String levelId) {
 		Level level = getById(levelId);
 		if (level == null) {
@@ -89,19 +50,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		}
 	}
 
-	/**
-	 * 指定框架id 获取所属所有层级
-	 */
-	private List<Level> getLevelsByFrameId(String frameId) {
+	@Override
+	public List<Level> getLevelsByFrameId(String frameId) {
 		Map<String, Object> columnMap = new HashMap<>();
 		columnMap.put("frame", frameId);
 		return listByMap(columnMap);
 	}
 
-	/**
-	 * 指定框架id 如果不是框架(Frame)，抛出异常，如果是则返回该框架
-	 */
-	private Level getFrameById(String frameId) {
+	@Override
+	public Level getFrameById(String frameId) {
 		Level level = getById(frameId);
 		if (level == null) {
 			throw new ResourceNotFoundException("找不到" + frameId + "对应的框架");
@@ -173,10 +130,8 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		}
 	}
 
-	/**
-	 * 层级(非框架)的parent和frame均不为空
-	 */
-	private void ensureNotFrame(Level level) {
+	@Override
+	public void ensureNotFrame(Level level) {
 		if (StringUtils.isBlank(level.getParent())) {
 			throw new InvalidParamException("脏数据:层级" + level.getResourceId() + "parent字段不应为空");
 		}

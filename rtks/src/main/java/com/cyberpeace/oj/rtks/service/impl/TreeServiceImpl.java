@@ -2,6 +2,10 @@ package com.cyberpeace.oj.rtks.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.oj.rtks.dao.mapper.LevelMapper;
+import com.cyberpeace.oj.rtks.dao.mapper.RoleMapper;
+import com.cyberpeace.oj.rtks.service.RoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.oj.rtks.dao.entity.Level;
@@ -11,23 +15,34 @@ import com.cyberpeace.oj.rtks.service.TreeService;
 @Service
 public class TreeServiceImpl implements TreeService {
 
+	@Autowired
+	private RoleMapper roleMapper;
+
+	@Autowired
+	private LevelMapper levelMapper;
+
 	@Override
 	public Level getNearestLevelByRole(String role) {
-		// TODO
-		return null;
+		Role existRole = roleMapper.selectById(role);
+		if (null == existRole) {
+			return null;
+		}
+		Level level = levelMapper.selectById(existRole.getLevelId());
+		return level;
 	}
 
 	@Override
 	public List<Level> getFirstLevel(String frameId) {
-		// TODO
-		return null;
+		List<Level> levels = levelMapper.getLevelsByFrameId(frameId);
+		return levels;
 	}
 
 	@Override
 	public List<Role> roleUnderLevel(String levelId) {
 		// TODO
 		// 遍历当前节点的所有子节点
+		List<Role> underRoles = roleMapper.getRolesUnderLevel(levelId);
 		// 返回当前节点及子节点下所有role数据
-		return null;
+		return underRoles;
 	}
 }

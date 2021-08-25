@@ -1,7 +1,14 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.common.util.JsonUtil;
+import com.cyberpeace.oj.course.service.CourseStatisticsService;
+import com.cyberpeace.oj.rtks.dao.mapper.KnowledgeMapper;
+import com.cyberpeace.oj.rtks.service.KnowledgeService;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +33,14 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private TreeService treeService;
 
 	@Autowired
+	private CourseStatisticsService courseStatisticsService;
+
+	@Autowired
 	private KnowledgeService knowledgeService;
+
+	@Autowired
+	private KnowledgeMapper knowledgeMapper;
+
 
 	/**
 	 * 角色评分中技能所占百分比
@@ -190,8 +204,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @return
 	 */
 	private List<Knowledge> mergeKnowledgeByRoles(List<Role> roles) {
-		// TODO
-		return null;
+		Set<String> knowledgeIds = roles.stream()
+				.map(role -> JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
+						String.class)).flatMap(Collection::stream).collect(Collectors.toSet());
+
+		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
+		return knowledges;
 	}
 
 	/**

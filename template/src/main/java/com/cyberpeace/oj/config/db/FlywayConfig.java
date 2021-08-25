@@ -26,7 +26,7 @@ public class FlywayConfig {
 
 	@PostConstruct
 	public void migrateFlyway() {
-		String needMigrateFlag = "false";
+		String needMigrateFlag = "0";
 
 		// 0、如果设置了不允许自动刷库，跳过该功能
 		String needMigrate = SystemPropUtil.getProp("NEED_MIGRATE");

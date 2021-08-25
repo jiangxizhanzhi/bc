@@ -51,6 +51,7 @@ public class HttpClientUtil {
 
 		// 1、生成get请求
 		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 
 		// 2、生成httpclient对象
 		HttpClient httpClient = getClient();
@@ -140,9 +141,6 @@ public class HttpClientUtil {
 		}
 
 		// 以下代码可能会并发，不会带来大问题
-		BasicHeader traceId = new BasicHeader(WebConstant.TRACE_HEADER,
-				TraceIdContext.getTraceId());
-
 		String mpAuthenticationParam = SystemPropUtil.getProp("MP_SECRET");
 
 		LOG.info("read prop mpAuthenticationParam=[{}]", mpAuthenticationParam);
@@ -152,7 +150,7 @@ public class HttpClientUtil {
 
 		BasicHeader clientSecret = new BasicHeader(WebConstant.CLIENT_SECRET, ss[1]);
 
-		List<Header> defaultHeader = Arrays.asList(traceId, clientId, clientSecret);
+		List<Header> defaultHeader = Arrays.asList(clientId, clientSecret);
 
 		HttpClientUtil.defaultHeaders = defaultHeader;
 

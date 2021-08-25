@@ -1,20 +1,18 @@
 package com.cyberpeace.oj.rtks.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.rtks.controller.role.*;
 import com.cyberpeace.oj.rtks.dao.entity.*;
 import com.cyberpeace.oj.rtks.service.*;
-
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Api(tags = "TRKS-岗位管理")
 @RestController
@@ -89,7 +87,7 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 	}
 
 	@Override
-	RoleDetailOutput getOutputFromEntity(Role role) {
+	public RoleDetailOutput getOutputFromEntity(Role role) {
 		RoleDetailOutput output = outputFromRole(role, new RoleDetailOutput());
 
 		List<String> taskIds = output.getTaskIds();

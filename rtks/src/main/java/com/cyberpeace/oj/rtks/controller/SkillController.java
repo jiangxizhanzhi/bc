@@ -31,12 +31,11 @@ public class SkillController {
 
 	@ApiOperation("查询单条")
 	@GetMapping()
-	public BaseRsp<Skill> getSkill(
+	public BaseRsp<SkillRes> getSkill(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		// ApiParam中的name和java参数String id的两个id必须同名
-		Skill skill = skillService.getSkillByResourceId(resource_id);
-
-		return new BaseRsp<>(skill);
+		SkillRes skillRes = skillService.getSkillByResourceId(resource_id);
+		return new BaseRsp<>(skillRes);
 	}
 
 	@ApiOperation("新增单条")
@@ -45,15 +44,9 @@ public class SkillController {
 		Skill skill = new Skill();
 		BeanUtils.copyProperties(skillAddReq, skill);
 		skill.setCourses(JsonUtil.toJsonString(skillAddReq.getCourseList()));
+
+		skillService.validate(skill);
 		skillService.save(skill);
-		// List<RelatedCourse> skillCourses = Lists.newArrayList();
-		// for (String courseId : skillAddReq.getCourseList()) {
-		// RelatedCourse sc = new RelatedCourse();
-		// sc.setSkillId(skillAddReq.getResourceId());
-		// sc.setCourseId(courseId);
-		// skillCourses.add(sc);
-		// }
-		// skillCourseService.saveBatch(skillCourses);
 
 		return new BaseRsp<>();
 	}
@@ -64,6 +57,8 @@ public class SkillController {
 		Skill skill = new Skill();
 		BeanUtils.copyProperties(skillAddReq, skill);
 		skill.setCourses(JsonUtil.toJsonString(skillAddReq.getCourseList()));
+
+		skillService.validate(skill);
 		skillService.updateById(skill);
 
 		return new BaseRsp<>();

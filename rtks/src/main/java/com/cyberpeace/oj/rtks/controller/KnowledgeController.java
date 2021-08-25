@@ -45,6 +45,8 @@ public class KnowledgeController {
 		Knowledge knowledge = new Knowledge();
 		BeanUtils.copyProperties(knowledgeAddReq, knowledge);
 		knowledge.setCourses(JsonUtil.toJsonString(knowledgeAddReq.getCourseList()));
+
+		knowledgeService.validate(knowledge);
 		knowledgeService.save(knowledge);
 
 		return new BaseRsp<>();
@@ -57,6 +59,8 @@ public class KnowledgeController {
 		Knowledge knowledge = new Knowledge();
 		BeanUtils.copyProperties(knowledgeAddReq, knowledge);
 		knowledge.setCourses(JsonUtil.toJsonString(knowledgeAddReq.getCourseList()));
+
+		knowledgeService.validate(knowledge);
 		knowledgeService.updateById(knowledge);
 
 		return new BaseRsp<>();

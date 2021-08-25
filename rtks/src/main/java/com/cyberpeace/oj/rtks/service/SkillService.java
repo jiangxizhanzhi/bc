@@ -22,4 +22,6 @@ public interface SkillService extends IService<Skill>, RoleRelatedService {
 	 * @return 分页查询结果
 	 */
 	SkillRes getSkillByResourceId(String id);
+
+	void validate(Skill skill);
 }

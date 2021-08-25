@@ -22,4 +22,6 @@ public interface KnowledgeService extends IService<Knowledge>, RoleRelatedServic
 	 * @return 分页查询结果
 	 */
 	KnowledgeRes getKnowledgeByResourceId(String id);
+
+	void validate(Knowledge knowledge);
 }

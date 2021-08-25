@@ -3,16 +3,18 @@ package com.cyberpeace.oj.rtks.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.common.util.PageUtil;
 import com.cyberpeace.oj.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.oj.rtks.controller.res.KnowledgeRes;
-import com.cyberpeace.oj.rtks.service.RelatedCourseService;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.mapper.KnowledgeMapper;
+import com.cyberpeace.oj.rtks.service.KnowledgeCategoryService;
 import com.cyberpeace.oj.rtks.service.KnowledgeService;
+import com.cyberpeace.oj.rtks.service.RelatedCourseService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 	@Autowired
 	private RelatedCourseService relatedCourseDao;
+
+	@Autowired
+	private KnowledgeCategoryService knowledgeCategoryService;
 
 	@Override
 	public ListRsp<KnowledgeRes> page(KnowledgeListReq knowledgeListReq) {
@@ -80,5 +85,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	@Override
 	public List<String> filterIds(List<String> ids) {
 		return knowledgeMapper.filterIds(ids);
+	}
+
+	@Override
+	public void validate(Knowledge knowledge) {
+		if (knowledgeCategoryService.getById(knowledge.getCategoryId()) == null) {
+			throw new InvalidParamException("类别不存在");
+		}
 	}
 }

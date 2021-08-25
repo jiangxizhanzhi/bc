@@ -3,6 +3,7 @@ package com.cyberpeace.oj.rtks.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.common.util.PageUtil;
@@ -12,7 +13,9 @@ import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.entity.Skill;
 import com.cyberpeace.oj.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.oj.rtks.service.RelatedCourseService;
+import com.cyberpeace.oj.rtks.service.SkillCategoryService;
 import com.cyberpeace.oj.rtks.service.SkillService;
+import com.cyberpeace.oj.rtks.service.SkillSystemService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Autowired
 	private RelatedCourseService relatedCourseDao;
+
+	@Autowired
+	private SkillCategoryService skillCategoryService;
+
+	@Autowired
+	private SkillSystemService skillSystemService;
 
 	@Override
 	public ListRsp<SkillRes> page(SkillListReq skillListReq) {
@@ -74,6 +83,18 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		skillRes.setCourseList(relatedCourseList);
 
 		return skillRes;
+	}
+
+	@Override
+	public void validate(Skill skill) {
+		if (skillCategoryService.getById(skill.getCategoryId()) == null) {
+			throw new InvalidParamException("类别不存在");
+		}
+
+		if (skillSystemService.getById(skill.getSystemId()) == null) {
+			throw new InvalidParamException("体系不存在");
+		}
+
 	}
 
 	@Override

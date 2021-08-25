@@ -33,6 +33,8 @@ public class FlywayConfig {
 
 		// 明确设置了不允许刷库才不刷库
 		if (StringUtils.equals(needMigrateFlag, needMigrate)) {
+			log.info("auto migrate skipped!");
+
 			return;
 		}
 

@@ -14,6 +14,8 @@ import com.cyberpeace.oj.rtks.dao.entity.Role;
 import com.cyberpeace.oj.rtks.service.KnowledgeService;
 import com.cyberpeace.oj.rtks.service.RtksStatisticService;
 import com.cyberpeace.oj.rtks.service.TreeService;
+import com.cyberpeace.oj.rtks.service.bo.KnowledgeStudyPercentBo;
+import com.cyberpeace.oj.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.oj.rtks.service.bo.RtksRadarBo;
 import com.google.common.collect.Lists;
 
@@ -86,6 +88,33 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		}
 
 		return ret;
+	}
+
+	@Override
+	public List<KnowledgeStudyPercentBo> calculateKnowledgePercent(String role, String userId) {
+		// 1、获取当前角色的所有技能点及权重
+
+		// 2、计算每个技能点的得分，忽略权重
+		// calculateKnowledgeScore(String knowledgeId, false)
+		return null;
+	}
+
+	@Override
+	public RoleStudyBo roleKnowledgeStudyRecord(String roleId, String userId) {
+		// TODO
+		// 1、获取用户角色关联的知识点
+		// 2、获取知识点对应的课程
+		// 3、针对课程统计
+		return null;
+	}
+
+	@Override
+	public RoleStudyBo roleSkillStudyRecord(String roleId, String userId) {
+		// TODO
+		// 1、获取用户角色关联的技能点
+		// 2、获取技能点对应的课程
+		// 3、针对课程统计
+		return null;
 	}
 
 	/**
@@ -170,9 +199,10 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * 计算方法：
 	 * 该知识点下所有课程的学习进度和课程权重的加权平均。
 	 * @param knowledgeId
+	 * @param useWeight true表示计算的时候考虑权重；false所有权重都使用默认值=1
 	 * @return
 	 */
-	private Double calculateKnowledgeScore(String knowledgeId) {
+	private Double calculateKnowledgeScore(String knowledgeId, boolean useWeight) {
 		// TODO
 		return null;
 	}

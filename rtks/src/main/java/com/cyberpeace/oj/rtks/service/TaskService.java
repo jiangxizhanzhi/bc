@@ -5,7 +5,7 @@ import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.model.PageReqBase;
 import com.cyberpeace.oj.rtks.dao.entity.Task;
 
-public interface TaskService extends IService<Task> {
+public interface TaskService extends IService<Task>, RoleRelatedService {
 
 	ListRsp<Task> page(PageReqBase pageReqBase);
 

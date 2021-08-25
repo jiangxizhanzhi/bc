@@ -9,7 +9,7 @@ import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
 /**
  *
  */
-public interface KnowledgeService extends IService<Knowledge> {
+public interface KnowledgeService extends IService<Knowledge>, RoleRelatedService {
 
 	/** 获取分页查询结果列表
 	 * @param  skillListReq

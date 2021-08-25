@@ -5,7 +5,7 @@ import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.rtks.controller.req.AbilityListReq;
 import com.cyberpeace.oj.rtks.dao.entity.Ability;
 
-public interface AbilityService extends IService<Ability> {
+public interface AbilityService extends IService<Ability>, RoleRelatedService {
 
 	ListRsp<Ability> page(AbilityListReq abilityListReq);
 }

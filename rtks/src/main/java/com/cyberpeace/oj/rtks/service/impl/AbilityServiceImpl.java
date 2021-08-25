@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +30,8 @@ public class AbilityServiceImpl extends ServiceImpl<AbilityMapper, Ability> impl
 		return PageUtil.getListResult(result);
 	}
 
+	@Override
+	public List<String> filterIds(List<String> ids) {
+		return abilityMapper.filterIds(ids);
+	}
 }

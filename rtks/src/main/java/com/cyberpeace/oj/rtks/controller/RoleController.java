@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.rtks.controller.role.*;
-import com.cyberpeace.oj.rtks.dao.entity.Role;
+import com.cyberpeace.oj.rtks.dao.entity.*;
 import com.cyberpeace.oj.rtks.service.*;
 
 import io.swagger.annotations.Api;
@@ -69,13 +69,21 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 			levelService.ensureLevelNoChild(levelId);
 		}
 
-		role.setTaskIds(checkIds(input.getTaskIds(), taskService, isModify));
+		List<String> taskIds = input.getTaskIds();
+		String taskIdsStr = getRelatedIdsStr(taskIds, isModify, taskService);
+		role.setTaskIds(taskIdsStr);
 
-		role.setKnowledgeIds(checkIds(input.getKnowledgeIds(), knowledgeService, isModify));
+		List<String> knowledgeIds = input.getKnowledgeIds();
+		String knowledgeIdsStr = getRelatedIdsStr(knowledgeIds, isModify, knowledgeService);
+		role.setKnowledgeIds(knowledgeIdsStr);
 
-		role.setSkillIds(checkIds(input.getSkillIds(), skillService, isModify));
+		List<String> skillIds = input.getSkillIds();
+		String skillIdsStr = getRelatedIdsStr(skillIds, isModify, skillService);
+		role.setSkillIds(skillIdsStr);
 
-		role.setAbilityIds(checkIds(input.getAbilityIds(), abilityService, isModify));
+		List<String> abilityIds = input.getAbilityIds();
+		String abilityIdsStr = getRelatedIdsStr(abilityIds, isModify, abilityService);
+		role.setAbilityIds(abilityIdsStr);
 
 		return role;
 	}
@@ -84,13 +92,21 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 	RoleDetailOutput getOutputFromEntity(Role role) {
 		RoleDetailOutput output = outputFromRole(role, new RoleDetailOutput());
 
-		output.setTaskDataList(getRelated(output.getTaskIds(), taskService));
+		List<String> taskIds = output.getTaskIds();
+		List<Task> taskList = getRoleRelatedObjects(taskIds, taskService);
+		output.setTaskDataList(taskList);
 
-		output.setKnowledgeDataList(getRelated(output.getKnowledgeIds(), knowledgeService));
+		List<String> knowledgeIds = output.getKnowledgeIds();
+		List<Knowledge> knowledgeList = getRoleRelatedObjects(knowledgeIds, knowledgeService);
+		output.setKnowledgeDataList(knowledgeList);
 
-		output.setSkillDataList(getRelated(output.getSkillIds(), skillService));
+		List<String> skillIds = output.getSkillIds();
+		List<Skill> skillList = getRoleRelatedObjects(skillIds, skillService);
+		output.setSkillDataList(skillList);
 
-		output.setAbilityDataList(getRelated(output.getAbilityIds(), abilityService));
+		List<String> abilityIds = output.getAbilityIds();
+		List<Ability> abilityList = getRoleRelatedObjects(abilityIds, abilityService);
+		output.setAbilityDataList(abilityList);
 
 		return output;
 	}
@@ -138,28 +154,40 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 	}
 
 	/**
-	 * 检查并处理输入中的职责、知识点等id列表是否合法
+	 * 给定两个字符串数组，检查toCheck中的每一个元素是否都是target的成员，如果出现任意否，抛出异常
 	 * */
-	private <T> String checkIds(List<String> relatedIds, IService<T> service, Boolean keepNull) {
+	private <T> void compareArrays(List<T> toCheck, List<T> target) {
+		for (T t : toCheck) {
+			if (!target.contains(t)) {
+				throw new ResourceNotFoundException(t + "不合法");
+			}
+		}
+	}
+
+	private String getRelatedIdsStr(List<String> relatedIds, Boolean isModify,
+			RoleRelatedService service) {
+		String strToSave;
 		if (relatedIds == null) {
-			if (keepNull) {
-				return null;
+			if (isModify) {
+				// 不更新该字段
+				strToSave = null;
+			} else {
+				strToSave = "[]";
 			}
-			return "[]";
+		} else if (relatedIds.size() == 0) {
+			strToSave = "[]";
+		} else {
+			List<String> existingIds = service.filterIds(relatedIds);
+			compareArrays(relatedIds, existingIds);
+			strToSave = JsonUtil.toJsonString(relatedIds);
 		}
-		for (String relatedId : relatedIds) {
-			T relatedObject = service.getById(relatedId);
-			if (relatedObject == null) {
-				throw new ResourceNotFoundException(relatedId + "未找到");
-			}
-		}
-		return JsonUtil.toJsonString(relatedIds);
+		return strToSave;
 	}
 
 	/**
 	 * 输出时获取职责、知识点等详细信息
 	 * */
-	private <T> List<T> getRelated(List<String> relatedIds, IService<T> service) {
+	private <T> List<T> getRoleRelatedObjects(List<String> relatedIds, IService<T> service) {
 		if (relatedIds.size() == 0) {
 			return new ArrayList<>();
 		} else {

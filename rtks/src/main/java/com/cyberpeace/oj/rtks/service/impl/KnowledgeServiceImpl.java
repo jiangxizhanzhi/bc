@@ -76,4 +76,9 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 		return knowledgeRes;
 	}
+
+	@Override
+	public List<String> filterIds(List<String> ids) {
+		return knowledgeMapper.filterIds(ids);
+	}
 }

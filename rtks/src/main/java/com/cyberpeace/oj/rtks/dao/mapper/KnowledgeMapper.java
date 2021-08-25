@@ -9,6 +9,8 @@ import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface KnowledgeMapper extends BaseMapper<Knowledge> {
@@ -16,4 +18,6 @@ public interface KnowledgeMapper extends BaseMapper<Knowledge> {
 	IPage<KnowledgeRes> listKnowledge(Page page, KnowledgeListReq knowledgeListReq);
 
 	KnowledgeRes getKnowledgeByResourceId(String id);
+
+    List<String> filterIds(List<String> ids);
 }

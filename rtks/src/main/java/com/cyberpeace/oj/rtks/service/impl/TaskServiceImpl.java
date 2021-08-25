@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -26,4 +28,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 		return PageUtil.getListResult(result);
 	}
 
+	@Override
+	public List<String> filterIds(List<String> ids) {
+		return taskMapper.filterIds(ids);
+	}
 }

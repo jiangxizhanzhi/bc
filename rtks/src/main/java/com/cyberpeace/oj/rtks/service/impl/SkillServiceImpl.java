@@ -75,4 +75,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 		return skillRes;
 	}
+
+	@Override
+	public List<String> filterIds(List<String> ids) {
+		return skillMapper.filterIds(ids);
+	}
 }

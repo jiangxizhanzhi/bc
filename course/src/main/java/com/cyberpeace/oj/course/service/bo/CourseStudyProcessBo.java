@@ -11,6 +11,8 @@ public class CourseStudyProcessBo {
 
     private String courseName;
 
+    private Integer difficulty;
+
     private Integer theoryCount;
 
     private Integer completeTheory;

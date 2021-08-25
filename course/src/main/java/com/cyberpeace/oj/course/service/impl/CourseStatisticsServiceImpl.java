@@ -61,6 +61,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
             CourseStudyProcessBo studyProcessBo = new CourseStudyProcessBo();
             studyProcessBo.setCourseId(course.getResourceId());
             studyProcessBo.setCourseName(course.getName());
+            studyProcessBo.setDifficulty(course.getDifficulty());
 
             // 计算已学习课时
             List<LessonRecord> studyRecord = Lists.newArrayList();

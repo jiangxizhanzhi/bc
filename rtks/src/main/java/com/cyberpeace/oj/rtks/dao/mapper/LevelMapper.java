@@ -17,4 +17,6 @@ public interface LevelMapper extends BaseMapper<Level> {
 	IPage<Level> listFrame(Page<Level> page, String keyword);
 
 	List<Level> getChildLevels(String levelId);
+
+    List<Level> getLevelsByFrameId(String frameId);
 }

@@ -1,22 +1,16 @@
 package com.cyberpeace.oj.rtks.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.oj.common.model.BaseTable;
 
 import lombok.Data;
 
 @Data
 @TableName("rtks_level")
-public class Level extends BaseTable {
+public class Level extends BaseEntity {
 
 	/**
 	 * Frame是Level的一种特殊形式，表示顶级的层级 其parent=null frame=null
 	 */
-
-	@TableId(type = IdType.UUID, value = "resource_id")
-	private String resourceId;
 
 	private String name;
 

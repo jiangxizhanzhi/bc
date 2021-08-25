@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.rtks.controller.frame;
+package com.cyberpeace.oj.rtks.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,50 +6,54 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.oj.common.model.BaseRsp;
+import com.cyberpeace.oj.rtks.controller.frame.*;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
+import com.cyberpeace.oj.rtks.service.FrameService;
 import com.cyberpeace.oj.rtks.service.LevelService;
-import com.cyberpeace.oj.rtks.service.RoleService;
 
-@Service
-public class FramePorter {
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(tags = "TRKS-框架管理")
+@RestController
+@RequestMapping("/rtks/frame")
+public class FrameController extends BaseController<Level, FrameInput, FrameAddInput, FrameModifyInput, FrameOutput, FrameOutput, FrameService> {
+
+	@Autowired
+	private FrameService frameService;
 
 	@Autowired
 	private LevelService levelService;
 
-	@Autowired
-	private RoleService roleService;
+	@Override
+	FrameService getService() {
+		return frameService;
+	}
 
-	public Level getFrameFromInput(FrameInput input) {
+	@Override
+	Level getEntityFromAddInput(FrameAddInput frameAddInput) {
 		Level frame = new Level();
-		frame.setName(input.getName());
-		frame.setDescription(input.getDescription());
-		if (input instanceof FrameModifyInput) {
-			frame.setResourceId(((FrameModifyInput) input).getResourceId());
-		}
+		frame.setName(frameAddInput.getName());
+		frame.setDescription(frameAddInput.getDescription());
 		return frame;
 	}
 
-	public Level getLevelFromInput(LevelInput input) {
-		Level level = new Level();
-		level.setName(input.getName());
-		level.setDescription(input.getDescription());
-
-		String parentId = input.getParent();
-		level.setParent(parentId);
-		if (parentId != null) {
-			// 已经绑定了岗位的层级不允许新增子层级
-			roleService.ensureLevelNotChildRole(level.getParent());
-		}
-
-		if (input instanceof LevelModifyInput) {
-			level.setResourceId(((LevelModifyInput) input).getResourceId());
-		}
-		return level;
+	@Override
+	Level getEntityFromModifyInput(FrameModifyInput frameModifyInput, Level originEntity) {
+		Level frame = new Level();
+		frame.setName(frameModifyInput.getName());
+		frame.setDescription(frameModifyInput.getDescription());
+		frame.setResourceId(frameModifyInput.getResourceId());
+		return frame;
 	}
 
-	public FrameOutput getFrameOutput(Level frame) {
+	@Override
+	FrameOutput getOutputFromEntity(Level frame) {
 		FrameOutput output = new FrameOutput();
 
 		output.setResourceId(frame.getResourceId());
@@ -59,25 +63,21 @@ public class FramePorter {
 		return output;
 	}
 
-	public LevelOutput getLevelOutput(Level level) {
-		LevelOutput output = new LevelOutput();
-
-		output.setResourceId(level.getResourceId());
-		output.setName(level.getName());
-		output.setDescription(level.getDescription());
-		output.setParent(level.getParent());
-
-		return output;
+	@Override
+	FrameOutput getListOutputFromEntity(Level frame) {
+		return getOutputFromEntity(frame);
 	}
 
-	public LevelTreeOutput getLevelTree(String frameId) {
+	@ApiOperation("指定框架层级数据的全量树形展示")
+	@GetMapping("/tree")
+	public BaseRsp<LevelTreeOutput> getTree(String resource_id) {
 		// {父级层级id:[子层级对象]}
 		Map<String, List<LevelTreeOutput>> levelTreeOutputMap = new HashMap<>();
 		// 所有层级输出对象
 		List<LevelTreeOutput> levelTreeOutputs = new ArrayList<>();
 
 		// 当前框架下所有的层级(不包括框架本身)
-		List<Level> levels = levelService.getLevelsByFrameId(frameId);
+		List<Level> levels = levelService.getLevelsByFrameId(resource_id);
 		for (Level level : levels) {
 			String parentId = level.getParent();
 			levelService.ensureNotFrame(level);
@@ -92,7 +92,7 @@ public class FramePorter {
 		}
 
 		// 加入框架本身
-		Level frame = levelService.getFrameById(frameId);
+		Level frame = frameService.getOr404(resource_id);
 		LevelTreeOutput frameTree = getLevelTreeOutput(frame);
 		levelTreeOutputs.add(frameTree);
 
@@ -103,7 +103,7 @@ public class FramePorter {
 			levelTreeOutput.setChildren(childLevels);
 		}
 
-		return frameTree;
+		return new BaseRsp<>(frameTree);
 	}
 
 	private LevelTreeOutput getLevelTreeOutput(Level level) {
@@ -115,4 +115,5 @@ public class FramePorter {
 
 		return output;
 	}
+
 }

@@ -19,4 +19,11 @@
             parent = #{levelId}
         </where>
     </select>
+
+    <select id="getLevelsByFrameId" resultType="com.cyberpeace.oj.rtks.dao.entity.Level">
+        select * from rtks_level
+        <where>
+            frame = #{frameId}
+        </where>
+    </select>
 </mapper>

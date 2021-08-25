@@ -1,10 +1,9 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -19,32 +18,33 @@ import com.cyberpeace.oj.rtks.service.LevelService;
 @Service
 public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements LevelService {
 
+	@Autowired
+	LevelMapper levelMapper;
+
 	@Override
-	public IPage<Level> getFrames(Page<Level> page, String keyword) {
-		return this.getBaseMapper().listFrame(page, keyword);
+	public Level getOr404(String resourceId) {
+		Level level = getById(resourceId);
+		if (level == null) {
+			throw new ResourceNotFoundException("层级" + resourceId + "未找到");
+		}
+
+		ensureNotFrame(level);
+		return level;
 	}
 
 	@Override
-	public void addLevel(Level level) {
-		beforeSaveLevel(level);
-
-		save(level);
-	}
-
-	@Override
-	public void modifyLevel(Level level) {
-		beforeSaveLevel(level);
-
-		updateById(level);
+	public IPage<Level> listEntity(Page<Level> page, String keyword) {
+		// 层级的列表查询不被允许
+		return null;
 	}
 
 	@Override
 	public void ensureLevelNoChild(String levelId) {
-		Level level = getById(levelId);
-		if (level == null) {
-			throw new ResourceNotFoundException("层级" + levelId + "未找到");
-		}
-		List<Level> childLevels = getBaseMapper().getChildLevels(levelId);
+		// 先确保层级存在
+		getOr404(levelId);
+
+		// 检查子层级
+		List<Level> childLevels = levelMapper.getChildLevels(levelId);
 		if (childLevels.size() > 0) {
 			throw new InvalidParamException("层级" + levelId + "有子层级");
 		}
@@ -52,69 +52,32 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Override
 	public List<Level> getLevelsByFrameId(String frameId) {
-		Map<String, Object> columnMap = new HashMap<>();
-		columnMap.put("frame", frameId);
-		return listByMap(columnMap);
+		return levelMapper.getLevelsByFrameId(frameId);
 	}
 
 	@Override
-	public Level getFrameById(String frameId) {
-		Level level = getById(frameId);
-		if (level == null) {
-			throw new ResourceNotFoundException("找不到" + frameId + "对应的框架");
-		}
-
-		if (level.getParent() != null) {
-			// level有父级，不是Frame
-			throw new InvalidParamException(frameId + "不是框架id");
-		}
-
-		return level;
-	}
-
-	/**
-	 * 给定层级(非框架)，设定其frame字段
-	 */
-	private void beforeSaveLevel(Level level) {
-		// 因为level是层级而不是框架，所以首先要校验其parent不为空
-		Level parentLevel = getParent(level);
-
-		// 迭代获取当前层级所属框架
-		int maxLoop = 10;
-		level.setFrame(getFrame(parentLevel, maxLoop - 1).getResourceId());
-	}
-
-	/**
-	 * 获取给定层级(非框架)的父级，如果父级不存在则报错
-	 */
-	private Level getParent(Level level) {
-		String parentId = level.getParent();
-		if (StringUtils.isBlank(parentId)) {
-			throw new InvalidParamException("层级" + level.getResourceId() + "的parent为空");
-		}
-
-		Level parentLevel = getById(parentId);
-		if (parentLevel == null) {
-			throw new ResourceNotFoundException("框架/层级" + parentId + "不存在");
-		}
-		return parentLevel;
-	}
-
-	/**
-	 * 给定层级(含框架)获取其顶级的框架对象
-	 */
-	private Level getFrame(Level level, int maxLoop) {
+	public Level getFrame(Level level, int maxLoop) {
 		if (maxLoop <= 0) {
 			throw new InvalidParamException("层级层数超限");
 		}
 
+		String parentId = level.getParent();
 		// 当parent为空时，停止迭代，已经找到框架对象了
-		if (StringUtils.isBlank(level.getParent())) {
+		if (StringUtils.isBlank(parentId)) {
 			ensureIsFrame(level);
 			return level;
 		}
-		Level parentLevel = getParent(level);
+		Level parentLevel = getLevelOrFrame(parentId);
 		return getFrame(parentLevel, maxLoop - 1);
+	}
+
+	@Override
+	public Level getLevelOrFrame(String resourceId) {
+		Level level = getById(resourceId);
+		if (level == null) {
+			throw new ResourceNotFoundException("框架/层级" + resourceId + "不存在");
+		}
+		return level;
 	}
 
 	/**

@@ -83,6 +83,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	}
 
 	@Override
+	public List<RelatedCourse> getCourseListByResourceId(String id) {
+		// todo
+		return null;
+	}
+
+	@Override
 	public List<String> filterIds(List<String> ids) {
 		return knowledgeMapper.filterIds(ids);
 	}

@@ -5,6 +5,9 @@ import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.oj.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
+import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
+
+import java.util.List;
 
 /**
  *
@@ -22,6 +25,12 @@ public interface KnowledgeService extends IService<Knowledge>, RoleRelatedServic
 	 * @return 分页查询结果
 	 */
 	KnowledgeRes getKnowledgeByResourceId(String id);
+
+	/**通过id获取查询结果
+	 * @param id
+	 * @return 分页查询结果
+	 */
+	List<RelatedCourse> getCourseListByResourceId(String id);
 
 	void validate(Knowledge knowledge);
 }

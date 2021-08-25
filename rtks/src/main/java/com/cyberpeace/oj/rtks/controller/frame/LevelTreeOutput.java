@@ -1,9 +1,10 @@
 package com.cyberpeace.oj.rtks.controller.frame;
 
-import java.util.List;
-
+import com.cyberpeace.oj.rtks.controller.role.RoleOutput;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class LevelTreeOutput {
@@ -19,4 +20,6 @@ public class LevelTreeOutput {
 	@ApiModelProperty(value = "子层级列表，不存在则为null")
 	private List<LevelTreeOutput> children;
 
+	@ApiModelProperty(value = "岗位列表，不存在则为null")
+	private List<RoleOutput> roleDetailList;
 }

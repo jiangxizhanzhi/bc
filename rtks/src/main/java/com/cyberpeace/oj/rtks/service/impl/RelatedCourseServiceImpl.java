@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Slf4j
 @Repository
-public class RelatedCourseDaoImpl implements RelatedCourseService {
+public class RelatedCourseServiceImpl implements RelatedCourseService {
 
 	@Autowired
 	private CourseService courseService;

@@ -124,8 +124,7 @@ public class ExceptionFilter implements Filter {
 		Matcher matcher = pattern.matcher(errorMsg);
 		while (matcher.find()) {
 			duplicateKey = matcher.group(0);
-			duplicateKey = StringUtils.substring(duplicateKey, 5, duplicateKey.length() - 1)
-					.concat("不能重复");
+			duplicateKey = StringUtils.substring(duplicateKey, 5, duplicateKey.length() - 1);
 		}
 		return duplicateKey;
 	}

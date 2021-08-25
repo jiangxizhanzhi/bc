@@ -2,13 +2,16 @@ package com.cyberpeace.oj.rtks.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.oj.rtks.service.KnowledgeService;
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.oj.common.util.ConfigUtil;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
 import com.cyberpeace.oj.rtks.dao.entity.Role;
+import com.cyberpeace.oj.rtks.service.KnowledgeService;
 import com.cyberpeace.oj.rtks.service.RtksStatisticService;
 import com.cyberpeace.oj.rtks.service.TreeService;
 import com.cyberpeace.oj.rtks.service.bo.RtksRadarBo;
@@ -23,9 +26,39 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * 角色评分中技能所占百分比
+	 */
+	private Integer skillWeight;
+
+	private final Integer MAX_PERCENT = 100;
+
+	@PostConstruct
+	public void init() {
+		String skillWeightString = ConfigUtil.getContextProperty("skillWeight");
+		skillWeight = Integer.parseInt(skillWeightString);
+	}
+
 	@Override
 	public String roleMatchPercent(String roleId, String userId) {
-		return null;
+		Integer knowledgeScore = 0;
+		Integer skillScore = 0;
+		// 1、计算知识点得分
+		if (skillWeight.intValue() != MAX_PERCENT.intValue()) {
+			knowledgeScore = calculateKnowledgeScore(roleId, userId);
+		}
+
+		// 2、计算技能得分
+		if (skillWeight != 0) {
+			skillScore = calculateSkillScore(roleId, userId);
+		}
+
+		// 3、技能得分和知识点得分加权平均
+		Integer result = knowledgeScore * (100 - skillWeight) + skillScore * skillWeight;
+
+		Integer ret = floor(result);
+
+		return ret + "";
 	}
 
 	@Override
@@ -53,6 +86,40 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * 计算角色对应的技能得分
+	 * @return
+	 */
+	private Integer calculateSkillScore(String roleId, String userId) {
+		// TODO
+		// 1、获取当前角色的所有技能点及权重
+
+		// 2、计算每个技能点的得分
+		// 连接靶场数据库，没有数据点技能点算0分
+		List<Integer> knowledgeScores = Lists.newArrayList();
+
+		// 3、2中的数据根据每个技能点的权重加权平均
+		return null;
+	}
+
+	/**
+	 * 计算角色对应的知识点得分
+	 * @param roleId
+	 * @param userId
+	 * @return
+	 */
+	private Integer calculateKnowledgeScore(String roleId, String userId) {
+		// 1、获取当前角色的所有知识点及权重
+
+		// 2、计算每个知识点点的得分
+		// calculateKnowledgeScore
+		List<Double> knowledgeScores = Lists.newArrayList();
+
+		// 3、2中的数据根据每个知识点的权重加权平均
+		// TODO
+		return null;
 	}
 
 	/**
@@ -105,9 +172,32 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param knowledgeId
 	 * @return
 	 */
-	private String calculateKnowledgeFinishPercent(String knowledgeId) {
+	private Double calculateKnowledgeScore(String knowledgeId) {
 		// TODO
 		return null;
 	}
 
+	/**
+	 * 向上取整，防止计算过程中精度丢失导致永远到不了100%
+	 * @param num
+	 * @return
+	 */
+	private Integer floor(Integer num) {
+		int ret = num / 100;
+		int mod = num % 100;
+
+		if (mod != 0) {
+			ret++;
+		}
+
+		if (ret > MAX_PERCENT) {
+			ret = 100;
+		}
+
+		if (ret < 0) {
+			ret = 0;
+		}
+
+		return ret;
+	}
 }

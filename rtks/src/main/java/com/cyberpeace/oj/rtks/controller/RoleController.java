@@ -1,18 +1,32 @@
 package com.cyberpeace.oj.rtks.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
+import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.util.JsonUtil;
+import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
+import com.cyberpeace.oj.rtks.controller.course.CourseLayoutInput;
 import com.cyberpeace.oj.rtks.controller.role.*;
 import com.cyberpeace.oj.rtks.dao.entity.*;
 import com.cyberpeace.oj.rtks.service.*;
-import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "TRKS-岗位管理")
 @RestController
@@ -42,46 +56,130 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 		return roleService;
 	}
 
+	@ApiOperation("获取课程列表")
+	@GetMapping("/courses")
+	public BaseRsp<List<CourseConfig>> getSkillCourses(String resource_id,
+			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
+		Role role = roleService.getOr404(resource_id);
+		return new BaseRsp<>(getCourseConfigs(role, field));
+	}
+
+	@ApiOperation("编排课程列表")
+	@PostMapping("/courses")
+	public BaseRsp<List<CourseConfig>>
+			setSkillCourses(@RequestBody @Validated CourseLayoutInput courseLayoutInput) {
+		Role role = roleService.getOr404(courseLayoutInput.getResourceId());
+		String field = courseLayoutInput.getField();
+
+		// 数据库中既有的课程编排
+		List<CourseConfig> originConfigs = getCourseConfigs(role, field);
+		List<String> originCourseIds = getCourseIds(originConfigs);
+		int originCourseCount = originCourseIds.size();
+
+		// 输入的课程编排
+		List<CourseConfig> inputConfigs = courseLayoutInput.getCourseConfigList();
+		List<String> inputCourseIds = getCourseIds(inputConfigs);
+		int inputCourseCount = inputCourseIds.size();
+
+		// 课程数量需要保持一致
+		if (originCourseCount != inputCourseCount) {
+			throw new InvalidParamException("输入课程数量不正确");
+		}
+
+		// 课程id排序后应当一致
+		for (int i = 0; i < originCourseCount; i++) {
+			if (!originCourseIds.get(i).equals(inputCourseIds.get(i))) {
+				throw new InvalidParamException("输入的课程id不正确");
+			}
+		}
+
+		// 校验通过后保存
+		setCourse(role, field, inputConfigs);
+		return new BaseRsp<>(inputConfigs);
+	}
+
+	private String getCourseText(Role role, String field) {
+		if ("skill".equals(field)) {
+			return role.getSkillCourses();
+		} else if ("knowledge".equals(field)) {
+			return role.getKnowledgeCourses();
+		} else {
+			throw new InvalidParamException("");
+		}
+	}
+
+	private void setCourse(Role role, String field, List<CourseConfig> courseConfigs) {
+		String toSave = JsonUtil.toJsonString(courseConfigs);
+		if ("skill".equals(field)) {
+			role.setSkillCourses(toSave);
+		} else if ("knowledge".equals(field)) {
+			role.setKnowledgeCourses(toSave);
+		} else {
+			throw new InvalidParamException("");
+		}
+	}
+
+	private List<String> getCourseIds(List<CourseConfig> courseConfigs) {
+		List<String> courseIds = new ArrayList<>();
+		for (CourseConfig courseConfig : courseConfigs) {
+			courseIds.add(courseConfig.getCourseId());
+		}
+		Collections.sort(courseIds);
+		return courseIds;
+	}
+
+	private List<CourseConfig> getCourseConfigs(Role role, String field) {
+
+		String courseText = getCourseText(role, field);
+
+		return JsonUtil.toJsonObjectArray(courseText, CourseConfig.class);
+	}
+
 	@Override
 	Role getEntityFromAddInput(RoleAddInput roleAddInput) {
-		return getRoleFromInput(roleAddInput, false);
+		return getRoleFromInput(roleAddInput, null);
 	}
 
 	@Override
 	Role getEntityFromModifyInput(RoleModifyInput roleModifyInput, Role originEntity) {
-		return getRoleFromInput(roleModifyInput, true);
+		Role role = getRoleFromInput(roleModifyInput, originEntity);
+		role.setResourceId(roleModifyInput.getResourceId());
+		return role;
 	}
 
-	private Role getRoleFromInput(RoleInput input, Boolean isModify) {
+	private Role getRoleFromInput(RoleInput input, Role originEntity) {
 		Role role = new Role();
 		role.setName(input.getName());
 		role.setDescription(input.getDescription());
 		role.setLevelId(input.getLevelId());
 		role.setCategory(input.getCategory());
-		if (input instanceof RoleModifyInput) {
-			role.setResourceId(((RoleModifyInput) input).getResourceId());
-		}
 
 		String levelId = input.getLevelId();
 		if (levelId != null) {
 			levelService.ensureLevelNoChild(levelId);
 		}
 
-		List<String> taskIds = input.getTaskIds();
-		String taskIdsStr = getRelatedIdsStr(taskIds, isModify, taskService);
-		role.setTaskIds(taskIdsStr);
+		boolean isModify = originEntity != null;
 
-		List<String> knowledgeIds = input.getKnowledgeIds();
-		String knowledgeIdsStr = getRelatedIdsStr(knowledgeIds, isModify, knowledgeService);
-		role.setKnowledgeIds(knowledgeIdsStr);
+		handlerInput("职责", isModify, taskService::filterIds, input::getTaskIds, role::setTaskIds);
 
-		List<String> skillIds = input.getSkillIds();
-		String skillIdsStr = getRelatedIdsStr(skillIds, isModify, skillService);
-		role.setSkillIds(skillIdsStr);
+		handlerInput("能力", isModify, abilityService::filterIds, input::getAbilityIds,
+				role::setAbilityIds);
 
-		List<String> abilityIds = input.getAbilityIds();
-		String abilityIdsStr = getRelatedIdsStr(abilityIds, isModify, abilityService);
-		role.setAbilityIds(abilityIdsStr);
+		String originKnowledgeIdsStr = null;
+		String originSkillIdsStr = null;
+		if (originEntity != null) {
+			originKnowledgeIdsStr = originEntity.getKnowledgeIds();
+			originSkillIdsStr = originEntity.getSkillIds();
+		}
+
+		handlerInputWithCourse("知识点", isModify, knowledgeService::getById, input::getKnowledgeIds,
+				originKnowledgeIdsStr, role::setKnowledgeIds, role::setKnowledgeCourses,
+				knowledgeService::getCourseConfigs);
+
+		handlerInputWithCourse("技能", isModify, skillService::getById, input::getSkillIds,
+				originSkillIdsStr, role::setSkillIds, role::setSkillCourses,
+				skillService::getCourseConfigs);
 
 		return role;
 	}
@@ -151,35 +249,80 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 		return ret;
 	}
 
-	/**
-	 * 给定两个字符串数组，检查toCheck中的每一个元素是否都是target的成员，如果出现任意否，抛出异常
-	 * */
-	private <T> void compareArrays(List<T> toCheck, List<T> target) {
-		for (T t : toCheck) {
-			if (!target.contains(t)) {
-				throw new ResourceNotFoundException(t + "不合法");
+	private void handlerInput(String name, Boolean isModify,
+			Function<List<String>, List<String>> filterIds, Supplier<List<String>> getInputIds,
+			Consumer<String> setIds) {
+
+		List<String> inputIds = getInputIds.get();
+
+		// 跳过该字段
+		if (isModify && inputIds == null) {
+			return;
+		}
+
+		// 直接置空
+		if (isEmptyList(inputIds)) {
+			setIds.accept("[]");
+			return;
+		}
+
+		String abilityIdsStr = JsonUtil.toJsonString(inputIds);
+		setIds.accept(abilityIdsStr);
+
+		List<String> existingIds = filterIds.apply(inputIds);
+
+		for (String t : inputIds) {
+			if (!existingIds.contains(t)) {
+				throw new ResourceNotFoundException(name + t + "不合法");
 			}
 		}
 	}
 
-	private String getRelatedIdsStr(List<String> relatedIds, Boolean isModify,
-			RoleRelatedService service) {
-		String strToSave;
-		if (relatedIds == null) {
-			if (isModify) {
-				// 不更新该字段
-				strToSave = null;
-			} else {
-				strToSave = "[]";
-			}
-		} else if (relatedIds.size() == 0) {
-			strToSave = "[]";
-		} else {
-			List<String> existingIds = service.filterIds(relatedIds);
-			compareArrays(relatedIds, existingIds);
-			strToSave = JsonUtil.toJsonString(relatedIds);
+	private <T> void handlerInputWithCourse(String name, Boolean isModify,
+			Function<String, T> getById, Supplier<List<String>> getInputIds, String originIdStr,
+			Consumer<String> setIds, Consumer<String> setCourses,
+			Function<T, List<CourseConfig>> getCourseConfigs) {
+
+		List<String> inputIds = getInputIds.get();
+
+		// 更新时跳过该字段
+		if (isModify && inputIds == null) {
+			return;
 		}
-		return strToSave;
+
+		// 直接置空
+		if (isEmptyList(inputIds)) {
+			setIds.accept("[]");
+			setCourses.accept("[]");
+			return;
+		}
+
+		String idsStr = JsonUtil.toJsonString(inputIds);
+		setIds.accept(idsStr);
+
+		// 字段无变化，跳过该字段
+		if (originIdStr.equals(idsStr)) {
+			return;
+		}
+
+		// 遍历关联记录，验证其是否存在，同时获取关联课程列表
+		List<String> courseIds = new ArrayList<>();
+		List<CourseConfig> courseConfigs = new ArrayList<>();
+		for (String inputId : inputIds) {
+			T t = getById.apply(inputId);
+			if (t == null) {
+				throw new ResourceNotFoundException(name + inputId + "不存在");
+			}
+			for (CourseConfig courseConfig : getCourseConfigs.apply(t)) {
+				String courseId = courseConfig.getCourseId();
+				if (!courseIds.contains(courseId)) {
+					courseIds.add(courseId);
+					courseConfigs.add(courseConfig);
+				}
+			}
+		}
+		String coursesStr = JsonUtil.toJsonString(courseConfigs);
+		setCourses.accept(coursesStr);
 	}
 
 	/**
@@ -194,5 +337,11 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 
 	}
 
-	// todo 相关课程编排 修改技能/知识时课程的联动
+	private <T> Boolean isEmptyList(List<T> arrayList) {
+		if (arrayList == null) {
+			return true;
+		}
+		return arrayList.isEmpty();
+	}
+
 }

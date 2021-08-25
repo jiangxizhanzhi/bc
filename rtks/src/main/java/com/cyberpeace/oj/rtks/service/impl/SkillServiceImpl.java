@@ -1,5 +1,11 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,6 +13,7 @@ import com.cyberpeace.oj.common.exception.InvalidParamException;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.common.util.PageUtil;
+import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.controller.res.SkillRes;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
@@ -17,11 +24,6 @@ import com.cyberpeace.oj.rtks.service.SkillCategoryService;
 import com.cyberpeace.oj.rtks.service.SkillService;
 import com.cyberpeace.oj.rtks.service.SkillSystemService;
 import com.google.common.collect.Lists;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  *
@@ -100,5 +102,10 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	@Override
 	public List<String> filterIds(List<String> ids) {
 		return skillMapper.filterIds(ids);
+	}
+
+	@Override
+	public List<CourseConfig> getCourseConfigs(Skill skill) {
+		return JsonUtil.toJsonObjectArray(skill.getCourses(), CourseConfig.class);
 	}
 }

@@ -1,7 +1,10 @@
 package com.cyberpeace.oj.rtks.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.controller.res.SkillRes;
 import com.cyberpeace.oj.rtks.dao.entity.Skill;
@@ -9,7 +12,7 @@ import com.cyberpeace.oj.rtks.dao.entity.Skill;
 /**
  *
  */
-public interface SkillService extends IService<Skill>, RoleRelatedService {
+public interface SkillService extends IService<Skill> {
 
 	/** 获取分页查询结果列表
 	 * @param  skillListReq
@@ -24,4 +27,8 @@ public interface SkillService extends IService<Skill>, RoleRelatedService {
 	SkillRes getSkillByResourceId(String id);
 
 	void validate(Skill skill);
+
+	List<CourseConfig> getCourseConfigs(Skill skill);
+
+	List<String> filterIds(List<String> ids);
 }

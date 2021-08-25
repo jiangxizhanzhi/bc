@@ -36,4 +36,10 @@ public class Role extends BaseEntity {
 	@TableField(value = "ability_ids")
 	private String abilityIds;
 
+	@TableField(value = "knowledge_courses")
+	private String knowledgeCourses;
+
+	@TableField(value = "skill_courses")
+	private String skillCourses;
+
 }

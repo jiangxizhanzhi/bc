@@ -1,18 +1,19 @@
 package com.cyberpeace.oj.rtks.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.oj.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 
-import java.util.List;
-
 /**
  *
  */
-public interface KnowledgeService extends IService<Knowledge>, RoleRelatedService {
+public interface KnowledgeService extends IService<Knowledge> {
 
 	/** 获取分页查询结果列表
 	 * @param  skillListReq
@@ -25,6 +26,10 @@ public interface KnowledgeService extends IService<Knowledge>, RoleRelatedServic
 	 * @return 分页查询结果
 	 */
 	KnowledgeRes getKnowledgeByResourceId(String id);
+
+	List<CourseConfig> getCourseConfigs(Knowledge knowledge);
+
+	List<String> filterIds(List<String> ids);
 
 	/**通过知识点id获取所有课程列表
 	 * @param id

@@ -26,11 +26,11 @@ public interface KnowledgeService extends IService<Knowledge>, RoleRelatedServic
 	 */
 	KnowledgeRes getKnowledgeByResourceId(String id);
 
-	/**通过id获取查询结果
+	/**通过知识点id获取所有课程列表
 	 * @param id
-	 * @return 分页查询结果
+	 * @return 课程列表
 	 */
-	List<RelatedCourse> getCourseListByResourceId(String id);
+	List<RelatedCourse> getCourseListByKnowledgeId(String id);
 
 	void validate(Knowledge knowledge);
 }

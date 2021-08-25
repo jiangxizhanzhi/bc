@@ -1,16 +1,15 @@
 package com.cyberpeace.oj.config.auth;
 
-import com.cyberpeace.oj.common.constant.ErrorCode;
-import com.cyberpeace.oj.common.constant.WebConstant;
-import com.cyberpeace.oj.common.exception.InvalidParamException;
-import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
-import com.cyberpeace.oj.common.model.BaseRsp;
-import com.cyberpeace.oj.common.model.UserInfoContext;
-import com.cyberpeace.oj.common.util.ConfigUtil;
-import com.cyberpeace.oj.common.util.JsonUtil;
-import com.cyberpeace.oj.common.util.LocalStringUtil;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -23,14 +22,19 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.util.NestedServletException;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.cyberpeace.oj.common.constant.ErrorCode;
+import com.cyberpeace.oj.common.constant.WebConstant;
+import com.cyberpeace.oj.common.exception.InvalidParamException;
+import com.cyberpeace.oj.common.exception.RemoteServiceException;
+import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
+import com.cyberpeace.oj.common.model.BaseRsp;
+import com.cyberpeace.oj.common.model.UserInfoContext;
+import com.cyberpeace.oj.common.util.ConfigUtil;
+import com.cyberpeace.oj.common.util.JsonUtil;
+import com.cyberpeace.oj.common.util.LocalStringUtil;
+import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
@@ -79,9 +83,22 @@ public class ExceptionFilter implements Filter {
 			parseAuthenticationException(servletResponse);
 		} else if (e instanceof DuplicateKeyException) {
 			parseDuplicateKeyException(servletResponse, (DuplicateKeyException) e);
+		} else if (e instanceof RemoteServiceException) {
+			parseRemoteServiceException(servletResponse);
 		} else {
 			dealDefaultError(servletResponse);
 		}
+	}
+
+	/**
+	 * 调用第三方服务错误
+	 * @param httpServletResponse
+	 */
+	private void parseRemoteServiceException(HttpServletResponse httpServletResponse) {
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setCode(ErrorCode.REMOTE_SERVICE_EXCEPTION);
+
+		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
 	/**

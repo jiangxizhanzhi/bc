@@ -9,4 +9,14 @@ public interface WebConstant {
 	String AUTHORIZATION_HEADER = "Authorization";
 
 	String TRACE_HEADER = "X-Request-Id";
+
+	/**
+	 * mp鉴权参数
+	 */
+	String CLIENT_ID = "clientId";
+
+	/**
+	 * mp鉴权参数
+	 */
+	String CLIENT_SECRET = "clientSecret";
 }

@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Configuration
-@PropertySource("classpath:config/datasource.properties")
+@PropertySource("classpath:db/datasource.properties")
 public class DataSourceConfig implements EnvironmentAware {
 
 	private Map<String, DataSource> dataSourceMap = Maps.newHashMap();

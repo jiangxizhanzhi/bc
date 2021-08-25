@@ -13,7 +13,7 @@ public interface RemoteUserService {
 	 * @param token jwttoken
 	 * @return 认证成功返回用户模型
 	 */
-	UserInfo doAuthentication(String token) throws RemoteUserAuthticationException;
+	UserInfo doAuthentication(String token);
 
 	UserInfo getById(String userId);
 

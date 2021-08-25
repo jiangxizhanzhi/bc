@@ -1,8 +1,23 @@
 package com.cyberpeace.oj.common.util;
 
+import com.cyberpeace.oj.common.exception.InvalidParamException;
+
 public class LocalStringUtil {
 
 	private LocalStringUtil() {}
+
+	public static String notEmptyString(String s, String fieldName) {
+		if (s == null) {
+			return null;
+		}
+
+		s = s.trim();
+		if (s.isEmpty()) {
+			throw new InvalidParamException(fieldName);
+		}
+
+		return s;
+	}
 
 	public static String snakeCaseFormat(String name) {
 		final StringBuilder result = new StringBuilder();

@@ -1,11 +1,5 @@
 package com.cyberpeace.oj.config.auth;
 
-import com.cyberpeace.oj.common.exception.RemoteUserAuthticationException;
-import com.cyberpeace.oj.common.model.UserInfo;
-import com.cyberpeace.oj.common.model.UserInfoContext;
-import com.cyberpeace.oj.integratation.service.RemoteUserService;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -18,51 +12,58 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.oj.common.model.UserInfo;
+import com.cyberpeace.oj.common.model.UserInfoContext;
+import com.cyberpeace.oj.integratation.service.RemoteUserService;
+import com.google.common.collect.Lists;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Service
 public class BasicValidationRealm extends AuthorizingRealm {
 
-    @Autowired
-    private RemoteUserService remoteUserService;
+	@Autowired
+	private RemoteUserService remoteUserService;
 
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+		SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
 
-        UserInfo userInfo = UserInfoContext.getUserContext();
+		UserInfo userInfo = UserInfoContext.getUserContext();
 
-        // 设置角色
-        simpleAuthorizationInfo.addRoles(userInfo.getRoles());
+		// 设置角色
+		simpleAuthorizationInfo.addRoles(userInfo.getRoles());
 
-        // 默认不设置权限
-        simpleAuthorizationInfo.addStringPermissions(Lists.newArrayList());
+		// 默认不设置权限
+		simpleAuthorizationInfo.addStringPermissions(Lists.newArrayList());
 
-        return simpleAuthorizationInfo;
-    }
+		return simpleAuthorizationInfo;
+	}
 
-    @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
-            throws AuthenticationException {
-        UserInfo userInfo = null;
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
+			throws AuthenticationException {
+		UserInfo userInfo = null;
 
-        if (null == authenticationToken.getCredentials()) {
-            throw new AuthenticationException();
-        }
+		if (null == authenticationToken.getCredentials()) {
+			throw new AuthenticationException();
+		}
 
-        String token = new String((char[]) authenticationToken.getCredentials());
-        if (StringUtils.isBlank(token)) {
-            throw new AuthenticationException();
-        }
+		String token = new String((char[]) authenticationToken.getCredentials());
+		if (StringUtils.isBlank(token)) {
+			throw new AuthenticationException();
+		}
 
-        try {
-            userInfo = remoteUserService.doAuthentication(token);
+		try {
+			userInfo = remoteUserService.doAuthentication(token);
 
-            UserInfoContext.setUserContext(userInfo);
-        } catch (RemoteUserAuthticationException e) {
-            log.error("RemoteUserService.doAuthentication error");
-            throw new AuthenticationException();
-        }
+			UserInfoContext.setUserContext(userInfo);
+		} catch (Exception e) {
+			log.error("RemoteUserService.doAuthentication error");
+			throw new AuthenticationException();
+		}
 
-        return new SimpleAuthenticationInfo(userInfo.getUserId(), token, getName());
-    }
+		return new SimpleAuthenticationInfo(userInfo.getUserId(), token, getName());
+	}
 }

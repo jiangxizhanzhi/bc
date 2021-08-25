@@ -20,5 +20,7 @@ public interface ErrorCode {
 	 * */
 	String RESOURCE_NOT_FOUND = "000002";
 
+	String REMOTE_SERVICE_EXCEPTION = "010000";
+
 	String INTERNAL_ERROR = "999999";
 }

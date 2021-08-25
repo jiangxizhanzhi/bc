@@ -1,12 +1,13 @@
 package com.cyberpeace.oj.config;
 
-import com.cyberpeace.oj.common.util.ConfigUtil;
-import com.cyberpeace.oj.common.util.SpringContextUtil;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import com.cyberpeace.oj.common.util.ConfigUtil;
+import com.cyberpeace.oj.common.util.SpringContextUtil;
 
 /**
  * 自定义配置项
@@ -14,22 +15,22 @@ import org.springframework.core.io.Resource;
 @Configuration
 public class CustomConf {
 
-    @Bean
-    public SpringContextUtil getSpringContextUtil() {
-        return new SpringContextUtil();
-    }
+	@Bean
+	public SpringContextUtil getSpringContextUtil() {
+		return new SpringContextUtil();
+	}
 
-    @Bean
-    public PropertyPlaceholderConfigurer getConfigUtil() {
-        PropertyPlaceholderConfigurer configurer = new ConfigUtil();
+	@Bean
+	public PropertyPlaceholderConfigurer getConfigUtil() {
+		PropertyPlaceholderConfigurer configurer = new ConfigUtil();
 
-        Resource[] resources = new ClassPathResource[]{
-                new ClassPathResource("integration.properties"),
-                new ClassPathResource("custom.properties")
-        };
-        configurer.setLocations(resources);
+		Resource[] resources = new ClassPathResource[] {
+				new ClassPathResource("modules/integration.properties"),
+				new ClassPathResource("modules/course.properties"),
+				new ClassPathResource("application.properties") };
+		configurer.setLocations(resources);
 
-        return configurer;
-    }
+		return configurer;
+	}
 
 }

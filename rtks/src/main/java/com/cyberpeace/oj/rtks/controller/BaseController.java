@@ -1,5 +1,8 @@
 package com.cyberpeace.oj.rtks.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -7,7 +10,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.ObjUtil;
-import com.cyberpeace.oj.common.util.PageUtil2;
 import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
 import com.cyberpeace.oj.rtks.controller.req.ListReq;
 import com.cyberpeace.oj.rtks.dao.entity.BaseEntity;
@@ -70,6 +72,16 @@ public abstract class BaseController<Entity extends BaseEntity, Input, AddInput 
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<ListOutput>> list(ListReq<Entity> listReq) {
 		IPage<Entity> page = getService().listEntity(listReq.toPageParam(), listReq.getKeyword());
-		return PageUtil2.getListResult(page, this::getListOutputFromEntity);
+
+		List<ListOutput> outputs = new ArrayList<>();
+		for (Entity record : page.getRecords()) {
+			outputs.add(getListOutputFromEntity(record));
+		}
+
+		ListRsp<ListOutput> listRsp = new ListRsp<>();
+		listRsp.setList(outputs);
+		listRsp.setTotal(page.getTotal());
+
+		return new BaseRsp<>(listRsp);
 	}
 }

@@ -13,26 +13,26 @@ public class RoleStudyBo implements Serializable {
 	/**
 	 * 总课程数
 	 */
-	private String totalCourses;
+	private Integer totalCourses;
 
 	/**
 	 * 已完成理论课时数
 	 */
-	private String finishedTheoryLessons;
+	private Integer finishedTheoryLessons;
 
 	/**
 	 * 未完成理论课时数
 	 */
-	private String unFinishedTheoryLessons;
+	private Integer unFinishedTheoryLessons;
 
 	/**
 	 * 已完成实验课时数
 	 */
-	private String finishedPracticeLessons;
+	private Integer finishedPracticeLessons;
 
 	/**
 	 * 未完成实验课时数
 	 */
-	private String unFinishedPracticeLessons;
+	private Integer unFinishedPracticeLessons;
 
 }

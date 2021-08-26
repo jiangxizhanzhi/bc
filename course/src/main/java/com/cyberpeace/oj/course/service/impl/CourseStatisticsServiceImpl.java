@@ -1,16 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.validation.constraints.NotEmpty;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.cyberpeace.oj.common.exception.InvalidParamException;
+import com.cyberpeace.oj.common.util.MathUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.Lesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
@@ -20,6 +11,15 @@ import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotEmpty;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseStatisticsServiceImpl implements CourseStatisticsService {
@@ -38,14 +38,14 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			String userId) {
 
 		if (CollectionUtils.isEmpty(courseIds)) {
-			return null;
+			return Lists.newArrayList();
 		}
 
 		// 过滤删除的课程
 		List<Course> courses = courseMapper.selectBatchIds(courseIds);
 		List<String> ids = courses.stream().map(Course::getResourceId).collect(Collectors.toList());
 		if (CollectionUtils.isEmpty(ids)) {
-			return null;
+			return Lists.newArrayList();
 		}
 
 		// 课程数量 以课程编号进行分组
@@ -117,10 +117,9 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			studyProcessBo.setCompleteDuration(studyDuration);
 
 			// 计算进度
-			if (studyProcessBo.getLessonCount() != null && studyProcessBo.getLessonCount() > 0) {
-				studyProcessBo.setProcess(
-						studyProcessBo.getCompleteCount() * 100 / studyProcessBo.getLessonCount());
-			}
+			studyProcessBo.setProcess(
+					MathUtils.divide(new Double(studyProcessBo.getCompleteCount() * 100),
+							new Double(studyProcessBo.getLessonCount())));
 
 			return studyProcessBo;
 		}).collect(Collectors.toList());

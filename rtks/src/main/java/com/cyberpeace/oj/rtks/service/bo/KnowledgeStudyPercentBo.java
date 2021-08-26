@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.rtks.service.bo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -9,6 +11,8 @@ import java.io.Serializable;
  * @author yinqingrong
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class KnowledgeStudyPercentBo implements Serializable {
 
 	/**

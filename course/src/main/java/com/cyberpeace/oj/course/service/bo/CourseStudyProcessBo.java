@@ -27,7 +27,7 @@ public class CourseStudyProcessBo {
 
     private Integer completeCount;
 
-    private Integer process;
+    private Double process;
 
     private Integer suggestDuration;
 

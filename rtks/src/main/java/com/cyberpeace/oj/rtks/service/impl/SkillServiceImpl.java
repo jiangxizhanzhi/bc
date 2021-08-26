@@ -16,13 +16,11 @@ import com.cyberpeace.oj.common.util.PageUtil;
 import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.controller.res.SkillRes;
+import com.cyberpeace.oj.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.entity.Skill;
 import com.cyberpeace.oj.rtks.dao.mapper.SkillMapper;
-import com.cyberpeace.oj.rtks.service.RelatedCourseService;
-import com.cyberpeace.oj.rtks.service.SkillCategoryService;
-import com.cyberpeace.oj.rtks.service.SkillService;
-import com.cyberpeace.oj.rtks.service.SkillSystemService;
+import com.cyberpeace.oj.rtks.service.*;
 import com.google.common.collect.Lists;
 
 /**
@@ -43,6 +41,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	@Autowired
 	private SkillSystemService skillSystemService;
 
+	@Autowired
+	private CourseRelatedService courseRelatedService;
+
 	@Override
 	public ListRsp<SkillRes> page(SkillListReq skillListReq) {
 		Page page = skillListReq.toPageParam();
@@ -57,12 +58,22 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 			if (relatedCourseDao.setCourseResult(courses, relatedCourseList)) {
+				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+				skillRes.setCourseList(relatedCourseList);
+
 				Skill skill = new Skill();
 				BeanUtils.copyProperties(skillRes, skill);
+
+				// 修改关联表
+				courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+						skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
+				skill.setCourses(courses);
+
 				skillList.add(skill);
+			} else {
+				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+				skillRes.setCourseList(relatedCourseList);
 			}
-			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-			skillRes.setCourseList(relatedCourseList);
 
 		}
 		updateBatchById(skillList);
@@ -76,13 +87,21 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 
 		if (relatedCourseDao.setCourseResult(skillRes.getCourses(), relatedCourseList)) {
+			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			skillRes.setCourseList(relatedCourseList);
+
 			Skill skill = new Skill();
 			BeanUtils.copyProperties(skillRes, skill);
-			updateById(skill);
-		} ;
+			// 修改关联表
+			String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+					skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
+			skill.setCourses(courses);
 
-		skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-		skillRes.setCourseList(relatedCourseList);
+			updateById(skill);
+		} else {
+			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			skillRes.setCourseList(relatedCourseList);
+		}
 
 		return skillRes;
 	}
@@ -92,11 +111,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		if (skillCategoryService.getById(skill.getCategoryId()) == null) {
 			throw new InvalidParamException("类别不存在");
 		}
-
 		if (skillSystemService.getById(skill.getSystemId()) == null) {
 			throw new InvalidParamException("体系不存在");
 		}
-
 	}
 
 	@Override

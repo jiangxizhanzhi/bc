@@ -16,9 +16,11 @@ import com.cyberpeace.oj.common.util.PageUtil;
 import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.oj.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.oj.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.mapper.KnowledgeMapper;
+import com.cyberpeace.oj.rtks.service.CourseRelatedService;
 import com.cyberpeace.oj.rtks.service.KnowledgeCategoryService;
 import com.cyberpeace.oj.rtks.service.KnowledgeService;
 import com.cyberpeace.oj.rtks.service.RelatedCourseService;
@@ -34,10 +36,13 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	private KnowledgeMapper knowledgeMapper;
 
 	@Autowired
-	private RelatedCourseService relatedCourseDao;
+	private RelatedCourseService relatedCourseService;
 
 	@Autowired
 	private KnowledgeCategoryService knowledgeCategoryService;
+
+	@Autowired
+	private CourseRelatedService courseRelatedService;
 
 	@Override
 	public ListRsp<KnowledgeRes> page(KnowledgeListReq knowledgeListReq) {
@@ -49,18 +54,29 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 		List<Knowledge> knowledgeList = Lists.newArrayList();
 
+		// 遍历知识点，获取知识点的相关内容，修改已删除的关联课程
 		for (KnowledgeRes knowledgeRes : knowledgeResList) {
 			String courses = knowledgeRes.getCourses();
 
 			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
-			if (relatedCourseDao.setCourseResult(courses, relatedCourseList)) {
+			if (relatedCourseService.setCourseResult(courses, relatedCourseList)) {
+				knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+				knowledgeRes.setCourseList(relatedCourseList);
+
 				Knowledge knowledge = new Knowledge();
 				BeanUtils.copyProperties(knowledgeRes, knowledge);
-				knowledgeList.add(knowledge);
-			} ;
 
-			knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-			knowledgeRes.setCourseList(relatedCourseList);
+				// 修改关联表
+				courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+						knowledge.getResourceId(), CourseRelated.RELATED_TYPE_KNOWLEDGE);
+				knowledge.setCourses(courses);
+				knowledgeList.add(knowledge);
+
+			} else {
+				knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+				knowledgeRes.setCourseList(relatedCourseList);
+			}
+
 		}
 		updateBatchById(knowledgeList);
 
@@ -72,11 +88,21 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		KnowledgeRes knowledgeRes = knowledgeMapper.getKnowledgeByResourceId(id);
 		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 
-		if (relatedCourseDao.setCourseResult(knowledgeRes.getCourses(), relatedCourseList)) {
+		//
+		if (relatedCourseService.setCourseResult(knowledgeRes.getCourses(), relatedCourseList)) {
+			knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			knowledgeRes.setCourseList(relatedCourseList);
+
 			Knowledge knowledge = new Knowledge();
 			BeanUtils.copyProperties(knowledgeRes, knowledge);
+
+			// 修改关联表
+			String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+					knowledge.getResourceId(), CourseRelated.RELATED_TYPE_KNOWLEDGE);
+			knowledge.setCourses(courses);
 			updateById(knowledge);
-		} ;
+
+		}
 
 		knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 		knowledgeRes.setCourseList(relatedCourseList);

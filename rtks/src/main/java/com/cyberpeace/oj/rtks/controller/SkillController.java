@@ -1,5 +1,13 @@
 package com.cyberpeace.oj.rtks.controller;
 
+import java.util.List;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.oj.common.model.BaseRsp;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.common.util.JsonUtil;
@@ -7,18 +15,15 @@ import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
 import com.cyberpeace.oj.rtks.controller.req.SkillAddReq;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.controller.res.SkillRes;
+import com.cyberpeace.oj.rtks.dao.entity.CourseRelated;
+import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.entity.Skill;
+import com.cyberpeace.oj.rtks.service.CourseRelatedService;
 import com.cyberpeace.oj.rtks.service.SkillService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags = "RTKS-技能管理")
 @RestController
@@ -28,6 +33,9 @@ public class SkillController {
 
 	@Autowired
 	private SkillService skillService;
+
+	@Autowired
+	private CourseRelatedService courseRelatedService;
 
 	@ApiOperation("查询单条")
 	@GetMapping()
@@ -46,6 +54,12 @@ public class SkillController {
 		skill.setCourses(JsonUtil.toJsonString(skillAddReq.getCourseList()));
 
 		skillService.validate(skill);
+		List<RelatedCourse> relatedCourseList = skillAddReq.getCourseList();
+
+		String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+				skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
+		skill.setCourses(courses);
+
 		skillService.save(skill);
 
 		return new BaseRsp<>();
@@ -59,6 +73,11 @@ public class SkillController {
 		skill.setCourses(JsonUtil.toJsonString(skillAddReq.getCourseList()));
 
 		skillService.validate(skill);
+		List<RelatedCourse> relatedCourseList = skillAddReq.getCourseList();
+		String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+				skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
+		skill.setCourses(courses);
+
 		skillService.updateById(skill);
 
 		return new BaseRsp<>();
@@ -68,6 +87,7 @@ public class SkillController {
 	@DeleteMapping()
 	public BaseRsp<String> deleteSkill(@RequestBody @Validated DeleteReq deleteReq) {
 		skillService.removeByIds(deleteReq.getIds());
+		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds());
 
 		return new BaseRsp<>();
 	}

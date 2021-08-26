@@ -1,7 +1,5 @@
 package com.cyberpeace.common.model.user;
 
-import com.cyberpeace.common.model.user.UserInfo;
-
 public class UserInfoContext {
 
 	private static final ThreadLocal<UserInfo> userContext = new ThreadLocal();

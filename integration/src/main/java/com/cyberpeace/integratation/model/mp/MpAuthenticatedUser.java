@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.integratation.model.mp;
+package com.cyberpeace.integratation.model.mp;
 
 import java.io.Serializable;
 import java.util.Date;

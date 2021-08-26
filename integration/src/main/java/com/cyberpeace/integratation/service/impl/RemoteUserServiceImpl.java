@@ -13,7 +13,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.oj.integratation.model.mp.MpAuthenticatedUser;
+import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.oj.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.integratation.service.mp.HttpClient;
 import com.google.common.collect.Lists;

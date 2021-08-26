@@ -62,5 +62,21 @@
             </foreach>
         </where>
     </select>
+    <select id="getKnowledgeByCourseId" resultType="com.cyberpeace.oj.rtks.controller.res.CourseRelatedRes">
+
+        select rtks_course_related.related_id,
+        rtks_course_related.resource_id,
+        rtks_knowledge.content,
+        rtks_course_related.weight
+        from rtks_course_related
+        left join rtks_knowledge on rtks_course_related.related_id = rtks_knowledge.resource_id
+        <where>
+            rtks_course_related.resource_id in
+            <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+
+    </select>
 
 </mapper>

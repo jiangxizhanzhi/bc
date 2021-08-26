@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import com.cyberpeace.oj.common.util.JsonUtil;
 import com.cyberpeace.oj.common.util.PageUtil;
 import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.req.KnowledgeListReq;
+import com.cyberpeace.oj.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.oj.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.oj.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
@@ -126,6 +129,15 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		if (knowledgeCategoryService.getById(knowledge.getCategoryId()) == null) {
 			throw new InvalidParamException("类别不存在");
 		}
+	}
+
+	@Override
+	public Map<String, List<CourseRelatedRes>> getKnowledgeByCourseId(List<String> ids) {
+		List<CourseRelatedRes> knowledgeList = knowledgeMapper.getKnowledgeByCourseId(ids);
+
+		Map<String, List<CourseRelatedRes>> courseKnowledgeResMap = knowledgeList.stream()
+				.collect(Collectors.groupingBy(CourseRelatedRes::getResourceId));
+		return courseKnowledgeResMap;
 	}
 
 	@Override

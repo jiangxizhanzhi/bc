@@ -1,11 +1,13 @@
 package com.cyberpeace.oj.rtks.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.common.model.ListRsp;
 import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.req.KnowledgeListReq;
+import com.cyberpeace.oj.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.oj.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
@@ -38,4 +40,6 @@ public interface KnowledgeService extends IService<Knowledge> {
 	List<RelatedCourse> getCourseListByKnowledgeId(String id);
 
 	void validate(Knowledge knowledge);
+
+	Map<String, List<CourseRelatedRes>> getKnowledgeByCourseId(List<String> ids);
 }

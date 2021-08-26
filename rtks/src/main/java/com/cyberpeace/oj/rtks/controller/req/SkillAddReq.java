@@ -15,20 +15,24 @@ import lombok.Data;
 @ApiModel
 public class SkillAddReq implements Serializable {
 
-	@ApiModelProperty()
+	@ApiModelProperty(value = "技能id")
 	private String resourceId;
 
+	@ApiModelProperty(value = "技能内容")
 	@NotBlank
 	private String content;
 
+	@ApiModelProperty(value = "体系id")
 	@NotBlank
 	private String systemId;
 
+	@ApiModelProperty(value = "类别id")
 	@NotBlank
 	private String categoryId;
 
+	@ApiModelProperty(value = "权重")
 	private Integer weight = 1;
 
-	@ApiModelProperty
+	@ApiModelProperty(value = "课程列表")
 	private List<RelatedCourse> courseList;
 }

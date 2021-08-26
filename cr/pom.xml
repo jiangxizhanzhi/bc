@@ -19,6 +19,7 @@
     <modules>
         <module>red_vs_blue</module>
         <module>single_train</module>
+        <module>tool</module>
     </modules>
 
     <properties>

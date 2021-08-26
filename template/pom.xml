@@ -54,6 +54,11 @@
             <version>${cr.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>tool</artifactId>
+            <version>${cr.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>

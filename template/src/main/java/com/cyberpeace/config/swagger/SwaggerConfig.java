@@ -15,6 +15,7 @@ import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
+import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
 import springfox.documentation.spring.web.plugins.Docket;
 
 @Configuration
@@ -22,7 +23,28 @@ import springfox.documentation.spring.web.plugins.Docket;
 public class SwaggerConfig {
 
 	@Bean
-	public Docket api() {
+	public Docket apiRtks() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.rtks"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("rtks");
+	}
+
+
+	@Bean
+	public Docket apiCr() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cr"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("cr");
+	}
+
+	@Bean
+	public Docket apiOj() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("oj");
+	}
+
+	private ApiSelectorBuilder getDocket() {
 		return new Docket(DocumentationType.OAS_30).apiInfo(apiInfo())
 				.securityContexts(Arrays.asList(SecurityContext.builder()
 						.securityReferences(Arrays.asList(SecurityReference.builder()
@@ -33,8 +55,7 @@ public class SwaggerConfig {
 						.build()))
 				.securitySchemes(
 						Arrays.asList(new ApiKey("Authorization", "Authorization", "header")))
-				.select().apis(RequestHandlerSelectors.basePackage("com.cyberpeace"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build();
+				.select();
 	}
 
 	private ApiInfo apiInfo() {

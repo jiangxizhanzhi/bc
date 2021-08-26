@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.config.db;
+package com.cyberpeace.config.db;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;

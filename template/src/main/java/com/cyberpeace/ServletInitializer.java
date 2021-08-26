@@ -1,4 +1,4 @@
-package com.cyberpeace.oj;
+package com.cyberpeace;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

@@ -1,4 +1,4 @@
-package com.cyberpeace.oj;
+package com.cyberpeace;
 
 import java.util.List;
 

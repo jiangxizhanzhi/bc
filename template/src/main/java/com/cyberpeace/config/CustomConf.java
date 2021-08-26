@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.config;
+package com.cyberpeace.config;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;

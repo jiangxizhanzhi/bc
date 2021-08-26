@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.config.auth;
+package com.cyberpeace.config.auth;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;

@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.config.auth;
+package com.cyberpeace.config.auth;
 
 import java.io.IOException;
 import java.util.List;

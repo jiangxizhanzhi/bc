@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.config.db;
+package com.cyberpeace.config.db;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

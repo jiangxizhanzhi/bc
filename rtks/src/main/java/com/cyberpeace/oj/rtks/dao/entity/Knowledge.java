@@ -23,4 +23,6 @@ public class Knowledge extends BaseTable {
 	private String content;
 
 	private String courses;
+
+	private Integer weight;
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.UserInfoContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.res.DirectionOutPut;
 import com.cyberpeace.oj.course.dao.entity.Course;

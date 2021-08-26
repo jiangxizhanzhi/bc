@@ -1,4 +1,6 @@
-package com.cyberpeace.common.model;
+package com.cyberpeace.common.model.user;
+
+import com.cyberpeace.common.model.user.UserInfo;
 
 public class UserInfoContext {
 

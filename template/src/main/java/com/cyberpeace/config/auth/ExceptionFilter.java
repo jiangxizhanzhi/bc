@@ -28,7 +28,7 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.UserInfoContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;

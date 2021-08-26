@@ -1,4 +1,4 @@
-package com.cyberpeace.common.model;
+package com.cyberpeace.common.model.user;
 
 import com.google.common.collect.Lists;
 import lombok.Data;

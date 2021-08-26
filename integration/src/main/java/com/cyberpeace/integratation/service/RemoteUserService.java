@@ -2,7 +2,7 @@ package com.cyberpeace.oj.integratation.service;
 
 import java.util.List;
 
-import com.cyberpeace.common.model.UserInfo;
+import com.cyberpeace.common.model.user.UserInfo;
 
 public interface RemoteUserService {
 

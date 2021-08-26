@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.UserInfoContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RtksStatisticService;

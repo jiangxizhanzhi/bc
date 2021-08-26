@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.KnowledgeMapper">
+<mapper namespace="com.cyberpeace.rtks.dao.mapper.KnowledgeMapper">
 
-    <select id="listKnowledge" resultType="com.cyberpeace.oj.rtks.controller.res.KnowledgeRes">
+    <select id="listKnowledge" resultType="com.cyberpeace.rtks.controller.res.KnowledgeRes">
         <if test="knowledgeListReq.pattern != null and knowledgeListReq.pattern != ''">
             <bind name="pattern" value="'%' + knowledgeListReq.pattern + '%'"/>
         </if>
@@ -33,7 +33,7 @@
         </where>
     </select>
 
-    <select id="getKnowledgeByResourceId" resultType="com.cyberpeace.oj.rtks.controller.res.KnowledgeRes">
+    <select id="getKnowledgeByResourceId" resultType="com.cyberpeace.rtks.controller.res.KnowledgeRes">
         select
         rtks_knowledge.id,
         rtks_knowledge.resource_id,
@@ -62,7 +62,7 @@
             </foreach>
         </where>
     </select>
-    <select id="getKnowledgeByCourseId" resultType="com.cyberpeace.oj.rtks.controller.res.CourseRelatedRes">
+    <select id="getKnowledgeByCourseId" resultType="com.cyberpeace.rtks.controller.res.CourseRelatedRes">
 
         select rtks_course_related.related_id,
         rtks_course_related.resource_id,

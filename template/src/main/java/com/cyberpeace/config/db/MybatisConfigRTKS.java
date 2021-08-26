@@ -23,7 +23,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(basePackages = "com.cyberpeace.oj.rtks.**.mapper",
+@MapperScan(basePackages = "com.cyberpeace.rtks.**.mapper",
 		sqlSessionFactoryRef = "rtksSqlSessionFactory")
 public class MybatisConfigRTKS {
 

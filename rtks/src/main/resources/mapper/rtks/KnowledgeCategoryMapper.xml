@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyberpeace.oj.rtks.dao.mapper.KnowledgeCategoryMapper">
+<mapper namespace="com.cyberpeace.rtks.dao.mapper.KnowledgeCategoryMapper">
 
-    <select id="listKnowledgeCategory" resultType="com.cyberpeace.oj.rtks.dao.entity.KnowledgeCategory">
+    <select id="listKnowledgeCategory" resultType="com.cyberpeace.rtks.dao.entity.KnowledgeCategory">
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
         </if>

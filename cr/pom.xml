@@ -24,6 +24,7 @@
 
     <properties>
         <integration.version>0.0.1-SNAPSHOT</integration.version>
+        <common.version>0.0.1-SNAPSHOT</common.version>
     </properties>
 
     <dependencies>
@@ -50,7 +51,7 @@
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${common.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

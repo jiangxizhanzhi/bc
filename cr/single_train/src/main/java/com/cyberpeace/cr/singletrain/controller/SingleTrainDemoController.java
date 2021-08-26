@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.single_train.controller;
+package com.cyberpeace.cr.singletrain.controller;
 
 import javax.validation.constraints.NotBlank;
 

@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 
 import com.cyberpeace.oj.rtks.service.bo.*;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -178,24 +179,41 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<Knowledge> knowledges = mergeKnowledgeByRoles(roles);
 
 		// 3、统计所有知识点的课时完成度
-		String ret = calculateKnowledgeFinishPercent(knowledges, userId);
+		String ret = calculateKnowledgeFinishPercent(knowledges, userId, true);
 
 		return ret;
 	}
 
 	/**
 	 * 计算知识点涉及到的所有课时的完成度
+	 * @param knowledges 知识点编号
+	 * @param userId 用户编号
 	 * @return
 	 */
-	private String calculateKnowledgeFinishPercent(List<Knowledge> knowledges, String userId) {
+	private String calculateKnowledgeFinishPercent(List<Knowledge> knowledges, String userId,
+			boolean useWeight) {
 		// 1、统计出知识点下的所有课程
-		List<ValueDataBo> knowledgeScores = calculateKnowledgeScore(knowledges, userId, true);
-		// 2、统计所有课程的总课时A；
+		List<ValueDataBo> knowledgeScores = calculateKnowledgeScore(knowledges, userId, useWeight);
+		if (useWeight) {
 
-		// 3、统计所有课程的已学课时B;
-		// 4、B/A，向上取整
-		// TODO
-		return null;
+			double sumProcess = knowledgeScores.stream()
+					.mapToDouble(value -> MathUtils.mul(value.getProcess(), value.getWeight()))
+					.sum();
+
+			double sumWeight = knowledgeScores.stream().mapToDouble(ValueDataBo::getWeight).sum();
+			return MathUtils.divide(sumProcess, sumWeight, 0).toString();
+		} else {
+			// 2、统计所有课程的总课时A；
+			double lessonCount = knowledgeScores.stream().mapToDouble(ValueDataBo::getLessonCount)
+					.sum();
+			// 3、统计所有课程的已学课时B;
+			double completeCount = knowledgeScores.stream()
+					.mapToDouble(ValueDataBo::getCompleteCount).sum();
+			// 4、B/A，向上取整
+			Double divide = MathUtils.divide(completeCount, lessonCount, 0);
+			return divide.toString();
+		}
+
 	}
 
 	/**
@@ -206,9 +224,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @return
 	 */
 	private List<Knowledge> mergeKnowledgeByRoles(List<Role> roles) {
-		Set<String> knowledgeIds = roles.stream()
+		List<String> knowledgeIds = roles.stream()
 				.map(role -> JsonUtil.toJsonObjectArray(role.getKnowledgeIds(), String.class))
-				.flatMap(Collection::stream).collect(Collectors.toSet());
+				.flatMap(Collection::stream).collect(Collectors.toList());
+
+		if (CollectionUtils.isEmpty(knowledgeIds)) {
+			return Lists.newArrayList();
+		}
 
 		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
 		return knowledges;
@@ -228,28 +250,34 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		// 获取知识点课程列表
 		List<ValueDataBo> dataBos = knowledges.stream().map(knowledge -> {
+
+			ValueDataBo knowledgeDataBo = new ValueDataBo();
+			knowledgeDataBo.setContent(knowledge.getContent());
+			knowledgeDataBo.setResourceId(knowledge.getResourceId());
+
 			List<KnowledgeUnderCourseBo> courses = JsonUtil
 					.toJsonObjectArray(knowledge.getCourses(), KnowledgeUnderCourseBo.class);
 
-			List<String> courseIds = courses.stream().map(KnowledgeUnderCourseBo::getCourseId)
-					.collect(Collectors.toList());
+			if (CollectionUtils.isEmpty(courses)) {
+				knowledgeDataBo.setProcess(new Double(0));
+				return knowledgeDataBo;
+			}
 
-			Map<String, KnowledgeUnderCourseBo> courseBoMap = courses.stream()
-					.collect(Collectors.toMap(KnowledgeUnderCourseBo::getCourseId,
-							knowledgeUnderCourseBo -> knowledgeUnderCourseBo));
+			List<String> courseIds = courses.stream().map(KnowledgeUnderCourseBo::getResourceId)
+					.collect(Collectors.toList());
 
 			// 计算课程学习进度
 			List<CourseStudyProcessBo> studyProcessBos = courseStatisticsService
 					.statisticByIds(courseIds, userId);
+			Map<String, CourseStudyProcessBo> boMap = studyProcessBos.stream()
+					.collect(Collectors.toMap(CourseStudyProcessBo::getCourseId,
+							courseStudyProcessBo -> courseStudyProcessBo));
 
-			ValueDataBo knowledgeDataBo = new ValueDataBo();
-			knowledgeDataBo.setContent(knowledge.getContent());
 			if (userWeight) {
-				List<ValueDataBo> courseProcess = studyProcessBos.stream().map(courseStudy -> {
+				List<ValueDataBo> courseProcess = courses.stream().map(underCourseBo -> {
 					ValueDataBo dataBo = new ValueDataBo();
-					KnowledgeUnderCourseBo courseBo = courseBoMap.get(courseStudy.getCourseId());
-					dataBo.setProcess(new Double(courseStudy.getProcess()));
-					dataBo.setWeight(new Double(courseBo.getWeight()));
+					dataBo.setProcess(new Double(boMap.get(underCourseBo.getResourceId()).getProcess()));
+					dataBo.setWeight(new Double(underCourseBo.getWeight()));
 					return dataBo;
 				}).collect(Collectors.toList());
 
@@ -266,12 +294,15 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 			} else {
 				double completeCount = studyProcessBos.stream()
-						.mapToDouble(courseStudy -> new Double(courseStudy.getCompleteCount())).sum();
+						.mapToDouble(courseStudy -> new Double(courseStudy.getCompleteCount()))
+						.sum();
 
 				double lessonCount = studyProcessBos.stream()
 						.mapToDouble(courseStudy -> new Double(courseStudy.getLessonCount())).sum();
 
 				knowledgeDataBo.setProcess(MathUtils.divide(completeCount, lessonCount));
+				knowledgeDataBo.setCompleteCount(completeCount);
+				knowledgeDataBo.setLessonCount(lessonCount);
 			}
 			return knowledgeDataBo;
 		}).collect(Collectors.toList());

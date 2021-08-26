@@ -7,4 +7,5 @@ import lombok.Data;
 public class RelatedCourse extends CourseInfoBo {
 
 	private Integer weight;
+
 }

@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel
+@ApiModel("")
 public class KnowledgeAddReq implements Serializable {
 
 	@ApiModelProperty()

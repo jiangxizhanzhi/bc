@@ -14,4 +14,16 @@ public class DataTransferUtils {
         return num;
     }
 
+    /**
+     * 判断 浮点数对象是否为空 并进行赋值
+     * @param num
+     * @return
+     */
+    public static Double nullToZero(Double num) {
+        if (null == num) {
+            num = new Double(0);
+        }
+        return num;
+    }
+
 }

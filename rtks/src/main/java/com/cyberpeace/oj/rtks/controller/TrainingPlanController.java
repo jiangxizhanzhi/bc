@@ -1,10 +1,13 @@
 package com.cyberpeace.oj.rtks.controller;
 
 import com.cyberpeace.oj.common.model.BaseRsp;
+import com.cyberpeace.oj.common.model.UserInfoContext;
 import com.cyberpeace.oj.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.oj.rtks.controller.res.SkillRes;
 import com.cyberpeace.oj.rtks.service.LevelService;
+import com.cyberpeace.oj.rtks.service.RtksStatisticService;
 import com.cyberpeace.oj.rtks.service.TrainingPlanService;
+import com.cyberpeace.oj.rtks.service.bo.RtksRadarBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,6 +31,9 @@ public class TrainingPlanController {
 
 	@Autowired
 	private TrainingPlanService trainingPlanService;
+
+	@Autowired
+	private RtksStatisticService rtksStatisticService;
 
 	@Autowired
 	private FrameController frameController;
@@ -56,5 +62,13 @@ public class TrainingPlanController {
 		trainingPlanService.parseTree(frame);
 
 		return new BaseRsp<>(frame);
+	}
+
+	@GetMapping("/test")
+	@ApiOperation("测试接口")
+	public BaseRsp getRtksstatistic() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		List<RtksRadarBo> liuleng = rtksStatisticService.calculateRadar("e42615d51086cf7e1abbbaee82a593f9", userId);
+		return new BaseRsp();
 	}
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.rtks.service.bo;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,9 +18,15 @@ public class ValueDataBo implements Serializable {
     private String content;
 
     @ApiModelProperty("进度或者得分")
-    private Double process;
+    private Double process = new Double(0);
 
     @ApiModelProperty("权重")
-    private Double weight;
+    private Double weight = new Double(0);
+
+    @JsonIgnore
+    private Double lessonCount = new Double(0);
+
+    @JsonIgnore
+    private Double completeCount = new Double(0);
 
 }

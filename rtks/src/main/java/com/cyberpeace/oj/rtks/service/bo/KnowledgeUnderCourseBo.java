@@ -7,11 +7,11 @@ import java.io.Serializable;
 @Data
 public class KnowledgeUnderCourseBo implements Serializable {
 
-    private String courseId;
+    private String relatedId;
 
-    private String courseName;
+    private String resourceId;
 
-    private String eBook;
+    private String type;
 
     private Integer weight;
 

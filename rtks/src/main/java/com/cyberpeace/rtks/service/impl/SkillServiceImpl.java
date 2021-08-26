@@ -2,9 +2,6 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.controller.course.CourseConfig;
-import com.cyberpeace.rtks.controller.res.SkillRes;
-import com.cyberpeace.rtks.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,11 +13,14 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
+import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
+import com.cyberpeace.rtks.service.*;
 import com.google.common.collect.Lists;
 
 /**
@@ -51,32 +51,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
 
 		List<SkillRes> skillResList = result.getRecords();
-		List<Skill> skillList = Lists.newArrayList();
-
-		for (SkillRes skillRes : skillResList) {
-			String courses = skillRes.getCourses();
-
-			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
-			if (relatedCourseDao.setCourseResult(courses, relatedCourseList)) {
-				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-				skillRes.setCourseList(relatedCourseList);
-
-				Skill skill = new Skill();
-				BeanUtils.copyProperties(skillRes, skill);
-
-				// 修改关联表
-				courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
-						skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
-				skill.setCourses(courses);
-
-				skillList.add(skill);
-			} else {
-				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-				skillRes.setCourseList(relatedCourseList);
-			}
-
-		}
-		updateBatchById(skillList);
+		checkSkillRes(skillResList);
 
 		return PageUtil.getListResult(result);
 	}
@@ -119,6 +94,36 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	@Override
 	public List<String> filterIds(List<String> ids) {
 		return skillMapper.filterIds(ids);
+	}
+
+	@Override
+	public void checkSkillRes(List<SkillRes> skillResList) {
+		List<Skill> skillList = Lists.newArrayList();
+
+		for (SkillRes skillRes : skillResList) {
+			String courses = skillRes.getCourses();
+
+			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
+			if (relatedCourseDao.setCourseResult(courses, relatedCourseList)) {
+				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+				skillRes.setCourseList(relatedCourseList);
+
+				Skill skill = new Skill();
+				BeanUtils.copyProperties(skillRes, skill);
+
+				// 修改关联表
+				courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+						skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
+				skill.setCourses(courses);
+
+				skillList.add(skill);
+			} else {
+				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+				skillRes.setCourseList(relatedCourseList);
+			}
+
+		}
+		updateBatchById(skillList);
 	}
 
 	@Override

@@ -31,4 +31,6 @@ public interface SkillService extends IService<Skill> {
 	List<CourseConfig> getCourseConfigs(Skill skill);
 
 	List<String> filterIds(List<String> ids);
+
+	void checkSkillRes(List<SkillRes> skillResList);
 }

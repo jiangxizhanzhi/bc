@@ -3,8 +3,6 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
+import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
@@ -74,4 +74,14 @@ public class TrainingPlanController {
 				.calculateRadar("e42615d51086cf7e1abbbaee82a593f9", userId);
 		return new BaseRsp();
 	}
+
+	@ApiOperation("人才能力图谱")
+	@GetMapping("/roleMap")
+	public BaseRsp<RoleDetailRes> getRoleOutputByRoleId(
+			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
+		RoleDetailRes roleOutput = trainingPlanService.getRoleOutputByRoleId(resource_id);
+
+		return new BaseRsp<RoleDetailRes>(roleOutput);
+	}
+
 }

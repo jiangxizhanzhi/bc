@@ -39,7 +39,16 @@ public interface KnowledgeService extends IService<Knowledge> {
 	 */
 	List<RelatedCourse> getCourseListByKnowledgeId(String id);
 
+	/**校验是否存在类别
+	 * @param knowledge
+	 */
 	void validate(Knowledge knowledge);
 
 	Map<String, List<CourseRelatedRes>> getKnowledgeByCourseId(List<String> ids);
+
+	/**遍历知识点，获取知识点的相关内容，修改已删除的关联课程
+	 * @param knowledgeResList
+	 */
+	void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList);
+
 }

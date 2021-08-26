@@ -1,14 +1,11 @@
 package com.cyberpeace.rtks.controller;
 
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.UserInfoContext;
-import com.cyberpeace.oj.course.service.CourseStatisticsService;
-import com.cyberpeace.oj.rtks.service.bo.KnowledgeStudyPercentBo;
-import com.cyberpeace.oj.rtks.service.bo.RoleMatchBo;
-import com.cyberpeace.oj.rtks.service.bo.RoleStudyBo;
-import com.cyberpeace.oj.rtks.service.bo.RtksRadarBo;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
+
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
+import com.cyberpeace.rtks.service.bo.RoleStudyBo;
+import com.cyberpeace.rtks.service.bo.RtksRadarBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 
 import io.swagger.annotations.Api;
-
-import java.util.List;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RequiresAuthentication
 @RestController

@@ -24,10 +24,15 @@ public interface LevelService extends BaseService<Level> {
 	/**
 	 * 给定层级(含框架)获取其顶级的框架对象
 	 */
-	Level getFrame(Level level, int maxLoop);
+	Level getFrame(Level level);
 
 	/**
 	 * 给定id获取框架或层级
 	 * */
 	Level getLevelOrFrame(String resourceId);
+
+	/**
+	 * 给定层级id 返回其完整路径
+	 * */
+	String getFullPathById(String levelId);
 }

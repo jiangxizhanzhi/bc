@@ -1,6 +1,8 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +58,22 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
-	public Level getFrame(Level level, int maxLoop) {
+	public Level getFrame(Level level) {
+		return findFrame(level, level1 -> {});
+	}
+
+	private Level findFrame(Level level, Consumer<Level> collector) {
+		// 最多层级数(不包括顶层框架)
+		int maxLoop = 9;
+		return findFrame(level, maxLoop, collector);
+	}
+
+	private Level findFrame(Level level, int maxLoop, Consumer<Level> collector) {
 		if (maxLoop <= 0) {
 			throw new InvalidParamException("层级层数超限");
 		}
+
+		collector.accept(level);
 
 		String parentId = level.getParent();
 		// 当parent为空时，停止迭代，已经找到框架对象了
@@ -68,7 +82,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 			return level;
 		}
 		Level parentLevel = getLevelOrFrame(parentId);
-		return getFrame(parentLevel, maxLoop - 1);
+		return findFrame(parentLevel, maxLoop - 1, collector);
 	}
 
 	@Override
@@ -78,6 +92,16 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 			throw new ResourceNotFoundException("框架/层级" + resourceId + "不存在");
 		}
 		return level;
+	}
+
+	@Override
+	public String getFullPathById(String levelId) {
+		Level level = getOr404(levelId);
+		List<String> levelNames = new ArrayList<>();
+		findFrame(level, level1 -> {
+			levelNames.add(0, level1.getName());
+		});
+		return StringUtils.join(levelNames, "/");
 	}
 
 	/**

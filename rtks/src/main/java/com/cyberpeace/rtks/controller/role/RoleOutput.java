@@ -19,6 +19,8 @@ public class RoleOutput {
 	@ApiModelProperty(value = "岗位所属层级id")
 	private String levelId;
 
+	private String levelName;
+
 	@ApiModelProperty(value = "技能体系")
 	private int category;
 
@@ -37,5 +39,9 @@ public class RoleOutput {
 	private List<String> abilityIds;
 
 	private Integer abilityCount;
+
+	private Integer knowledgeCourseCount;
+
+	private Integer skillCourseCount;
 
 }

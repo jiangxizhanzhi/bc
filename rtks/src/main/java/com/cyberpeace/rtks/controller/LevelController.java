@@ -1,10 +1,5 @@
 package com.cyberpeace.rtks.controller;
 
-import com.cyberpeace.rtks.controller.frame.LevelAddInput;
-import com.cyberpeace.rtks.controller.frame.LevelInput;
-import com.cyberpeace.rtks.controller.frame.LevelModifyInput;
-import com.cyberpeace.rtks.controller.frame.LevelOutput;
-import com.cyberpeace.rtks.controller.req.ListReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.rtks.controller.frame.LevelAddInput;
+import com.cyberpeace.rtks.controller.frame.LevelInput;
+import com.cyberpeace.rtks.controller.frame.LevelModifyInput;
+import com.cyberpeace.rtks.controller.frame.LevelOutput;
+import com.cyberpeace.rtks.controller.req.ListReq;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RoleService;
@@ -70,8 +70,7 @@ public class LevelController extends BaseController<Level, LevelInput, LevelAddI
 		// 确保parentId对应的框架/层级存在
 		Level parentLevel = levelService.getLevelOrFrame(parentId);
 		// 迭代获取当前层级所属框架
-		int maxLoop = 10;
-		level.setFrame(levelService.getFrame(parentLevel, maxLoop - 1).getResourceId());
+		level.setFrame(levelService.getFrame(parentLevel).getResourceId());
 
 		return level;
 	}

@@ -9,11 +9,6 @@ import java.util.function.Supplier;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.rtks.controller.course.CourseConfig;
-import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
-import com.cyberpeace.rtks.controller.role.*;
-import com.cyberpeace.rtks.dao.entity.*;
-import com.cyberpeace.rtks.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +18,8 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.rtks.controller.course.CourseConfig;
+import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
 import com.cyberpeace.rtks.controller.role.*;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.service.*;
@@ -62,7 +59,7 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 	@ApiOperation("获取课程列表")
 	@GetMapping("/courses")
 	public BaseRsp<List<CourseConfig>> getSkillCourses(String resource_id,
-                                                       @ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
+			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
 		Role role = roleService.getOr404(resource_id);
 		return new BaseRsp<>(getCourseConfigs(role, field));
 	}
@@ -219,7 +216,11 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 		output.setResourceId(role.getResourceId());
 		output.setName(role.getName());
 		output.setDescription(role.getDescription());
-		output.setLevelId(role.getLevelId());
+
+		String levelId = role.getLevelId();
+		output.setLevelId(levelId);
+		output.setLevelName(levelService.getFullPathById(levelId));
+
 		output.setCategory(role.getCategory());
 
 		List<String> taskIds = stringToList(role.getTaskIds());
@@ -237,6 +238,12 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 		List<String> abilityIds = stringToList(role.getAbilityIds());
 		output.setAbilityIds(abilityIds);
 		output.setAbilityCount(abilityIds.size());
+
+		List<String> knowledgeCourses = stringToList(role.getKnowledgeCourses());
+		output.setKnowledgeCourseCount(knowledgeCourses.size());
+
+		List<String> skillCourses = stringToList(role.getSkillCourses());
+		output.setSkillCourseCount(skillCourses.size());
 
 		return output;
 	}

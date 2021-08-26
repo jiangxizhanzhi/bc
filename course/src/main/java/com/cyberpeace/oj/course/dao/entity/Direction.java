@@ -1,28 +1,28 @@
 package com.cyberpeace.oj.course.dao.entity;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.oj.common.model.BaseTable;
-import lombok.Data;
 
-import java.util.Date;
+import lombok.Data;
 
 @Data
 @TableName("course_direction")
 public class Direction {
 
-    private Integer id;
+	private Integer id;
 
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    private String name;
+	private String name;
 
-    private Integer status;
+	private Integer status;
 
-    private Integer eBook;
+	private Integer eBook;
 
-    private Date updateTime;
+	private Date updateTime;
 
 }

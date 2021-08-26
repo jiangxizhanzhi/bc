@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberpeace.oj.common.model.BaseRsp;
-import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.rtks.controller.frame.LevelAddInput;
 import com.cyberpeace.oj.rtks.controller.frame.LevelInput;
 import com.cyberpeace.oj.rtks.controller.frame.LevelModifyInput;

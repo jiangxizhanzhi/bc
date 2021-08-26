@@ -3,20 +3,17 @@ package com.cyberpeace.oj.rtks.service.impl;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.oj.rtks.service.bo.*;
-import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.oj.common.util.ConfigUtil;
-import com.cyberpeace.oj.common.util.JsonUtil;
-import com.cyberpeace.oj.common.util.MathUtils;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.oj.rtks.dao.entity.Knowledge;
@@ -26,6 +23,7 @@ import com.cyberpeace.oj.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.oj.rtks.service.KnowledgeService;
 import com.cyberpeace.oj.rtks.service.RtksStatisticService;
 import com.cyberpeace.oj.rtks.service.TreeService;
+import com.cyberpeace.oj.rtks.service.bo.*;
 import com.google.common.collect.Lists;
 
 @Service
@@ -276,7 +274,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			if (userWeight) {
 				List<ValueDataBo> courseProcess = courses.stream().map(underCourseBo -> {
 					ValueDataBo dataBo = new ValueDataBo();
-					dataBo.setProcess(new Double(boMap.get(underCourseBo.getResourceId()).getProcess()));
+					dataBo.setProcess(
+							new Double(boMap.get(underCourseBo.getResourceId()).getProcess()));
 					dataBo.setWeight(new Double(underCourseBo.getWeight()));
 					return dataBo;
 				}).collect(Collectors.toList());

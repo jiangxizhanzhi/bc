@@ -12,8 +12,8 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.oj.common.model.UserInfo;
-import com.cyberpeace.oj.common.model.UserInfoContext;
+import com.cyberpeace.common.model.UserInfo;
+import com.cyberpeace.common.model.UserInfoContext;
 import com.cyberpeace.oj.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 

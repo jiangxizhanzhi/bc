@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.oj.common.util.JsonUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.oj.rtks.dao.mapper.CourseRelatedMapper;

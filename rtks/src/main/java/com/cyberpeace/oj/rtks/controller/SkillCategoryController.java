@@ -1,23 +1,25 @@
 package com.cyberpeace.oj.rtks.controller;
 
-import com.cyberpeace.oj.common.model.BaseRsp;
-import com.cyberpeace.oj.common.model.ListRsp;
-import com.cyberpeace.oj.common.model.PageReqBase;
-import com.cyberpeace.oj.rtks.controller.req.AbilityAddReq;
-import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
-import com.cyberpeace.oj.rtks.controller.req.SkillCategoryOrSystemAddReq;
-import com.cyberpeace.oj.rtks.dao.entity.SkillCategory;
-import com.cyberpeace.oj.rtks.service.SkillCategoryService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.oj.rtks.controller.req.AbilityAddReq;
+import com.cyberpeace.oj.rtks.controller.req.DeleteReq;
+import com.cyberpeace.oj.rtks.controller.req.SkillCategoryOrSystemAddReq;
+import com.cyberpeace.oj.rtks.dao.entity.SkillCategory;
+import com.cyberpeace.oj.rtks.service.SkillCategoryService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "RTKS-技能类别管理")
 @RestController

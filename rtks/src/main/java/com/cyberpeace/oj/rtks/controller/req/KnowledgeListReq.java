@@ -1,6 +1,6 @@
 package com.cyberpeace.oj.rtks.controller.req;
 
-import com.cyberpeace.oj.common.model.PageReqBase;
+import com.cyberpeace.common.model.PageReqBase;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

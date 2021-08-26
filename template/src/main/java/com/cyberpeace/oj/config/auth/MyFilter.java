@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.impl.TraceIdContext;
 
-import com.cyberpeace.oj.common.constant.WebConstant;
+import com.cyberpeace.common.constant.WebConstant;
 
 import lombok.extern.slf4j.Slf4j;
 

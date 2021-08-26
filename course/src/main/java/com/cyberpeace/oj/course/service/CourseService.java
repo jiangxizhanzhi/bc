@@ -3,7 +3,7 @@ package com.cyberpeace.oj.course.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;

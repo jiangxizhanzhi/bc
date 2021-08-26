@@ -1,6 +1,6 @@
 package com.cyberpeace.oj.rtks.service.impl;
 
-import com.cyberpeace.oj.common.util.JsonUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.rtks.dao.entity.RelatedCourse;

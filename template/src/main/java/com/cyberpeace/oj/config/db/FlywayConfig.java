@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import com.cyberpeace.oj.common.util.SystemPropUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
 
 import lombok.extern.slf4j.Slf4j;
 

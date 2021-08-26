@@ -14,10 +14,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.common.exception.InvalidParamException;
-import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
-import com.cyberpeace.oj.common.model.BaseRsp;
-import com.cyberpeace.oj.common.util.JsonUtil;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.course.CourseLayoutInput;
 import com.cyberpeace.oj.rtks.controller.role.*;

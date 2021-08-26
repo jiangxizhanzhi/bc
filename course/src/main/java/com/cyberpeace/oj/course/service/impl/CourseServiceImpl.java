@@ -4,28 +4,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.common.exception.InvalidParamException;
-import com.cyberpeace.oj.common.model.ListRsp;
-import com.cyberpeace.oj.common.util.PageUtil;
-import com.cyberpeace.oj.course.controller.req.CourseListReq;
-import com.cyberpeace.oj.course.dao.entity.Lesson;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.Direction;
+import com.cyberpeace.oj.course.dao.entity.Lesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -63,7 +62,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		courseInfoBo.setDirectionName(direction.getName());
 
 		// 计算课时数量
-		List<Lesson> lessons = courseLessonMapper.listByCourses(Arrays.asList(course.getResourceId()));
+		List<Lesson> lessons = courseLessonMapper
+				.listByCourses(Arrays.asList(course.getResourceId()));
 		courseInfoBo.setLessonCount(lessons.size());
 
 		// 计算课程时长

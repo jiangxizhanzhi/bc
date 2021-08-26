@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.cyberpeace.oj.common.util.ConfigUtil;
-import com.cyberpeace.oj.common.util.SpringContextUtil;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.SpringContextUtil;
 
 /**
  * 自定义配置项

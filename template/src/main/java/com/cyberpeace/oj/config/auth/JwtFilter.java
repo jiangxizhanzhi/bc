@@ -1,6 +1,6 @@
 package com.cyberpeace.oj.config.auth;
 
-import com.cyberpeace.oj.common.constant.WebConstant;
+import com.cyberpeace.common.constant.WebConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;

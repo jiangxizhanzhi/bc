@@ -22,16 +22,16 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.util.NestedServletException;
 
-import com.cyberpeace.oj.common.constant.ErrorCode;
-import com.cyberpeace.oj.common.constant.WebConstant;
-import com.cyberpeace.oj.common.exception.InvalidParamException;
-import com.cyberpeace.oj.common.exception.RemoteServiceException;
-import com.cyberpeace.oj.common.exception.ResourceNotFoundException;
-import com.cyberpeace.oj.common.model.BaseRsp;
-import com.cyberpeace.oj.common.model.UserInfoContext;
-import com.cyberpeace.oj.common.util.ConfigUtil;
-import com.cyberpeace.oj.common.util.JsonUtil;
-import com.cyberpeace.oj.common.util.LocalStringUtil;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.UserInfoContext;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;

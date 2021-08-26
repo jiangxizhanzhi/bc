@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
+            <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>provided</scope>

@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.rtks.service;
 
-import com.cyberpeace.oj.rtks.dao.entity.Role;
+import java.util.List;
+
 import com.cyberpeace.oj.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.oj.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.oj.rtks.service.bo.RtksRadarBo;
-import java.util.List;
 
 /**
  * rtks数据统计功能

@@ -3,7 +3,7 @@ package com.cyberpeace.oj.rtks.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.common.model.ListRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.rtks.controller.course.CourseConfig;
 import com.cyberpeace.oj.rtks.controller.req.SkillListReq;
 import com.cyberpeace.oj.rtks.controller.res.SkillRes;

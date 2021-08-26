@@ -8,7 +8,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>com.cyberpeace.oj</groupId>
+    <groupId>com.cyberpeace</groupId>
     <artifactId>integration</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -20,7 +20,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
+            <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
             <version>${common.version}</version>
             <scope>provided</scope>

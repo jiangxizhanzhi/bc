@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberpeace.oj.common.model.BaseRsp;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.rtks.controller.frame.*;
 import com.cyberpeace.oj.rtks.dao.entity.Level;
 import com.cyberpeace.oj.rtks.service.FrameService;

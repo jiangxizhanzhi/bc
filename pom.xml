@@ -36,6 +36,7 @@
         <module>template</module>
         <module>gateway</module>
         <module>course</module>
+        <module>cr</module>
     </modules>
 
     <dependencyManagement>

@@ -28,5 +28,5 @@ public class KnowledgeStudyPercentBo implements Serializable {
 	/**
 	 * 知识点完成度
 	 */
-	private String percent;
+	private Integer percent;
 }

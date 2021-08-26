@@ -78,14 +78,4 @@ public class CourseController {
 		return rsp;
 	}
 
-	@GetMapping("/test")
-	@ApiOperation("测试调用service代码")
-	public BaseRsp test() {
-		List<String> ids = Lists.newArrayList();
-		String userId = UserInfoContext.getUserContext().getUserId();
-		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(ids, userId);
-		BaseRsp rsp = new BaseRsp(processBos);
-		return rsp;
-	}
-
 }

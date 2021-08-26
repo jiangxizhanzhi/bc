@@ -66,5 +66,6 @@ public class Course extends BaseTable {
 
 	private Integer score;
 
+	@TableField(exist = false)
 	private String courseNum;
 }

@@ -7,14 +7,15 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 /**
- * json序列化和反序列化工具类
+ * 对象拷贝工具类
+ * @author yinqingrong
  */
 public class BeanUtils {
 
 	private BeanUtils() {}
 
 	/**
-	 * 浅kaobei
+	 * 浅拷贝
 	 * @param source
 	 * @param target
 	 * @param <S>

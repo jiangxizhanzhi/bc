@@ -1,5 +1,9 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +29,35 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Override
 	public Level getOr404(String frameId) {
-		Level level = getById(frameId);
-		if (level == null) {
+		Level frame = getById(frameId);
+		if (frame == null) {
 			throw new ResourceNotFoundException("找不到" + frameId + "对应的框架");
 		}
 
-		if (level.getParent() != null) {
-			// level有父级，不是Frame
-			throw new InvalidParamException(frameId + "不是框架id");
-		}
+		ensureIsFrame(frame);
 
-		return level;
+		return frame;
 	}
 
+	/**
+	 * 给定level对象，确保其为框架，否则报错
+	 * */
+	private void ensureIsFrame(Level level) {
+		if (StringUtils.isNotBlank(level.getParent())) {
+			throw new InvalidParamException(level.getResourceId() + "不是框架而是层级");
+		}
+	}
+
+	@Override
+	public List<String> checkFrameIds(List<String> ids) {
+		List<Level> frames = levelMapper.selectBatchIds(ids);
+
+		List<String> ret = new ArrayList<>();
+		for (Level frame : frames) {
+			ensureIsFrame(frame);
+			ret.add(frame.getResourceId());
+		}
+
+		return ret;
+	}
 }

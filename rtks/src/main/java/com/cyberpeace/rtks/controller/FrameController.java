@@ -68,6 +68,18 @@ public class FrameController extends BaseController<Level, FrameInput, FrameAddI
 		return getOutputFromEntity(frame);
 	}
 
+	@Override
+	protected void performBatchDelete(List<String> frameIds) {
+		// 检查输入
+		frameIds = frameService.checkFrameIds(frameIds);
+
+		// 删除框架下所有层级及岗位
+		levelService.batchDeleteLevelsByFrameIds(frameIds);
+
+		// 删除框架
+		frameService.removeByIds(frameIds);
+	}
+
 	@ApiOperation("指定框架层级数据的全量树形展示")
 	@GetMapping("/tree")
 	public BaseRsp<LevelTreeOutput> getTree(String resource_id) {

@@ -18,5 +18,7 @@ public interface LevelMapper extends BaseMapper<Level> {
 
 	List<Level> getChildLevels(String levelId);
 
-    List<Level> getLevelsByFrameId(String frameId);
+	List<Level> getLevelsByFrameId(String frameId);
+
+	List<String> getLevelIdsByFrameIds(List<String> frameIds);
 }

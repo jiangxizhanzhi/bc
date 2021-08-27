@@ -1,14 +1,15 @@
 package com.cyberpeace.rtks.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.rtks.dao.entity.Role;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.rtks.dao.entity.Role;
 
 @Mapper
 @Repository
@@ -22,4 +23,6 @@ public interface RoleMapper extends BaseMapper<Role> {
 	List<Role> getRolesUnderLevel(String levelId);
 
 	List<Role> selectRoleByFrameId(@Param("frameId") String frameId);
+
+	List<String> getRolesIdsUnderLevels(List<String> levelIds);
 }

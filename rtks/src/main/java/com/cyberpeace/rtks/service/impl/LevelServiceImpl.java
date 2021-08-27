@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.mapper.LevelMapper;
+import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.LevelService;
 
 @Service
@@ -22,6 +24,9 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Autowired
 	LevelMapper levelMapper;
+
+	@Autowired
+	RoleMapper roleMapper;
 
 	@Override
 	public Level getOr404(String resourceId) {
@@ -98,10 +103,29 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	public String getFullPathById(String levelId) {
 		Level level = getOr404(levelId);
 		List<String> levelNames = new ArrayList<>();
-		findFrame(level, level1 -> {
-			levelNames.add(0, level1.getName());
-		});
+		findFrame(level, level1 -> levelNames.add(0, level1.getName()));
 		return StringUtils.join(levelNames, "/");
+	}
+
+	@Override
+	public void batchDeleteLevelsByFrameIds(List<String> frameIds) {
+		// 获取框架对应层级
+		if (CollectionUtils.isEmpty(frameIds)) {
+			return;
+		}
+		List<String> levelIds = levelMapper.getLevelIdsByFrameIds(frameIds);
+
+		// 获取层级对应岗位
+		if (CollectionUtils.isEmpty(levelIds)) {
+			return;
+		}
+		List<String> roleIds = roleMapper.getRolesIdsUnderLevels(levelIds);
+
+		// 删除层级对应岗位
+		roleMapper.deleteBatchIds(roleIds);
+
+		// 删除层级
+		removeByIds(levelIds);
 	}
 
 	/**

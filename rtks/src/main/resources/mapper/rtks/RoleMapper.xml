@@ -22,4 +22,14 @@
             SELECT resource_id FROM `ojj`.`rtks_level` where frame = #{frameId,jdbcType=INTEGER}
         )
     </select>
+
+    <select id="getRolesIdsUnderLevels" resultType="java.lang.String">
+        select resource_id from rtks_role
+        <where>
+            level_id in
+            <foreach collection="levelIds" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
 </mapper>

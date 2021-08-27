@@ -35,4 +35,9 @@ public interface LevelService extends BaseService<Level> {
 	 * 给定层级id 返回其完整路径
 	 * */
 	String getFullPathById(String levelId);
+
+	/**
+	 * 给定框架id数组，删除对应的所有层级及其绑定的岗位
+	 * */
+	void batchDeleteLevelsByFrameIds(List<String> frameIds);
 }

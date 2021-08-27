@@ -3,7 +3,6 @@ package com.cyberpeace.rtks.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cyberpeace.rtks.controller.req.ListReq;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +11,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
+import com.cyberpeace.rtks.controller.req.ListReq;
 import com.cyberpeace.rtks.dao.entity.BaseEntity;
 import com.cyberpeace.rtks.service.BaseService;
 
@@ -64,8 +64,12 @@ public abstract class BaseController<Entity extends BaseEntity, Input, AddInput 
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		getService().removeByIds(deleteReq.getIds());
+		performBatchDelete(deleteReq.getIds());
 		return new BaseRsp<>();
+	}
+
+	protected void performBatchDelete(List<String> ids) {
+		getService().removeByIds(ids);
 	}
 
 	@ApiOperation("列表查询")

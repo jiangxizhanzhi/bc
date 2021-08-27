@@ -107,7 +107,11 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 		}
 
 		// 校验通过后保存
-		setCourse(role, field, newIds);
+		Role roleToSave = new Role();
+		roleToSave.setResourceId(role.getResourceId());
+		setCourse(roleToSave, field, newIds);
+		roleService.updateById(roleToSave);
+
 		return new BaseRsp<>(getCourseConfigOutputListFromCourseIds(newIds));
 	}
 
@@ -208,6 +212,7 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 
 		return role;
 	}
+	// todo 根据frameId过滤
 
 	@Override
 	public RoleDetailOutput getOutputFromEntity(Role role) {

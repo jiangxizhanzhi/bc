@@ -25,5 +25,5 @@ public class CourseLayoutInput {
 	String field;
 
 	@NotNull
-	List<CourseConfig> courseConfigList;
+	List<String> courseIds;
 }

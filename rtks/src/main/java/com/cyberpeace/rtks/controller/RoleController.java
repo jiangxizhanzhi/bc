@@ -19,7 +19,10 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
+import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
 import com.cyberpeace.rtks.controller.role.*;
 import com.cyberpeace.rtks.dao.entity.*;
@@ -55,6 +58,9 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 	@Autowired
 	private SkillSystemService skillSystemService;
 
+	@Autowired
+	private CourseService courseService;
+
 	@Override
 	RoleService getService() {
 		return roleService;
@@ -62,44 +68,47 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 
 	@ApiOperation("获取课程列表")
 	@GetMapping("/courses")
-	public BaseRsp<List<CourseConfig>> getSkillCourses(String resource_id,
+	public BaseRsp<List<CourseConfigOutput>> getSkillCourses(String resource_id,
 			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
 		Role role = roleService.getOr404(resource_id);
-		return new BaseRsp<>(getCourseConfigs(role, field));
+		List<String> courseIds = getCourseIdsFromDb(role, field);
+
+		return new BaseRsp<>(getCourseConfigOutputListFromCourseIds(courseIds));
 	}
 
 	@ApiOperation("编排课程列表")
 	@PostMapping("/courses")
-	public BaseRsp<List<CourseConfig>>
+	public BaseRsp<List<CourseConfigOutput>>
 			setSkillCourses(@RequestBody @Validated CourseLayoutInput courseLayoutInput) {
 		Role role = roleService.getOr404(courseLayoutInput.getResourceId());
 		String field = courseLayoutInput.getField();
 
 		// 数据库中既有的课程编排
-		List<CourseConfig> originConfigs = getCourseConfigs(role, field);
-		List<String> originCourseIds = getCourseIds(originConfigs);
-		int originCourseCount = originCourseIds.size();
+		List<String> oldIds = getCourseIdsFromDb(role, field);
+		Collections.sort(oldIds);
+		int oldCount = oldIds.size();
 
 		// 输入的课程编排
-		List<CourseConfig> inputConfigs = courseLayoutInput.getCourseConfigList();
-		List<String> inputCourseIds = getCourseIds(inputConfigs);
-		int inputCourseCount = inputCourseIds.size();
+		List<String> newIds = courseLayoutInput.getCourseIds();
+		int newCount = newIds.size();
 
 		// 课程数量需要保持一致
-		if (originCourseCount != inputCourseCount) {
+		if (oldCount != newCount) {
 			throw new InvalidParamException("输入课程数量不正确");
 		}
 
+		List<String> newIdsSorted = new ArrayList<>(newIds);
+		Collections.sort(newIdsSorted);
 		// 课程id排序后应当一致
-		for (int i = 0; i < originCourseCount; i++) {
-			if (!originCourseIds.get(i).equals(inputCourseIds.get(i))) {
+		for (int i = 0; i < oldCount; i++) {
+			if (!oldIds.get(i).equals(newIdsSorted.get(i))) {
 				throw new InvalidParamException("输入的课程id不正确");
 			}
 		}
 
 		// 校验通过后保存
-		setCourse(role, field, inputConfigs);
-		return new BaseRsp<>(inputConfigs);
+		setCourse(role, field, newIds);
+		return new BaseRsp<>(getCourseConfigOutputListFromCourseIds(newIds));
 	}
 
 	private String getCourseText(Role role, String field) {
@@ -112,8 +121,8 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 		}
 	}
 
-	private void setCourse(Role role, String field, List<CourseConfig> courseConfigs) {
-		String toSave = JsonUtil.toJsonString(courseConfigs);
+	private void setCourse(Role role, String field, List<String> courseIds) {
+		String toSave = JsonUtil.toJsonString(courseIds);
 		if ("skill".equals(field)) {
 			role.setSkillCourses(toSave);
 		} else if ("knowledge".equals(field)) {
@@ -123,20 +132,28 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 		}
 	}
 
-	private List<String> getCourseIds(List<CourseConfig> courseConfigs) {
-		List<String> courseIds = new ArrayList<>();
-		for (CourseConfig courseConfig : courseConfigs) {
-			courseIds.add(courseConfig.getCourseId());
-		}
-		Collections.sort(courseIds);
-		return courseIds;
-	}
-
-	private List<CourseConfig> getCourseConfigs(Role role, String field) {
-
+	private List<String> getCourseIdsFromDb(Role role, String field) {
 		String courseText = getCourseText(role, field);
 
-		return JsonUtil.toJsonObjectArray(courseText, CourseConfig.class);
+		return JsonUtil.toJsonObjectArray(courseText, String.class);
+	}
+
+	private List<CourseConfigOutput>
+			getCourseConfigOutputListFromCourseIds(List<String> courseIds) {
+		List<CourseConfigOutput> courseConfigOutputList = new ArrayList<>();
+		for (String courseId : courseIds) {
+			CourseConfigOutput courseConfigOutput = new CourseConfigOutput();
+			courseConfigOutput.setResourceId(courseId);
+
+			String name = "课程未找到";
+			Course course = courseService.getById(courseId);
+			if (course != null) {
+				name = course.getName();
+			}
+			courseConfigOutput.setName(name);
+			courseConfigOutputList.add(courseConfigOutput);
+		}
+		return courseConfigOutputList;
 	}
 
 	@Override
@@ -331,21 +348,19 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 
 		// 遍历关联记录，验证其是否存在，同时获取关联课程列表
 		List<String> courseIds = new ArrayList<>();
-		List<CourseConfig> courseConfigs = new ArrayList<>();
 		for (String inputId : inputIds) {
 			T t = getById.apply(inputId);
 			if (t == null) {
 				throw new ResourceNotFoundException(name + inputId + "不存在");
 			}
 			for (CourseConfig courseConfig : getCourseConfigs.apply(t)) {
-				String courseId = courseConfig.getCourseId();
+				String courseId = courseConfig.getResourceId();
 				if (!courseIds.contains(courseId)) {
 					courseIds.add(courseId);
-					courseConfigs.add(courseConfig);
 				}
 			}
 		}
-		String coursesStr = JsonUtil.toJsonString(courseConfigs);
+		String coursesStr = JsonUtil.toJsonString(courseIds);
 		setCourses.accept(coursesStr);
 	}
 

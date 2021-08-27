@@ -8,5 +8,5 @@ import lombok.Data;
 public class CourseConfig {
 
 	@NotBlank
-	String courseId;
+	String resourceId;
 }

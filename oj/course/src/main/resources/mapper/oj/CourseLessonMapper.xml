@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper">
 
-    <select id="listByCourses" resultType="com.cyberpeace.oj.course.dao.entity.Lesson">
+    <select id="listByCourses" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
         select * from course_lesson
         <where>
             and course in

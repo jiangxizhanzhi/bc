@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @TableName("course_lesson")
-public class Lesson extends BaseTable {
+public class CourseLesson extends BaseTable {
 
 	/** 理论课*/
 	public static final int TYPE_THEORY = 0;

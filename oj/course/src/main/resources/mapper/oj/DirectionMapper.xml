@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.DirectionMapper">
 
-    <select id="selectByResource" resultType="com.cyberpeace.oj.course.dao.entity.Direction">
+    <select id="selectByResource" resultType="com.cyberpeace.oj.course.dao.entity.CourseDirection">
         select * from course_direction where resource_id = #{direction}
     </select>
 

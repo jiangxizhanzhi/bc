@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotEmpty;
 
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.Lesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -50,10 +50,10 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		}
 
 		// 课程数量 以课程编号进行分组
-		List<Lesson> lessons = courseLessonMapper.listByCourses(ids);
-		Map<String, List<Lesson>> courseMap = lessons.stream()
-				.collect(Collectors.groupingBy(Lesson::getCourse));
-		List<String> lessonIds = lessons.stream().map(Lesson::getResourceId)
+		List<CourseLesson> courseLessons = courseLessonMapper.listByCourses(ids);
+		Map<String, List<CourseLesson>> courseMap = courseLessons.stream()
+				.collect(Collectors.groupingBy(CourseLesson::getCourse));
+		List<String> lessonIds = courseLessons.stream().map(CourseLesson::getResourceId)
 				.collect(Collectors.toList());
 
 		// 学习记录
@@ -71,12 +71,12 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
 			// 计算已学习课时
 			List<LessonRecord> studyRecord = Lists.newArrayList();
-			List<Lesson> lessonList = courseMap.get(course.getResourceId());
+			List<CourseLesson> lessonList = courseMap.get(course.getResourceId());
 			if (lessonList == null) {
 				lessonList = Lists.newArrayList();
 			}
 			studyProcessBo.setLessonCount(lessonList.size());
-			List<Lesson> study = lessonList.stream().filter(lesson -> {
+			List<CourseLesson> study = lessonList.stream().filter(lesson -> {
 				if (recordMap.get(lesson.getResourceId()) != null) {
 					return studyRecord.add(recordMap.get(lesson.getResourceId()));
 				}
@@ -85,10 +85,10 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			studyProcessBo.setCompleteCount(studyRecord.size());
 
 			// 计算课时类型数量
-			Map<Integer, List<Lesson>> lessonMap = lessonList.stream()
-					.collect(Collectors.groupingBy(Lesson::getType));
+			Map<Integer, List<CourseLesson>> lessonMap = lessonList.stream()
+					.collect(Collectors.groupingBy(CourseLesson::getType));
 			lessonMap.forEach((key, value) -> {
-				if (key.intValue() == Lesson.TYPE_THEORY) {
+				if (key.intValue() == CourseLesson.TYPE_THEORY) {
 					studyProcessBo.setTheoryCount(value.size());
 				} else {
 					studyProcessBo.setExerciseCount(value.size());
@@ -96,10 +96,10 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			});
 
 			// 课时分类
-			Map<Integer, List<Lesson>> studyLessonMap = study.stream()
-					.collect(Collectors.groupingBy(Lesson::getType));
+			Map<Integer, List<CourseLesson>> studyLessonMap = study.stream()
+					.collect(Collectors.groupingBy(CourseLesson::getType));
 			studyLessonMap.forEach((key, value) -> {
-				if (key.intValue() == Lesson.TYPE_THEORY) {
+				if (key.intValue() == CourseLesson.TYPE_THEORY) {
 					studyProcessBo.setCompleteTheory(value.size());
 				} else {
 					studyProcessBo.setCompleteExercise(value.size());
@@ -114,7 +114,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			}
 
 			// 计算课程学习时长
-			int studyDuration = study.stream().mapToInt(Lesson::getDuration).sum();
+			int studyDuration = study.stream().mapToInt(CourseLesson::getDuration).sum();
 			studyProcessBo.setCompleteDuration(studyDuration);
 
 			// 计算进度

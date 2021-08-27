@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.oj.course.dao.entity.CourseDirection;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,17 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.res.DirectionOutPut;
 import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.Direction;
 import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
-import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -67,11 +64,11 @@ public class CourseController {
 
 	@GetMapping("/direction")
 	@ApiOperation("课程分类")
-	public BaseRsp<List<Direction>> listDirection() {
-		List<Direction> directions = directionMapper.selectList(null);
-		List<DirectionOutPut> outPuts = directions.stream().map(direction -> {
+	public BaseRsp<List<CourseDirection>> listDirection() {
+		List<CourseDirection> courseDirections = directionMapper.selectList(null);
+		List<DirectionOutPut> outPuts = courseDirections.stream().map(courseDirection -> {
 			DirectionOutPut outPut = new DirectionOutPut();
-			BeanUtils.copyProperties(direction, outPut);
+			BeanUtils.copyProperties(courseDirection, outPut);
 			return outPut;
 		}).collect(Collectors.toList());
 		BaseRsp rsp = new BaseRsp(outPuts);

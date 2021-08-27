@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @TableName("course_direction")
-public class Direction {
+public class CourseDirection {
 
 	private Integer id;
 

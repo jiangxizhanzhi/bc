@@ -16,8 +16,8 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.Direction;
-import com.cyberpeace.oj.course.dao.entity.Lesson;
+import com.cyberpeace.oj.course.dao.entity.CourseDirection;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
@@ -56,18 +56,18 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseInfoBo courseToBo(Course course) {
 
 		// 转换类别
-		Direction direction = directionMapper.selectByResource(course.getDirection());
+		CourseDirection courseDirection = directionMapper.selectByResource(course.getDirection());
 		CourseInfoBo courseInfoBo = new CourseInfoBo();
 		BeanUtils.copyProperties(course, courseInfoBo);
-		courseInfoBo.setDirectionName(direction.getName());
+		courseInfoBo.setDirectionName(courseDirection.getName());
 
 		// 计算课时数量
-		List<Lesson> lessons = courseLessonMapper
+		List<CourseLesson> courseLessons = courseLessonMapper
 				.listByCourses(Arrays.asList(course.getResourceId()));
-		courseInfoBo.setLessonCount(lessons.size());
+		courseInfoBo.setLessonCount(courseLessons.size());
 
 		// 计算课程时长
-		int sum = lessons.stream().mapToInt(Lesson::getDuration).sum();
+		int sum = courseLessons.stream().mapToInt(CourseLesson::getDuration).sum();
 		courseInfoBo.setCourseDuration(sum);
 
 		return courseInfoBo;

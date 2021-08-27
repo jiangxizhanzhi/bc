@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.rtks.dao.entity.Ability;
-import com.cyberpeace.rtks.dao.entity.Knowledge;
-import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.Task;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -13,6 +11,12 @@ import lombok.Data;
 
 @Data
 public class RoleDetailRes implements Serializable {
+
+	public final static String RELATED_COURSE_COURSE = "course";
+
+	public final static String RELATED_COURSE_STUDY = "study";
+
+	public final static String RELATED_COURSE_ALL = "all";
 
 	private String resourceId;
 
@@ -45,10 +49,6 @@ public class RoleDetailRes implements Serializable {
 	private Integer abilityCount;
 
 	private List<Task> taskDataList;
-
-	private List<Knowledge> knowledgeDataList;
-
-	private List<Skill> skillDataList;
 
 	private List<Ability> abilityDataList;
 

@@ -48,7 +48,8 @@ public interface KnowledgeService extends IService<Knowledge> {
 
 	/**遍历知识点，获取知识点的相关内容，修改已删除的关联课程
 	 * @param knowledgeResList
+	 * @param type
 	 */
-	void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList);
+	void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList, String type);
 
 }

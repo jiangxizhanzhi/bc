@@ -13,8 +13,10 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
+import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.RelatedCourse;
@@ -51,7 +53,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
 
 		List<SkillRes> skillResList = result.getRecords();
-		checkSkillRes(skillResList);
+		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_COURSE);
 
 		return PageUtil.getListResult(result);
 	}
@@ -60,8 +62,10 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	public SkillRes getSkillByResourceId(String id) {
 		SkillRes skillRes = skillMapper.getSkillByResourceId(id);
 		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
+		List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-		if (relatedCourseDao.setCourseResult(skillRes.getCourses(), relatedCourseList)) {
+		if (relatedCourseDao.setCourseResult(skillRes.getCourses(), relatedCourseList, processBos,
+				RoleDetailRes.RELATED_COURSE_COURSE)) {
 			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
 
@@ -97,29 +101,31 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public void checkSkillRes(List<SkillRes> skillResList) {
+	public void checkSkillRes(List<SkillRes> skillResList, String related_course_type) {
 		List<Skill> skillList = Lists.newArrayList();
 
 		for (SkillRes skillRes : skillResList) {
 			String courses = skillRes.getCourses();
 
 			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
-			if (relatedCourseDao.setCourseResult(courses, relatedCourseList)) {
-				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-				skillRes.setCourseList(relatedCourseList);
+			List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-				Skill skill = new Skill();
-				BeanUtils.copyProperties(skillRes, skill);
+			boolean isDeleted = relatedCourseDao.setCourseResult(courses, relatedCourseList,
+					processBos, related_course_type);
+			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			skillRes.setCourseList(relatedCourseList);
+			skillRes.setCourseStudyProcessBoList(processBos);
+
+			if (isDeleted) {
 
 				// 修改关联表
+				Skill skill = new Skill();
+				BeanUtils.copyProperties(skillRes, skill);
 				courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
 						skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
 				skill.setCourses(courses);
 
 				skillList.add(skill);
-			} else {
-				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-				skillRes.setCourseList(relatedCourseList);
 			}
 
 		}

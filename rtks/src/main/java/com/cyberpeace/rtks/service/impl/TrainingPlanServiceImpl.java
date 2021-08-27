@@ -79,7 +79,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	}
 
 	@Override
-	public RoleDetailRes getRoleOutputByRoleId(String resource_id) {
+	public RoleDetailRes getRoleOutputByRoleId(String resource_id, String type) {
 		Role role = roleMapper.selectById(resource_id);
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.copy(roleDetailOutput, RoleDetailRes.class);
@@ -89,14 +89,14 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,
 				KnowledgeRes.class);
 
-		knowledgeService.checkKonwledgeRes(knowledgeResList);
+		knowledgeService.checkKonwledgeRes(knowledgeResList, type);
 		roleDetailRes.setKnowledgeResDataList(knowledgeResList);
 
 		// 获取技能的课程列表
 		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
 		List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList, SkillRes.class);
 
-		skillService.checkSkillRes(skillResList);
+		skillService.checkSkillRes(skillResList, type);
 		roleDetailRes.setSkillResDataList(skillResList);
 
 		return roleDetailRes;

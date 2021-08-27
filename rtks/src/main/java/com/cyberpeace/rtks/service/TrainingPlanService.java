@@ -13,5 +13,5 @@ public interface TrainingPlanService {
 
 	Map<String, List<SkillRes>> getSkillTree();
 
-	RoleDetailRes getRoleOutputByRoleId(String resource_id);
+	RoleDetailRes getRoleOutputByRoleId(String resource_id, String type);
 }

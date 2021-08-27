@@ -42,10 +42,10 @@ public class TrainingPlanController {
 	private FrameController frameController;
 	// @ApiOperation("框架列表查询")
 	// @GetMapping()
-	// public BaseRsp<ListRsp<FrameOutput>> getFrames(ListReq<Level> listReq) {
-	// IPage<Level> page = trainingPlanService.getFrames(listReq.toPageParam(),
-	// listReq.getKeyword());
-	// return PageUtil2.getListResult(page, FrameOutput::new);
+	// // public BaseRsp<ListRsp<FrameOutput>> getFrames(ListReq<Level> listReq) {
+	// // IPage<Level> page = trainingPlanService.getFrames(listReq.toPageParam(),
+	// // listReq.getKeyword());
+	// // return PageUtil2.getListResult(page, FrameOutput::new);
 	// }
 
 	@ApiOperation("知识技能体系")
@@ -76,11 +76,34 @@ public class TrainingPlanController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("人才能力图谱")
+	@ApiOperation("人才能力图谱（获取技能和知识点的课程内容）")
 	@GetMapping("/roleMap")
 	public BaseRsp<RoleDetailRes> getRoleOutputByRoleId(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
-		RoleDetailRes roleOutput = trainingPlanService.getRoleOutputByRoleId(resource_id);
+		RoleDetailRes roleOutput = trainingPlanService.getRoleOutputByRoleId(resource_id,
+				RoleDetailRes.RELATED_COURSE_COURSE);
+
+		return new BaseRsp<RoleDetailRes>(roleOutput);
+	}
+
+	// @ApiOperation("人才能力图谱（分页获取技能和知识点的课程）")
+	// @GetMapping("/roleMap")
+	// public BaseRsp<RoleDetailRes> page(
+	// @ApiParam(name = "resource_id", value = "岗位id", required = true) String
+	// resource_id) {
+	// RoleDetailRes roleOutput =
+	// trainingPlanService.getRoleOutputByRoleId(resource_id);
+	//
+	// return new BaseRsp<RoleDetailRes>(roleOutput);
+	// }
+
+	@ApiOperation("查询岗位所有知识点关联的课程学习情况")
+	@GetMapping("/list")
+	public BaseRsp<RoleDetailRes> getRelatedCourseList(
+			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
+		RoleDetailRes roleOutput = trainingPlanService.getRoleOutputByRoleId(resource_id,
+				RoleDetailRes.RELATED_COURSE_STUDY);
+		// String userId = UserInfoContext.getUserContext().getUserId();
 
 		return new BaseRsp<RoleDetailRes>(roleOutput);
 	}

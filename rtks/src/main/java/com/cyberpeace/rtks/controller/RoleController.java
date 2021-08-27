@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import javax.validation.constraints.NotBlank;
 
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -159,7 +160,11 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 
 		String levelId = input.getLevelId();
 		if (levelId != null) {
-			levelService.ensureLevelNoChild(levelId);
+			levelService.getOr404(levelId);
+			List<Level> childLevels = levelService.getChildLevelsByLevelId(levelId);
+			if (!CollectionUtils.isEmpty(childLevels)) {
+				throw new InvalidParamException("层级" + levelId + "有子层级，不能绑定岗位");
+			}
 		}
 
 		boolean isModify = originEntity != null;

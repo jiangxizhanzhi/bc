@@ -46,20 +46,17 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
-	public void ensureLevelNoChild(String levelId) {
-		// 先确保层级存在
-		getOr404(levelId);
-
-		// 检查子层级
-		List<Level> childLevels = levelMapper.getChildLevels(levelId);
-		if (childLevels.size() > 0) {
-			throw new InvalidParamException("层级" + levelId + "有子层级");
-		}
+	public List<Level> getChildLevelsByLevelId(String levelId) {
+		return levelMapper.getChildLevels(levelId);
 	}
 
 	@Override
 	public List<Level> getLevelsByFrameId(String frameId) {
-		return levelMapper.getLevelsByFrameId(frameId);
+		List<Level> levels = levelMapper.getLevelsByFrameId(frameId);
+		for (Level level : levels) {
+			ensureNotFrame(level);
+		}
+		return levels;
 	}
 
 	@Override
@@ -86,12 +83,12 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 			ensureIsFrame(level);
 			return level;
 		}
-		Level parentLevel = getLevelOrFrame(parentId);
+		Level parentLevel = getLevelOrFrameOr404(parentId);
 		return findFrame(parentLevel, maxLoop - 1, collector);
 	}
 
 	@Override
-	public Level getLevelOrFrame(String resourceId) {
+	public Level getLevelOrFrameOr404(String resourceId) {
 		Level level = getById(resourceId);
 		if (level == null) {
 			throw new ResourceNotFoundException("框架/层级" + resourceId + "不存在");
@@ -108,24 +105,25 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
-	public void batchDeleteLevelsByFrameIds(List<String> frameIds) {
-		// 获取框架对应层级
+	public List<String> getLevelIdsByFrameIds(List<String> frameIds) {
 		if (CollectionUtils.isEmpty(frameIds)) {
-			return;
+			return new ArrayList<>();
 		}
-		List<String> levelIds = levelMapper.getLevelIdsByFrameIds(frameIds);
+		return levelMapper.getLevelIdsByFrameIds(frameIds);
+	}
 
-		// 获取层级对应岗位
-		if (CollectionUtils.isEmpty(levelIds)) {
-			return;
+	@Override
+	public List<Level> getLevelsByIds(List<String> ids) {
+		List<Level> levels = listByIds(ids);
+		for (Level level : levels) {
+			ensureNotFrame(level);
 		}
-		List<String> roleIds = roleMapper.getRolesIdsUnderLevels(levelIds);
+		return levels;
+	}
 
-		// 删除层级对应岗位
-		roleMapper.deleteBatchIds(roleIds);
-
-		// 删除层级
-		removeByIds(levelIds);
+	@Override
+	public void changeLevelId(String levelId, String target) {
+		levelMapper.changeLevelId(levelId, target);
 	}
 
 	/**
@@ -141,8 +139,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		}
 	}
 
-	@Override
-	public void ensureNotFrame(Level level) {
+	private void ensureNotFrame(Level level) {
 		if (StringUtils.isBlank(level.getParent())) {
 			throw new InvalidParamException("脏数据:层级" + level.getResourceId() + "parent字段不应为空");
 		}

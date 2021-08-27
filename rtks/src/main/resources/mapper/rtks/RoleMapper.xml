@@ -23,7 +23,7 @@
         )
     </select>
 
-    <select id="getRolesIdsUnderLevels" resultType="java.lang.String">
+    <select id="getRoleIdsByLevelIds" resultType="java.lang.String">
         select resource_id from rtks_role
         <where>
             level_id in

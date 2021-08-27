@@ -15,6 +15,7 @@ import com.cyberpeace.rtks.controller.frame.*;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
+import com.cyberpeace.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,9 @@ public class FrameController extends BaseController<Level, FrameInput, FrameAddI
 
 	@Autowired
 	private LevelService levelService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@Override
 	FrameService getService() {
@@ -58,7 +62,7 @@ public class FrameController extends BaseController<Level, FrameInput, FrameAddI
 
 		output.setResourceId(frame.getResourceId());
 		output.setName(frame.getName());
-		output.setDescription(frame.getDescription());;
+		output.setDescription(frame.getDescription());
 
 		return output;
 	}
@@ -73,8 +77,17 @@ public class FrameController extends BaseController<Level, FrameInput, FrameAddI
 		// 检查输入
 		frameIds = frameService.checkFrameIds(frameIds);
 
-		// 删除框架下所有层级及岗位
-		levelService.batchDeleteLevelsByFrameIds(frameIds);
+		// 获取框架对应层级
+		List<String> levelIds = levelService.getLevelIdsByFrameIds(frameIds);
+
+		// 获取层级对应岗位
+		List<String> roleIds = roleService.getRoleIdsByLevelIds(levelIds);
+
+		// 删除岗位
+		roleService.removeByIds(roleIds);
+
+		// 删除层级
+		levelService.removeByIds(levelIds);
 
 		// 删除框架
 		frameService.removeByIds(frameIds);
@@ -92,7 +105,6 @@ public class FrameController extends BaseController<Level, FrameInput, FrameAddI
 		List<Level> levels = levelService.getLevelsByFrameId(resource_id);
 		for (Level level : levels) {
 			String parentId = level.getParent();
-			levelService.ensureNotFrame(level);
 
 			if (!levelTreeOutputMap.containsKey(parentId)) {
 				levelTreeOutputMap.put(parentId, new ArrayList<>());

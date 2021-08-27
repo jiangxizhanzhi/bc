@@ -24,5 +24,6 @@ public interface RoleMapper extends BaseMapper<Role> {
 
 	List<Role> selectRoleByFrameId(@Param("frameId") String frameId);
 
-	List<String> getRolesIdsUnderLevels(List<String> levelIds);
+	List<String> getRoleIdsByLevelIds(List<String> levelIds);
+
 }

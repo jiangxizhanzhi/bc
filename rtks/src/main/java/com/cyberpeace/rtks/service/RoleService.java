@@ -1,12 +1,19 @@
 package com.cyberpeace.rtks.service;
 
+import java.util.List;
+
 import com.cyberpeace.rtks.dao.entity.Role;
 
 public interface RoleService extends BaseService<Role> {
 
 	/**
-	 * 确保没有绑定在给定层级id下的岗位，否则报错
+	 * 获取层级id下的岗位列表
 	 * */
-	void ensureLevelNotChildRole(String levelId);
+	List<Role> getRolesByLevelId(String levelId);
+
+	/**
+	 * 给定一个id的数组，返回level_id在该数组中的岗位id列表
+	 * */
+	List<String> getRoleIdsByLevelIds(List<String> ids);
 
 }

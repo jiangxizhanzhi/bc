@@ -37,4 +37,14 @@
             </foreach>
         </where>
     </select>
+
+    <update id="changeLevelId">
+        update rtks_level
+        <set>
+            parent = #{target}
+        </set>
+        <where>
+            parent = #{levelId}
+        </where>
+    </update>
 </mapper>

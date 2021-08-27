@@ -7,19 +7,14 @@ import com.cyberpeace.rtks.dao.entity.Level;
 public interface LevelService extends BaseService<Level> {
 
 	/**
-	 * 检查输入的level_id是否合法(存在且没有子层级)
+	 * 给定层级id获取该层级的子层级列表
 	 */
-	void ensureLevelNoChild(String levelId);
+	List<Level> getChildLevelsByLevelId(String levelId);
 
 	/**
-	 * 指定框架id 获取所属所有层级
+	 * 指定框架id 获取所属所有层级(不包括框架本身)
 	 */
 	List<Level> getLevelsByFrameId(String frameId);
-
-	/**
-	 * 层级(非框架)的parent和frame均不为空
-	 */
-	void ensureNotFrame(Level level);
 
 	/**
 	 * 给定层级(含框架)获取其顶级的框架对象
@@ -27,9 +22,9 @@ public interface LevelService extends BaseService<Level> {
 	Level getFrame(Level level);
 
 	/**
-	 * 给定id获取框架或层级
+	 * 给定id获取框架或层级 不存在则报错
 	 * */
-	Level getLevelOrFrame(String resourceId);
+	Level getLevelOrFrameOr404(String resourceId);
 
 	/**
 	 * 给定层级id 返回其完整路径
@@ -37,7 +32,19 @@ public interface LevelService extends BaseService<Level> {
 	String getFullPathById(String levelId);
 
 	/**
-	 * 给定框架id数组，删除对应的所有层级及其绑定的岗位
+	 * 给定框架id列表 返回这些框架所属的层级(不包含框架)列表
 	 * */
-	void batchDeleteLevelsByFrameIds(List<String> frameIds);
+	List<String> getLevelIdsByFrameIds(List<String> frameIds);
+
+	/**
+	 * 给定一个数组，返回对应的层级(非框架)数组，如果里面有框架则报错
+	 * */
+	List<Level> getLevelsByIds(List<String> ids);
+
+	/**
+	 * 修改levelId字段
+	 * @param levelId 原levelId
+	 * @param target 新levelId
+	 * */
+	void changeLevelId(String levelId, String target);
 }

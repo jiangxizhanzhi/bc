@@ -1,10 +1,20 @@
 package com.cyberpeace.rtks.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
+
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.OperationConditionNotSatisfied;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.controller.frame.LevelAddInput;
@@ -13,6 +23,7 @@ import com.cyberpeace.rtks.controller.frame.LevelModifyInput;
 import com.cyberpeace.rtks.controller.frame.LevelOutput;
 import com.cyberpeace.rtks.controller.req.ListReq;
 import com.cyberpeace.rtks.dao.entity.Level;
+import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RoleService;
 
@@ -66,9 +77,13 @@ public class LevelController extends BaseController<Level, LevelInput, LevelAddI
 		}
 
 		// 已经绑定了岗位的层级不允许新增子层级
-		roleService.ensureLevelNotChildRole(parentId);
+		List<Role> roles = roleService.getRolesByLevelId(parentId);
+		if (!CollectionUtils.isEmpty(roles)) {
+			throw new InvalidParamException("层级" + parentId + "已绑定岗位，不允许新增子层级");
+		}
+
 		// 确保parentId对应的框架/层级存在
-		Level parentLevel = levelService.getLevelOrFrame(parentId);
+		Level parentLevel = levelService.getLevelOrFrameOr404(parentId);
 		// 迭代获取当前层级所属框架
 		level.setFrame(levelService.getFrame(parentLevel).getResourceId());
 
@@ -99,6 +114,54 @@ public class LevelController extends BaseController<Level, LevelInput, LevelAddI
 	public BaseRsp<ListRsp<LevelOutput>> list(ListReq<Level> listReq) {
 		// 层级的列表查询不被允许
 		return null;
+	}
+
+	@Override
+	protected void performBatchDelete(List<String> ids) {
+		// 验证输入层级id合法
+		List<Level> levels = levelService.getLevelsByIds(ids);
+		List<String> levelIds = new ArrayList<>();
+		for (Level level : levels) {
+			levelIds.add(level.getResourceId());
+		}
+
+		// 如果层级下有岗位绑定，不允许删除
+		List<String> roleIds = roleService.getRoleIdsByLevelIds(ids);
+		if (!CollectionUtils.isEmpty(roleIds)) {
+			throw new OperationConditionNotSatisfied("请先删除层级下的岗位");
+		}
+
+		// 把待删除层级下的层级绑定到其父层级/框架上
+		// 待删除的层级-转移到的层级映射表
+		Map<String, String> changeMap = new HashMap<>();
+		for (Level level : levels) {
+			String levelId = level.getResourceId();
+			String target = getAncestorExclude(level, levelIds);
+			changeMap.put(levelId, target);
+		}
+
+		// 更改子层级的parent属性
+		for (String levelId : changeMap.keySet()) {
+			String target = changeMap.get(levelId);
+			levelService.changeLevelId(levelId, target);
+		}
+
+		levelService.removeByIds(levelIds);
+	}
+
+	/**
+	 * 给定层级(非框架) 获取其父层级/框架id 如果该id在给定levelIds数组中，则再迭代查找
+	 * */
+	private String getAncestorExclude(@NotNull Level level, @NotNull List<String> levelIds) {
+		String parentId = level.getParent();
+		if (!levelIds.contains(parentId)) {
+			return parentId;
+		}
+
+		levelIds.remove(parentId);
+
+		Level parent = levelService.getById(parentId);
+		return getAncestorExclude(parent, levelIds);
 	}
 
 }

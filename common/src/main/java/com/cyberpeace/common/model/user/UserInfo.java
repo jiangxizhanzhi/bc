@@ -49,4 +49,9 @@ public class UserInfo implements Serializable {
      */
     private boolean superuser;
 
+    /**
+     * 岗位编号
+     */
+    private String roleId;
+
 }

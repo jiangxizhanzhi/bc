@@ -38,9 +38,6 @@ public class CourseController {
 	private CourseService courseService;
 
 	@Autowired
-	private CourseStatisticsService courseStatisticsService;
-
-	@Autowired
 	private DirectionMapper directionMapper;
 
 	@GetMapping()

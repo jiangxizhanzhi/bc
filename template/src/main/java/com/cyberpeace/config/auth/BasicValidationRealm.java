@@ -1,5 +1,7 @@
 package com.cyberpeace.config.auth;
 
+import com.cyberpeace.rtks.dao.entity.UserRole;
+import com.cyberpeace.rtks.service.UserRelateService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -25,6 +27,9 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private UserRelateService userRelateService;
 
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
@@ -57,7 +62,8 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
 		try {
 			userInfo = remoteUserService.doAuthentication(token);
-
+			UserRole roleInfo = userRelateService.getUserRoleInfo(userInfo.getUserId());
+			userInfo.setRoleId(roleInfo.getRoleId());
 			UserInfoContext.setUserContext(userInfo);
 		} catch (Exception e) {
 			log.error("RemoteUserService.doAuthentication error");

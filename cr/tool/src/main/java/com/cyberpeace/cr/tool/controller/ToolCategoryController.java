@@ -1,0 +1,69 @@
+package com.cyberpeace.cr.tool.controller;
+
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.tool.controller.req.CategoryAddReq;
+import com.cyberpeace.cr.tool.controller.req.CategoryListReq;
+import com.cyberpeace.cr.tool.controller.req.DeleteReq;
+import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
+import com.cyberpeace.cr.tool.service.ToolCategoryService;
+import com.cyberpeace.cr.tool.service.bo.ToolCategoryBo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+
+@Api(tags = "工具库-分类管理")
+@RestController
+@RequestMapping("cr/tool/category")
+public class ToolCategoryController {
+
+	@Autowired
+	private ToolCategoryService toolCategoryService;
+
+	@GetMapping("/list")
+	@ApiOperation("工具分类列表")
+	public BaseRsp<ListRsp<ToolCategoryBo>> getList(
+			@ApiParam(name = "listReq", value = "查询条件") @Validated CategoryListReq listReq) {
+		ListRsp<ToolCategoryBo> courseInfos = toolCategoryService.selectPage(listReq);
+		return new BaseRsp<>(courseInfos);
+	}
+
+	@GetMapping()
+	@ApiOperation("工具分类详情")
+	public BaseRsp<ToolCategoryBo> getDetail(
+			@ApiParam(name = "resource_id", value = "查询id", required = true)
+			@RequestParam("resource_id") @NotBlank String resource_id) {
+		ToolCategory toolCategory = toolCategoryService.getById(resource_id);
+		ToolCategoryBo toolCategoryBo = BeanUtils.copy(toolCategory, ToolCategoryBo.class);
+		return new BaseRsp<>(toolCategoryBo);
+	}
+
+	@PostMapping()
+	@ApiOperation("工具分类创建")
+	public BaseRsp<String> create(@RequestBody @Validated CategoryAddReq categoryAddReq) {
+		ToolCategory toolCategory = BeanUtils.copy(categoryAddReq, ToolCategory.class);
+		toolCategoryService.save(toolCategory);
+		return new BaseRsp<>();
+	}
+
+	@PutMapping()
+	@ApiOperation("工具分类更新")
+	public BaseRsp<String> update(@RequestBody @Validated CategoryAddReq categoryAddReq) {
+		ToolCategory toolCategory = BeanUtils.copy(categoryAddReq, ToolCategory.class);
+		toolCategoryService.updateById(toolCategory);
+		return new BaseRsp<>();
+	}
+
+	@DeleteMapping()
+	@ApiOperation("工具分类批量删除")
+	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
+		toolCategoryService.removeByIds(deleteReq.getIds());
+		return new BaseRsp<>();
+	}
+}

@@ -1,23 +1,21 @@
 package com.cyberpeace.cr.tool.controller;
 
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.tool.controller.req.ToolGhdbListReq;
+import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
+import com.cyberpeace.cr.tool.service.ToolGhdbService;
+import com.cyberpeace.cr.tool.service.bo.GhdbQueryContext;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.tool.controller.req.ToolGhdbListReq;
-import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
-import com.cyberpeace.cr.tool.service.ToolGhdbService;
-import com.cyberpeace.cr.tool.service.bo.GhdbQueryContext;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @Api(tags = "靶场-工具库-ghdb")
 @RestController
@@ -31,11 +29,8 @@ public class ToolGhdbController {
 	@ApiOperation("分页查询")
 	@GetMapping("/ghdbs")
 	public BaseRsp<ListRsp<ToolGhdb>> list(@Validated ToolGhdbListReq toolGhdbListReq) {
-		GhdbQueryContext ghdbQueryContext = new GhdbQueryContext();
-		BeanUtils.copyProperties(toolGhdbListReq, ghdbQueryContext);
-
+		GhdbQueryContext ghdbQueryContext = BeanUtils.copy(toolGhdbListReq, GhdbQueryContext.class);
 		ListRsp<ToolGhdb> data = toolGhdbService.listGhdb(toolGhdbListReq, ghdbQueryContext);
-
 		return new BaseRsp<>(data);
 	}
 

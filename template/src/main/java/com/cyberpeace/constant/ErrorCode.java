@@ -1,4 +1,4 @@
-package com.cyberpeace.common.constant;
+package com.cyberpeace.constant;
 
 /**
  * 统一错误吗

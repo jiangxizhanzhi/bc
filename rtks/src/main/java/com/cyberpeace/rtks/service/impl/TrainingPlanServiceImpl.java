@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.common.util.BeanListUtils;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
@@ -46,7 +45,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 			LevelTreeOutput element = frame.getChildren().get(index);
 
 			if (element.getChildren() == null) {
-				// System.out.println("叶子节点" + element.getName());
 				// 处理叶子结点
 				element.setRoleDetailList(roleListMap.get(element.getResourceId()));
 			} else {
@@ -84,21 +82,19 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	public RoleDetailRes getRoleOutputByRoleId(String resource_id) {
 		Role role = roleMapper.selectById(resource_id);
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
-		RoleDetailRes roleDetailRes = new RoleDetailRes();
-		BeanUtils.copyProperties(roleDetailOutput, roleDetailRes);
+		RoleDetailRes roleDetailRes = BeanUtils.copy(roleDetailOutput, RoleDetailRes.class);
 
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();
-		List<KnowledgeRes> knowledgeResList = BeanListUtils.copyListProperties(knowledgeDataList,
-				KnowledgeRes::new);
+		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,
+				KnowledgeRes.class);
 
 		knowledgeService.checkKonwledgeRes(knowledgeResList);
 		roleDetailRes.setKnowledgeResDataList(knowledgeResList);
 
 		// 获取技能的课程列表
 		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
-		List<SkillRes> skillResList = Lists.newArrayList();
-		BeanUtils.copyProperties(skillDataList, skillResList);
+		List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList, SkillRes.class);
 
 		skillService.checkSkillRes(skillResList);
 		roleDetailRes.setSkillResDataList(skillResList);

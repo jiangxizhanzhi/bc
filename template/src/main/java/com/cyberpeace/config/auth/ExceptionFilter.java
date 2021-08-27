@@ -22,8 +22,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.util.NestedServletException;
 
-import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -32,6 +32,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.constant.ErrorCode;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -85,9 +86,26 @@ public class ExceptionFilter implements Filter {
 			parseDuplicateKeyException(servletResponse, (DuplicateKeyException) e);
 		} else if (e instanceof RemoteServiceException) {
 			parseRemoteServiceException(servletResponse);
+		} else if (e instanceof BusinessException) {
+			parseBusinessException(servletResponse, (BusinessException) e);
 		} else {
 			dealDefaultError(servletResponse);
 		}
+	}
+
+	/**
+	 * 处理自定义业务异常
+	 * @param httpServletResponse
+	 * @param e
+	 */
+	private void parseBusinessException(HttpServletResponse httpServletResponse,
+			BusinessException e) {
+		String errCode = e.getMessage();
+
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setCode(errCode);
+
+		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
 	/**

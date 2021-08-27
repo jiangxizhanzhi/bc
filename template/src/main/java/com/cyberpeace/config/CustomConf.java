@@ -11,6 +11,7 @@ import com.cyberpeace.common.util.SpringContextUtil;
 
 /**
  * 自定义配置项
+ * @author yinqingrong
  */
 @Configuration
 public class CustomConf {
@@ -26,7 +27,8 @@ public class CustomConf {
 
 		Resource[] resources = new ClassPathResource[] {
 				new ClassPathResource("modules/integration.properties"),
-				new ClassPathResource("modules/course.properties"),
+				new ClassPathResource("modules/oj.properties"),
+				new ClassPathResource("modules/cr.properties"),
 				new ClassPathResource("modules/rtks.properties"),
 				new ClassPathResource("application.properties") };
 		configurer.setLocations(resources);

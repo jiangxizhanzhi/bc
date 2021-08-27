@@ -29,6 +29,12 @@ public class SwaggerConfig {
 				.groupName("rtks");
 	}
 
+	@Bean
+	public Docket apiTemplate() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.controller"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("template");
+	}
 
 	@Bean
 	public Docket apiCr() {

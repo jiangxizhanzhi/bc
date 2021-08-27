@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.xml.crypto.Data;
 
+import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.service.bo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
-import com.cyberpeace.rtks.dao.entity.Knowledge;
-import com.cyberpeace.rtks.dao.entity.Level;
-import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
@@ -113,13 +110,27 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	@Override
 	public List<KnowledgeStudyPercentBo> calculateKnowledgePercent(String role, String userId) {
 		// 获取当前角色的所有技能点及权重
-		Role roleInfo = roleMapper.selectById(role);
-		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(roleInfo.getKnowledgeIds(),
-				String.class);
+		List<String> knowledgeIds = getKnowledgeIdsByRole(role);
 		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
 
 		List<KnowledgeStudyPercentBo> percentBoList = knowledges.stream().map(knowledge -> {
 			ValueDataBo valueDataBo = calculateKnowledgeScore(knowledge, userId, true);
+			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(
+					valueDataBo.getResourceId(), valueDataBo.getContent(),
+					valueDataBo.getProcess().intValue());
+			return percentBo;
+		}).collect(Collectors.toList());
+		return percentBoList;
+	}
+
+	@Override
+	public List<KnowledgeStudyPercentBo> calculateSkillPercent(String roleId, String userId) {
+		List<String> skillIds = getSkillIdsByRole(roleId);
+		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
+
+		List<KnowledgeStudyPercentBo> percentBoList = skills.stream().map(skill -> {
+
+			ValueDataBo valueDataBo = calculateKnowledgeScore(skill, userId, true);
 			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(
 					valueDataBo.getResourceId(), valueDataBo.getContent(),
 					valueDataBo.getProcess().intValue());
@@ -301,7 +312,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param userWeight 是否使用权重
 	 * @return
 	 */
-	private ValueDataBo calculateKnowledgeScore(Knowledge knowledge, String userId,
+	private ValueDataBo calculateKnowledgeScore(SkillAndKnowledgeBase knowledge, String userId,
 			boolean userWeight) {
 
 		// 获取知识点课程列表
@@ -332,7 +343,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			List<ValueDataBo> courseProcess = studyProcessBos.stream().map(underCourseBo -> {
 				ValueDataBo dataBo = new ValueDataBo();
 				dataBo.setProcess(new Double(underCourseBo.getProcess()));
-				dataBo.setWeight(new Double(underCourseBoMap.get(underCourseBo.getCourseId()).getWeight()));
+				dataBo.setWeight(
+						new Double(underCourseBoMap.get(underCourseBo.getCourseId()).getWeight()));
 				return dataBo;
 			}).collect(Collectors.toList());
 
@@ -343,7 +355,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 						.mapToDouble(value -> MathUtils.mul(value.getProcess(), value.getWeight()))
 						.sum();
 
-				double weightSum = courseProcess.stream().mapToDouble(value -> value.getWeight()).sum();
+				double weightSum = courseProcess.stream().mapToDouble(value -> value.getWeight())
+						.sum();
 				knowledgeDataBo.setProcess(MathUtils.divide(courseProcessSum, weightSum));
 			}
 

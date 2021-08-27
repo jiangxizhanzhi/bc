@@ -36,6 +36,14 @@ public interface RtksStatisticService {
 	List<KnowledgeStudyPercentBo> calculateKnowledgePercent(String roleId, String userId);
 
 	/**
+	 * 计算制定角色的技能完成度
+	 * @param roleId
+	 * @param userId
+	 * @return
+	 */
+	List<KnowledgeStudyPercentBo> calculateSkillPercent(String roleId, String userId);
+
+	/**
 	 * 针对知识点，获取用户理论课学习记录
 	 * @param roleId
 	 * @param userId

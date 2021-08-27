@@ -51,6 +51,9 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 	@Autowired
 	private RoleService roleService;
 
+	@Autowired
+	private SkillSystemService skillSystemService;
+
 	@Override
 	RoleService getService() {
 		return roleService;
@@ -221,7 +224,13 @@ public class RoleController extends BaseController<Role, RoleInput, RoleAddInput
 		output.setLevelId(levelId);
 		output.setLevelName(levelService.getFullPathById(levelId));
 
-		output.setCategory(role.getCategory());
+		// 技能体系
+		String categoryId = role.getCategory();
+		output.setCategory(categoryId);
+		SkillSystem skillSystem = skillSystemService.getById(categoryId);
+		if (skillSystem != null) {
+			output.setCategoryName(skillSystem.getContent());
+		}
 
 		List<String> taskIds = stringToList(role.getTaskIds());
 		output.setTaskIds(taskIds);

@@ -19,7 +19,7 @@ public class RoleInput implements Serializable {
 	private String levelId;
 
 	@ApiModelProperty(value = "技能体系")
-	private Integer category;
+	private String category;
 
 	private List<String> taskIds;
 

@@ -22,7 +22,7 @@ public class Role extends BaseEntity {
 	/**
 	 * 技能体系
 	 */
-	private Integer category;
+	private String category;
 
 	@TableField(value = "task_ids")
 	private String taskIds;

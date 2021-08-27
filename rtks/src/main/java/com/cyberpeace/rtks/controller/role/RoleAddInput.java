@@ -19,6 +19,6 @@ public class RoleAddInput extends RoleInput {
 
 	@NotNull
 	@ApiModelProperty(value = "技能体系")
-	private Integer category;
+	private String category;
 
 }

@@ -22,7 +22,9 @@ public class RoleOutput {
 	private String levelName;
 
 	@ApiModelProperty(value = "技能体系")
-	private int category;
+	private String category;
+
+	private String categoryName;
 
 	private List<String> taskIds;
 

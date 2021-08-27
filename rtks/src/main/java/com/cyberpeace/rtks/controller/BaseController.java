@@ -1,24 +1,20 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
-import com.cyberpeace.rtks.controller.req.ListReq;
 import com.cyberpeace.rtks.dao.entity.BaseEntity;
 import com.cyberpeace.rtks.service.BaseService;
 
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-public abstract class BaseController<Entity extends BaseEntity, Input, AddInput extends Input, ModifyInput extends Input, Output, ListOutput, Service extends BaseService<Entity>> {
+public abstract class BaseController<Entity extends BaseEntity, Input, AddInput extends Input, ModifyInput extends Input, Output, Service extends BaseService<Entity>> {
 
 	abstract Service getService();
 
@@ -27,8 +23,6 @@ public abstract class BaseController<Entity extends BaseEntity, Input, AddInput 
 	abstract Entity getEntityFromModifyInput(ModifyInput input, Entity originEntity);
 
 	abstract Output getOutputFromEntity(Entity entity);
-
-	abstract ListOutput getListOutputFromEntity(Entity entity);
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -72,20 +66,4 @@ public abstract class BaseController<Entity extends BaseEntity, Input, AddInput 
 		getService().removeByIds(ids);
 	}
 
-	@ApiOperation("列表查询")
-	@GetMapping("/list")
-	public BaseRsp<ListRsp<ListOutput>> list(ListReq<Entity> listReq) {
-		IPage<Entity> page = getService().listEntity(listReq.toPageParam(), listReq.getKeyword());
-
-		List<ListOutput> outputs = new ArrayList<>();
-		for (Entity record : page.getRecords()) {
-			outputs.add(getListOutputFromEntity(record));
-		}
-
-		ListRsp<ListOutput> listRsp = new ListRsp<>();
-		listRsp.setList(outputs);
-		listRsp.setTotal(page.getTotal());
-
-		return new BaseRsp<>(listRsp);
-	}
 }

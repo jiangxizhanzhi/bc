@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "TRKS-框架管理")
 @RestController
 @RequestMapping("/rtks/frame")
-public class FrameController extends BaseController<Level, FrameInput, FrameAddInput, FrameModifyInput, FrameOutput, FrameOutput, FrameService> {
+public class FrameController extends ListController<Level, FrameInput, FrameAddInput, FrameModifyInput, FrameOutput, FrameOutput, FrameService> {
 
 	@Autowired
 	private FrameService frameService;

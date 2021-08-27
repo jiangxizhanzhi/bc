@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "TRKS-岗位管理")
 @RestController
 @RequestMapping("/rtks/role")
-public class RoleController extends BaseController<Role, RoleInput, RoleAddInput, RoleModifyInput, RoleDetailOutput, RoleOutput, RoleService> {
+public class RoleController extends ListController<Role, RoleInput, RoleAddInput, RoleModifyInput, RoleDetailOutput, RoleOutput, RoleService> {
 
 	@Autowired
 	private TaskService taskService;

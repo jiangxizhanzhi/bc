@@ -22,11 +22,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	RoleMapper roleMapper;
 
 	@Override
-	public IPage<Role> listEntity(Page<Role> page, String keyword) {
-		return roleMapper.listRole(page, keyword);
-	}
-
-	@Override
 	public Role getOr404(String roleId) {
 		Role role = getById(roleId);
 		if (role == null) {

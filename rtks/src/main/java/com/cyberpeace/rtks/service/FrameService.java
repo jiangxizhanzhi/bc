@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.rtks.dao.entity.Level;
 
-public interface FrameService extends BaseService<Level> {
+public interface FrameService extends BaseListService<Level> {
 
 	/**
 	 * 给定一个id的数组，确保这些id对应框架(非层级)都存在，返回去重后的框架id数组

@@ -9,8 +9,6 @@ import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -37,12 +35,6 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 		ensureNotFrame(level);
 		return level;
-	}
-
-	@Override
-	public IPage<Level> listEntity(Page<Level> page, String keyword) {
-		// 层级的列表查询不被允许
-		return null;
 	}
 
 	@Override

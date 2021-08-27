@@ -9,31 +9,26 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.OperationConditionNotSatisfied;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.controller.frame.LevelAddInput;
 import com.cyberpeace.rtks.controller.frame.LevelInput;
 import com.cyberpeace.rtks.controller.frame.LevelModifyInput;
 import com.cyberpeace.rtks.controller.frame.LevelOutput;
-import com.cyberpeace.rtks.controller.req.ListReq;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "TRKS-框架层级管理")
 @RestController
 @RequestMapping("/rtks/frame/level")
-public class LevelController extends BaseController<Level, LevelInput, LevelAddInput, LevelModifyInput, LevelOutput, LevelOutput, LevelService> {
+public class LevelController extends BaseController<Level, LevelInput, LevelAddInput, LevelModifyInput, LevelOutput, LevelService> {
 
 	@Autowired
 	private LevelService levelService;
@@ -100,20 +95,6 @@ public class LevelController extends BaseController<Level, LevelInput, LevelAddI
 		output.setParent(level.getParent());
 
 		return output;
-	}
-
-	@Override
-	LevelOutput getListOutputFromEntity(Level entity) {
-		// 层级的列表查询不被允许
-		return null;
-	}
-
-	@ApiOperation("忽略本接口")
-	@GetMapping("/list")
-	@Override
-	public BaseRsp<ListRsp<LevelOutput>> list(ListReq<Level> listReq) {
-		// 层级的列表查询不被允许
-		return null;
 	}
 
 	@Override

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;

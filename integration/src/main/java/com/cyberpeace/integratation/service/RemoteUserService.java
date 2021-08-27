@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.integratation.service;
+package com.cyberpeace.integratation.service;
 
 import java.util.List;
 

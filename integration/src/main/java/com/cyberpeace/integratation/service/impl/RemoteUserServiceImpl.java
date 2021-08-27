@@ -14,8 +14,8 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
-import com.cyberpeace.oj.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.integratation.service.mp.HttpClient;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.mp.HttpClient;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;

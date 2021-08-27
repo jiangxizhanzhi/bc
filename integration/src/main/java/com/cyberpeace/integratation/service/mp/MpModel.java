@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.integratation.service.mp;
+package com.cyberpeace.integratation.service.mp;
 
 public class MpModel {
 	public Object data;

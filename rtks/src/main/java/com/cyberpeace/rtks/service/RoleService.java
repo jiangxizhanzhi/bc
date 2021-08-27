@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.rtks.dao.entity.Role;
 
 public interface RoleService extends BaseService<Role> {
@@ -16,4 +18,5 @@ public interface RoleService extends BaseService<Role> {
 	 * */
 	List<String> getRoleIdsByLevelIds(List<String> ids);
 
+	IPage<Role> listRoles(Page<Role> page, String keyword, String frameId);
 }

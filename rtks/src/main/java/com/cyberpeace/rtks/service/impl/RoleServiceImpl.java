@@ -43,4 +43,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		return roleMapper.getRoleIdsByLevelIds(ids);
 	}
 
+	@Override
+	public IPage<Role> listRoles(Page<Role> page, String keyword, String frameId) {
+		return roleMapper.listRole(page, keyword, frameId);
+	}
+
 }

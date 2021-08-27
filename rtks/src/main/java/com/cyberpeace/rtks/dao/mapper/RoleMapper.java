@@ -15,7 +15,7 @@ import com.cyberpeace.rtks.dao.entity.Role;
 @Repository
 public interface RoleMapper extends BaseMapper<Role> {
 
-	IPage<Role> listRole(Page<Role> page, @Param("pattern") String pattern);
+	IPage<Role> listRole(Page<Role> page, @Param("pattern") String pattern, String frameId);
 
 	/**
 	 * 获取绑定在指定层级下的岗位列表

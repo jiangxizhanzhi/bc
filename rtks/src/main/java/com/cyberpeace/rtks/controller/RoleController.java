@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -24,18 +25,30 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
+import com.cyberpeace.rtks.controller.req.ListReq;
 import com.cyberpeace.rtks.controller.role.*;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.service.*;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.Getter;
+import lombok.Setter;
+
+class RoleListReq<T> extends ListReq<T> {
+
+	@ApiModelProperty(value = "所属框架id，可以为空")
+	@Getter
+	@Setter
+	private String frameId;
+}
 
 @Api(tags = "TRKS-岗位管理")
 @RestController
 @RequestMapping("/rtks/role")
-public class RoleController extends ListController<Role, RoleInput, RoleAddInput, RoleModifyInput, RoleDetailOutput, RoleOutput, RoleService> {
+public class RoleController extends BaseListController<Role, RoleInput, RoleAddInput, RoleModifyInput, RoleDetailOutput, RoleOutput, RoleService, RoleListReq<Role>> {
 
 	@Autowired
 	private TaskService taskService;
@@ -212,7 +225,6 @@ public class RoleController extends ListController<Role, RoleInput, RoleAddInput
 
 		return role;
 	}
-	// todo 根据frameId过滤
 
 	@Override
 	public RoleDetailOutput getOutputFromEntity(Role role) {
@@ -240,6 +252,12 @@ public class RoleController extends ListController<Role, RoleInput, RoleAddInput
 	@Override
 	RoleOutput getListOutputFromEntity(Role role) {
 		return outputFromRole(role, new RoleOutput());
+	}
+
+	@Override
+	IPage<Role> getPage(RoleListReq<Role> listReq) {
+		return roleService.listRoles(listReq.toPageParam(), listReq.getKeyword(),
+				listReq.getFrameId());
 	}
 
 	private <T extends RoleOutput> T outputFromRole(Role role, T output) {

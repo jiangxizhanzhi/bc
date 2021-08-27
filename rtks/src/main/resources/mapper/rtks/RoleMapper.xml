@@ -4,10 +4,16 @@
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.RoleMapper">
     <select id="listRole" resultType="com.cyberpeace.rtks.dao.entity.Role">
         select * from rtks_role
-        <if test="pattern != null and pattern != ''">
-            <bind name="pattern" value="'%' + pattern + '%'"/>
-            <where>name LIKE #{pattern}</where>
-        </if>
+        <where>
+            <if test="pattern != null and pattern != ''">
+                <bind name="pattern" value="'%' + pattern + '%'"/>
+                name LIKE #{pattern}
+            </if>
+            <if test="pattern != null and pattern != '' and frameId != null and frameId != ''"> AND </if>
+            <if test="frameId != null and frameId != ''">
+                level_id in (SELECT resource_id FROM rtks_level where frame = #{frameId})
+            </if>
+        </where>
     </select>
 
     <select id="getRolesUnderLevel" resultType="com.cyberpeace.rtks.dao.entity.Role">

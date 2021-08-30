@@ -38,13 +38,13 @@ import io.swagger.annotations.ApiParam;
 public class TrainingPlanController {
 
 	@Autowired
-	private LevelService levelService;
-
-	@Autowired
 	private TrainingPlanService trainingPlanService;
 
 	@Autowired
 	private FrameController frameController;
+
+	@Autowired
+	private RtksStatisticService rtksStatisticService;
 
 	@ApiOperation("知识技能体系")
 	@GetMapping("/ability")

@@ -30,8 +30,8 @@ import io.swagger.annotations.ApiParam;
 @RequiresAuthentication
 @RestController
 @RequestMapping("/rtks/statistic")
-@Api(tags = "RTKS-岗位相关统计")
-public class RtksStatisticController {
+@Api(tags = "RTKS-作战能力评估")
+public class RtksEvaluationController {
 
 	@Autowired
 	private RtksStatisticService rtksStatisticService;

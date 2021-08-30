@@ -19,4 +19,6 @@ public interface TrainingPlanService {
 	RoleDetailRes getRoleOutputByRoleId(String resource_id, String type);
 
 	ListRsp<KnowledgeRes> getKnowledgeCourseList(PageReqBase pageReqBase, String existRoleId);
+
+	RoleDetailRes getLearningPathTree(String resource_id, String type);
 }

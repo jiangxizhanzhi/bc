@@ -3,7 +3,9 @@ package com.cyberpeace.rtks.controller.res;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Ability;
+import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.Task;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -56,4 +58,11 @@ public class RoleDetailRes implements Serializable {
 
 	private List<SkillRes> skillResDataList;
 
+	private LevelTreeOutput levelTreeOutput;
+
+	@ApiModelProperty("基础课程")
+	private List<RelatedCourse> basicCourseList;
+
+	@ApiModelProperty("技能课程")
+	private List<RelatedCourse> skillCourseList;
 }

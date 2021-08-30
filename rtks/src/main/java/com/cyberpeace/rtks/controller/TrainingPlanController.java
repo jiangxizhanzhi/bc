@@ -72,6 +72,16 @@ public class TrainingPlanController {
 		return new BaseRsp<>(frame);
 	}
 
+	@ApiOperation("学习路径")
+	@GetMapping("/learning-path ")
+	public BaseRsp<RoleDetailRes> learningPath(
+			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
+		RoleDetailRes roleOutput = trainingPlanService.getLearningPathTree(resource_id,
+				RoleDetailRes.RELATED_COURSE_COURSE);
+
+		return new BaseRsp<RoleDetailRes>(roleOutput);
+	}
+
 	@GetMapping("/test")
 	@ApiOperation("测试接口")
 	public BaseRsp getRtksstatistic() {
@@ -81,14 +91,30 @@ public class TrainingPlanController {
 		return new BaseRsp();
 	}
 
+	// @ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
+	// @GetMapping("/roleMap")
+	// public BaseRsp<RoleDetailRes> getRoleOutputByRoleId(
+	// @ApiParam(name = "resource_id", value = "岗位id", required = true) String
+	// resource_id) {
+	// RoleDetailRes roleOutput =
+	// trainingPlanService.getRoleOutputByRoleId(resource_id,
+	// RoleDetailRes.RELATED_COURSE_COURSE);
+	//
+	// return new BaseRsp<RoleDetailRes>(roleOutput);
+	// }
+
 	@ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
 	@GetMapping("/roleMap")
-	public BaseRsp<RoleDetailRes> getRoleOutputByRoleId(
-			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
-		RoleDetailRes roleOutput = trainingPlanService.getRoleOutputByRoleId(resource_id,
-				RoleDetailRes.RELATED_COURSE_COURSE);
+	public BaseRsp<RoleDetailRes> getRoleOutputByRoleId() {
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(existRoleId)) {
+			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
+					RoleDetailRes.RELATED_COURSE_COURSE);
+			rsp.setData(data);
+		}
 
-		return new BaseRsp<RoleDetailRes>(roleOutput);
+		return rsp;
 	}
 
 	@ApiOperation("分页获取知识点以及课程")
@@ -106,13 +132,17 @@ public class TrainingPlanController {
 
 	@ApiOperation("查询技能和知识点关联的课程学习情况")
 	@GetMapping("/getRelatedCourseList")
-	public BaseRsp<RoleDetailRes> getRelatedCourseList(
-			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
-		RoleDetailRes roleOutput = trainingPlanService.getRoleOutputByRoleId(resource_id,
-				RoleDetailRes.RELATED_COURSE_STUDY);
+	public BaseRsp<RoleDetailRes> getRelatedCourseList() {
 
-		return new BaseRsp<RoleDetailRes>(roleOutput);
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(existRoleId)) {
+			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
+					RoleDetailRes.RELATED_COURSE_STUDY);
+			rsp.setData(data);
+		}
+
+		return rsp;
 	}
-
 
 }

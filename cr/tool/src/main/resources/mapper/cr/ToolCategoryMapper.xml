@@ -16,4 +16,16 @@
         </where>
         order by id desc
     </select>
+
+    <select id="selectByIds" resultType="com.cyberpeace.cr.tool.dao.entity.ToolCategory">
+        select * from cr_tool_toolcategory
+        <where>
+            <if test="null != ids and ids.size() > 0">
+                and id in
+                <foreach collection="ids" separator="," open="(" close=")" item="cId">
+                    #{cId}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

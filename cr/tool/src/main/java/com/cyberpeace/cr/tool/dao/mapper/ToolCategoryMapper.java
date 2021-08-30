@@ -8,9 +8,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
 @Mapper
 @Repository
 public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 
 	IPage<ToolCategory> list(Page page, @Param("pattern") String pattern);
+
+	List<ToolCategory> selectByIds(@NotEmpty @Param("ids") List<Integer> ids);
 }

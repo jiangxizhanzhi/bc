@@ -15,7 +15,14 @@
     <name>course</name>
     <description>课程</description>
 
-    <dependencies></dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>com.cyberpeace.oj</groupId>
+            <artifactId>practice</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>

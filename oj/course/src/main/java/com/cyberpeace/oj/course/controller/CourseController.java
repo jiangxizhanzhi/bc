@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.oj.course.dao.entity.CourseDirection;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -19,9 +18,9 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.res.DirectionOutPut;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseDirection;
 import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 
 import io.swagger.annotations.Api;

@@ -70,6 +70,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		int sum = courseLessons.stream().mapToInt(CourseLesson::getDuration).sum();
 		courseInfoBo.setCourseDuration(sum);
 
+		// 计算实验课和理论课数量
+		List<CourseLesson> theoryCount = courseLessons.stream().filter(
+				courseLesson -> courseLesson.getType().intValue() == CourseLesson.TYPE_THEORY)
+				.collect(Collectors.toList());
+		courseInfoBo.setTheoryCount(theoryCount.size());
+		courseInfoBo.setExerciseCount(courseInfoBo.getLessonCount() - courseInfoBo.getTheoryCount());
 		return courseInfoBo;
 	}
 

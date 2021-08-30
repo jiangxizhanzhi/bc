@@ -35,9 +35,13 @@ public class UserInfo implements Serializable {
     private String organizationData;
 
     /**
-     * 用户角色
+     * 用户角色(用来做权限校验，和rtks的岗位角色不相关)
      */
     private List<String> roles = Lists.newArrayList();
+
+    private String positionId;
+
+    private String positionName;
 
     /**
      * true表示用户为管理员

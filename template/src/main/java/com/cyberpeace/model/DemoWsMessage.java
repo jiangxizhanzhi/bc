@@ -6,6 +6,9 @@ import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * 模拟实际需要发送的websocket消息
+ */
 @Data
 @Builder
 public class DemoWsMessage implements Serializable {

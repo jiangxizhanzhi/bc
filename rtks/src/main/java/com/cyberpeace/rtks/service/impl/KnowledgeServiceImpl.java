@@ -91,7 +91,6 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		return knowledgeRes;
 	}
 
-
 	@Override
 	public List<String> filterIds(List<String> ids) {
 		return knowledgeMapper.filterIds(ids);
@@ -130,12 +129,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 			knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			knowledgeRes.setCourseList(relatedCourseList);
 			if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
-				knowledgeRes.setProcess(getProcess(processBos));
+				knowledgeRes.setProcess(calculateProcess(processBos));
 				knowledgeRes.setCourses("");
 				knowledgeRes.setCourseList(null);
 				knowledgeRes.setCourseStudyProcessBoList(processBos);
 			} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
-				knowledgeRes.setProcess(getProcess(processBos));
+				knowledgeRes.setProcess(calculateProcess(processBos));
 				knowledgeRes.setCourseStudyProcessBoList(processBos);
 			}
 
@@ -153,7 +152,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		updateBatchById(knowledgeList);
 	}
 
-	public Double getProcess(List<CourseStudyProcessBo> processBos) {
+	public Integer calculateProcess(List<CourseStudyProcessBo> processBos) {
 		Double lessonCount = Double.valueOf(0);
 
 		Double completeCount = Double.valueOf(0);
@@ -162,9 +161,9 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 			completeCount += courseStudyProcessBo.getCompleteCount();
 		}
 		if (lessonCount <= 0.0) {
-			return lessonCount;
+			return 0;
 		} else {
-			return completeCount / lessonCount;
+			return Integer.valueOf(Math.toIntExact(Math.round(completeCount / lessonCount * 100)));
 		}
 	}
 

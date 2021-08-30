@@ -115,12 +115,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
 			if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
-				skillRes.setProcess(getProcess(processBos));
+				skillRes.setProcess(calculateProcess(processBos));
 				skillRes.setCourses("");
 				skillRes.setCourseList(null);
 				skillRes.setCourseStudyProcessBoList(processBos);
 			} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
-				skillRes.setProcess(getProcess(processBos));
+				skillRes.setProcess(calculateProcess(processBos));
 				skillRes.setCourseStudyProcessBoList(processBos);
 			}
 
@@ -140,7 +140,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		updateBatchById(skillList);
 	}
 
-	private Double getProcess(List<CourseStudyProcessBo> processBos) {
+	private Integer calculateProcess(List<CourseStudyProcessBo> processBos) {
 		Double lessonCount = Double.valueOf(0);
 
 		Double completeCount = Double.valueOf(0);
@@ -149,9 +149,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			completeCount += courseStudyProcessBo.getCompleteCount();
 		}
 		if (lessonCount <= 0.0) {
-			return lessonCount;
+			return 0;
 		} else {
-			return completeCount / lessonCount;
+			return Integer.valueOf(Math.toIntExact(Math.round(completeCount / lessonCount * 100)));
 		}
 	}
 

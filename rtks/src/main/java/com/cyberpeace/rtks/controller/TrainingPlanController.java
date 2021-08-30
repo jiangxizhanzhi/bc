@@ -139,6 +139,9 @@ public class TrainingPlanController {
 		if (StringUtils.isNotBlank(existRoleId)) {
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
+			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
+					UserInfoContext.getUserContext().getUserId());
+			data.setPercent(percent);
 			rsp.setData(data);
 		}
 

@@ -32,7 +32,10 @@ public class RoleDetailRes implements Serializable {
 	private String levelId;
 
 	@ApiModelProperty(value = "技能体系")
-	private int category;
+	private String category;
+
+	@ApiModelProperty(value = "岗位匹配度")
+	private String percent;
 
 	private List<String> taskIds;
 

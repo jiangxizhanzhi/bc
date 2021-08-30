@@ -94,7 +94,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		Role role = roleMapper.selectById(resource_id);
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.copy(roleDetailOutput, RoleDetailRes.class);
-
+		roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();
 		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,

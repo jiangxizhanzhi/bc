@@ -31,7 +31,7 @@ public class KnowledgeRes implements Serializable {
 	private Integer weight;
 
 	@ApiModelProperty("知识点所有课程总体进度")
-	private Double process;
+	private Integer process;
 
 	@ApiModelProperty("知识点关联课程")
 	private List<RelatedCourse> courseList;

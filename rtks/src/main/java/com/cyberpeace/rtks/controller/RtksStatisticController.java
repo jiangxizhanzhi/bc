@@ -1,9 +1,11 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.rtks.controller.res.PercentRes;
 import com.cyberpeace.rtks.dao.entity.UserRole;
 import com.cyberpeace.rtks.service.UserRelateService;
 import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
@@ -43,8 +45,8 @@ public class RtksStatisticController {
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleStudyBo> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
-			RoleStudyBo studyBo = rtksStatisticService
-					.roleKnowledgeStudyRecord(existRoleId, userId);
+			RoleStudyBo studyBo = rtksStatisticService.roleKnowledgeStudyRecord(existRoleId,
+					userId);
 			rsp.setData(studyBo);
 		}
 		return rsp;
@@ -78,14 +80,16 @@ public class RtksStatisticController {
 
 	@ApiOperation("岗位下知识点完成进度")
 	@GetMapping("/role/knowledge/percent")
-	public BaseRsp<List<KnowledgeStudyPercentBo>> getKnowledgeProcessByRole() {
+	public BaseRsp<PercentRes> getKnowledgeProcessByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp<List<KnowledgeStudyPercentBo>> rsp = new BaseRsp<>();
+
+		BaseRsp<PercentRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
+			// 数据计算
 			List<KnowledgeStudyPercentBo> percentBos = rtksStatisticService
 					.calculateKnowledgePercent(existRoleId, userId);
-			rsp.setData(percentBos);
+			rsp.setData(percentFormatterTran(percentBos));
 		}
 
 		return rsp;
@@ -93,16 +97,34 @@ public class RtksStatisticController {
 
 	@ApiOperation("岗位下技能点完成度")
 	@GetMapping("/role/skill/percent")
-	public BaseRsp<List<KnowledgeStudyPercentBo>> getSkillProcessByRole() {
+	public BaseRsp<PercentRes> getSkillProcessByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp<List<KnowledgeStudyPercentBo>> rsp = new BaseRsp<>();
+		BaseRsp<PercentRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
 			List<KnowledgeStudyPercentBo> percentBos = rtksStatisticService
 					.calculateSkillPercent(existRoleId, userId);
-			rsp.setData(percentBos);
+			rsp.setData(percentFormatterTran(percentBos));
 		}
 		return rsp;
+	}
+
+	/**
+	 *
+	 * @param percentBos
+	 * @return
+	 */
+	private PercentRes percentFormatterTran(List<KnowledgeStudyPercentBo> percentBos) {
+		List<String> xNames = percentBos.stream().map(KnowledgeStudyPercentBo::getKnowledgeName)
+				.collect(Collectors.toList());
+		List<Integer> yPercents = percentBos.stream().map(KnowledgeStudyPercentBo::getPercent)
+				.collect(Collectors.toList());
+
+		// 结果返回
+		PercentRes res = new PercentRes();
+		res.setXNames(xNames);
+		res.setYPercents(yPercents);
+		return res;
 	}
 
 	@ApiOperation("岗位匹配度计算")

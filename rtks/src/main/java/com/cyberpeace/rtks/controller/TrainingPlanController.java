@@ -3,6 +3,9 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
+import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +44,7 @@ public class TrainingPlanController {
 	private TrainingPlanService trainingPlanService;
 
 	@Autowired
-	private RtksStatisticService rtksStatisticService;
-
-	@Autowired
 	private FrameController frameController;
-	// @ApiOperation("框架列表查询")
-	// @GetMapping()
-	// // public BaseRsp<ListRsp<FrameOutput>> getFrames(ListReq<Level> listReq) {
-	// // IPage<Level> page = trainingPlanService.getFrames(listReq.toPageParam(),
-	// // listReq.getKeyword());
-	// // return PageUtil2.getListResult(page, FrameOutput::new);
-	// }
 
 	@ApiOperation("知识技能体系")
 	@GetMapping("/ability")
@@ -72,6 +65,40 @@ public class TrainingPlanController {
 		return new BaseRsp<>(frame);
 	}
 
+	@ApiOperation("课程训练-职业课程课程学习进度")
+	@GetMapping("/course/knowledge")
+	public BaseRsp<OccupationCourseRes> courseKnowledge() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		List<CourseKnowledgeBo> courseKnowledges = trainingPlanService.getCourseKnowledges(userId, roleId);
+		return new BaseRsp<>(calculatePercent(courseKnowledges));
+	}
+
+	/**
+	 * 计算进度
+	 * @param courseKnowledges
+	 * @return
+	 */
+	private OccupationCourseRes calculatePercent(List<CourseKnowledgeBo> courseKnowledges) {
+
+		OccupationCourseRes courseRes = new OccupationCourseRes();
+		// 计算理论课时进度
+		int theoryCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getTheoryCount).sum();
+		int completeTheory = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteTheory).sum();
+		courseRes.setTheoryPercent(MathUtils.divide(theoryCount * 100, completeTheory));
+		// 计算实验课时进度
+		int exerciseCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getExerciseCount).sum();
+		int completeExercise = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteExercise).sum();
+		courseRes.setExercisePercent(MathUtils.divide(exerciseCount * 100, completeExercise));
+		// 计算总进度
+		int Count = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getLessonCount).sum();
+		int completeCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteCount).sum();
+		courseRes.setCoursePercent(MathUtils.divide(Count * 100, completeCount));
+
+		courseRes.setKnowledgeBos(courseKnowledges);
+		return courseRes;
+	}
+
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path ")
 	public BaseRsp<RoleDetailRes> learningPath(
@@ -81,27 +108,6 @@ public class TrainingPlanController {
 
 		return new BaseRsp<RoleDetailRes>(roleOutput);
 	}
-
-	@GetMapping("/test")
-	@ApiOperation("测试接口")
-	public BaseRsp getRtksstatistic() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		List<RtksRadarBo> liuleng = rtksStatisticService
-				.calculateRadar("e42615d51086cf7e1abbbaee82a593f9", userId);
-		return new BaseRsp();
-	}
-
-	// @ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
-	// @GetMapping("/roleMap")
-	// public BaseRsp<RoleDetailRes> getRoleOutputByRoleId(
-	// @ApiParam(name = "resource_id", value = "岗位id", required = true) String
-	// resource_id) {
-	// RoleDetailRes roleOutput =
-	// trainingPlanService.getRoleOutputByRoleId(resource_id,
-	// RoleDetailRes.RELATED_COURSE_COURSE);
-	//
-	// return new BaseRsp<RoleDetailRes>(roleOutput);
-	// }
 
 	@ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
 	@GetMapping("/roleMap")
@@ -113,7 +119,6 @@ public class TrainingPlanController {
 					RoleDetailRes.RELATED_COURSE_COURSE);
 			rsp.setData(data);
 		}
-
 		return rsp;
 	}
 

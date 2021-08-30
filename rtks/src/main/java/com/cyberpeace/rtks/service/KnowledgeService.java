@@ -37,6 +37,11 @@ public interface KnowledgeService extends IService<Knowledge> {
 	 */
 	void validate(Knowledge knowledge);
 
+	/**
+	 * 根据课程编号查询关联的知识点
+	 * @param ids
+	 * @return
+	 */
 	Map<String, List<CourseRelatedRes>> getKnowledgeByCourseId(List<String> ids);
 
 	/**遍历知识点，获取知识点的相关内容，修改已删除的关联课程
@@ -45,4 +50,10 @@ public interface KnowledgeService extends IService<Knowledge> {
 	 */
 	void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList, String type);
 
+	/**
+	 * 根据知识点编号查询对应的课程编号
+	 * @param knowledgeIds
+	 * @return
+	 */
+	List<String> getCourseByIds(List<String> knowledgeIds);
 }

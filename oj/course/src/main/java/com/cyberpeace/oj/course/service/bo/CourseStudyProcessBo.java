@@ -20,33 +20,33 @@ public class CourseStudyProcessBo {
     private Integer difficulty;
 
     @ApiModelProperty("理论课数量")
-    private Integer theoryCount;
+    private Integer theoryCount = 0;
 
     @ApiModelProperty("完成理论课数量")
-    private Integer completeTheory;
+    private Integer completeTheory = 0;
 
     @ApiModelProperty("实验课数量")
-    private Integer exerciseCount;
+    private Integer exerciseCount = 0;
 
     @ApiModelProperty("完成实验课数量")
-    private Integer completeExercise;
+    private Integer completeExercise = 0;
 
     @ApiModelProperty("最后学习时间")
     private Date lastStudyTime;
 
     @ApiModelProperty("课时总数量")
-    private Integer lessonCount;
+    private Integer lessonCount = 0;
 
     @ApiModelProperty("完成学习数量")
-    private Integer completeCount;
+    private Integer completeCount = 0;
 
     @ApiModelProperty("课程进度")
-    private Double process;
+    private Double process = new Double(0);
 
     @ApiModelProperty("建议学习时长")
     private Integer suggestDuration;
 
     @ApiModelProperty("完成学习时长")
-    private Integer completeDuration;
+    private Integer completeDuration = 0;
 
 }

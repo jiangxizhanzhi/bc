@@ -1,9 +1,11 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.rtks.service.bo.KnowledgeUnderCourseBo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -170,5 +172,16 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	@Override
 	public List<CourseConfig> getCourseConfigs(Knowledge knowledge) {
 		return JsonUtil.toJsonObjectArray(knowledge.getCourses(), CourseConfig.class);
+	}
+
+	@Override
+	public List<String> getCourseByIds(List<String> knowledgeIds) {
+		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
+		List<String> courseIds = knowledges.stream()
+				.map(knowledge -> JsonUtil.toJsonObjectArray(knowledge.getCourses(),
+						KnowledgeUnderCourseBo.class))
+				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId)
+				.distinct().collect(Collectors.toList());
+		return courseIds;
 	}
 }

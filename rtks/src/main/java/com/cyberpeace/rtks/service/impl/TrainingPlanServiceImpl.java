@@ -4,6 +4,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.DataTransferUtils;
+import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.CourseStatisticsService;
+import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
+import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
+import com.cyberpeace.rtks.service.RoleService;
+import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +58,12 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	@Autowired
 	private KnowledgeService knowledgeService;
+
+	@Autowired
+	private CourseStatisticsService courseStatisticsService;
+
+	@Autowired
+	private CourseService courseService;
 
 	public void parseTreeNode(LevelTreeOutput frame, Map<String, List<RoleOutput>> roleListMap) {
 		for (int index = 0; index < frame.getChildren().size(); index++) {
@@ -160,6 +174,33 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		roleDetailRes.setSkillCourseList(skillCourseList);
 
 		return roleDetailRes;
+	}
+
+	@Override
+	public List<CourseKnowledgeBo> getCourseKnowledges(String userId, String roleId) {
+		Role role = roleMapper.selectById(roleId);
+		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(), String.class);
+		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
+		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds, userId);
+
+		List<CourseInfoBo> courses = courseService.selectByIds(courseIds);
+		Map<String, CourseInfoBo> infoMap = courses.stream().collect(Collectors.
+				toMap(CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo));
+
+		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService.getKnowledgeByCourseId(courseIds);
+
+		List<CourseKnowledgeBo> boList = processBos.stream().map(bo -> {
+			CourseKnowledgeBo knowledgeBo = BeanUtils.copy(infoMap.get(bo.getCourseId()), CourseKnowledgeBo.class);
+			knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
+			knowledgeBo.setProcess(bo.getProcess().intValue());
+			knowledgeBo.setCompleteTheory(bo.getCompleteTheory());
+			knowledgeBo.setCompleteExercise(bo.getCompleteExercise());
+			knowledgeBo.setTheoryCount(DataTransferUtils.nullToZero(bo.getTheoryCount()));
+			knowledgeBo.setExerciseCount(bo.getExerciseCount());
+			knowledgeBo.setCompleteCount(bo.getCompleteCount());
+			return knowledgeBo;
+		}).collect(Collectors.toList());
+		return boList;
 	}
 
 	private LevelTreeOutput getLevelTree(List<Level> levelList, String levelId) {

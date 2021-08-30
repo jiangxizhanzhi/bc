@@ -82,6 +82,35 @@ public class MathUtils {
     }
 
     /**
+     * 向上取整除法
+     * @param dividend
+     * @param divisor
+     * @return
+     */
+    public static Integer divide(Integer dividend, Integer divisor) {
+        if (null == divisor || divisor.intValue() == 0) {
+            return 0;
+        }
+        int ret = dividend / divisor;
+        int mod = dividend % divisor;
+
+        if (mod != 0) {
+            ret++;
+        }
+
+        if (ret > 100) {
+            ret = 100;
+        }
+
+        if (ret < 0) {
+            ret = 0;
+        }
+
+        return ret;
+    }
+
+
+    /**
      * 提供指定数值的（精确）小数位四舍五入处理。
      *
      * @param value 需要四舍五入的数字

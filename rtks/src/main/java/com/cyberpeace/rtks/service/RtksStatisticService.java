@@ -2,6 +2,7 @@ package com.cyberpeace.rtks.service;
 
 import java.util.List;
 
+import com.cyberpeace.rtks.service.bo.CategorySkillBo;
 import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.RtksRadarBo;
@@ -58,4 +59,20 @@ public interface RtksStatisticService {
 	 * @return
 	 */
 	RoleStudyBo roleSkillStudyRecord(String roleId, String userId);
+
+	/**
+	 * 根据用户编号和岗位编号统计岗位下技能得分
+	 * @param userId
+	 * @param roleId
+	 * @return
+	 */
+	List<CategorySkillBo> getRoleSkillScores(String userId, String roleId);
+
+	/**
+	 * 计算岗位下技能能力雷达图
+	 * @param userId
+	 * @param roleId
+	 * @return
+	 */
+    List<RtksRadarBo> calculateSkillRadar(String userId, String roleId);
 }

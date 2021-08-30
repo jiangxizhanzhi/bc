@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.rtks.controller.res.PercentRes;
 import com.cyberpeace.rtks.dao.entity.UserRole;
 import com.cyberpeace.rtks.service.UserRelateService;
+import com.cyberpeace.rtks.service.bo.CategorySkillBo;
 import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.RtksRadarBo;
@@ -34,9 +35,6 @@ public class RtksStatisticController {
 
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
-
-	@Autowired
-	private UserRelateService userRelateService;
 
 	@ApiOperation("岗位知识点学习进度统计")
 	@GetMapping("/role/knowledge/study_record")
@@ -65,9 +63,9 @@ public class RtksStatisticController {
 		return rsp;
 	}
 
-	@ApiOperation("岗位六棱图统计")
-	@GetMapping("/role/radar")
-	public BaseRsp<List<RtksRadarBo>> getRoleMatch() {
+	@ApiOperation("岗位知识点六棱图统计")
+	@GetMapping("/role/knowledge/radar")
+	public BaseRsp<List<RtksRadarBo>> getRoleKnowledgeMatch() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
@@ -137,6 +135,29 @@ public class RtksStatisticController {
 			String percent = rtksStatisticService.roleMatchPercent(existRoleId, userId);
 			rsp.setData(percent);
 		}
+		return rsp;
+	}
+
+	@GetMapping("/role/skill/score")
+	@ApiOperation("岗位技能评分详情")
+	public BaseRsp<List<CategorySkillBo>> getRoleSillScore() {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		List<CategorySkillBo> categorySkills = rtksStatisticService.getRoleSkillScores(userId, roleId);
+		BaseRsp<List<CategorySkillBo>> rsp = new BaseRsp<>();
+		rsp.setData(categorySkills);
+		return rsp;
+	}
+
+	@ApiOperation("人才能力评估")
+	@GetMapping("/role/skill/rardar")
+	public BaseRsp<List<RtksRadarBo>> getRoleSkillMatch() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		List<RtksRadarBo> skillRadars = rtksStatisticService.calculateSkillRadar(userId, roleId);
+		BaseRsp<List<RtksRadarBo>> rsp = new BaseRsp<>();
+		rsp.setData(skillRadars);
 		return rsp;
 	}
 

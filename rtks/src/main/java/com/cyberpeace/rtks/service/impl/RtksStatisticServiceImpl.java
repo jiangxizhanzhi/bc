@@ -4,19 +4,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.xml.crypto.Data;
 
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.model.skill.OutSkillScore;
+import com.cyberpeace.integratation.service.OutSkillService;
 import com.cyberpeace.rtks.dao.entity.*;
+import com.cyberpeace.rtks.dao.mapper.SkillCategoryMapper;
 import com.cyberpeace.rtks.service.bo.*;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
@@ -26,6 +30,7 @@ import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TreeService;
 import com.cyberpeace.rtks.service.bo.*;
 import com.google.common.collect.Lists;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class RtksStatisticServiceImpl implements RtksStatisticService {
@@ -44,6 +49,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private SkillMapper skillMapper;
+
+	@Autowired
+	private SkillCategoryMapper skillCategoryMapper;
+
+	@Autowired
+	private OutSkillService outSkillService;
 
 	/**
 	 * 角色评分中技能所占百分比
@@ -171,6 +182,59 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return studyBo;
 	}
 
+	@Override
+	public List<CategorySkillBo> getRoleSkillScores(String userId, String roleId) {
+
+		Role role = roleMapper.selectById(roleId);
+		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
+		List<Skill> skillList = skillMapper.selectBatchIds(skillIds);
+		Map<String, List<Skill>> skillMap = skillList.stream()
+				.collect(Collectors.groupingBy(Skill::getCategoryId));
+		List<String> categoryIds = skillList.stream().map(Skill::getCategoryId).distinct()
+				.collect(Collectors.toList());
+		List<SkillCategory> categories = skillCategoryMapper.selectBatchIds(categoryIds);
+
+		// 获取技能得分情况 转化为map
+		List<OutSkillScore> scores = outSkillService.getUserSkillScore(userId, skillIds);
+		Map<String, String> scoreMap = scores.stream()
+				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
+
+		// 组装数据
+		List<CategorySkillBo> skillBos = categories.stream().map(skillCategory -> {
+			CategorySkillBo skillBo = BeanUtils.copy(skillCategory, CategorySkillBo.class);
+			List<Skill> skills = skillMap.get(skillCategory.getResourceId());
+			// 组装技能得分
+			List<SkillScoreBo> scoreBos = skills.stream().map(skill -> {
+				SkillScoreBo scoreBo = new SkillScoreBo();
+				scoreBo.setSkillId(skill.getResourceId());
+				scoreBo.setSkillContent(skill.getContent());
+				scoreBo.setScore(scoreMap.get(skill.getResourceId()));
+				scoreBo.setWeight(skill.getWeight());
+				return scoreBo;
+			}).collect(Collectors.toList());
+
+			skillBo.setSkills(scoreBos);
+			return skillBo;
+		}).collect(Collectors.toList());
+
+		return skillBos;
+	}
+
+	@Override
+	public List<RtksRadarBo> calculateSkillRadar(String userId, String roleId) {
+		List<CategorySkillBo> skillScores = getRoleSkillScores(userId, roleId);
+		List<RtksRadarBo> boList = skillScores.stream().map(categorySkillBo -> {
+			RtksRadarBo radarBo = new RtksRadarBo();
+			radarBo.setFirstTreeId(categorySkillBo.getResourceId());
+			radarBo.setTreeName(categorySkillBo.getContent());
+			double sum = categorySkillBo.getSkills().stream().mapToDouble(skillBo -> Double.parseDouble(skillBo.getScore()) * new Double(skillBo.getWeight())).sum();
+			double weightSum = categorySkillBo.getSkills().stream().mapToDouble(SkillScoreBo::getWeight).sum();
+			radarBo.setMatchPercent(String.valueOf(MathUtils.divide(sum, weightSum, 0).intValue()));
+			return radarBo;
+		}).collect(Collectors.toList());
+		return boList;
+	}
+
 	/**
 	 * 根据课程进度列表计算岗位学习进度
 	 * @param processBoList
@@ -202,13 +266,20 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private Integer calculateSkillScore(String roleId, String userId) {
 		// 1、获取当前角色的所有技能点及权重
 		List<String> skillIds = getSkillIdsByRole(roleId);
-
+		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
 		// 2、计算每个技能点的得分
 		// 连接靶场数据库，没有数据点技能点算0分
-		List<Integer> knowledgeScores = Lists.newArrayList();
+		List<OutSkillScore> skillScore = outSkillService.getUserSkillScore(userId, skillIds);
+		Map<String, String> scoreMap = skillScore.stream()
+				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
+		double sum = skills.stream().mapToDouble(skill -> new Double(skill.getWeight())
+				* Double.parseDouble(scoreMap.get(skill.getResourceId()))).sum();
+
+		int weightSum = skills.stream().mapToInt(Skill::getWeight).sum();
+		Double result = MathUtils.divide(sum, Double.parseDouble(String.valueOf(weightSum)), 0);
 
 		// 3、2中的数据根据每个技能点的权重加权平均
-		return null;
+		return result.intValue();
 	}
 
 	/**

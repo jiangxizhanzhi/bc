@@ -97,4 +97,13 @@ public class MathUtils {
         return b.divide(one,scale, RoundingMode.HALF_UP).doubleValue();
     }
 
+    /**
+     * 生成随机int值
+     * @param max 最大
+     * @return
+     */
+    public static int randomInt(Integer max) {
+        return (int) (max * Math.random());
+    }
+
 }

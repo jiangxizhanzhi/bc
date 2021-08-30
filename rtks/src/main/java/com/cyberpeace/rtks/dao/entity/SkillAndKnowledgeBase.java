@@ -8,7 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SkillAndKnowledgeBase extends BaseTable implements Serializable {
+public class SkillAndKnowledgeBase extends BaseTable {
 
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;

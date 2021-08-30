@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import com.cyberpeace.common.model.WebSocketContext;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 
@@ -61,8 +61,12 @@ public class JwtHandShake implements HandshakeInterceptor {
 			return false;
 		}
 
-		WebSocketContext context = WebSocketContext.builder().businessId(businessId)
-				.userId(userInfo.getUserId()).build();
+		parametersMap.remove(TOKEN);
+		WebSocketConnectionContext context = WebSocketConnectionContext.builder()
+				.originParams(parametersMap).build();
+		context.setUserId(userInfo.getUserId());
+
+		// 透传websocket连接的上下文
 		map.put("key", context);
 
 		return true;
@@ -75,7 +79,7 @@ public class JwtHandShake implements HandshakeInterceptor {
 	}
 
 	private Map<String, String> parseParameterMap(String queryString) {
-		Map<String, String> parameterMap = Maps.newHashMap();
+		Map<String, String> parameterMap = Maps.newTreeMap();
 		String[] parameters = StringUtils.split(queryString, "&");
 
 		for (String parameter : parameters) {

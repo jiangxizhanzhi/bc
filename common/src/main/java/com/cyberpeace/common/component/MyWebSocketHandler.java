@@ -1,15 +1,19 @@
 package com.cyberpeace.common.component;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
-import com.cyberpeace.common.model.WebSocketContext;
+import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,14 +24,28 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class MyWebSocketHandler implements WebSocketHandler {
 
-	private Map<String, WebSocketSession> userSocketSessionMap = Maps.newConcurrentMap();
+	/**
+	 * 1、key=业务数据生成编号。
+	 * 2、value
+	 * 2.1、 value的key=该业务场景下的用户id
+	 * 2.2、value的value=该业务场景下指定用户的session
+	 */
+	private Map<String, Map<String, Set<WebSocketSession>>> businessSocketSessionMap = Maps
+			.newConcurrentMap();
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
-		WebSocketContext webSocketContext = (WebSocketContext) webSocketSession.getAttributes()
-				.get("key");
+		WebSocketConnectionContext webSocketContext = (WebSocketConnectionContext) webSocketSession
+				.getAttributes().get("key");
 
-		userSocketSessionMap.putIfAbsent(webSocketContext.toString(), webSocketSession);
+		businessSocketSessionMap.putIfAbsent(webSocketContext.getBusinessId(),
+				Maps.newConcurrentMap());
+
+		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
+				.get(webSocketContext.getBusinessId());
+
+		userSocketSessionMap.putIfAbsent(webSocketContext.getUserId(), Sets.newHashSet());
+		userSocketSessionMap.get(webSocketContext.getUserId()).add(webSocketSession);
 	}
 
 	@Override
@@ -53,46 +71,109 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		return false;
 	}
 
-	public void pushMessage(WebSocketContext webSocketContext, Object obj) {
-		WebSocketSession session = userSocketSessionMap.get(webSocketContext.toString());
+	/**
+	 * 向用户推送websocket消息
+	 * @param message 待推送的websocket消息
+	 * @param toAllUser 向该业务的所有用户推送消息。toAllUser目前就实训的共享场景用到
+	 */
+	public void pushMessage(WebSocketMessageContext message, boolean toAllUser) {
+		String businessId = message.getMessageIdentifier().getBusinessId();
+		String userId = message.getMessageIdentifier().getUserId();
 
-		if (session == null || session.isOpen()) {
-			log.error("key=[{}] session not found!");
+		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
+				.get(businessId);
+
+		if (StringUtils.isBlank(userId) || MapUtils.isEmpty(userSocketSessionMap)) {
+			log.warn("businessId=[{}], userId=[{}] send ws message fail! userSessionMap maybe null",
+					businessId, userId);
+			return;
 		}
 
-		String jsonMessage = JsonUtil.toJsonString(obj);
-		TextMessage toSendMessage = new TextMessage(jsonMessage);
-		try {
-			session.sendMessage(toSendMessage);
-		} catch (IOException e) {
-			log.error("key=[{}] send message fail, message=[{}]", webSocketContext.toString(),
-					jsonMessage);
-		}
+		// 实际消息发送
+		for (Map.Entry<String, Set<WebSocketSession>> item : userSocketSessionMap.entrySet()) {
+			String sessionUserId = item.getKey();
 
-		if (log.isDebugEnabled()) {
-			log.debug("key=[{}], message=[{}]", webSocketContext.toString(), jsonMessage);
+			if (!toAllUser && !StringUtils.equals(sessionUserId, userId)) {
+				continue;
+			}
+
+			Set<WebSocketSession> sessions = item.getValue();
+
+			for (WebSocketSession userSession : sessions) {
+				if (null == userSession) {
+					log.warn(
+							"businessId=[{}], userId=[{}] send ws message fail! userSession is null!");
+					continue;
+				}
+
+				if (!userSession.isOpen()) {
+					log.warn(
+							"businessId=[{}], userId=[{}] send ws message fail! userSession is closed!");
+					removeSession(userSession);
+					continue;
+				}
+
+				String jsonMessage = JsonUtil.toJsonString(message.getData());
+				TextMessage toSendMessage = new TextMessage(jsonMessage);
+				try {
+					userSession.sendMessage(toSendMessage);
+				} catch (IOException e) {
+					log.error("businessId=[{}], userId=[{}], message=[{}] send fail!",
+							new Object[] { businessId, userId, jsonMessage });
+				}
+
+				if (log.isDebugEnabled()) {
+					log.debug("businessId=[{}], userId=[{}], message=[{}] send fail!",
+							new Object[] { businessId, userId, jsonMessage });
+				}
+			}
 		}
 	}
 
-	private void removeSession(WebSocketSession webSocketSession) throws Exception {
-		WebSocketContext webSocketContext = (WebSocketContext) webSocketSession.getAttributes()
-				.get("key");
-
+	private void removeSession(WebSocketSession webSocketSession) {
 		if (webSocketSession.isOpen()) {
-			webSocketSession.close();
+			try {
+				webSocketSession.close();
+			} catch (Exception e) {
+				log.error("remove webSocketSession error, e:", e);
+			}
 		}
 
-		Iterator<Map.Entry<String, WebSocketSession>> it = userSocketSessionMap.entrySet()
-				.iterator();
-		// 移除Socket会话
-		while (it.hasNext()) {
-			Map.Entry<String, WebSocketSession> entry = it.next();
-			if (entry.getValue().getId().equals(webSocketSession.getId())) {
-				userSocketSessionMap.remove(entry.getKey());
+		WebSocketConnectionContext connectionContext = (WebSocketConnectionContext) webSocketSession
+				.getAttributes().get("key");
 
-				log.info("key=[{}] removed from userSocketSessionMap", webSocketContext.toString());
+		if (null == connectionContext || MapUtils.isEmpty(businessSocketSessionMap)) {
+			return;
+		}
+
+		String businessId = connectionContext.getBusinessId();
+
+		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
+				.get(businessId);
+
+		if (MapUtils.isEmpty(userSocketSessionMap)) {
+			return;
+		}
+
+		Set<WebSocketSession> userSessions = userSocketSessionMap
+				.get(connectionContext.getUserId());
+		if (null == userSessions || userSessions.isEmpty()) {
+			return;
+		}
+
+		for (WebSocketSession userSession : userSessions) {
+			if (StringUtils.equals(userSession.getId(), webSocketSession.getId())) {
+				userSessions.remove(userSession);
 				break;
 			}
 		}
+
+		if (userSessions.isEmpty()) {
+			userSocketSessionMap.remove(connectionContext.getUserId());
+		}
+
+		log.info("businessId=[{}], userId=[{}] removed from socketSessionMap",
+				connectionContext.toString(), connectionContext.getUserId());
+
 	}
 }

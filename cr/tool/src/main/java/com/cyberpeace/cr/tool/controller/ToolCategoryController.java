@@ -12,6 +12,7 @@ import com.cyberpeace.cr.tool.service.bo.ToolCategoryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotBlank;
 @Api(tags = "工具库-分类管理")
 @RestController
 @RequestMapping("cr/tool/category")
+@RequiresAuthentication
 public class ToolCategoryController {
 
 	@Autowired

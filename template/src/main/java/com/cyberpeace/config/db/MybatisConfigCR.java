@@ -70,9 +70,9 @@ public class MybatisConfigCR {
 		GlobalConfig globalConfig = new GlobalConfig();
 		globalConfig.setMetaObjectHandler(crMetaObjectHandler());
 		GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
-		// dbConfig.setLogicDeleteField("status");
-		// dbConfig.setLogicDeleteValue(DELETE_VALUE);
-		// dbConfig.setLogicNotDeleteValue(NOT_DELETE);
+		dbConfig.setLogicDeleteField("status");
+		dbConfig.setLogicDeleteValue(DELETE_VALUE);
+		dbConfig.setLogicNotDeleteValue(NOT_DELETE);
 		globalConfig.setDbConfig(dbConfig);
 		return globalConfig;
 	}

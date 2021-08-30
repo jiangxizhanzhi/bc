@@ -4,18 +4,25 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.constant.ModelConstant;
+import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @TableName("cr_tool_tool")
-public class Tool implements Serializable {
+public class Tool extends BaseTable {
 
-	private Integer id;
-
-	private Integer status;
+	enum Type{
+		OFFLINE(0), // 离线
+		ONLINE(1); // 在线
+		private final Integer value;
+		Type(Integer value) {
+			this.value = value;
+		}
+	}
+	private Integer status = ModelConstant.NOT_DELETE;
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -52,10 +59,6 @@ public class Tool implements Serializable {
 	private String tag;
 
 	private Date publishTime;
-
-	private Date createTime;
-
-	private Date updateTime;
 
 	private String scene;
 

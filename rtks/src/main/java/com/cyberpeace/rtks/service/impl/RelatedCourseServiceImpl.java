@@ -65,9 +65,11 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 			}
 			if (existIds.size() > 0) {
 				// 查询课程或者学习情况
-				if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
+				if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)
+						|| RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
 					String userId = UserInfoContext.getUserContext().getUserId();
-					processBos = courseStatisticsService.statisticByIds(existIds, userId);
+					processBos.addAll(courseStatisticsService.statisticByIds(existIds, userId));
+
 				}
 
 				List<CourseInfoBo> courseList = courseService.selectByIds(existIds);

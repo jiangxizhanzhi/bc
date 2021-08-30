@@ -53,7 +53,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
 
 		List<SkillRes> skillResList = result.getRecords();
-		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_COURSE);
+		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
 
 		return PageUtil.getListResult(result);
 	}
@@ -114,7 +114,15 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 					processBos, related_course_type);
 			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
-			skillRes.setCourseStudyProcessBoList(processBos);
+			if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
+				skillRes.setProcess(getProcess(processBos));
+				skillRes.setCourses("");
+				skillRes.setCourseList(null);
+				skillRes.setCourseStudyProcessBoList(processBos);
+			} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
+				skillRes.setProcess(getProcess(processBos));
+				skillRes.setCourseStudyProcessBoList(processBos);
+			}
 
 			if (isDeleted) {
 
@@ -130,6 +138,21 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 		}
 		updateBatchById(skillList);
+	}
+
+	private Double getProcess(List<CourseStudyProcessBo> processBos) {
+		Double lessonCount = Double.valueOf(0);
+
+		Double completeCount = Double.valueOf(0);
+		for (CourseStudyProcessBo courseStudyProcessBo : processBos) {
+			lessonCount += courseStudyProcessBo.getLessonCount();
+			completeCount += courseStudyProcessBo.getCompleteCount();
+		}
+		if (lessonCount <= 0.0) {
+			return lessonCount;
+		} else {
+			return completeCount / lessonCount;
+		}
 	}
 
 	@Override

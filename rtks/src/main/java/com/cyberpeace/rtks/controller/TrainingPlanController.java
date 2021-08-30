@@ -3,15 +3,20 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
+import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.service.LevelService;
@@ -76,7 +81,7 @@ public class TrainingPlanController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("人才能力图谱（获取技能和知识点的课程内容）")
+	@ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
 	@GetMapping("/roleMap")
 	public BaseRsp<RoleDetailRes> getRoleOutputByRoleId(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
@@ -86,26 +91,28 @@ public class TrainingPlanController {
 		return new BaseRsp<RoleDetailRes>(roleOutput);
 	}
 
-	// @ApiOperation("人才能力图谱（分页获取技能和知识点的课程）")
-	// @GetMapping("/roleMap")
-	// public BaseRsp<RoleDetailRes> page(
-	// @ApiParam(name = "resource_id", value = "岗位id", required = true) String
-	// resource_id) {
-	// RoleDetailRes roleOutput =
-	// trainingPlanService.getRoleOutputByRoleId(resource_id);
-	//
-	// return new BaseRsp<RoleDetailRes>(roleOutput);
-	// }
+	@ApiOperation("分页获取知识点以及课程")
+	@GetMapping("/getKnowledgeCourseList")
+	public BaseRsp<ListRsp<KnowledgeRes>> page(@Validated PageReqBase pageReqBase) {
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp<ListRsp<KnowledgeRes>> rsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(existRoleId)) {
+			ListRsp<KnowledgeRes> data = trainingPlanService.getKnowledgeCourseList(pageReqBase,
+					existRoleId);
+			rsp.setData(data);
+		}
+		return rsp;
+	}
 
-	@ApiOperation("查询岗位所有知识点关联的课程学习情况")
-	@GetMapping("/list")
+	@ApiOperation("查询技能和知识点关联的课程学习情况")
+	@GetMapping("/getRelatedCourseList")
 	public BaseRsp<RoleDetailRes> getRelatedCourseList(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
 		RoleDetailRes roleOutput = trainingPlanService.getRoleOutputByRoleId(resource_id,
 				RoleDetailRes.RELATED_COURSE_STUDY);
-		// String userId = UserInfoContext.getUserContext().getUserId();
 
 		return new BaseRsp<RoleDetailRes>(roleOutput);
 	}
+
 
 }

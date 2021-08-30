@@ -10,7 +10,6 @@ import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 
 /**
  *
@@ -32,12 +31,6 @@ public interface KnowledgeService extends IService<Knowledge> {
 	List<CourseConfig> getCourseConfigs(Knowledge knowledge);
 
 	List<String> filterIds(List<String> ids);
-
-	/**通过知识点id获取所有课程列表
-	 * @param id
-	 * @return 课程列表
-	 */
-	List<RelatedCourse> getCourseListByKnowledgeId(String id);
 
 	/**校验是否存在类别
 	 * @param knowledge

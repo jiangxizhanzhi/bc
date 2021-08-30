@@ -12,11 +12,11 @@ import lombok.Data;
 @Data
 public class RoleDetailRes implements Serializable {
 
-	public final static String RELATED_COURSE_COURSE = "course";
+	public final static String RELATED_COURSE_COURSE = "course";// 只传课程
 
-	public final static String RELATED_COURSE_STUDY = "study";
+	public final static String RELATED_COURSE_STUDY = "study";// 只传课程学习进展
 
-	public final static String RELATED_COURSE_ALL = "all";
+	public final static String RELATED_COURSE_ALL = "all";// 同时都传
 
 	private String resourceId;
 

@@ -7,7 +7,13 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
@@ -19,6 +25,7 @@ import com.cyberpeace.rtks.controller.role.RoleOutput;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.entity.Skill;
+import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.SkillService;
@@ -38,7 +45,10 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	private RoleMapper roleMapper;
 
 	@Autowired
+	private KnowledgeMapper knowledgeMapper;
+	@Autowired
 	private KnowledgeService knowledgeService;
+
 
 	public void parseTreeNode(LevelTreeOutput frame, Map<String, List<RoleOutput>> roleListMap) {
 		for (int index = 0; index < frame.getChildren().size(); index++) {
@@ -100,6 +110,35 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		roleDetailRes.setSkillResDataList(skillResList);
 
 		return roleDetailRes;
+	}
+
+	@Override
+	public ListRsp<KnowledgeRes> getKnowledgeCourseList(PageReqBase pageReqBase,
+			String existRoleId) {
+		Page page = pageReqBase.toPageParam();
+		List<String> knowledgeIds = getKnowledgeIdsByRole(existRoleId);
+
+		IPage<KnowledgeRes> result = knowledgeMapper.getKnowledgeListByIds(page, knowledgeIds);
+
+		List<KnowledgeRes> knowledgeResList = result.getRecords();
+		knowledgeService.checkKonwledgeRes(knowledgeResList, RoleDetailRes.RELATED_COURSE_ALL);
+
+		return PageUtil.getListResult(result);
+	}
+
+	/**
+	 * 根据岗位编号查询知识点编号
+	 * @param roleId
+	 * @return
+	 */
+	private List<String> getKnowledgeIdsByRole(String roleId) {
+		Role role = roleMapper.selectById(roleId);
+		if (null == role) {
+			return Lists.newArrayList();
+		}
+		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
+				String.class);
+		return knowledgeIds;
 	}
 
 }

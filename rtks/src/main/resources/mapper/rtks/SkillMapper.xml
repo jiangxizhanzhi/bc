@@ -60,15 +60,4 @@
             rtks_skill.resource_id = #{id}
         </where>
     </select>
-
-    <select id="filterIds" resultType="java.lang.String">
-        select resource_id
-        from rtks_skill
-        <where>
-            resource_id in
-            <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
-                #{id}
-            </foreach>
-        </where>
-    </select>
 </mapper>

@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
@@ -96,8 +97,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public List<String> filterIds(List<String> ids) {
-		return skillMapper.filterIds(ids);
+	public Skill getOr404(String skillId) {
+		Skill skill = getById(skillId);
+		if (skill == null) {
+			throw new ResourceNotFoundException("技能" + skillId + "未找到");
+		}
+		return skill;
 	}
 
 	@Override
@@ -156,7 +161,8 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public List<CourseConfig> getCourseConfigs(Skill skill) {
+	public List<CourseConfig> getCourseConfigs(String skillId) {
+		Skill skill = getOr404(skillId);
 		return JsonUtil.toJsonObjectArray(skill.getCourses(), CourseConfig.class);
 	}
 }

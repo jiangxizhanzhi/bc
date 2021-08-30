@@ -11,5 +11,8 @@ public interface AbilityService extends IService<Ability> {
 
 	ListRsp<Ability> page(AbilityListReq abilityListReq);
 
-	List<String> filterIds(List<String> ids);
+	/**
+	 * 给定数组的列表，只要其中任意一个id对应的能力不存在 报错
+	 * */
+	void checkIds(List<String> ids);
 }

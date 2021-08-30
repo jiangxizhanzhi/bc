@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
@@ -94,8 +95,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	}
 
 	@Override
-	public List<String> filterIds(List<String> ids) {
-		return knowledgeMapper.filterIds(ids);
+	public Knowledge getOr404(String knowledgeId) {
+		Knowledge knowledge = getById(knowledgeId);
+		if (knowledge == null) {
+			throw new ResourceNotFoundException("知识点" + knowledgeId + "未找到");
+		}
+		return knowledge;
 	}
 
 	@Override
@@ -170,7 +175,8 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	}
 
 	@Override
-	public List<CourseConfig> getCourseConfigs(Knowledge knowledge) {
+	public List<CourseConfig> getCourseConfigs(String knowledgeId) {
+		Knowledge knowledge = getOr404(knowledgeId);
 		return JsonUtil.toJsonObjectArray(knowledge.getCourses(), CourseConfig.class);
 	}
 

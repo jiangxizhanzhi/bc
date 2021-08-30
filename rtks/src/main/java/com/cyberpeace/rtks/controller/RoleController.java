@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.validation.constraints.NotBlank;
 
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.dao.entity.Course;
@@ -34,6 +32,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,6 +42,23 @@ class RoleListReq<T> extends ListReq<T> {
 	@Getter
 	@Setter
 	private String frameId;
+}
+
+@Data
+class Helper {
+
+	private String idStr;
+
+	private String courseStr;
+
+	public Helper(String idStr, String courseStr) {
+		this.idStr = idStr;
+		this.courseStr = courseStr;
+	}
+
+	public Helper() {
+		this("[]", "[]");
+	}
 }
 
 @Api(tags = "TRKS-岗位管理")
@@ -203,25 +219,42 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 
 		boolean isModify = originEntity != null;
 
-		handlerInput("职责", isModify, taskService::filterIds, input::getTaskIds, role::setTaskIds);
+		// 职责
+		String taskIdStr = handlerInput(isModify, input.getTaskIds(), taskService::checkIds);
+		role.setTaskIds(taskIdStr);
 
-		handlerInput("能力", isModify, abilityService::filterIds, input::getAbilityIds,
-				role::setAbilityIds);
+		// 能力
+		String abilityIdStr = handlerInput(isModify, input.getAbilityIds(),
+				abilityService::checkIds);
+		role.setAbilityIds(abilityIdStr);
 
+		// 知识点
 		String originKnowledgeIdsStr = null;
-		String originSkillIdsStr = null;
 		if (originEntity != null) {
 			originKnowledgeIdsStr = originEntity.getKnowledgeIds();
+		}
+
+		Helper knowledgeHelper = handlerInputWithCourse(isModify, input.getKnowledgeIds(),
+				originKnowledgeIdsStr, knowledgeService::getCourseConfigs);
+
+		if (knowledgeHelper != null) {
+			role.setKnowledgeIds(knowledgeHelper.getIdStr());
+			role.setKnowledgeCourses(knowledgeHelper.getCourseStr());
+		}
+
+		// 技能
+		String originSkillIdsStr = null;
+		if (originEntity != null) {
 			originSkillIdsStr = originEntity.getSkillIds();
 		}
 
-		handlerInputWithCourse("知识点", isModify, knowledgeService::getById, input::getKnowledgeIds,
-				originKnowledgeIdsStr, role::setKnowledgeIds, role::setKnowledgeCourses,
-				knowledgeService::getCourseConfigs);
+		Helper skillHelper = handlerInputWithCourse(isModify, input.getSkillIds(),
+				originSkillIdsStr, skillService::getCourseConfigs);
 
-		handlerInputWithCourse("技能", isModify, skillService::getById, input::getSkillIds,
-				originSkillIdsStr, role::setSkillIds, role::setSkillCourses,
-				skillService::getCourseConfigs);
+		if (skillHelper != null) {
+			role.setSkillIds(skillHelper.getIdStr());
+			role.setSkillCourses(skillHelper.getCourseStr());
+		}
 
 		return role;
 	}
@@ -313,70 +346,61 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		return ret;
 	}
 
-	private void handlerInput(String name, Boolean isModify,
-			Function<List<String>, List<String>> filterIds, Supplier<List<String>> getInputIds,
-			Consumer<String> setIds) {
-
-		List<String> inputIds = getInputIds.get();
+	/***
+	 * 校验输入中的职责ids，能力ids，并转换为字符串
+	 * @param isModify 更新/新建 更新时，如果输入为null 将被跳过
+	 * @param inputIds 输入的id列表
+	 * @param checkIds 无返回值函数 输入id的列表 确保所有id对应的对象存在 否则报错
+	 */
+	private String handlerInput(Boolean isModify, List<String> inputIds,
+			Consumer<List<String>> checkIds) {
 
 		// 跳过该字段
 		if (isModify && inputIds == null) {
-			return;
+			return null;
 		}
 
 		// 直接置空
-		if (isEmptyList(inputIds)) {
-			setIds.accept("[]");
-			return;
+		if (CollectionUtils.isEmpty(inputIds)) {
+			return "[]";
 		}
 
-		String abilityIdsStr = JsonUtil.toJsonString(inputIds);
-		setIds.accept(abilityIdsStr);
+		checkIds.accept(inputIds);
 
-		List<String> existingIds = filterIds.apply(inputIds);
-
-		for (String t : inputIds) {
-			if (!existingIds.contains(t)) {
-				throw new ResourceNotFoundException(name + t + "不合法");
-			}
-		}
+		return JsonUtil.toJsonString(inputIds);
 	}
 
-	private <T> void handlerInputWithCourse(String name, Boolean isModify,
-			Function<String, T> getById, Supplier<List<String>> getInputIds, String originIdStr,
-			Consumer<String> setIds, Consumer<String> setCourses,
-			Function<T, List<CourseConfig>> getCourseConfigs) {
-
-		List<String> inputIds = getInputIds.get();
+	/**
+	 * 校验输入中的知识点ids、技能ids，并输出ids字符串，课程ids字符串
+	 * @param isModify 更新/新建 更新时，如果输入为null 将被跳过
+	 * @param inputIds 输入的id列表
+	 * @param originIdStr 更新时，数据库中既有的id列表的json字符串 用于比较是否发生变化
+	 * @param getCourseConfigs 函数: id，返回其课程配置数组
+	 */
+	private Helper handlerInputWithCourse(Boolean isModify, List<String> inputIds,
+			String originIdStr, Function<String, List<CourseConfig>> getCourseConfigs) {
 
 		// 更新时跳过该字段
 		if (isModify && inputIds == null) {
-			return;
+			return null;
 		}
 
 		// 直接置空
-		if (isEmptyList(inputIds)) {
-			setIds.accept("[]");
-			setCourses.accept("[]");
-			return;
+		if (CollectionUtils.isEmpty(inputIds)) {
+			return new Helper();
 		}
 
 		String idsStr = JsonUtil.toJsonString(inputIds);
-		setIds.accept(idsStr);
 
 		// 字段无变化，跳过该字段
 		if (originIdStr.equals(idsStr)) {
-			return;
+			return null;
 		}
 
 		// 遍历关联记录，验证其是否存在，同时获取关联课程列表
 		List<String> courseIds = new ArrayList<>();
 		for (String inputId : inputIds) {
-			T t = getById.apply(inputId);
-			if (t == null) {
-				throw new ResourceNotFoundException(name + inputId + "不存在");
-			}
-			for (CourseConfig courseConfig : getCourseConfigs.apply(t)) {
+			for (CourseConfig courseConfig : getCourseConfigs.apply(inputId)) {
 				String courseId = courseConfig.getResourceId();
 				if (!courseIds.contains(courseId)) {
 					courseIds.add(courseId);
@@ -384,7 +408,7 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 			}
 		}
 		String coursesStr = JsonUtil.toJsonString(courseIds);
-		setCourses.accept(coursesStr);
+		return new Helper(idsStr, coursesStr);
 	}
 
 	/**
@@ -398,12 +422,4 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		}
 
 	}
-
-	private <T> Boolean isEmptyList(List<T> arrayList) {
-		if (arrayList == null) {
-			return true;
-		}
-		return arrayList.isEmpty();
-	}
-
 }

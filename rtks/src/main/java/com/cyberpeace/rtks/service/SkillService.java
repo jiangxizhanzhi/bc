@@ -28,9 +28,15 @@ public interface SkillService extends IService<Skill> {
 
 	void validate(Skill skill);
 
-	List<CourseConfig> getCourseConfigs(Skill skill);
+	/**
+	 * 给定技能id 如果技能不存在报错 否则返回该技能下课程配置信息
+	 * */
+	List<CourseConfig> getCourseConfigs(String skillId);
 
-	List<String> filterIds(List<String> ids);
+	/**
+	 * 给定id 返回对应的技能对象 否则报错
+	 * */
+	Skill getOr404(String skillId);
 
 	void checkSkillRes(List<SkillRes> skillResList, String type);
 }

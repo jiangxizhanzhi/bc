@@ -28,9 +28,15 @@ public interface KnowledgeService extends IService<Knowledge> {
 	 */
 	KnowledgeRes getKnowledgeByResourceId(String id);
 
-	List<CourseConfig> getCourseConfigs(Knowledge knowledge);
+	/**
+	 * 给定知识点id 如果知识点对象不存在报错 否则返回该知识点下课程配置信息
+	 * */
+	List<CourseConfig> getCourseConfigs(String knowledgeId);
 
-	List<String> filterIds(List<String> ids);
+	/**
+	 * 给定知识点id 返回对应知识点对象 不存在则报错
+	 * */
+	Knowledge getOr404(String knowledgeId);
 
 	/**校验是否存在类别
 	 * @param knowledge

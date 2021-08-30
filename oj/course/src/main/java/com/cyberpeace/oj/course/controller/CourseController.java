@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +31,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "实训-课程相关")
 @RestController
 @RequestMapping("/oj/course")
-// @RequiresAuthentication
+@RequiresAuthentication
 public class CourseController {
 
 	@Autowired

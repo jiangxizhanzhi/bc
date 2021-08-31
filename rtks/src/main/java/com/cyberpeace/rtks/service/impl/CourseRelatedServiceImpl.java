@@ -42,7 +42,7 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 		// if (CourseRelated.RELATED_TYPE_KNOWLEDGE.equals(type)) { // 知识点要修改单独的课程关联数据库
 		List<String> ids = Lists.newArrayList();
 		ids.add(resourceId);
-		deleteCourseRelatedByRelatedIds(ids);
+		deleteCourseRelatedByRelatedIds(ids, type);
 
 		this.saveBatch(courseRelatedList);
 		// }
@@ -51,7 +51,7 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 	}
 
 	@Override
-	public void deleteCourseRelatedByRelatedIds(List<String> ids) {
-		courseRelatedMapper.deleteByRelatedId(ids);
+	public void deleteCourseRelatedByRelatedIds(List<String> ids, Integer type) {
+		courseRelatedMapper.deleteByRelatedId(ids, type);
 	}
 }

@@ -61,7 +61,8 @@
         from rtks_course_related
         left join rtks_knowledge on rtks_course_related.related_id = rtks_knowledge.resource_id
         <where>
-            rtks_course_related.resource_id in
+            rtks_course_related.type = 1
+            and rtks_course_related.resource_id in
             <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
                 #{id}
             </foreach>

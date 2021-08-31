@@ -87,7 +87,8 @@ public class SkillController {
 	@DeleteMapping()
 	public BaseRsp<String> deleteSkill(@RequestBody @Validated DeleteReq deleteReq) {
 		skillService.removeByIds(deleteReq.getIds());
-		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds());
+		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds(),
+				CourseRelated.RELATED_TYPE_SKILL);
 
 		return new BaseRsp<>();
 	}

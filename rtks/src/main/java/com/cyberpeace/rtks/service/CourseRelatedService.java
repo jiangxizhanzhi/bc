@@ -20,5 +20,5 @@ public interface CourseRelatedService extends IService<CourseRelated> {
 	String saveCourseRelatedList(List<RelatedCourse> relatedCourseList, String resourceId,
 			Integer type);
 
-	void deleteCourseRelatedByRelatedIds(List<String> ids);
+	void deleteCourseRelatedByRelatedIds(List<String> ids, Integer type);
 }

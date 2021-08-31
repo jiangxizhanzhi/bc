@@ -1,18 +1,8 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.rtks.controller.res.PercentRes;
-import com.cyberpeace.rtks.dao.entity.UserRole;
-import com.cyberpeace.rtks.service.UserRelateService;
-import com.cyberpeace.rtks.service.bo.*;
-import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.rtks.controller.res.PercentRes;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.bo.*;

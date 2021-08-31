@@ -48,7 +48,7 @@ class RoleListReq<T> extends ListReq<T> {
 @Api(tags = "TRKS-岗位管理")
 @RestController
 @RequestMapping("/rtks/role")
-public class RoleController extends BaseListController<Role, RoleInput, RoleAddInput, RoleModifyInput, RoleDetailOutput, RoleOutput, RoleService, RoleListReq<Role>> {
+public class RoleController extends BaseListController<Role, RoleAddInput, RoleModifyInput, RoleListReq<Role>, RoleDetailOutput, RoleOutput> {
 
 	@Autowired
 	private TaskService taskService;

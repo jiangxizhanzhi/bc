@@ -10,12 +10,20 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.dao.entity.BaseEntity;
-import com.cyberpeace.rtks.service.BaseService;
 
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 支持新增、删除、单条查询、修改(部分修改)、列表查询
+ * @param <Entity> 实体类
+ * @param <AddInput> 新增请求模型
+ * @param <ModifyInput> 修改请求模型
+ * @param <ListRequest> 列表查询请求模型
+ * @param <Output> 单条查询输出模型
+ * @param <ListOutput> 列表查询输出模型(单条) 可以等同于Output
+ */
 @RestController
-public abstract class BaseListController<Entity extends BaseEntity, Input, AddInput extends Input, ModifyInput extends Input, Output, ListOutput, Service extends BaseService<Entity>, ListRequest> extends BaseController<Entity, Input, AddInput, ModifyInput, Output, Service> {
+public abstract class BaseListController<Entity extends BaseEntity, AddInput, ModifyInput, ListRequest, Output, ListOutput> extends BaseController<Entity, AddInput, ModifyInput, Output> {
 
 	abstract ListOutput getListOutputFromEntity(Entity entity);
 

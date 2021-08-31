@@ -28,7 +28,7 @@ import io.swagger.annotations.Api;
 @Api(tags = "TRKS-框架层级管理")
 @RestController
 @RequestMapping("/rtks/frame/level")
-public class LevelController extends BaseController<Level, LevelInput, LevelAddInput, LevelModifyInput, LevelOutput, LevelService> {
+public class LevelController extends BaseController<Level, LevelAddInput, LevelModifyInput, LevelOutput> {
 
 	@Autowired
 	private LevelService levelService;

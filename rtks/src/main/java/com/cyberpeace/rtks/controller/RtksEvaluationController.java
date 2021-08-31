@@ -4,13 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.rtks.controller.res.PercentRes;
-import com.cyberpeace.rtks.dao.entity.UserRole;
-import com.cyberpeace.rtks.service.UserRelateService;
-import com.cyberpeace.rtks.service.bo.*;
-import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.rtks.controller.res.PercentRes;
 import com.cyberpeace.rtks.service.RtksStatisticService;
+import com.cyberpeace.rtks.service.bo.*;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @RequiresAuthentication
 @RestController
@@ -66,6 +67,20 @@ public class RtksEvaluationController {
 		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
 			List<RtksRadarBo> radarBos = rtksStatisticService.calculateRadar(existRoleId, userId);
+			baseRsp.setData(radarBos);
+		}
+		return baseRsp;
+	}
+
+	@ApiOperation("LGD岗位技能点六棱图统计")
+	@GetMapping("/role/skill/radar")
+	public BaseRsp<List<RtksRadarBo>> getLgdRoleSkillMatch() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(existRoleId)) {
+			List<RtksRadarBo> radarBos = rtksStatisticService.calculateLgdRadar(existRoleId,
+					userId);
 			baseRsp.setData(radarBos);
 		}
 		return baseRsp;

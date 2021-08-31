@@ -17,11 +17,13 @@ public class CourseRelated {
 
 	public final static Integer RELATED_TYPE_SKILL = 2;
 
+	public final static Integer DEFAULT_WEIGHT = 1;
+
 	private String resourceId;
 
 	private String relatedId;
 
-	private Integer weight = 1;
+	private Integer weight = DEFAULT_WEIGHT;
 
 	private Integer type;
 }

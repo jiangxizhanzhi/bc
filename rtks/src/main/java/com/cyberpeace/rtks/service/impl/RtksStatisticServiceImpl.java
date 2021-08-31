@@ -2,10 +2,12 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
-import javax.xml.crypto.Data;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.skill.OutSkillScore;
@@ -14,27 +16,17 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.rtks.dao.entity.*;
-import com.cyberpeace.rtks.dao.mapper.SkillCategoryMapper;
-import com.cyberpeace.rtks.service.bo.*;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import io.swagger.annotations.ApiModelProperty;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
+import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
+import com.cyberpeace.rtks.dao.mapper.SkillCategoryMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TreeService;
 import com.cyberpeace.rtks.service.bo.*;
 import com.google.common.collect.Lists;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class RtksStatisticServiceImpl implements RtksStatisticService {
@@ -99,6 +91,33 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		Integer ret = floor(result);
 
 		return ret + "";
+	}
+
+	@Override
+	public List<RtksRadarBo> calculateLgdRadar(String roleId, String userId) {
+		List<RtksRadarBo> ret = Lists.newArrayList();
+
+		// 1、获取当前岗位对应的框架数据
+		Level nearestLevel = treeService.getNearestLevelByRole(roleId);
+		String frameId = nearestLevel.getFrame();
+
+		// 2、获取当前岗位对应的第一树形结构
+		List<Level> firstLevel = treeService.getFirstLevel(frameId);
+
+		// 3、计算当前树形节点的评分
+		for (Level level : firstLevel) {
+			String matchPercent = calculateLgdRadarByLevel(level.getResourceId(), userId);
+
+			RtksRadarBo rtksRadarBo = new RtksRadarBo();
+
+			rtksRadarBo.setFirstTreeId(level.getResourceId());
+			rtksRadarBo.setTreeName(level.getName());
+			rtksRadarBo.setMatchPercent(matchPercent);
+
+			ret.add(rtksRadarBo);
+		}
+
+		return ret;
 	}
 
 	@Override
@@ -276,10 +295,10 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			List<LessonRecord> lessonRecordList = recordMap.get(format8);
 
 			if (CollectionUtils.isNotEmpty(lessonRecordList)) {
-				List<String> recordLessonIds = lessonRecordList.stream().map(LessonRecord::getLesson)
-						.distinct().collect(Collectors.toList());
-				List<String> recordCourseIds = courseLessonService.recordBelongCourse(recordLessonIds,
-						lessons);
+				List<String> recordLessonIds = lessonRecordList.stream()
+						.map(LessonRecord::getLesson).distinct().collect(Collectors.toList());
+				List<String> recordCourseIds = courseLessonService
+						.recordBelongCourse(recordLessonIds, lessons);
 				yCourses.add(String.valueOf(recordCourseIds.size()));
 
 				recordCourseIds.retainAll(lessonSet);
@@ -378,6 +397,24 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	}
 
 	/**
+	 * 计算当前层级下所有技能点的完成度
+	 * @param levelId
+	 * @return
+	 */
+	private String calculateLgdRadarByLevel(String levelId, String userId) {
+		// 1、获取当前层级下所有role数据
+		List<Role> roles = treeService.roleUnderLevel(levelId);
+
+		// 2、获取所有知识点
+		List<Skill> skills = mergeSkillByRoles(roles);
+
+		// 3、统计所有知识点的课时完成度
+		Integer ret = calculateSkillFinishPercent(skills, userId, true);
+
+		return ret.toString();
+	}
+
+	/**
 	 * 计算当前层级下所有知识点的完成度
 	 * @param levelId
 	 * @return
@@ -393,6 +430,41 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		Integer ret = calculateKnowledgeFinishPercent(knowledges, userId, true);
 
 		return ret.toString();
+	}
+
+	/**
+	 * 计算知识点涉及到的所有课时的完成度
+	 * @param skills 技能编号
+	 * @param userId 用户编号
+	 * @return
+	 */
+	private Integer calculateSkillFinishPercent(List<Skill> skills, String userId,
+			boolean useWeight) {
+
+		// 1、统计所有知识点的进度和权重
+		List<ValueDataBo> skillScores = skills.stream()
+				.map(skill -> calculateKnowledgeScore(skill, userId, useWeight))
+				.collect(Collectors.toList());
+
+		if (useWeight) {
+			double sumProcess = skillScores.stream()
+					.mapToDouble(value -> MathUtils.mul(value.getProcess(), value.getWeight()))
+					.sum();
+
+			double sumWeight = skillScores.stream().mapToDouble(ValueDataBo::getWeight).sum();
+			return MathUtils.divide(sumProcess, sumWeight, 0).intValue();
+		} else {
+			// 2、统计所有课程的总课时A；
+			double lessonCount = skillScores.stream().mapToDouble(ValueDataBo::getLessonCount)
+					.sum();
+			// 3、统计所有课程的已学课时B;
+			double completeCount = skillScores.stream()
+					.mapToDouble(ValueDataBo::getCompleteCount).sum();
+			// 4、B/A，向上取整
+			Double divide = MathUtils.divide(completeCount, lessonCount, 0);
+			return divide.intValue();
+		}
+
 	}
 
 	/**
@@ -428,6 +500,26 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			return divide.intValue();
 		}
 
+	}
+
+	/**
+	 * 获取角色列表的所有技能点集合。
+	 *
+	 * 注意去重！
+	 * @param roles
+	 * @return
+	 */
+	private List<Skill> mergeSkillByRoles(List<Role> roles) {
+		List<String> skillIds = roles.stream()
+				.map(role -> JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class))
+				.flatMap(Collection::stream).collect(Collectors.toList());
+
+		if (CollectionUtils.isEmpty(skillIds)) {
+			return Lists.newArrayList();
+		}
+
+		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
+		return skills;
 	}
 
 	/**

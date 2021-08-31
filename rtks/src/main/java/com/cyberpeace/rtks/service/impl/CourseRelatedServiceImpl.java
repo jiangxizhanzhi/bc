@@ -32,17 +32,20 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 			courseRelated.setRelatedId(resourceId);
 			courseRelated.setResourceId(relatedCourse.getResourceId());
 			courseRelated.setWeight(relatedCourse.getWeight());
+			if (relatedCourse.getWeight() == null || relatedCourse.getWeight() == 0) {
+				courseRelated.setWeight(CourseRelated.DEFAULT_WEIGHT);
+			}
 			courseRelated.setType(type);
 
 			courseRelatedList.add(courseRelated);
 		}
-		if (CourseRelated.RELATED_TYPE_KNOWLEDGE.equals(type)) { // 知识点要修改单独的课程关联数据库
-			List<String> ids = Lists.newArrayList();
-			ids.add(resourceId);
-			deleteCourseRelatedByRelatedIds(ids);
+		// if (CourseRelated.RELATED_TYPE_KNOWLEDGE.equals(type)) { // 知识点要修改单独的课程关联数据库
+		List<String> ids = Lists.newArrayList();
+		ids.add(resourceId);
+		deleteCourseRelatedByRelatedIds(ids);
 
-			this.saveBatch(courseRelatedList);
-		}
+		this.saveBatch(courseRelatedList);
+		// }
 
 		return JsonUtil.toJsonString(courseRelatedList);
 	}

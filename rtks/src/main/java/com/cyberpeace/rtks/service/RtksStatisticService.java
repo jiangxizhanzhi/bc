@@ -83,4 +83,6 @@ public interface RtksStatisticService {
 	 * @return
 	 */
     StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime, Date endTime);
+
+	List<RtksRadarBo> calculateLgdRadar(String existRoleId, String userId);
 }

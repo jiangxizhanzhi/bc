@@ -43,7 +43,8 @@ public class MyFilter implements Filter {
 			traceId = UUID.randomUUID().toString();
 		}
 
-		if (StringUtils.isBlank(language)) {
+		// 不显式指定英文语言，就默认使用中文
+		if (!StringUtils.equals(language, WebConstant.LANGUAGE_EN)) {
 			language = WebConstant.LANGUAGE_ZH;
 		}
 

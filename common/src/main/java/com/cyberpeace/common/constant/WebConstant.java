@@ -10,6 +10,12 @@ public interface WebConstant {
 
 	String TRACE_HEADER = "X-Request-Id";
 
+	String LANGUAGE = "X-Language";
+
+	String LANGUAGE_ZH = "zh";
+
+	String LANGUAGE_EN = "en";
+
 	/**
 	 * mp鉴权参数
 	 */

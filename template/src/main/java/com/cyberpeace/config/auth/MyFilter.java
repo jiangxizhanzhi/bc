@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.impl.TraceIdContext;
 
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,9 +37,17 @@ public class MyFilter implements Filter {
 	private void setTraceId(ServletRequest request) {
 		String traceId = ((HttpServletRequest) request).getHeader(WebConstant.TRACE_HEADER);
 
+		String language = ((HttpServletRequest) request).getHeader(WebConstant.LANGUAGE);
+
 		if (StringUtils.isBlank(traceId)) {
 			traceId = UUID.randomUUID().toString();
 		}
+
+		if (StringUtils.isBlank(language)) {
+			language = WebConstant.LANGUAGE_ZH;
+		}
+
+		CommonContext.setLanguage(language);
 
 		TraceIdContext.setTraceId(traceId);
 	}

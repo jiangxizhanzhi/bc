@@ -173,7 +173,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		}
 
 		log.info("businessId=[{}], userId=[{}] removed from socketSessionMap",
-				connectionContext.toString(), connectionContext.getUserId());
+				connectionContext.getBusinessId(), connectionContext.getUserId());
 
 	}
 }

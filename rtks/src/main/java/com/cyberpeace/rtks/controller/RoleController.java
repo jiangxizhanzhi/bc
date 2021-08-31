@@ -1,13 +1,13 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.validation.constraints.NotBlank;
 
+import org.apache.commons.collections.SetUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -59,6 +59,17 @@ class Helper {
 	public Helper() {
 		this("[]", "[]");
 	}
+}
+
+interface Fields {
+
+	String TASK = "task";
+
+	String ABILITY = "ability";
+
+	String KNOWLEDGE = "knowledge";
+
+	String SKILL = "skill";
 }
 
 @Api(tags = "TRKS-岗位管理")
@@ -114,55 +125,45 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 
 		// 数据库中既有的课程编排
 		List<String> oldIds = getCourseIdsFromDb(role, field);
-		Collections.sort(oldIds);
-		int oldCount = oldIds.size();
 
 		// 输入的课程编排
-		List<String> newIds = courseLayoutInput.getCourseIds();
-		int newCount = newIds.size();
+		List<String> inputIds = courseLayoutInput.getCourseIds();
 
 		// 课程数量需要保持一致
-		if (oldCount != newCount) {
-			throw new InvalidParamException("输入课程数量不正确");
-		}
-
-		List<String> newIdsSorted = new ArrayList<>(newIds);
-		Collections.sort(newIdsSorted);
-		// 课程id排序后应当一致
-		for (int i = 0; i < oldCount; i++) {
-			if (!oldIds.get(i).equals(newIdsSorted.get(i))) {
-				throw new InvalidParamException("输入的课程id不正确");
-			}
+		if (!SetUtils.isEqualSet(oldIds, inputIds)) {
+			throw new InvalidParamException("输入的课程不正确");
 		}
 
 		// 校验通过后保存
 		Role roleToSave = new Role();
 		roleToSave.setResourceId(role.getResourceId());
-		setCourse(roleToSave, field, newIds);
+		setCourse(roleToSave, field, inputIds);
 		roleService.updateById(roleToSave);
 
-		return new BaseRsp<>(getCourseConfigOutputListFromCourseIds(newIds));
+		return new BaseRsp<>(getCourseConfigOutputListFromCourseIds(inputIds));
 	}
 
 	private String getCourseText(Role role, String field) {
-		if ("skill".equals(field)) {
+		if (Fields.SKILL.equals(field)) {
 			return role.getSkillCourses();
-		} else if ("knowledge".equals(field)) {
-			return role.getKnowledgeCourses();
-		} else {
-			throw new InvalidParamException("");
 		}
+		if (Fields.KNOWLEDGE.equals(field)) {
+			return role.getKnowledgeCourses();
+		}
+		throw new InvalidParamException("Invalid field:" + field);
 	}
 
 	private void setCourse(Role role, String field, List<String> courseIds) {
 		String toSave = JsonUtil.toJsonString(courseIds);
-		if ("skill".equals(field)) {
+		if (Fields.SKILL.equals(field)) {
 			role.setSkillCourses(toSave);
-		} else if ("knowledge".equals(field)) {
-			role.setKnowledgeCourses(toSave);
-		} else {
-			throw new InvalidParamException("");
+			return;
 		}
+		if (Fields.KNOWLEDGE.equals(field)) {
+			role.setKnowledgeCourses(toSave);
+			return;
+		}
+		throw new InvalidParamException("Invalid field:" + field);
 	}
 
 	private List<String> getCourseIdsFromDb(Role role, String field) {

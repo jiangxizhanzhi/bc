@@ -663,8 +663,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private List<String> getCourseIdsBySkill(String skillId) {
 		Skill skill = skillMapper.selectById(skillId);
-		List<String> courseIds = JsonUtil.toJsonObjectArray(skill.getCourses(), String.class);
-		return courseIds;
+		List<KnowledgeUnderCourseBo> courseIds = JsonUtil.toJsonObjectArray(skill.getCourses(), KnowledgeUnderCourseBo.class);
+		return courseIds.stream().map(KnowledgeUnderCourseBo::getResourceId).collect(Collectors.toList());
 	}
 
 	/**

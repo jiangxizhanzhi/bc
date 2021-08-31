@@ -3,9 +3,6 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +15,15 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
-import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
-import com.cyberpeace.rtks.service.bo.RtksRadarBo;
+import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,14 +39,14 @@ public class TrainingPlanController {
 	private TrainingPlanService trainingPlanService;
 
 	@Autowired
-	private FrameController frameController;
+	private RtksStatisticService rtksStatisticService;
 
 	@Autowired
-	private RtksStatisticService rtksStatisticService;
+	private FrameController frameController;
 
 	@ApiOperation("知识技能体系")
 	@GetMapping("/ability")
-	public BaseRsp<Map> skill() {
+	public BaseRsp<Map<String, List<SkillRes>>> skill() {
 		Map<String, List<SkillRes>> result = trainingPlanService.getSkillTree();
 
 		return new BaseRsp<>(result);
@@ -70,7 +68,8 @@ public class TrainingPlanController {
 	public BaseRsp<OccupationCourseRes> courseKnowledge() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();
-		List<CourseKnowledgeBo> courseKnowledges = trainingPlanService.getCourseKnowledges(userId, roleId);
+		List<CourseKnowledgeBo> courseKnowledges = trainingPlanService.getCourseKnowledges(userId,
+				roleId);
 		return new BaseRsp<>(calculatePercent(courseKnowledges));
 	}
 
@@ -83,16 +82,21 @@ public class TrainingPlanController {
 
 		OccupationCourseRes courseRes = new OccupationCourseRes();
 		// 计算理论课时进度
-		int theoryCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getTheoryCount).sum();
-		int completeTheory = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteTheory).sum();
+		int theoryCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getTheoryCount)
+				.sum();
+		int completeTheory = courseKnowledges.stream()
+				.mapToInt(CourseKnowledgeBo::getCompleteTheory).sum();
 		courseRes.setTheoryPercent(MathUtils.divide(theoryCount * 100, completeTheory));
 		// 计算实验课时进度
-		int exerciseCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getExerciseCount).sum();
-		int completeExercise = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteExercise).sum();
+		int exerciseCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getExerciseCount)
+				.sum();
+		int completeExercise = courseKnowledges.stream()
+				.mapToInt(CourseKnowledgeBo::getCompleteExercise).sum();
 		courseRes.setExercisePercent(MathUtils.divide(exerciseCount * 100, completeExercise));
 		// 计算总进度
 		int Count = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getLessonCount).sum();
-		int completeCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteCount).sum();
+		int completeCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteCount)
+				.sum();
 		courseRes.setCoursePercent(MathUtils.divide(Count * 100, completeCount));
 
 		courseRes.setKnowledgeBos(courseKnowledges);
@@ -152,5 +156,4 @@ public class TrainingPlanController {
 
 		return rsp;
 	}
-
 }

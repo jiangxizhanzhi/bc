@@ -4,14 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.DataTransferUtils;
-import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.CourseStatisticsService;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
-import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
-import com.cyberpeace.rtks.service.RoleService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +14,17 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.DataTransferUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.CourseStatisticsService;
+import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
+import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
@@ -38,6 +36,7 @@ import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
+import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -198,6 +197,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 			knowledgeBo.setTheoryCount(DataTransferUtils.nullToZero(bo.getTheoryCount()));
 			knowledgeBo.setExerciseCount(bo.getExerciseCount());
 			knowledgeBo.setCompleteCount(bo.getCompleteCount());
+			knowledgeBo.setLastStudyTime(bo.getLastStudyTime());
+
 			return knowledgeBo;
 		}).collect(Collectors.toList());
 		return boList;
@@ -213,7 +214,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 			if (StringUtils.equals(level1.getResourceId(), levelId)) {
 				level = level1;
 				newlevelList.add(level);
-
 				break;
 			}
 

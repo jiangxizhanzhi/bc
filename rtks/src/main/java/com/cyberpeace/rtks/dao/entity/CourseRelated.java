@@ -21,7 +21,7 @@ public class CourseRelated {
 
 	private String relatedId;
 
-	private Integer weight;
+	private Integer weight = 1;
 
 	private Integer type;
 }

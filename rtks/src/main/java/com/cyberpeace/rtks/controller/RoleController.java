@@ -63,10 +63,6 @@ class Helper {
 
 interface Fields {
 
-	String TASK = "task";
-
-	String ABILITY = "ability";
-
 	String KNOWLEDGE = "knowledge";
 
 	String SKILL = "skill";
@@ -110,18 +106,29 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 	@GetMapping("/courses")
 	public BaseRsp<List<CourseConfigOutput>> getSkillCourses(String resource_id,
 			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
+
 		Role role = roleService.getOr404(resource_id);
+
 		List<String> courseIds = getCourseIdsFromDb(role, field);
 
-		return new BaseRsp<>(getCourseConfigOutputListFromCourseIds(courseIds));
+		int courseCount = courseIds.size();
+		List<CourseConfigOutput> outputList = getCourseConfigOutputList(courseIds);
+		// 发现被删除的课程则更新数据库
+		if (courseCount > courseIds.size()) {
+			updateRoleCourse(resource_id, courseIds, field);
+		}
+
+		return new BaseRsp<>(outputList);
 	}
 
 	@ApiOperation("编排课程列表")
 	@PostMapping("/courses")
 	public BaseRsp<List<CourseConfigOutput>>
 			setSkillCourses(@RequestBody @Validated CourseLayoutInput courseLayoutInput) {
-		Role role = roleService.getOr404(courseLayoutInput.getResourceId());
+		String roleId = courseLayoutInput.getResourceId();
 		String field = courseLayoutInput.getField();
+
+		Role role = roleService.getOr404(roleId);
 
 		// 数据库中既有的课程编排
 		List<String> oldIds = getCourseIdsFromDb(role, field);
@@ -134,13 +141,13 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 			throw new InvalidParamException("输入的课程不正确");
 		}
 
-		// 校验通过后保存
-		Role roleToSave = new Role();
-		roleToSave.setResourceId(role.getResourceId());
-		setCourse(roleToSave, field, inputIds);
-		roleService.updateById(roleToSave);
+		// 获取课程详情 同时去掉被删除的课程 必须在保存前执行
+		List<CourseConfigOutput> outputList = getCourseConfigOutputList(inputIds);
 
-		return new BaseRsp<>(getCourseConfigOutputListFromCourseIds(inputIds));
+		// 校验通过后保存
+		updateRoleCourse(roleId, inputIds, field);
+
+		return new BaseRsp<>(outputList);
 	}
 
 	private String getCourseText(Role role, String field) {
@@ -153,17 +160,21 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		throw new InvalidParamException("Invalid field:" + field);
 	}
 
-	private void setCourse(Role role, String field, List<String> courseIds) {
+	private void updateRoleCourse(String roleId, List<String> courseIds, String field) {
+		Role roleToSave = new Role();
+
+		roleToSave.setResourceId(roleId);
+
 		String toSave = JsonUtil.toJsonString(courseIds);
 		if (Fields.SKILL.equals(field)) {
-			role.setSkillCourses(toSave);
-			return;
+			roleToSave.setSkillCourses(toSave);
+		} else if (Fields.KNOWLEDGE.equals(field)) {
+			roleToSave.setKnowledgeCourses(toSave);
+		} else {
+			throw new InvalidParamException("Invalid field:" + field);
 		}
-		if (Fields.KNOWLEDGE.equals(field)) {
-			role.setKnowledgeCourses(toSave);
-			return;
-		}
-		throw new InvalidParamException("Invalid field:" + field);
+
+		roleService.updateById(roleToSave);
 	}
 
 	private List<String> getCourseIdsFromDb(Role role, String field) {
@@ -172,21 +183,29 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		return JsonUtil.toJsonObjectArray(courseText, String.class);
 	}
 
-	private List<CourseConfigOutput>
-			getCourseConfigOutputListFromCourseIds(List<String> courseIds) {
+	/**
+	 * 根据课程id列表获取课程的详细信息
+	 * @param courseIds 课程id列表 注意 如果有课程找不到 courseIds数组会剔除这些课程id
+	 */
+	private List<CourseConfigOutput> getCourseConfigOutputList(List<String> courseIds) {
 		List<CourseConfigOutput> courseConfigOutputList = new ArrayList<>();
+		List<String> removedIds = new ArrayList<>();
+
 		for (String courseId : courseIds) {
 			CourseConfigOutput courseConfigOutput = new CourseConfigOutput();
 			courseConfigOutput.setResourceId(courseId);
 
-			String name = "课程未找到";
 			Course course = courseService.getById(courseId);
-			if (course != null) {
-				name = course.getName();
+			if (course == null) {
+				removedIds.add(courseId);
+				continue;
 			}
-			courseConfigOutput.setName(name);
+
+			courseConfigOutput.setName(course.getName());
 			courseConfigOutputList.add(courseConfigOutput);
 		}
+
+		courseIds.removeAll(removedIds);
 		return courseConfigOutputList;
 	}
 

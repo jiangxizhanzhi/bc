@@ -1,8 +1,6 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,11 +10,17 @@ import javax.xml.crypto.Data;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.skill.OutSkillScore;
 import com.cyberpeace.integratation.service.OutSkillService;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.dao.mapper.SkillCategoryMapper;
 import com.cyberpeace.rtks.service.bo.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +59,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private OutSkillService outSkillService;
+
+	@Autowired
+	private CourseLessonService courseLessonService;
+
+	@Autowired
+	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 角色评分中技能所占百分比
@@ -227,12 +237,78 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			RtksRadarBo radarBo = new RtksRadarBo();
 			radarBo.setFirstTreeId(categorySkillBo.getResourceId());
 			radarBo.setTreeName(categorySkillBo.getContent());
-			double sum = categorySkillBo.getSkills().stream().mapToDouble(skillBo -> Double.parseDouble(skillBo.getScore()) * new Double(skillBo.getWeight())).sum();
-			double weightSum = categorySkillBo.getSkills().stream().mapToDouble(SkillScoreBo::getWeight).sum();
+			double sum = categorySkillBo.getSkills().stream()
+					.mapToDouble(skillBo -> Double.parseDouble(skillBo.getScore())
+							* new Double(skillBo.getWeight()))
+					.sum();
+			double weightSum = categorySkillBo.getSkills().stream()
+					.mapToDouble(SkillScoreBo::getWeight).sum();
 			radarBo.setMatchPercent(String.valueOf(MathUtils.divide(sum, weightSum, 0).intValue()));
 			return radarBo;
 		}).collect(Collectors.toList());
 		return boList;
+	}
+
+	@Override
+	public StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime,
+			Date endTime) {
+		List<LessonRecord> records = courseLessonService.selectByTime(userId, startTime, endTime);
+		int daysBetween = TimeUtil.getDaysBetween(startTime, endTime);
+		Map<String, List<LessonRecord>> recordMap = records.stream().collect(Collectors
+				.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getStartTime())));
+
+		List<String> knowledgeIds = getKnowledgeIdsByRole(roleId);
+		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
+		List<String> courseIds = getCourseIdsByKnowledge(knowledges);
+		List<CourseLesson> lessons = courseLessonMapper.listByCourses(courseIds);
+
+		Set<String> lessonSet = lessons.stream().map(CourseLesson::getResourceId)
+				.collect(Collectors.toSet());
+
+		List<String> yCourses = Lists.newArrayList();
+		List<String> yLessons = Lists.newArrayList();
+		List<String> xDates = Lists.newArrayList();
+
+		for (int i = 1; i <= daysBetween; i++) {
+			Date date = TimeUtil.addDates(startTime, i);
+			String format8 = TimeUtil.format8(date);
+			xDates.add(format8);
+			List<LessonRecord> lessonRecordList = recordMap.get(format8);
+
+			if (CollectionUtils.isNotEmpty(lessonRecordList)) {
+				List<String> recordLessonIds = lessonRecordList.stream().map(LessonRecord::getLesson)
+						.distinct().collect(Collectors.toList());
+				List<String> recordCourseIds = courseLessonService.recordBelongCourse(recordLessonIds,
+						lessons);
+				yCourses.add(String.valueOf(recordCourseIds.size()));
+
+				recordCourseIds.retainAll(lessonSet);
+				yLessons.add(String.valueOf(recordCourseIds.size()));
+
+			} else {
+				yCourses.add(String.valueOf(0));
+				yLessons.add(String.valueOf(0));
+			}
+		}
+		StudyRecordBo recordBo = new StudyRecordBo();
+		recordBo.setXDates(xDates);
+		recordBo.setYCourses(yCourses);
+		recordBo.setYLessons(yLessons);
+		return recordBo;
+	}
+
+	/**
+	 * 根据知识点
+	 * @param knowledges
+	 * @return
+	 */
+	private List<String> getCourseIdsByKnowledge(List<Knowledge> knowledges) {
+		List<String> courseIds = knowledges.stream()
+				.map(knowledge -> JsonUtil.toJsonObjectArray(knowledge.getCourses(),
+						KnowledgeUnderCourseBo.class))
+				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId).distinct()
+				.collect(Collectors.toList());
+		return courseIds;
 	}
 
 	/**

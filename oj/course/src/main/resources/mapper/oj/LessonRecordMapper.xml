@@ -3,6 +3,8 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper">
 
+    <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.LessonRecord"/>
+
     <select id="selectByUser" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
         select * from course_lessonrecord
         <where>
@@ -25,7 +27,23 @@
                     #{lessonId}
                 </foreach>
             </if>
-    </where>
+        </where>
+    </select>
+
+    <select id="selectByTime" resultMap="baseResultMap">
+        select * from course_lessonrecord
+        <where>
+            <if test="null != userId and userId != ''">
+                and user = #{userId}
+            </if>
+            <if test="null != start">
+                and start_time &gt; #{start}
+            </if>
+            <if test="null != end">
+                and start_time &lt; #{end}
+            </if>
+        </where>
+        order by start_time asc
     </select>
 
 </mapper>

@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,10 +9,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.rtks.controller.res.PercentRes;
 import com.cyberpeace.rtks.dao.entity.UserRole;
 import com.cyberpeace.rtks.service.UserRelateService;
-import com.cyberpeace.rtks.service.bo.CategorySkillBo;
-import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
-import com.cyberpeace.rtks.service.bo.RoleStudyBo;
-import com.cyberpeace.rtks.service.bo.RtksRadarBo;
+import com.cyberpeace.rtks.service.bo.*;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.rtks.service.RtksStatisticService;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @RequiresAuthentication
 @RestController
@@ -144,9 +139,12 @@ public class RtksEvaluationController {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();
-		List<CategorySkillBo> categorySkills = rtksStatisticService.getRoleSkillScores(userId, roleId);
 		BaseRsp<List<CategorySkillBo>> rsp = new BaseRsp<>();
-		rsp.setData(categorySkills);
+		if (StringUtils.isNotBlank(roleId)) {
+			List<CategorySkillBo> categorySkills = rtksStatisticService.getRoleSkillScores(userId,
+					roleId);
+			rsp.setData(categorySkills);
+		}
 		return rsp;
 	}
 
@@ -155,9 +153,29 @@ public class RtksEvaluationController {
 	public BaseRsp<List<RtksRadarBo>> getRoleSkillMatch() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();
-		List<RtksRadarBo> skillRadars = rtksStatisticService.calculateSkillRadar(userId, roleId);
 		BaseRsp<List<RtksRadarBo>> rsp = new BaseRsp<>();
-		rsp.setData(skillRadars);
+		if (StringUtils.isNotBlank(roleId)) {
+			List<RtksRadarBo> skillRadars = rtksStatisticService.calculateSkillRadar(userId,
+					roleId);
+			rsp.setData(skillRadars);
+		}
+		return rsp;
+	}
+
+	@ApiOperation("岗位课程学习记录")
+	@GetMapping("/role/course/study")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "start_time", value = "开始时间"),
+			@ApiImplicitParam(name = "end_time", value = "结束时间") })
+	public BaseRsp<StudyRecordBo> getStudyRecord(@RequestParam("start_time") Date startTime,
+			@RequestParam("end_time") Date endTime) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp rsp = new BaseRsp();
+		if (StringUtils.isNotBlank(roleId)) {
+			StudyRecordBo studyRecordBo = rtksStatisticService.calculateStudyRecord(userId, roleId,
+					startTime, endTime);
+			rsp.setData(studyRecordBo);
+		}
 		return rsp;
 	}
 

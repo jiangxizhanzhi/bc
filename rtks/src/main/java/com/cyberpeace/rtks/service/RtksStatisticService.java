@@ -1,11 +1,9 @@
 package com.cyberpeace.rtks.service;
 
+import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.rtks.service.bo.CategorySkillBo;
-import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
-import com.cyberpeace.rtks.service.bo.RoleStudyBo;
-import com.cyberpeace.rtks.service.bo.RtksRadarBo;
+import com.cyberpeace.rtks.service.bo.*;
 
 /**
  * rtks数据统计功能
@@ -75,4 +73,14 @@ public interface RtksStatisticService {
 	 * @return
 	 */
     List<RtksRadarBo> calculateSkillRadar(String userId, String roleId);
+
+	/**
+	 * 统计用户岗位课程学习记录
+	 * @param userId
+	 * @param roleId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+    StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime, Date endTime);
 }

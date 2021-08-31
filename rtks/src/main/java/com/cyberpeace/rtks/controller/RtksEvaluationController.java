@@ -4,6 +4,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.rtks.controller.res.PercentRes;
+import com.cyberpeace.rtks.dao.entity.UserRole;
+import com.cyberpeace.rtks.service.UserRelateService;
+import com.cyberpeace.rtks.service.bo.*;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,14 +190,19 @@ public class RtksEvaluationController {
 	@GetMapping("/role/course/study")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "start_time", value = "开始时间"),
 			@ApiImplicitParam(name = "end_time", value = "结束时间") })
-	public BaseRsp<StudyRecordBo> getStudyRecord(@RequestParam("start_time") Date startTime,
-			@RequestParam("end_time") Date endTime) {
+	public BaseRsp<StudyRecordBo> getStudyRecord(@RequestParam("start_time") String startTime,
+			@RequestParam("end_time") String endTime) {
+		boolean startValidate = TimeUtil.isValidDate(startTime);
+		boolean endValidate = TimeUtil.isValidDate(endTime);
+		if (!startValidate || !endValidate) {
+			throw new InvalidParamException("时间格式不正确！");
+		}
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp rsp = new BaseRsp();
 		if (StringUtils.isNotBlank(roleId)) {
 			StudyRecordBo studyRecordBo = rtksStatisticService.calculateStudyRecord(userId, roleId,
-					startTime, endTime);
+					TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
 			rsp.setData(studyRecordBo);
 		}
 		return rsp;

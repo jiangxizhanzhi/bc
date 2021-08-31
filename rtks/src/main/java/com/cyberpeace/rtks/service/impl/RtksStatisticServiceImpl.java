@@ -288,7 +288,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<String> yLessons = Lists.newArrayList();
 		List<String> xDates = Lists.newArrayList();
 
-		for (int i = 1; i <= daysBetween; i++) {
+		for (int i = 0; i < daysBetween; i++) {
 			Date date = TimeUtil.addDates(startTime, i);
 			String format8 = TimeUtil.format8(date);
 			xDates.add(format8);
@@ -301,8 +301,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 						.recordBelongCourse(recordLessonIds, lessons);
 				yCourses.add(String.valueOf(recordCourseIds.size()));
 
-				recordCourseIds.retainAll(lessonSet);
-				yLessons.add(String.valueOf(recordCourseIds.size()));
+				recordLessonIds.retainAll(lessonSet);
+				yLessons.add(String.valueOf(recordLessonIds.size()));
 
 			} else {
 				yCourses.add(String.valueOf(0));
@@ -651,8 +651,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private List<String> getCourseIdsByKnowledge(String knowledgeId) {
 		Knowledge knowledge = knowledgeMapper.selectById(knowledgeId);
-		List<String> courseIds = JsonUtil.toJsonObjectArray(knowledge.getCourses(), String.class);
-		return courseIds;
+		List<KnowledgeUnderCourseBo> courseBos = JsonUtil.toJsonObjectArray(knowledge.getCourses(),
+				KnowledgeUnderCourseBo.class);
+		return courseBos.stream().map(KnowledgeUnderCourseBo::getResourceId).collect(Collectors.toList());
 	}
 
 	/**

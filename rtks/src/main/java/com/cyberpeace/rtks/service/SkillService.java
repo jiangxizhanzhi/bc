@@ -39,4 +39,6 @@ public interface SkillService extends IService<Skill> {
 	Skill getOr404(String skillId);
 
 	void checkSkillRes(List<SkillRes> skillResList, String type);
+
+	List<SkillRes> getAllSkills();
 }

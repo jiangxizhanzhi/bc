@@ -1,6 +1,7 @@
 package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
@@ -25,6 +27,7 @@ import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.service.*;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  *
@@ -67,7 +70,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 		if (relatedCourseDao.setCourseResult(skillRes.getCourses(), relatedCourseList, processBos,
 				RoleDetailRes.RELATED_COURSE_COURSE)) {
-			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
 
 			Skill skill = new Skill();
@@ -79,7 +82,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 			updateById(skill);
 		} else {
-			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
 		}
 
@@ -117,15 +120,15 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 			boolean isDeleted = relatedCourseDao.setCourseResult(courses, relatedCourseList,
 					processBos, related_course_type);
-			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
 			if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
-				skillRes.setProcess(calculateProcess(processBos));
+				skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
 				skillRes.setCourses("");
 				skillRes.setCourseList(null);
 				skillRes.setCourseStudyProcessBoList(processBos);
 			} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
-				skillRes.setProcess(calculateProcess(processBos));
+				skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
 				skillRes.setCourseStudyProcessBoList(processBos);
 			}
 
@@ -145,18 +148,34 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		updateBatchById(skillList);
 	}
 
-	private Integer calculateProcess(List<CourseStudyProcessBo> processBos) {
-		Double lessonCount = Double.valueOf(0);
+	@Override
+	public List<SkillRes> getAllSkills() {
+		List<SkillRes> skillResList = skillMapper.getAllSkills();
+		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
 
-		Double completeCount = Double.valueOf(0);
-		for (CourseStudyProcessBo courseStudyProcessBo : processBos) {
-			lessonCount += courseStudyProcessBo.getLessonCount();
-			completeCount += courseStudyProcessBo.getCompleteCount();
+		return skillResList;
+	}
+
+	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,
+			List<RelatedCourse> relatedCourseList) {
+		Map<String, Integer> map = Maps.newHashMap();
+
+		for (RelatedCourse relatedCourse : relatedCourseList) {
+			map.put(relatedCourse.getResourceId(), relatedCourse.getWeight());
 		}
-		if (lessonCount <= 0.0) {
+
+		Double sumWeight = Double.valueOf(0);
+
+		Double sumProcess = Double.valueOf(0);
+		for (CourseStudyProcessBo courseStudyProcessBo : processBos) {
+			sumProcess += MathUtils.mul(courseStudyProcessBo.getProcess(),
+					Double.valueOf(map.get(courseStudyProcessBo.getCourseId())));
+			sumWeight += map.get(courseStudyProcessBo.getCourseId());
+		}
+		if (sumWeight <= 0.0) {
 			return 0;
 		} else {
-			return Integer.valueOf(Math.toIntExact(Math.round(completeCount / lessonCount * 100)));
+			return MathUtils.divide(sumProcess, sumWeight, 0).intValue();
 		}
 	}
 

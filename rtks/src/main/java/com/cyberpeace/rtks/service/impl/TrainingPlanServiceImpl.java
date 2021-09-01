@@ -23,7 +23,6 @@ import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.controller.req.SkillListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
@@ -95,7 +94,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	@Override
 	public Map<String, List<SkillRes>> getSkillTree() {
-		List<SkillRes> skillResList = skillService.page(new SkillListReq()).getList();
+
+		List<SkillRes> skillResList = skillService.getAllSkills();
 
 		Map<String, List<SkillRes>> skillResMap = skillResList.stream()
 				.collect(Collectors.groupingBy(SkillRes::getCategory));
@@ -178,18 +178,22 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Override
 	public List<CourseKnowledgeBo> getCourseKnowledges(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
-		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(), String.class);
+		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
+				String.class);
 		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
-		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds, userId);
+		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
+				userId);
 
 		List<CourseInfoBo> courses = courseService.selectByIds(courseIds);
-		Map<String, CourseInfoBo> infoMap = courses.stream().collect(Collectors.
-				toMap(CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo));
+		Map<String, CourseInfoBo> infoMap = courses.stream().collect(
+				Collectors.toMap(CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo));
 
-		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService.getKnowledgeByCourseId(courseIds);
+		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService
+				.getKnowledgeByCourseId(courseIds);
 
 		List<CourseKnowledgeBo> boList = processBos.stream().map(bo -> {
-			CourseKnowledgeBo knowledgeBo = BeanUtils.copy(infoMap.get(bo.getCourseId()), CourseKnowledgeBo.class);
+			CourseKnowledgeBo knowledgeBo = BeanUtils.copy(infoMap.get(bo.getCourseId()),
+					CourseKnowledgeBo.class);
 			knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
 			knowledgeBo.setProcess(bo.getProcess().intValue());
 			knowledgeBo.setCompleteTheory(bo.getCompleteTheory());

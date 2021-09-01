@@ -1,5 +1,7 @@
 package com.cyberpeace.rtks.dao.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +19,7 @@ public interface SkillMapper extends BaseMapper<Skill> {
 	IPage<SkillRes> listSkill(Page page, SkillListReq skillListReq);
 
 	SkillRes getSkillByResourceId(String id);
+
+	List<SkillRes> getAllSkills();
 
 }

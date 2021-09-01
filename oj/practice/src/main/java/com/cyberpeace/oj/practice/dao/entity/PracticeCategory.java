@@ -9,8 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("practice_theory_category")
-public class TheoryCategory {
+public class PracticeCategory {
 
     // 资源ID
     private String resourceId;
@@ -25,7 +24,6 @@ public class TheoryCategory {
     @JsonIgnore
     private Integer status;
 
-    @TableField(exist = false)
     @JsonIgnore
     private Integer practiceType;
 

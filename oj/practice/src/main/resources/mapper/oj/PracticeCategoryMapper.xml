@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper">
+
+    <select id="getSingle" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
+        select `resource_id`, `name`, 0 as `practice_type` from practice_theory_category
+        where resource_id = #{resource_id} and status = 1
+        union select `resource_id`, `name`, 2 as `practice_type` from practice_exercise_category
+        where resource_id = #{resource_id} and status = 1;
+    </select>
+
+
+    <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
+        select `resource_id`, `name` from ${tableName} where status = 1
+    </select>
+    
+    <update id="partialUpdate">
+        update ${tableName} set `name` = #{name} where resource_id = #{resource_id}
+    </update>
+
+    <update id="batchDelete">
+        update ${tableName} set status = 0 where resource_id in
+        <foreach collection="resource_ids" item="resource_id" open="(" close=")" separator=",">
+            #{resource_id}
+        </foreach>
+    </update>
+
+</mapper>

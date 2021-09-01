@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper">
+
+    <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSet">
+        select `resource_id`, `name`, `logo`, `type`, `public`, `create_user`, `share`, `auth` from practice_practiceset
+        where status = 1
+        <if test="practiceType != null">
+            and `type` = #{practiceType}
+        </if>
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+            and `name` like #{pattern}
+        </if>
+    </select>
+
+    <update id="batchDelete">
+        update practice_practiceset set status = 0
+        where resource_id in
+        <foreach collection="resource_ids" item="resource_id" open="(" close=")" separator=",">
+            #{resource_id}
+        </foreach>
+    </update>
+
+</mapper>

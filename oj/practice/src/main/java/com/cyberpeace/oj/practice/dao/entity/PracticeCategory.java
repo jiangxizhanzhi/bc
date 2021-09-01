@@ -1,14 +1,9 @@
 package com.cyberpeace.oj.practice.dao.entity;
 
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
-@TableName("practice_theory_category")
 public class PracticeCategory {
 
     // 资源ID

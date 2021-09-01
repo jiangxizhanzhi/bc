@@ -13,7 +13,7 @@ public abstract class SelfDefinedWsChecker {
 	 * @param requestParams 请求ws连接时的业务参数
 	 * @param wsPath 请求连接ws的连接地址
 	 * @param userId 请求连接ws的用户id
-	 * @return
+	 * @return 校验成功返回true
 	 */
 	public abstract boolean doSelfDefinedCheck(Map<String, String> requestParams, String wsPath,
 			String userId);

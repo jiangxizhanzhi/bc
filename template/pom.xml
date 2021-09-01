@@ -44,6 +44,11 @@
             <version>${module.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.cyberpeace.oj</groupId>
+            <artifactId>practice</artifactId>
+            <version>${module.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>red_vs_blue</artifactId>
             <version>${cr.version}</version>

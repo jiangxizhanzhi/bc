@@ -10,7 +10,6 @@ import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 
 /**
  *
@@ -29,26 +28,38 @@ public interface KnowledgeService extends IService<Knowledge> {
 	 */
 	KnowledgeRes getKnowledgeByResourceId(String id);
 
-	List<CourseConfig> getCourseConfigs(Knowledge knowledge);
+	/**
+	 * 给定知识点id 如果知识点对象不存在报错 否则返回该知识点下课程配置信息
+	 * */
+	List<CourseConfig> getCourseConfigs(String knowledgeId);
 
-	List<String> filterIds(List<String> ids);
-
-	/**通过知识点id获取所有课程列表
-	 * @param id
-	 * @return 课程列表
-	 */
-	List<RelatedCourse> getCourseListByKnowledgeId(String id);
+	/**
+	 * 给定知识点id 返回对应知识点对象 不存在则报错
+	 * */
+	Knowledge getOr404(String knowledgeId);
 
 	/**校验是否存在类别
 	 * @param knowledge
 	 */
 	void validate(Knowledge knowledge);
 
+	/**
+	 * 根据课程编号查询关联的知识点
+	 * @param ids
+	 * @return
+	 */
 	Map<String, List<CourseRelatedRes>> getKnowledgeByCourseId(List<String> ids);
 
 	/**遍历知识点，获取知识点的相关内容，修改已删除的关联课程
 	 * @param knowledgeResList
+	 * @param type
 	 */
-	void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList);
+	void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList, String type);
 
+	/**
+	 * 根据知识点编号查询对应的课程编号
+	 * @param knowledgeIds
+	 * @return
+	 */
+	List<String> getCourseByIds(List<String> knowledgeIds);
 }

@@ -1,6 +1,11 @@
 package com.cyberpeace.common.util;
 
 import com.cyberpeace.common.exception.InvalidParamException;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class LocalStringUtil {
 
@@ -61,5 +66,10 @@ public class LocalStringUtil {
 			result.append(ch);
 		}
 		return result.toString();
+	}
+
+	public static List<Integer> strToList(String data) {
+		return Arrays.stream(StringUtils.split(data, ',')).map(Integer::parseInt)
+				.collect(Collectors.toList());
 	}
 }

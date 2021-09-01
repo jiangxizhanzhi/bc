@@ -2,8 +2,6 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.controller.req.KnowledgeAddReq;
-import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +12,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
+import com.cyberpeace.rtks.controller.req.KnowledgeAddReq;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
+import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.KnowledgeService;
 
@@ -88,7 +88,8 @@ public class KnowledgeController {
 	@DeleteMapping()
 	public BaseRsp<String> deleteKnowledge(@RequestBody @Validated DeleteReq deleteReq) {
 		knowledgeService.removeByIds(deleteReq.getIds());
-		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds());
+		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds(),
+				CourseRelated.RELATED_TYPE_KNOWLEDGE);
 		return new BaseRsp<>();
 	}
 

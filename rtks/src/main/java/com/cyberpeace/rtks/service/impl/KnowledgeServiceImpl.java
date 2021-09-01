@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,22 +13,28 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
+import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.KnowledgeCategoryService;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.RelatedCourseService;
+import com.cyberpeace.rtks.service.bo.KnowledgeUnderCourseBo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  *
@@ -55,7 +62,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 		List<KnowledgeRes> knowledgeResList = result.getRecords();
 
-		checkKonwledgeRes(knowledgeResList);
+		checkKonwledgeRes(knowledgeResList, RoleDetailRes.RELATED_COURSE_ALL);
 
 		return PageUtil.getListResult(result);
 	}
@@ -64,10 +71,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	public KnowledgeRes getKnowledgeByResourceId(String id) {
 		KnowledgeRes knowledgeRes = knowledgeMapper.getKnowledgeByResourceId(id);
 		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
+		List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
 		//
-		if (relatedCourseService.setCourseResult(knowledgeRes.getCourses(), relatedCourseList)) {
-			knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+		if (relatedCourseService.setCourseResult(knowledgeRes.getCourses(), relatedCourseList,
+				processBos, RoleDetailRes.RELATED_COURSE_COURSE)) {
+			// knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			knowledgeRes.setCourseList(relatedCourseList);
 
 			Knowledge knowledge = new Knowledge();
@@ -81,21 +90,19 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 		}
 
-		knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+		// knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 		knowledgeRes.setCourseList(relatedCourseList);
 
 		return knowledgeRes;
 	}
 
 	@Override
-	public List<RelatedCourse> getCourseListByKnowledgeId(String id) {
-		// todo
-		return null;
-	}
-
-	@Override
-	public List<String> filterIds(List<String> ids) {
-		return knowledgeMapper.filterIds(ids);
+	public Knowledge getOr404(String knowledgeId) {
+		Knowledge knowledge = getById(knowledgeId);
+		if (knowledge == null) {
+			throw new ResourceNotFoundException("知识点" + knowledgeId + "未找到");
+		}
+		return knowledge;
 	}
 
 	@Override
@@ -115,7 +122,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	}
 
 	@Override
-	public void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList) {
+	public void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList, String related_course_type) {
 		List<Knowledge> knowledgeList = Lists.newArrayList();
 
 		// 遍历知识点，获取知识点的相关内容，修改已删除的关联课程
@@ -123,30 +130,74 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 			String courses = knowledgeRes.getCourses();
 
 			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
-			if (relatedCourseService.setCourseResult(courses, relatedCourseList)) {
-				knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-				knowledgeRes.setCourseList(relatedCourseList);
+			List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
+			boolean isDeleted = relatedCourseService.setCourseResult(courses, relatedCourseList,
+					processBos, related_course_type);
+
+			// knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			knowledgeRes.setCourseList(relatedCourseList);
+			if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
+				knowledgeRes.setProcess(calculateProcess(processBos, relatedCourseList));
+				knowledgeRes.setCourses("");
+				knowledgeRes.setCourseList(null);
+				knowledgeRes.setCourseStudyProcessBoList(processBos);
+			} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
+				knowledgeRes.setProcess(calculateProcess(processBos, relatedCourseList));
+				knowledgeRes.setCourseStudyProcessBoList(processBos);
+			}
+
+			if (isDeleted) {
+				// 修改关联表
 				Knowledge knowledge = new Knowledge();
 				BeanUtils.copyProperties(knowledgeRes, knowledge);
-
-				// 修改关联表
 				courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
 						knowledge.getResourceId(), CourseRelated.RELATED_TYPE_KNOWLEDGE);
 				knowledge.setCourses(courses);
 				knowledgeList.add(knowledge);
 
-			} else {
-				knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-				knowledgeRes.setCourseList(relatedCourseList);
 			}
-
 		}
 		updateBatchById(knowledgeList);
 	}
 
+	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,
+			List<RelatedCourse> relatedCourseList) {
+		Map<String, Integer> map = Maps.newHashMap();
+
+		for (RelatedCourse relatedCourse : relatedCourseList) {
+			map.put(relatedCourse.getResourceId(), relatedCourse.getWeight());
+		}
+
+		Double sumWeight = Double.valueOf(0);
+
+		Double sumProcess = Double.valueOf(0);
+		for (CourseStudyProcessBo courseStudyProcessBo : processBos) {
+			sumProcess += MathUtils.mul(courseStudyProcessBo.getProcess(),
+					Double.valueOf(map.get(courseStudyProcessBo.getCourseId())));
+			sumWeight += map.get(courseStudyProcessBo.getCourseId());
+		}
+		if (sumWeight <= 0.0) {
+			return 0;
+		} else {
+			return MathUtils.divide(sumProcess, sumWeight, 0).intValue();
+		}
+	}
+
 	@Override
-	public List<CourseConfig> getCourseConfigs(Knowledge knowledge) {
+	public List<CourseConfig> getCourseConfigs(String knowledgeId) {
+		Knowledge knowledge = getOr404(knowledgeId);
 		return JsonUtil.toJsonObjectArray(knowledge.getCourses(), CourseConfig.class);
+	}
+
+	@Override
+	public List<String> getCourseByIds(List<String> knowledgeIds) {
+		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
+		List<String> courseIds = knowledges.stream()
+				.map(knowledge -> JsonUtil.toJsonObjectArray(knowledge.getCourses(),
+						KnowledgeUnderCourseBo.class))
+				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId).distinct()
+				.collect(Collectors.toList());
+		return courseIds;
 	}
 }

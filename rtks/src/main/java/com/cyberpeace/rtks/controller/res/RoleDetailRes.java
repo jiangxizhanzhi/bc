@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.controller.res;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.entity.Skill;
@@ -13,6 +14,18 @@ import lombok.Data;
 
 @Data
 public class RoleDetailRes implements Serializable {
+
+	public final static String TYPE_SKILL = "skill";// 只传技能关联课程
+
+	public final static String TYPE_KNOWLEDGE = "knowledge";// 只传知识点关联课程
+
+	public final static String TYPE_ALL = "all";// 只传课程学习进展
+
+	public final static String RELATED_COURSE_COURSE = "course";// 只传课程
+
+	public final static String RELATED_COURSE_STUDY = "study";// 只传课程学习进展
+
+	public final static String RELATED_COURSE_ALL = "all";// 同时都传
 
 	private String resourceId;
 
@@ -26,7 +39,10 @@ public class RoleDetailRes implements Serializable {
 	private String levelId;
 
 	@ApiModelProperty(value = "技能体系")
-	private int category;
+	private String category;
+
+	@ApiModelProperty(value = "岗位匹配度")
+	private String percent;
 
 	private List<String> taskIds;
 
@@ -46,14 +62,21 @@ public class RoleDetailRes implements Serializable {
 
 	private List<Task> taskDataList;
 
+	private List<Ability> abilityDataList;
+
 	private List<Knowledge> knowledgeDataList;
 
 	private List<Skill> skillDataList;
-
-	private List<Ability> abilityDataList;
 
 	private List<KnowledgeRes> knowledgeResDataList;
 
 	private List<SkillRes> skillResDataList;
 
+	private LevelTreeOutput levelTreeOutput;
+
+	@ApiModelProperty("基础课程")
+	private List<RelatedCourse> basicCourseList;
+
+	@ApiModelProperty("技能课程")
+	private List<RelatedCourse> skillCourseList;
 }

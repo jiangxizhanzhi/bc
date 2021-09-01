@@ -2,9 +2,9 @@ package com.cyberpeace.cr.tool.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.tool.controller.req.CategoryAddReq;
-import com.cyberpeace.cr.tool.controller.req.CategoryListReq;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
@@ -30,9 +30,9 @@ public class ToolCategoryController {
 
 	@GetMapping("/list")
 	@ApiOperation("工具分类列表")
-	public BaseRsp<ListRsp<ToolCategoryBo>> getList(
-			@ApiParam(name = "listReq", value = "查询条件") @Validated CategoryListReq listReq) {
-		ListRsp<ToolCategoryBo> courseInfos = toolCategoryService.selectPage(listReq);
+	public BaseRsp<ListRsp<ToolCategory>> getList(
+			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
+		ListRsp<ToolCategory> courseInfos = toolCategoryService.selectPage(pageReqBase);
 		return new BaseRsp<>(courseInfos);
 	}
 

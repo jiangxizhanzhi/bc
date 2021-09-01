@@ -52,16 +52,6 @@
         </where>
     </select>
 
-    <select id="filterIds" resultType="java.lang.String">
-        select resource_id
-        from rtks_knowledge
-        <where>
-            resource_id in
-            <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
-                #{id}
-            </foreach>
-        </where>
-    </select>
     <select id="getKnowledgeByCourseId" resultType="com.cyberpeace.rtks.controller.res.CourseRelatedRes">
 
         select rtks_course_related.related_id,
@@ -71,12 +61,32 @@
         from rtks_course_related
         left join rtks_knowledge on rtks_course_related.related_id = rtks_knowledge.resource_id
         <where>
-            rtks_course_related.resource_id in
+            rtks_course_related.type = 1
+            and rtks_course_related.resource_id in
             <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
                 #{id}
             </foreach>
         </where>
 
+    </select>
+    <select id="getKnowledgeListByIds" resultType="com.cyberpeace.rtks.controller.res.KnowledgeRes">
+        select
+        rtks_knowledge.id,
+        rtks_knowledge.resource_id,
+        rtks_knowledge.category_id,
+        rtks_knowledge.content,
+        rtks_knowledge.courses,
+        rtks_knowledge.weight,
+        rtks_knowledge.create_time,
+        rtks_knowledge.update_time
+        from
+        rtks_knowledge
+        <where>
+            rtks_knowledge.resource_id in
+            <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
     </select>
 
 </mapper>

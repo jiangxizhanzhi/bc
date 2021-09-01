@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
 
 @Mapper
@@ -26,4 +27,5 @@ public interface RoleMapper extends BaseMapper<Role> {
 
 	List<String> getRoleIdsByLevelIds(List<String> levelIds);
 
+	List<Level> selectLevelsByRoleId(String resource_id);
 }

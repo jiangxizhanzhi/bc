@@ -11,6 +11,9 @@ public interface TaskService extends IService<Task> {
 
 	ListRsp<Task> page(PageReqBase pageReqBase);
 
-	List<String> filterIds(List<String> ids);
+	/**
+	 * 给定数组的列表，只要其中任意一个id对应的职责不存在 报错
+	 * */
+	void checkIds(List<String> ids);
 
 }

@@ -67,4 +67,7 @@ public class CourseInfoBo implements Serializable {
     @ApiModelProperty("课程实验课时数量")
     private Integer exerciseCount;
 
+    @ApiModelProperty("建议学习时长")
+    private Integer suggestDuration;
+
 }

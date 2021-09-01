@@ -13,10 +13,17 @@ import com.cyberpeace.rtks.service.BaseService;
 
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 支持新增、删除、单条查询、修改(部分修改)
+ * @param <Entity> 实体类
+ * @param <AddInput> 新增请求模型
+ * @param <ModifyInput> 修改请求模型
+ * @param <Output> 单条查询输出模型
+ */
 @RestController
-public abstract class BaseController<Entity extends BaseEntity, Input, AddInput extends Input, ModifyInput extends Input, Output, Service extends BaseService<Entity>> {
+public abstract class BaseController<Entity extends BaseEntity, AddInput, ModifyInput, Output> {
 
-	abstract Service getService();
+	abstract BaseService<Entity> getService();
 
 	abstract Entity getEntityFromAddInput(AddInput input);
 

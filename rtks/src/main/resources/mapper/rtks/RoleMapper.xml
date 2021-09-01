@@ -9,7 +9,7 @@
                 <bind name="pattern" value="'%' + pattern + '%'"/>
                 name LIKE #{pattern}
             </if>
-            <if test="pattern != null and pattern != '' and frameId != null and frameId != ''"> AND </if>
+            <if test="pattern != null and pattern != '' and frameId != null and frameId != ''">AND</if>
             <if test="frameId != null and frameId != ''">
                 level_id in (SELECT resource_id FROM rtks_level where frame = #{frameId})
             </if>
@@ -25,8 +25,25 @@
         select *
         from rtks_role
         where level_id in (
-            SELECT resource_id FROM `ojj`.`rtks_level` where frame = #{frameId,jdbcType=INTEGER}
+            SELECT resource_id FROM rtks_level where frame = #{frameId,jdbcType=INTEGER}
         )
+    </select>
+
+    <select id="selectLevelsByRoleId" resultType="com.cyberpeace.rtks.dao.entity.Level">
+        select *
+        from rtks_level
+        where frame = (
+            select frame
+            from rtks_level,
+                 rtks_role
+            where rtks_level.resource_id = rtks_role.level_id
+              and rtks_role.resource_id = #{resource_id})
+           or resource_id = (
+            select frame
+            from rtks_level,
+                 rtks_role
+            where rtks_level.resource_id = rtks_role.level_id
+              and rtks_role.resource_id = #{resource_id})
     </select>
 
     <select id="getRoleIdsByLevelIds" resultType="java.lang.String">
@@ -38,4 +55,5 @@
             </foreach>
         </where>
     </select>
+
 </mapper>

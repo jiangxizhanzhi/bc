@@ -28,6 +28,7 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -60,6 +61,8 @@ public class ExceptionFilter implements Filter {
 			UserInfoContext.removeUserContext();
 
 			TraceIdContext.removeTraceId();
+
+			CommonContext.removeLanguage();
 		}
 	}
 

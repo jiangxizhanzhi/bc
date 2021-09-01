@@ -82,6 +82,49 @@ public class MathUtils {
     }
 
     /**
+     * double向上取整除法
+     * @param dividend
+     * @param divisor
+     * @return
+     */
+    public static Integer ceilDivide(Double dividend, Double divisor) {
+        if (null == divisor || divisor.doubleValue() == new Double(0).doubleValue()) {
+            return 0;
+        }
+        double result = divide(dividend, divisor, DEF_DIV_SCALE);
+        return MathUtils.ceil(result);
+    }
+
+    /**
+     * 向上取整除法
+     * @param dividend
+     * @param divisor
+     * @return
+     */
+    public static Integer divide(Integer dividend, Integer divisor) {
+        if (null == divisor || divisor.intValue() == 0) {
+            return 0;
+        }
+        int ret = dividend / divisor;
+        int mod = dividend % divisor;
+
+        if (mod != 0) {
+            ret++;
+        }
+
+        if (ret > 100) {
+            ret = 100;
+        }
+
+        if (ret < 0) {
+            ret = 0;
+        }
+
+        return ret;
+    }
+
+
+    /**
      * 提供指定数值的（精确）小数位四舍五入处理。
      *
      * @param value 需要四舍五入的数字
@@ -97,4 +140,22 @@ public class MathUtils {
         return b.divide(one,scale, RoundingMode.HALF_UP).doubleValue();
     }
 
+    /**
+     * 生成随机int值
+     * @param max 最大
+     * @return
+     */
+    public static int randomInt(Integer max) {
+        return (int) (max * Math.random());
+    }
+
+    /**
+     * double向上取整
+     * @param num
+     * @return
+     */
+    public static int ceil(Double num) {
+        double ceil = Math.ceil(num);
+        return Double.valueOf(ceil).intValue();
+    }
 }

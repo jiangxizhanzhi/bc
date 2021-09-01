@@ -3,14 +3,6 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.rtks.controller.res.PercentRes;
-import com.cyberpeace.rtks.dao.entity.UserRole;
-import com.cyberpeace.rtks.service.UserRelateService;
-import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
-import com.cyberpeace.rtks.service.bo.RoleStudyBo;
-import com.cyberpeace.rtks.service.bo.RtksRadarBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +11,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.rtks.controller.res.PercentRes;
 import com.cyberpeace.rtks.service.RtksStatisticService;
+import com.cyberpeace.rtks.service.bo.*;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @RequiresAuthentication
 @RestController
 @RequestMapping("/rtks/statistic")
-@Api(tags = "RTKS-岗位相关统计")
-public class RtksStatisticController {
+@Api(tags = "RTKS-作战能力评估")
+public class RtksEvaluationController {
 
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
-
-	@Autowired
-	private UserRelateService userRelateService;
 
 	@ApiOperation("岗位知识点学习进度统计")
 	@GetMapping("/role/knowledge/study_record")
@@ -65,9 +60,9 @@ public class RtksStatisticController {
 		return rsp;
 	}
 
-	@ApiOperation("岗位六棱图统计")
-	@GetMapping("/role/radar")
-	public BaseRsp<List<RtksRadarBo>> getRoleMatch() {
+	@ApiOperation("岗位知识点六棱图统计")
+	@GetMapping("/role/knowledge/radar")
+	public BaseRsp<List<RtksRadarBo>> getRoleKnowledgeMatch() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
@@ -78,7 +73,21 @@ public class RtksStatisticController {
 		return baseRsp;
 	}
 
-	@ApiOperation("岗位下知识点完成进度")
+	@ApiOperation("LGD岗位技能点六棱图统计")
+	@GetMapping("/role/skill/radar")
+	public BaseRsp<List<RtksRadarBo>> getLgdRoleSkillMatch() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(existRoleId)) {
+			List<RtksRadarBo> radarBos = rtksStatisticService.calculateLgdRadar(existRoleId,
+					userId);
+			baseRsp.setData(radarBos);
+		}
+		return baseRsp;
+	}
+
+	@ApiOperation("知识点完成进度折线图")
 	@GetMapping("/role/knowledge/percent")
 	public BaseRsp<PercentRes> getKnowledgeProcessByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -95,7 +104,7 @@ public class RtksStatisticController {
 		return rsp;
 	}
 
-	@ApiOperation("岗位下技能点完成度")
+	@ApiOperation("技能点完成度折线图")
 	@GetMapping("/role/skill/percent")
 	public BaseRsp<PercentRes> getSkillProcessByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -115,7 +124,7 @@ public class RtksStatisticController {
 	 * @return
 	 */
 	private PercentRes percentFormatterTran(List<KnowledgeStudyPercentBo> percentBos) {
-		List<String> xNames = percentBos.stream().map(KnowledgeStudyPercentBo::getKnowledgeName)
+		List<String> xNames = percentBos.stream().map(KnowledgeStudyPercentBo::getKnowledgeId)
 				.collect(Collectors.toList());
 		List<Integer> yPercents = percentBos.stream().map(KnowledgeStudyPercentBo::getPercent)
 				.collect(Collectors.toList());
@@ -136,6 +145,43 @@ public class RtksStatisticController {
 		if (StringUtils.isNotBlank(existRoleId)) {
 			String percent = rtksStatisticService.roleMatchPercent(existRoleId, userId);
 			rsp.setData(percent);
+		}
+		return rsp;
+	}
+
+	@GetMapping("/role/skill/score")
+	@ApiOperation("岗位技能评分详情")
+	public BaseRsp<List<CategorySkillBo>> getRoleSillScore() {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp<List<CategorySkillBo>> rsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(roleId)) {
+			List<CategorySkillBo> categorySkills = rtksStatisticService.getRoleSkillScores(userId,
+					roleId);
+			rsp.setData(categorySkills);
+		}
+		return rsp;
+	}
+
+	@ApiOperation("岗位课程学习记录")
+	@GetMapping("/role/course/study")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "start_time", value = "开始时间"),
+			@ApiImplicitParam(name = "end_time", value = "结束时间") })
+	public BaseRsp<StudyRecordBo> getStudyRecord(@RequestParam("start_time") String startTime,
+			@RequestParam("end_time") String endTime) {
+		boolean startValidate = TimeUtil.isValidDate(startTime);
+		boolean endValidate = TimeUtil.isValidDate(endTime);
+		if (!startValidate || !endValidate) {
+			throw new InvalidParamException("时间格式不正确！");
+		}
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp rsp = new BaseRsp();
+		if (StringUtils.isNotBlank(roleId)) {
+			StudyRecordBo studyRecordBo = rtksStatisticService.calculateStudyRecord(userId, roleId,
+					TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
+			rsp.setData(studyRecordBo);
 		}
 		return rsp;
 	}

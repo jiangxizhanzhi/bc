@@ -2,13 +2,13 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.dao.mapper.LevelMapper;
-import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.mapper.LevelMapper;
+import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.TreeService;
 
 @Service
@@ -32,7 +32,7 @@ public class TreeServiceImpl implements TreeService {
 
 	@Override
 	public List<Level> getFirstLevel(String frameId) {
-		List<Level> levels = levelMapper.getLevelsByFrameId(frameId);
+		List<Level> levels = levelMapper.getChildLevels(frameId);
 		return levels;
 	}
 

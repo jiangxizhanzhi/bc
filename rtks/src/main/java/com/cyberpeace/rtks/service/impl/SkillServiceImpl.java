@@ -1,6 +1,7 @@
 package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +11,23 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
+import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.service.*;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  *
@@ -51,7 +57,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
 
 		List<SkillRes> skillResList = result.getRecords();
-		checkSkillRes(skillResList);
+		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
 
 		return PageUtil.getListResult(result);
 	}
@@ -60,9 +66,11 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	public SkillRes getSkillByResourceId(String id) {
 		SkillRes skillRes = skillMapper.getSkillByResourceId(id);
 		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
+		List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-		if (relatedCourseDao.setCourseResult(skillRes.getCourses(), relatedCourseList)) {
-			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+		if (relatedCourseDao.setCourseResult(skillRes.getCourses(), relatedCourseList, processBos,
+				RoleDetailRes.RELATED_COURSE_COURSE)) {
+			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
 
 			Skill skill = new Skill();
@@ -74,7 +82,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 			updateById(skill);
 		} else {
-			skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
 		}
 
@@ -92,34 +100,48 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public List<String> filterIds(List<String> ids) {
-		return skillMapper.filterIds(ids);
+	public Skill getOr404(String skillId) {
+		Skill skill = getById(skillId);
+		if (skill == null) {
+			throw new ResourceNotFoundException("技能" + skillId + "未找到");
+		}
+		return skill;
 	}
 
 	@Override
-	public void checkSkillRes(List<SkillRes> skillResList) {
+	public void checkSkillRes(List<SkillRes> skillResList, String related_course_type) {
 		List<Skill> skillList = Lists.newArrayList();
 
 		for (SkillRes skillRes : skillResList) {
 			String courses = skillRes.getCourses();
 
 			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
-			if (relatedCourseDao.setCourseResult(courses, relatedCourseList)) {
-				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-				skillRes.setCourseList(relatedCourseList);
+			List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-				Skill skill = new Skill();
-				BeanUtils.copyProperties(skillRes, skill);
+			boolean isDeleted = relatedCourseDao.setCourseResult(courses, relatedCourseList,
+					processBos, related_course_type);
+			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+			skillRes.setCourseList(relatedCourseList);
+			if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
+				skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
+				skillRes.setCourses("");
+				skillRes.setCourseList(null);
+				skillRes.setCourseStudyProcessBoList(processBos);
+			} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
+				skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
+				skillRes.setCourseStudyProcessBoList(processBos);
+			}
+
+			if (isDeleted) {
 
 				// 修改关联表
+				Skill skill = new Skill();
+				BeanUtils.copyProperties(skillRes, skill);
 				courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
 						skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
 				skill.setCourses(courses);
 
 				skillList.add(skill);
-			} else {
-				skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-				skillRes.setCourseList(relatedCourseList);
 			}
 
 		}
@@ -127,7 +149,39 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public List<CourseConfig> getCourseConfigs(Skill skill) {
+	public List<SkillRes> getAllSkills() {
+		List<SkillRes> skillResList = skillMapper.getAllSkills();
+		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
+
+		return skillResList;
+	}
+
+	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,
+			List<RelatedCourse> relatedCourseList) {
+		Map<String, Integer> map = Maps.newHashMap();
+
+		for (RelatedCourse relatedCourse : relatedCourseList) {
+			map.put(relatedCourse.getResourceId(), relatedCourse.getWeight());
+		}
+
+		Double sumWeight = Double.valueOf(0);
+
+		Double sumProcess = Double.valueOf(0);
+		for (CourseStudyProcessBo courseStudyProcessBo : processBos) {
+			sumProcess += MathUtils.mul(courseStudyProcessBo.getProcess(),
+					Double.valueOf(map.get(courseStudyProcessBo.getCourseId())));
+			sumWeight += map.get(courseStudyProcessBo.getCourseId());
+		}
+		if (sumWeight <= 0.0) {
+			return 0;
+		} else {
+			return MathUtils.divide(sumProcess, sumWeight, 0).intValue();
+		}
+	}
+
+	@Override
+	public List<CourseConfig> getCourseConfigs(String skillId) {
+		Skill skill = getOr404(skillId);
 		return JsonUtil.toJsonObjectArray(skill.getCourses(), CourseConfig.class);
 	}
 }

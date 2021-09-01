@@ -26,7 +26,7 @@ public class ObjUtil {
 	private ObjUtil() {}
 
 	/**
-	 * 将object按field转换成map集合，其中key为field的名称，value为field的值。
+	 * 将object按field转换成treeMap集合，其中key为field的名称，value为field的值。
 	 * 不会过滤value为null的值。
 	 *
 	 * @param obj
@@ -34,12 +34,16 @@ public class ObjUtil {
 	 */
 	public static Map<String, Object> obj2map(Object obj) {
 		if (null == obj) {
-			return Maps.newHashMap();
+			return Maps.newTreeMap();
+		}
+
+		if (obj instanceof Map) {
+			return (Map) obj;
 		}
 
 		Field[] fields = getFields(obj);
 
-		Map<String, Object> result = Maps.newHashMap();
+		Map<String, Object> result = Maps.newTreeMap();
 
 		for (int i = 0; i < fields.length; i++) {
 			result.put(fields[i].getName(), getFieldValueByName(fields[i].getName(), obj));

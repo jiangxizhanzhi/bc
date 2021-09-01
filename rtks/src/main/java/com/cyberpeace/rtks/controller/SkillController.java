@@ -14,9 +14,9 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
 import com.cyberpeace.rtks.controller.req.SkillAddReq;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.SkillService;
@@ -87,7 +87,8 @@ public class SkillController {
 	@DeleteMapping()
 	public BaseRsp<String> deleteSkill(@RequestBody @Validated DeleteReq deleteReq) {
 		skillService.removeByIds(deleteReq.getIds());
-		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds());
+		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds(),
+				CourseRelated.RELATED_TYPE_SKILL);
 
 		return new BaseRsp<>();
 	}

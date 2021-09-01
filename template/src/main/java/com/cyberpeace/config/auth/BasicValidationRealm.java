@@ -63,7 +63,11 @@ public class BasicValidationRealm extends AuthorizingRealm {
 		try {
 			userInfo = remoteUserService.doAuthentication(token);
 			UserRole roleInfo = userRelateService.getUserRoleInfo(userInfo.getUserId());
-			userInfo.setRoleId(roleInfo.getRoleId());
+
+			if (null != roleInfo) {
+				userInfo.setRoleId(roleInfo.getRoleId());
+			}
+
 			UserInfoContext.setUserContext(userInfo);
 		} catch (Exception e) {
 			log.error("RemoteUserService.doAuthentication error");

@@ -60,7 +60,7 @@ public class MybatisConfigCR {
 		// 指定数据库方言为 MYSQL
 		PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
 		// 单页分页条数限制
-		pageInterceptor.setMaxLimit(100L);
+		pageInterceptor.setMaxLimit(10000L);
 		interceptor.addInnerInterceptor(pageInterceptor);
 		return interceptor;
 	}
@@ -71,7 +71,7 @@ public class MybatisConfigCR {
 		globalConfig.setMetaObjectHandler(crMetaObjectHandler());
 		GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
 		dbConfig.setLogicDeleteField("status");
-		dbConfig.setLogicDeleteValue(DELETE_VALUE);
+		dbConfig.setLogicDeleteValue("UNIX_TIMESTAMP()");
 		dbConfig.setLogicNotDeleteValue(NOT_DELETE);
 		globalConfig.setDbConfig(dbConfig);
 		return globalConfig;

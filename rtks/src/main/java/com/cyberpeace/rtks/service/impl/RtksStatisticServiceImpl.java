@@ -272,7 +272,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	public StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime,
 			Date endTime) {
 		List<LessonRecord> records = courseLessonService.selectByTime(userId, startTime, endTime);
-		int daysBetween = TimeUtil.getDaysBetween(startTime, endTime);
+
+		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime), TimeUtil.getStartOfDay(endTime));
 		Map<String, List<LessonRecord>> recordMap = records.stream().collect(Collectors
 				.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getStartTime())));
 

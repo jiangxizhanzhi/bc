@@ -87,7 +87,7 @@ public class RtksEvaluationController {
 		return baseRsp;
 	}
 
-	@ApiOperation("岗位下知识点完成进度")
+	@ApiOperation("知识点完成进度折线图")
 	@GetMapping("/role/knowledge/percent")
 	public BaseRsp<PercentRes> getKnowledgeProcessByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -104,7 +104,7 @@ public class RtksEvaluationController {
 		return rsp;
 	}
 
-	@ApiOperation("岗位下技能点完成度")
+	@ApiOperation("技能点完成度折线图")
 	@GetMapping("/role/skill/percent")
 	public BaseRsp<PercentRes> getSkillProcessByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -160,20 +160,6 @@ public class RtksEvaluationController {
 			List<CategorySkillBo> categorySkills = rtksStatisticService.getRoleSkillScores(userId,
 					roleId);
 			rsp.setData(categorySkills);
-		}
-		return rsp;
-	}
-
-	@ApiOperation("人才能力评估")
-	@GetMapping("/role/skill/rardar")
-	public BaseRsp<List<RtksRadarBo>> getRoleSkillMatch() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String roleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp<List<RtksRadarBo>> rsp = new BaseRsp<>();
-		if (StringUtils.isNotBlank(roleId)) {
-			List<RtksRadarBo> skillRadars = rtksStatisticService.calculateSkillRadar(userId,
-					roleId);
-			rsp.setData(skillRadars);
 		}
 		return rsp;
 	}

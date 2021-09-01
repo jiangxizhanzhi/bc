@@ -157,7 +157,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			ValueDataBo valueDataBo = calculateKnowledgeScore(knowledge, userId, true);
 			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(
 					valueDataBo.getResourceId(), valueDataBo.getContent(),
-					valueDataBo.getProcess().intValue());
+					MathUtils.ceil(valueDataBo.getProcess()));
 			return percentBo;
 		}).collect(Collectors.toList());
 		return percentBoList;
@@ -173,7 +173,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			ValueDataBo valueDataBo = calculateKnowledgeScore(skill, userId, true);
 			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(
 					valueDataBo.getResourceId(), valueDataBo.getContent(),
-					valueDataBo.getProcess().intValue());
+					MathUtils.ceil(valueDataBo.getProcess()));
 			return percentBo;
 		}).collect(Collectors.toList());
 		return percentBoList;
@@ -216,9 +216,14 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		Role role = roleMapper.selectById(roleId);
 		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
+		if (CollectionUtils.isEmpty(skillIds)) {
+			skillIds = Lists.newArrayList();
+		}
+
 		List<Skill> skillList = skillMapper.selectBatchIds(skillIds);
 		Map<String, List<Skill>> skillMap = skillList.stream()
 				.collect(Collectors.groupingBy(Skill::getCategoryId));
+
 		List<String> categoryIds = skillList.stream().map(Skill::getCategoryId).distinct()
 				.collect(Collectors.toList());
 		List<SkillCategory> categories = skillCategoryMapper.selectBatchIds(categoryIds);
@@ -232,6 +237,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<CategorySkillBo> skillBos = categories.stream().map(skillCategory -> {
 			CategorySkillBo skillBo = BeanUtils.copy(skillCategory, CategorySkillBo.class);
 			List<Skill> skills = skillMap.get(skillCategory.getResourceId());
+
 			// 组装技能得分
 			List<SkillScoreBo> scoreBos = skills.stream().map(skill -> {
 				SkillScoreBo scoreBo = new SkillScoreBo();
@@ -252,10 +258,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	@Override
 	public List<RtksRadarBo> calculateSkillRadar(String userId, String roleId) {
 		List<CategorySkillBo> skillScores = getRoleSkillScores(userId, roleId);
+
 		List<RtksRadarBo> boList = skillScores.stream().map(categorySkillBo -> {
 			RtksRadarBo radarBo = new RtksRadarBo();
 			radarBo.setFirstTreeId(categorySkillBo.getResourceId());
 			radarBo.setTreeName(categorySkillBo.getContent());
+
 			double sum = categorySkillBo.getSkills().stream()
 					.mapToDouble(skillBo -> Double.parseDouble(skillBo.getScore())
 							* new Double(skillBo.getWeight()))
@@ -263,6 +271,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			double weightSum = categorySkillBo.getSkills().stream()
 					.mapToDouble(SkillScoreBo::getWeight).sum();
 			radarBo.setMatchPercent(String.valueOf(MathUtils.divide(sum, weightSum, 0).intValue()));
+
 			return radarBo;
 		}).collect(Collectors.toList());
 		return boList;
@@ -273,7 +282,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			Date endTime) {
 		List<LessonRecord> records = courseLessonService.selectByTime(userId, startTime, endTime);
 
-		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime), TimeUtil.getStartOfDay(endTime));
+		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
+				TimeUtil.getStartOfDay(endTime));
 		Map<String, List<LessonRecord>> recordMap = records.stream().collect(Collectors
 				.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getStartTime())));
 
@@ -296,6 +306,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			List<LessonRecord> lessonRecordList = recordMap.get(format8);
 
 			if (CollectionUtils.isNotEmpty(lessonRecordList)) {
+
 				List<String> recordLessonIds = lessonRecordList.stream()
 						.map(LessonRecord::getLesson).distinct().collect(Collectors.toList());
 				List<String> recordCourseIds = courseLessonService
@@ -372,9 +383,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<OutSkillScore> skillScore = outSkillService.getUserSkillScore(userId, skillIds);
 		Map<String, String> scoreMap = skillScore.stream()
 				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
+
 		double sum = skills.stream().mapToDouble(skill -> new Double(skill.getWeight())
 				* Double.parseDouble(scoreMap.get(skill.getResourceId()))).sum();
-
 		int weightSum = skills.stream().mapToInt(Skill::getWeight).sum();
 		Double result = MathUtils.divide(sum, Double.parseDouble(String.valueOf(weightSum)), 0);
 
@@ -463,8 +474,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			double lessonCount = skillScores.stream().mapToDouble(ValueDataBo::getLessonCount)
 					.sum();
 			// 3、统计所有课程的已学课时B;
-			double completeCount = skillScores.stream()
-					.mapToDouble(ValueDataBo::getCompleteCount).sum();
+			double completeCount = skillScores.stream().mapToDouble(ValueDataBo::getCompleteCount)
+					.sum();
 
 			// 4、B/A，向上取整
 			Double divide = MathUtils.divide(completeCount, lessonCount, 0);
@@ -659,7 +670,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		Knowledge knowledge = knowledgeMapper.selectById(knowledgeId);
 		List<KnowledgeUnderCourseBo> courseBos = JsonUtil.toJsonObjectArray(knowledge.getCourses(),
 				KnowledgeUnderCourseBo.class);
-		return courseBos.stream().map(KnowledgeUnderCourseBo::getResourceId).collect(Collectors.toList());
+		return courseBos.stream().map(KnowledgeUnderCourseBo::getResourceId)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -669,8 +681,10 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private List<String> getCourseIdsBySkill(String skillId) {
 		Skill skill = skillMapper.selectById(skillId);
-		List<KnowledgeUnderCourseBo> courseIds = JsonUtil.toJsonObjectArray(skill.getCourses(), KnowledgeUnderCourseBo.class);
-		return courseIds.stream().map(KnowledgeUnderCourseBo::getResourceId).collect(Collectors.toList());
+		List<KnowledgeUnderCourseBo> courseIds = JsonUtil.toJsonObjectArray(skill.getCourses(),
+				KnowledgeUnderCourseBo.class);
+		return courseIds.stream().map(KnowledgeUnderCourseBo::getResourceId)
+				.collect(Collectors.toList());
 	}
 
 	/**

@@ -18,7 +18,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.res.DirectionOutPut;
-import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseDirection;
 import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
 import com.cyberpeace.oj.course.service.CourseService;
@@ -42,7 +41,7 @@ public class CourseController {
 
 	@GetMapping()
 	@ApiOperation("单条查询")
-	public BaseRsp<Course> getCourse(@ApiParam(name = "resource_id", value = "查询id",
+	public BaseRsp<CourseInfoBo> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
 		CourseInfoBo course = courseService.selectById(resourceId);
 		BaseRsp rsp = new BaseRsp(course);

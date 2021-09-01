@@ -135,4 +135,13 @@ public class MathUtils {
         return (int) (max * Math.random());
     }
 
+    /**
+     * double向上取整
+     * @param num
+     * @return
+     */
+    public static int ceil(Double num) {
+        double ceil = Math.ceil(num);
+        return Double.valueOf(ceil).intValue();
+    }
 }

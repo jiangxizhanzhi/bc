@@ -412,8 +412,8 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 
 		String idsStr = JsonUtil.toJsonString(inputIds);
 
-		// 字段无变化，跳过该字段
-		if (originIdStr.equals(idsStr)) {
+		// 更新时字段无变化，跳过该字段
+		if (isModify && originIdStr.equals(idsStr)) {
 			return null;
 		}
 

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

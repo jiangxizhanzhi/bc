@@ -3,8 +3,8 @@ package com.cyberpeace.rtks.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 
 /**
  *

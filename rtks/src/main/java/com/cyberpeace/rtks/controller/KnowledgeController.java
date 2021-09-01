@@ -15,9 +15,9 @@ import com.cyberpeace.rtks.controller.req.DeleteReq;
 import com.cyberpeace.rtks.controller.req.KnowledgeAddReq;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.KnowledgeService;
 

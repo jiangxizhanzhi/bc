@@ -5,7 +5,8 @@ import java.util.List;
 
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Ability;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
+import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.Task;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -13,6 +14,12 @@ import lombok.Data;
 
 @Data
 public class RoleDetailRes implements Serializable {
+
+	public final static String TYPE_SKILL = "skill";// 只传技能关联课程
+
+	public final static String TYPE_KNOWLEDGE = "knowledge";// 只传知识点关联课程
+
+	public final static String TYPE_ALL = "all";// 只传课程学习进展
 
 	public final static String RELATED_COURSE_COURSE = "course";// 只传课程
 
@@ -56,6 +63,10 @@ public class RoleDetailRes implements Serializable {
 	private List<Task> taskDataList;
 
 	private List<Ability> abilityDataList;
+
+	private List<Knowledge> knowledgeDataList;
+
+	private List<Skill> skillDataList;
 
 	private List<KnowledgeRes> knowledgeResDataList;
 

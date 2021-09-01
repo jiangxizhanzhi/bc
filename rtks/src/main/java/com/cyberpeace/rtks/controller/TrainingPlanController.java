@@ -138,11 +138,11 @@ public class TrainingPlanController {
 		}
 		return rsp;
 	}
-
 	@ApiOperation("查询技能和知识点关联的课程学习情况")
 	@GetMapping("/getRelatedCourseList")
-	public BaseRsp<RoleDetailRes> getRelatedCourseList() {
-
+	public BaseRsp<RoleDetailRes> getRelatedCourseList() {// @ApiParam(name = "course_type", value =
+															// "查询课程类型(skill/knowledge)", required =
+															// true) String course_type
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {

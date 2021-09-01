@@ -23,13 +23,13 @@ import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
-import com.cyberpeace.rtks.controller.res.KnowledgeRes;
-import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillRes;
+import com.cyberpeace.rtks.controller.res.*;
 import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
 import com.cyberpeace.rtks.controller.role.RoleOutput;
-import com.cyberpeace.rtks.dao.entity.*;
+import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.dao.entity.Level;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
@@ -106,7 +106,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	public RoleDetailRes getRoleOutputByRoleId(String resource_id, String type) {
 		Role role = roleMapper.selectById(resource_id);
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
-		RoleDetailRes roleDetailRes = BeanUtils.copy(roleDetailOutput, RoleDetailRes.class);
+		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 		roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();
@@ -144,7 +144,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	public RoleDetailRes getLearningPathTree(String resource_id, String type) {
 		Role role = roleMapper.selectById(resource_id);
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
-		RoleDetailRes roleDetailRes = BeanUtils.copy(roleDetailOutput, RoleDetailRes.class);
+		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 
 		List<Level> levelList = roleMapper.selectLevelsByRoleId(resource_id);
 		roleDetailRes.setLevelTreeOutput(getLevelTree(levelList, role.getLevelId()));
@@ -159,7 +159,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		for (KnowledgeRes knowledgeRes : knowledgeResList) {
 			basicCourseList.addAll(knowledgeRes.getCourseList());
 		}
-		roleDetailRes.setSkillCourseList(basicCourseList);
+		roleDetailRes.setBasicCourseList(basicCourseList);
 
 		// 获取技能的课程列表
 		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
@@ -192,7 +192,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 				.getKnowledgeByCourseId(courseIds);
 
 		List<CourseKnowledgeBo> boList = processBos.stream().map(bo -> {
-			CourseKnowledgeBo knowledgeBo = BeanUtils.copy(infoMap.get(bo.getCourseId()),
+			CourseKnowledgeBo knowledgeBo = BeanUtils.deepCopy(infoMap.get(bo.getCourseId()),
 					CourseKnowledgeBo.class);
 			knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
 			knowledgeBo.setProcess(bo.getProcess().intValue());

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
 import com.cyberpeace.rtks.dao.mapper.CourseRelatedMapper;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.google.common.collect.Lists;

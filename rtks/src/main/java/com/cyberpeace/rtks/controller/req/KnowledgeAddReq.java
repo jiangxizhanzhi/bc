@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.rtks.dao.entity.RelatedCourse;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

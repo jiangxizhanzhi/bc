@@ -86,18 +86,23 @@ public class TrainingPlanController {
 				.sum();
 		int completeTheory = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeBo::getCompleteTheory).sum();
-		courseRes.setTheoryPercent(MathUtils.divide(theoryCount * 100, completeTheory));
+		courseRes.setTheoryPercent(MathUtils.ceilDivide(Double.valueOf(completeTheory * 100),
+				Double.valueOf(theoryCount)));
+
 		// 计算实验课时进度
 		int exerciseCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getExerciseCount)
 				.sum();
 		int completeExercise = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeBo::getCompleteExercise).sum();
-		courseRes.setExercisePercent(MathUtils.divide(exerciseCount * 100, completeExercise));
+		courseRes.setExercisePercent(MathUtils.ceilDivide(Double.valueOf(completeExercise * 100),
+				Double.valueOf(exerciseCount)));
+
 		// 计算总进度
-		int Count = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getLessonCount).sum();
+		int count = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getLessonCount).sum();
 		int completeCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteCount)
 				.sum();
-		courseRes.setCoursePercent(MathUtils.divide(Count * 100, completeCount));
+		courseRes.setCoursePercent(
+				MathUtils.ceilDivide(Double.valueOf(completeCount * 100), Double.valueOf(count)));
 
 		courseRes.setKnowledgeBos(courseKnowledges);
 		return courseRes;
@@ -138,6 +143,7 @@ public class TrainingPlanController {
 		}
 		return rsp;
 	}
+
 	@ApiOperation("查询技能和知识点关联的课程学习情况")
 	@GetMapping("/getRelatedCourseList")
 	public BaseRsp<RoleDetailRes> getRelatedCourseList() {// @ApiParam(name = "course_type", value =

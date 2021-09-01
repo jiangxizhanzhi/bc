@@ -1,17 +1,15 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.skill.OutSkillScore;
 import com.cyberpeace.integratation.service.OutSkillService;

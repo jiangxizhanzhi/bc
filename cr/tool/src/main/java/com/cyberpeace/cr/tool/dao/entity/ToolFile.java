@@ -27,6 +27,6 @@ public class ToolFile implements Serializable {
 		if (StringUtils.isBlank(savePath)) {
 			return "";
 		}
-		return ConfigUtil.getContextProperty("cr.uploaded_file_prefix") + savePath;
+		return ConfigUtil.getContextProperty("cr.local.file.prefix") + savePath;
 	}
 }

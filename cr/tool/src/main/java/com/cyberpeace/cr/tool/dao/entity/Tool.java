@@ -66,7 +66,7 @@ public class Tool extends BaseTable {
 		if (StringUtils.isBlank(cover)) {
 			return "";
 		}
-		return ConfigUtil.getContextProperty("cr.uploaded_file_prefix") + cover;
+		return ConfigUtil.getContextProperty("cr.local.file.prefix") + cover;
 	}
 
 	private static final long serialVersionUID = 1L;

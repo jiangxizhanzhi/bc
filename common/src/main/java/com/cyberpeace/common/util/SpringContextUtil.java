@@ -1,8 +1,11 @@
 package com.cyberpeace.common.util;
 
+import java.util.Map;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
 public class SpringContextUtil implements ApplicationContextAware {
 
@@ -34,5 +37,9 @@ public class SpringContextUtil implements ApplicationContextAware {
 	@SuppressWarnings("unchecked")
 	public static <T> T getBeanByClass(Class<T> cls) throws BeansException {
 		return (T) applicationContext.getBean(cls);
+	}
+
+	public static <T> Map<String, T> getBeansOfType(@Nullable Class<T> type) throws BeansException {
+		return applicationContext.getBeansOfType(type);
 	}
 }

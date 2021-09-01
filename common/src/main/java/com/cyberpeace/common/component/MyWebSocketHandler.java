@@ -17,9 +17,7 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author yinqingrong
- */
+
 @Slf4j
 @Component
 public class MyWebSocketHandler implements WebSocketHandler {
@@ -38,11 +36,11 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		WebSocketConnectionContext webSocketContext = (WebSocketConnectionContext) webSocketSession
 				.getAttributes().get("key");
 
-		businessSocketSessionMap.putIfAbsent(webSocketContext.getBusinessId(),
+		businessSocketSessionMap.putIfAbsent(webSocketContext.getIdentifierId(),
 				Maps.newConcurrentMap());
 
-		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
-				.get(webSocketContext.getBusinessId());
+		Map<String, Set<WebSocketSession>>userSocketSessionMap = businessSocketSessionMap
+				.get(webSocketContext.getIdentifierId());
 
 		userSocketSessionMap.putIfAbsent(webSocketContext.getUserId(), Sets.newHashSet());
 		userSocketSessionMap.get(webSocketContext.getUserId()).add(webSocketSession);
@@ -77,7 +75,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * @param toAllUser 向该业务的所有用户推送消息。toAllUser目前就实训的共享场景用到
 	 */
 	public void pushMessage(WebSocketMessageContext message, boolean toAllUser) {
-		String businessId = message.getMessageIdentifier().getBusinessId();
+		String businessId = message.getMessageIdentifier().getIdentifierId();
 		String userId = message.getMessageIdentifier().getUserId();
 
 		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
@@ -146,7 +144,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 			return;
 		}
 
-		String businessId = connectionContext.getBusinessId();
+		String businessId = connectionContext.getIdentifierId();
 
 		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
 				.get(businessId);
@@ -173,7 +171,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		}
 
 		log.info("businessId=[{}], userId=[{}] removed from socketSessionMap",
-				connectionContext.getBusinessId(), connectionContext.getUserId());
+				connectionContext.getIdentifierId(), connectionContext.getUserId());
 
 	}
 }

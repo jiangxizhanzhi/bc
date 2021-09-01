@@ -30,7 +30,7 @@ public class WebSocketConnectionContext extends WsMessageIdentifier {
 	 * @return
 	 */
 	@Override
-	public String getBusinessId() {
+	public String getIdentifierId() {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (Map.Entry<String, String> item : originParams.entrySet()) {
 			stringBuilder.append(item.getValue()).append("&");

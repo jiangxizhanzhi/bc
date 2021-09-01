@@ -31,9 +31,9 @@ public class SwaggerConfig {
 
 	@Bean
 	public Docket apiTemplate() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.controller"))
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("template");
+				.groupName("demo");
 	}
 
 	@Bean

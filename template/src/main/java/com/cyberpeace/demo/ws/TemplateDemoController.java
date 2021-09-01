@@ -1,8 +1,9 @@
-package com.cyberpeace.controller;
+package com.cyberpeace.demo.ws;
 
 import java.util.Date;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.model.DemoWsMessage;
 import com.cyberpeace.model.DemoWsMessageIdentifier;
 import com.cyberpeace.rtks.dao.entity.Task;
@@ -28,19 +30,43 @@ public class TemplateDemoController {
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
-	@ApiOperation("测试websocket消息发送")
+	String path1 = "/ws";
+
+	String path2 = "/ws/course";
+
+	@ApiOperation("测试websocket消息发送1")
 	@GetMapping("/ws")
-	public BaseRsp<Task> getTask() {
-		DemoWsMessageIdentifier identifier = DemoWsMessageIdentifier.builder().courseId("courseId")
-				.lessonId("lessonId").build();
+	public BaseRsp<Task> sendMsg1() {
+		DemoWsMessageIdentifier identifier = DemoWsMessageIdentifier.builder().courseId("12")
+				.lessonId("34").build();
 		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
-		DemoWsMessage data = DemoWsMessage.builder().code(1).message("test message")
+		identifier.setPath(path1);
+
+		DemoWsMessage data = DemoWsMessage.builder().code(1).message("test message1")
 				.timestamp(new Date()).build();
 
 		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
 				.messageIdentifier(identifier).data(data).build();
 
 		myWebSocketHandler.pushMessage(messageContext, false);
+
+		return new BaseRsp();
+	}
+
+	@ApiOperation("测试websocket消息发送2")
+	@GetMapping("/ws1")
+	public BaseRsp<Task> sendMsg2() {
+		WsMessageIdentifier identifier = new WsMessageIdentifier();
+		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
+		identifier.setPath(path2);
+
+		DemoWsMessage data = DemoWsMessage.builder().code(1).message("test message2")
+				.timestamp(new Date()).build();
+
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+				.messageIdentifier(identifier).data(data).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
 
 		return new BaseRsp();
 	}

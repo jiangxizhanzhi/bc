@@ -6,12 +6,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import com.cyberpeace.common.component.SelfDefinedWsChecker;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
+import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 
@@ -29,7 +32,7 @@ public class JwtHandShake implements HandshakeInterceptor {
 
 	private final String TOKEN = "token";
 
-	private final String ID = "business";
+	private final String PATH = "path";
 
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest serverHttpRequest,
@@ -37,12 +40,15 @@ public class JwtHandShake implements HandshakeInterceptor {
 			Map<String, Object> map) throws Exception {
 		String queryString = serverHttpRequest.getURI().getQuery();
 
+		String path = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest()
+				.getServletPath();
+
 		// 1、解析连接参数
 		Map<String, String> parametersMap = parseParameterMap(queryString);
 
 		// 2、权限校验
 		String jwtToken = parametersMap.get(TOKEN);
-		String businessId = parametersMap.get(ID);
+
 		if (StringUtils.isBlank(jwtToken)) {
 			log.error("websocket handshake fail, token is null");
 			return false;
@@ -62,12 +68,51 @@ public class JwtHandShake implements HandshakeInterceptor {
 		}
 
 		parametersMap.remove(TOKEN);
+
+		// 3、进行自定义校验
+		if (!selfDefinedCheck(parametersMap, path, userInfo.getUserId())) {
+			return false;
+		}
+
+		// 4、path参数最后透传，不然会传递到自定义
+		parametersMap.put(PATH, path);
+
 		WebSocketConnectionContext context = WebSocketConnectionContext.builder()
 				.originParams(parametersMap).build();
 		context.setUserId(userInfo.getUserId());
 
 		// 透传websocket连接的上下文
 		map.put("key", context);
+
+		return true;
+	}
+
+	/**
+	 * 逐个遍历自定义校验器
+	 * @param requestParams
+	 * @param servletPath
+	 * @param userId
+	 * @return
+	 */
+	private boolean selfDefinedCheck(Map<String, String> requestParams, String servletPath,
+			String userId) {
+		Map<String, SelfDefinedWsChecker> checkers = SpringContextUtil
+				.getBeansOfType(SelfDefinedWsChecker.class);
+
+		for (SelfDefinedWsChecker checker : checkers.values()) {
+			// requestParams进行拷贝，防止有checker改变其数据
+			boolean checkResult = checker.doSelfDefinedCheck(copyMap(requestParams), servletPath,
+					userId);
+
+			if (!checkResult) {
+				log.error(
+						"websocket handshake fail, due to checker=[{}], params=[{}], path=[{}], userId=[{}]",
+						new Object[] { checker.getClass().getSimpleName(),
+								mapToString(requestParams), servletPath, userId });
+
+				return false;
+			}
+		}
 
 		return true;
 	}
@@ -89,5 +134,24 @@ public class JwtHandShake implements HandshakeInterceptor {
 			}
 		}
 		return parameterMap;
+	}
+
+	private Map<String, String> copyMap(Map<String, String> origin) {
+		Map<String, String> copy = Maps.newTreeMap();
+
+		for (Map.Entry<String, String> item : origin.entrySet()) {
+			copy.put(item.getKey(), item.getValue());
+		}
+
+		return copy;
+	}
+
+	private String mapToString(Map<String, String> params) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (Map.Entry<String, String> item : params.entrySet()) {
+			stringBuilder.append(item.getKey()).append("=").append(item.getValue()).append("&");
+		}
+
+		return stringBuilder.toString();
 	}
 }

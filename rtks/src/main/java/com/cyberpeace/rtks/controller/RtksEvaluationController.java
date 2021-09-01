@@ -124,7 +124,7 @@ public class RtksEvaluationController {
 	 * @return
 	 */
 	private PercentRes percentFormatterTran(List<KnowledgeStudyPercentBo> percentBos) {
-		List<String> xNames = percentBos.stream().map(KnowledgeStudyPercentBo::getKnowledgeName)
+		List<String> xNames = percentBos.stream().map(KnowledgeStudyPercentBo::getKnowledgeId)
 				.collect(Collectors.toList());
 		List<Integer> yPercents = percentBos.stream().map(KnowledgeStudyPercentBo::getPercent)
 				.collect(Collectors.toList());

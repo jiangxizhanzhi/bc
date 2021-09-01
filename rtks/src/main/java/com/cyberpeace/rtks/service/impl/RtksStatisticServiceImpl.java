@@ -339,15 +339,19 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 计算总体进度
 		RoleStudyBo studyBo = new RoleStudyBo();
 		studyBo.setTotalCourses(processBoList.size());
+
 		int completeTheorySum = processBoList.stream()
 				.mapToInt(CourseStudyProcessBo::getTheoryCount).sum();
 		studyBo.setFinishedTheoryLessons(completeTheorySum);
+
 		int completeExerciseSum = processBoList.stream()
 				.mapToInt(CourseStudyProcessBo::getCompleteExercise).sum();
 		studyBo.setFinishedPracticeLessons(completeExerciseSum);
+
 		int unTheorySum = processBoList.stream()
 				.mapToInt(bo -> bo.getTheoryCount() - bo.getCompleteTheory()).sum();
 		studyBo.setUnFinishedTheoryLessons(unTheorySum);
+
 		int unExerciseSum = processBoList.stream()
 				.mapToInt(bo -> bo.getExerciseCount() - bo.getCompleteExercise()).sum();
 		studyBo.setUnFinishedPracticeLessons(unExerciseSum);
@@ -460,6 +464,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			// 3、统计所有课程的已学课时B;
 			double completeCount = skillScores.stream()
 					.mapToDouble(ValueDataBo::getCompleteCount).sum();
+
 			// 4、B/A，向上取整
 			Double divide = MathUtils.divide(completeCount, lessonCount, 0);
 			return divide.intValue();

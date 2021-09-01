@@ -82,6 +82,20 @@ public class MathUtils {
     }
 
     /**
+     * double向上取整除法
+     * @param dividend
+     * @param divisor
+     * @return
+     */
+    public static Integer ceilDivide(Double dividend, Double divisor) {
+        if (null == divisor || divisor.doubleValue() == new Double(0).doubleValue()) {
+            return 0;
+        }
+        double result = divide(dividend, divisor, DEF_DIV_SCALE);
+        return MathUtils.ceil(result);
+    }
+
+    /**
      * 向上取整除法
      * @param dividend
      * @param divisor

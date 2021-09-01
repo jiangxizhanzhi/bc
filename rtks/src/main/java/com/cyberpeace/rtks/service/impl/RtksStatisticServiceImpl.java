@@ -1,10 +1,13 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -149,10 +152,28 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Override
 	public List<KnowledgeStudyPercentBo> calculateKnowledgePercent(String role, String userId) {
-		// 获取当前角色的所有技能点及权重
-		List<String> knowledgeIds = getKnowledgeIdsByRole(role);
-		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
 
+		// 获取知识点
+		List<String> knowledgeIds = getSkillOrKnowledges(role, Knowledge.class);
+		if (CollectionUtils.isEmpty(knowledgeIds)) {
+			return Lists.newArrayList();
+		}
+		// 计算结果
+		return calculatePercent(knowledgeIds, userId, knowledgeMapper);
+	}
+
+	/**
+	 * 根据技能点或者知识点编号计算对应的进度
+	 * @param skillOrKnowledgeIds
+	 * @param baseMapper
+	 * @param userId
+	 * @param <T>
+	 * @return
+	 */
+	private <T extends SkillAndKnowledgeBase> List<KnowledgeStudyPercentBo> calculatePercent(
+			List<String> skillOrKnowledgeIds, String userId, BaseMapper<T> baseMapper) {
+		List<T> knowledges = baseMapper.selectBatchIds(skillOrKnowledgeIds);
+		CourseStudyProcessBo bo = new CourseStudyProcessBo();
 		List<KnowledgeStudyPercentBo> percentBoList = knowledges.stream().map(knowledge -> {
 			ValueDataBo valueDataBo = calculateKnowledgeScore(knowledge, userId, true);
 			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(
@@ -165,46 +186,52 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Override
 	public List<KnowledgeStudyPercentBo> calculateSkillPercent(String roleId, String userId) {
-		List<String> skillIds = getSkillIdsByRole(roleId);
-		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
-
-		List<KnowledgeStudyPercentBo> percentBoList = skills.stream().map(skill -> {
-
-			ValueDataBo valueDataBo = calculateKnowledgeScore(skill, userId, true);
-			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(
-					valueDataBo.getResourceId(), valueDataBo.getContent(),
-					MathUtils.ceil(valueDataBo.getProcess()));
-			return percentBo;
-		}).collect(Collectors.toList());
-		return percentBoList;
+		// 获取知识点
+		List<String> skillIds = getSkillOrKnowledges(roleId, Skill.class);
+		if (CollectionUtils.isEmpty(skillIds)) {
+			return Lists.newArrayList();
+		}
+		// 计算结果
+		return calculatePercent(skillIds, userId, skillMapper);
 	}
 
 	@Override
 	public RoleStudyBo roleKnowledgeStudyRecord(String roleId, String userId) {
 		// 1、获取用户角色关联的知识点
-		List<String> knowledgeIds = getKnowledgeIdsByRole(roleId);
+		List<String> knowledgeIds = getSkillOrKnowledges(roleId, Knowledge.class);
 
-		// 2、获取知识点对应的课程学习进度
-		List<CourseStudyProcessBo> processBoList = knowledgeIds.stream().map(knowledgeId -> {
-			List<String> courseIds = getCourseIdsByKnowledge(knowledgeId);
-			List<CourseStudyProcessBo> processBos = courseStatisticsService
-					.statisticByIds(courseIds, userId);
-			return processBos;
-		}).flatMap(Collection::stream).collect(Collectors.toList());
-
-		return getStudyBo(processBoList);
+		// 2、返回计算结果
+		return calculateStudy(knowledgeIds, userId, knowledgeMapper);
 	}
 
 	@Override
 	public RoleStudyBo roleSkillStudyRecord(String roleId, String userId) {
 		// 1、获取用户角色关联的技能点
-		List<String> skillIds = getSkillIdsByRole(roleId);
-		List<CourseStudyProcessBo> processBoList = skillIds.stream().map(skllId -> {
-			List<String> courseIds = getCourseIdsBySkill(skllId);
+		List<String> skillIds = getSkillOrKnowledges(roleId, Skill.class);
+
+		// 2、返回计算结果
+		return calculateStudy(skillIds, userId, skillMapper);
+	}
+
+	/**
+	 * 根据技能点或者知识点计算学习的课程数量
+	 * @param skillOrKnowledgeIds
+	 * @param userId
+	 * @param baseMapper
+	 * @param <T>
+	 * @return
+	 */
+	private <T extends SkillAndKnowledgeBase> RoleStudyBo
+			calculateStudy(List<String> skillOrKnowledgeIds, String userId, BaseMapper<T> baseMapper) {
+
+		// 1、获取课程学习进度
+		List<CourseStudyProcessBo> processBoList = skillOrKnowledgeIds.stream().map(skllId -> {
+			List<String> courseIds = getCourseIds(skllId, baseMapper);
 			List<CourseStudyProcessBo> processBos = courseStatisticsService
 					.statisticByIds(courseIds, userId);
 			return processBos;
 		}).flatMap(Collection::stream).collect(Collectors.toList());
+
 		// 2、获取技能点对应的课程
 		RoleStudyBo studyBo = getStudyBo(processBoList);
 
@@ -287,9 +314,16 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		Map<String, List<LessonRecord>> recordMap = records.stream().collect(Collectors
 				.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getStartTime())));
 
-		List<String> knowledgeIds = getKnowledgeIdsByRole(roleId);
+		List<String> knowledgeIds = getSkillOrKnowledges(roleId, Knowledge.class);
+		if (CollectionUtils.isEmpty(knowledgeIds)) {
+			return null;
+		}
+
 		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
 		List<String> courseIds = getCourseIdsByKnowledge(knowledges);
+		if (CollectionUtils.isEmpty(courseIds)) {
+			return null;
+		}
 		List<CourseLesson> lessons = courseLessonMapper.listByCourses(courseIds);
 
 		Set<String> lessonSet = lessons.stream().map(CourseLesson::getResourceId)
@@ -376,7 +410,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private Integer calculateSkillScore(String roleId, String userId) {
 		// 1、获取当前角色的所有技能点及权重
-		List<String> skillIds = getSkillIdsByRole(roleId);
+		List<String> skillIds = getSkillOrKnowledges(roleId, Skill.class);
 		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
 		// 2、计算每个技能点的得分
 		// 连接靶场数据库，没有数据点技能点算0分
@@ -405,9 +439,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 				String.class);
 
+		if (CollectionUtils.isEmpty(knowledgeIds)) {
+			return 0;
+		}
 		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
+
 		// 根据权重计算数据根据每个知识点的权重加权平均
-		Integer percent = calculateKnowledgeFinishPercent(knowledges, userId, true);
+		Integer percent = calculateFinishPercent(knowledges, userId, true);
 
 		return percent;
 	}
@@ -425,7 +463,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<Skill> skills = mergeSkillByRoles(roles);
 
 		// 3、统计所有知识点的课时完成度
-		Integer ret = calculateSkillFinishPercent(skills, userId, true);
+		Integer ret = calculateFinishPercent(skills, userId, true);
 
 		return ret.toString();
 	}
@@ -443,45 +481,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<Knowledge> knowledges = mergeKnowledgeByRoles(roles);
 
 		// 3、统计所有知识点的课时完成度
-		Integer ret = calculateKnowledgeFinishPercent(knowledges, userId, true);
+		Integer ret = calculateFinishPercent(knowledges, userId, true);
 
 		return ret.toString();
-	}
-
-	/**
-	 * 计算知识点涉及到的所有课时的完成度
-	 * @param skills 技能编号
-	 * @param userId 用户编号
-	 * @return
-	 */
-	private Integer calculateSkillFinishPercent(List<Skill> skills, String userId,
-			boolean useWeight) {
-
-		// 1、统计所有知识点的进度和权重
-		List<ValueDataBo> skillScores = skills.stream()
-				.map(skill -> calculateKnowledgeScore(skill, userId, useWeight))
-				.collect(Collectors.toList());
-
-		if (useWeight) {
-			double sumProcess = skillScores.stream()
-					.mapToDouble(value -> MathUtils.mul(value.getProcess(), value.getWeight()))
-					.sum();
-
-			double sumWeight = skillScores.stream().mapToDouble(ValueDataBo::getWeight).sum();
-			return MathUtils.divide(sumProcess, sumWeight, 0).intValue();
-		} else {
-			// 2、统计所有课程的总课时A；
-			double lessonCount = skillScores.stream().mapToDouble(ValueDataBo::getLessonCount)
-					.sum();
-			// 3、统计所有课程的已学课时B;
-			double completeCount = skillScores.stream().mapToDouble(ValueDataBo::getCompleteCount)
-					.sum();
-
-			// 4、B/A，向上取整
-			Double divide = MathUtils.divide(completeCount, lessonCount, 0);
-			return divide.intValue();
-		}
-
 	}
 
 	/**
@@ -490,12 +492,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param userId 用户编号
 	 * @return
 	 */
-	private Integer calculateKnowledgeFinishPercent(List<Knowledge> knowledges, String userId,
+	private <T extends SkillAndKnowledgeBase> Integer calculateFinishPercent(List<T> knowledges, String userId,
 			boolean useWeight) {
 
 		// 1、统计所有知识点的进度和权重
 		List<ValueDataBo> knowledgeScores = knowledges.stream()
-				.map(knowledge -> calculateKnowledgeScore(knowledge, userId, useWeight))
+				.map(base -> calculateKnowledgeScore(base, userId, useWeight))
 				.collect(Collectors.toList());
 
 		if (useWeight) {
@@ -633,54 +635,32 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	}
 
 	/**
-	 * 根据岗位编号查询知识点编号
+	 * 根据岗位编号查询技能点或者知识点
 	 * @param roleId
 	 * @return
 	 */
-	private List<String> getKnowledgeIdsByRole(String roleId) {
+	private List<String> getSkillOrKnowledges(String roleId, Class cls) {
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
 			return Lists.newArrayList();
 		}
-		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
-				String.class);
-		return knowledgeIds;
-	}
-
-	/**
-	 * 根据岗位编号查询技能点
-	 * @param roleId
-	 * @return
-	 */
-	private List<String> getSkillIdsByRole(String roleId) {
-		Role role = roleMapper.selectById(roleId);
-		if (null == role) {
-			return Lists.newArrayList();
+		List<String> resourceIds;
+		if (cls.getName().equals(Skill.class.getName())) {
+			resourceIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
+		} else {
+			resourceIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(), String.class);
 		}
-		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
-		return skillIds;
+		return resourceIds;
 	}
 
 	/**
-	 * 根据知识点编号查询全部的课程编号
-	 * @param knowledgeId
+	 * 根据知识点或者技能编号查询全部的课程编号
+	 * @param skillOrKnowledge
 	 * @return
 	 */
-	private List<String> getCourseIdsByKnowledge(String knowledgeId) {
-		Knowledge knowledge = knowledgeMapper.selectById(knowledgeId);
-		List<KnowledgeUnderCourseBo> courseBos = JsonUtil.toJsonObjectArray(knowledge.getCourses(),
-				KnowledgeUnderCourseBo.class);
-		return courseBos.stream().map(KnowledgeUnderCourseBo::getResourceId)
-				.collect(Collectors.toList());
-	}
-
-	/**
-	 * 根据技能编号查询全部的课程编号
-	 * @param skillId
-	 * @return
-	 */
-	private List<String> getCourseIdsBySkill(String skillId) {
-		Skill skill = skillMapper.selectById(skillId);
+	private <T extends SkillAndKnowledgeBase> List<String> getCourseIds(String skillOrKnowledge,
+			BaseMapper<T> baseMapper) {
+		T skill = baseMapper.selectById(skillOrKnowledge);
 		List<KnowledgeUnderCourseBo> courseIds = JsonUtil.toJsonObjectArray(skill.getCourses(),
 				KnowledgeUnderCourseBo.class);
 		return courseIds.stream().map(KnowledgeUnderCourseBo::getResourceId)

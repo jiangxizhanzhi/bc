@@ -20,7 +20,7 @@ public class CourseStudyProcessBo {
     private Integer difficulty;
 
     @ApiModelProperty("理论课数量")
-    private Integer theoryCount = 0;
+    private Integer theoryCount;
 
     @ApiModelProperty("完成理论课数量")
     private Integer completeTheory = 0;

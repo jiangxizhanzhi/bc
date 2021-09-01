@@ -53,7 +53,7 @@ public class MybatisConfigRTKS {
 		// 指定数据库方言为 MYSQL
 		PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
 		// 单页分页条数限制
-		pageInterceptor.setMaxLimit(100L);
+		pageInterceptor.setMaxLimit(10000L);
 		interceptor.addInnerInterceptor(pageInterceptor);
 		return interceptor;
 	}

@@ -1,4 +1,5 @@
 package com.cyberpeace.cr.tool.service.bo;
+import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -37,4 +38,19 @@ public class ToolBo implements Serializable {
 
 	@ApiModelProperty("工具类型")
 	private Integer toolType;
+
+	@ApiModelProperty("工具分类")
+	private List<Integer> category;
+
+	@ApiModelProperty("封面")
+	private String cover;
+
+	@ApiModelProperty("封面连接")
+	private String coverUrl;
+
+	@ApiModelProperty("附件列表")
+	private List<Integer> files;
+
+	@ApiModelProperty("附件详细列表")
+	private List<ToolFile> toolFiles;
 }

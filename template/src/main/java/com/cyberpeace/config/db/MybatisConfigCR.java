@@ -71,7 +71,7 @@ public class MybatisConfigCR {
 		globalConfig.setMetaObjectHandler(crMetaObjectHandler());
 		GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
 		dbConfig.setLogicDeleteField("status");
-		dbConfig.setLogicDeleteValue(DELETE_VALUE);
+		dbConfig.setLogicDeleteValue("UNIX_TIMESTAMP()");
 		dbConfig.setLogicNotDeleteValue(NOT_DELETE);
 		globalConfig.setDbConfig(dbConfig);
 		return globalConfig;

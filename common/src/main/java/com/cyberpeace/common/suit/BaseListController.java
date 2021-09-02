@@ -1,4 +1,4 @@
-package com.cyberpeace.rtks.controller;
+package com.cyberpeace.common.suit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.rtks.dao.entity.BaseEntity;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -25,9 +24,9 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 public abstract class BaseListController<Entity extends BaseEntity, AddInput, ModifyInput, ListRequest, Output, ListOutput> extends BaseController<Entity, AddInput, ModifyInput, Output> {
 
-	abstract ListOutput getListOutputFromEntity(Entity entity);
+	protected abstract ListOutput getListOutputFromEntity(Entity entity);
 
-	abstract IPage<Entity> getPage(ListRequest listReq);
+	protected abstract IPage<Entity> getPage(ListRequest listReq);
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")

@@ -1,6 +1,7 @@
 package com.cyberpeace.rtks.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.suit.BaseEntity;
 
 import lombok.Data;
 

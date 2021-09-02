@@ -10,8 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.rtks.controller.frame.*;
+import com.cyberpeace.common.suit.ListController;
+import com.cyberpeace.rtks.controller.frame.FrameAddInput;
+import com.cyberpeace.rtks.controller.frame.FrameModifyInput;
+import com.cyberpeace.rtks.controller.frame.FrameOutput;
+import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
@@ -35,12 +41,17 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 	private RoleService roleService;
 
 	@Override
-	FrameService getService() {
+	protected FrameService getService() {
 		return frameService;
 	}
 
 	@Override
-	Level getEntityFromAddInput(FrameAddInput frameAddInput) {
+	protected Level getOr404(String resourceId) {
+		return frameService.getOr404(resourceId);
+	}
+
+	@Override
+	protected Level getEntityFromAddInput(FrameAddInput frameAddInput) {
 		Level frame = new Level();
 		frame.setName(frameAddInput.getName());
 		frame.setDescription(frameAddInput.getDescription());
@@ -48,7 +59,8 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 	}
 
 	@Override
-	Level getEntityFromModifyInput(FrameModifyInput frameModifyInput, Level originEntity) {
+	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput,
+			Level originEntity) {
 		Level frame = new Level();
 		frame.setName(frameModifyInput.getName());
 		frame.setDescription(frameModifyInput.getDescription());
@@ -57,7 +69,7 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 	}
 
 	@Override
-	FrameOutput getOutputFromEntity(Level frame) {
+	protected FrameOutput getOutputFromEntity(Level frame) {
 		FrameOutput output = new FrameOutput();
 
 		output.setResourceId(frame.getResourceId());
@@ -68,7 +80,12 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 	}
 
 	@Override
-	FrameOutput getListOutputFromEntity(Level frame) {
+	protected IPage<Level> listEntity(Page<Level> page, String keyword) {
+		return frameService.listEntity(page, keyword);
+	}
+
+	@Override
+	protected FrameOutput getListOutputFromEntity(Level frame) {
 		return getOutputFromEntity(frame);
 	}
 

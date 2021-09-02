@@ -1,15 +1,13 @@
-package com.cyberpeace.rtks.controller;
+package com.cyberpeace.common.suit;
 
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.ObjUtil;
-import com.cyberpeace.rtks.controller.req.DeleteReq;
-import com.cyberpeace.rtks.dao.entity.BaseEntity;
-import com.cyberpeace.rtks.service.BaseService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -23,13 +21,15 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 public abstract class BaseController<Entity extends BaseEntity, AddInput, ModifyInput, Output> {
 
-	abstract BaseService<Entity> getService();
+	protected abstract IService<Entity> getService();
 
-	abstract Entity getEntityFromAddInput(AddInput input);
+	protected abstract Entity getOr404(String resourceId);
 
-	abstract Entity getEntityFromModifyInput(ModifyInput input, Entity originEntity);
+	protected abstract Entity getEntityFromAddInput(AddInput input);
 
-	abstract Output getOutputFromEntity(Entity entity);
+	protected abstract Entity getEntityFromModifyInput(ModifyInput input, Entity originEntity);
+
+	protected abstract Output getOutputFromEntity(Entity entity);
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -46,7 +46,7 @@ public abstract class BaseController<Entity extends BaseEntity, AddInput, Modify
 	public BaseRsp<Output> update(@RequestBody @Validated ModifyInput input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 
-		Entity originEntity = getService().getOr404(resourceId);
+		Entity originEntity = getOr404(resourceId);
 
 		Entity entity = getEntityFromModifyInput(input, originEntity);
 
@@ -58,7 +58,7 @@ public abstract class BaseController<Entity extends BaseEntity, AddInput, Modify
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<Output> retrieve(String resource_id) {
-		Entity t = getService().getOr404(resource_id);
+		Entity t = getOr404(resource_id);
 		return new BaseRsp<>(getOutputFromEntity(t));
 	}
 

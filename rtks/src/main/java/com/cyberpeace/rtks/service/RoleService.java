@@ -4,9 +4,10 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.rtks.dao.entity.Role;
 
-public interface RoleService extends BaseService<Role> {
+public interface RoleService extends IService<Role> {
 
 	/**
 	 * 获取层级id下的岗位列表
@@ -19,4 +20,6 @@ public interface RoleService extends BaseService<Role> {
 	List<String> getRoleIdsByLevelIds(List<String> ids);
 
 	IPage<Role> listRoles(Page<Role> page, String keyword, String frameId);
+
+	Role getOr404(String resourceId);
 }

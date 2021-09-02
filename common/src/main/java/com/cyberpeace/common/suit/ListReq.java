@@ -1,4 +1,4 @@
-package com.cyberpeace.rtks.controller.req;
+package com.cyberpeace.common.suit;
 
 import com.cyberpeace.common.model.PageReqBase2;
 

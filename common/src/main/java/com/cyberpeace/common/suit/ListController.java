@@ -1,11 +1,9 @@
-package com.cyberpeace.rtks.controller;
+package com.cyberpeace.common.suit;
 
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.rtks.controller.req.ListReq;
-import com.cyberpeace.rtks.dao.entity.BaseEntity;
-import com.cyberpeace.rtks.service.BaseListService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
  * 支持新增、删除、单条查询、修改(部分修改)、列表查询
@@ -18,12 +16,11 @@ import com.cyberpeace.rtks.service.BaseListService;
 @RestController
 public abstract class ListController<Entity extends BaseEntity, AddInput, ModifyInput, Output, ListOutput> extends BaseListController<Entity, AddInput, ModifyInput, ListReq<Entity>, Output, ListOutput> {
 
-	@Override
-	abstract BaseListService<Entity> getService();
+	protected abstract IPage<Entity> listEntity(Page<Entity> page, String keyword);
 
 	@Override
-	IPage<Entity> getPage(ListReq<Entity> listReq) {
-		return getService().listEntity(listReq.toPageParam(), listReq.getKeyword());
+	protected IPage<Entity> getPage(ListReq<Entity> listReq) {
+		return listEntity(listReq.toPageParam(), listReq.getKeyword());
 	}
 
 }

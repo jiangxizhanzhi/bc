@@ -20,6 +20,6 @@ public interface SkillMapper extends BaseMapper<Skill> {
 
 	SkillRes getSkillByResourceId(String id);
 
-	List<SkillRes> getAllSkills();
+	List<SkillRes> getAllSkills(String scene_category);
 
 }

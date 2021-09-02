@@ -44,4 +44,6 @@ public interface SkillService extends IService<Skill> {
 	 * @return
 	 */
 	List<SkillRes> getAllSkills();
+
+	List<SkillRes> getSkillBySceneCategory(String scene_category_id);
 }

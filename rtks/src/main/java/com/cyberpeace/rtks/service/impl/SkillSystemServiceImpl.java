@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.rtks.controller.req.SceneSkillSystemAddReq;
 import com.cyberpeace.rtks.dao.entity.SkillSystem;
 import com.cyberpeace.rtks.dao.mapper.SkillSystemMapper;
 import com.cyberpeace.rtks.service.SkillSystemService;
@@ -30,4 +31,16 @@ public class SkillSystemServiceImpl extends ServiceImpl<SkillSystemMapper, Skill
 
 		return PageUtil.getListResult(result);
 	}
+
+	@Override
+	public void updateSceneSkillSystem(SceneSkillSystemAddReq sceneSkillSystemAddReq) {
+		skillSystemMapper.updateDefaultSceneSkillSystem();
+
+		skillSystemMapper.updateSceneSkillSystem(sceneSkillSystemAddReq.getAttackSkillSystemId(),
+				SceneSkillSystemAddReq.attack_id);
+		skillSystemMapper.updateSceneSkillSystem(sceneSkillSystemAddReq.getDefenseSkillSystemId(),
+				SceneSkillSystemAddReq.defense_id);
+
+	}
+
 }

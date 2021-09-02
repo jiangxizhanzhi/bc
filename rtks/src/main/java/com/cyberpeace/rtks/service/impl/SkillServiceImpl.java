@@ -150,8 +150,15 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public List<SkillRes> getAllSkills() {
-		List<SkillRes> skillResList = skillMapper.getAllSkills();
+		List<SkillRes> skillResList = skillMapper.getAllSkills("");
 		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
+
+		return skillResList;
+	}
+
+	@Override
+	public List<SkillRes> getSkillBySceneCategory(String scene_category_id) {
+		List<SkillRes> skillResList = skillMapper.getAllSkills(scene_category_id);
 
 		return skillResList;
 	}

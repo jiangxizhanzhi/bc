@@ -100,4 +100,13 @@ public class SkillController {
 
 		return new BaseRsp(data);
 	}
+
+	@ApiOperation("场景类型查询技能")
+	@GetMapping("/getSkillBySceneCategory")
+	public BaseRsp<SkillRes> getSkillBySceneCategory(@ApiParam(name = "scene_category_id",
+			value = "场景类型id", required = true) String scene_category_id) {
+		List<SkillRes> skillRes = skillService.getSkillBySceneCategory(scene_category_id);
+
+		return new BaseRsp(skillRes);
+	}
 }

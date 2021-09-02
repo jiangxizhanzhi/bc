@@ -40,5 +40,8 @@ public interface SkillService extends IService<Skill> {
 
 	void checkSkillRes(List<SkillRes> skillResList, String type);
 
+	/**获取全部技能
+	 * @return
+	 */
 	List<SkillRes> getAllSkills();
 }

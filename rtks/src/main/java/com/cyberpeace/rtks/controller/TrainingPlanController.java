@@ -68,7 +68,7 @@ public class TrainingPlanController {
 	public BaseRsp<OccupationCourseRes> courseKnowledge() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();
-		List<CourseKnowledgeBo> courseKnowledges = trainingPlanService.getCourseKnowledges(userId,
+		List<CourseKnowledgeBo> courseKnowledges = trainingPlanService.getCourseKnowledge(userId,
 				roleId);
 		return new BaseRsp<>(calculatePercent(courseKnowledges));
 	}

@@ -176,7 +176,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	}
 
 	@Override
-	public List<CourseKnowledgeBo> getCourseKnowledges(String userId, String roleId) {
+	public List<CourseKnowledgeBo> getCourseKnowledge(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 				String.class);

@@ -13,14 +13,35 @@ import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 
 public interface TrainingPlanService {
 
+	/**修改框架树，增加角色
+	 * @param frame 
+	 */
 	void parseTree(LevelTreeOutput frame);
 
+	/** 获取按照类别分组的技能树
+	 * @return 
+	 */
 	Map<String, List<SkillRes>> getSkillTree();
 
+	/**通过角色id获取包含技能、知识点、课程列表的角色对象
+	 * @param resource_id 
+	 * @param type
+	 * @return
+	 */
 	RoleDetailRes getRoleOutputByRoleId(String resource_id, String type);
 
+	/**获取知识点课程分页
+	 * @param pageReqBase 
+	 * @param existRoleId
+	 * @return
+	 */
 	ListRsp<KnowledgeRes> getKnowledgeCourseList(PageReqBase pageReqBase, String existRoleId);
 
+	/**获取包含课程学习信息的角色对象
+	 * @param resource_id 
+	 * @param type
+	 * @return
+	 */
 	RoleDetailRes getLearningPathTree(String resource_id, String type);
 
 	/**
@@ -29,5 +50,5 @@ public interface TrainingPlanService {
 	 * @param roleId
 	 * @return
 	 */
-	List<CourseKnowledgeBo> getCourseKnowledges(String userId, String roleId);
+	List<CourseKnowledgeBo> getCourseKnowledge(String userId, String roleId);
 }

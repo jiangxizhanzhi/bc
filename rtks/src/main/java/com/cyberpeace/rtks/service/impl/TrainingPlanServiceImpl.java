@@ -63,7 +63,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Autowired
 	private CourseService courseService;
 
-	public void parseTreeNode(LevelTreeOutput frame, Map<String, List<RoleOutput>> roleListMap) {
+	public void parseTreeNode(LevelTreeOutput frame,
+			Map<String, List<RoleDetailOutput>> roleListMap) {
 		for (int index = 0; index < frame.getChildren().size(); index++) {
 			LevelTreeOutput element = frame.getChildren().get(index);
 
@@ -79,14 +80,14 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Override
 	public void parseTree(LevelTreeOutput frame) {
 		List<Role> roleList = roleMapper.selectRoleByFrameId(frame.getResourceId());
-		List<RoleOutput> roleDetailOutputList = Lists.newArrayList();
+		List<RoleDetailOutput> roleDetailOutputList = Lists.newArrayList();
 
 		for (Role role : roleList) {
-			RoleOutput detailOutputFromRole = roleController.getOutputFromEntity(role);
+			RoleDetailOutput detailOutputFromRole = roleController.getOutputFromEntity(role);
 			roleDetailOutputList.add(detailOutputFromRole);
 		}
 		// 以层级对角色进行分组
-		Map<String, List<RoleOutput>> roleListMap = roleDetailOutputList.stream()
+		Map<String, List<RoleDetailOutput>> roleListMap = roleDetailOutputList.stream()
 				.collect(Collectors.groupingBy(RoleOutput::getLevelId));
 
 		parseTreeNode(frame, roleListMap);

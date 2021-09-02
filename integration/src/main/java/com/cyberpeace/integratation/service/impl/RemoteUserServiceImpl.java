@@ -15,7 +15,6 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.integratation.service.mp.HttpClient;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,13 +37,13 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@PostConstruct
 	public void init() {
-		TOKEN_AUTHENTICATE_URL = ConfigUtil.getContextProperty("token.authenticate");
-		USERINFO_BY_ID_URL = ConfigUtil.getContextProperty("userinfo.by.id");
-		USERINFO_LIST_URL = ConfigUtil.getContextProperty("userinfo.list");
 		MP_HOST = SystemPropUtil.getProp("MP_HOST");
 		MP_PORT = SystemPropUtil.getProp("MP_PORT");
-
 		MP_URL = "http://" + MP_HOST + ":" + MP_PORT;
+
+		TOKEN_AUTHENTICATE_URL = MP_URL + ConfigUtil.getContextProperty("token.authenticate");
+		USERINFO_BY_ID_URL = MP_URL + ConfigUtil.getContextProperty("userinfo.by.id");
+		USERINFO_LIST_URL = MP_URL + ConfigUtil.getContextProperty("userinfo.list");
 
 		log.info("mp host=[{}], port=[{}]", MP_HOST, MP_PORT);
 	}
@@ -52,7 +51,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Override
 	public UserInfo doAuthentication(String token) {
 		// 1、调用mp
-		String targetUrl = MP_URL + TOKEN_AUTHENTICATE_URL + token;
+		String targetUrl = TOKEN_AUTHENTICATE_URL + token;
 
 		MpAuthenticatedUser mpAuthenticatedUser = HttpClientUtil.rawGet(targetUrl,
 				MpAuthenticatedUser.class);
@@ -65,15 +64,16 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@Override
 	public UserInfo getById(String userId) {
-		HttpClient httpClient = new HttpClient();
-		JSONObject jsonObject = httpClient.get("/api/mp/auth/users/" + userId);
+		String targetUrl = USERINFO_BY_ID_URL + userId;
+		JSONObject jsonObject = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+
 		return userInfoFromJsonObject(jsonObject);
 	}
 
 	@Override
 	public List<UserInfo> getList() {
-		HttpClient httpClient = new HttpClient();
-		JSONArray jsonArray = httpClient.getList("/api/mp/auth/org_users/page/byorg");
+		JSONArray jsonArray = HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONArray.class);
+
 		List<UserInfo> userInfoList = new ArrayList<>();
 		for (Object object : jsonArray) {
 			userInfoList.add(userInfoFromJsonObject((JSONObject) object));

@@ -22,5 +22,5 @@ public interface ErrorCode {
 
 	String REMOTE_SERVICE_EXCEPTION = "010000";
 
-	String INTERNAL_ERROR = "999999";
+	String INTERNAL_ERROR = "099999";
 }

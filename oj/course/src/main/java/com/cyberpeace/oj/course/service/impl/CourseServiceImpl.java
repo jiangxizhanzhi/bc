@@ -1,9 +1,12 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.dao.entity.CourseCollection;
+import com.cyberpeace.oj.course.dao.mapper.CourseCollectionMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
+
+	@Autowired
+	private CourseCollectionMapper courseCollectionMapper;
 
 	@Override
 	public CourseInfoBo selectById(String courseId) {
@@ -101,5 +107,26 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	public List<String> idsByNotDeleteIds(List<String> courseIds) {
 		List<String> ids = courseMapper.notDeleteIdsByIds(courseIds);
 		return ids;
+	}
+
+	@Override
+	public String collectCourse(String userId, String course, Boolean isCollection) {
+		CourseCollection collection = new CourseCollection();
+		CourseCollection exist = courseCollectionMapper.selectByUserAndCourse(userId, course);
+
+		// 新增或者更新
+		if (null == exist) {
+			collection.setUser(userId);
+			collection.setCourse(course);
+			collection.setIsCollection(isCollection);
+			collection.setUpdateTime(new Date());
+			courseCollectionMapper.insert(collection);
+		} else {
+			BeanUtils.copyProperties(exist, collection);
+			collection.setIsCollection(isCollection);
+			courseCollectionMapper.updateById(collection);
+		}
+
+		return course;
 	}
 }

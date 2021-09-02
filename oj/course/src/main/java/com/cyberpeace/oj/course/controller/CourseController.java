@@ -5,14 +5,13 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.course.controller.req.CollectionReq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -69,6 +68,16 @@ public class CourseController {
 		}).collect(Collectors.toList());
 		BaseRsp rsp = new BaseRsp(outPuts);
 		return rsp;
+	}
+
+	@ApiOperation("课程收藏")
+	@PostMapping("/collect")
+	public BaseRsp<String> courseCollection(@RequestBody CollectionReq req) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		String courseId = courseService.collectCourse(userId, req.getResource(), req.getIsCollection());
+		return new BaseRsp<>(courseId);
 	}
 
 }

@@ -46,7 +46,7 @@ public class CourseInfoBo implements Serializable {
     @ApiModelProperty("课程讲师")
     private String lecturer;
 
-    @ApiModelProperty("课程成绩")
+    @ApiModelProperty("课程学分")
     private Integer score;
 
     @ApiModelProperty("课程编号")

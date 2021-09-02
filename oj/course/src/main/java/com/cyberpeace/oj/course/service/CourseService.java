@@ -40,4 +40,12 @@ public interface CourseService extends IService<Course> {
      */
     List<String> idsByNotDeleteIds(List<String> courseIds);
 
+    /**
+     * 课程收藏
+     * @param userId
+     * @param course
+     * @param isCollection
+     * @return
+     */
+    String collectCourse(String userId, String course, Boolean isCollection);
 }

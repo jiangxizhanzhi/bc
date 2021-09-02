@@ -17,9 +17,9 @@
     <description>靶场</description>
 
     <modules>
-        <module>red_vs_blue</module>
-        <module>single_train</module>
+        <module>ce_base</module>
         <module>tool</module>
+        <module>cr_base</module>
     </modules>
 
     <properties>

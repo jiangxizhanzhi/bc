@@ -14,4 +14,7 @@ public class PracticeCategoryReq {
     @ApiModelProperty(value = "名称", required = true)
     private String name;
 
+    @ApiModelProperty(value = "练习类型", required = true)
+    private Integer practiceType;
+
 }

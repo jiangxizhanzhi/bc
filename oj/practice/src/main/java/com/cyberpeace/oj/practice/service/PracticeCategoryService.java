@@ -14,6 +14,8 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 
     ListRsp<PracticeCategory> search(PracticeListReq queryParams);
 
+    PracticeCategory create(PracticeCategory object);
+
     Integer partialUpdate(String tableName, String id, String name);
 
     Integer batchDelete(List<String> resourceIds);

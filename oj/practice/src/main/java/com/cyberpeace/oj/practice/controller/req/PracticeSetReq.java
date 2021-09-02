@@ -8,7 +8,7 @@ import lombok.Data;
 @ApiModel
 public class PracticeSetReq {
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "ID", required = true)
     private String resourceId;
 
     @ApiModelProperty(value = "名称", required = true)

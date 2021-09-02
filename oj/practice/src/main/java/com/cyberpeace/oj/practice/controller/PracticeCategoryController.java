@@ -26,6 +26,7 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/oj/practice-category")
 public class PracticeCategoryController {
+    // TODO insert
 
     @Autowired
     PracticeCategoryService categoryService;
@@ -42,13 +43,20 @@ public class PracticeCategoryController {
         return new BaseRsp<>(categoryService.search(queryParams));
     }
 
+    @ApiOperation("新增练习方向")
+    @PostMapping()
+    public BaseRsp<PracticeCategory> create(@RequestBody PracticeCategoryReq requestData) {
+        PracticeCategory object = new PracticeCategory();
+        BeanUtils.copyProperties(requestData, object, "resourceId");
+        return new BaseRsp<>(categoryService.create(object));
+    }
+
     @ApiOperation("部分更新练习方向")
     @PatchMapping()
-    public BaseRsp<PracticeCategory> partialUpdate(@RequestParam("resource_id") @NotBlank @ApiParam("资源ID") String resourceId,
-                                                   @RequestBody @Validated PracticeCategoryReq requestData) {
-        PracticeCategory object = categoryService.get(resourceId);
+    public BaseRsp<PracticeCategory> partialUpdate(@RequestBody @Validated PracticeCategoryReq requestData) {
+        PracticeCategory object = categoryService.get(requestData.getResourceId());
         String tableName = object.getPracticeType() == PracticeType.THEORY.ordinal() ? "practice_theory_category" : "practice_exercise_category";
-        Integer isSuccess = categoryService.partialUpdate(tableName, resourceId, requestData.getName());
+        Integer isSuccess = categoryService.partialUpdate(tableName, object.getResourceId(), requestData.getName());
         if (isSuccess == 1) {
             BeanUtils.copyProperties(requestData, object, "resourceId");
         }

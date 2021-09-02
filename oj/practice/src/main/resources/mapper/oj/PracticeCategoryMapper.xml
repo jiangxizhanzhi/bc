@@ -14,6 +14,11 @@
     <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
         select `resource_id`, `name` from ${tableName} where status = 1
     </select>
+
+    <insert id="create">
+        insert into ${tableName} (`resource_id`, `name`, `status`)
+        values (#{object.resourceId}, #{object.name}, #{object.status});
+    </insert>
     
     <update id="partialUpdate">
         update ${tableName} set `name` = #{name} where resource_id = #{resource_id}

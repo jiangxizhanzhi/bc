@@ -1,37 +1,56 @@
 package com.cyberpeace.oj.practice.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel("实践操作练习")
+@TableName("practice_exercise_practiceexercise")
 public class PracticeOperation extends PracticeBase{
 
-    @ApiModelProperty("附件")
+    /**
+     * 附件
+     */
     private String file;
 
-    // 附件名称
+    /**
+     * 附件名称
+     */
     private String fileName;
 
-    @ApiModelProperty("题解")
+    /**
+     * 题解
+     */
     private String officialWriteup;
 
-    // 题解是否公开
-    private boolean isPublicWriteup;
+    /**
+     * 是否公开题解
+     */
+    private boolean isPublicWriteup = false;
 
-    @ApiModelProperty("动态答题环境(使用场景)")
+    /**
+     * 动态答题环境(使用场景)
+     */
     private boolean isDynamicEnv;
 
-    // 关联场景管理ID
+    /**
+     * 关联场景管理ID
+     */
     private String ojSceneConfig;
 
-    @ApiModelProperty("共享模式")
+    /**
+     * 共享模式
+     */
     private Integer share_mode;
 
-    @ApiModelProperty("是否使用动态FLAG")
-    private boolean isDynamicFlag;
+    /**
+     * 是否使用动态FLAG
+     */
+    private boolean isDynamicFlag = false;
 
-    @ApiModelProperty("场景存活时间")
-    private Integer destroyDelay;
+    /**
+     * 场景存活时间
+     */
+    private Integer destroyDelay = 2;
 }

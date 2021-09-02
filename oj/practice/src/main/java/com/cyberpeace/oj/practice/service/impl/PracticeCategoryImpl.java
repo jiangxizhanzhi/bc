@@ -10,6 +10,7 @@ import com.cyberpeace.oj.practice.dao.constants.PracticeType;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,14 @@ public class PracticeCategoryImpl extends ServiceImpl<PracticeCategoryMapper, Pr
         }
         IPage<PracticeCategory> result = categoryMapper.getList(queryParams.toPageParam(), tableName);
         return PageUtil.getListResult(result);
+    }
+
+    @Override
+    public PracticeCategory create(PracticeCategory object) {
+        String tableName = object.getPracticeType() == PracticeType.THEORY.ordinal() ? "practice_theory_category" : "practice_exercise_category";
+        categoryMapper.create(tableName, object);
+
+        return categoryMapper.getSingle(object.getResourceId());
     }
 
     @Override

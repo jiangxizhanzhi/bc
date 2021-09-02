@@ -1,31 +1,42 @@
 package com.cyberpeace.oj.practice.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.oj.practice.dao.constants.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 
+@Data
 public class PracticeBase extends BaseTable implements Serializable {
 
     /**
      * 状态
      */
-    private Integer status;
+    @JsonIgnore
+    private Integer status = Status.NORMAL.ordinal();
 
     /**
      * 资源ID
      */
+    @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
     /**
      * 是否内建
      */
-    private boolean builtin;
+    @JsonIgnore
+    private boolean builtin = false;
 
     /**
      * 公开
      */
-    private boolean isPublic;
+    @TableField("public")
+    private boolean isPublic = true;
 
     /**
      * 所属习题集
@@ -62,9 +73,10 @@ public class PracticeBase extends BaseTable implements Serializable {
      */
     private String knowledge;
 
+    // TODO 是否可丢弃
     /**
      * 分值
      */
-    private Float score;
+    private Float score = 0.0f;
 
 }

@@ -50,11 +50,12 @@ public class PracticeSetController {
 
     @ApiOperation("部分更新习题集")
     @PatchMapping()
-    public BaseRsp<PracticeSet> partialUpdate(@RequestParam @NotBlank String resourceId, @RequestBody PracticeSetReq requestData) {
-        requestData.setResourceId(resourceId);
-        PracticeSet object = practiceSetMapper.selectById(resourceId);
+    public BaseRsp<PracticeSet> partialUpdate(@RequestBody PracticeSetReq requestData) {
+        PracticeSet object = new PracticeSet();
         BeanUtils.copyProperties(requestData, object, "authOrganization", "shareTeachers");
-        return new BaseRsp<>(object);
+        practiceSetMapper.updateById(object);
+
+        return new BaseRsp<>(practiceSetMapper.selectById(requestData.getResourceId()));
     }
 
     @ApiOperation("批量删除习题集")

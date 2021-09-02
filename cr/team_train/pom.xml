@@ -4,17 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.cyberpeace.cr</groupId>
-        <artifactId>ce_base</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>cr</artifactId>
+        <version>1.0.0</version>
     </parent>
 
-    <artifactId>red_vs_blue</artifactId>
+    <groupId>com.cyberpeace.cr</groupId>
+    <artifactId>team_train</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>red_vs_blue</name>
-
-    <dependencies>
-    </dependencies>
+    <packaging>jar</packaging>
+    <name>team_train</name>
 
     <build>
         <plugins>

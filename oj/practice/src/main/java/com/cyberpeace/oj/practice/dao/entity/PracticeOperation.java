@@ -1,6 +1,10 @@
 package com.cyberpeace.oj.practice.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.oj.practice.dao.constants.PracticeType;
+import com.cyberpeace.oj.practice.dao.constants.SceneShare;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,11 +26,13 @@ public class PracticeOperation extends PracticeBase{
     /**
      * 题解
      */
-    private String officialWriteup;
+    @TableField("official_writeup")
+    private String writeup;
 
     /**
      * 是否公开题解
      */
+    @TableField("public_official_writeup")
     private boolean isPublicWriteup = false;
 
     /**
@@ -40,17 +46,21 @@ public class PracticeOperation extends PracticeBase{
     private String ojSceneConfig;
 
     /**
-     * 共享模式
+     * 共享模式 (拥有场景时使用)
      */
-    private Integer share_mode;
+    private Integer shareMode = SceneShare.PRIVATE.ordinal();
 
     /**
-     * 是否使用动态FLAG
+     * 是否使用动态FLAG (拥有场景时使用)
      */
     private boolean isDynamicFlag = false;
 
     /**
-     * 场景存活时间
+     * 场景存活时间 单位/h (拥有场景时使用)
      */
     private Integer destroyDelay = 2;
+
+    // TODO 规避db exception
+    @JsonIgnore
+    private Integer practiceType = PracticeType.OPERATION.ordinal();
 }

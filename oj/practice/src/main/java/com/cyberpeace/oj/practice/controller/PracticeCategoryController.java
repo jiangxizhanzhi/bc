@@ -39,7 +39,7 @@ public class PracticeCategoryController {
 
     @ApiOperation("获取练习方向列表")
     @GetMapping("/list")
-    public BaseRsp<ListRsp<PracticeCategory>> list(PracticeListReq queryParams) {
+    public BaseRsp<ListRsp<PracticeCategory>> getList(PracticeListReq queryParams) {
         return new BaseRsp<>(categoryService.search(queryParams));
     }
 

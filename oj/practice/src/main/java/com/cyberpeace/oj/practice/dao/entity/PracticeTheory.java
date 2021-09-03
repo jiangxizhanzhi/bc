@@ -36,11 +36,7 @@ public class PracticeTheory extends PracticeBase {
      */
     private String keyword;
 
-    // TODO 以下字段均为规避db error
-    @TableField(exist = false)
-    @JsonIgnore
-    private Date updateTime;
-
+    // TODO 以下字段均为规避 db exception
     @JsonIgnore
     private Integer practiceType = PracticeType.THEORY.ordinal();
 
@@ -52,9 +48,6 @@ public class PracticeTheory extends PracticeBase {
 
     @JsonIgnore
     private boolean publicOfficialWriteup = false;
-
-    @JsonIgnore
-    private Date lastEditTime = new Date();
 
     /**
      * 理论基础中并未实际使用此字段, 忽略

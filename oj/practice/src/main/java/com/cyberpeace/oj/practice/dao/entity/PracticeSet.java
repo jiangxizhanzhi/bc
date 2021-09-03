@@ -71,4 +71,8 @@ public class PracticeSet {
      * 原表存在的不能为null fields
      */
     private Date lastEditTime = new Date();
+
+    @JsonIgnore
+    @TableField("`lock`")
+    private boolean lock = false;
 }

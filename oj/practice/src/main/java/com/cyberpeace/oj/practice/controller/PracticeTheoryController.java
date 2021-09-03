@@ -35,7 +35,7 @@ public class PracticeTheoryController {
 
     @GetMapping("/list")
     @ApiOperation("获取理论基础练习")
-    public BaseRsp<ListRsp<PracticeTheory>> search(PracticeTheoryListReq queryParams) {
+    public BaseRsp<ListRsp<PracticeTheory>> getList(PracticeTheoryListReq queryParams) {
         IPage<PracticeTheory> result = practiceTheoryMapper.getList(
                 queryParams.toPageParam(), queryParams.getPattern(), queryParams.getPracticeSet(),
                 queryParams.getCategory(), queryParams.getQuestionType()

@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class PracticeBase extends BaseTable implements Serializable {
@@ -78,5 +79,16 @@ public class PracticeBase extends BaseTable implements Serializable {
      * 分值
      */
     private Float score = 0.0f;
+
+    // TODO 规避 db exception
+    @TableField(exist = false)
+    @JsonIgnore
+    private Date updateTime;
+
+    @TableField("`lock`")
+    private boolean lock = false;
+
+    @JsonIgnore
+    private Date lastEditTime = new Date();
 
 }

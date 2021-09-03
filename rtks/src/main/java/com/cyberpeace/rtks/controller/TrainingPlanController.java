@@ -63,51 +63,6 @@ public class TrainingPlanController {
 		return new BaseRsp<>(frame);
 	}
 
-	@ApiOperation("课程训练-职业课程课程学习进度")
-	@GetMapping("/course/knowledge")
-	public BaseRsp<OccupationCourseRes> courseKnowledge() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String roleId = UserInfoContext.getUserContext().getRoleId();
-		List<CourseKnowledgeBo> courseKnowledges = trainingPlanService.getCourseKnowledge(userId,
-				roleId);
-		return new BaseRsp<>(calculatePercent(courseKnowledges));
-	}
-
-	/**
-	 * 计算进度
-	 * @param courseKnowledges
-	 * @return
-	 */
-	private OccupationCourseRes calculatePercent(List<CourseKnowledgeBo> courseKnowledges) {
-
-		OccupationCourseRes courseRes = new OccupationCourseRes();
-		// 计算理论课时进度
-		int theoryCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getTheoryCount)
-				.sum();
-		int completeTheory = courseKnowledges.stream()
-				.mapToInt(CourseKnowledgeBo::getCompleteTheory).sum();
-		courseRes.setTheoryPercent(MathUtils.ceilDivide(Double.valueOf(completeTheory * 100),
-				Double.valueOf(theoryCount)));
-
-		// 计算实验课时进度
-		int exerciseCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getExerciseCount)
-				.sum();
-		int completeExercise = courseKnowledges.stream()
-				.mapToInt(CourseKnowledgeBo::getCompleteExercise).sum();
-		courseRes.setExercisePercent(MathUtils.ceilDivide(Double.valueOf(completeExercise * 100),
-				Double.valueOf(exerciseCount)));
-
-		// 计算总进度
-		int count = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getLessonCount).sum();
-		int completeCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteCount)
-				.sum();
-		courseRes.setCoursePercent(
-				MathUtils.ceilDivide(Double.valueOf(completeCount * 100), Double.valueOf(count)));
-
-		courseRes.setKnowledgeBos(courseKnowledges);
-		return courseRes;
-	}
-
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path ")
 	public BaseRsp<RoleDetailRes> learningPath(

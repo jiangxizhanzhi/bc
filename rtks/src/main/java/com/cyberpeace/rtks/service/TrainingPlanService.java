@@ -44,11 +44,4 @@ public interface TrainingPlanService {
 	 */
 	RoleDetailRes getLearningPathTree(String resource_id, String type);
 
-	/**
-	 * 根据用户编号和岗位编号 查询课程对应的进度以及知识点信息
-	 * @param userId
-	 * @param roleId
-	 * @return
-	 */
-	List<CourseKnowledgeBo> getCourseKnowledge(String userId, String roleId);
 }

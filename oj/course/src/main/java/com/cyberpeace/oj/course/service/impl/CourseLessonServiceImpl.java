@@ -1,23 +1,22 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.oj.course.dao.entity.LessonFile;
-import com.cyberpeace.oj.course.dao.entity.LessonScene;
-import com.cyberpeace.oj.course.dao.mapper.LessonFileMapper;
+import com.cyberpeace.oj.course.dao.entity.*;
+import com.cyberpeace.oj.course.dao.mapper.*;
+import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonRecord;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 
@@ -33,6 +32,9 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 	@Autowired
 	private LessonFileMapper lessonFileMapper;
 
+	@Autowired
+	private LessonCollectionMapper lessonCollectionMapper;
+
 	@Override
 	public List<LessonRecord> selectByTime(String userId, Date startTime, Date endTime) {
 
@@ -47,7 +49,8 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 				.filter(courseLesson -> recordLesson.contains(courseLesson.getResourceId()))
 				.collect(Collectors.toList());
 
-		List<String> courseIds = lessonList.stream().map(CourseLesson::getCourse).distinct().collect(Collectors.toList());
+		List<String> courseIds = lessonList.stream().map(CourseLesson::getCourse).distinct()
+				.collect(Collectors.toList());
 		return courseIds;
 	}
 
@@ -73,10 +76,72 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 
 		// 上节和下节课程查询
 
-		// 获取场景信息
-
-
+		// TODO 获取场景信息
 
 		return null;
+	}
+
+	@Autowired
+	private LessonConfigMapper lessonConfigMapper;
+
+	@Override
+	public LessonConfigBo getLessonConfig(String courseId, String userId) {
+		LessonConfig firstConfig = lessonConfigMapper.getFirstNode(courseId);
+		LessonConfigBo configBo = BeanUtils.copy(firstConfig, LessonConfigBo.class);
+		assembleLessonLib(configBo);
+		return configBo;
+	}
+
+	/**
+	 * 根据最上级节点组装课程目录
+	 * @param firstNode
+	 */
+	private void assembleLessonLib(LessonConfigBo firstNode) {
+
+		List<LessonConfig> childrens = lessonConfigMapper.listByParent(firstNode.getResourceId());
+
+		if (CollectionUtils.isNotEmpty(childrens)) {
+			List<LessonConfigBo> boList = childrens.stream()
+					.map(lessonConfig -> BeanUtils.copy(lessonConfig, LessonConfigBo.class))
+					.collect(Collectors.toList());
+
+			boList.stream().forEach(bo -> assembleLessonLib(bo));
+			firstNode.setLessonConfigs(boList);
+		}
+
+	}
+
+	@Override
+	public List<LessonConfigBo> getSortListByTree(LessonConfigBo configBo) {
+		List<LessonConfigBo> configs = configBo.getLessonConfigs();
+		if (CollectionUtils.isNotEmpty(configs)) {
+			List<LessonConfigBo> configBos = configs.stream()
+					.map(lessonConfigBo -> getSortListByTree(lessonConfigBo))
+					.flatMap(Collection::stream)
+					.filter(bo -> bo.getNodeType().intValue() == LessonConfig.NODE_LESSON)
+					.collect(Collectors.toList());
+			return configBos;
+		}
+		return Lists.newArrayList();
+	}
+
+
+	@Override
+	public String collectionLesson(String userId, String lessonId, Boolean isCollection) {
+		LessonCollection exist = lessonCollectionMapper.selectByUserAndLesson(userId, lessonId);
+
+		if (null == exist) {
+			LessonCollection newCollection = new LessonCollection();
+			newCollection.setIsCollection(isCollection);
+			newCollection.setLesson(lessonId);
+			newCollection.setUpdateTime(new Date());
+			newCollection.setUser(userId);
+			lessonCollectionMapper.insert(newCollection);
+		} else {
+			exist.setIsCollection(isCollection);
+			lessonCollectionMapper.update(exist);
+		}
+
+		return lessonId;
 	}
 }

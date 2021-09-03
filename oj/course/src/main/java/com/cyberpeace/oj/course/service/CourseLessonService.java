@@ -4,6 +4,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.entity.LessonScene;
+import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 
 import java.util.Date;
@@ -43,4 +44,28 @@ public interface CourseLessonService {
      * @return
      */
     LessonScene getLessonScene(UserInfo user, String lessonId);
+
+    /**
+     * 根据课程编号用户编号查询课程目录
+     * @param courseId
+     * @param userId
+     * @return
+     */
+    LessonConfigBo getLessonConfig(String courseId, String userId);
+
+    /**
+     * 根据课程编号获取目录列表 仅限于数据库目录表对应的数据
+     * @param configBo
+     * @return
+     */
+    List<LessonConfigBo> getSortListByTree(LessonConfigBo configBo);
+
+    /**
+     * 收藏课时
+     * @param userId
+     * @param lessonId
+     * @param isCollection
+     * @return
+     */
+    String collectionLesson(String userId, String lessonId, Boolean isCollection);
 }

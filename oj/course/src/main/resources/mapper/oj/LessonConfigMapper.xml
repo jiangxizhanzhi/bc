@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper">
+
+    <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.LessonConfig"/>
+
+    <select id="getFirstNode" resultMap="base">
+        select * from course_lessonconfig
+        where course = #{courseId} and parent is null
+    </select>
+
+    <select id="listByParent" resultMap="base">
+        select * from course_lessonconfig
+        where parent = #{parentId}
+        order by index asc
+    </select>
+
+</mapper>

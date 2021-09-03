@@ -1,15 +1,7 @@
 package com.cyberpeace.rtks.controller;
 
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
-import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.service.CourseTrainService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
-import com.cyberpeace.rtks.service.bo.RoleCourseBo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +9,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
+import com.cyberpeace.rtks.service.CourseTrainService;
+import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
+import com.cyberpeace.rtks.service.bo.RoleCourseBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "rtks-课程训练相关")
 @RestController

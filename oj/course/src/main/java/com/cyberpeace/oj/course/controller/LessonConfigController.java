@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import io.swagger.annotations.Api;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LessonConfigController {
 
 	@Autowired
-	private LessonConfigService lessonConfigService;
+	private CourseLessonService courseLessonService;
 
 	@GetMapping("")
 	@ApiOperation("课程目录查询")
@@ -29,7 +30,7 @@ public class LessonConfigController {
 			value = "课程编号") @RequestParam("course_id") String courseId) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		LessonConfigBo config = lessonConfigService.getLessonConfig(courseId, userId);
+		LessonConfigBo config = courseLessonService.getLessonConfig(courseId, userId);
 		return new BaseRsp<>(config);
 	}
 

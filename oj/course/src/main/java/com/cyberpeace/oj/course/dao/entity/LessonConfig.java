@@ -9,6 +9,12 @@ import java.io.Serializable;
 @TableName("course_lessonconfig")
 public class LessonConfig implements Serializable {
 
+    public static final int NODE_COURSE = 0;
+
+    public static final int NODE_CHAPTER = 1;
+
+    public static final int NODE_LESSON = 2;
+
     private String resourceId;
 
     private String course;

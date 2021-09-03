@@ -107,6 +107,7 @@ public class TrainingPlanController {
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
+
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
 

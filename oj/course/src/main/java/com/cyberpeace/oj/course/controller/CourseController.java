@@ -5,9 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.course.controller.req.CollectionReq;
-import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.course.controller.req.CollectionReq;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.res.DirectionOutPut;
 import com.cyberpeace.oj.course.dao.entity.CourseDirection;

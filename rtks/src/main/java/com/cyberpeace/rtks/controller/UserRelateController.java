@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.controller;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "RTKS-用户绑定岗位以及相关api")
 @RestController
 @RequestMapping("/relate/user")
+@RequiresAuthentication
 public class UserRelateController {
 
 	@Autowired

@@ -1,4 +1,4 @@
-package com.cyberpeace.rtks.controller.req;
+package com.cyberpeace.rtks.service.bo;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @ApiModel
-public class SceneSkillSystemAddReq implements Serializable {
+public class SceneSkillSystem implements Serializable {
 
 	public final static Integer attack_id = 1;// 只传技能关联课程
 

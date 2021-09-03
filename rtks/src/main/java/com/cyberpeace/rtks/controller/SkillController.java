@@ -20,6 +20,7 @@ import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.SkillService;
+import com.cyberpeace.rtks.service.bo.SceneSkillSystem;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -103,10 +104,27 @@ public class SkillController {
 
 	@ApiOperation("场景类型查询技能")
 	@GetMapping("/getSkillBySceneCategory")
-	public BaseRsp<SkillRes> getSkillBySceneCategory(@ApiParam(name = "scene_category_id",
+	public BaseRsp<List<SkillRes>> getSkillBySceneCategory(@ApiParam(name = "scene_category_id",
 			value = "场景类型id", required = true) String scene_category_id) {
 		List<SkillRes> skillRes = skillService.getSkillBySceneCategory(scene_category_id);
 
 		return new BaseRsp(skillRes);
+	}
+
+	@ApiOperation("场景类型查询技能体系")
+	@GetMapping("/getSkillSystemIdBySceneCategory")
+	public BaseRsp<SceneSkillSystem> getSkillSystemIdBySceneCategory() {
+		SceneSkillSystem sceneSkillSystem = new SceneSkillSystem();
+		List<SkillRes> skillRes = skillService
+				.getSkillBySceneCategory(String.valueOf(SceneSkillSystem.attack_id));
+		if (skillRes.size() > 0) {
+			sceneSkillSystem.setAttackSkillSystemId(skillRes.get(0).getSystemId());
+		}
+		skillRes = skillService
+				.getSkillBySceneCategory(String.valueOf(SceneSkillSystem.defense_id));
+		if (skillRes.size() > 0) {
+			sceneSkillSystem.setDefenseSkillSystemId(skillRes.get(0).getSystemId());
+		}
+		return new BaseRsp(sceneSkillSystem);
 	}
 }

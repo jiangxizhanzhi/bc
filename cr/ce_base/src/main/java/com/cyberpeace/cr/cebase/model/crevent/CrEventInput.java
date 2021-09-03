@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.cebase.model.crevent;
 
 import lombok.Data;
+import org.hibernate.validator.internal.util.privilegedactions.GetAnnotationAttribute;
 
 @Data
 public class CrEventInput {
@@ -15,10 +16,10 @@ public class CrEventInput {
 
 	public CrEvent toEntity() {
 		CrEvent crEvent = new CrEvent();
-		crEvent.setName(name);
-		crEvent.setDescription(description);
-		crEvent.setCategory(category);
-		crEvent.setDifficulty(difficulty);
+		crEvent.setName(getName());
+		crEvent.setDescription(getDescription());
+		crEvent.setCategory(getCategory());
+		crEvent.setDifficulty(getDifficulty());
 		return crEvent;
 	}
 }

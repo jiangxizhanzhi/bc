@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.oj.course.controller.req.CollectionReq;
+import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "实训-课程相关")
+@Api(tags = "oj-课程相关")
 @RestController
 @RequestMapping("/oj/course")
 @RequiresAuthentication
@@ -42,7 +43,8 @@ public class CourseController {
 	@ApiOperation("单条查询")
 	public BaseRsp<CourseInfoBo> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
-		CourseInfoBo course = courseService.selectById(resourceId);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CourseInfoBo course = courseService.selectById(resourceId, userId);
 		BaseRsp rsp = new BaseRsp(course);
 		return rsp;
 	}

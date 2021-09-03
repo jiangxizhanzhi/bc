@@ -54,7 +54,7 @@ public class Course extends BaseTable {
 	private String lastEditUser;
 
 	@TableField("public")
-	private Integer coursePublic;
+	private Integer isPublic;
 
 	private Integer eBook;
 

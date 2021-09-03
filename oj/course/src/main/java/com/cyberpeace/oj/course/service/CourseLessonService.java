@@ -1,7 +1,10 @@
 package com.cyberpeace.oj.course.service;
 
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import com.cyberpeace.oj.course.dao.entity.LessonScene;
+import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 
 import java.util.Date;
 import java.util.List;
@@ -25,4 +28,19 @@ public interface CourseLessonService {
      */
     List<String> recordBelongCourse(List<String> recordLesson, List<CourseLesson> lessons);
 
+    /**
+     * 根据课程编号和课时编号查询课时基本信息
+     * @param courseId
+     * @param lessonId
+     * @return
+     */
+    LessonInfoBo getLessonDetail(String courseId, String lessonId);
+
+    /**
+     * 根据课时编号查询课时启动的场景
+     * @param user
+     * @param lessonId
+     * @return
+     */
+    LessonScene getLessonScene(UserInfo user, String lessonId);
 }

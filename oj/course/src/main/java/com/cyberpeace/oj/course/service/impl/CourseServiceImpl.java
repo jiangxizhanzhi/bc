@@ -46,12 +46,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseCollectionMapper courseCollectionMapper;
 
 	@Override
-	public CourseInfoBo selectById(String courseId) {
+	public CourseInfoBo selectById(String courseId, String userId) {
 		Course course = courseMapper.selectByCourse(courseId);
 		if (null == course) {
 			throw new InvalidParamException("课程不存在！");
 		}
-		return courseToBo(course);
+		CourseInfoBo courseInfoBo = courseToBo(course);
+		// 设置是否收藏
+		CourseCollection collection = courseCollectionMapper.selectByUserAndCourse(userId, courseId);
+		courseInfoBo.setIsCollection(null != collection && collection.getIsCollection());
+		return courseInfoBo;
 	}
 
 	/**

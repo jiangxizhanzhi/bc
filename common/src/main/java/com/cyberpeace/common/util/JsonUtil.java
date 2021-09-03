@@ -27,4 +27,7 @@ public class JsonUtil {
 		return JSONObject.parseArray(text, clazz);
 	}
 
+	public static <T> T toJsonObject(String text, Class<T> clazz) {
+		return JSONObject.parseObject(text, clazz);
+	}
 }

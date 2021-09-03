@@ -116,12 +116,12 @@ public class SkillController {
 	public BaseRsp<SceneSkillSystem> getSkillSystemIdBySceneCategory() {
 		SceneSkillSystem sceneSkillSystem = new SceneSkillSystem();
 		List<SkillRes> skillRes = skillService
-				.getSkillBySceneCategory(String.valueOf(SceneSkillSystem.attack_id));
+				.getSkillBySceneCategory(String.valueOf(SceneSkillSystem.ATTACK_ID));
 		if (skillRes.size() > 0) {
 			sceneSkillSystem.setAttackSkillSystemId(skillRes.get(0).getSystemId());
 		}
 		skillRes = skillService
-				.getSkillBySceneCategory(String.valueOf(SceneSkillSystem.defense_id));
+				.getSkillBySceneCategory(String.valueOf(SceneSkillSystem.DEFENSE_ID));
 		if (skillRes.size() > 0) {
 			sceneSkillSystem.setDefenseSkillSystemId(skillRes.get(0).getSystemId());
 		}

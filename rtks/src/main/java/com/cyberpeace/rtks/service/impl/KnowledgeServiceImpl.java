@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,8 @@ import com.google.common.collect.Maps;
  */
 @Service
 public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge> implements KnowledgeService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(KnowledgeService.class);
 
 	@Autowired
 	private KnowledgeMapper knowledgeMapper;
@@ -128,12 +132,13 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		// 遍历知识点，获取知识点的相关内容，修改已删除的关联课程
 		for (KnowledgeRes knowledgeRes : knowledgeResList) {
 			String courses = knowledgeRes.getCourses();
-
+			LOG.info("查询知识点课程" + knowledgeRes.getContent());
 			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 			List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
 			boolean isDeleted = relatedCourseService.setCourseResult(courses, relatedCourseList,
 					processBos, related_course_type);
+			LOG.info("结束查询知识点课程" + knowledgeRes.getContent());
 
 			// knowledgeRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			knowledgeRes.setCourseList(relatedCourseList);

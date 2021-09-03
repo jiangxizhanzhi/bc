@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +16,15 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DataTransferUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.CourseStatisticsService;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.RoleController;
+import com.cyberpeace.rtks.controller.TrainingPlanController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.controller.res.*;
+import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
+import com.cyberpeace.rtks.controller.res.RoleDetailRes;
+import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
 import com.cyberpeace.rtks.controller.role.RoleOutput;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
@@ -35,12 +36,13 @@ import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Service
 public class TrainingPlanServiceImpl implements TrainingPlanService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
 
 	@Autowired
 	private SkillService skillService;
@@ -100,9 +102,12 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Override
 	public RoleDetailRes getRoleOutputByRoleId(String resource_id, String type) {
 		Role role = roleMapper.selectById(resource_id);
+		LOG.info("结束查岗位Role");
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 		roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
+		LOG.info("获取知识点的课程列表");
+
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();
 		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,
@@ -110,6 +115,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 		knowledgeService.checkKonwledgeRes(knowledgeResList, type);
 		roleDetailRes.setKnowledgeResDataList(knowledgeResList);
+		LOG.info("获取技能点的课程列表");
 
 		// 获取技能的课程列表
 		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();

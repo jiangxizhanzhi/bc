@@ -12,9 +12,9 @@ import lombok.Data;
 @ApiModel
 public class SceneSkillSystem implements Serializable {
 
-	public final static Integer attack_id = 1;// 只传技能关联课程
+	public final static Integer ATTACK_ID = 1;
 
-	public final static Integer defense_id = 2;// 只传知识点关联课程
+	public final static Integer DEFENSE_ID = 2;
 
 	@ApiModelProperty(value = "攻击场景对应技能体系id")
 	@NotBlank

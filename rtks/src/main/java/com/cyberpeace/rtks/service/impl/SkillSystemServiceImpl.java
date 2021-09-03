@@ -37,9 +37,9 @@ public class SkillSystemServiceImpl extends ServiceImpl<SkillSystemMapper, Skill
 		skillSystemMapper.updateDefaultSceneSkillSystem();
 
 		skillSystemMapper.updateSceneSkillSystem(sceneSkillSystemAddReq.getAttackSkillSystemId(),
-				SceneSkillSystem.attack_id);
+				SceneSkillSystem.ATTACK_ID);
 		skillSystemMapper.updateSceneSkillSystem(sceneSkillSystemAddReq.getDefenseSkillSystemId(),
-				SceneSkillSystem.defense_id);
+				SceneSkillSystem.DEFENSE_ID);
 
 	}
 

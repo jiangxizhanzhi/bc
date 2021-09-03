@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,15 +17,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
-import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +33,8 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/rtks/training-plan")
 @RequiresAuthentication
 public class TrainingPlanController {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
 
 	@Autowired
 	private TrainingPlanService trainingPlanService;
@@ -103,14 +104,18 @@ public class TrainingPlanController {
 	@GetMapping("/getRelatedCourseList")
 	public BaseRsp<RoleDetailRes> getRelatedCourseList() {// @ApiParam(name = "course_type", value =
 															// "查询课程类型(skill/knowledge)", required =
-															// true) String course_type
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
+		LOG.info("开始查岗位");
 		if (StringUtils.isNotBlank(existRoleId)) {
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
+			LOG.info("开始查匹配度");
+
 			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
 					UserInfoContext.getUserContext().getUserId());
+			LOG.info("结束查匹配度");
+
 			data.setPercent(percent);
 			rsp.setData(data);
 		}

@@ -13,20 +13,16 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 
-/**
- * 暂时将理论基础、实践操作分类整合至同一资源接口
- */
+// TODO 理论基础、实践操作分类表结构完全一致, 暂时将其整合至同一资源接口
 @Api(tags = "练习分类")
 @RestController
 @RequestMapping("/oj/practice-category")
 public class PracticeCategoryController {
-    // TODO insert
 
     @Autowired
     PracticeCategoryService categoryService;

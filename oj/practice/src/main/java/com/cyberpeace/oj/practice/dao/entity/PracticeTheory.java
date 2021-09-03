@@ -8,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 @ApiModel("理论基础练习")
 @TableName("practice_theory_practicetheory")

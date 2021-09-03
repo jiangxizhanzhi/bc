@@ -56,6 +56,11 @@ public class PracticeCategoryImpl extends ServiceImpl<PracticeCategoryMapper, Pr
         return categoryMapper.partialUpdate(tableName, id, name);
     }
 
+    /**
+     * 临时使用， 对两张表各进行一次删除
+     * @param resourceIds 资源id列表
+     * @return 删除条数
+     */
     @Override
     public Integer batchDelete(List<String> resourceIds) {
         Integer matchCount1 = categoryMapper.batchDelete("practice_theory_category", resourceIds);

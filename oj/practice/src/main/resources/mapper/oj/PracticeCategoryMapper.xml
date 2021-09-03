@@ -25,7 +25,7 @@
     </update>
 
     <update id="batchDelete">
-        update ${tableName} set status = 0 where resource_id in
+        update ${tableName} set status = 0 where status = 1 and resource_id in
         <foreach collection="resource_ids" item="resource_id" open="(" close=")" separator=",">
             #{resource_id}
         </foreach>

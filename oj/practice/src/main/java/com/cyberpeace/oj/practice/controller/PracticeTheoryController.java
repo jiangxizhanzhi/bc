@@ -8,6 +8,7 @@ import com.cyberpeace.oj.practice.controller.req.PracticeDelReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeTheoryListReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeTheoryReq;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import io.swagger.annotations.Api;
@@ -22,10 +23,20 @@ import javax.validation.constraints.NotBlank;
 @Api(tags = "理论基础练习")
 @RestController
 @RequestMapping("/oj/practice-theory")
-public class PracticeTheoryController {
+public class PracticeTheoryController extends PracticeMixinController<PracticeTheory, PracticeTheoryMapper> {
 
     @Autowired
     PracticeTheoryMapper practiceTheoryMapper;
+
+    @Override
+    public PracticeTheoryMapper getMapper() {
+        return this.practiceTheoryMapper;
+    }
+
+    @Override
+    public Class<PracticeTheory> getEntityCls() {
+        return PracticeTheory.class;
+    }
 
     @GetMapping()
     @ApiOperation("获取单个理论基础练习")

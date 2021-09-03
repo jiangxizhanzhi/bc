@@ -12,7 +12,7 @@
 
     <update id="update" parameterType="com.cyberpeace.oj.course.dao.entity.LessonCollection">
         update course_lessoncollection
-        set update = now()
+        set update_time = now()
         <if test="null != lessonCollection.isCollection">
             ,is_collection = #{lessonCollection.isCollection}
         </if>

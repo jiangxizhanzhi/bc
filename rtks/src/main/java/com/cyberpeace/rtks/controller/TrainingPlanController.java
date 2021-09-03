@@ -106,15 +106,12 @@ public class TrainingPlanController {
 															// "查询课程类型(skill/knowledge)", required =
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
-		LOG.info("开始查岗位");
 		if (StringUtils.isNotBlank(existRoleId)) {
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
-			LOG.info("开始查匹配度");
 
 			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
 					UserInfoContext.getUserContext().getUserId());
-			LOG.info("结束查匹配度");
 
 			data.setPercent(percent);
 			rsp.setData(data);

@@ -12,7 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.cyberpeace.common.util.CustomExceptionHandlerResolver;
 
 @ServletComponentScan
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class }, scanBasePackages = {"com.cyberpeace"})
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
+		scanBasePackages = { "com.cyberpeace" })
 public class OJApplication implements WebMvcConfigurer {
 
 	@Override

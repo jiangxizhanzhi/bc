@@ -31,7 +31,7 @@ public class MyFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		Filter.super.destroy();
+		// 什么都不需要做
 	}
 
 	private void setTraceId(ServletRequest request) {

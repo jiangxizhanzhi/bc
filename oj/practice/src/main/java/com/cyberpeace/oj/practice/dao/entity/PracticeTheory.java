@@ -34,22 +34,40 @@ public class PracticeTheory extends PracticeBase {
      */
     private String keyword;
 
-    // TODO 以下字段均为规避 db exception
     @JsonIgnore
-    private Integer practiceType = PracticeType.THEORY.ordinal();
+    private Integer practiceType;
 
     @JsonIgnore
-    private Integer difficulty = Difficulty.PRIMARY.ordinal();
+    private Integer difficulty;
 
     @JsonIgnore
-    private String file = "";
+    private String file;
 
     @JsonIgnore
-    private boolean publicOfficialWriteup = false;
+    private boolean publicOfficialWriteup;
 
     /**
      * 理论基础中并未实际使用此字段, 忽略
      */
     @JsonIgnore
-    private String title = "";
+    private String title;
+
+    // TODO 以下字段均为规避 db exception
+//    @JsonIgnore
+//    private Integer practiceType = PracticeType.THEORY.ordinal();
+//
+//    @JsonIgnore
+//    private Integer difficulty = Difficulty.PRIMARY.ordinal();
+//
+//    @JsonIgnore
+//    private String file = "";
+//
+//    @JsonIgnore
+//    private boolean publicOfficialWriteup = false;
+//
+//    /**
+//     * 理论基础中并未实际使用此字段, 忽略
+//     */
+//    @JsonIgnore
+//    private String title = "";
 }

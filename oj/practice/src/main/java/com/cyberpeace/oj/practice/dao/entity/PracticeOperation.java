@@ -63,4 +63,7 @@ public class PracticeOperation extends PracticeBase{
     // TODO 规避db exception
     @JsonIgnore
     private Integer practiceType = PracticeType.OPERATION.ordinal();
+
+    @TableField("`lock`")
+    private boolean lock = false;
 }

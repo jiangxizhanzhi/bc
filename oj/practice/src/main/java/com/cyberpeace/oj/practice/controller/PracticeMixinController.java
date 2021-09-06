@@ -1,18 +1,24 @@
 package com.cyberpeace.oj.practice.controller;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.practice.controller.req.ResourceAuthReq;
 import com.cyberpeace.oj.practice.controller.req.ResourcePublicReq;
 import com.cyberpeace.oj.practice.controller.req.ResourceShareReq;
-import com.google.common.collect.Maps;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeMixinMapper;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.lang.reflect.Field;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 提供练习公共功能接口
@@ -23,62 +29,109 @@ import java.util.Map;
 @RestController
 public abstract class PracticeMixinController<Entity, Mapper extends BaseMapper<Entity>> {
 
+    @Autowired
+    private PracticeMixinMapper practiceMixinMapper;
+
     public abstract Mapper getMapper();
 
     // 子类显式设置`Entity`class  TODO 替换其它获取方式
     public abstract Class<Entity> getEntityCls();
 
     /**
-     * 构建实体类时, 摒弃`conditions`外所有属性
+     * 获取实体类关联资源数据表名称,
+     * 无`com.baomidou.mybatisplus.annotation.TableName`注解情况返回转换后实体类名称 example: TableName -> table_name.
      *
-     * @param conditions 属性设置
-     * @return Entity
+     * @return table name string
      */
-    public Entity newInstance(String... conditions) throws ReflectiveOperationException {
-        Entity object = getEntityCls().newInstance();
-        Map<String, String> objectAttr = Maps.newHashMap();
+    private String getTableName() {
+        TableName annotation = getEntityCls().getAnnotation(TableName.class);
+        if (annotation != null) {
+            return annotation.value();
+        } else {
+            Pattern regexRule = Pattern.compile("[A-Z][a-z]+");
+            Matcher m = regexRule.matcher(getEntityCls().getSimpleName());
 
-        for (String item : conditions) {
-            if (item.indexOf("=") == 1) {
-                String[] condition = item.split("=");
-                objectAttr.put(condition[0], condition[1]);
+            List<String> listByString = new ArrayList<>();
+            while (m.find()) {
+                listByString.add(m.group().toLowerCase());
             }
-        }
 
-        for (Field field : object.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            // TODO 布尔类型无法设置null, 临时跳过
-            if (field.getType() != boolean.class) {
-                field.set(object, objectAttr.getOrDefault(field.getName(), null));
-            }
+            return StringUtils.join(listByString, "_");
         }
-
-        return object;
     }
 
-    public Entity newInstance() throws ReflectiveOperationException {
-        return newInstance("");
+    /**
+     * 接口是否允许被调用
+     *
+     * @param field 属性字符串
+     */
+    private void isAllowApi(String field) {
+        // TODO 临时认证方式
+        try {
+            Field f = getEntityCls().getDeclaredField(field);
+        } catch (NoSuchFieldException e) {
+            try {
+                Field f = getEntityCls().getSuperclass().getDeclaredField(field);
+            } catch (NoSuchFieldException _e) {
+                throw new NullPointerException("api not allow.");
+            }
+        }
     }
 
     @PatchMapping("/batch-public")
     @ApiOperation("资源公开/隐藏")
-    public boolean batchPublic(@RequestBody ResourcePublicReq requestData) throws ReflectiveOperationException {
-        UpdateWrapper<Entity> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.in("resource_id", requestData.getResourceIds());
-        int matchCount = getMapper().update(newInstance(String.format("public=%s", requestData.isPublic())), updateWrapper);
+    public BaseRsp<Boolean> batchPublic(@RequestBody ResourcePublicReq requestData) {
+        isAllowApi("isPublic");
+        if (requestData.getResourceIds() == null) {
+            throw new IllegalArgumentException("无效参数");
+        }
+        String tableName = getTableName();
+        Integer matchCount = practiceMixinMapper.batchPublic(tableName, requestData.getResourceIds(), requestData.isPublic());
 
-        return matchCount >= 1;
+        return new BaseRsp<>(matchCount >= 1);
     }
 
     @PatchMapping("/batch-auth")
     @ApiOperation("资源授权访问")
-    public boolean batchAuth(@RequestBody ResourceAuthReq requestData) {
-        return true;
+    public BaseRsp<Boolean> batchAuth(@RequestBody ResourceAuthReq requestData) {
+        isAllowApi("auth");
+
+        Integer matchCount = practiceMixinMapper.batchAuth(
+                getTableName(),
+                requestData.getResourceIds(),
+                JsonUtil.toJsonString(requestData.getAuthOrganizations()),
+                requestData.getAuthMode()
+        );
+
+        return new BaseRsp<>(matchCount >= 1);
+    }
+
+    @GetMapping("/auth")
+    @ApiOperation("获取授权访问信息")
+    public BaseRsp<Object> getAuth(@RequestParam @NotBlank String resourceId) {
+        isAllowApi("auth");
+        // TODO 待调用MP
+        return new BaseRsp<>();
     }
 
     @PatchMapping("/batch-share")
     @ApiOperation("资源授权操作")
-    public boolean batchShare(@RequestBody ResourceShareReq requestData) {
-        return true;
+    public BaseRsp<Boolean> batchShare(@RequestBody ResourceShareReq requestData) {
+        isAllowApi("share");
+        Integer matchCount = practiceMixinMapper.batchShare(
+                getTableName(),
+                requestData.getResourceIds(),
+                JsonUtil.toJsonString(requestData.getShareTeachers()),
+                requestData.getShareMode()
+        );
+        return new BaseRsp<>(matchCount >= 1);
+    }
+
+    @GetMapping("/share")
+    @ApiOperation("获取授权操作信息")
+    public BaseRsp<Object> getShare(@RequestParam @NotBlank String resourceId) {
+        isAllowApi("share");
+        // TODO 待调用MP
+        return new BaseRsp<>();
     }
 }

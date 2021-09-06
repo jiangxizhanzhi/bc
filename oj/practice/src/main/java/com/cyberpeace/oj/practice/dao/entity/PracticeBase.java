@@ -85,9 +85,6 @@ public class PracticeBase extends BaseTable implements Serializable {
     @JsonIgnore
     private Date updateTime;
 
-    @TableField("`lock`")
-    private boolean lock = false;
-
     @JsonIgnore
     private Date lastEditTime = new Date();
 

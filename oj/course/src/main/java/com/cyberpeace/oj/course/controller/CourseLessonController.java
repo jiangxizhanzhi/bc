@@ -1,21 +1,24 @@
 package com.cyberpeace.oj.course.controller;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.course.controller.req.CollectionReq;
-import com.cyberpeace.oj.course.dao.entity.LessonRecord;
-import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.course.controller.req.CollectionReq;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/course/lesson")
 @Api(tags = "oj-课时相关")
-//@RequiresAuthentication
+@RequiresAuthentication
 public class CourseLessonController {
 
 	@Autowired

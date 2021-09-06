@@ -1,14 +1,14 @@
 package com.cyberpeace.rtks.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillRes;
+import com.cyberpeace.rtks.controller.res.SkillTreeRes;
 
 public interface TrainingPlanService {
 
@@ -20,7 +20,7 @@ public interface TrainingPlanService {
 	/** 获取按照类别分组的技能树
 	 * @return 
 	 */
-	Map<String, List<SkillRes>> getSkillTree();
+	List<SkillTreeRes> getSkillTree();
 
 	/**通过角色id获取包含技能、知识点、课程列表的角色对象
 	 * @param resource_id 
@@ -44,4 +44,9 @@ public interface TrainingPlanService {
 	RoleDetailRes getLearningPathTree(String resource_id, String type);
 
 	RoleDetailRes getRoleDetailResByRoleId(String existRoleId);
+
+	/** 获取按照类别分组的知识树
+	 * @return
+	 */
+	List<KnowledgeTreeRes> getKnowledgeTree();
 }

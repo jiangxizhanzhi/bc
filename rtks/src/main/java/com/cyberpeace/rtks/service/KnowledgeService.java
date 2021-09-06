@@ -62,4 +62,6 @@ public interface KnowledgeService extends IService<Knowledge> {
 	 * @return
 	 */
 	List<String> getCourseByIds(List<String> knowledgeIds);
+
+	List<KnowledgeRes> getAllKnowledge();
 }

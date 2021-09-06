@@ -21,10 +21,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.TrainingPlanController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.controller.res.KnowledgeRes;
-import com.cyberpeace.rtks.controller.res.RelatedCourse;
-import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillRes;
+import com.cyberpeace.rtks.controller.res.*;
 import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
 import com.cyberpeace.rtks.controller.role.RoleOutput;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
@@ -90,13 +87,37 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	}
 
 	@Override
-	public Map<String, List<SkillRes>> getSkillTree() {
-
+	public List<SkillTreeRes> getSkillTree() {
+		List<SkillTreeRes> skillTreeResList = Lists.newArrayList();
 		List<SkillRes> skillResList = skillService.getAllSkills();
 
 		Map<String, List<SkillRes>> skillResMap = skillResList.stream()
 				.collect(Collectors.groupingBy(SkillRes::getCategory));
-		return skillResMap;
+		for (String key : skillResMap.keySet()) {
+			SkillTreeRes skillTreeRes = new SkillTreeRes();
+			skillTreeRes.setCategory(key);
+			skillTreeRes.setSkillResList(skillResMap.get(key));
+			skillTreeResList.add(skillTreeRes);
+		}
+
+		return skillTreeResList;
+	}
+
+	@Override
+	public List<KnowledgeTreeRes> getKnowledgeTree() {
+		List<KnowledgeTreeRes> knowledgeTreeResList = Lists.newArrayList();
+		List<KnowledgeRes> knowledgeResList = knowledgeService.getAllKnowledge();
+
+		Map<String, List<KnowledgeRes>> knowledgeResMap = knowledgeResList.stream()
+				.collect(Collectors.groupingBy(KnowledgeRes::getCategory));
+		for (String key : knowledgeResMap.keySet()) {
+			KnowledgeTreeRes knowledgeTreeRes = new KnowledgeTreeRes();
+			knowledgeTreeRes.setCategory(key);
+			knowledgeTreeRes.setKnowledgeResList(knowledgeResMap.get(key));
+			knowledgeTreeResList.add(knowledgeTreeRes);
+		}
+
+		return knowledgeTreeResList;
 	}
 
 	@Override

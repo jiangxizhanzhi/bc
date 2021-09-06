@@ -1,7 +1,6 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -19,8 +18,9 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillRes;
+import com.cyberpeace.rtks.controller.res.SkillTreeRes;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
 
@@ -45,12 +45,21 @@ public class TrainingPlanController {
 	@Autowired
 	private FrameController frameController;
 
-	@ApiOperation("知识技能体系")
-	@GetMapping("/ability")
-	public BaseRsp<Map<String, List<SkillRes>>> skill() {
-		Map<String, List<SkillRes>> result = trainingPlanService.getSkillTree();
+	@ApiOperation("技能体系")
+	@GetMapping("/skillTree")
+	public BaseRsp<List<SkillTreeRes>> skillTree() {
 
-		return new BaseRsp<>(result);
+		List<SkillTreeRes> skillTreeRes = trainingPlanService.getSkillTree();
+
+		return new BaseRsp<>(skillTreeRes);
+	}
+
+	@ApiOperation("知识体系")
+	@GetMapping("/knowledgeTree")
+	public BaseRsp<List<KnowledgeTreeRes>> knowledgeTree() {
+		List<KnowledgeTreeRes> knowledgeTreeRes = trainingPlanService.getKnowledgeTree();
+
+		return new BaseRsp<>(knowledgeTreeRes);
 	}
 
 	@ApiOperation("职业框架管理")

@@ -228,4 +228,17 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 				.collect(Collectors.toList());
 		return courseIds;
 	}
+
+	@Override
+	public List<KnowledgeRes> getAllKnowledge() {
+		KnowledgeListReq knowledgeListReq = new KnowledgeListReq();
+		knowledgeListReq.setPer_page(10000);
+		Page page = knowledgeListReq.toPageParam();
+
+		List<KnowledgeRes> knowledgeResList = knowledgeMapper.listKnowledge(page, knowledgeListReq)
+				.getRecords();
+		checkKnowledgeRes(knowledgeResList, RoleDetailRes.RELATED_COURSE_ALL);
+
+		return knowledgeResList;
+	}
 }

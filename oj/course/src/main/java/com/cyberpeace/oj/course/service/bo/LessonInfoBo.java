@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -72,5 +73,25 @@ public class LessonInfoBo implements Serializable {
     private String sceneData;
 
     private String sceneConfigName;
+
+    /**
+     * 设置上节和下节课程编号
+     * @param infoBo
+     * @param sortList
+     */
+    public void setPreAndNext(LessonInfoBo infoBo, List<String> sortList) {
+
+        int index = sortList.indexOf(infoBo.getResourceId());
+        if (index > 0 && index < sortList.size()) {
+            infoBo.setPre(sortList.get(index - 1));
+            infoBo.setNext(sortList.get(index + 1));
+        } else {
+            if (index == 0) {
+                infoBo.setNext(sortList.get(index + 1));
+            } else if (index >= sortList.size() - 1) {
+                infoBo.setPre(sortList.get(index - 1));
+            }
+        }
+    }
 
 }

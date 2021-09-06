@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller;
 
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.oj.course.controller.req.CollectionReq;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 @RestController
 @RequestMapping("/course/lesson")
 @Api(tags = "oj-课时相关")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class CourseLessonController {
 
 	@Autowired
@@ -26,7 +27,9 @@ public class CourseLessonController {
 			@ApiImplicitParam(name = "course_id", value = "课程编号") })
 	public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId,
 			@RequestParam("lesson_id") String lessonId) {
-		LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId);
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		LessonInfoBo infoBo = courseLessonService.getLessonDetail(userId, courseId, lessonId);
 		return new BaseRsp<>(infoBo);
 	}
 

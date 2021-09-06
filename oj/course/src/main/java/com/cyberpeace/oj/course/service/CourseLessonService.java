@@ -35,7 +35,7 @@ public interface CourseLessonService {
      * @param lessonId
      * @return
      */
-    LessonInfoBo getLessonDetail(String courseId, String lessonId);
+    LessonInfoBo getLessonDetail(String userId, String courseId, String lessonId);
 
     /**
      * 根据课时编号查询课时启动的场景
@@ -52,13 +52,6 @@ public interface CourseLessonService {
      * @return
      */
     LessonConfigBo getLessonConfig(String courseId, String userId);
-
-    /**
-     * 根据课程编号获取目录列表 仅限于数据库目录表对应的数据
-     * @param configBo
-     * @return
-     */
-    List<LessonConfigBo> getSortListByTree(LessonConfigBo configBo);
 
     /**
      * 收藏课时

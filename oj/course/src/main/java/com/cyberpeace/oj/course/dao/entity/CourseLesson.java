@@ -18,6 +18,12 @@ public class CourseLesson extends BaseTable {
 	/** 实验课*/
 	public static final int TYPE_EXPERIMENT = 1;
 
+	/** 必修*/
+	public static final int IS_REQUIRED = 2;
+
+	/** 选修*/
+	public static final int IS_ELECTIVE = 1;
+
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
@@ -40,7 +46,7 @@ public class CourseLesson extends BaseTable {
 	private Integer difficulty;
 
 	@TableField("public")
-	private Integer lessonPublic;
+	private Integer isPublic;
 
 	private String attachments;
 

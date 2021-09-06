@@ -18,4 +18,7 @@ public interface LessonRecordMapper extends BaseMapper<LessonRecord> {
 
 	List<LessonRecord> selectByTime(@Param("userId") String userId, @Param("start") Date startTime,
 			@Param("end") Date endTime);
+
+    LessonRecord selectByLessonAndUser(@Param("lessonId") String lessonId,
+									   @Param("userId") String userId);
 }

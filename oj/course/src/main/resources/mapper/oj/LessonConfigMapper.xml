@@ -13,7 +13,7 @@
     <select id="listByParent" resultMap="base">
         select * from course_lessonconfig
         where parent = #{parentId}
-        order by index asc
+        order by `index` asc
     </select>
 
 </mapper>

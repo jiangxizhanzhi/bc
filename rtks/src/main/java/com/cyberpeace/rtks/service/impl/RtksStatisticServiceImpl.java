@@ -385,7 +385,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		studyBo.setTotalCourses(processBoList.size());
 
 		int completeTheorySum = processBoList.stream()
-				.mapToInt(CourseStudyProcessBo::getTheoryCount).sum();
+				.mapToInt(CourseStudyProcessBo::getCompleteTheory).sum();
 		studyBo.setFinishedTheoryLessons(completeTheorySum);
 
 		int completeExerciseSum = processBoList.stream()
@@ -659,10 +659,15 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private <T extends SkillAndKnowledgeBase> List<String> getCourseIds(String skillOrKnowledge,
 			BaseMapper<T> baseMapper) {
 		T skill = baseMapper.selectById(skillOrKnowledge);
-		List<KnowledgeUnderCourseBo> courseIds = JsonUtil.toJsonObjectArray(skill.getCourses(),
-				KnowledgeUnderCourseBo.class);
-		return courseIds.stream().map(KnowledgeUnderCourseBo::getResourceId)
-				.collect(Collectors.toList());
+		if (null != skill) {
+			List<KnowledgeUnderCourseBo> courseIds = JsonUtil.toJsonObjectArray(skill.getCourses(),
+					KnowledgeUnderCourseBo.class);
+			return courseIds.stream().map(KnowledgeUnderCourseBo::getResourceId)
+					.collect(Collectors.toList());
+		}
+
+		return Lists.newArrayList();
+
 	}
 
 	/**

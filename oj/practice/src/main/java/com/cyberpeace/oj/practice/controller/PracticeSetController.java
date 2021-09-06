@@ -20,15 +20,10 @@ import javax.validation.constraints.NotBlank;
 @Api(tags = "习题集")
 @RestController
 @RequestMapping("/oj/practice-set")
-public class PracticeSetController extends PracticeMixinController<PracticeSet, PracticeSetMapper> {
+public class PracticeSetController extends PracticeMixinController<PracticeSet> {
 
     @Autowired
     PracticeSetMapper practiceSetMapper;
-
-    @Override
-    public PracticeSetMapper getMapper() {
-        return this.practiceSetMapper;
-    }
 
     @Override
     public Class<PracticeSet> getEntityCls() {

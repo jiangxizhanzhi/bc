@@ -1,7 +1,6 @@
 package com.cyberpeace.oj.practice.controller;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.practice.controller.req.ResourceAuthReq;
@@ -27,12 +26,10 @@ import java.util.regex.Pattern;
  * @param <Mapper> mybatis-plus Mapper
  */
 @RestController
-public abstract class PracticeMixinController<Entity, Mapper extends BaseMapper<Entity>> {
+public abstract class PracticeMixinController<Entity> {
 
     @Autowired
     private PracticeMixinMapper practiceMixinMapper;
-
-    public abstract Mapper getMapper();
 
     // 子类显式设置`Entity`class  TODO 替换其它获取方式
     public abstract Class<Entity> getEntityCls();
@@ -106,11 +103,12 @@ public abstract class PracticeMixinController<Entity, Mapper extends BaseMapper<
         return new BaseRsp<>(matchCount >= 1);
     }
 
+    // TODO 定义`auth`、`share`接口无意义, 浙能版本中已由前端实现
     @GetMapping("/auth")
     @ApiOperation("获取授权访问信息")
-    public BaseRsp<Object> getAuth(@RequestParam @NotBlank String resourceId) {
+    @Deprecated
+    public BaseRsp<Entity> getAuth(@RequestParam("resource_id") @NotBlank String resourceId) {
         isAllowApi("auth");
-        // TODO 待调用MP
         return new BaseRsp<>();
     }
 
@@ -129,9 +127,9 @@ public abstract class PracticeMixinController<Entity, Mapper extends BaseMapper<
 
     @GetMapping("/share")
     @ApiOperation("获取授权操作信息")
-    public BaseRsp<Object> getShare(@RequestParam @NotBlank String resourceId) {
+    @Deprecated
+    public BaseRsp<Entity> getShare(@RequestParam("resource_id") @NotBlank String resourceId) {
         isAllowApi("share");
-        // TODO 待调用MP
         return new BaseRsp<>();
     }
 }

@@ -65,7 +65,7 @@ public class TrainingPlanController {
 	}
 
 	@ApiOperation("学习路径")
-	@GetMapping("/learning-path ")
+	@GetMapping("/learning-path")
 	public BaseRsp<RoleDetailRes> learningPath(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
 		RoleDetailRes roleOutput = trainingPlanService.getLearningPathTree(resource_id,
@@ -110,6 +110,25 @@ public class TrainingPlanController {
 
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
+
+			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
+					UserInfoContext.getUserContext().getUserId());
+
+			data.setPercent(percent);
+			rsp.setData(data);
+		}
+
+		return rsp;
+	}
+
+	@ApiOperation("查询个人能力评估")
+	@GetMapping("/getRoleDetailRes")
+	public BaseRsp<RoleDetailRes> getRoleDetailRes() {// @ApiParam(name = "course_type", value =
+		// "查询课程类型(skill/knowledge)", required =
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(existRoleId)) {
+			RoleDetailRes data = trainingPlanService.getRoleDetailResByRoleId(existRoleId);
 
 			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
 					UserInfoContext.getUserContext().getUserId());

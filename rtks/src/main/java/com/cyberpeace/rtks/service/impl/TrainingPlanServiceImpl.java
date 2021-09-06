@@ -113,7 +113,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,
 				KnowledgeRes.class);
 
-		knowledgeService.checkKonwledgeRes(knowledgeResList, type);
+		knowledgeService.checkKnowledgeRes(knowledgeResList, type);
 		roleDetailRes.setKnowledgeResDataList(knowledgeResList);
 		LOG.info("获取技能点的课程列表");
 
@@ -136,7 +136,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		IPage<KnowledgeRes> result = knowledgeMapper.getKnowledgeListByIds(page, knowledgeIds);
 
 		List<KnowledgeRes> knowledgeResList = result.getRecords();
-		knowledgeService.checkKonwledgeRes(knowledgeResList, RoleDetailRes.RELATED_COURSE_ALL);
+		knowledgeService.checkKnowledgeRes(knowledgeResList, RoleDetailRes.RELATED_COURSE_ALL);
 
 		return PageUtil.getListResult(result);
 	}
@@ -155,7 +155,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,
 				KnowledgeRes.class);
 
-		knowledgeService.checkKonwledgeRes(knowledgeResList, type);
+		knowledgeService.checkKnowledgeRes(knowledgeResList, type);
 		List<RelatedCourse> basicCourseList = Lists.newArrayList();
 		for (KnowledgeRes knowledgeRes : knowledgeResList) {
 			basicCourseList.addAll(knowledgeRes.getCourseList());
@@ -172,6 +172,15 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 			skillCourseList.addAll(skillRes.getCourseList());
 		}
 		roleDetailRes.setSkillCourseList(skillCourseList);
+
+		return roleDetailRes;
+	}
+
+	@Override
+	public RoleDetailRes getRoleDetailResByRoleId(String existRoleId) {
+		Role role = roleMapper.selectById(existRoleId);
+		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
+		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 
 		return roleDetailRes;
 	}
@@ -213,13 +222,16 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 				levelTreeOutput = getLevelTreeOutputFromLevel(level1);
 			}
 		}
+
+		LevelTreeOutput tempLevelTreeOutput = levelTreeOutput;
 		String childId = levelTreeOutput.getResourceId();
 		while (levelMap.get(childId) != null) {
 			List<LevelTreeOutput> children = Lists.newArrayList();
-			children.add(
-					getLevelTreeOutputFromLevel(levelMap.get(levelTreeOutput.getResourceId())));
-			levelTreeOutput.setChildren(children);
-			childId = levelMap.get(levelTreeOutput.getResourceId()).getResourceId();
+			LevelTreeOutput child = getLevelTreeOutputFromLevel(levelMap.get(childId));
+			children.add(child);
+			tempLevelTreeOutput.setChildren(children);
+			tempLevelTreeOutput = child;
+			childId = child.getResourceId();
 		}
 		return levelTreeOutput;
 	}

@@ -9,7 +9,6 @@ import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 
 public interface TrainingPlanService {
 
@@ -44,4 +43,5 @@ public interface TrainingPlanService {
 	 */
 	RoleDetailRes getLearningPathTree(String resource_id, String type);
 
+	RoleDetailRes getRoleDetailResByRoleId(String existRoleId);
 }

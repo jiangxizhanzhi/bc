@@ -54,7 +54,7 @@ public interface KnowledgeService extends IService<Knowledge> {
 	 * @param knowledgeResList
 	 * @param type
 	 */
-	void checkKonwledgeRes(List<KnowledgeRes> knowledgeResList, String type);
+	void checkKnowledgeRes(List<KnowledgeRes> knowledgeResList, String type);
 
 	/**
 	 * 根据知识点编号查询对应的课程编号

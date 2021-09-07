@@ -213,10 +213,10 @@ public class CrEventController {
 	 * */
 	private void uploadedFileToPath(String path, @NotNull MultipartFile file) throws IOException {
 		InputStream inputStream = file.getInputStream();
-		ZipInputStream zipInput = new ZipInputStream(inputStream);
+		ZipInputStream zipInputStream = new ZipInputStream(inputStream);
 
 		while (true) {
-			ZipEntry entry = zipInput.getNextEntry();
+			ZipEntry entry = zipInputStream.getNextEntry();
 			if (entry == null) {
 				break;
 			}
@@ -239,13 +239,13 @@ public class CrEventController {
 				if (!created) {
 					throw new RuntimeException("Fail to create file: " + fileName);
 				}
+
+				OutputStream output = new FileOutputStream(outFile);
+				for (int i = 0; i < entry.getSize(); i++) {
+					output.write(zipInputStream.read());
+				}
+				output.close();
 			}
-			// todo
-			OutputStream output = new FileOutputStream(outFile);
-			for (int i = 0; i < entry.getSize(); i++) {
-				output.write(inputStream.read());
-			}
-			output.close();
 		}
 	}
 

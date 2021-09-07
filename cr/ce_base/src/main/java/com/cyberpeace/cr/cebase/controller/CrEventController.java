@@ -28,29 +28,6 @@ import com.cyberpeace.cr.cebase.service.CrEventService;
 
 import lombok.Data;
 
-@Data
-class IdsInput {
-
-	@NotNull
-	private List<String> ids;
-}
-
-/**
- * data.json数据结构
- * */
-@Data
-class IndexData {
-
-	private Map<String, List<Representation>> data;
-
-	private String file;
-}
-
-interface Constant {
-
-	String INDEX_DATA_JSON_FILE = "data.json";
-}
-
 @RestController
 @RequestMapping("/cr/ce_base")
 public class CrEventController {
@@ -323,4 +300,27 @@ public class CrEventController {
 		}
 	}
 
+}
+
+@Data
+class IdsInput {
+
+	@NotNull
+	private List<String> ids;
+}
+
+/**
+ * data.json数据结构
+ * */
+@Data
+class IndexData {
+
+	private Map<String, List<Representation>> data;
+
+	private String file;
+}
+
+interface Constant {
+
+	String INDEX_DATA_JSON_FILE = "data.json";
 }

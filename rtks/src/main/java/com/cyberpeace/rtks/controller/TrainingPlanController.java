@@ -21,6 +21,9 @@ import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillTreeRes;
+import com.cyberpeace.rtks.dao.entity.Level;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
 
@@ -41,6 +44,9 @@ public class TrainingPlanController {
 
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
+
+	@Autowired
+	private LevelService levelService;
 
 	@Autowired
 	private FrameController frameController;
@@ -66,6 +72,27 @@ public class TrainingPlanController {
 	@GetMapping("/tree")
 	public BaseRsp<LevelTreeOutput> tree(
 			@ApiParam(name = "resource_id", value = "框架id", required = true) String resource_id) {
+		// 如果前端没有获取框架，尝试获取默认角色的框架
+		if (StringUtils.equals(resource_id, "-1")) {
+			resource_id = "";
+			String existRoleId = UserInfoContext.getUserContext().getRoleId();
+			if (StringUtils.isNotBlank(existRoleId)) {
+				Role role = trainingPlanService.getRoleByRoleId(existRoleId);
+				if (role != null) {
+					resource_id = levelService.getOr404(role.getLevelId()).getFrame();
+				}
+			}
+		}
+		// 如果还是获取不到框架，从框架列表查询第一个框架返回
+		if (StringUtils.isBlank(resource_id)) {
+			List<Level> levelList = levelService.list();
+			for (Level level : levelList) {
+				if (StringUtils.isNotBlank(level.getFrame())) {
+					resource_id = level.getFrame();
+					break;
+				}
+			}
+		}
 
 		LevelTreeOutput frame = frameController.getTree(resource_id).data;
 		trainingPlanService.parseTree(frame);

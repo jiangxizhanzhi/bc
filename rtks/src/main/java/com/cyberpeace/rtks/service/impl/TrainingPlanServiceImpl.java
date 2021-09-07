@@ -123,11 +123,11 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Override
 	public RoleDetailRes getRoleOutputByRoleId(String resource_id, String type) {
 		Role role = roleMapper.selectById(resource_id);
-		LOG.info("结束查岗位Role");
+
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 		roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
-		LOG.info("获取知识点的课程列表");
+
 
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();
@@ -136,7 +136,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 		knowledgeService.checkKnowledgeRes(knowledgeResList, type);
 		roleDetailRes.setKnowledgeResDataList(knowledgeResList);
-		LOG.info("获取技能点的课程列表");
+
 
 		// 获取技能的课程列表
 		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
@@ -195,6 +195,13 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		roleDetailRes.setSkillCourseList(skillCourseList);
 
 		return roleDetailRes;
+	}
+
+	@Override
+	public Role getRoleByRoleId(String existRoleId) {
+		Role role = roleMapper.selectById(existRoleId);
+
+		return role;
 	}
 
 	@Override

@@ -30,6 +30,7 @@
         <orika.version>1.5.4</orika.version>
         <knife4j.version>2.0.8</knife4j.version>
         <servlet.version>3.0.1</servlet.version>
+        <cache.version>2.3.2.RELEASE</cache.version>
     </properties>
 
     <modules>
@@ -44,6 +45,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-cache</artifactId>
+                <version>${cache.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>

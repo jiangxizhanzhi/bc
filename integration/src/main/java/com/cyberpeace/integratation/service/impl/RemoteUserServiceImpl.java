@@ -5,10 +5,13 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
@@ -19,6 +22,7 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+@CacheConfig(cacheNames = { CacheConstant.REMOTE_USER })
 @Slf4j
 @Service
 public class RemoteUserServiceImpl implements RemoteUserService {
@@ -49,6 +53,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
+	@Cacheable(key = "#token")
 	public UserInfo doAuthentication(String token) {
 		// 1、调用mp
 		String targetUrl = TOKEN_AUTHENTICATE_URL + token;

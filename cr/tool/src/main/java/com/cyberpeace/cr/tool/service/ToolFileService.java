@@ -4,4 +4,5 @@ import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 
 public interface ToolFileService extends IService<ToolFile> {
 
+	ToolFile saveFile(String filePath);
 }

@@ -13,10 +13,8 @@ public class FileUtil {
 		String fileSuffix = originalFilename.substring(originalFilename.lastIndexOf("."));
 		String uuid = String.valueOf(UUID.randomUUID());
 		String fileName = uuid + fileSuffix;
-		File fileExist = new File(basePath);
-		if (!fileExist.exists()) {
-			fileExist.mkdirs();
-		}
+
+		mkdirs(basePath);
 		File newFile = new File(basePath, fileName);
 		file.transferTo(newFile);
 		return newFile;
@@ -60,5 +58,13 @@ public class FileUtil {
 		} catch (IOException e) {
 			throw new RuntimeException("Fail to write file " + path);
 		}
+	}
+
+	public static File mkdirs(String path) {
+		File file = new File(path);
+		if(!file.exists()) {
+			file.mkdirs();
+		}
+		return file;
 	}
 }

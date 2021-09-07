@@ -11,4 +11,6 @@ public interface ToolService extends IService<Tool> {
 	ListRsp<ToolBo> selectPage(PageReqBase toolListReq);
 
 	ToolBo selectById(@Param("resourceId") String resourceId);
+
+	Tool getByName(String name);
 }

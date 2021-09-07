@@ -14,6 +14,15 @@
     <packaging>jar</packaging>
     <name>tool</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>cr_base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

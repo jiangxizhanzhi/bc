@@ -25,4 +25,17 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		IPage<ToolCategory> result = toolCategoryMapper.list(page, listReq.getPattern());
 		return PageUtil.getListResult(result);
 	}
+
+	@Override
+	public ToolCategory getOrCreateByName(String name) {
+		ToolCategory toolCategory = toolCategoryMapper.getByCnName(name);
+		if (toolCategory != null) {
+			return toolCategory;
+		}
+		ToolCategory newCategory = new ToolCategory();
+		newCategory.setCnName(name);
+		newCategory.setEnName(name);
+		save(newCategory);
+		return newCategory;
+	}
 }

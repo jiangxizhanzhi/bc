@@ -25,8 +25,10 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -43,6 +45,15 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 
 	@Autowired
 	private RemoteTerminalService remoteTerminalService;
+
+	@Override
+	@Transactional(
+			rollbackFor = {Exception.class},
+			transactionManager = "crTransactionManager"
+	)
+	public boolean saveBatch(Collection<Tool> entityList) {
+		return super.saveBatch(entityList);
+	}
 
 	private void setAboutCategory(ToolBo toolBo, Tool tool) {
 		List<Integer> categoryList = LocalStringUtil.strToList(tool.getCategory());
@@ -104,5 +115,10 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	public ToolBo selectById(String resourceId) {
 		Tool tool = getById(resourceId);
 		return toBo(tool, true);
+	}
+
+	@Override
+	public Tool getByName(String name) {
+		return toolMapper.selectByName(name);
 	}
 }

@@ -15,6 +15,11 @@ public class Tool extends BaseTable {
 
 	private Integer status = ModelConstant.NOT_DELETE;
 
+	// 在线
+	public static final Integer ONLINE = 1;
+	// 离线
+	public static final Integer OFFLINE = 0;
+
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 

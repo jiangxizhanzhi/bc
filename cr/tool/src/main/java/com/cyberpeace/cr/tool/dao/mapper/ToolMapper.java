@@ -5,11 +5,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import javax.validation.constraints.NotEmpty;
 
 @Mapper
 @Repository
 public interface ToolMapper extends BaseMapper<Tool> {
 
 	IPage<Tool> list(Page page, String pattern);
+
+	Tool selectByName(@NotEmpty @Param("name") String name);
 }

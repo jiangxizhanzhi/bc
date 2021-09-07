@@ -110,7 +110,10 @@ public class HttpClientUtil {
 			BaseRsp baseRsp = JSON.parseObject(httpResponse, BaseRsp.class);
 
 			if (!isSuccess(baseRsp)) {
-				LOG.error("url=[{}], result=[{}] error, f");
+				// 只要中台的错误码不是000000，都认为是有问题的
+				LOG.error("url=[{}], result=[{}] error, code=[{}]",
+						new Object[] { url, httpResponse, baseRsp.getCode() });
+				throw new RemoteServiceException();
 			}
 
 			String realData = baseRsp.getData().toString();
@@ -155,7 +158,7 @@ public class HttpClientUtil {
 
 		LOG.info("read prop mpAuthenticationParam=[{}]", mpAuthenticationParam);
 
-		String[] ss = StringUtils.split(mpAuthenticationParam, "|");
+		String[] ss = StringUtils.split(mpAuthenticationParam, ",");
 		BasicHeader clientId = new BasicHeader(WebConstant.CLIENT_ID, ss[0]);
 
 		BasicHeader clientSecret = new BasicHeader(WebConstant.CLIENT_SECRET, ss[1]);

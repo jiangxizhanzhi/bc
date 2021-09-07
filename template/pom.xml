@@ -24,6 +24,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
             <version>${common.version}</version>

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -113,6 +114,9 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 	@Override
 	public Map<String, List<CourseRelatedRes>> getKnowledgeByCourseId(List<String> ids) {
+		if (CollectionUtils.isEmpty(ids)) {
+			return Maps.newHashMap();
+		}
 		List<CourseRelatedRes> knowledgeList = knowledgeMapper.getKnowledgeByCourseId(ids);
 
 		Map<String, List<CourseRelatedRes>> courseKnowledgeResMap = knowledgeList.stream()
@@ -220,6 +224,9 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 	@Override
 	public List<String> getCourseByIds(List<String> knowledgeIds) {
+		if (CollectionUtils.isEmpty(knowledgeIds)) {
+			return Lists.newArrayList();
+		}
 		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
 		List<String> courseIds = knowledges.stream()
 				.map(knowledge -> JsonUtil.toJsonObjectArray(knowledge.getCourses(),

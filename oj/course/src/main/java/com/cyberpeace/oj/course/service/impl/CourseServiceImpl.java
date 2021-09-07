@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.dao.context.AuthContext;
+import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.CourseCollection;
 import com.cyberpeace.oj.course.dao.mapper.CourseCollectionMapper;
 import com.google.common.collect.Lists;
@@ -105,10 +107,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public ListRsp<CourseInfoBo> selectPage(CourseListReq listReq) {
-		Page page = listReq.toPageParam();
-		IPage<Course> iPage = courseMapper.listByPage(page, listReq.getEBook(),
-				listReq.getDirection(), listReq.getDifficulty(), listReq.getPattern());
+	public ListRsp<CourseInfoBo> selectPage(Page page, CourseContext courseContext, AuthContext authContext) {
+		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, authContext);
 
 		iPage.convert(course -> courseToBo(course));
 		return PageUtil.getListResult(iPage);

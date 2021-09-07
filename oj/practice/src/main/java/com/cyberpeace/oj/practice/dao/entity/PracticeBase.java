@@ -80,6 +80,11 @@ public class PracticeBase extends BaseTable implements Serializable {
      */
     private Float score = 0.0f;
 
+    /**
+     * 练习类型
+     */
+    private Integer practiceType;
+
     // TODO 规避 db exception
     @TableField(exist = false)
     @JsonIgnore

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeServiceMapper">
+    <insert id="saveSolved">
+    insert into practice_practicesubmitsolved
+        (`submit_user`, `submit_time`, `submit_answer`, `score`, `weight_score`, `is_solved`, `practice`, `type`)
+    values
+        (#{user}, #{now}, #{answer}, #{evaluated.score}, #{object.score}, #{evaluated.isPass}, #{object.resource_id}, #{object.practiceType})
+    </insert>
+
+</mapper>

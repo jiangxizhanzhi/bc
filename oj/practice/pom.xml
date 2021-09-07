@@ -17,4 +17,18 @@
     <name>practice</name>
     <description>练习</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.cyberpeace</groupId>
+            <artifactId>integration</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 </project>

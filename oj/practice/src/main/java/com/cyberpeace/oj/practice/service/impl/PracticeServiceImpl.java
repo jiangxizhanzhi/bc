@@ -1,0 +1,156 @@
+package com.cyberpeace.oj.practice.service.impl;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.oj.practice.dao.constants.PracticeType;
+import com.cyberpeace.oj.practice.dao.constants.TheoryQuestionType;
+import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeServiceMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeService;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+@Service
+@Slf4j
+public class PracticeServiceImpl implements PracticeService {
+
+    @Autowired
+    PracticeServiceMapper practiceServiceMapper;
+
+    @Autowired
+    PracticeTheoryMapper practiceTheoryMapper;
+
+    @Autowired
+    PracticeOperationMapper practiceOperationMapper;
+
+    public EvaluateResult evaluator(String resourceId, Integer practiceType, String answer) {
+        return evaluator(resourceId, practiceType, answer, "");
+    }
+
+    public EvaluateResult evaluator(String resourceId, Integer practiceType, String answer, String user) {
+        if (practiceType.equals(PracticeType.THEORY.ordinal())) {
+            PracticeTheory practiceObject = practiceTheoryMapper.selectById(resourceId);
+            return evaluator(practiceObject, answer, user);
+
+        } else if (practiceType.equals(PracticeType.OPERATION.ordinal())) {
+            PracticeOperation practiceObject = practiceOperationMapper.selectById(resourceId);
+            return evaluator(practiceObject, answer, user);
+
+        } else {
+            throw new IllegalArgumentException("Type not available.");
+        }
+    }
+
+    @Override
+    public <P extends PracticeBase> EvaluateResult evaluator(P practiceObject, String answer) {
+        return evaluator(practiceObject, answer, "");
+    }
+
+    @Override
+    public <P extends PracticeBase> EvaluateResult evaluator(P practiceObject, String answer, String user) {
+
+        EvaluateResult result;
+
+        if (practiceObject instanceof PracticeTheory) {
+            PracticeTheory origin = (PracticeTheory) practiceObject;
+            if (origin.getQuestionType().equals(TheoryQuestionType.SINGLE.ordinal())) {
+                result = Evaluator.singleEval((PracticeTheory) practiceObject, answer);
+
+            } else if (origin.getQuestionType().equals(TheoryQuestionType.MULTIPLE.ordinal())) {
+                result = Evaluator.multipleEval((PracticeTheory) practiceObject, answer);
+
+            } else if (origin.getQuestionType().equals(TheoryQuestionType.JUDGMENT.ordinal())) {
+                result = Evaluator.judgmentEval((PracticeTheory) practiceObject, answer);
+
+            } else if (origin.getQuestionType().equals(TheoryQuestionType.FILL_BLANK.ordinal())) {
+                result = Evaluator.fillBlankEval((PracticeTheory) practiceObject, answer);
+
+            } else if (origin.getQuestionType().equals(TheoryQuestionType.SHORT_ANSWER.ordinal())) {
+                result = Evaluator.shortAnswerEval((PracticeTheory) practiceObject, answer);
+
+            } else {
+                throw new IllegalArgumentException("Question type invalid.");
+            }
+        } else if (practiceObject instanceof PracticeOperation) {
+            result = Evaluator.operationEval((PracticeOperation) practiceObject, answer);
+
+        } else {
+            throw new IllegalArgumentException("Type not available.");
+        }
+
+        // 通过记录写入DB
+        if (!user.isEmpty() && result.getIsPass()) {
+            practiceServiceMapper.saveSolved(user, answer, result, practiceObject, new Date());
+        }
+
+        return result;
+    }
+}
+
+class Evaluator {
+
+    // TODO 需要重载, 兼顾其它入参?
+    public static EvaluateResult singleEval(PracticeTheory practice, String answer) {
+        Boolean isPass = practice.getAnswer().equalsIgnoreCase(answer);
+        Float score = isPass ? practice.getScore() : 0;
+        return new EvaluateResult(isPass, score, practice.getScore());
+    }
+
+    public static EvaluateResult multipleEval(PracticeTheory practice, String answer) {
+        return singleEval(practice, answer);
+    }
+
+    public static EvaluateResult judgmentEval(PracticeTheory practice, String answer) {
+        return singleEval(practice, answer);
+    }
+
+    public static EvaluateResult fillBlankEval(PracticeTheory practice, String answer) {
+        float score = 0f;
+        boolean isPass = false;
+
+        JSONObject jsonAnswer = JSONObject.parseObject(answer);
+        JSONArray blankArray = JSONArray.parseArray(practice.getBlank());
+
+        for (int i = 0; i < blankArray.size(); i++) {
+            // 获取用户提交的每个填空答案
+            String v = jsonAnswer.getString(Integer.toString(i));
+            if (v == null) {
+                continue;
+            }
+
+            JSONObject blank = (JSONObject) blankArray.get(i);
+            if (blank.getString("value").equalsIgnoreCase(v)) {
+
+                Integer blankWeight = blank.getInteger("weight");
+                BigDecimal proportion = new BigDecimal(practice.getScore() * blankWeight * 0.01f);
+                score = score + proportion.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+
+                // 答对一项视为通过
+                isPass = true;
+            }
+        }
+
+        return new EvaluateResult(isPass, score, practice.getScore());
+    }
+
+    /**
+     * 简答题直接通过, 无分值
+     */
+    public static EvaluateResult shortAnswerEval(PracticeTheory practice, String answer) {
+        return new EvaluateResult(true, 0f, practice.getScore());
+    }
+
+    // TODO 处理待定
+    public static EvaluateResult operationEval(PracticeOperation practice, String answer) {
+        return new EvaluateResult(true, 0f, practice.getScore());
+    }
+}

@@ -1,7 +1,10 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
@@ -64,12 +68,13 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public SkillRes getSkillByResourceId(String id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
 		SkillRes skillRes = skillMapper.getSkillByResourceId(id);
 		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 		List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-		if (relatedCourseDao.setCourseResult(skillRes.getCourses(), relatedCourseList, processBos,
-				RoleDetailRes.RELATED_COURSE_COURSE)) {
+		if (relatedCourseDao.setCourseResult(userId, skillRes.getCourses(), relatedCourseList,
+				processBos, RoleDetailRes.RELATED_COURSE_COURSE)) {
 			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
 
@@ -110,48 +115,82 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public void checkSkillRes(List<SkillRes> skillResList, String related_course_type) {
-		List<Skill> skillList = Lists.newArrayList();
+		List<Skill> skillList = Collections.synchronizedList(new ArrayList<>());
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 创建一个线程池
+		ExecutorService exec = new ThreadPoolExecutor(10, 100, 60L, TimeUnit.SECONDS,
+				new SynchronousQueue<Runnable>());
+		// 定义一个任务集合
+		List<Callable<Integer>> tasks = new ArrayList<>();
+		Callable<Integer> task = null;
 
 		for (SkillRes skillRes : skillResList) {
-			String courses = skillRes.getCourses();
+			task = new Callable<Integer>() {
 
-			List<RelatedCourse> relatedCourseList = Lists.newArrayList();
-			List<CourseStudyProcessBo> processBos = Lists.newArrayList();
+				@Override
+				public Integer call() throws Exception {
+					String courses = skillRes.getCourses();
 
-			boolean isDeleted = relatedCourseDao.setCourseResult(courses, relatedCourseList,
-					processBos, related_course_type);
-			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-			skillRes.setCourseList(relatedCourseList);
-			if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
-				skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
-				skillRes.setCourses("");
-				skillRes.setCourseList(null);
-				skillRes.setCourseStudyProcessBoList(processBos);
-			} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
-				skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
-				skillRes.setCourseStudyProcessBoList(processBos);
-			}
+					List<RelatedCourse> relatedCourseList = Lists.newArrayList();
+					List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-			if (isDeleted) {
+					boolean isDeleted = relatedCourseDao.setCourseResult(userId, courses,
+							relatedCourseList, processBos, related_course_type);
+					// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
+					skillRes.setCourseList(relatedCourseList);
+					if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
+						skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
+						skillRes.setCourses("");
+						skillRes.setCourseList(null);
+						skillRes.setCourseStudyProcessBoList(processBos);
+					} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
+						skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
+						skillRes.setCourseStudyProcessBoList(processBos);
+					}
 
-				// 修改关联表
-				Skill skill = new Skill();
-				BeanUtils.copyProperties(skillRes, skill);
-				courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
-						skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
-				skill.setCourses(courses);
+					if (isDeleted) {
 
-				skillList.add(skill);
-			}
+						// 修改关联表
+						Skill skill = new Skill();
+						BeanUtils.copyProperties(skillRes, skill);
+						courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+								skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
+						skill.setCourses(courses);
+
+						skillList.add(skill);
+					}
+
+					return 123;
+				}
+
+			};
+			tasks.add(task);
 
 		}
+
+		try {
+			List<Future<Integer>> results = exec.invokeAll(tasks);
+			results.isEmpty();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// 关闭线程池
+		exec.shutdown();
 		updateBatchById(skillList);
 	}
 
 	@Override
 	public List<SkillRes> getAllSkills() {
-		List<SkillRes> skillResList = skillMapper.getAllSkills();
+		List<SkillRes> skillResList = skillMapper.getAllSkills("");
 		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
+
+		return skillResList;
+	}
+
+	@Override
+	public List<SkillRes> getSkillBySceneCategory(String scene_category_id) {
+		List<SkillRes> skillResList = skillMapper.getAllSkills(scene_category_id);
 
 		return skillResList;
 	}

@@ -3,33 +3,61 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseMapper">
 
-    <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.Course">
-        <result property="coursePublic" column="public"/>
-    </resultMap>
+    <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.Course"/>
+
+    <sql id="auth">
+        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.oj.course.dao.entity.Course@ALL_SHARE_MODE"/>
+        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.oj.course.dao.entity.Course@CUSTOM_SHARE_MODE"/>
+
+        select resource_id from course_course
+        <choose>
+            <when test="authContext.isWeb">
+                <if test="authContext.organization != null and authContext.organization != ''">
+                    <bind name="authContext.organization" value="'%' + authContext.organization + '%'"/>
+                </if>
+                and (create_user = #{authContext.userId} or (auth_organization like #{authContext.organization}
+                and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
+            </when>
+            <otherwise>
+                and (create_user = #{authContext.userId} or (share_teachers like #{authContext.likeUser}
+                and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
+            </otherwise>
+        </choose>
+    </sql>
 
     <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">
         select * from course_course where resource_id = #{courseId} and status = 1
     </select>
 
     <select id="listByPage" resultMap="baseResultMap">
-        <if test="pattern != null and pattern != ''">
-            <bind name="pattern" value="'%' + pattern + '%'"/>
+        <if test="courseContext.pattern != null and courseContext.pattern != ''">
+            <bind name="courseContext.pattern" value="'%' + courseContext.pattern + '%'"/>
         </if>
+
         select * from course_course
         <where>
+            <if test="null != authContext">
+                and resource_id in (<include refid="auth"/>)
+            </if>
+            <if test="null != courseContext">
+                <if test="null != courseContext.eBook">
+                    and e_book = #{courseContext.eBook}
+                </if>
+                <if test="null != courseContext.direction and courseContext.direction != ''">
+                    and direction = #{courseContext.direction}
+                </if>
+                <if test="null != courseContext.difficulty">
+                    and difficulty = #{courseContext.difficulty}
+                </if>
+                <if test="null != courseContext.pattern and courseContext.pattern != ''">
+                    and `name` like #{courseContext.pattern}
+                </if>
+                <if test="null != courseContext.isPublic">
+                    and public = #{courseContext.isPublic}
+                </if>
+            </if>
+
             and status = 1
-            <if test="null != eBook">
-                and e_book = #{eBook}
-            </if>
-            <if test="null != direction and direction != ''">
-                and direction = #{direction}
-            </if>
-            <if test="null != difficulty">
-                and difficulty = #{difficulty}
-            </if>
-            <if test="null != pattern and pattern != ''">
-                and `name` like #{pattern}
-            </if>
         </where>
     </select>
 

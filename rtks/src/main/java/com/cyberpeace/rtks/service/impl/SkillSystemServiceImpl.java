@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.rtks.dao.entity.SkillSystem;
 import com.cyberpeace.rtks.dao.mapper.SkillSystemMapper;
 import com.cyberpeace.rtks.service.SkillSystemService;
+import com.cyberpeace.rtks.service.bo.SceneSkillSystem;
 
 /**
  *
@@ -30,4 +31,16 @@ public class SkillSystemServiceImpl extends ServiceImpl<SkillSystemMapper, Skill
 
 		return PageUtil.getListResult(result);
 	}
+
+	@Override
+	public void updateSceneSkillSystem(SceneSkillSystem sceneSkillSystemAddReq) {
+		skillSystemMapper.updateDefaultSceneSkillSystem();
+
+		skillSystemMapper.updateSceneSkillSystem(sceneSkillSystemAddReq.getAttackSkillSystemId(),
+				SceneSkillSystem.ATTACK_ID);
+		skillSystemMapper.updateSceneSkillSystem(sceneSkillSystemAddReq.getDefenseSkillSystemId(),
+				SceneSkillSystem.DEFENSE_ID);
+
+	}
+
 }

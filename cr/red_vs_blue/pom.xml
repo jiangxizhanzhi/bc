@@ -14,9 +14,6 @@
     <packaging>jar</packaging>
     <name>red_vs_blue</name>
 
-    <dependencies>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>

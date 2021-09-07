@@ -3,7 +3,6 @@ package com.cyberpeace.config.ws;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -26,9 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class JwtHandShake implements HandshakeInterceptor {
-
-	@Autowired
-	private RemoteUserService remoteUserService;
 
 	private final String TOKEN = "token";
 
@@ -55,6 +51,10 @@ public class JwtHandShake implements HandshakeInterceptor {
 		}
 
 		UserInfo userInfo = null;
+
+		RemoteUserService remoteUserService = SpringContextUtil
+				.getBeanByClass(RemoteUserService.class);
+
 		try {
 			userInfo = remoteUserService.doAuthentication(jwtToken);
 		} catch (Exception e) {

@@ -1,33 +1,52 @@
 package com.cyberpeace.rtks.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillRes;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
+import com.cyberpeace.rtks.controller.res.SkillTreeRes;
 
 public interface TrainingPlanService {
 
+	/**修改框架树，增加角色
+	 * @param frame 
+	 */
 	void parseTree(LevelTreeOutput frame);
 
-	Map<String, List<SkillRes>> getSkillTree();
+	/** 获取按照类别分组的技能树
+	 * @return 
+	 */
+	List<SkillTreeRes> getSkillTree();
 
-	RoleDetailRes getRoleOutputByRoleId(String resource_id, String type);
-
-	ListRsp<KnowledgeRes> getKnowledgeCourseList(PageReqBase pageReqBase, String existRoleId);
-
-	RoleDetailRes getLearningPathTree(String resource_id, String type);
-
-	/**
-	 * 根据用户编号和岗位编号 查询课程对应的进度以及知识点信息
-	 * @param userId
-	 * @param roleId
+	/**通过角色id获取包含技能、知识点、课程列表的角色对象
+	 * @param resource_id 
+	 * @param type
 	 * @return
 	 */
-	List<CourseKnowledgeBo> getCourseKnowledges(String userId, String roleId);
+	RoleDetailRes getRoleOutputByRoleId(String resource_id, String type);
+
+	/**获取知识点课程分页
+	 * @param pageReqBase 
+	 * @param existRoleId
+	 * @return
+	 */
+	ListRsp<KnowledgeRes> getKnowledgeCourseList(PageReqBase pageReqBase, String existRoleId);
+
+	/**获取包含课程学习信息的角色对象
+	 * @param resource_id 
+	 * @param type
+	 * @return
+	 */
+	RoleDetailRes getLearningPathTree(String resource_id, String type);
+
+	RoleDetailRes getRoleDetailResByRoleId(String existRoleId);
+
+	/** 获取按照类别分组的知识树
+	 * @return
+	 */
+	List<KnowledgeTreeRes> getKnowledgeTree();
 }

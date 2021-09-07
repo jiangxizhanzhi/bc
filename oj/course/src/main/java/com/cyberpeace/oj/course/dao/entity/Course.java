@@ -21,6 +21,15 @@ public class Course extends BaseTable {
 	/** 高级*/
 	public static final int SENIOR = 2;
 
+	/** 公开*/
+	public static final int IS_PUBLIC = 1;
+
+	/** 共享所有*/
+	public static final int ALL_SHARE_MODE = 1;
+
+	/** 自定义共享*/
+	public static final int CUSTOM_SHARE_MODE = 2;
+
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
@@ -54,7 +63,7 @@ public class Course extends BaseTable {
 	private String lastEditUser;
 
 	@TableField("public")
-	private Integer coursePublic;
+	private Integer isPublic;
 
 	private Integer eBook;
 

@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +16,10 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DataTransferUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.CourseStatisticsService;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.RoleController;
+import com.cyberpeace.rtks.controller.TrainingPlanController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.*;
 import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
@@ -35,12 +33,13 @@ import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Service
 public class TrainingPlanServiceImpl implements TrainingPlanService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
 
 	@Autowired
 	private SkillService skillService;
@@ -57,13 +56,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Autowired
 	private KnowledgeService knowledgeService;
 
-	@Autowired
-	private CourseStatisticsService courseStatisticsService;
-
-	@Autowired
-	private CourseService courseService;
-
-	public void parseTreeNode(LevelTreeOutput frame, Map<String, List<RoleOutput>> roleListMap) {
+	public void parseTreeNode(LevelTreeOutput frame,
+			Map<String, List<RoleDetailOutput>> roleListMap) {
 		for (int index = 0; index < frame.getChildren().size(); index++) {
 			LevelTreeOutput element = frame.getChildren().get(index);
 
@@ -79,42 +73,70 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Override
 	public void parseTree(LevelTreeOutput frame) {
 		List<Role> roleList = roleMapper.selectRoleByFrameId(frame.getResourceId());
-		List<RoleOutput> roleDetailOutputList = Lists.newArrayList();
+		List<RoleDetailOutput> roleDetailOutputList = Lists.newArrayList();
 
 		for (Role role : roleList) {
-			RoleOutput detailOutputFromRole = roleController.getOutputFromEntity(role);
+			RoleDetailOutput detailOutputFromRole = roleController.getOutputFromEntity(role);
 			roleDetailOutputList.add(detailOutputFromRole);
 		}
 		// 以层级对角色进行分组
-		Map<String, List<RoleOutput>> roleListMap = roleDetailOutputList.stream()
+		Map<String, List<RoleDetailOutput>> roleListMap = roleDetailOutputList.stream()
 				.collect(Collectors.groupingBy(RoleOutput::getLevelId));
 
 		parseTreeNode(frame, roleListMap);
 	}
 
 	@Override
-	public Map<String, List<SkillRes>> getSkillTree() {
-
+	public List<SkillTreeRes> getSkillTree() {
+		List<SkillTreeRes> skillTreeResList = Lists.newArrayList();
 		List<SkillRes> skillResList = skillService.getAllSkills();
 
 		Map<String, List<SkillRes>> skillResMap = skillResList.stream()
 				.collect(Collectors.groupingBy(SkillRes::getCategory));
-		return skillResMap;
+		for (String key : skillResMap.keySet()) {
+			SkillTreeRes skillTreeRes = new SkillTreeRes();
+			skillTreeRes.setCategory(key);
+			skillTreeRes.setSkillResList(skillResMap.get(key));
+			skillTreeResList.add(skillTreeRes);
+		}
+
+		return skillTreeResList;
+	}
+
+	@Override
+	public List<KnowledgeTreeRes> getKnowledgeTree() {
+		List<KnowledgeTreeRes> knowledgeTreeResList = Lists.newArrayList();
+		List<KnowledgeRes> knowledgeResList = knowledgeService.getAllKnowledge();
+
+		Map<String, List<KnowledgeRes>> knowledgeResMap = knowledgeResList.stream()
+				.collect(Collectors.groupingBy(KnowledgeRes::getCategory));
+		for (String key : knowledgeResMap.keySet()) {
+			KnowledgeTreeRes knowledgeTreeRes = new KnowledgeTreeRes();
+			knowledgeTreeRes.setCategory(key);
+			knowledgeTreeRes.setKnowledgeResList(knowledgeResMap.get(key));
+			knowledgeTreeResList.add(knowledgeTreeRes);
+		}
+
+		return knowledgeTreeResList;
 	}
 
 	@Override
 	public RoleDetailRes getRoleOutputByRoleId(String resource_id, String type) {
 		Role role = roleMapper.selectById(resource_id);
+		LOG.info("结束查岗位Role");
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 		roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
+		LOG.info("获取知识点的课程列表");
+
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();
 		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,
 				KnowledgeRes.class);
 
-		knowledgeService.checkKonwledgeRes(knowledgeResList, type);
+		knowledgeService.checkKnowledgeRes(knowledgeResList, type);
 		roleDetailRes.setKnowledgeResDataList(knowledgeResList);
+		LOG.info("获取技能点的课程列表");
 
 		// 获取技能的课程列表
 		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
@@ -135,7 +157,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		IPage<KnowledgeRes> result = knowledgeMapper.getKnowledgeListByIds(page, knowledgeIds);
 
 		List<KnowledgeRes> knowledgeResList = result.getRecords();
-		knowledgeService.checkKonwledgeRes(knowledgeResList, RoleDetailRes.RELATED_COURSE_ALL);
+		knowledgeService.checkKnowledgeRes(knowledgeResList, RoleDetailRes.RELATED_COURSE_ALL);
 
 		return PageUtil.getListResult(result);
 	}
@@ -154,7 +176,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,
 				KnowledgeRes.class);
 
-		knowledgeService.checkKonwledgeRes(knowledgeResList, type);
+		knowledgeService.checkKnowledgeRes(knowledgeResList, type);
 		List<RelatedCourse> basicCourseList = Lists.newArrayList();
 		for (KnowledgeRes knowledgeRes : knowledgeResList) {
 			basicCourseList.addAll(knowledgeRes.getCourseList());
@@ -176,36 +198,12 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	}
 
 	@Override
-	public List<CourseKnowledgeBo> getCourseKnowledges(String userId, String roleId) {
-		Role role = roleMapper.selectById(roleId);
-		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
-				String.class);
-		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
-		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
-				userId);
+	public RoleDetailRes getRoleDetailResByRoleId(String existRoleId) {
+		Role role = roleMapper.selectById(existRoleId);
+		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
+		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 
-		List<CourseInfoBo> courses = courseService.selectByIds(courseIds);
-		Map<String, CourseInfoBo> infoMap = courses.stream().collect(
-				Collectors.toMap(CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo));
-
-		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService
-				.getKnowledgeByCourseId(courseIds);
-
-		List<CourseKnowledgeBo> boList = processBos.stream().map(bo -> {
-			CourseKnowledgeBo knowledgeBo = BeanUtils.deepCopy(infoMap.get(bo.getCourseId()),
-					CourseKnowledgeBo.class);
-			knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
-			knowledgeBo.setProcess(bo.getProcess().intValue());
-			knowledgeBo.setCompleteTheory(bo.getCompleteTheory());
-			knowledgeBo.setCompleteExercise(bo.getCompleteExercise());
-			knowledgeBo.setTheoryCount(DataTransferUtils.nullToZero(bo.getTheoryCount()));
-			knowledgeBo.setExerciseCount(bo.getExerciseCount());
-			knowledgeBo.setCompleteCount(bo.getCompleteCount());
-			knowledgeBo.setLastStudyTime(bo.getLastStudyTime());
-
-			return knowledgeBo;
-		}).collect(Collectors.toList());
-		return boList;
+		return roleDetailRes;
 	}
 
 	private LevelTreeOutput getLevelTree(List<Level> levelList, String levelId) {
@@ -245,13 +243,16 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 				levelTreeOutput = getLevelTreeOutputFromLevel(level1);
 			}
 		}
+
+		LevelTreeOutput tempLevelTreeOutput = levelTreeOutput;
 		String childId = levelTreeOutput.getResourceId();
 		while (levelMap.get(childId) != null) {
 			List<LevelTreeOutput> children = Lists.newArrayList();
-			children.add(
-					getLevelTreeOutputFromLevel(levelMap.get(levelTreeOutput.getResourceId())));
-			levelTreeOutput.setChildren(children);
-			childId = levelMap.get(levelTreeOutput.getResourceId()).getResourceId();
+			LevelTreeOutput child = getLevelTreeOutputFromLevel(levelMap.get(childId));
+			children.add(child);
+			tempLevelTreeOutput.setChildren(children);
+			tempLevelTreeOutput = child;
+			childId = child.getResourceId();
 		}
 		return levelTreeOutput;
 	}

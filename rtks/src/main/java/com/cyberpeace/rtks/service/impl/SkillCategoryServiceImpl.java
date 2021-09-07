@@ -30,4 +30,5 @@ public class SkillCategoryServiceImpl extends ServiceImpl<SkillCategoryMapper, S
 
 		return PageUtil.getListResult(result);
 	}
+
 }

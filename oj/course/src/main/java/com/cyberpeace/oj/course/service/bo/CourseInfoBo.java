@@ -46,7 +46,7 @@ public class CourseInfoBo implements Serializable {
     @ApiModelProperty("课程讲师")
     private String lecturer;
 
-    @ApiModelProperty("课程成绩")
+    @ApiModelProperty("课程学分")
     private Integer score;
 
     @ApiModelProperty("课程编号")
@@ -69,5 +69,8 @@ public class CourseInfoBo implements Serializable {
 
     @ApiModelProperty("建议学习时长")
     private Integer suggestDuration;
+
+    @ApiModelProperty("是否收藏")
+    private Boolean isCollection;
 
 }

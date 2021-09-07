@@ -15,4 +15,7 @@ public interface SkillSystemMapper extends BaseMapper<SkillSystem> {
 
 	IPage<SkillSystem> listSkillSystem(Page page, @Param("pattern") String pattern);
 
+	void updateSceneSkillSystem(String skillSystemId, Integer sceneId);
+
+	void updateDefaultSceneSkillSystem();
 }

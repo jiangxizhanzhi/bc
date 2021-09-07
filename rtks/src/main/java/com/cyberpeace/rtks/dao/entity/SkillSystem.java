@@ -18,4 +18,7 @@ public class SkillSystem extends BaseTable {
 	private String resourceId;
 
 	private String content;
+
+	private Integer sceneId = 0;
+
 }

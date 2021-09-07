@@ -31,6 +31,8 @@ public class HttpClientUtil {
 
 	private static List<Header> defaultHeaders;
 
+	private static final String SUCCESS_POSTFIX = "-000000";
+
 	/**
 	 * 所有参数都放在url中都get方法
 	 *
@@ -107,6 +109,10 @@ public class HttpClientUtil {
 		try {
 			BaseRsp baseRsp = JSON.parseObject(httpResponse, BaseRsp.class);
 
+			if (!isSuccess(baseRsp)) {
+				LOG.error("url=[{}], result=[{}] error, f");
+			}
+
 			String realData = baseRsp.getData().toString();
 			result = JSON.parseObject(realData, resultType);
 
@@ -159,5 +165,14 @@ public class HttpClientUtil {
 		HttpClientUtil.defaultHeaders = defaultHeader;
 
 		return defaultHeader;
+	}
+
+	/**
+	 * 判断请求码
+	 * @param baseRsp
+	 * @return
+	 */
+	private static boolean isSuccess(BaseRsp baseRsp) {
+		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
 	}
 }

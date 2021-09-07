@@ -20,7 +20,13 @@
     <modules>
         <module>course</module>
         <module>practice</module>
+        <module>note_comment</module>
     </modules>
+
+    <properties>
+        <integration.version>0.0.1-SNAPSHOT</integration.version>
+        <common.version>0.0.1-SNAPSHOT</common.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -41,8 +47,13 @@
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${common.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace</groupId>
+            <artifactId>integration</artifactId>
+            <version>${integration.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

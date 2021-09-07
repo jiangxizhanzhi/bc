@@ -1,10 +1,11 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,15 +16,13 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
-import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
+import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillRes;
+import com.cyberpeace.rtks.controller.res.SkillTreeRes;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +34,8 @@ import io.swagger.annotations.ApiParam;
 @RequiresAuthentication
 public class TrainingPlanController {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
+
 	@Autowired
 	private TrainingPlanService trainingPlanService;
 
@@ -44,12 +45,21 @@ public class TrainingPlanController {
 	@Autowired
 	private FrameController frameController;
 
-	@ApiOperation("知识技能体系")
-	@GetMapping("/ability")
-	public BaseRsp<Map<String, List<SkillRes>>> skill() {
-		Map<String, List<SkillRes>> result = trainingPlanService.getSkillTree();
+	@ApiOperation("技能体系")
+	@GetMapping("/skillTree")
+	public BaseRsp<List<SkillTreeRes>> skillTree() {
 
-		return new BaseRsp<>(result);
+		List<SkillTreeRes> skillTreeRes = trainingPlanService.getSkillTree();
+
+		return new BaseRsp<>(skillTreeRes);
+	}
+
+	@ApiOperation("知识体系")
+	@GetMapping("/knowledgeTree")
+	public BaseRsp<List<KnowledgeTreeRes>> knowledgeTree() {
+		List<KnowledgeTreeRes> knowledgeTreeRes = trainingPlanService.getKnowledgeTree();
+
+		return new BaseRsp<>(knowledgeTreeRes);
 	}
 
 	@ApiOperation("职业框架管理")
@@ -63,53 +73,8 @@ public class TrainingPlanController {
 		return new BaseRsp<>(frame);
 	}
 
-	@ApiOperation("课程训练-职业课程课程学习进度")
-	@GetMapping("/course/knowledge")
-	public BaseRsp<OccupationCourseRes> courseKnowledge() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String roleId = UserInfoContext.getUserContext().getRoleId();
-		List<CourseKnowledgeBo> courseKnowledges = trainingPlanService.getCourseKnowledges(userId,
-				roleId);
-		return new BaseRsp<>(calculatePercent(courseKnowledges));
-	}
-
-	/**
-	 * 计算进度
-	 * @param courseKnowledges
-	 * @return
-	 */
-	private OccupationCourseRes calculatePercent(List<CourseKnowledgeBo> courseKnowledges) {
-
-		OccupationCourseRes courseRes = new OccupationCourseRes();
-		// 计算理论课时进度
-		int theoryCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getTheoryCount)
-				.sum();
-		int completeTheory = courseKnowledges.stream()
-				.mapToInt(CourseKnowledgeBo::getCompleteTheory).sum();
-		courseRes.setTheoryPercent(MathUtils.ceilDivide(Double.valueOf(completeTheory * 100),
-				Double.valueOf(theoryCount)));
-
-		// 计算实验课时进度
-		int exerciseCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getExerciseCount)
-				.sum();
-		int completeExercise = courseKnowledges.stream()
-				.mapToInt(CourseKnowledgeBo::getCompleteExercise).sum();
-		courseRes.setExercisePercent(MathUtils.ceilDivide(Double.valueOf(completeExercise * 100),
-				Double.valueOf(exerciseCount)));
-
-		// 计算总进度
-		int count = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getLessonCount).sum();
-		int completeCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteCount)
-				.sum();
-		courseRes.setCoursePercent(
-				MathUtils.ceilDivide(Double.valueOf(completeCount * 100), Double.valueOf(count)));
-
-		courseRes.setKnowledgeBos(courseKnowledges);
-		return courseRes;
-	}
-
 	@ApiOperation("学习路径")
-	@GetMapping("/learning-path ")
+	@GetMapping("/learning-path")
 	public BaseRsp<RoleDetailRes> learningPath(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
 		RoleDetailRes roleOutput = trainingPlanService.getLearningPathTree(resource_id,
@@ -148,14 +113,35 @@ public class TrainingPlanController {
 	@GetMapping("/getRelatedCourseList")
 	public BaseRsp<RoleDetailRes> getRelatedCourseList() {// @ApiParam(name = "course_type", value =
 															// "查询课程类型(skill/knowledge)", required =
-															// true) String course_type
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
+
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
+
 			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
 					UserInfoContext.getUserContext().getUserId());
+
+			data.setPercent(percent);
+			rsp.setData(data);
+		}
+
+		return rsp;
+	}
+
+	@ApiOperation("查询个人能力评估")
+	@GetMapping("/getRoleDetailRes")
+	public BaseRsp<RoleDetailRes> getRoleDetailRes() {// @ApiParam(name = "course_type", value =
+		// "查询课程类型(skill/knowledge)", required =
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(existRoleId)) {
+			RoleDetailRes data = trainingPlanService.getRoleDetailResByRoleId(existRoleId);
+
+			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
+					UserInfoContext.getUserContext().getUserId());
+
 			data.setPercent(percent);
 			rsp.setData(data);
 		}

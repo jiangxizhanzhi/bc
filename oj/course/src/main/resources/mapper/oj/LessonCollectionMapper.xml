@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.course.dao.mapper.LessonCollectionMapper">
+
+    <resultMap id="baseMap" type="com.cyberpeace.oj.course.dao.entity.LessonCollection"/>
+
+    <select id="selectByUserAndLesson" resultMap="baseMap">
+        select * from course_lessoncollection
+        where `user` = #{userId} and lesson = #{lessonId}
+    </select>
+
+    <update id="update" parameterType="com.cyberpeace.oj.course.dao.entity.LessonCollection">
+        update course_lessoncollection
+        set update_time = now()
+        <if test="null != lessonCollection.isCollection">
+            ,is_collection = #{lessonCollection.isCollection}
+        </if>
+        <where>
+            and `user` = #{lessonCollection.user}
+            and lesson = #{lessonCollection.lesson}
+        </where>
+    </update>
+
+</mapper>

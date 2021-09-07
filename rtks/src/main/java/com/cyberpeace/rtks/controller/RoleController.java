@@ -17,13 +17,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.suit.BaseListController;
+import com.cyberpeace.common.suit.ListReq;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
-import com.cyberpeace.rtks.controller.req.ListReq;
 import com.cyberpeace.rtks.controller.role.*;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.service.*;
@@ -98,8 +99,13 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 	private CourseService courseService;
 
 	@Override
-	RoleService getService() {
+	protected RoleService getService() {
 		return roleService;
+	}
+
+	@Override
+	protected Role getOr404(String resourceId) {
+		return roleService.getOr404(resourceId);
 	}
 
 	@ApiOperation("获取课程列表")
@@ -210,12 +216,12 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 	}
 
 	@Override
-	Role getEntityFromAddInput(RoleAddInput roleAddInput) {
+	protected Role getEntityFromAddInput(RoleAddInput roleAddInput) {
 		return getRoleFromInput(roleAddInput, null);
 	}
 
 	@Override
-	Role getEntityFromModifyInput(RoleModifyInput roleModifyInput, Role originEntity) {
+	protected Role getEntityFromModifyInput(RoleModifyInput roleModifyInput, Role originEntity) {
 		Role role = getRoleFromInput(roleModifyInput, originEntity);
 		role.setResourceId(roleModifyInput.getResourceId());
 		return role;
@@ -303,12 +309,12 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 	}
 
 	@Override
-	RoleOutput getListOutputFromEntity(Role role) {
+	protected RoleOutput getListOutputFromEntity(Role role) {
 		return outputFromRole(role, new RoleOutput());
 	}
 
 	@Override
-	IPage<Role> getPage(RoleListReq<Role> listReq) {
+	protected IPage<Role> getPage(RoleListReq<Role> listReq) {
 		return roleService.listRoles(listReq.toPageParam(), listReq.getKeyword(),
 				listReq.getFrameId());
 	}

@@ -66,15 +66,21 @@
                rtks_skill.resource_id,
                rtks_skill.system_id,
                rtks_skill.category_id,
-               rtks_skill.content,
-               rtks_skill.courses,
-               rtks_skill.weight,
-               rtks_skill.create_time,
-               rtks_skill.update_time,
-               rtks_skill_category.content category,
-               rtks_skill_system.content   system
+        rtks_skill.content,
+        rtks_skill.courses,
+        rtks_skill.weight,
+        rtks_skill.create_time,
+        rtks_skill.update_time,
+        rtks_skill_category.content category,
+        rtks_skill_system.content system
         from rtks_skill
-                 left join rtks_skill_category on rtks_skill.category_id = rtks_skill_category.resource_id
-                 left join rtks_skill_system on rtks_skill.system_id = rtks_skill_system.resource_id
+        left join rtks_skill_category on rtks_skill.category_id = rtks_skill_category.resource_id
+        left join rtks_skill_system on rtks_skill.system_id = rtks_skill_system.resource_id
+        <if test="scene_category != null and scene_category != ''">
+            <where>
+                rtks_skill_system.scene_id = #{scene_category}
+            </where>
+        </if>
+
     </select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.cyberpeace.rtks.controller;
 
+import com.cyberpeace.rtks.controller.req.UserRoleAddReq;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "RTKS-用户绑定岗位以及相关api")
 @RestController
 @RequestMapping("/relate/user")
+@RequiresAuthentication
 public class UserRelateController {
 
 	@Autowired
@@ -23,11 +26,11 @@ public class UserRelateController {
 	@ApiOperation("用户新增或修改岗位")
 	@PostMapping("/role")
 	public BaseRsp<UserRole>
-			relateUser(@ApiParam(name = "role_id") @RequestParam("role_id") String roleId) {
+			relateUser(@ApiParam(name = "req", value = "岗位信息") @RequestBody UserRoleAddReq req) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String userName = UserInfoContext.getUserContext().getUserName();
-		UserRole userRole = userRelateService.roleRelateUser(roleId, userId, userName);
+		UserRole userRole = userRelateService.roleRelateUser(req.getRoleId(), userId, userName);
 		BaseRsp<UserRole> rsp = new BaseRsp<>();
 		rsp.setData(userRole);
 		return rsp;
@@ -36,7 +39,8 @@ public class UserRelateController {
 	@ApiOperation("查询用户和岗位信息")
 	@GetMapping("/role/info")
 	public BaseRsp<UserRole> getUserAndRoleInfo() {
-		UserRole userRole = userRelateService.getUserRoleInfo(UserInfoContext.getUserContext().getUserId());
+		UserRole userRole = userRelateService
+				.getUserRoleInfo(UserInfoContext.getUserContext().getUserId());
 		BaseRsp<UserRole> rsp = new BaseRsp<>();
 		rsp.setData(userRole);
 		return rsp;

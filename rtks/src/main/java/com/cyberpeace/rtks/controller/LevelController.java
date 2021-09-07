@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.suit.BaseController;
 import com.cyberpeace.rtks.controller.frame.LevelAddInput;
 import com.cyberpeace.rtks.controller.frame.LevelInput;
 import com.cyberpeace.rtks.controller.frame.LevelModifyInput;
@@ -36,17 +37,23 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 	private RoleService roleService;
 
 	@Override
-	LevelService getService() {
+	protected LevelService getService() {
 		return levelService;
 	}
 
 	@Override
-	Level getEntityFromAddInput(LevelAddInput levelAddInput) {
+	protected Level getOr404(String resourceId) {
+		return levelService.getOr404(resourceId);
+	}
+
+	@Override
+	protected Level getEntityFromAddInput(LevelAddInput levelAddInput) {
 		return getLevelFromInput(levelAddInput, null);
 	}
 
 	@Override
-	Level getEntityFromModifyInput(LevelModifyInput levelModifyInput, Level originEntity) {
+	protected Level getEntityFromModifyInput(LevelModifyInput levelModifyInput,
+			Level originEntity) {
 		Level level = getLevelFromInput(levelModifyInput, originEntity);
 		level.setResourceId(levelModifyInput.getResourceId());
 		return level;
@@ -85,7 +92,7 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 	}
 
 	@Override
-	LevelOutput getOutputFromEntity(Level level) {
+	protected LevelOutput getOutputFromEntity(Level level) {
 		LevelOutput output = new LevelOutput();
 
 		output.setResourceId(level.getResourceId());

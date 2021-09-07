@@ -5,17 +5,20 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.oj.course.dao.context.AuthContext;
+import com.cyberpeace.oj.course.dao.context.CourseContext;
+import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.course.controller.req.CollectionReq;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.res.DirectionOutPut;
 import com.cyberpeace.oj.course.dao.entity.CourseDirection;
@@ -27,7 +30,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "实训-课程相关")
+@Api(tags = "oj-课程相关")
 @RestController
 @RequestMapping("/oj/course")
 @RequiresAuthentication
@@ -39,21 +42,32 @@ public class CourseController {
 	@Autowired
 	private DirectionMapper directionMapper;
 
+	@Autowired
+	private CourseAuthConstructService courseAuthConstructService;
+
 	@GetMapping()
 	@ApiOperation("单条查询")
 	public BaseRsp<CourseInfoBo> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
-		CourseInfoBo course = courseService.selectById(resourceId);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CourseInfoBo course = courseService.selectById(resourceId, userId);
 		BaseRsp rsp = new BaseRsp(course);
 		return rsp;
 	}
 
 	@GetMapping("/list")
-	@ApiOperation("分页查询课程信息")
+	@ApiOperation("分页查询全部课程信息")
 	public BaseRsp<List<CourseInfoBo>>
 			getList(@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
 
-		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(listReq);
+		// 组装筛选条件
+		CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
+		context.isWeb();
+		Page page = listReq.toPageParam();
+		AuthContext authContext = courseAuthConstructService.webCourseConstruct(UserInfoContext.getUserContext());
+
+		// 数据查询
+		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(page, context, authContext);
 		BaseRsp rsp = new BaseRsp(courseInfos);
 		return rsp;
 	}
@@ -62,13 +76,32 @@ public class CourseController {
 	@ApiOperation("课程分类")
 	public BaseRsp<List<CourseDirection>> listDirection() {
 		List<CourseDirection> courseDirections = directionMapper.selectList(null);
+
 		List<DirectionOutPut> outPuts = courseDirections.stream().map(courseDirection -> {
-			DirectionOutPut outPut = new DirectionOutPut();
-			BeanUtils.copyProperties(courseDirection, outPut);
+			DirectionOutPut outPut = BeanUtils.copy(courseDirection, DirectionOutPut.class);
 			return outPut;
 		}).collect(Collectors.toList());
+
 		BaseRsp rsp = new BaseRsp(outPuts);
 		return rsp;
+	}
+
+	@ApiOperation("课程收藏")
+	@PostMapping("/collect")
+	public BaseRsp<String> courseCollection(@RequestBody CollectionReq req) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		String courseId = courseService.collectCourse(userId, req.getResource(), req.getIsCollection());
+		return new BaseRsp<>(courseId);
+	}
+
+
+	@ApiOperation("前台课程列表查询")
+	@GetMapping("/web/list")
+	public BaseRsp<List<CourseInfoBo>> getWebCourse() {
+
+		return null;
 	}
 
 }

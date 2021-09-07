@@ -2,8 +2,6 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.controller.req.AbilityAddReq;
-import com.cyberpeace.rtks.controller.req.SkillCategoryOrSystemAddReq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.rtks.controller.req.AbilityAddReq;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
+import com.cyberpeace.rtks.controller.req.SkillCategoryOrSystemAddReq;
 import com.cyberpeace.rtks.dao.entity.SkillSystem;
 import com.cyberpeace.rtks.service.SkillSystemService;
+import com.cyberpeace.rtks.service.bo.SceneSkillSystem;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -77,4 +78,15 @@ public class SkillSystemController {
 
 		return new BaseRsp(data);
 	}
+
+	@ApiOperation("新增场景技能体系")
+	@PostMapping("/addSceneSkillSystem")
+	public BaseRsp<String> addSceneSkillSystem(
+			@RequestBody @Validated SceneSkillSystem sceneSkillSystemAddReq) {
+
+		skillSystemService.updateSceneSkillSystem(sceneSkillSystemAddReq);
+
+		return new BaseRsp<>();
+	}
+
 }

@@ -15,11 +15,22 @@
     <name>course</name>
     <description>课程</description>
 
+    <properties>
+        <note_comment.version>0.0.1-SNAPSHOT</note_comment.version>
+        <practice.version>0.0.1-SNAPSHOT</practice.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>practice</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${practice.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.oj</groupId>
+            <artifactId>note_comment</artifactId>
+            <version>${note_comment.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

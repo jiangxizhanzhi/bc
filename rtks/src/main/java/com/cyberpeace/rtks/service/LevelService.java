@@ -2,9 +2,10 @@ package com.cyberpeace.rtks.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.rtks.dao.entity.Level;
 
-public interface LevelService extends BaseService<Level> {
+public interface LevelService extends IService<Level> {
 
 	/**
 	 * 给定层级id获取该层级的子层级列表
@@ -47,4 +48,6 @@ public interface LevelService extends BaseService<Level> {
 	 * @param target 新levelId
 	 * */
 	void changeLevelId(String levelId, String target);
+
+	Level getOr404(String resourceId);
 }

@@ -22,12 +22,15 @@ public class FileUtil {
 
 	public static String textFromFile(String filePath) {
 		File file = new File(filePath);
+		return textFromFile(file);
+	}
 
+	public static String textFromFile(File file) {
 		BufferedReader input;
 		try {
 			input = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
-			throw new RuntimeException("File " + filePath + " not found");
+			throw new RuntimeException("File not found");
 		}
 
 		StringBuilder stringBuilder = new StringBuilder();
@@ -37,7 +40,7 @@ public class FileUtil {
 			try {
 				text = input.readLine();
 			} catch (IOException e) {
-				throw new RuntimeException("IOException while reading " + filePath);
+				throw new RuntimeException(e);
 			}
 
 			if (text == null) {
@@ -50,14 +53,18 @@ public class FileUtil {
 		return stringBuilder.toString();
 	}
 
-	public static void textToFile(String path, String text) {
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(path));
-			out.write(text);
-			out.close();
-		} catch (IOException e) {
-			throw new RuntimeException("Fail to write file " + path);
-		}
+	public static void textToFile(String path, String text) throws IOException {
+		textToFile(new FileWriter(path), text);
+	}
+
+	public static void textToFile(File file, String text) throws IOException {
+		textToFile(new FileWriter(file), text);
+	}
+
+	public static void textToFile(FileWriter fileWriter, String text) throws IOException {
+		BufferedWriter out = new BufferedWriter(fileWriter);
+		out.write(text);
+		out.close();
 	}
 
 	public static File mkdirs(String path) {

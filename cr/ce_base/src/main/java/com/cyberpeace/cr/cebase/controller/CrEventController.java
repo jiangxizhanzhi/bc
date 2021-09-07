@@ -1,10 +1,8 @@
 package com.cyberpeace.cr.cebase.controller;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.FileTree;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SpringContextUtil;
@@ -32,24 +31,24 @@ import lombok.Data;
 @RequestMapping("/cr/ce_base")
 public class CrEventController {
 
+	private final String INDEX_DATA_JSON_FILE = "data.json";
+
 	@Autowired
 	private CrEventService crEventService;
 
 	@PostMapping("/load")
 	public BaseRsp<String> load(@RequestParam("file") @NotNull MultipartFile file) {
-		String tempPath = getTempPath();
+		FileTree fileTree = new FileTree();
 
 		try {
-			uploadedFileToPath(tempPath, file);
+			fileTree.inputFromStream(file.getInputStream());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
-		IndexData indexData = readIndexData(tempPath);
+		IndexData indexData = readIndexData(fileTree);
 
 		loadData(indexData);
-
-		clearPath(tempPath);
 
 		return new BaseRsp<>();
 	}
@@ -58,28 +57,28 @@ public class CrEventController {
 	public void dump(IdsInput input, HttpServletResponse response) {
 		List<String> ids = input.getIds();
 
-		String tempPath = getTempPath();
+		FileTree fileTree = new FileTree();
 
 		IndexData indexData = dumpData(ids);
 
-		writeIndexData(tempPath, indexData);
+		writeIndexData(fileTree, indexData);
 
+		response.setContentType("application/x-msdownload;charset=UTF-8");
+		response.setHeader("Content-disposition", "attachment;filename=dump.zip");
 		try {
-			pathToDownloadFile(tempPath, response);
+			fileTree.outputToStream(response.getOutputStream());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-
-		clearPath(tempPath);
 
 	}
 
 	/**
 	 * 读取data.json文件
 	 * */
-	private IndexData readIndexData(String filePath) {
-		String path = filePath + File.separator + Constant.INDEX_DATA_JSON_FILE;
-		String text = FileUtil.textFromFile(path);
+	private IndexData readIndexData(FileTree fileTree) {
+		File file = fileTree.getFileByName(INDEX_DATA_JSON_FILE);
+		String text = FileUtil.textFromFile(file);
 		IndexData indexData = JsonUtil.toJsonObject(text, IndexData.class);
 		if (indexData == null) {
 			throw new RuntimeException("Fail to read data.json");
@@ -90,10 +89,17 @@ public class CrEventController {
 	/**
 	 * 写入data.json文件
 	 * */
-	private void writeIndexData(String filePath, IndexData indexData) {
-		String path = filePath + File.separator + Constant.INDEX_DATA_JSON_FILE;
+	private void writeIndexData(FileTree fileTree, IndexData indexData) {
 		String text = JsonUtil.toJsonString(indexData);
-		FileUtil.textToFile(path, text);
+
+		File file = fileTree.addFile(INDEX_DATA_JSON_FILE);
+
+		try {
+			FileUtil.textToFile(file, text);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	/**
@@ -180,126 +186,6 @@ public class CrEventController {
 		return new CollectorImpl();
 	}
 
-	/**
-	 * 创建一个临时文件夹 返回其路径
-	 * */
-	private String getTempPath() {
-		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-		String path = "/tmp/cr/resource/" + uuid;
-
-		File file = new File(path);
-
-		boolean created = file.mkdirs();
-		if (!created) {
-			throw new RuntimeException("Fail to generate temp path " + path);
-		}
-
-		return path;
-	}
-
-	/**
-	 * 删除临时文件夹
-	 * */
-	private void clearPath(String path) {
-		File file = new File(path);
-		boolean deleted = file.delete();
-		if (!deleted) {
-			throw new RuntimeException("Fail to remove temp path " + path);
-		}
-	}
-
-	/**
-	 * 获取接口请求中的zip文件 解压到指定目录
-	 * */
-	private void uploadedFileToPath(String path, @NotNull MultipartFile file) throws IOException {
-		InputStream inputStream = file.getInputStream();
-		ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-
-		while (true) {
-			ZipEntry entry = zipInputStream.getNextEntry();
-			if (entry == null) {
-				break;
-			}
-
-			String fileName = path + File.separator + entry.getName();
-			File outFile = new File(fileName);
-
-			if (fileName.endsWith("/")) {
-
-				outFile.mkdirs();
-
-			} else {
-
-				File parent = outFile.getParentFile();
-				if (!parent.exists()) {
-					parent.mkdirs();
-				}
-
-				boolean created = outFile.createNewFile();
-				if (!created) {
-					throw new RuntimeException("Fail to create file: " + fileName);
-				}
-
-				OutputStream output = new FileOutputStream(outFile);
-				for (int i = 0; i < entry.getSize(); i++) {
-					output.write(zipInputStream.read());
-				}
-				output.close();
-			}
-		}
-	}
-
-	/**
-	 * 把指定目录中的文件压缩到zip文件
-	 * */
-	private void pathToDownloadFile(String path, HttpServletResponse response) throws IOException {
-		response.setContentType("application/x-msdownload;charset=UTF-8");
-		response.setHeader("Content-disposition", "attachment;filename=dump.zip");
-
-		ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
-		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(zipOutputStream);
-		File file = new File(path);
-		String base = file.getName();
-
-		compress(zipOutputStream, bufferedOutputStream, file, base);
-		bufferedOutputStream.close();
-		zipOutputStream.close();
-	}
-
-	private void compress(ZipOutputStream zos, BufferedOutputStream bos, File file, String base)
-			throws IOException {
-		if (file.isDirectory()) {
-			File[] children = file.listFiles();
-			assert children != null;
-			if (children.length == 0) {
-				// 如果文件夹为空，则只需在目的地zip文件中写入一个目录进入点
-				zos.putNextEntry(new ZipEntry(base + File.separator));
-			} else {
-				// 如果文件夹不为空，则递归调用compress，文件夹中的每一个文件（或文件夹）进行压缩
-				for (File child : children) {
-					compress(zos, bos, child, base + File.separator + child.getName());
-				}
-			}
-		} else {
-			// 如果不是文件夹，即为文件，则先写入目录进入点，之后将文件写入zip文件中
-			zos.putNextEntry(new ZipEntry(base));
-
-			FileInputStream fos = new FileInputStream(file);
-			BufferedInputStream bis = new BufferedInputStream(fos);
-
-			while (true) {
-				int tag = bis.read();
-				if (tag == -1) {
-					break;
-				}
-				bos.write(tag);
-			}
-
-			bis.close();
-			fos.close();
-		}
-	}
-
 }
 
 @Data
@@ -318,9 +204,4 @@ class IndexData {
 	private Map<String, List<Representation>> data;
 
 	private String file;
-}
-
-interface Constant {
-
-	String INDEX_DATA_JSON_FILE = "data.json";
 }

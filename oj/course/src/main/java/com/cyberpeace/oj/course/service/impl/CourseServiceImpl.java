@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.oj.course.dao.entity.CourseCollection;
 import com.cyberpeace.oj.course.dao.mapper.CourseCollectionMapper;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +55,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		}
 		CourseInfoBo courseInfoBo = courseToBo(course);
 		// 设置是否收藏
-		CourseCollection collection = courseCollectionMapper.selectByUserAndCourse(userId, courseId);
+		CourseCollection collection = courseCollectionMapper.selectByUserAndCourse(userId,
+				courseId);
 		courseInfoBo.setIsCollection(null != collection && collection.getIsCollection());
 		return courseInfoBo;
 	}
@@ -85,12 +88,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				courseLesson -> courseLesson.getType().intValue() == CourseLesson.TYPE_THEORY)
 				.collect(Collectors.toList());
 		courseInfoBo.setTheoryCount(theoryCount.size());
-		courseInfoBo.setExerciseCount(courseInfoBo.getLessonCount() - courseInfoBo.getTheoryCount());
+		courseInfoBo
+				.setExerciseCount(courseInfoBo.getLessonCount() - courseInfoBo.getTheoryCount());
 		return courseInfoBo;
 	}
 
 	@Override
 	public List<CourseInfoBo> selectByIds(List<String> ids) {
+		if (CollectionUtils.isEmpty(ids)) {
+			return Lists.newArrayList();
+		}
 		List<Course> courses = courseMapper.selectBatchIds(ids);
 		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course))
 				.collect(Collectors.toList());
@@ -109,6 +116,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Override
 	public List<String> idsByNotDeleteIds(List<String> courseIds) {
+		if (CollectionUtils.isEmpty(courseIds)) {
+			return Lists.newArrayList();
+		}
 		List<String> ids = courseMapper.notDeleteIdsByIds(courseIds);
 		return ids;
 	}

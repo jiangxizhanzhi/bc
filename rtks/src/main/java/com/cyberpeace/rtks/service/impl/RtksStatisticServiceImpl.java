@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.skill.OutSkillScore;
-import com.cyberpeace.integratation.service.OutSkillService;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -51,13 +52,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private SkillCategoryMapper skillCategoryMapper;
 
 	@Autowired
-	private OutSkillService outSkillService;
-
-	@Autowired
 	private CourseLessonService courseLessonService;
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
+
+	@Autowired
+	private MissionSkillEvaluationMapper missionSkillEvaluationMapper;
 
 	/**
 	 * 角色评分中技能所占百分比
@@ -219,8 +220,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param <T>
 	 * @return
 	 */
-	private <T extends SkillAndKnowledgeBase> RoleStudyBo
-			calculateStudy(List<String> skillOrKnowledgeIds, String userId, BaseMapper<T> baseMapper) {
+	private <T extends SkillAndKnowledgeBase> RoleStudyBo calculateStudy(
+			List<String> skillOrKnowledgeIds, String userId, BaseMapper<T> baseMapper) {
 
 		// 1、获取课程学习进度
 		List<CourseStudyProcessBo> processBoList = skillOrKnowledgeIds.stream().map(skllId -> {
@@ -254,7 +255,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<SkillCategory> categories = skillCategoryMapper.selectBatchIds(categoryIds);
 
 		// 获取技能得分情况 转化为map
-		List<OutSkillScore> scores = outSkillService.getUserSkillScore(userId, skillIds);
+		List<OutSkillScore> scores = getSkillScore(userId, skillIds);
 		Map<String, String> scoreMap = scores.stream()
 				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
 
@@ -412,7 +413,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
 		// 2、计算每个技能点的得分
 		// 连接靶场数据库，没有数据点技能点算0分
-		List<OutSkillScore> skillScore = outSkillService.getUserSkillScore(userId, skillIds);
+		List<OutSkillScore> skillScore = getSkillScore(userId, skillIds);
 		Map<String, String> scoreMap = skillScore.stream()
 				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
 
@@ -423,6 +424,39 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		// 3、2中的数据根据每个技能点的权重加权平均
 		return result.intValue();
+	}
+
+	/**
+	 * 查询技能技能点得分
+	 * @param userId
+	 * @param skillIds
+	 * @return
+	 */
+	private List<OutSkillScore> getSkillScore(String userId, List<String> skillIds) {
+		// 查询技能点得分 为空则为零分
+		List<MissionSkillEvaluation> skillScores = skillIds.stream().map(skillId -> {
+			MissionSkillEvaluation skillEvaluation = missionSkillEvaluationMapper
+					.selectLastOne(userId, skillId);
+
+			// 设置零分返回
+			if (null == skillEvaluation) {
+				skillEvaluation = new MissionSkillEvaluation();
+				skillEvaluation.setSkill(skillId);
+				skillEvaluation.setScore(0);
+			}
+			return skillEvaluation;
+		}).collect(Collectors.toList());
+
+		// 数据类型转换
+		List<OutSkillScore> scores = skillScores.stream().map(missionSkillEvaluation -> {
+			OutSkillScore skillScore = new OutSkillScore();
+			skillScore.setScore(
+					DataTransferUtils.nullToZero(missionSkillEvaluation.getScore()).toString());
+			skillScore.setSkillId(missionSkillEvaluation.getSkill());
+			return skillScore;
+		}).collect(Collectors.toList());
+
+		return scores;
 	}
 
 	/**
@@ -490,8 +524,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param userId 用户编号
 	 * @return
 	 */
-	private <T extends SkillAndKnowledgeBase> Integer calculateFinishPercent(List<T> knowledges, String userId,
-			boolean useWeight) {
+	private <T extends SkillAndKnowledgeBase> Integer calculateFinishPercent(List<T> knowledges,
+			String userId, boolean useWeight) {
 
 		// 1、统计所有知识点的进度和权重
 		List<ValueDataBo> knowledgeScores = knowledges.stream()

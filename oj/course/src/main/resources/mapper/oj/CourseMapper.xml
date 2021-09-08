@@ -23,6 +23,9 @@
                     and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
                 </when>
                 <otherwise>
+                    <if test="authContext.likeUser != null and authContext.likeUser != ''">
+                        <bind name="authContext.likeUser" value="'%' + authContext.likeUser + '%'"/>
+                    </if>
                     (create_user = #{authContext.userId} or (share_teachers like #{authContext.likeUser}
                     and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
                 </otherwise>
@@ -50,20 +53,42 @@
             and `name` like #{courseContext.pattern}
         </if>
         <if test="null != courseContext.isPublic">
-            and public = #{courseContext.isPublic}
+            and `public` = #{courseContext.isPublic}
         </if>
-        <if test="courseContext.myCourse">
-            and create_user = #{courseContext.userId}
-        </if>
-        <if test="courseContext.systemCourse">
-            and builtin = #{courseContext.systemCourse}
-        </if>
-        <if test="courseContext.shareCourse">
-            <include refid="share_constant"/>
-            <bind name="courseContext.likeUser" value="'%' + courseContext.userId + '%'"/>
-            and (share = ${ALL_SHARE_MODE} or (share = ${CUSTOM_SHARE_MODE} and share_teachers like
-            #{courseContext.likeUser}))
-        </if>
+        <choose>
+            <when test="courseContext.myCourse and courseContext.systemCourse and courseContext.shareCourse">
+                # 不进行条件过滤
+            </when>
+            <otherwise>
+                <if test="null != courseContext.myCourse">
+                    <choose>
+                        <when test="courseContext.myCourse">
+                            and create_user = #{courseContext.userId}
+                        </when>
+                        <otherwise>
+                            and create_user != #{courseContext.userId}
+                        </otherwise>
+                    </choose>
+                </if>
+                <if test="null != courseContext.systemCourse">
+                    and builtin = #{courseContext.systemCourse}
+                </if>
+                <if test="null != courseContext.shareCourse">
+                    <include refid="share_constant"/>
+                    <bind name="courseContext.likeUser" value="'%' + courseContext.userId + '%'"/>
+                    <choose>
+                        <when test="courseContext.shareCourse">
+                            and (share = ${ALL_SHARE_MODE} or (share = ${CUSTOM_SHARE_MODE} and share_teachers like
+                            #{courseContext.likeUser}))
+                        </when>
+                        <otherwise>
+                            and (share = ${CUSTOM_SHARE_MODE} and share_teachers not like
+                            #{courseContext.likeUser})
+                        </otherwise>
+                    </choose>
+                </if>
+            </otherwise>
+        </choose>
     </sql>
 
     <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">

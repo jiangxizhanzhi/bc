@@ -31,7 +31,6 @@ public class CourseAuthConstructServiceImpl implements CourseAuthConstructServic
         AuthContext authContext = new AuthContext();
         authContext.setOrganization(userInfo.getOrganizationId());
         authContext.setUserId(userInfo.getUserId());
-        authContext.setLikeUser("%" + userInfo.getUserId() + "%");
         authContext.setIsWeb(false);
         return authContext;
     }

@@ -1,7 +1,7 @@
 package com.cyberpeace.cr.tool.service.impl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.DateUtil;
-import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
@@ -15,7 +15,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,9 +48,15 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	@Override
 	public void importResource(String path) {
 		// 兼容目录和单个压缩包
-		if (path.endsWith(".zip")) {
-			path = unZipToTmpPath(path);
+		try{
+			if (path.endsWith(".zip")) {
+				path = ZipUtil.unZipToTmpPath(path);
+			}
+		} catch (ZipException e) {
+			log.error("解压失败：{}", path);
+			throw new BusinessException(CrBusinessErrorCode.ZIP_PATH_NOT_EXTRA);
 		}
+
 		List<Tool> tools = Lists.newArrayList();
 
 		File file = new File(path);
@@ -77,8 +81,6 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		toolService.saveBatch(tools);
 	}
 
-
-
 	/**
 	 * 将markdown中数据导成tool数据
 	 * @param toolDir 单个tool所在目录
@@ -100,29 +102,6 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		}
 
 		return tool;
-	}
-
-	public static String generatePath() {
-		String tmpPath;
-		if (System.getProperty("os.name").toLowerCase().contains("win")) {
-			tmpPath = "/C:/test/";
-		} else {
-			tmpPath = "/tmp/";
-		}
-		File file = FileUtil.mkdirs(tmpPath + UUID.randomUUID());
-		return file.getPath();
-	}
-
-	public static String unZipToTmpPath(String zipPath) {
-		try {
-			ZipFile zipFile = new ZipFile(zipPath);
-			String tmpPath = generatePath();
-			zipFile.extractAll(tmpPath);
-			return tmpPath;
-		} catch (ZipException e) {
-			log.error("解压失败：{}", zipPath);
-			throw new BusinessException(CrBusinessErrorCode.ZIP_PATH_NOT_EXTRA);
-		}
 	}
 
 	/**

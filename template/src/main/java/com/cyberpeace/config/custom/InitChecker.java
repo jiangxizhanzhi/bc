@@ -20,9 +20,29 @@ public class InitChecker {
 
 	@PostConstruct
 	public void checkList() {
-		// 1、校验中台配置
 		checkMp();
+
+		checkCr();
+
+		checkOj();
+
+		checkRtks();
 	}
+
+	/**
+	 * 靶场启动项检查
+	 */
+	private void checkCr() {}
+
+	/**
+	 * 实训启动项检查
+	 */
+	private void checkOj() {}
+
+	/**
+	 * rtks启动项检查
+	 */
+	private void checkRtks() {}
 
 	/**
 	 * 检查中台配置

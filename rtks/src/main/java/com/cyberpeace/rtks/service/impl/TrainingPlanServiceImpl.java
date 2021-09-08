@@ -58,16 +58,19 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	public void parseTreeNode(LevelTreeOutput frame,
 			Map<String, List<RoleDetailOutput>> roleListMap) {
-		for (int index = 0; index < frame.getChildren().size(); index++) {
-			LevelTreeOutput element = frame.getChildren().get(index);
+		if (frame.getChildren() != null) {
+			for (int index = 0; index < frame.getChildren().size(); index++) {
+				LevelTreeOutput element = frame.getChildren().get(index);
 
-			if (element.getChildren() == null) {
-				// 处理叶子结点
-				element.setRoleDetailList(roleListMap.get(element.getResourceId()));
-			} else {
-				parseTreeNode(element, roleListMap);
+				if (element.getChildren() == null) {
+					// 处理叶子结点
+					element.setRoleDetailList(roleListMap.get(element.getResourceId()));
+				} else {
+					parseTreeNode(element, roleListMap);
+				}
 			}
 		}
+
 	}
 
 	@Override
@@ -128,7 +131,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 		roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
 
-
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();
 		List<KnowledgeRes> knowledgeResList = BeanUtils.deepCopyList(knowledgeDataList,
@@ -136,7 +138,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 		knowledgeService.checkKnowledgeRes(knowledgeResList, type);
 		roleDetailRes.setKnowledgeResDataList(knowledgeResList);
-
 
 		// 获取技能的课程列表
 		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();

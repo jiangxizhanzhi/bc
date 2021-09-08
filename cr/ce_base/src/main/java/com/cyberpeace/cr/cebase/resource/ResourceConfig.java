@@ -1,13 +1,16 @@
 package com.cyberpeace.cr.cebase.resource;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.cebase.model.crevent.CrEvent;
+
 public interface ResourceConfig {
 
 	int getCeType();
 
 	String getLabel();
 
-	Dumper getDumper();
+	Representation dump(CrEvent crEvent, Collector collector);
 
-	Loader getLoader();
+	void load(JSONObject jsonObject, Dispatcher dispatcher);
 
 }

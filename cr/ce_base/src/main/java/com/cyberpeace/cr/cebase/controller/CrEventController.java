@@ -14,13 +14,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.FileTree;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.cr.cebase.model.crevent.CrEvent;
-import com.cyberpeace.cr.cebase.resource.*;
+import com.cyberpeace.cr.cebase.resource.Collector;
+import com.cyberpeace.cr.cebase.resource.Dispatcher;
+import com.cyberpeace.cr.cebase.resource.Representation;
+import com.cyberpeace.cr.cebase.resource.ResourceConfig;
 import com.cyberpeace.cr.cebase.resource.impl.CollectorImpl;
 import com.cyberpeace.cr.cebase.resource.impl.DispatcherImpl;
 import com.cyberpeace.cr.cebase.service.CrEventService;
@@ -59,9 +63,9 @@ public class CrEventController {
 
 		FileTree fileTree = new FileTree();
 
-		IndexData indexData = dumpData(ids);
+		IndexDataOutput indexDataOutput = dumpData(ids);
 
-		writeIndexData(fileTree, indexData);
+		writeIndexData(fileTree, indexDataOutput);
 
 		response.setContentType("application/x-msdownload;charset=UTF-8");
 		response.setHeader("Content-disposition", "attachment;filename=dump.zip");
@@ -89,8 +93,8 @@ public class CrEventController {
 	/**
 	 * 写入data.json文件
 	 * */
-	private void writeIndexData(FileTree fileTree, IndexData indexData) {
-		String text = JsonUtil.toJsonString(indexData);
+	private void writeIndexData(FileTree fileTree, IndexDataOutput indexDataOutput) {
+		String text = JsonUtil.toJsonString(indexDataOutput);
 
 		File file = fileTree.addFile(INDEX_DATA_JSON_FILE);
 
@@ -106,20 +110,18 @@ public class CrEventController {
 	 * 根据data.json文件的配置导入
 	 * */
 	private void loadData(IndexData indexData) {
-		Map<String, List<Representation>> dataMap = indexData.getData();
+		Map<String, List<JSONObject>> dataMap = indexData.getData();
 		String file = indexData.getFile();
 		// # 资源文件复制添加
 		Dispatcher dispatcher = getDispatcher();
 		dispatcher.addFiles(file);
 
 		for (String label : dataMap.keySet()) {
-			List<Representation> representationList = dataMap.get(label);
-
+			List<JSONObject> jsonObjectList = dataMap.get(label);
 			ResourceConfig resourceConfig = getResourceConfig(label);
-			Loader loader = resourceConfig.getLoader();
 
-			for (Representation representation : representationList) {
-				loader.load(representation, dispatcher);
+			for (JSONObject jsonObject : jsonObjectList) {
+				resourceConfig.load(jsonObject, dispatcher);
 			}
 		}
 	}
@@ -127,7 +129,7 @@ public class CrEventController {
 	/**
 	 * 导出场景模板 生成data.json配置
 	 * */
-	private IndexData dumpData(List<String> ids) {
+	private IndexDataOutput dumpData(List<String> ids) {
 		Collector collector = getCollector();
 
 		Map<String, List<Representation>> dataMap = new HashMap<>();
@@ -137,8 +139,7 @@ public class CrEventController {
 		for (CrEvent crEvent : crEventList) {
 			int ceType = crEvent.getCeType();
 			ResourceConfig resourceConfig = getResourceConfig(ceType);
-			Dumper dumper = resourceConfig.getDumper();
-			Representation representation = dumper.dump(crEvent, collector);
+			Representation representation = resourceConfig.dump(crEvent, collector);
 
 			String label = resourceConfig.getLabel();
 			if (!dataMap.containsKey(label)) {
@@ -147,10 +148,10 @@ public class CrEventController {
 			dataMap.get(label).add(representation);
 		}
 
-		IndexData indexData = new IndexData();
-		indexData.setData(dataMap);
-		indexData.setFile(collector.getFiles());
-		return indexData;
+		IndexDataOutput indexDataOutput = new IndexDataOutput();
+		indexDataOutput.setData(dataMap);
+		indexDataOutput.setFile(collector.getFiles());
+		return indexDataOutput;
 	}
 
 	private ResourceConfig getResourceConfig(String label) {
@@ -200,6 +201,14 @@ class IdsInput {
  * */
 @Data
 class IndexData {
+
+	private Map<String, List<JSONObject>> data;
+
+	private String file;
+}
+
+@Data
+class IndexDataOutput {
 
 	private Map<String, List<Representation>> data;
 

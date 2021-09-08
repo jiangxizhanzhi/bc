@@ -53,7 +53,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
-	@Cacheable(key = "#p0")
+//	@Cacheable(key = "#p0")
 	public UserInfo doAuthentication(String token) {
 		// 1、调用mp
 		String targetUrl = TOKEN_AUTHENTICATE_URL + token;

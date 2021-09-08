@@ -16,6 +16,11 @@ public class RoleStudyBo implements Serializable {
 	private Integer totalCourses;
 
 	/**
+	 * 完成的总课程数
+	 */
+	private Integer finishedCourses;
+
+	/**
 	 * 已完成理论课时数
 	 */
 	private Integer finishedTheoryLessons;

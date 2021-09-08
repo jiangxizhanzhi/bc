@@ -2,8 +2,10 @@ package com.cyberpeace.oj.practice.service.bo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class EvaluateResult {
+public class EvaluateResult implements Serializable {
     /**
      * 是否通过
      */

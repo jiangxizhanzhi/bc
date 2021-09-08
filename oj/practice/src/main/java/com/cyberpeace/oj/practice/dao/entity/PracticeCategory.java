@@ -1,20 +1,29 @@
 package com.cyberpeace.oj.practice.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.oj.practice.dao.constants.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 @Data
-public class PracticeCategory  implements Serializable {
+@TableName("practice_category")
+public class PracticeCategory extends BaseTable implements Serializable {
 
     /**
      * 资源ID
      */
-    private String resourceId = DigestUtils.md5Hex(UUID.randomUUID().toString());
+    @TableId(type = IdType.UUID, value = "resource_id")
+    private String resourceId;
+
+    /**
+     * 父级分类, 非必填
+     */
+    private String parent;
 
     /**
      * 名称
@@ -28,7 +37,7 @@ public class PracticeCategory  implements Serializable {
      * 状态
      */
     @JsonIgnore
-    private Integer status = Status.NORMAL.ordinal();
+    private Integer status = Status.NORMAL.getValue();
 
     /**
      * 练习类型

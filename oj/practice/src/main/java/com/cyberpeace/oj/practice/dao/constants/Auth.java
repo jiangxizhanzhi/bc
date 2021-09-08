@@ -1,15 +1,22 @@
 package com.cyberpeace.oj.practice.dao.constants;
 
-public enum Auth {
-    NULL,
+import lombok.Getter;
 
+public enum Auth {
     /**
      * 授权所有
      */
-    ALL,
+    ALL(1),
 
     /**
      * 自定义授权
      */
-    CUSTOM
+    CUSTOM(2);
+
+    @Getter
+    private final Integer value;
+
+    Auth(Integer value) {
+        this.value = value;
+    }
 }

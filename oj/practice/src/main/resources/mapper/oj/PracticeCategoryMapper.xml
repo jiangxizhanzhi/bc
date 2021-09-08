@@ -3,29 +3,20 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper">
 
-    <select id="getSingle" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
-        select `resource_id`, `name`, 0 as `practice_type` from practice_theory_category
-        where resource_id = #{resource_id} and status = 1
-        union select `resource_id`, `name`, 2 as `practice_type` from practice_exercise_category
-        where resource_id = #{resource_id} and status = 1;
-    </select>
-
-
     <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
-        select `resource_id`, `name` from ${tableName} where status = 1
+        select `resource_id`, `name`, `parent`, `create_time`, `update_time`
+        from practice_category where status = 1
+        <if test="practice_type != null">
+            and practice_type = #{practice_type}
+        </if>
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+            and `name` like #{pattern}
+        </if>
     </select>
-
-    <insert id="create">
-        insert into ${tableName} (`resource_id`, `name`, `status`)
-        values (#{object.resourceId}, #{object.name}, #{object.status});
-    </insert>
-    
-    <update id="partialUpdate">
-        update ${tableName} set `name` = #{name} where resource_id = #{resource_id}
-    </update>
 
     <update id="batchDelete">
-        update ${tableName} set status = 0 where status = 1 and resource_id in
+        update practice_category set status = 0 where status = 1 and resource_id in
         <foreach collection="resource_ids" item="resource_id" open="(" close=")" separator=",">
             #{resource_id}
         </foreach>

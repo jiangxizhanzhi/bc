@@ -1,18 +1,27 @@
 package com.cyberpeace.oj.practice.dao.constants;
 
+import lombok.Getter;
+
 public enum Difficulty {
     /**
      * 初级
      */
-    PRIMARY,
+    PRIMARY(0),
 
     /**
      * 中级
      */
-    MIDDLE,
+    MIDDLE(1),
 
     /**
      * 高级
      */
-    HIGH
+    HIGH(2);
+
+    @Getter
+    private final Integer value;
+
+    Difficulty(Integer value) {
+        this.value = value;
+    }
 }

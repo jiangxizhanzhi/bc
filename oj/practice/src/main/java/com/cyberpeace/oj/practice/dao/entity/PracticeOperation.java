@@ -48,7 +48,7 @@ public class PracticeOperation extends PracticeBase{
     /**
      * 共享模式 (拥有场景时使用)
      */
-    private Integer shareMode = SceneShare.PRIVATE.ordinal();
+    private Integer shareMode = SceneShare.PRIVATE.getValue();
 
     /**
      * 是否使用动态FLAG (拥有场景时使用)
@@ -62,7 +62,7 @@ public class PracticeOperation extends PracticeBase{
 
     // TODO 规避db exception
     @JsonIgnore
-    private Integer practiceType = PracticeType.OPERATION.ordinal();
+    private Integer practiceType = PracticeType.OPERATION.getValue();
 
     @TableField("`lock`")
     private boolean lock = false;

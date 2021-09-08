@@ -37,11 +37,20 @@ public class PracticeServiceImpl implements PracticeService {
     }
 
     public EvaluateResult evaluator(String resourceId, Integer practiceType, String answer, String user) {
-        if (practiceType.equals(PracticeType.THEORY.ordinal())) {
+
+        // 针对同一用户、同一练习, 仅评估一次  TODO 试卷评估等不同形式待处理
+        if (!user.isEmpty()) {
+            EvaluateResult result = practiceServiceMapper.getSolved(user, resourceId);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        if (practiceType.equals(PracticeType.THEORY.getValue())) {
             PracticeTheory practiceObject = practiceTheoryMapper.selectById(resourceId);
             return evaluator(practiceObject, answer, user);
 
-        } else if (practiceType.equals(PracticeType.OPERATION.ordinal())) {
+        } else if (practiceType.equals(PracticeType.OPERATION.getValue())) {
             PracticeOperation practiceObject = practiceOperationMapper.selectById(resourceId);
             return evaluator(practiceObject, answer, user);
 
@@ -62,19 +71,19 @@ public class PracticeServiceImpl implements PracticeService {
 
         if (practiceObject instanceof PracticeTheory) {
             PracticeTheory origin = (PracticeTheory) practiceObject;
-            if (origin.getQuestionType().equals(TheoryQuestionType.SINGLE.ordinal())) {
+            if (origin.getQuestionType().equals(TheoryQuestionType.SINGLE.getValue())) {
                 result = Evaluator.singleEval((PracticeTheory) practiceObject, answer);
 
-            } else if (origin.getQuestionType().equals(TheoryQuestionType.MULTIPLE.ordinal())) {
+            } else if (origin.getQuestionType().equals(TheoryQuestionType.MULTIPLE.getValue())) {
                 result = Evaluator.multipleEval((PracticeTheory) practiceObject, answer);
 
-            } else if (origin.getQuestionType().equals(TheoryQuestionType.JUDGMENT.ordinal())) {
+            } else if (origin.getQuestionType().equals(TheoryQuestionType.JUDGMENT.getValue())) {
                 result = Evaluator.judgmentEval((PracticeTheory) practiceObject, answer);
 
-            } else if (origin.getQuestionType().equals(TheoryQuestionType.FILL_BLANK.ordinal())) {
+            } else if (origin.getQuestionType().equals(TheoryQuestionType.FILL_BLANK.getValue())) {
                 result = Evaluator.fillBlankEval((PracticeTheory) practiceObject, answer);
 
-            } else if (origin.getQuestionType().equals(TheoryQuestionType.SHORT_ANSWER.ordinal())) {
+            } else if (origin.getQuestionType().equals(TheoryQuestionType.SHORT_ANSWER.getValue())) {
                 result = Evaluator.shortAnswerEval((PracticeTheory) practiceObject, answer);
 
             } else {
@@ -99,20 +108,32 @@ public class PracticeServiceImpl implements PracticeService {
 class Evaluator {
 
     // TODO 需要重载, 兼顾其它入参?
+    /**
+     * 单选题评估
+     */
     public static EvaluateResult singleEval(PracticeTheory practice, String answer) {
         Boolean isPass = practice.getAnswer().equalsIgnoreCase(answer);
         Float score = isPass ? practice.getScore() : 0;
         return new EvaluateResult(isPass, score, practice.getScore());
     }
 
+    /**
+     * 多选题评估
+     */
     public static EvaluateResult multipleEval(PracticeTheory practice, String answer) {
         return singleEval(practice, answer);
     }
 
+    /**
+     * 判断题评估
+     */
     public static EvaluateResult judgmentEval(PracticeTheory practice, String answer) {
         return singleEval(practice, answer);
     }
 
+    /**
+     * 填空题评估
+     */
     public static EvaluateResult fillBlankEval(PracticeTheory practice, String answer) {
         float score = 0f;
         boolean isPass = false;
@@ -143,12 +164,15 @@ class Evaluator {
     }
 
     /**
-     * 简答题直接通过, 无分值
+     * 简答题评估, 默认通过, 不设置得分.
      */
     public static EvaluateResult shortAnswerEval(PracticeTheory practice, String answer) {
         return new EvaluateResult(true, 0f, practice.getScore());
     }
 
+    /**
+     * 操作题评估
+     */
     // TODO 处理待定
     public static EvaluateResult operationEval(PracticeOperation practice, String answer) {
         return new EvaluateResult(true, 0f, practice.getScore());

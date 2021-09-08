@@ -5,15 +5,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.practice.controller.req.PracticeDelReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeTheoryListReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeTheoryReq;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,11 +24,6 @@ public class PracticeTheoryController extends PracticeMixinController<PracticeTh
 
     @Autowired
     PracticeTheoryMapper practiceTheoryMapper;
-
-    @Override
-    public Class<PracticeTheory> getEntityCls() {
-        return PracticeTheory.class;
-    }
 
     @GetMapping()
     @ApiOperation("获取单个理论基础练习")

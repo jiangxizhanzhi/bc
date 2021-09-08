@@ -6,7 +6,12 @@
     insert into practice_practicesubmitsolved
         (`submit_user`, `submit_time`, `submit_answer`, `score`, `weight_score`, `is_solved`, `practice`, `type`)
     values
-        (#{user}, #{now}, #{answer}, #{evaluated.score}, #{object.score}, #{evaluated.isPass}, #{object.resource_id}, #{object.practiceType})
+        (#{user}, #{now}, #{answer}, #{evaluated.score}, #{object.score}, #{evaluated.isPass}, #{object.resourceId}, #{object.practiceType})
     </insert>
+
+    <select id="getSolved" resultType="com.cyberpeace.oj.practice.service.bo.EvaluateResult">
+        select is_solved as isPass, weight_score as totalScore, score from practice_practicesubmitsolved
+        where submit_user = #{user} and practice = #{resource_id}
+    </select>
 
 </mapper>

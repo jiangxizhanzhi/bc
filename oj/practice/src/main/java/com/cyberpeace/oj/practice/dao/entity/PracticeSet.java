@@ -16,7 +16,6 @@ public class PracticeSet {
     private Integer id;
 
     @TableId(type = IdType.UUID, value = "resource_id")
-    @ApiModelProperty(hidden = true)
     private String resourceId;
 
     private boolean builtin;
@@ -47,12 +46,12 @@ public class PracticeSet {
     /**
      * 授权访问
      */
-    private Integer auth = Auth.CUSTOM.ordinal();
+    private Integer auth = Auth.CUSTOM.getValue();
 
     /**
      * 授权操作
      */
-    private Integer share = Auth.CUSTOM.ordinal();
+    private Integer share = Auth.CUSTOM.getValue();
 
     /**
      * 已授权访问组织

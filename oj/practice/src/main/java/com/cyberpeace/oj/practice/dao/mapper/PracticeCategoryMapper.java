@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -15,13 +14,7 @@ import java.util.List;
 @Repository
 public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 
-    PracticeCategory getSingle(@Param("resource_id") String resourceId);
+    IPage<PracticeCategory> getList(Page page, @Param("pattern") String pattern, @Param("practice_type") Integer practiceType);
 
-    IPage<PracticeCategory> getList(Page page, @Param("tableName") String table);
-
-    Integer create(@Param("tableName") String table, @Param("object") PracticeCategory object);
-
-    Integer partialUpdate(@Param("tableName") String tableName, @Param("resource_id") String id, @Param("name") String name);
-
-    Integer batchDelete(@Param("tableName") String tableName, @Param("resource_ids") List<String> resourceIds);
+    Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
 }

@@ -1,17 +1,24 @@
 package com.cyberpeace.oj.practice.dao.constants;
 
-public enum Share {
+import lombok.Getter;
 
-    NULL,
+public enum Share {
 
     /**
      * 授权所有
      */
 
-    ALL,
+    ALL(1),
 
     /**
      * 自定义授权
      */
-    CUSTOM
+    CUSTOM(2);
+
+    @Getter
+    private final Integer value;
+
+    Share(Integer value) {
+        this.value = value;
+    }
 }

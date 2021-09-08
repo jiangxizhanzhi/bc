@@ -19,7 +19,7 @@ public class PracticeBase extends BaseTable implements Serializable {
      * 状态
      */
     @JsonIgnore
-    private Integer status = Status.NORMAL.ordinal();
+    private Integer status = Status.NORMAL.getValue();
 
     /**
      * 资源ID

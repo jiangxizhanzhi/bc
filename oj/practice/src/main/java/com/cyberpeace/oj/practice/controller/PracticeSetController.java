@@ -25,11 +25,6 @@ public class PracticeSetController extends PracticeMixinController<PracticeSet> 
     @Autowired
     PracticeSetMapper practiceSetMapper;
 
-    @Override
-    public Class<PracticeSet> getEntityCls() {
-        return PracticeSet.class;
-    }
-
     @ApiOperation("获取单个习题集")
     @GetMapping()
     public BaseRsp<PracticeSet> get(@RequestParam("resource_id") @NotBlank String resourceId) {

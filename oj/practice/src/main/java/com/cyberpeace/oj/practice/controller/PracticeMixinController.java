@@ -1,23 +1,24 @@
 package com.cyberpeace.oj.practice.controller;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.oj.practice.controller.req.PracticeEvaluateReq;
 import com.cyberpeace.oj.practice.controller.req.ResourceAuthReq;
 import com.cyberpeace.oj.practice.controller.req.ResourcePublicReq;
 import com.cyberpeace.oj.practice.controller.req.ResourceShareReq;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeMixinMapper;
+import com.cyberpeace.oj.practice.service.PracticeService;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 提供练习公共功能接口
@@ -26,17 +27,28 @@ import java.util.regex.Pattern;
  * @param <Mapper> mybatis-plus Mapper
  */
 @RestController
+@RequiresAuthentication
 public abstract class PracticeMixinController<Entity> {
 
     @Autowired
-    private PracticeMixinMapper practiceMixinMapper;
+    protected PracticeMixinMapper practiceMixinMapper;
 
-    // 子类显式设置`Entity`class  TODO 替换其它获取方式
-    public abstract Class<Entity> getEntityCls();
+    @Autowired
+    protected PracticeService practiceService;
+
+    protected Class<Entity> entityClass = this.currentModelCls();
+
+    @SuppressWarnings("unchecked")
+    protected Class<Entity> currentModelCls() {
+        return (Class<Entity>) ReflectionKit.getSuperClassGenericType(this.getClass(), 0);
+    }
+
+    public Class<Entity> getEntityCls() {
+        return this.entityClass;
+    }
 
     /**
-     * 获取实体类关联资源数据表名称,
-     * 无`com.baomidou.mybatisplus.annotation.TableName`注解情况返回转换后实体类名称 example: TableName -> table_name.
+     * 获取实体类关联资源数据表名称, 必须拥有`com.baomidou.mybatisplus.annotation.TableName`注解
      *
      * @return table name string
      */
@@ -45,15 +57,7 @@ public abstract class PracticeMixinController<Entity> {
         if (annotation != null) {
             return annotation.value();
         } else {
-            Pattern regexRule = Pattern.compile("[A-Z][a-z]+");
-            Matcher m = regexRule.matcher(getEntityCls().getSimpleName());
-
-            List<String> listByString = new ArrayList<>();
-            while (m.find()) {
-                listByString.add(m.group().toLowerCase());
-            }
-
-            return StringUtils.join(listByString, "_");
+            throw new NullPointerException("Get DB TABLE NAME is failed, entity class need to use Annotation `TableName`");
         }
     }
 
@@ -131,5 +135,13 @@ public abstract class PracticeMixinController<Entity> {
     public BaseRsp<Entity> getShare(@RequestParam("resource_id") @NotBlank String resourceId) {
         isAllowApi("share");
         return new BaseRsp<>();
+    }
+
+    @PostMapping("/evaluate")
+    @ApiOperation("练习评估")
+    public BaseRsp<EvaluateResult> evaluate(@RequestBody PracticeEvaluateReq requestData) {
+        isAllowApi("answer");
+        String userId = UserInfoContext.getUserContext().getUserId();
+        return new BaseRsp<>(practiceService.evaluator(requestData.getResourceId(), requestData.getPracticeType(), requestData.getAnswer(), userId));
     }
 }

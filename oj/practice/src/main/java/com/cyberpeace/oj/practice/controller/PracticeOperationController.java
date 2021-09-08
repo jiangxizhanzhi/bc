@@ -25,11 +25,6 @@ public class PracticeOperationController extends PracticeMixinController<Practic
     @Autowired
     PracticeOperationMapper practiceOperationMapper;
 
-    @Override
-    public Class<PracticeOperation> getEntityCls() {
-        return PracticeOperation.class;
-    }
-
     @GetMapping()
     @ApiOperation("获取单个实践操作")
     public BaseRsp<PracticeOperation> get(@RequestParam("resource_id") @NotBlank String resourceId) {

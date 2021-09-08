@@ -20,4 +20,6 @@ public interface PracticeServiceMapper {
             @Param("now") Date date
     );
 
+    EvaluateResult getSolved(@Param("user") String user, @Param("resource_id") String practice);
+
 }

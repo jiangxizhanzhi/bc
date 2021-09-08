@@ -2,15 +2,12 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
-import com.cyberpeace.oj.practice.dao.constants.PracticeType;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,46 +22,17 @@ public class PracticeCategoryImpl extends ServiceImpl<PracticeCategoryMapper, Pr
     PracticeCategoryMapper categoryMapper;
 
     @Override
-    public PracticeCategory get(String resource_id) {
-        return categoryMapper.getSingle(resource_id);
-    }
-
-    @Override
     public ListRsp<PracticeCategory> search(PracticeListReq queryParams) {
-        String tableName;
-        if (queryParams.getPracticeType().equals(PracticeType.THEORY.ordinal())) {
-            tableName = "practice_theory_category";
-        } else if (queryParams.getPracticeType().equals(PracticeType.OPERATION.ordinal())) {
-            tableName = "practice_exercise_category";
-        } else {
-            throw new InvalidParamException("无效参数");
-        }
-        IPage<PracticeCategory> result = categoryMapper.getList(queryParams.toPageParam(), tableName);
+        IPage<PracticeCategory> result = categoryMapper.getList(
+                queryParams.toPageParam(),
+                queryParams.getPattern(),
+                queryParams.getPracticeType()
+        );
         return PageUtil.getListResult(result);
     }
 
     @Override
-    public PracticeCategory create(PracticeCategory object) {
-        String tableName = object.getPracticeType() == PracticeType.THEORY.ordinal() ? "practice_theory_category" : "practice_exercise_category";
-        categoryMapper.create(tableName, object);
-
-        return categoryMapper.getSingle(object.getResourceId());
-    }
-
-    @Override
-    public Integer partialUpdate(String tableName, String id, String name) {
-        return categoryMapper.partialUpdate(tableName, id, name);
-    }
-
-    /**
-     * 临时使用， 对两张表各进行一次删除
-     * @param resourceIds 资源id列表
-     * @return 删除条数
-     */
-    @Override
     public Integer batchDelete(List<String> resourceIds) {
-        Integer matchCount1 = categoryMapper.batchDelete("practice_theory_category", resourceIds);
-        Integer matchCount2 = categoryMapper.batchDelete("practice_exercise_category", resourceIds);
-        return matchCount1 + matchCount2;
+        return categoryMapper.batchDelete(resourceIds);
     }
 }

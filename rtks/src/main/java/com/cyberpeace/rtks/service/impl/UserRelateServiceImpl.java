@@ -22,7 +22,7 @@ public class UserRelateServiceImpl implements UserRelateService {
     public UserRole roleRelateUser(String roleId, String userId, String userName) {
         Role role = roleMapper.selectById(roleId);
         if (null == role) {
-            return null;
+            throw new UnsupportedOperationException("岗位非法！");
         }
         UserRole userRole = new UserRole();
         userRole.setRoleId(roleId);

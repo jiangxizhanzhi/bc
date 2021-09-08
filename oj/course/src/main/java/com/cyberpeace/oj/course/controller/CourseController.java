@@ -7,8 +7,10 @@ import javax.validation.constraints.NotBlank;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.oj.course.controller.req.CourseAdminListReq;
 import com.cyberpeace.oj.course.dao.context.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,14 +64,47 @@ public class CourseController {
 
 		// 组装筛选条件
 		CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
+		context.setUserId(UserInfoContext.getUserContext().getUserId());
 		context.isWeb();
 		Page page = listReq.toPageParam();
-		AuthContext authContext = courseAuthConstructService.webCourseConstruct(UserInfoContext.getUserContext());
 
 		// 数据查询
-		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(page, context, authContext);
+		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(page, context, null);
 		BaseRsp rsp = new BaseRsp(courseInfos);
 		return rsp;
+	}
+
+	@ApiOperation("前台课程列表查询")
+	@GetMapping("/web/list")
+	public BaseRsp<List<CourseInfoBo>> getWebCourse(
+			@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
+		// 数据组装
+		CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
+		context.setUserId(UserInfoContext.getUserContext().getUserId());
+		context.isWeb();
+		Page page = listReq.toPageParam();
+		AuthContext authContext = courseAuthConstructService
+				.webCourseConstruct(UserInfoContext.getUserContext());
+
+		// 数据查询
+		ListRsp<CourseInfoBo> boListRsp = courseService.selectPage(page, context, authContext);
+		return new BaseRsp(boListRsp);
+	}
+
+	@ApiOperation("后台课程列表查询")
+	@GetMapping("/admin/list")
+	public BaseRsp<List<CourseInfoBo>>
+			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
+
+		// 数据组装
+		CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
+		context.setUserId(UserInfoContext.getUserContext().getUserId());
+		Page page = listReq.toPageParam();
+		AuthContext authContext = courseAuthConstructService.adminCourseConstruct(UserInfoContext.getUserContext());
+
+		// 数据查询
+		ListRsp<CourseInfoBo> rsp = courseService.selectPage(page, context, authContext);
+		return new BaseRsp(rsp);
 	}
 
 	@GetMapping("/direction")
@@ -92,16 +127,9 @@ public class CourseController {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		String courseId = courseService.collectCourse(userId, req.getResource(), req.getIsCollection());
+		String courseId = courseService.collectCourse(userId, req.getResource(),
+				req.getIsCollection());
 		return new BaseRsp<>(courseId);
-	}
-
-
-	@ApiOperation("前台课程列表查询")
-	@GetMapping("/web/list")
-	public BaseRsp<List<CourseInfoBo>> getWebCourse() {
-
-		return null;
 	}
 
 }

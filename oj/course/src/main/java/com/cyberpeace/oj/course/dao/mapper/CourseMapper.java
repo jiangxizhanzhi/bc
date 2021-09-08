@@ -23,11 +23,14 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * 分页查询课程信息
 	 * @param page
 	 * @param courseContext 筛选条件
-	 * @param authContext 访问权限条件
+	 * @param courseIds
 	 * @return
 	 */
-	IPage<Course> listByPage(@Param("page") Page page, @Param("courseContext") CourseContext courseContext,
-			@Param("authContext") AuthContext authContext);
+	IPage<Course> listByPage(Page page,
+			@Param("courseContext") CourseContext courseContext,
+			@Param("courseIds") List<String> courseIds);
 
 	List<String> notDeleteIdsByIds(@NotEmpty @Param("courseIds") List<String> courseIds);
+
+	List<String> selectByAuth(@Param("authContext") AuthContext authContext);
 }

@@ -9,6 +9,8 @@ public class AuthContext implements Serializable {
 
     private String organization;
 
+    private String likeOrganization;
+
     private String userId;
 
     private String likeUser;

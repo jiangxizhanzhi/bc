@@ -108,7 +108,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Override
 	public ListRsp<CourseInfoBo> selectPage(Page page, CourseContext courseContext, AuthContext authContext) {
-		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, authContext);
+		List<String> courseIds = null;
+		if (null != authContext) {
+			courseIds = courseMapper.selectByAuth(authContext);
+		}
+		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds);
 
 		iPage.convert(course -> courseToBo(course));
 		return PageUtil.getListResult(iPage);

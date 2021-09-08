@@ -172,7 +172,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private <T extends SkillAndKnowledgeBase> List<KnowledgeStudyPercentBo> calculatePercent(
 			List<String> skillOrKnowledgeIds, String userId, BaseMapper<T> baseMapper) {
 		List<T> knowledges = baseMapper.selectBatchIds(skillOrKnowledgeIds);
-		CourseStudyProcessBo bo = new CourseStudyProcessBo();
 		List<KnowledgeStudyPercentBo> percentBoList = knowledges.stream().map(knowledge -> {
 			ValueDataBo valueDataBo = calculateKnowledgeScore(knowledge, userId, true);
 			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(

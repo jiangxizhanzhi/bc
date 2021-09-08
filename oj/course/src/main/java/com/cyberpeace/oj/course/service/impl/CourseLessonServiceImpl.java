@@ -107,6 +107,7 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 			lessonRecord.setUser(userId);
 			lessonRecord.setStartTime(new Date());
 			lessonRecord.setEndTime(new Date());
+			lessonRecord.setCourse(courseId);
 		}
 
 		return infoBo;

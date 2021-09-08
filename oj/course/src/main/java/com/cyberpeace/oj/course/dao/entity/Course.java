@@ -33,10 +33,7 @@ public class Course extends BaseTable {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	@TableField(exist = false)
-	private Integer lock;
-
-	private Integer builtin;
+	private Boolean builtin;
 
 	private Integer auth;
 
@@ -63,7 +60,7 @@ public class Course extends BaseTable {
 	private String lastEditUser;
 
 	@TableField("public")
-	private Integer isPublic;
+	private Boolean isPublic;
 
 	private Integer eBook;
 

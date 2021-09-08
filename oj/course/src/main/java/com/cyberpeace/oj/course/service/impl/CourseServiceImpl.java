@@ -5,31 +5,35 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.course.dao.context.AuthContext;
-import com.cyberpeace.oj.course.dao.context.CourseContext;
-import com.cyberpeace.oj.course.dao.entity.CourseCollection;
-import com.cyberpeace.oj.course.dao.mapper.CourseCollectionMapper;
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ModelConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.course.controller.req.CourseListReq;
+import com.cyberpeace.oj.course.dao.context.AuthContext;
+import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseCollection;
 import com.cyberpeace.oj.course.dao.entity.CourseDirection;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseCollectionMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
 import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,8 +76,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 转换类别
 		CourseDirection courseDirection = directionMapper.selectByResource(course.getDirection());
-		CourseInfoBo courseInfoBo = new CourseInfoBo();
-		BeanUtils.copyProperties(course, courseInfoBo);
+
+		CourseInfoBo courseInfoBo = BeanUtils.copy(course, CourseInfoBo.class);
 		courseInfoBo.setDirectionName(courseDirection.getName());
 
 		// 计算课时数量
@@ -107,15 +111,49 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public ListRsp<CourseInfoBo> selectPage(Page page, CourseContext courseContext, AuthContext authContext) {
+	public ListRsp<CourseInfoBo> selectPage(Page page, CourseContext courseContext,
+			AuthContext authContext) {
 		List<String> courseIds = null;
 		if (null != authContext) {
 			courseIds = courseMapper.selectByAuth(authContext);
 		}
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds);
 
-		iPage.convert(course -> courseToBo(course));
+		iPage.convert(course -> transferToBo(course, authContext));
 		return PageUtil.getListResult(iPage);
+	}
+
+	/**
+	 * 数据格式转换
+	 * @param course
+	 * @param authContext
+	 * @return
+	 */
+	private CourseWebBo transferToBo(Course course, AuthContext authContext) {
+
+		if (null != authContext && !authContext.getIsWeb()) {
+			CourseInfoBo courseInfoBo = courseToBo(course);
+			CourseAdminBo courseAdminBo = BeanUtils.copy(courseInfoBo, CourseAdminBo.class);
+			courseAdminBo.setAuth(course.getAuth());
+			courseAdminBo.setShare(course.getShare());
+			if (course.getAuth().intValue() == Course.CUSTOM_SHARE_MODE) {
+				List<String> orgs = JsonUtil.toJsonObjectArray(course.getAuthOrganization(),
+						String.class);
+				courseAdminBo.setAuthCount(orgs.size());
+			}
+			if (course.getShare().intValue() == Course.CUSTOM_SHARE_MODE) {
+				List<String> shares = JsonUtil.toJsonObjectArray(course.getShareTeachers(),
+						String.class);
+				courseAdminBo.setAuthCount(shares.size());
+			}
+			return courseAdminBo;
+
+		} else {
+			CourseInfoBo courseInfoBo = courseToBo(course);
+			CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
+			return courseWebBo;
+		}
+
 	}
 
 	@Override
@@ -129,20 +167,37 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Override
 	public String collectCourse(String userId, String course, Boolean isCollection) {
-		CourseCollection collection = new CourseCollection();
+
 		CourseCollection exist = courseCollectionMapper.selectByUserAndCourse(userId, course);
 
 		// 新增或者更新
 		if (null == exist) {
+			CourseCollection collection = new CourseCollection();
 			collection.setUser(userId);
 			collection.setCourse(course);
 			collection.setIsCollection(isCollection);
 			collection.setUpdateTime(new Date());
 			courseCollectionMapper.insert(collection);
 		} else {
-			BeanUtils.copyProperties(exist, collection);
+			CourseCollection collection = BeanUtils.copy(exist, CourseCollection.class);
 			collection.setIsCollection(isCollection);
 			courseCollectionMapper.updateById(collection);
+		}
+
+		return course;
+	}
+
+	@Override
+	public Course addCourse(String userId, Course course) {
+
+		if (StringUtils.isNotBlank(course.getResourceId())) {
+			courseMapper.updateById(course);
+		} else {
+			course.setCreateUser(userId);
+			course.setLastEditUser(userId);
+			course.setStatus(ModelConstant.NOT_DELETE);
+			course.setHeat(0);
+			courseMapper.insert(course);
 		}
 
 		return course;

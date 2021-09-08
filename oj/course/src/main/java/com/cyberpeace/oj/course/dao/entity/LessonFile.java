@@ -20,6 +20,8 @@ public class LessonFile implements Serializable {
 
     private String isPublic;
 
+    private String lesson;
+
     @JsonIgnore
     private Integer status;
 

@@ -3,30 +3,36 @@ package com.cyberpeace.oj.course.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.oj.course.controller.req.CourseAdminListReq;
-import com.cyberpeace.oj.course.dao.context.AuthContext;
-import com.cyberpeace.oj.course.dao.context.CourseContext;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.CollectionReq;
+import com.cyberpeace.oj.course.controller.req.CourseAddReq;
+import com.cyberpeace.oj.course.controller.req.CourseAdminListReq;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.res.DirectionOutPut;
+import com.cyberpeace.oj.course.dao.context.AuthContext;
+import com.cyberpeace.oj.course.dao.context.CourseContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseDirection;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
+import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+import com.cyberpeace.oj.practice.controller.PracticeMixinController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +42,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/oj/course")
 @RequiresAuthentication
-public class CourseController {
+public class CourseController extends PracticeMixinController<Course> {
 
 	@Autowired
 	private CourseService courseService;
@@ -46,6 +52,14 @@ public class CourseController {
 
 	@Autowired
 	private CourseAuthConstructService courseAuthConstructService;
+
+	@Autowired
+	private CourseMapper courseMapper;
+
+	@Override
+	public Class<Course> getEntityCls() {
+		return Course.class;
+	}
 
 	@GetMapping()
 	@ApiOperation("单条查询")
@@ -59,8 +73,8 @@ public class CourseController {
 
 	@GetMapping("/list")
 	@ApiOperation("分页查询全部课程信息")
-	public BaseRsp<List<CourseInfoBo>>
-			getList(@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
+	public BaseRsp<List<CourseWebBo>>
+			getList(@ApiParam(name = "listReq", value = "查询条件") @Valid CourseListReq listReq) {
 
 		// 组装筛选条件
 		CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
@@ -93,14 +107,15 @@ public class CourseController {
 
 	@ApiOperation("后台课程列表查询")
 	@GetMapping("/admin/list")
-	public BaseRsp<List<CourseInfoBo>>
+	public BaseRsp<List<CourseAdminBo>>
 			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
 
 		// 数据组装
 		CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
 		context.setUserId(UserInfoContext.getUserContext().getUserId());
 		Page page = listReq.toPageParam();
-		AuthContext authContext = courseAuthConstructService.adminCourseConstruct(UserInfoContext.getUserContext());
+		AuthContext authContext = courseAuthConstructService
+				.adminCourseConstruct(UserInfoContext.getUserContext());
 
 		// 数据查询
 		ListRsp<CourseInfoBo> rsp = courseService.selectPage(page, context, authContext);
@@ -132,4 +147,23 @@ public class CourseController {
 		return new BaseRsp<>(courseId);
 	}
 
+	@ApiOperation("课程资源新增或修改")
+	@PostMapping("")
+	public BaseRsp<Course> addCourse(
+			@ApiParam(name = "addReq", value = "课程基本信息") @Valid @RequestBody CourseAddReq addReq) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		Course course = BeanUtils.copy(addReq, Course.class);
+		Course courseRsp = courseService.addCourse(userId, course);
+		return new BaseRsp<>(courseRsp);
+	}
+
+	@ApiOperation("课程删除")
+	@DeleteMapping("")
+	public BaseRsp<String> deleteCourse(@ApiParam(name = "resource_id",
+			value = "课程编号") @RequestParam("resource_id") String courseId) {
+
+		courseMapper.deleteById(courseId);
+		return new BaseRsp(courseId);
+	}
 }

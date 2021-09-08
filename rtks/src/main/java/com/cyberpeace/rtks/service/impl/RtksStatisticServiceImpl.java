@@ -108,7 +108,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		// 3、计算当前树形节点的评分
 		for (Level level : firstLevel) {
-			String matchPercent = calculateLgdRadarByLevel(level.getResourceId(), userId);
+			Integer matchPercent = calculateLgdRadarByLevel(level.getResourceId(), userId);
 
 			RtksRadarBo rtksRadarBo = new RtksRadarBo();
 
@@ -135,7 +135,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		// 3、计算当前树形节点的评分
 		for (Level level : firstLevel) {
-			String matchPercent = calculateRadarByLevel(level.getResourceId(), userId);
+			Integer matchPercent = calculateRadarByLevel(level.getResourceId(), userId);
 
 			RtksRadarBo rtksRadarBo = new RtksRadarBo();
 
@@ -295,7 +295,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 					.sum();
 			double weightSum = categorySkillBo.getSkills().stream()
 					.mapToDouble(SkillScoreBo::getWeight).sum();
-			radarBo.setMatchPercent(String.valueOf(MathUtils.divide(sum, weightSum, 0).intValue()));
+			radarBo.setMatchPercent(MathUtils.divide(sum, weightSum, 0).intValue());
 
 			return radarBo;
 		}).collect(Collectors.toList());
@@ -491,7 +491,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param levelId
 	 * @return
 	 */
-	private String calculateLgdRadarByLevel(String levelId, String userId) {
+	private Integer calculateLgdRadarByLevel(String levelId, String userId) {
 		// 1、获取当前层级下所有role数据
 		List<Role> roles = treeService.roleUnderLevel(levelId);
 
@@ -501,7 +501,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 3、统计所有知识点的课时完成度
 		Integer ret = calculateFinishPercent(skills, userId, true);
 
-		return ret.toString();
+		return ret;
 	}
 
 	/**
@@ -509,7 +509,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param levelId
 	 * @return
 	 */
-	private String calculateRadarByLevel(String levelId, String userId) {
+	private Integer calculateRadarByLevel(String levelId, String userId) {
 		// 1、获取当前层级下所有role数据
 		List<Role> roles = treeService.roleUnderLevel(levelId);
 
@@ -519,7 +519,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 3、统计所有知识点的课时完成度
 		Integer ret = calculateFinishPercent(knowledges, userId, true);
 
-		return ret.toString();
+		return ret;
 	}
 
 	/**

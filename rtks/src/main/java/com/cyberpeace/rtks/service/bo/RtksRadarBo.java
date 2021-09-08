@@ -24,5 +24,5 @@ public class RtksRadarBo implements Serializable {
 	 * 该层级下的能力匹配度百分比。
 	 * 10代表10%
 	 */
-	private String matchPercent;
+	private Integer matchPercent;
 }

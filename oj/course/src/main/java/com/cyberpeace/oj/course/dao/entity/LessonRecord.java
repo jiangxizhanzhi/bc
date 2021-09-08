@@ -25,6 +25,8 @@ public class LessonRecord implements Serializable {
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
+    private String course;
+
     private String lesson;
 
     private String user;

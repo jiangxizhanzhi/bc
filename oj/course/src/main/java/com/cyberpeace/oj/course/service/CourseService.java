@@ -1,12 +1,10 @@
 package com.cyberpeace.oj.course.service;
 
-import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.dao.context.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
@@ -54,4 +52,12 @@ public interface CourseService extends IService<Course> {
      * @return
      */
     String collectCourse(String userId, String course, Boolean isCollection);
+
+    /**
+     * 新增或修改课程
+     * @param course
+     * @param userId
+     * @return
+     */
+    Course addCourse(String userId, Course course);
 }

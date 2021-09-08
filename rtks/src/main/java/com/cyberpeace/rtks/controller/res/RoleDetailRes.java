@@ -38,6 +38,9 @@ public class RoleDetailRes implements Serializable {
 	@ApiModelProperty(value = "岗位所属层级id")
 	private String levelId;
 
+	@ApiModelProperty(value = "岗位所属完整层级路径")
+	private String levelName;
+
 	@ApiModelProperty(value = "技能体系")
 	private String category;
 

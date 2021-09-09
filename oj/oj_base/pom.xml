@@ -10,10 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.cyberpeace.oj</groupId>
-    <artifactId>note_comment</artifactId>
+    <artifactId>oj_base</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>note_comment</name>
-    <description>笔记和留言</description>
+    <name>oj_base</name>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
 </project>

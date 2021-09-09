@@ -1,19 +1,25 @@
 package com.cyberpeace.oj.course.controller;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.controller.req.CollectionReq;
+import com.cyberpeace.oj.course.controller.req.ListLessonReq;
+import com.cyberpeace.oj.course.controller.res.AdminLessonRes;
+import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/course/lesson")
@@ -38,7 +44,7 @@ public class CourseLessonController {
 
 	@ApiOperation("课时收藏")
 	@PostMapping("/collection")
-	public BaseRsp<String> collectionLesson(@RequestBody CollectionReq req) {
+	public BaseRsp<String> collectionLesson(@ApiParam(name = "req", value = "课时收藏信息") @RequestBody CollectionReq req) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String lesson = courseLessonService.collectionLesson(userId, req.getResource(),
@@ -46,4 +52,23 @@ public class CourseLessonController {
 		return new BaseRsp<>(lesson);
 	}
 
+	@ApiOperation("查询课程下课时列表")
+	@GetMapping("/admin/list")
+	public BaseRsp<ListRsp<AdminLessonRes>> getLessonList(ListLessonReq lessonReq) {
+
+		// 数据转换
+		Page page = lessonReq.toPageParam();
+		LessonContext context = BeanUtils.copy(lessonReq, LessonContext.class);
+		IPage<LessonInfoBo> iPage = courseLessonService.pageByContext(page, context);
+		iPage.convert(lessonInfoBo -> BeanUtils.copy(lessonInfoBo, AdminLessonRes.class));
+		ListRsp<AdminLessonRes> rsp = PageUtil.getListResult(iPage);
+		return new BaseRsp(rsp);
+	}
+
+	@ApiOperation("后台课时详情查询接口")
+	@GetMapping("/admin/lesson")
+	public BaseRsp getAdminLessonDetail() {
+
+		return null;
+	}
 }

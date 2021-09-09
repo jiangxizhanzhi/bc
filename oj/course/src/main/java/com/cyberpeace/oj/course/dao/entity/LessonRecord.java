@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.SpringContextUtil;
@@ -25,6 +26,7 @@ public class LessonRecord implements Serializable {
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
+    @TableField(exist = false)
     private String course;
 
     private String lesson;

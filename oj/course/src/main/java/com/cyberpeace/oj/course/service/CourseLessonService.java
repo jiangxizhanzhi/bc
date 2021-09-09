@@ -1,6 +1,9 @@
 package com.cyberpeace.oj.course.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.entity.LessonScene;
@@ -61,4 +64,12 @@ public interface CourseLessonService {
      * @return
      */
     String collectionLesson(String userId, String lessonId, Boolean isCollection);
+
+    /**
+     * 分页查询
+     * @param page
+     * @param context
+     * @return
+     */
+    IPage<LessonInfoBo> pageByContext(Page page, LessonContext context);
 }

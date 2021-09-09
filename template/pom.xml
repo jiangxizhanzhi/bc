@@ -55,7 +55,12 @@
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>note_comment</artifactId>
+            <artifactId>oj_base</artifactId>
+            <version>${module.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.oj</groupId>
+            <artifactId>exam</artifactId>
             <version>${module.version}</version>
         </dependency>
         <dependency>

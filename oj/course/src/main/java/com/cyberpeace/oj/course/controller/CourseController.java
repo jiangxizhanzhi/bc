@@ -88,6 +88,31 @@ public class CourseController extends PracticeMixinController<Course> {
 		return rsp;
 	}
 
+	@GetMapping("/direction")
+	@ApiOperation("课程分类")
+	public BaseRsp<List<CourseDirection>> listDirection() {
+		List<CourseDirection> courseDirections = directionMapper.selectList(null);
+
+		List<DirectionOutPut> outPuts = courseDirections.stream().map(courseDirection -> {
+			DirectionOutPut outPut = BeanUtils.copy(courseDirection, DirectionOutPut.class);
+			return outPut;
+		}).collect(Collectors.toList());
+
+		BaseRsp rsp = new BaseRsp(outPuts);
+		return rsp;
+	}
+
+	@ApiOperation("课程收藏")
+	@PostMapping("/web/collect")
+	public BaseRsp<String> courseCollection(@RequestBody CollectionReq req) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		String courseId = courseService.collectCourse(userId, req.getResource(),
+				req.getIsCollection());
+		return new BaseRsp<>(courseId);
+	}
+
 	@ApiOperation("前台课程列表查询")
 	@GetMapping("/web/list")
 	public BaseRsp<List<CourseInfoBo>> getWebCourse(
@@ -120,31 +145,6 @@ public class CourseController extends PracticeMixinController<Course> {
 		// 数据查询
 		ListRsp<CourseInfoBo> rsp = courseService.selectPage(page, context, authContext);
 		return new BaseRsp(rsp);
-	}
-
-	@GetMapping("/direction")
-	@ApiOperation("课程分类")
-	public BaseRsp<List<CourseDirection>> listDirection() {
-		List<CourseDirection> courseDirections = directionMapper.selectList(null);
-
-		List<DirectionOutPut> outPuts = courseDirections.stream().map(courseDirection -> {
-			DirectionOutPut outPut = BeanUtils.copy(courseDirection, DirectionOutPut.class);
-			return outPut;
-		}).collect(Collectors.toList());
-
-		BaseRsp rsp = new BaseRsp(outPuts);
-		return rsp;
-	}
-
-	@ApiOperation("课程收藏")
-	@PostMapping("/collect")
-	public BaseRsp<String> courseCollection(@RequestBody CollectionReq req) {
-
-		String userId = UserInfoContext.getUserContext().getUserId();
-
-		String courseId = courseService.collectCourse(userId, req.getResource(),
-				req.getIsCollection());
-		return new BaseRsp<>(courseId);
 	}
 
 	@ApiOperation("课程资源新增或修改")

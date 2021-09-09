@@ -17,11 +17,22 @@
     <name>practice</name>
     <description>练习</description>
 
+    <properties>
+        <oj_base.version>0.0.1-SNAPSHOT</oj_base.version>
+        <integration.version>0.0.1-SNAPSHOT</integration.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>integration</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${integration.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.oj</groupId>
+            <artifactId>oj_base</artifactId>
+            <version>${oj_base.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

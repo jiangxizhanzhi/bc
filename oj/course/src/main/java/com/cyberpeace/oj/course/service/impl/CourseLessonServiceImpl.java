@@ -1,11 +1,16 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.dao.context.LessonContext;
+import com.cyberpeace.oj.course.dao.oj_entity.Lesson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +44,9 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 
 	@Autowired
 	private CourseMapper courseMapper;
+
+	@Autowired
+	private LessonMapper lessonMapper;
 
 	@Override
 	public List<LessonRecord> selectByTime(String userId, Date startTime, Date endTime) {
@@ -77,12 +85,8 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 		LessonInfoBo infoBo = BeanUtils.copy(lesson, LessonInfoBo.class);
 
 		// 课时文件组装
-		String attachments = infoBo.getAttachments();
-		if (StringUtils.isNotBlank(attachments)) {
-			String[] fileIds = attachments.split(",");
-			List<LessonFile> files = lessonFileMapper.selectBatchIds(Arrays.asList(fileIds));
-			infoBo.setLessonFile(files);
-		}
+		List<LessonFile> lessonFiles = lessonFileMapper.listByLesson(lessonId);
+		infoBo.setLessonFile(lessonFiles);
 
 		// 上节和下节课程查询
 		LessonConfigBo lessonConfig = getLessonConfig(courseId, userId);
@@ -191,5 +195,12 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 		}
 
 		return lessonId;
+	}
+
+	@Override
+	public IPage<LessonInfoBo> pageByContext(Page page, LessonContext context) {
+
+		List<Lesson> lessons = lessonMapper.pageByContext(page, context);
+		return null;
 	}
 }

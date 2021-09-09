@@ -20,7 +20,8 @@
     <modules>
         <module>course</module>
         <module>practice</module>
-        <module>note_comment</module>
+        <module>oj_base</module>
+        <module>exam</module>
     </modules>
 
     <properties>

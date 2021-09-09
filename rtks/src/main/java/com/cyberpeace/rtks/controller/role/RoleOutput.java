@@ -32,9 +32,13 @@ public class RoleOutput {
 
 	private List<String> knowledgeIds;
 
+	private List<SkillKnowledgeWeight> knowledgeIdWeights;
+
 	private Integer knowledgeCount;
 
 	private List<String> skillIds;
+
+	private List<SkillKnowledgeWeight> skillIdWeights;
 
 	private Integer skillCount;
 

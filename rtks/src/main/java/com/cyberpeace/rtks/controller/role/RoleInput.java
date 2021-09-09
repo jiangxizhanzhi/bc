@@ -25,7 +25,11 @@ public class RoleInput implements Serializable {
 
 	private List<String> knowledgeIds;
 
+	private List<SkillKnowledgeWeight> knowledgeIdWeights;
+
 	private List<String> skillIds;
+
+	private List<SkillKnowledgeWeight> skillIdWeights;
 
 	private List<String> abilityIds;
 

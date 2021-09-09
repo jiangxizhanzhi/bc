@@ -267,6 +267,7 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 			role.setKnowledgeIds(knowledgeHelper.getIdStr());
 			role.setKnowledgeCourses(knowledgeHelper.getCourseStr());
 		}
+		role.setKnowledgeIdWeights(JsonUtil.toJsonString(input.getKnowledgeIdWeights()));
 
 		// 技能
 		String originSkillIdsStr = null;
@@ -282,6 +283,8 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 			role.setSkillCourses(skillHelper.getCourseStr());
 		}
 
+		role.setSkillIdWeights(JsonUtil.toJsonString(input.getSkillIdWeights()));
+
 		return role;
 	}
 
@@ -295,11 +298,18 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 
 		List<String> knowledgeIds = output.getKnowledgeIds();
 		List<Knowledge> knowledgeList = getRoleRelatedObjects(knowledgeIds, knowledgeService);
+		List<SkillKnowledgeWeight> knowledgeWeights = JsonUtil
+				.toJsonObjectArray(role.getKnowledgeIdWeights(), SkillKnowledgeWeight.class);
+		output.setKnowledgeIdWeights(knowledgeWeights);
+
 		output.setKnowledgeDataList(knowledgeList);
 
 		List<String> skillIds = output.getSkillIds();
 		List<Skill> skillList = getRoleRelatedObjects(skillIds, skillService);
 		output.setSkillDataList(skillList);
+		List<SkillKnowledgeWeight> skillWeights = JsonUtil
+				.toJsonObjectArray(role.getSkillIdWeights(), SkillKnowledgeWeight.class);
+		output.setSkillIdWeights(skillWeights);
 
 		List<String> abilityIds = output.getAbilityIds();
 		List<Ability> abilityList = getRoleRelatedObjects(abilityIds, abilityService);

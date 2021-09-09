@@ -13,4 +13,6 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 
     Integer batchDelete(List<String> resourceIds);
 
+    List<PracticeCategory> getChildren(PracticeCategory root);
+
 }

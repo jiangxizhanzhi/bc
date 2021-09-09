@@ -17,4 +17,7 @@ public class PracticeCategoryReq {
     @ApiModelProperty(value = "练习类型", required = true)
     private Integer practiceType;
 
+    @ApiModelProperty("所属父级节点")
+    private String parent;
+
 }

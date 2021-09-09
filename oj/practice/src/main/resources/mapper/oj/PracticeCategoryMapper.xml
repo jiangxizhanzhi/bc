@@ -22,4 +22,9 @@
         </foreach>
     </update>
 
+    <select id="containsByCode" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
+        <bind name="code" value="code + '|' + '%'"/>
+        select * from practice_category where status = 1 and code like #{code}
+    </select>
+
 </mapper>

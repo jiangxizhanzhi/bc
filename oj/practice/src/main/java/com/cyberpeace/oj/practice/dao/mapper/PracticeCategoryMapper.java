@@ -17,4 +17,6 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
     IPage<PracticeCategory> getList(Page page, @Param("pattern") String pattern, @Param("practice_type") Integer practiceType);
 
     Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
+
+    List<PracticeCategory> containsByCode(@Param("code") String parentCode);
 }

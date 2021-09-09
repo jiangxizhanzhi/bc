@@ -24,7 +24,6 @@ import java.lang.reflect.Field;
  * 提供练习公共功能接口
  *
  * @param <Entity> 实体类
- * @param <Mapper> mybatis-plus Mapper
  */
 @RestController
 @RequiresAuthentication

@@ -56,7 +56,8 @@ public class InitChecker {
 		String mpSecret = SystemPropUtil.getProp("MP_SECRET");
 		String[] mpSecretSplit = StringUtils.split(mpSecret, ",");
 
-		if (null == mpSecretSplit || mpSecretSplit.length != 2) {
+		Integer mpSecretLength = 2;
+		if (null == mpSecretSplit || mpSecretSplit.length != mpSecretLength) {
 			log.error("[MP_SECRET]格式错误, 读到的值=[{}]", mpSecret);
 			throw new Error();
 		}

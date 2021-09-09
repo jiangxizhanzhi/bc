@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.EnvironmentAware;
@@ -90,6 +91,10 @@ public class DataSourceConfig implements EnvironmentAware {
 	@Bean(name = "oj")
 	@ConfigurationProperties(prefix = "spring.datasource.oj")
 	public DataSource ojDataSource() {
+		if (StringUtils.isBlank(ojJdbcUrl)) {
+			return null;
+		}
+
 		DataSource dataSource = DataSourceBuilder.create().url(ojJdbcUrl).password(ojPassword)
 				.username(ojUserName).driverClassName(ojDriverClass).build();
 
@@ -103,6 +108,10 @@ public class DataSourceConfig implements EnvironmentAware {
 	@Bean(name = "cr")
 	@ConfigurationProperties(prefix = "spring.datasource.cr")
 	public DataSource crDataSource() {
+		if (StringUtils.isBlank(crJdbcUrl)) {
+			return null;
+		}
+
 		DataSource dataSource = DataSourceBuilder.create().url(crJdbcUrl).password(crPassword)
 				.username(crUserName).driverClassName(crDriverClass).build();
 

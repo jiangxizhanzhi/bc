@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.google.common.collect.Lists;
@@ -56,22 +57,33 @@ public class LessonConfigBo implements Serializable {
 	/**
 	 * 获取排序好的课时信息
 	 * @param configBo
+	 * @param includeChapter true 包含章节 false
 	 * @return
 	 */
-	public List<LessonConfigBo> getSortListByTree(LessonConfigBo configBo) {
+	public List<LessonConfigBo> getSortListByTree(LessonConfigBo configBo, Boolean includeChapter) {
 
 		List<LessonConfigBo> configs = configBo.getLessonConfigs();
-		if (CollectionUtils.isNotEmpty(configs)) {
-			List<LessonConfigBo> bos = configs.stream().map(bo -> getSortListByTree(bo))
-					.flatMap(Collection::stream).collect(Collectors.toList());
-			configs.addAll(bos);
 
-			List<LessonConfigBo> configBos = configs.stream()
-					.filter(bo -> bo.getNodeType().intValue() == LessonConfig.NODE_LESSON)
+		if (CollectionUtils.isNotEmpty(configs)) {
+			List<LessonConfigBo> bos = configs.stream()
+					.map(bo -> getSortListByTree(bo, includeChapter)).flatMap(Collection::stream)
 					.collect(Collectors.toList());
+			// 将跟节点和子节点加入集合
+			configs.addAll(bos);
+			configs.set(0, configBo);
+
+			List<LessonConfigBo> configBos = bos.stream()
+					.filter(bo -> includeChapter ? includeChapter
+							: bo.getNodeType().intValue() == LessonConfig.NODE_LESSON)
+					.map(bo -> {
+						BeanUtils.copy(bo, LessonConfig.class);
+						bo.setLessonConfigs(null);
+						return bo;
+					}).collect(Collectors.toList());
+
 			return configBos;
 		} else {
-			return Lists.newArrayList();
+			return Lists.newArrayList(configBo);
 		}
 	}
 

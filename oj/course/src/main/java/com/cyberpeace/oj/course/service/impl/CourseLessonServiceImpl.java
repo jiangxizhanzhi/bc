@@ -1,28 +1,23 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.security.PrivateKey;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.oj.course.dao.context.LessonContext;
-import com.cyberpeace.oj.course.dao.oj_entity.Lesson;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
+import com.cyberpeace.oj.course.dao.oj_entity.Lesson;
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
+import com.cyberpeace.oj.crbase.constant.OjBusinessErrorCode;
 
 @Service
 public class CourseLessonServiceImpl implements CourseLessonService {
@@ -40,32 +35,13 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 	private LessonCollectionMapper lessonCollectionMapper;
 
 	@Autowired
-	private LessonConfigMapper lessonConfigMapper;
-
-	@Autowired
 	private CourseMapper courseMapper;
 
 	@Autowired
 	private LessonMapper lessonMapper;
 
-	@Override
-	public List<LessonRecord> selectByTime(String userId, Date startTime, Date endTime) {
-
-		List<LessonRecord> lessonRecords = lessonRecordMapper.selectByTime(userId, startTime,
-				endTime);
-		return lessonRecords;
-	}
-
-	@Override
-	public List<String> recordBelongCourse(List<String> recordLesson, List<CourseLesson> lessons) {
-		List<CourseLesson> lessonList = lessons.stream()
-				.filter(courseLesson -> recordLesson.contains(courseLesson.getResourceId()))
-				.collect(Collectors.toList());
-
-		List<String> courseIds = lessonList.stream().map(CourseLesson::getCourse).distinct()
-				.collect(Collectors.toList());
-		return courseIds;
-	}
+	@Autowired
+	private LessonConfigService lessonConfigService;
 
 	@Override
 	public LessonScene getLessonScene(UserInfo user, String lessonId) {
@@ -89,8 +65,8 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 		infoBo.setLessonFile(lessonFiles);
 
 		// 上节和下节课程查询
-		LessonConfigBo lessonConfig = getLessonConfig(courseId, userId);
-		List<LessonConfigBo> boList = lessonConfig.getSortListByTree(lessonConfig);
+		LessonConfigBo lessonConfig = lessonConfigService.getLessonConfig(courseId, userId, true);
+		List<LessonConfigBo> boList = lessonConfig.getSortListByTree(lessonConfig, false);
 		List<String> sortLessonIds = boList.stream().map(LessonConfigBo::getLesson)
 				.collect(Collectors.toList());
 		infoBo.setPreAndNext(infoBo, sortLessonIds);
@@ -118,67 +94,6 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 	}
 
 	@Override
-	public LessonConfigBo getLessonConfig(String courseId, String userId) {
-		LessonConfig firstConfig = lessonConfigMapper.getFirstNode(courseId);
-		Course course = courseMapper.selectById(firstConfig.getCourse());
-		if (null == course) {
-			return null;
-		}
-		LessonConfigBo configBo = BeanUtils.copy(firstConfig, LessonConfigBo.class);
-		configBo.setName(course.getName());
-
-		List<CourseLesson> lessons = courseLessonMapper
-				.listByCourses(Arrays.asList(course.getResourceId()));
-		Map<String, CourseLesson> lessonMap = lessons.stream().collect(
-				Collectors.toMap(CourseLesson::getResourceId, courseLesson -> courseLesson));
-
-		List<String> lessonIds = lessons.stream().map(CourseLesson::getResourceId)
-				.collect(Collectors.toList());
-
-		List<LessonRecord> recordList = lessonRecordMapper.listByLessonAndUser(userId, lessonIds);
-		Map<String, LessonRecord> recordMap = recordList.stream()
-				.collect(Collectors.toMap(LessonRecord::getLesson, lessonRecord -> lessonRecord));
-		assembleLessonLib(configBo, lessonMap, recordMap);
-		return configBo;
-	}
-
-	/**
-	 * 根据最上级节点组装课程目录 
-	 * @param firstNode 最上级节点 课程节点
-	 * @param lessonMap 课时map集合 传入将补全课程信息
-	 * @param recordMap 传入补全是否学习状态   
-	 */
-	private void assembleLessonLib(LessonConfigBo firstNode, Map<String, CourseLesson> lessonMap,
-			Map<String, LessonRecord> recordMap) {
-
-		// 获取子节点
-		List<LessonConfig> childrens = lessonConfigMapper.listByParent(firstNode.getResourceId());
-
-		if (CollectionUtils.isNotEmpty(childrens)) {
-			// 数据格式转换
-			List<LessonConfigBo> boList = childrens.stream().map(lessonConfig -> {
-				LessonConfigBo configBo = BeanUtils.copy(lessonConfig, LessonConfigBo.class);
-
-				CourseLesson lesson = lessonMap.get(configBo.getLesson());
-				if (null != lesson) {
-					configBo.setName(lesson.getName());
-					configBo.setType(lesson.getType());
-					configBo.setRequired(
-							lesson.getLessonType().intValue() == CourseLesson.IS_REQUIRED);
-				}
-
-				configBo.setLearn(null != recordMap.get(configBo.getLesson()));
-				return configBo;
-			}).collect(Collectors.toList());
-
-			// 递归组装
-			boList.stream().forEach(bo -> assembleLessonLib(bo, lessonMap, recordMap));
-			firstNode.setLessonConfigs(boList);
-		}
-
-	}
-
-	@Override
 	public String collectionLesson(String userId, String lessonId, Boolean isCollection) {
 		LessonCollection exist = lessonCollectionMapper.selectByUserAndLesson(userId, lessonId);
 
@@ -197,4 +112,25 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 		return lessonId;
 	}
 
+	@Override
+	public LessonInfoBo getAdminLessonDetail(String courseId, String lessonId) {
+
+		Course course = courseMapper.selectById(courseId);
+		if (null == course) {
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+		}
+
+		Lesson lesson = lessonMapper.selectById(lessonId);
+		if (null == lesson) {
+			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FOUND);
+		}
+
+		LessonInfoBo copy = BeanUtils.copy(lesson, LessonInfoBo.class);
+
+		// 查询习题数量
+
+		// 查询场景名称以及场景访问权限
+
+		return null;
+	}
 }

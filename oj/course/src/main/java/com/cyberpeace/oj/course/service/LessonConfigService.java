@@ -1,11 +1,25 @@
 package com.cyberpeace.oj.course.service;
 
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 
-import java.util.List;
+public interface LessonConfigService extends IService<LessonConfig> {
 
-public interface LessonConfigService {
+    /**
+     * 根据课程编号用户编号查询课程目录
+     * @param courseId 课程编号
+     * @param userId 用户编号
+     * @param ispublic
+     * @return
+     */
+    LessonConfigBo getLessonConfig(String courseId, String userId, Boolean ispublic);
 
 
+    /**
+     *
+     * @param configBo
+     * @return
+     */
+    LessonConfigBo updateLessonConfig(LessonConfigBo configBo);
 }

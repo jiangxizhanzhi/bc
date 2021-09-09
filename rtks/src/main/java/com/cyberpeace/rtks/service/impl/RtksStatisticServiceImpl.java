@@ -19,6 +19,7 @@ import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
+import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
@@ -59,6 +60,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private MissionSkillEvaluationMapper missionSkillEvaluationMapper;
+
+	@Autowired
+	private LessonRecordService lessonRecordService;
 
 	/**
 	 * 角色评分中技能所占百分比
@@ -305,7 +309,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	@Override
 	public StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime,
 			Date endTime) {
-		List<LessonRecord> records = courseLessonService.selectByTime(userId, startTime, endTime);
+		List<LessonRecord> records = lessonRecordService.selectByTime(userId, startTime, endTime);
 
 		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
 				TimeUtil.getStartOfDay(endTime));
@@ -341,7 +345,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 				List<String> recordLessonIds = lessonRecordList.stream()
 						.map(LessonRecord::getLesson).distinct().collect(Collectors.toList());
-				List<String> recordCourseIds = courseLessonService
+				List<String> recordCourseIds = lessonRecordService
 						.recordBelongCourse(recordLessonIds, lessons);
 				yCourses.add(String.valueOf(recordCourseIds.size()));
 

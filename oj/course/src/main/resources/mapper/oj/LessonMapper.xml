@@ -20,6 +20,17 @@
                     and `name` like #{context.pattern}
                 </if>
             </if>
+            and status = 1
+        </where>
+    </select>
+
+    <select id="selectByCourse" resultMap="base">
+        select * from course_lesson
+        <where>
+            <if test="null != context.courseId">
+                and course = #{courseId}
+            </if>
+            and status = 1
         </where>
     </select>
 

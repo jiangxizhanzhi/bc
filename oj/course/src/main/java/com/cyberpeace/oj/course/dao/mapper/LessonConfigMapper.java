@@ -12,5 +12,9 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
     LessonConfig getFirstNode(@Param("courseId") String courseId);
 
-    List<LessonConfig> listByParent(@Param("parentId") String parentId);
+    List<LessonConfig> listByParent(@Param("parentId") String parentId,
+                                    @Param("isPublic") Boolean isPublic);
+
+    List<LessonConfig> selectByCourse(@Param("courseId") String courseId,
+                                      @Param("isPublic") Boolean isPublic);
 }

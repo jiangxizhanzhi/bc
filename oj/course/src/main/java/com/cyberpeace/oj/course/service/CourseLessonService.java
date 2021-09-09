@@ -65,11 +65,4 @@ public interface CourseLessonService {
      */
     String collectionLesson(String userId, String lessonId, Boolean isCollection);
 
-    /**
-     * 分页查询
-     * @param page
-     * @param context
-     * @return
-     */
-    IPage<LessonInfoBo> pageByContext(Page page, LessonContext context);
 }

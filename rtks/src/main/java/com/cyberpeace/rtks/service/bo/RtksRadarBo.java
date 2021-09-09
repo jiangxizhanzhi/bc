@@ -2,27 +2,23 @@ package com.cyberpeace.rtks.service.bo;
 
 import java.io.Serializable;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
  * @author yinqingrong
  */
 @Data
+@ApiModel("六棱图数据")
 public class RtksRadarBo implements Serializable {
 
-	/**
-	 * 层级id
-	 */
+	@ApiModelProperty("节点编号")
 	private String firstTreeId;
 
-	/**
-	 * 层级名称
-	 */
+	@ApiModelProperty("节点名称")
 	private String treeName;
 
-	/**
-	 * 该层级下的能力匹配度百分比。
-	 * 10代表10%
-	 */
+	@ApiModelProperty("节点值")
 	private Integer matchPercent;
 }

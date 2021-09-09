@@ -197,10 +197,4 @@ public class CourseLessonServiceImpl implements CourseLessonService {
 		return lessonId;
 	}
 
-	@Override
-	public IPage<LessonInfoBo> pageByContext(Page page, LessonContext context) {
-
-		List<Lesson> lessons = lessonMapper.pageByContext(page, context);
-		return null;
-	}
 }

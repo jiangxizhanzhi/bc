@@ -12,9 +12,12 @@
                 <if test="null != context.courseId">
                     and  course = #{context.courseId}
                 </if>
+                <if test="null != context.type">
+                    and `type` = #{context.type}
+                </if>
                 <if test="null != context.pattern and context.pattern != ''">
                     <bind name="context.pattern" value="'%' + context.pattern + '%'"/>
-                    and name like #{context.pattern}
+                    and `name` like #{context.pattern}
                 </if>
             </if>
         </where>

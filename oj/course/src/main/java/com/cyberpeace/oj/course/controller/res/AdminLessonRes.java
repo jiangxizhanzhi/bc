@@ -46,4 +46,7 @@ public class AdminLessonRes implements Serializable {
     @ApiModelProperty("创建人姓名")
     private String createUserName;
 
+    @ApiModelProperty("拓扑编号")
+    private String ojSceneConfig;
+
 }

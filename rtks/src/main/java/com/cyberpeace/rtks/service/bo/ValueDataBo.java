@@ -21,7 +21,7 @@ public class ValueDataBo implements Serializable {
     private Double process = new Double(0);
 
     @ApiModelProperty("权重")
-    private Double weight = new Double(0);
+    private Double weight = new Double(1);
 
     @JsonIgnore
     private Double lessonCount = new Double(0);

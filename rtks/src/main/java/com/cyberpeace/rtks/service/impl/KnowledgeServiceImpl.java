@@ -202,8 +202,8 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		}
 
 		Double sumWeight = 0.0;
-
 		Double sumProcess = 0.0;
+
 		for (CourseStudyProcessBo courseStudyProcessBo : processBos) {
 			sumProcess += MathUtils.mul(courseStudyProcessBo.getProcess(),
 					Double.valueOf(map.get(courseStudyProcessBo.getCourseId())));
@@ -212,7 +212,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		if (sumWeight <= 0.0) {
 			return 0;
 		} else {
-			return MathUtils.divide(sumProcess, sumWeight, 0).intValue();
+			return MathUtils.ceilDivide(sumProcess, sumWeight);
 		}
 	}
 

@@ -204,8 +204,8 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		}
 
 		Double sumWeight = Double.valueOf(0);
-
 		Double sumProcess = Double.valueOf(0);
+
 		for (CourseStudyProcessBo courseStudyProcessBo : processBos) {
 			sumProcess += MathUtils.mul(courseStudyProcessBo.getProcess(),
 					Double.valueOf(map.get(courseStudyProcessBo.getCourseId())));
@@ -214,7 +214,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		if (sumWeight <= 0.0) {
 			return 0;
 		} else {
-			return MathUtils.divide(sumProcess, sumWeight, 0).intValue();
+			return MathUtils.ceilDivide(sumProcess, sumWeight);
 		}
 	}
 

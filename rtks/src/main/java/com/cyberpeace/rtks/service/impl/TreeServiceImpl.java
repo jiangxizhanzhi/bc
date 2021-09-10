@@ -1,7 +1,10 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +41,20 @@ public class TreeServiceImpl implements TreeService {
 
 	@Override
 	public List<Role> roleUnderLevel(String levelId) {
-		// TODO
 		// 遍历当前节点的所有子节点
-		List<Role> underRoles = roleMapper.getRolesUnderLevel(levelId);
-		// 返回当前节点及子节点下所有role数据
-		return underRoles;
+		List<Level> childLevels = levelMapper.getChildLevels(levelId);
+
+		if (CollectionUtils.isEmpty(childLevels)) {
+			// 最后一级节点数据
+			return roleMapper.getRolesUnderLevel(levelId);
+
+		} else {
+			// 遍历子节点数据
+			List<Role> roles = childLevels.stream()
+					.map(level -> roleUnderLevel(level.getResourceId())).flatMap(Collection::stream)
+					.collect(Collectors.toList());
+
+			return roles;
+		}
 	}
 }

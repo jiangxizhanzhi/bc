@@ -92,7 +92,7 @@ public class DataSourceConfig implements EnvironmentAware {
 	@ConfigurationProperties(prefix = "spring.datasource.oj")
 	public DataSource ojDataSource() {
 		if (StringUtils.isBlank(ojJdbcUrl)) {
-			return null;
+			return DataSourceBuilder.create().build();
 		}
 
 		DataSource dataSource = DataSourceBuilder.create().url(ojJdbcUrl).password(ojPassword)
@@ -109,7 +109,7 @@ public class DataSourceConfig implements EnvironmentAware {
 	@ConfigurationProperties(prefix = "spring.datasource.cr")
 	public DataSource crDataSource() {
 		if (StringUtils.isBlank(crJdbcUrl)) {
-			return null;
+			return DataSourceBuilder.create().build();
 		}
 
 		DataSource dataSource = DataSourceBuilder.create().url(crJdbcUrl).password(crPassword)

@@ -22,7 +22,26 @@
         <module.version>0.0.1-SNAPSHOT</module.version>
         <cr.version>0.0.1-SNAPSHOT</cr.version>
     </properties>
-
+    <profiles>
+        <profile>
+            <id>rtks</id>
+            <activation>
+                <!-- 默认激活 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- lgd -->
+                <package.environment>rtks</package.environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>rtks_v5_2</id>
+            <properties>
+                <!-- base5.2 -->
+                <package.environment>rtks_v5_2</package.environment>
+            </properties>
+        </profile>
+    </profiles>
     <dependencies>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
@@ -81,6 +100,11 @@
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>single_train</artifactId>
+            <version>${cr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>team_train</artifactId>
             <version>${cr.version}</version>
         </dependency>
         <dependency>
@@ -226,12 +250,45 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 覆盖原有文件 -->
+                            <overwrite>true</overwrite>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <!-- 也可以用下面这样的方式（指定相对url的方式指定outputDirectory） <outputDirectory>target/classes</outputDirectory> -->
+                            <!-- 待处理的资源定义 -->
+                            <resources>
+                                <resource>
+                                    <!-- 指定resources插件处理哪个目录下的资源文件 -->
+                                    <directory>src/main/resources/env/${package.environment}</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warName>ojj</warName>
+                    <packagingExcludes>
+                        WEB-INF/classes/env/**
+                    </packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>
+
     </build>
 
 </project>

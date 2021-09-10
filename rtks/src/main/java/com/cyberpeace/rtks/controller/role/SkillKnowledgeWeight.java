@@ -12,6 +12,6 @@ public class SkillKnowledgeWeight implements Serializable {
 	private String id;
 
 	@ApiModelProperty(value = "权重")
-	private String weight;
+	private Integer weight = 1;
 
 }

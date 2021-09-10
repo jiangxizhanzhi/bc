@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,7 +81,7 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 		// 已经绑定了岗位的层级不允许新增子层级
 		List<Role> roles = roleService.getRolesByLevelId(parentId);
 		if (!CollectionUtils.isEmpty(roles)) {
-			throw new BusinessException("100002");
+			throw new BusinessException(RtksBusinessErrorCode.UNABLE_ADD_FRAME);
 		}
 
 		// 确保parentId对应的框架/层级存在
@@ -115,7 +116,7 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 		// 如果层级下有岗位绑定，不允许删除
 		List<String> roleIds = roleService.getRoleIdsByLevelIds(ids);
 		if (!CollectionUtils.isEmpty(roleIds)) {
-			throw new BusinessException("100001");
+			throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_FRAME);
 		}
 
 		// 把待删除层级下的层级绑定到其父层级/框架上

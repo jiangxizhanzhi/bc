@@ -600,7 +600,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 				KnowledgeUnderCourseBo.class);
 
 		if (CollectionUtils.isEmpty(courses)) {
-			knowledgeDataBo.setProcess(new Double(MAX_PERCENT));
+			knowledgeDataBo.setProcess(new Double(0));
 			return knowledgeDataBo;
 		}
 

@@ -18,6 +18,8 @@ public class Direction {
 
     private String code;
 
+    private String parent;
+
     private String name;
 
     private Integer status;

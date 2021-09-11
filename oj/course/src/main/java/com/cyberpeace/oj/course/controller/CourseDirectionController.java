@@ -26,7 +26,7 @@ public class CourseDirectionController {
     private DirectionMapper directionMapper;
 
     // LGD在使用 知识点和技能点绑定课程
-    @GetMapping("/list")
+    @GetMapping("")
     @ApiOperation("课程分类")
     public BaseRsp<List<CourseDirection>> listDirection() {
         List<CourseDirection> courseDirections = directionMapper.selectList(null);

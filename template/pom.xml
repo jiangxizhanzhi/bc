@@ -247,36 +247,23 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <!-- 覆盖原有文件 -->
-                            <overwrite>true</overwrite>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <!-- 也可以用下面这样的方式（指定相对url的方式指定outputDirectory） <outputDirectory>target/classes</outputDirectory> -->
-                            <!-- 待处理的资源定义 -->
-                            <resources>
-                                <resource>
-                                    <!-- 指定resources插件处理哪个目录下的资源文件 -->
-                                    <directory>src/main/resources/env/${package.environment}</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+        <resources>
+            <resource>
+                <directory>src/main/resources/env/${package.environment}</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <includes>
+                    <include>modules/*.*</include>
+                    <include>static/**/*.*</include>
+                    <include>*.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

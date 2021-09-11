@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import com.cyberpeace.common.util.ConfigUtil;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @TableName("course_course")
@@ -74,4 +76,15 @@ public class Course extends BaseTable {
 
 	@TableField(exist = false)
 	private String courseNum;
+
+	public String getLogo() {
+		if (StringUtils.isNotBlank(this.logo)) {
+			String fastdfsPrefix = ConfigUtil.getContextProperty("common.fastdfs.url.prefix");
+			if (StringUtils.isNotBlank(fastdfsPrefix)) {
+				return fastdfsPrefix + this.logo;
+			}
+			return this.logo;
+		}
+		return this.logo;
+	}
 }

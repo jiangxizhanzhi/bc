@@ -30,6 +30,7 @@ public class CustomConf {
 				new ClassPathResource("modules/oj.properties"),
 				new ClassPathResource("modules/cr.properties"),
 				new ClassPathResource("modules/rtks.properties"),
+				new ClassPathResource("modules/common.properties"),
 				new ClassPathResource("application.properties") };
 		configurer.setLocations(resources);
 

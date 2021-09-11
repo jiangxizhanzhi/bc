@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.dao.context;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.Data;
 
@@ -9,7 +10,7 @@ public class CourseContext implements Serializable {
 
     private Integer eBook;
 
-    private String direction;
+    private List<String> directions;
 
     private Integer difficulty;
 

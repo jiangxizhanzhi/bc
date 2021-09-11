@@ -1,19 +1,20 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.LessonConfigService;
-import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 @RestController
-@RequestMapping("/admin/lessonconfig")
-@Api("oj-课程目录相关api")
+@RequestMapping("/oj/admin/lessonconfig")
+@Api(tags = "oj-后台课程目录相关api")
 @RequiresAuthentication
 public class AdminLessonConfigController {
 

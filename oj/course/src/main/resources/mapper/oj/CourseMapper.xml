@@ -39,15 +39,22 @@
         </foreach>
     </sql>
 
+    <sql id="directions">
+        <foreach collection="courseContext.directions" index="index" separator="," item="direction" open="(" close=")">
+            #{direction}
+        </foreach>
+    </sql>
+
     <sql id="courseCondition">
         <if test="null != courseContext.eBook">
-            and e_book = #{courseContext.eBook}
-        </if>
-        <if test="null != courseContext.direction and courseContext.direction != ''">
-            and direction = #{courseContext.direction}
+            and `e_book` = #{courseContext.eBook}
         </if>
         <if test="null != courseContext.difficulty">
-            and difficulty = #{courseContext.difficulty}
+            <bind name="courseContext.difficulty" value="courseContext.difficulty"/>
+            and `difficulty` = #{courseContext.difficulty}
+        </if>
+        <if test="null != courseContext.directions and courseContext.directions.size() > 0">
+            and `direction` in <include refid="directions"/>
         </if>
         <if test="null != courseContext.pattern and courseContext.pattern != ''">
             and `name` like #{courseContext.pattern}
@@ -63,26 +70,26 @@
                 <if test="null != courseContext.myCourse">
                     <choose>
                         <when test="courseContext.myCourse">
-                            and create_user = #{courseContext.userId}
+                            and `create_user` = #{courseContext.userId}
                         </when>
                         <otherwise>
-                            and create_user != #{courseContext.userId}
+                            and `create_user` != #{courseContext.userId}
                         </otherwise>
                     </choose>
                 </if>
                 <if test="null != courseContext.systemCourse">
-                    and builtin = #{courseContext.systemCourse}
+                    and `builtin` = #{courseContext.systemCourse}
                 </if>
                 <if test="null != courseContext.shareCourse">
                     <include refid="share_constant"/>
                     <bind name="courseContext.likeUser" value="'%' + courseContext.userId + '%'"/>
                     <choose>
                         <when test="courseContext.shareCourse">
-                            and (share = ${ALL_SHARE_MODE} or (share = ${CUSTOM_SHARE_MODE} and share_teachers like
+                            and (`share` = ${ALL_SHARE_MODE} or (`share` = ${CUSTOM_SHARE_MODE} and `share_teachers` like
                             #{courseContext.likeUser}))
                         </when>
                         <otherwise>
-                            and (share = ${CUSTOM_SHARE_MODE} and share_teachers not like
+                            and (`share` = ${CUSTOM_SHARE_MODE} and `share_teachers` not like
                             #{courseContext.likeUser})
                         </otherwise>
                     </choose>

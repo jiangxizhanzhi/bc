@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "oj-课时后台api")
 @RestController
-@RequestMapping("/admin/lesson")
+@RequestMapping("/oj/admin/lesson")
 @RequiresAuthentication
 public class AdminLessonController {
 

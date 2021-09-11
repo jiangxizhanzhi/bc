@@ -3,8 +3,16 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.DirectionMapper">
 
+    <resultMap id="oj_direction" type="com.cyberpeace.oj.course.dao.oj_entity.Direction"/>
+
     <select id="selectByResource" resultType="com.cyberpeace.oj.course.dao.entity.CourseDirection">
         select * from course_direction where resource_id = #{direction}
+    </select>
+
+    <select id="selectChirdlentByCode" resultMap="oj_direction">
+        <bind name="directionId" value="directionId + '%'"/>
+        select * from course_direction where
+        code like #{directionId}
     </select>
 
 </mapper>

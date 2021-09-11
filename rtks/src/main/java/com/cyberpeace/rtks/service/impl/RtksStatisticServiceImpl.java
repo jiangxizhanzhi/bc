@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.InvalidParamException;
@@ -123,6 +124,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	}
 
 	@Override
+	@Cacheable(cacheNames = "role", key = "#roleId + #userId")
 	public List<RtksRadarBo> calculateRadar(String roleId, String userId) {
 		List<RtksRadarBo> ret = Lists.newArrayList();
 

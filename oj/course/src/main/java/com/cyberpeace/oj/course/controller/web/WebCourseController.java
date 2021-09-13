@@ -2,9 +2,18 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseDirectionService;
+import com.cyberpeace.oj.crbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.crbase.controller.req.CommentReq;
+import com.cyberpeace.oj.crbase.controller.res.CommentRes;
+import com.cyberpeace.oj.crbase.dao.entity.Comment;
+import com.cyberpeace.oj.crbase.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +51,12 @@ public class WebCourseController {
 
     @Autowired
     private CourseDirectionService courseDirectionService;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private CourseMapper courseMapper;
 
     @ApiOperation("课程收藏")
     @PostMapping("/collect")
@@ -85,5 +100,23 @@ public class WebCourseController {
         CourseInfoBo course = courseService.selectById(resourceId, userId);
         BaseRsp rsp = new BaseRsp(course);
         return rsp;
+    }
+
+    @PostMapping
+    @ApiOperation("/comment")
+    public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
+
+        Course course = courseMapper.selectById(commentReq.getResource());
+        if (null == course) {
+            throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+        }
+
+        Comment comment = BeanUtils.copy(commentReq, Comment.class);
+        comment.setUser(UserInfoContext.getUserContext().getUserId());
+        comment.setCommentType(Comment.COURSE);
+
+        Comment newComment = commentService.addNewComment(comment);
+        CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);
+        return new BaseRsp<>(commentRes);
     }
 }

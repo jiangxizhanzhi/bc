@@ -1,14 +1,25 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.CollectionReq;
+import com.cyberpeace.oj.course.dao.mapper.LessonMapper;
+import com.cyberpeace.oj.course.dao.oj_entity.Lesson;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
+import com.cyberpeace.oj.crbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.crbase.controller.req.CommentReq;
+import com.cyberpeace.oj.crbase.controller.res.CommentRes;
+import com.cyberpeace.oj.crbase.dao.entity.Comment;
+import com.cyberpeace.oj.crbase.service.CommentService;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Api(tags = "oj-前台课时相关api")
 @RestController
@@ -18,6 +29,12 @@ public class WebLessonController {
 
     @Autowired
     private CourseLessonService courseLessonService;
+
+    @Autowired
+    private LessonMapper lessonMapper;
+
+    @Autowired
+    private CommentService commentService;
 
     @ApiOperation("课时收藏")
     @PostMapping("/collection")
@@ -39,6 +56,24 @@ public class WebLessonController {
         String userId = UserInfoContext.getUserContext().getUserId();
         LessonInfoBo infoBo = courseLessonService.getLessonDetail(userId, courseId, lessonId);
         return new BaseRsp<>(infoBo);
+    }
+
+    @ApiOperation("课时评论")
+    @PostMapping("")
+    public BaseRsp<CommentRes> lessonComment(@RequestBody @Valid CommentReq commentReq) {
+
+        Lesson lesson = lessonMapper.selectById(commentReq.getResource());
+        if (null == lesson) {
+            throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FOUND);
+        }
+
+        Comment comment = BeanUtils.copy(commentReq, Comment.class);
+        comment.setCommentType(Comment.LESSON);
+        comment.setUser(UserInfoContext.getUserContext().getUserId());
+
+        Comment newComment = commentService.addNewComment(comment);
+        CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);
+        return new BaseRsp<>(commentRes);
     }
 
 }

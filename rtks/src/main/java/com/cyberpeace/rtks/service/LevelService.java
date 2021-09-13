@@ -50,4 +50,14 @@ public interface LevelService extends IService<Level> {
 	void changeLevelId(String levelId, String target);
 
 	Level getOr404(String resourceId);
+
+	/**
+	 * 删除所有层级 保留框架
+	 * */
+	void removeAllLevels();
+
+	/**
+	 * 清空level表并导入预置数据
+	 * */
+	void initDefaultFromPreset();
 }

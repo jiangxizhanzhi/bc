@@ -4,16 +4,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.suit.ListController;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.rtks.controller.frame.FrameAddInput;
 import com.cyberpeace.rtks.controller.frame.FrameModifyInput;
 import com.cyberpeace.rtks.controller.frame.FrameOutput;
@@ -40,6 +46,31 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 	@Autowired
 	private RoleService roleService;
 
+	private Boolean singleFrame;
+
+	private void multiFrameOnly() {
+		if (singleFrame) {
+			throw new InvalidParamException("单框架模式下禁用");
+		}
+	}
+
+	private void singleFrameOnly() {
+		if (!singleFrame) {
+			throw new InvalidParamException("多框架模式下禁用");
+		}
+	}
+
+	/**
+	 * 单框架模式下 默认的框架id
+	 */
+	private final String DEFAULT_FRAME_ID = "default";
+
+	@PostConstruct
+	public void init() {
+		String singleFrameConfig = ConfigUtil.getContextProperty("singleFrame");
+		singleFrame = Objects.equals(singleFrameConfig, "true");
+	}
+
 	@Override
 	protected FrameService getService() {
 		return frameService;
@@ -59,10 +90,12 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 	}
 
 	@Override
-	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput,
-			Level originEntity) {
+	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput, Level originEntity) {
 		Level frame = new Level();
-		frame.setName(frameModifyInput.getName());
+		if (!singleFrame) {
+			// 单框架模式下框架名称不可变
+			frame.setName(frameModifyInput.getName());
+		}
 		frame.setDescription(frameModifyInput.getDescription());
 		frame.setResourceId(frameModifyInput.getResourceId());
 		return frame;
@@ -81,6 +114,7 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 
 	@Override
 	protected IPage<Level> listEntity(Page<Level> page, String keyword) {
+		multiFrameOnly();
 		return frameService.listEntity(page, keyword);
 	}
 
@@ -91,6 +125,7 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 
 	@Override
 	protected void performBatchDelete(List<String> frameIds) {
+		multiFrameOnly();
 		// 检查输入
 		frameIds = frameService.checkFrameIds(frameIds);
 
@@ -145,6 +180,24 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 		}
 
 		return new BaseRsp<>(frameTree);
+	}
+
+	@ApiOperation("清空默认框架，仅单框架模式下有效")
+	@PostMapping("/clear")
+	public BaseRsp<FrameOutput> clearFrame() {
+		singleFrameOnly();
+		// 除根节点外删除所有框架、层级
+		levelService.removeAllLevels();
+		return retrieve(DEFAULT_FRAME_ID);
+	}
+
+	@ApiOperation("重置默认框架，仅单框架模式下有效")
+	@PostMapping("/reset")
+	public BaseRsp<FrameOutput> resetFrame() {
+		singleFrameOnly();
+		// 重置所有框架、层级
+		levelService.initDefaultFromPreset();
+		return retrieve(DEFAULT_FRAME_ID);
 	}
 
 	private LevelTreeOutput getLevelTreeOutput(Level level) {

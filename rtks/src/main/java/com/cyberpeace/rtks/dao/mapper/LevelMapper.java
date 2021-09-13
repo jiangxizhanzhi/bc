@@ -23,4 +23,10 @@ public interface LevelMapper extends BaseMapper<Level> {
 	List<String> getLevelIdsByFrameIds(List<String> frameIds);
 
 	void changeLevelId(String levelId, String target);
+
+	void deleteAllLevels();
+
+	void truncateLevels();
+
+	void copyFromPreset();
 }

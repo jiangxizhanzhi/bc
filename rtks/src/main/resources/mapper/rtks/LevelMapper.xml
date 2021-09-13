@@ -47,4 +47,18 @@
             parent = #{levelId}
         </where>
     </update>
+
+    <delete id="deleteAllLevels">
+        delete
+        from rtks_level
+        where frame IS NOT NULL;
+    </delete>
+
+    <delete id="truncateLevels">
+        truncate table rtks_level;
+    </delete>
+
+    <insert id="copyFromPreset">
+        INSERT INTO rtks_level SELECT * FROM init_rtks_level;
+    </insert>
 </mapper>

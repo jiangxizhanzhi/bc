@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
@@ -26,6 +29,14 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	@Autowired
 	RoleMapper roleMapper;
 
+	private Boolean singleFrame;
+
+	@PostConstruct
+	public void init() {
+		String singleFrameConfig = ConfigUtil.getContextProperty("singleFrame");
+		singleFrame = Boolean.parseBoolean(singleFrameConfig);
+	}
+
 	@Override
 	public Level getOr404(String resourceId) {
 		Level level = getById(resourceId);
@@ -35,6 +46,17 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 		ensureNotFrame(level);
 		return level;
+	}
+
+	@Override
+	public void removeAllLevels() {
+		levelMapper.deleteAllLevels();
+	}
+
+	@Override
+	public void initDefaultFromPreset() {
+		levelMapper.truncateLevels();
+		levelMapper.copyFromPreset();
 	}
 
 	@Override
@@ -90,7 +112,16 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Override
 	public String getFullPathById(String levelId) {
-		Level level = getOr404(levelId);
+		Level level;
+		try {
+			level = getOr404(levelId);
+		} catch (ResourceNotFoundException e) {
+			if (singleFrame) {
+				return null;
+			} else {
+				throw e;
+			}
+		}
 		List<String> levelNames = new ArrayList<>();
 		findFrame(level, level1 -> levelNames.add(0, level1.getName()));
 		return StringUtils.join(levelNames, "/");

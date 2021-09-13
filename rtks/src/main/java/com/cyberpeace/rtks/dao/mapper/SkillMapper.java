@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
+import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.Skill;
 
@@ -22,4 +23,7 @@ public interface SkillMapper extends BaseMapper<Skill> {
 
 	List<SkillRes> getAllSkills(String scene_category);
 
+	List<SkillRes> getAllSkillsBySkillSystemId(String skillSystemId);
+
+	List<CourseRelatedRes> getKnowledgeByCourseId(List<String> ids);
 }

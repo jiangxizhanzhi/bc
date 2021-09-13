@@ -90,9 +90,9 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	}
 
 	@Override
-	public List<SkillTreeRes> getSkillTree() {
+	public List<SkillTreeRes> getSkillTree(String skillSystemId) {
 		List<SkillTreeRes> skillTreeResList = Lists.newArrayList();
-		List<SkillRes> skillResList = skillService.getAllSkills();
+		List<SkillRes> skillResList = skillService.getAllSkillsBySkillSystemId(skillSystemId);
 
 		Map<String, List<SkillRes>> skillResMap = skillResList.stream()
 				.collect(Collectors.groupingBy(SkillRes::getCategory));

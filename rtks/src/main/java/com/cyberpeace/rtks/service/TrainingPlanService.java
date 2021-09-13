@@ -24,8 +24,9 @@ public interface TrainingPlanService {
 	 * 获取按照类别分组的技能树
 	 *
 	 * @return
+	 * @param skillSystemId
 	 */
-	List<SkillTreeRes> getSkillTree();
+	List<SkillTreeRes> getSkillTree(String skillSystemId);
 
 	/**
 	 * 通过角色id获取包含技能、知识点、课程列表的角色对象

@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("课程与知识点关系绑定")
-public class CourseKnowledgeBo implements Serializable {
+public class CourseKnowledgeSkillBo implements Serializable {
 
 	@ApiModelProperty("课程资源编号")
 	private String resourceId;
@@ -64,4 +64,7 @@ public class CourseKnowledgeBo implements Serializable {
 
 	@ApiModelProperty("课程关联知识点信息")
 	private List<CourseRelatedRes> knowledges;
+
+	@ApiModelProperty("课程关联技能点信息")
+	private List<CourseRelatedRes> skills;
 }

@@ -1,5 +1,13 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DataTransferUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -11,20 +19,12 @@ import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
+import com.cyberpeace.rtks.service.CourseTrainService;
 import com.cyberpeace.rtks.service.KnowledgeService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
+import com.cyberpeace.rtks.service.SkillService;
+import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
 import com.cyberpeace.rtks.service.bo.RoleCourseBo;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cyberpeace.rtks.service.CourseTrainService;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseTrainServiceImpl implements CourseTrainService {
@@ -36,13 +36,16 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	private KnowledgeService knowledgeService;
 
 	@Autowired
+	private SkillService skillService;
+
+	@Autowired
 	private CourseStatisticsService courseStatisticsService;
 
 	@Autowired
 	private CourseService courseService;
 
 	@Override
-	public List<CourseKnowledgeBo> getCourseKnowledge(String userId, String roleId) {
+	public List<CourseKnowledgeSkillBo> getCourseKnowledge(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 				String.class);
@@ -57,9 +60,9 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService
 				.getKnowledgeByCourseId(courseIds);
 
-		List<CourseKnowledgeBo> boList = processBos.stream().map(bo -> {
-			CourseKnowledgeBo knowledgeBo = BeanUtils.deepCopy(infoMap.get(bo.getCourseId()),
-					CourseKnowledgeBo.class);
+		List<CourseKnowledgeSkillBo> boList = processBos.stream().map(bo -> {
+			CourseKnowledgeSkillBo knowledgeBo = BeanUtils.deepCopy(infoMap.get(bo.getCourseId()),
+					CourseKnowledgeSkillBo.class);
 			knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
 			knowledgeBo.setProcess(MathUtils.ceil(bo.getProcess()));
 			knowledgeBo.setCompleteTheory(bo.getCompleteTheory());
@@ -71,6 +74,50 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 
 			return knowledgeBo;
 		}).collect(Collectors.toList());
+		return boList;
+	}
+
+	@Override
+	public List<CourseKnowledgeSkillBo> getCourseSkillByRoleId(String roleId) {
+		Role role = roleMapper.selectById(roleId);
+		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
+		List<String> courseIds = skillService.getCourseByIds(skillIds);
+
+		List<CourseInfoBo> courses = courseService.selectByIds(courseIds);
+
+		Map<String, List<CourseRelatedRes>> courseMap = skillService.getSkillByCourseId(courseIds);
+
+		List<CourseKnowledgeSkillBo> boList = courses.stream().map(bo -> {
+			CourseKnowledgeSkillBo knowledgeSkillBo = BeanUtils.deepCopy(bo,
+					CourseKnowledgeSkillBo.class);
+			knowledgeSkillBo.setSkills(courseMap.get(bo.getResourceId()));
+
+			return knowledgeSkillBo;
+		}).collect(Collectors.toList());
+
+		return boList;
+	}
+
+	@Override
+	public List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String roleId) {
+		Role role = roleMapper.selectById(roleId);
+		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
+				String.class);
+		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
+
+		List<CourseInfoBo> courses = courseService.selectByIds(courseIds);
+
+		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService
+				.getKnowledgeByCourseId(courseIds);
+
+		List<CourseKnowledgeSkillBo> boList = courses.stream().map(bo -> {
+			CourseKnowledgeSkillBo knowledgeSkillBo = BeanUtils.deepCopy(bo,
+					CourseKnowledgeSkillBo.class);
+			knowledgeSkillBo.setSkills(courseMap.get(bo.getResourceId()));
+
+			return knowledgeSkillBo;
+		}).collect(Collectors.toList());
+
 		return boList;
 	}
 

@@ -14,11 +14,12 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
 import com.cyberpeace.rtks.service.CourseTrainService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeBo;
+import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
 import com.cyberpeace.rtks.service.bo.RoleCourseBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "rtks-课程训练相关")
 @RestController
@@ -26,66 +27,87 @@ import io.swagger.annotations.ApiOperation;
 @RequiresAuthentication
 public class CourseTrainController {
 
+	@Autowired
+	private CourseTrainService courseTrainService;
 
-    @Autowired
-    private CourseTrainService courseTrainService;
+	@ApiOperation("课程训练-职业课程课程学习进度")
+	@GetMapping("/knowledge")
+	public BaseRsp<OccupationCourseRes> courseKnowledge() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		List<CourseKnowledgeSkillBo> courseKnowledges = courseTrainService
+				.getCourseKnowledge(userId, roleId);
+		return new BaseRsp<>(calculatePercent(courseKnowledges));
+	}
 
-    @ApiOperation("课程训练-职业课程课程学习进度")
-    @GetMapping("/knowledge")
-    public BaseRsp<OccupationCourseRes> courseKnowledge() {
-        String userId = UserInfoContext.getUserContext().getUserId();
-        String roleId = UserInfoContext.getUserContext().getRoleId();
-        List<CourseKnowledgeBo> courseKnowledges = courseTrainService.getCourseKnowledge(userId,
-                roleId);
-        return new BaseRsp<>(calculatePercent(courseKnowledges));
-    }
+	@ApiOperation("课程训练-职业课程课程学习进度")
+	@GetMapping("/getCourseKnowledgeByRoleId")
+	public BaseRsp<OccupationCourseRes> getCourseKnowledgeByRoleId(
+			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		List<CourseKnowledgeSkillBo> courseKnowledges = courseTrainService
+				.getCourseKnowledgeByRoleId(resource_id);
+		return new BaseRsp<>(calculatePercent(courseKnowledges));
+	}
 
-    /**
-     * 计算进度
-     * @param courseKnowledges
-     * @return
-     */
-    private OccupationCourseRes calculatePercent(List<CourseKnowledgeBo> courseKnowledges) {
+	@ApiOperation("课程训练-技能课程课程学习进度")
+	@GetMapping("/getCourseSkillByRoleId")
+	public BaseRsp<OccupationCourseRes> getCourseSkillByRoleId(
+			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
 
-        OccupationCourseRes courseRes = new OccupationCourseRes();
-        // 计算理论课时进度
-        int theoryCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getTheoryCount)
-                .sum();
-        int completeTheory = courseKnowledges.stream()
-                .mapToInt(CourseKnowledgeBo::getCompleteTheory).sum();
-        courseRes.setTheoryPercent(MathUtils.ceilDivide(Double.valueOf(completeTheory * 100),
-                Double.valueOf(theoryCount)));
+		List<CourseKnowledgeSkillBo> courseKnowledges = courseTrainService
+				.getCourseSkillByRoleId(resource_id);
+		return new BaseRsp<>(calculatePercent(courseKnowledges));
+	}
 
-        // 计算实验课时进度
-        int exerciseCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getExerciseCount)
-                .sum();
-        int completeExercise = courseKnowledges.stream()
-                .mapToInt(CourseKnowledgeBo::getCompleteExercise).sum();
-        courseRes.setExercisePercent(MathUtils.ceilDivide(Double.valueOf(completeExercise * 100),
-                Double.valueOf(exerciseCount)));
+	/**
+	 * 计算进度
+	 * @param courseKnowledges
+	 * @return
+	 */
+	private OccupationCourseRes calculatePercent(List<CourseKnowledgeSkillBo> courseKnowledges) {
 
-        // 计算总进度
-        int count = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getLessonCount).sum();
-        int completeCount = courseKnowledges.stream().mapToInt(CourseKnowledgeBo::getCompleteCount)
-                .sum();
-        courseRes.setCoursePercent(
-                MathUtils.ceilDivide(Double.valueOf(completeCount * 100), Double.valueOf(count)));
+		OccupationCourseRes courseRes = new OccupationCourseRes();
+		// 计算理论课时进度
+		int theoryCount = courseKnowledges.stream().mapToInt(CourseKnowledgeSkillBo::getTheoryCount)
+				.sum();
+		int completeTheory = courseKnowledges.stream()
+				.mapToInt(CourseKnowledgeSkillBo::getCompleteTheory).sum();
+		courseRes.setTheoryPercent(MathUtils.ceilDivide(Double.valueOf(completeTheory * 100),
+				Double.valueOf(theoryCount)));
 
-        courseRes.setKnowledgeBos(courseKnowledges);
-        return courseRes;
-    }
+		// 计算实验课时进度
+		int exerciseCount = courseKnowledges.stream()
+				.mapToInt(CourseKnowledgeSkillBo::getExerciseCount).sum();
+		int completeExercise = courseKnowledges.stream()
+				.mapToInt(CourseKnowledgeSkillBo::getCompleteExercise).sum();
+		courseRes.setExercisePercent(MathUtils.ceilDivide(Double.valueOf(completeExercise * 100),
+				Double.valueOf(exerciseCount)));
 
-    @ApiOperation("职业路径课程")
-    @GetMapping("/role/path")
-    public BaseRsp<List<RoleCourseBo>> getRoleCourse() {
-        String roleId = UserInfoContext.getUserContext().getRoleId();
+		// 计算总进度
+		int count = courseKnowledges.stream().mapToInt(CourseKnowledgeSkillBo::getLessonCount)
+				.sum();
+		int completeCount = courseKnowledges.stream()
+				.mapToInt(CourseKnowledgeSkillBo::getCompleteCount).sum();
+		courseRes.setCoursePercent(
+				MathUtils.ceilDivide(Double.valueOf(completeCount * 100), Double.valueOf(count)));
 
-        BaseRsp<List<RoleCourseBo>> rsp = new BaseRsp<>();
-        if (StringUtils.isNotBlank(roleId)) {
-            List<RoleCourseBo> courses = courseTrainService.getRoleCoursePath(roleId);
-            rsp.setData(courses);
-        }
-        return rsp;
-    }
+		courseRes.setKnowledgeBos(courseKnowledges);
+		return courseRes;
+	}
+
+	@ApiOperation("职业路径课程")
+	@GetMapping("/role/path")
+	public BaseRsp<List<RoleCourseBo>> getRoleCourse() {
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+
+		BaseRsp<List<RoleCourseBo>> rsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(roleId)) {
+			List<RoleCourseBo> courses = courseTrainService.getRoleCoursePath(roleId);
+			rsp.setData(courses);
+		}
+		return rsp;
+	}
 
 }

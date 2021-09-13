@@ -53,9 +53,10 @@ public class TrainingPlanController {
 
 	@ApiOperation("技能体系")
 	@GetMapping("/skillTree")
-	public BaseRsp<List<SkillTreeRes>> skillTree() {
+	public BaseRsp<List<SkillTreeRes>> skillTree(@ApiParam(name = "skillSystemId", value = "技能体系id",
+			required = false) String skillSystemId) {
 
-		List<SkillTreeRes> skillTreeRes = trainingPlanService.getSkillTree();
+		List<SkillTreeRes> skillTreeRes = trainingPlanService.getSkillTree(skillSystemId);
 
 		return new BaseRsp<>(skillTreeRes);
 	}

@@ -1,11 +1,10 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
+import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
@@ -30,6 +30,7 @@ import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.service.*;
+import com.cyberpeace.rtks.service.bo.KnowledgeUnderCourseBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -64,6 +65,20 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
 
 		return PageUtil.getListResult(result);
+	}
+
+	@Override
+	public List<String> getCourseByIds(List<String> skillIds) {
+		if (CollectionUtils.isEmpty(skillIds)) {
+			return Lists.newArrayList();
+		}
+		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
+		List<String> courseIds = skills.stream()
+				.map(skill -> JsonUtil.toJsonObjectArray(skill.getCourses(),
+						KnowledgeUnderCourseBo.class))
+				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId).distinct()
+				.collect(Collectors.toList());
+		return courseIds;
 	}
 
 	@Override
@@ -193,6 +208,23 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		List<SkillRes> skillResList = skillMapper.getAllSkills(scene_category_id);
 
 		return skillResList;
+	}
+
+	@Override
+	public List<SkillRes> getAllSkillsBySkillSystemId(String skillSystemId) {
+		return skillMapper.getAllSkillsBySkillSystemId(skillSystemId);
+	}
+
+	@Override
+	public Map<String, List<CourseRelatedRes>> getSkillByCourseId(List<String> ids) {
+		if (CollectionUtils.isEmpty(ids)) {
+			return Maps.newHashMap();
+		}
+		List<CourseRelatedRes> knowledgeList = skillMapper.getKnowledgeByCourseId(ids);
+
+		Map<String, List<CourseRelatedRes>> courseKnowledgeResMap = knowledgeList.stream()
+				.collect(Collectors.groupingBy(CourseRelatedRes::getResourceId));
+		return courseKnowledgeResMap;
 	}
 
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,

@@ -4,8 +4,8 @@
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper">
 
     <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
-        select `resource_id`, `name`, `parent`, `create_time`, `update_time`
-        from practice_category where status = 1
+        select `resource_id`, `name`, `create_time`, `update_time`, `code`
+        from practice_category where status = 1 and code not like '%|%'
         <if test="practice_type != null">
             and practice_type = #{practice_type}
         </if>
@@ -25,6 +25,16 @@
     <select id="containsByCode" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
         <bind name="code" value="code + '|' + '%'"/>
         select * from practice_category where status = 1 and code like #{code}
+    </select>
+
+    <select id="batchGetByCode" resultType="com.cyberpeace.oj.practice.service.bo.PracticeCategoryParent">
+        select * from practice_category where status = 1
+        <if test="codes.size() > 0">
+            and code in
+            <foreach collection="codes" item="code" separator="," open="(" close=")">
+                #{code}
+            </foreach>
+        </if>
     </select>
 
 </mapper>

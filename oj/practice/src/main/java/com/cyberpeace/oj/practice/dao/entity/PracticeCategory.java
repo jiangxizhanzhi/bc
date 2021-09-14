@@ -29,6 +29,7 @@ public class PracticeCategory extends BaseTable {
     /**
      * 节点编码, 基于父级节点: p1(父节点) -> p1|c1(子节点)
      */
+    @JsonIgnore
     private String code;
 
     /**

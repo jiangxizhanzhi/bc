@@ -9,6 +9,7 @@ import com.cyberpeace.oj.practice.controller.req.PracticeTheoryListReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeTheoryReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -25,10 +26,15 @@ public class PracticeTheoryController extends PracticeMixinController<PracticeTh
     @Autowired
     PracticeTheoryMapper practiceTheoryMapper;
 
+    @Autowired
+    PracticeCategoryService practiceCategoryService;
+
     @GetMapping()
     @ApiOperation("获取单个理论基础练习")
     public BaseRsp<PracticeTheory> get(@RequestParam("resource_id") @NotBlank String resourceId) {
-        return new BaseRsp<>(practiceTheoryMapper.selectById(resourceId));
+        PracticeTheory object = practiceTheoryMapper.selectById(resourceId);
+        object.setCategoryInfo(practiceCategoryService.nodeInfo(object.getCategory()));
+        return new BaseRsp<>(object);
     }
 
     @GetMapping("/list")

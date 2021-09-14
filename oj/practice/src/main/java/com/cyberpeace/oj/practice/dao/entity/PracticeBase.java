@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.oj.practice.dao.constants.Status;
+import com.cyberpeace.oj.practice.service.bo.PracticeCategoryParent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -48,6 +48,10 @@ public class PracticeBase extends BaseTable implements Serializable {
      * 所属分类
      */
     private String category;
+
+    // 分类信息 TODO DAO可以引用service.bo?
+    @TableField(exist = false)
+    private PracticeCategoryParent categoryInfo;
 
     /**
      * 标题

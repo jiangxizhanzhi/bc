@@ -30,9 +30,7 @@ public class PracticeCategoryController {
     @ApiOperation("获取练习方向详情")
     @GetMapping()
     public BaseRsp<PracticeCategory> get(@ApiParam(name = "资源ID", required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
-        PracticeCategory root = categoryService.getById(resourceId);
-        root.setChildren(categoryService.getChildren(root));
-        return new BaseRsp<>(root);
+        return new BaseRsp<>(categoryService.get(resourceId));
     }
 
     @ApiOperation("获取练习方向列表")

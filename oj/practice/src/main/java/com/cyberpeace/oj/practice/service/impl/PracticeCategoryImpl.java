@@ -8,12 +8,14 @@ import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.bo.PracticeCategoryParent;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -24,12 +26,23 @@ public class PracticeCategoryImpl extends ServiceImpl<PracticeCategoryMapper, Pr
     PracticeCategoryMapper categoryMapper;
 
     @Override
+    public PracticeCategory get(String resourceId) {
+        PracticeCategory root = getById(resourceId);
+        root.setChildren(getChildren(root));
+        return root;
+    }
+
+    @Override
     public ListRsp<PracticeCategory> search(PracticeListReq queryParams) {
         IPage<PracticeCategory> result = categoryMapper.getList(
                 queryParams.toPageParam(),
                 queryParams.getPattern(),
                 queryParams.getPracticeType()
         );
+        // TODO 列表是否返回子级, 循环查询
+        for (PracticeCategory instance : result.getRecords()) {
+            instance.setChildren(getChildren(instance));
+        }
         return PageUtil.getListResult(result);
     }
 
@@ -81,4 +94,47 @@ public class PracticeCategoryImpl extends ServiceImpl<PracticeCategoryMapper, Pr
 
         return children;
     }
+
+    /**
+     * 获取当前节点所有父级节点
+     * @param categoryId 练习分类resourceId
+     * @return PracticeCategoryParent
+     */
+    @Override
+    public PracticeCategoryParent nodeInfo(String categoryId) {
+        PracticeCategory childNode = getById(categoryId);
+
+        String childCode = childNode.getCode();
+        String[] codes = childCode.split("\\|");
+        List<String> categoryIds = Lists.newArrayList();
+        StringBuilder currentCode = new StringBuilder();
+        for (int i = 0; i < codes.length; i++) {
+            if (i == 0) {
+                currentCode.append(codes[i]);
+            } else {
+                currentCode.append("|").append(codes[i]);
+            }
+            categoryIds.add(currentCode.toString());
+        }
+        List<PracticeCategoryParent> categoryLs = categoryMapper.batchGetByCode(categoryIds);
+        // 根据`code`长度倒序
+        categoryLs.sort(new Comparator<PracticeCategoryParent>() {
+            @Override
+            public int compare(PracticeCategoryParent o1, PracticeCategoryParent o2) {
+                return Integer.compare(o2.getCode().length(), o1.getCode().length());
+            }
+        });
+
+        return getPrevLevel(categoryLs);
+    }
+
+    private PracticeCategoryParent getPrevLevel(List<PracticeCategoryParent> fullNode) {
+        PracticeCategoryParent node = fullNode.get(0);
+        fullNode.remove(node);
+        if (fullNode.size() >= 1) {
+            node.setParent(getPrevLevel(fullNode));
+        }
+        return node;
+    }
+
 }

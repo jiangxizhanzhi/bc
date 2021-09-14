@@ -40,7 +40,7 @@ public class CourseTrainController {
 		return new BaseRsp<>(calculatePercent(courseKnowledges));
 	}
 
-	@ApiOperation("课程训练-职业课程课程学习进度")
+	@ApiOperation("学习路径-专业课程")
 	@GetMapping("/getCourseKnowledgeByRoleId")
 	public BaseRsp<OccupationCourseRes> getCourseKnowledgeByRoleId(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
@@ -51,7 +51,7 @@ public class CourseTrainController {
 		return new BaseRsp<>(calculatePercent(courseKnowledges));
 	}
 
-	@ApiOperation("课程训练-技能课程课程学习进度")
+	@ApiOperation("学习路径-技能课程")
 	@GetMapping("/getCourseSkillByRoleId")
 	public BaseRsp<OccupationCourseRes> getCourseSkillByRoleId(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {

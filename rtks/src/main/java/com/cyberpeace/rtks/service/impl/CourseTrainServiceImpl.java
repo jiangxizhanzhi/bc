@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DataTransferUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -47,6 +48,10 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledge(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
+		if (null == role) {
+			throw new InvalidParamException("未检索到相应岗位!");
+		}
+
 		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 				String.class);
 		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
@@ -80,6 +85,10 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseSkillByRoleId(String roleId) {
 		Role role = roleMapper.selectById(roleId);
+		if (null == role) {
+			throw new InvalidParamException("未检索到相应岗位!");
+		}
+
 		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
 		List<String> courseIds = skillService.getCourseByIds(skillIds);
 
@@ -101,6 +110,10 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String roleId) {
 		Role role = roleMapper.selectById(roleId);
+		if (null == role) {
+			throw new InvalidParamException("未检索到相应岗位!");
+		}
+
 		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 				String.class);
 		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
@@ -113,7 +126,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		List<CourseKnowledgeSkillBo> boList = courses.stream().map(bo -> {
 			CourseKnowledgeSkillBo knowledgeSkillBo = BeanUtils.deepCopy(bo,
 					CourseKnowledgeSkillBo.class);
-			knowledgeSkillBo.setSkills(courseMap.get(bo.getResourceId()));
+			knowledgeSkillBo.setKnowledges(courseMap.get(bo.getResourceId()));
 
 			return knowledgeSkillBo;
 		}).collect(Collectors.toList());

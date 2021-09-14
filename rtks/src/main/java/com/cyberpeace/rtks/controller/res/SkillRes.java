@@ -33,7 +33,7 @@ public class SkillRes implements Serializable {
 	private String courses;
 
 	@ApiModelProperty("技能课程权重")
-	private Integer weight;
+	private Integer weight = 1;
 
 	@ApiModelProperty("技能所有课程总体进度")
 	private Integer process;

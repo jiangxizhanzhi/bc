@@ -14,7 +14,6 @@
         rtks_knowledge.category_id,
         rtks_knowledge.content,
         rtks_knowledge.courses,
-        rtks_knowledge.weight,
         rtks_knowledge.create_time,
         rtks_knowledge.update_time,
         rtks_knowledge_category.content category
@@ -40,7 +39,6 @@
         rtks_knowledge.category_id,
         rtks_knowledge.content,
         rtks_knowledge.courses,
-        rtks_knowledge.weight,
         rtks_knowledge.create_time,
         rtks_knowledge.update_time,
         rtks_knowledge_category.content category
@@ -57,7 +55,6 @@
         select rtks_course_related.related_id,
         rtks_course_related.resource_id,
         rtks_knowledge.content,
-        rtks_course_related.weight
         from rtks_course_related
         left join rtks_knowledge on rtks_course_related.related_id = rtks_knowledge.resource_id
         <where>
@@ -76,7 +73,6 @@
         rtks_knowledge.category_id,
         rtks_knowledge.content,
         rtks_knowledge.courses,
-        rtks_knowledge.weight,
         rtks_knowledge.create_time,
         rtks_knowledge.update_time
         from

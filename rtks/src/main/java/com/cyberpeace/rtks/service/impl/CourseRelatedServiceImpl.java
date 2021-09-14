@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.mapper.CourseRelatedMapper;
@@ -33,7 +34,7 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 			courseRelated.setResourceId(relatedCourse.getResourceId());
 			courseRelated.setWeight(relatedCourse.getWeight());
 			if (relatedCourse.getWeight() == null || relatedCourse.getWeight() == 0) {
-				courseRelated.setWeight(CourseRelated.DEFAULT_WEIGHT);
+				courseRelated.setWeight(CourseInfoBo.DEFAULT_WEIGHT);
 			}
 			courseRelated.setType(type);
 

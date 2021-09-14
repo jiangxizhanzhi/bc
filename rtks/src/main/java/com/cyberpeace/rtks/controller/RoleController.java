@@ -5,13 +5,18 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
 import org.apache.commons.collections.SetUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -19,15 +24,33 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.suit.BaseListController;
 import com.cyberpeace.common.suit.ListReq;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
-import com.cyberpeace.rtks.controller.role.*;
-import com.cyberpeace.rtks.dao.entity.*;
-import com.cyberpeace.rtks.service.*;
+import com.cyberpeace.rtks.controller.role.RoleAddInput;
+import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
+import com.cyberpeace.rtks.controller.role.RoleInput;
+import com.cyberpeace.rtks.controller.role.RoleModifyInput;
+import com.cyberpeace.rtks.controller.role.RoleOutput;
+import com.cyberpeace.rtks.controller.role.SkillKnowledgeWeight;
+import com.cyberpeace.rtks.dao.entity.Ability;
+import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.dao.entity.Level;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.entity.Skill;
+import com.cyberpeace.rtks.dao.entity.SkillSystem;
+import com.cyberpeace.rtks.dao.entity.Task;
+import com.cyberpeace.rtks.service.AbilityService;
+import com.cyberpeace.rtks.service.KnowledgeService;
+import com.cyberpeace.rtks.service.LevelService;
+import com.cyberpeace.rtks.service.RoleService;
+import com.cyberpeace.rtks.service.SkillService;
+import com.cyberpeace.rtks.service.SkillSystemService;
+import com.cyberpeace.rtks.service.TaskService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
@@ -97,6 +120,14 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 
 	@Autowired
 	private CourseService courseService;
+
+	private Boolean singleFrame;
+
+	@PostConstruct
+	public void init() {
+		String singleFrameConfig = ConfigUtil.getContextProperty("singleFrame");
+		singleFrame = Boolean.parseBoolean(singleFrameConfig);
+	}
 
 	@Override
 	protected RoleService getService() {
@@ -325,8 +356,14 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 
 	@Override
 	protected IPage<Role> getPage(RoleListReq<Role> listReq) {
-		return roleService.listRoles(listReq.toPageParam(), listReq.getKeyword(),
-				listReq.getFrameId());
+		String frameId;
+		if (singleFrame) {
+			// 单框架模式下 忽略所属框架筛选条件
+			frameId = null;
+		} else {
+			frameId = listReq.getFrameId();
+		}
+		return roleService.listRoles(listReq.toPageParam(), listReq.getKeyword(), frameId);
 	}
 
 	private <T extends RoleOutput> T outputFromRole(Role role, T output) {
@@ -335,8 +372,12 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		output.setDescription(role.getDescription());
 
 		String levelId = role.getLevelId();
+		String fullPath = levelService.getFullPathById(levelId);
+		if (fullPath == null) {
+			levelId = null;
+		}
 		output.setLevelId(levelId);
-		output.setLevelName(levelService.getFullPathById(levelId));
+		output.setLevelName(fullPath);
 
 		// 技能体系
 		String categoryId = role.getCategory();

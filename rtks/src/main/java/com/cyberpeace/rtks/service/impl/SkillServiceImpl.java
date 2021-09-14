@@ -212,7 +212,10 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public List<SkillRes> getAllSkillsBySkillSystemId(String skillSystemId) {
-		return skillMapper.getAllSkillsBySkillSystemId(skillSystemId);
+		List<SkillRes> skillResList = skillMapper.getAllSkillsBySkillSystemId(skillSystemId);
+		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
+
+		return skillResList;
 	}
 
 	@Override
@@ -224,6 +227,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 		Map<String, List<CourseRelatedRes>> courseKnowledgeResMap = knowledgeList.stream()
 				.collect(Collectors.groupingBy(CourseRelatedRes::getResourceId));
+
 		return courseKnowledgeResMap;
 	}
 

@@ -23,6 +23,9 @@ public class CourseKnowledgeSkillBo implements Serializable {
 	@ApiModelProperty("课程描述")
 	private String description;
 
+	@ApiModelProperty("类型 基础=0，攻击=2，防御=3")
+	private Integer eBook;
+
 	@ApiModelProperty("课程方向")
 	private String direction;
 

@@ -1,0 +1,25 @@
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamTrainTemplateRoleMapper6546">
+
+    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="roleGroup" column="role_group" jdbcType="INTEGER"/>
+            <result property="missionsScheme" column="missions_scheme" jdbcType="VARCHAR"/>
+            <result property="nodes" column="nodes" jdbcType="VARCHAR"/>
+            <result property="crEventId" column="cr_event_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,resource_id,name,
+        description,role_group,missions_scheme,
+        nodes,cr_event_id
+    </sql>
+</mapper>
+-->

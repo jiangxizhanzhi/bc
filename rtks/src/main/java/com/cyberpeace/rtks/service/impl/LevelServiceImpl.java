@@ -54,15 +54,6 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
-	public List<Level> getLevelsByFrameId(String frameId) {
-		List<Level> levels = levelMapper.getLevelsByFrameId(frameId);
-		for (Level level : levels) {
-			ensureNotFrame(level);
-		}
-		return levels;
-	}
-
-	@Override
 	public Level getFrame(Level level) {
 		return findFrame(level, level1 -> {});
 	}

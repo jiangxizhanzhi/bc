@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
 
 public interface FrameService extends IService<Level> {
@@ -17,5 +18,7 @@ public interface FrameService extends IService<Level> {
 	Level getOr404(String resourceId);
 
 	IPage<Level> listEntity(Page<Level> page, String keyword);
+
+	LevelTreeOutput getTree(String frameId);
 
 }

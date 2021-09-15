@@ -1,9 +1,6 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -148,38 +145,7 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 	@ApiOperation("指定框架层级数据的全量树形展示")
 	@GetMapping("/tree")
 	public BaseRsp<LevelTreeOutput> getTree(String resource_id) {
-		// {父级层级id:[子层级对象]}
-		Map<String, List<LevelTreeOutput>> levelTreeOutputMap = new HashMap<>();
-		// 所有层级输出对象
-		List<LevelTreeOutput> levelTreeOutputs = new ArrayList<>();
-
-		// 当前框架下所有的层级(不包括框架本身)
-		List<Level> levels = levelService.getLevelsByFrameId(resource_id);
-		for (Level level : levels) {
-			String parentId = level.getParent();
-
-			if (!levelTreeOutputMap.containsKey(parentId)) {
-				levelTreeOutputMap.put(parentId, new ArrayList<>());
-			}
-
-			LevelTreeOutput levelTreeOutput = getLevelTreeOutput(level);
-			levelTreeOutputMap.get(parentId).add(levelTreeOutput);
-			levelTreeOutputs.add(levelTreeOutput);
-		}
-
-		// 加入框架本身
-		Level frame = frameService.getOr404(resource_id);
-		LevelTreeOutput frameTree = getLevelTreeOutput(frame);
-		levelTreeOutputs.add(frameTree);
-
-		// 遍历框架+层级，赋予children值
-		for (LevelTreeOutput levelTreeOutput : levelTreeOutputs) {
-			List<LevelTreeOutput> childLevels = levelTreeOutputMap
-					.getOrDefault(levelTreeOutput.getResourceId(), null);
-			levelTreeOutput.setChildren(childLevels);
-		}
-
-		return new BaseRsp<>(frameTree);
+		return new BaseRsp<>(frameService.getTree(resource_id));
 	}
 
 	@ApiOperation("清空默认框架，仅单框架模式下有效")
@@ -199,15 +165,4 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 		levelService.initDefaultFromPreset();
 		return retrieve(DEFAULT_FRAME_ID);
 	}
-
-	private LevelTreeOutput getLevelTreeOutput(Level level) {
-		LevelTreeOutput output = new LevelTreeOutput();
-
-		output.setResourceId(level.getResourceId());
-		output.setName(level.getName());
-		output.setDescription(level.getDescription());
-
-		return output;
-	}
-
 }

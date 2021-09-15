@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 
-@Api(tags = "工具库-分类管理")
+@Api(tags = "资源中心-工具库-分类管理")
 @RestController
 @RequestMapping("cr/tool/category")
 @RequiresAuthentication

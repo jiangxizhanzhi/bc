@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(tags = "靶场-工具库-ghdb")
+@Api(tags = "资源中心-ghdb")
 @RestController
 @RequestMapping("/cr/tool/")
 @RequiresAuthentication

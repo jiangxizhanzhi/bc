@@ -3,6 +3,8 @@ package com.cyberpeace.rtks.controller.role;
 import java.io.Serializable;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -25,12 +27,12 @@ public class RoleInput implements Serializable {
 
 	private List<String> knowledgeIds;
 
-	private List<SkillKnowledgeWeight> knowledgeIdWeights;
+	private List<SkillKnowledgeWeight> knowledgeIdWeights = Lists.newArrayList();
 
-	private List<String> skillIds;
+	private List<String> skillIds = Lists.newArrayList();
 
-	private List<SkillKnowledgeWeight> skillIdWeights;
+	private List<SkillKnowledgeWeight> skillIdWeights = Lists.newArrayList();
 
-	private List<String> abilityIds;
+	private List<String> abilityIds = Lists.newArrayList();
 
 }

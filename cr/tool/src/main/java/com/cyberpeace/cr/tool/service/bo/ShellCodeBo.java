@@ -1,0 +1,41 @@
+package com.cyberpeace.cr.tool.service.bo;
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+public class ShellCodeBo {
+	private String applicationUrl;
+
+	private String author;
+
+	private String content;
+
+	private Date createTime;
+
+	private String cve;
+
+	private String date;
+
+	private String downloadUrl;
+
+	private String edbId;
+
+	private String exploit;
+
+	private String fileName;
+
+	private Integer id;
+
+	private String platform;
+
+	private String suffix;
+
+	private String title;
+
+	private String type;
+
+	private Boolean verified;
+
+	private String vulnerableApp;
+}

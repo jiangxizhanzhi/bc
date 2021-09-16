@@ -223,7 +223,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		if (CollectionUtils.isEmpty(ids)) {
 			return Maps.newHashMap();
 		}
-		List<CourseRelatedRes> knowledgeList = skillMapper.getKnowledgeByCourseId(ids);
+		List<CourseRelatedRes> knowledgeList = skillMapper.getSkillByCourseId(ids);
 
 		Map<String, List<CourseRelatedRes>> courseKnowledgeResMap = knowledgeList.stream()
 				.collect(Collectors.groupingBy(CourseRelatedRes::getResourceId));

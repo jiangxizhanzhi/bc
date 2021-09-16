@@ -25,5 +25,5 @@ public interface SkillMapper extends BaseMapper<Skill> {
 
 	List<SkillRes> getAllSkillsBySkillSystemId(String skillSystemId);
 
-	List<CourseRelatedRes> getKnowledgeByCourseId(List<String> ids);
+	List<CourseRelatedRes> getSkillByCourseId(List<String> ids);
 }

@@ -1,8 +1,10 @@
 package com.cyberpeace.oj.practice.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.practice.controller.req.PracticeDelReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
@@ -11,6 +13,7 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,7 @@ import javax.validation.constraints.NotBlank;
 @Api(tags = "习题集")
 @RestController
 @RequestMapping("/oj/practice-set")
+@RequiresAuthentication
 public class PracticeSetController extends PracticeMixinController<PracticeSet> {
 
     @Autowired
@@ -29,6 +33,9 @@ public class PracticeSetController extends PracticeMixinController<PracticeSet> 
     @GetMapping()
     public BaseRsp<PracticeSet> get(@RequestParam("resource_id") @NotBlank String resourceId) {
         PracticeSet result = practiceSetMapper.selectById(resourceId);
+        if (result == null) {
+            throw new ResourceNotFoundException(resourceId);
+        }
         return new BaseRsp<>(result);
     }
 
@@ -43,6 +50,7 @@ public class PracticeSetController extends PracticeMixinController<PracticeSet> 
     @PostMapping()
     public BaseRsp<PracticeSet> create(@RequestBody PracticeSetReq requestData) {
         PracticeSet object = new PracticeSet();
+        object.setCreateUser(UserInfoContext.getUserContext().getUserId());
         BeanUtils.copyProperties(requestData, object, "authOrganization", "shareTeachers");
         practiceSetMapper.insert(object);
         return new BaseRsp<>(object);

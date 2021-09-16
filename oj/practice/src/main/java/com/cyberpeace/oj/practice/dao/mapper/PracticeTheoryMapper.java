@@ -18,4 +18,6 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
                                   @Param("category") String category, @Param("question_type") Integer questionType);
 
     Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
+
+    List<PracticeTheory> batchGet(@Param("resource_ids") List<String> resourceIds);
 }

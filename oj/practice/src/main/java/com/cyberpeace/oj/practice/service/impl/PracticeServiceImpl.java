@@ -4,9 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.oj.practice.dao.constants.PracticeType;
 import com.cyberpeace.oj.practice.dao.constants.TheoryQuestionType;
-import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeServiceMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -103,11 +102,25 @@ public class PracticeServiceImpl implements PracticeService {
 
         return result;
     }
+
+    @Override
+    public TestPaper createTestPaper(List<String> resourceIds) {
+        TestPaper object = new TestPaper();
+
+        List<PracticeTheory> theoryList = practiceTheoryMapper.selectBatchIds(resourceIds);
+        List<PracticeOperation> operationList = practiceOperationMapper.selectBatchIds(resourceIds);
+
+//        for (PracticeTheory theory:
+//             theoryList) {
+//            theory
+//        }
+        return null;
+    }
 }
 
 class Evaluator {
 
-    // TODO 需要重载, 兼顾其它入参?
+    // TODO 1.需要重载, 兼顾其它入参? 2.支持 Practice*Ref 类型
     /**
      * 单选题评估
      */

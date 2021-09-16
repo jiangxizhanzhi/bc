@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel
+@ApiModel("习题集新增/更新")
 public class PracticeSetReq {
 
     @ApiModelProperty(value = "ID", required = true)
@@ -15,7 +15,7 @@ public class PracticeSetReq {
     private String name;
 
     @ApiModelProperty(value = "类型", allowableValues = "0, 2", required = true)
-    private Integer type;
+    private Integer practiceType;
 
     @ApiModelProperty(value = "公开", required = true)
     private boolean isPublic;

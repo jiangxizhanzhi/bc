@@ -4,7 +4,7 @@
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper">
 
     <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
-        select `resource_id`, `name`, `create_time`, `update_time`, `code`
+        select `id`, `resource_id`, `name`, `create_time`, `update_time`, `code`
         from practice_category where status = 1 and code not like '%|%'
         <if test="practice_type != null">
             and practice_type = #{practice_type}
@@ -13,6 +13,7 @@
             <bind name="pattern" value="'%' + pattern + '%'"/>
             and `name` like #{pattern}
         </if>
+        order by id desc
     </select>
 
     <update id="batchDelete">

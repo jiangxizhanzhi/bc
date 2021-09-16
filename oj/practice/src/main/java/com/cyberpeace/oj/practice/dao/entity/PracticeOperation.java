@@ -5,13 +5,15 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.oj.practice.dao.constants.PracticeType;
 import com.cyberpeace.oj.practice.dao.constants.SceneShare;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("practice_exercise_practiceexercise")
-public class PracticeOperation extends PracticeBase{
+@TableName("practice_operation")
+public class PracticeOperation extends PracticeBase {
+
+    @JsonIgnore
+    @TableField(exist = false)
+    private Integer practiceType = PracticeType.OPERATION.getValue();
 
     /**
      * 附件
@@ -26,13 +28,11 @@ public class PracticeOperation extends PracticeBase{
     /**
      * 题解
      */
-    @TableField("official_writeup")
     private String writeup;
 
     /**
      * 是否公开题解
      */
-    @TableField("public_official_writeup")
     private boolean isPublicWriteup = false;
 
     /**
@@ -59,11 +59,4 @@ public class PracticeOperation extends PracticeBase{
      * 场景存活时间 单位/h (拥有场景时使用)
      */
     private Integer destroyDelay = 2;
-
-    // TODO 规避db exception
-    @JsonIgnore
-    private Integer practiceType = PracticeType.OPERATION.getValue();
-
-    @TableField("`lock`")
-    private boolean lock = false;
 }

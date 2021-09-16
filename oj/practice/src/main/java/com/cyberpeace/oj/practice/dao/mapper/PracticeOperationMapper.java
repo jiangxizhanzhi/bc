@@ -18,4 +18,6 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
     );
 
     Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
+
+    List<PracticeOperation> batchGet(@Param("resource_ids") List<String> resourceIds);
 }

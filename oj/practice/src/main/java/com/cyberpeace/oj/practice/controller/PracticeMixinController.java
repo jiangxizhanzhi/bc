@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.practice.controller.req.PracticeEvaluateReq;
@@ -13,7 +14,6 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeMixinMapper;
 import com.cyberpeace.oj.practice.service.PracticeService;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,6 @@ import java.lang.reflect.Field;
  * @param <Entity> 实体类
  */
 @RestController
-@RequiresAuthentication
 public abstract class PracticeMixinController<Entity> {
 
     @Autowired
@@ -44,6 +43,14 @@ public abstract class PracticeMixinController<Entity> {
 
     public Class<Entity> getEntityCls() {
         return this.entityClass;
+    }
+
+    protected UserInfo getRequestUser() {
+        return UserInfoContext.getUserContext();
+    }
+
+    protected String getRequestUserId() {
+        return getRequestUser().getUserId();
     }
 
     /**
@@ -140,7 +147,6 @@ public abstract class PracticeMixinController<Entity> {
     @ApiOperation("练习评估")
     public BaseRsp<EvaluateResult> evaluate(@RequestBody PracticeEvaluateReq requestData) {
         isAllowApi("answer");
-        String userId = UserInfoContext.getUserContext().getUserId();
-        return new BaseRsp<>(practiceService.evaluator(requestData.getResourceId(), requestData.getPracticeType(), requestData.getAnswer(), userId));
+        return new BaseRsp<>(practiceService.evaluator(requestData.getResourceId(), requestData.getPracticeType(), requestData.getAnswer(), getRequestUserId()));
     }
 }

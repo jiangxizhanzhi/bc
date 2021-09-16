@@ -2,16 +2,17 @@ package com.cyberpeace.oj.practice.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.oj.practice.dao.constants.Difficulty;
 import com.cyberpeace.oj.practice.dao.constants.PracticeType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 @Data
-@ApiModel("理论基础练习")
-@TableName("practice_theory_practicetheory")
+@TableName("practice_theory")
 public class PracticeTheory extends PracticeBase {
+
+    @JsonIgnore
+    @TableField(exist = false)
+    private Integer practiceType = PracticeType.THEORY.getValue();
 
     /**
      * 题型
@@ -34,40 +35,10 @@ public class PracticeTheory extends PracticeBase {
      */
     private String keyword;
 
-    @JsonIgnore
-    private Integer practiceType;
-
-    @JsonIgnore
-    private Integer difficulty;
-
-    @JsonIgnore
-    private String file;
-
-    @JsonIgnore
-    private boolean publicOfficialWriteup;
-
     /**
      * 理论基础中并未实际使用此字段, 忽略
      */
     @JsonIgnore
     private String title;
 
-    // TODO 以下字段均为规避 db exception
-//    @JsonIgnore
-//    private Integer practiceType = PracticeType.THEORY.ordinal();
-//
-//    @JsonIgnore
-//    private Integer difficulty = Difficulty.PRIMARY.ordinal();
-//
-//    @JsonIgnore
-//    private String file = "";
-//
-//    @JsonIgnore
-//    private boolean publicOfficialWriteup = false;
-//
-//    /**
-//     * 理论基础中并未实际使用此字段, 忽略
-//     */
-//    @JsonIgnore
-//    private String title = "";
 }

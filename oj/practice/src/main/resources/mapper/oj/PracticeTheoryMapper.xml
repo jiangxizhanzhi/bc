@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper">
     <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
-        select * from practice_theory_practicetheory
+        select * from practice_theory
         where status = 1
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
@@ -22,13 +22,21 @@
     </select>
 
     <update id="batchDelete">
-        update practice_theory_practicetheory set status = 0
+        update practice_theory set status = 0
         where status = 1
         and resource_id in
         <foreach collection="resource_ids" item="resource_id" open="(" close=")" separator=",">
             #{resource_id}
         </foreach>
     </update>
+
+    <select id="batchGet" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+        select * from practice_theory
+        where status = 1 and resource_id in
+        <foreach collection="resource_ids" item="resource_id" separator="," open="(" close=")">
+            #{resource_id}
+        </foreach>
+    </select>
 
 
 </mapper>

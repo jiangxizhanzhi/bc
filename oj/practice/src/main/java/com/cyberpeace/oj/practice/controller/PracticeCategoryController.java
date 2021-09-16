@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.oj.practice.controller.req.PracticeCategoryReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeDelReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
@@ -12,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +24,7 @@ import javax.validation.constraints.NotBlank;
 @Api(tags = "练习分类")
 @RestController
 @RequestMapping("/oj/practice-category")
+@RequiresAuthentication
 public class PracticeCategoryController {
 
     @Autowired
@@ -43,6 +46,7 @@ public class PracticeCategoryController {
     @PostMapping()
     public BaseRsp<PracticeCategory> create(@RequestBody PracticeCategoryReq requestData) {
         PracticeCategory object = new PracticeCategory();
+        object.setCreateUser(UserInfoContext.getUserContext().getUserId());
         BeanUtils.copyProperties(requestData, object);
         // TODO 具体使用标识待定
         String code = RandomStringUtils.randomAlphanumeric(16);

@@ -4,19 +4,20 @@
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper">
 
     <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSet">
-        select `resource_id`, `name`, `logo`, `type`, `public`, `create_user`, `share`, `auth` from practice_practiceset
+        select * from practice_set
         where status = 1
         <if test="practiceType != null">
-            and `type` = #{practiceType}
+            and `practice_type` = #{practiceType}
         </if>
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
             and `name` like #{pattern}
         </if>
+        order by id desc
     </select>
 
     <update id="batchDelete">
-        update practice_practiceset set status = 0
+        update practice_set set status = 0
         where resource_id in
         <foreach collection="resource_ids" item="resource_id" open="(" close=")" separator=",">
             #{resource_id}

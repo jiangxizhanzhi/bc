@@ -4,16 +4,19 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.oj.practice.dao.constants.Difficulty;
 import com.cyberpeace.oj.practice.dao.constants.Status;
 import com.cyberpeace.oj.practice.service.bo.PracticeCategoryParent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 public class PracticeBase extends BaseTable implements Serializable {
+
+    @JsonIgnore
+    private Integer id;
 
     /**
      * 状态
@@ -69,32 +72,28 @@ public class PracticeBase extends BaseTable implements Serializable {
     private String answer;
 
     /**
-     * 难度, 仅实操题使用, 暂时保留到Base
+     * 难度, 目前仅操作题使用
      */
-    private Integer difficulty;
+    private Integer difficulty = Difficulty.PRIMARY.getValue();
 
     /**
      * 知识点
      */
     private String knowledge;
 
-    // TODO 是否可丢弃
     /**
      * 分值
      */
     private Float score = 0.0f;
 
     /**
-     * 练习类型
+     * 练习类型, 数据库无此字段, 子类覆写, 设置默认值
      */
     private Integer practiceType;
 
-    // TODO 规避 db exception
-    @TableField(exist = false)
-    @JsonIgnore
-    private Date updateTime;
-
-    @JsonIgnore
-    private Date lastEditTime = new Date();
+    /**
+     * 创建者
+     */
+    private String createUser;
 
 }

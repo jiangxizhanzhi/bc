@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
@@ -28,6 +29,9 @@ public class PracticeCategoryImpl extends ServiceImpl<PracticeCategoryMapper, Pr
     @Override
     public PracticeCategory get(String resourceId) {
         PracticeCategory root = getById(resourceId);
+        if (root == null) {
+            throw new ResourceNotFoundException(resourceId);
+        }
         root.setChildren(getChildren(root));
         return root;
     }

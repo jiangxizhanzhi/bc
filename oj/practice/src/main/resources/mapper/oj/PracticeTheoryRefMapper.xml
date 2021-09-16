@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper">
+    <select id="getListByTestPaper" resultType="com.cyberpeace.oj.practice.service.bo.TestPaperPractice">
+        select *, practice_type as 0 from practice_theory_ref where status = 1 and test_paper = #{test_paper}
+    </select>
+
+
+</mapper>

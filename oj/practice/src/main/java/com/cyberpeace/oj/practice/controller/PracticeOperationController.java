@@ -1,8 +1,10 @@
 package com.cyberpeace.oj.practice.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.practice.controller.req.PracticeDelReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeOperationListReq;
@@ -12,6 +14,7 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +24,7 @@ import javax.validation.constraints.NotBlank;
 @Api(tags = "实践操作练习")
 @RestController
 @RequestMapping("/oj/practice-operation")
+@RequiresAuthentication
 public class PracticeOperationController extends PracticeMixinController<PracticeOperation>{
 
     @Autowired
@@ -33,6 +37,9 @@ public class PracticeOperationController extends PracticeMixinController<Practic
     @ApiOperation("获取单个实践操作")
     public BaseRsp<PracticeOperation> get(@RequestParam("resource_id") @NotBlank String resourceId) {
         PracticeOperation object = practiceOperationMapper.selectById(resourceId);
+        if (object == null) {
+            throw new ResourceNotFoundException(resourceId);
+        }
         object.setCategoryInfo(practiceCategoryService.nodeInfo(object.getCategory()));
         return new BaseRsp<>(object);
     }
@@ -51,6 +58,7 @@ public class PracticeOperationController extends PracticeMixinController<Practic
     @ApiOperation("创建实践操作")
     public BaseRsp<PracticeOperation> create(@RequestBody PracticeOperationReq requestData){
         PracticeOperation object = new PracticeOperation();
+        object.setCreateUser(getRequestUserId());
         BeanUtils.copyProperties(requestData, object);
         practiceOperationMapper.insert(object);
 

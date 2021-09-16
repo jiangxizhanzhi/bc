@@ -30,7 +30,7 @@ public class FlywayConfig {
 
 		// 0、如果设置了不允许自动刷库，跳过该功能
 		String needMigrate = SystemPropUtil.getProp("NEED_MIGRATE");
-		log.info(needMigrate);
+
 		// 明确设置了不允许刷库才不刷库
 		if (StringUtils.equals(needMigrateFlag, needMigrate)) {
 			log.info("auto migrate skipped!");
@@ -41,7 +41,7 @@ public class FlywayConfig {
 		// 1、获取需要自动刷库的db
 		// 格式dbname1,dbname2
 		String needMigrateDbs = SystemPropUtil.getProp("MIGRATE_DB");
-		log.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + needMigrateDbs);
+
 		String[] configs = StringUtils.split(needMigrateDbs, "|");
 
 		if (null == configs || configs.length == 0) {

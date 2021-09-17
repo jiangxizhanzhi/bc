@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.TestItemInputMapper">
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.TestItemInput"/>
+
+    <insert id="insert">
+        insert into test_item_input
+        (item_id, instance_id, action_input, create_time, update_time,
+         action_result, status)
+        values
+        (#{itemId}, #{instanceId}, #{actionInput}, now(), now(),
+         #{actionResult}, #{status})
+    </insert>
+
+    <select id="selectByInstanceAndItemId" resultMap="baseResultMap">
+        select * from test_item_input
+        where
+        instance_id = #{instanceId}
+        and item_id = #{itemId}
+    </select>
+
+    <select id="selectByInstance" resultMap="baseResultMap">
+        select * from test_item_input
+        where instance_id = #{instanceId}
+    </select>
+
+    <update id="update">
+        update test_item_input
+        set update_time = now()
+        <if test="null != actionResult">
+            ,action_result = #{actionResult}
+        </if>
+        <if test="null != actionInput">
+            ,action_input = #{actionInput}
+        </if>
+        <if test="null != status">
+            ,status = #{status}
+        </if>
+        where item_id = #{itemId}
+        and instance_id = #{instanceId}
+    </update>
+</mapper>

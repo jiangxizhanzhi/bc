@@ -43,6 +43,7 @@
         <module>gateway</module>
         <module>cr</module>
         <module>oj</module>
+        <module>evaluate</module>
     </modules>
 
     <dependencyManagement>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.EstimateVariableModelOutMapper">
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.EstimateVariableModelOut"/>
+
+    <insert id="insert">
+    insert into estimate_variable_model_out
+    (variable_model_out_id,scene_id,host_id,variable_id,estimate_instance_id,
+    record_time,record_type,create_time,update_time,`value`)
+    values
+    (#{variableModelOutId},#{sceneId},#{hostId},#{variableId},#{estimateInstanceId},
+    #{recordTime},#{recordType},now(),now(),#{value})
+    </insert>
+
+    <insert id="batchAdd" parameterType="com.cyberpeace.evaluate.dao.entity.EstimateVariableModelOut">
+        insert into estimate_variable_model_out
+        (variable_model_out_id,scene_id,host_id,variable_id,estimate_instance_id,
+        record_time,record_type,create_time,update_time,`value`)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.variableModelOutId},#{item.sceneId},#{item.hostId},#{item.variableId},#{item.estimateInstanceId},
+            #{item.recordTime},#{item.recordType},now(),now(),#{item.value})
+        </foreach>
+    </insert>
+
+    <update id="update">
+        update estimate_variable_model_out
+        set update_time = now()
+        <if test="null != sceneId">
+            ,scene_id = #{sceneId}
+        </if>
+        <if test="null != hostId">
+            ,host_id = #{hostId}
+        </if>
+        <if test="null != variableId">
+            ,variable_id = #{variableId}
+        </if>
+        <if test="null != estimateInstanceId">
+            ,estimate_instance_id = #{estimateInstanceId}
+        </if>
+        <if test="null != recordTime">
+            ,record_time = #{recordTime}
+        </if>
+        <if test="null != recordType">
+            ,record_type = #{recordType}
+        </if>
+        <if test="null != value">
+            ,`value` = #{value}
+        </if>
+        where variable_model_out_id = #{variableModelOutId}
+    </update>
+
+    <select id="select" resultMap="baseResultMap">
+        select * from estimate_variable_model_out
+        where estimate_instance_id = #{estimateInstanceId}
+        and variable_id = #{variableId}
+        and scene_id = #{sceneId}
+        and host_id = #{hostId}
+    </select>
+</mapper>

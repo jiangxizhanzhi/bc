@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.cebase.model.crevent;
 
 import lombok.Data;
-import org.hibernate.validator.internal.util.privilegedactions.GetAnnotationAttribute;
 
 @Data
 public class CrEventInput {

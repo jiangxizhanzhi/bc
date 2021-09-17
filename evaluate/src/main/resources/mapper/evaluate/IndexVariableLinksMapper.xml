@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.IndexVariableLinksMapper">
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.IndexVariableLinks"/>
+
+    <insert id="insert">
+    insert into index_variable_links
+    (index_variable_links_id,index_items_id,variable_items_id,estimate_scheme_id,serial_number,create_time,update_time)
+    values
+    (#{indexVariableLinksId},#{indexItemsId},#{variableItemsId},#{estimateSchemeId},#{serialNumber},now(),now())
+    </insert>
+
+    <insert id="batchAdd" parameterType="com.cyberpeace.evaluate.dao.entity.IndexVariableLinks">
+        insert into index_variable_links
+        (index_variable_links_id,index_items_id,variable_items_id,estimate_scheme_id,serial_number,create_time,update_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.indexVariableLinksId},#{item.indexItemsId},#{item.variableItemsId},#{item.estimateSchemeId},#{item.serialNumber},now(),now())
+        </foreach>
+    </insert>
+
+    <update id="update">
+        update index_variable_links
+        set update_time = now()
+        <if test="null != indexItemsId">
+            ,index_items_id = #{indexItemsId}
+        </if>
+        <if test="null != variableItemsId">
+            ,variable_items_id = #{variableItemsId}
+        </if>
+        <if test="null != estimateSchemeId">
+            ,estimate_scheme_id = #{estimateSchemeId}
+        </if>
+        <if test="null != serialNumber">
+            ,serial_number = #{serialNumber}
+        </if>
+        where index_variable_links_id = #{indexVariableLinksId}
+    </update>
+
+    <select id="selectBySchemeAndIndex" resultMap="baseResultMap">
+        select * from index_variable_links
+        where 1=1
+        <if test="null != schemeId">
+            and estimate_scheme_id = #{schemeId}
+        </if>
+        <if test="null != estimateIndexId">
+            and index_items_id = #{estimateIndexId}
+        </if>
+        order by serial_number asc
+    </select>
+
+    <delete id="batchDelete" parameterType="string">
+        delete from index_variable_links
+        where index_variable_links_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByScheme" parameterType="string">
+        delete from index_variable_links
+        where estimate_scheme_id = #{schemeId}
+    </delete>
+</mapper>

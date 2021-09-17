@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.AppendixMapper">
+
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.Appendix"/>
+
+    <insert id="insert">
+        insert into appendix
+        (appendix_id, appendix_name, appendix_url, create_time, update_time)
+        values
+        (#{appendixId}, #{appendixName}, #{appendixUrl}, now(), now())
+    </insert>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from appendix
+        where appendix_id = #{appendixId}
+    </select>
+</mapper>

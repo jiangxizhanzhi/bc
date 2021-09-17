@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.EstimateItemsMapper">
+
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.EstimateItems"/>
+
+    <insert id="insert">
+        insert into estimate_items
+        (estimate_items_id, `name`, algorithm_id, estimate_scheme_id,
+        create_time, update_time, params)
+        values
+        (#{estimateItemsId}, #{name}, #{algorithmId}, #{estimateSchemeId},
+        now(), now(),#{params})
+    </insert>
+
+    <select id="selectByScheme" resultMap="baseResultMap">
+        select * from estimate_items
+        where estimate_scheme_id = #{schemeId}
+    </select>
+
+    <insert id="batchAdd" parameterType="com.cyberpeace.evaluate.dao.entity.EstimateItems">
+        insert into estimate_items
+        (estimate_items_id, `name`, algorithm_id, estimate_scheme_id,
+        create_time, update_time,params)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.estimateItemsId}, #{item.name}, #{item.algorithmId}, #{item.estimateSchemeId},
+            now(), now(),#{params})
+        </foreach>
+    </insert>
+
+    <delete id="batchDelete" parameterType="string">
+        delete from estimate_items
+        where estimate_items_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByScheme" parameterType="string">
+        delete from estimate_items
+        where estimate_scheme_id = #{schemeId}
+    </delete>
+
+    <select id="selectById" resultType="com.cyberpeace.evaluate.dao.entity.EstimateItems">
+        select * from estimate_items
+        where estimate_items_id = #{itemId}
+    </select>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.TestIndexOutMapper">
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.TestIndexOut"/>
+
+    <insert id="insert">
+        insert into test_index_out
+        (index_id, item_id, instance_id, result, create_time, update_time)
+        values
+        (#{indexId}, #{itemId}, #{instanceId}, #{result}, now(), now())
+    </insert>
+
+    <update id="update">
+        update test_index_out
+        set update_time = now()
+        <if test="null != result">
+            ,result = #{result}
+        </if>
+        where index_id = #{indexId}
+        and item_id = #{itemId}
+        and instance_id = #{instanceId}
+    </update>
+
+    <select id="selectByInstanceAndIndexId" resultMap="baseResultMap">
+        select * from test_index_out
+        where index_id = #{indexId}
+        and item_id = #{itemId}
+        and instance_id = #{instanceId}
+
+    </select>
+</mapper>

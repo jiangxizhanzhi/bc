@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.TestItemMapper">
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.TestItem"/>
+
+    <insert id="insert">
+        insert into test_item
+        (item_id, item_name, operation, expectation, auto_run,
+         tool_id, action_id, scheme_id, logo_url, create_time,
+         update_time)
+        values
+        (#{itemId}, #{itemName}, #{operation}, #{expectation}, #{autoRun},
+         #{toolId}, #{actionId}, #{schemeId}, #{logoUrl}, now(),
+         now())
+    </insert>
+
+    <select id="selectBySchemeId" resultMap="baseResultMap">
+        select * from test_item
+        where scheme_id = #{schemeId}
+    </select>
+
+    <select id="selectByItemId" resultMap="baseResultMap">
+        select * from test_item
+        where item_id = #{itemId}
+    </select>
+
+    <delete id="deleteBySchemeId" >
+        delete from test_item
+        where scheme_id = #{schemeId}
+    </delete>
+
+    <update id="update">
+        update test_item
+        set update_time = now()
+        <if test="null != itemName">
+            ,item_name = #{itemName}
+        </if>
+        <if test="null != operation">
+            ,operation = #{operation}
+        </if>
+        <if test="null != expectation">
+            ,expectation = #{expectation}
+        </if>
+        <if test="null != autoRun">
+            ,auto_run = #{autoRun}
+        </if>
+        <if test="null != toolId">
+            ,tool_id = #{toolId}
+        </if>
+        <if test="null != actionId">
+            ,action_id = #{actionId}
+        </if>
+        <if test="null != logoUrl">
+            ,logo_url = #{logoUrl}
+        </if>
+        <if test="null != schemeId">
+            ,scheme_id = #{schemeId}
+        </if>
+        where item_id = #{itemId}
+    </update>
+</mapper>

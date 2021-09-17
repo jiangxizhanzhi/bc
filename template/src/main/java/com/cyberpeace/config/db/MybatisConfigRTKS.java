@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -16,14 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
-@MapperScan(basePackages = "com.cyberpeace.rtks.**.mapper",
+@MapperScan(basePackages = { "com.cyberpeace.rtks.**.mapper", "com.cyberpeace.evaluate.**.mapper" },
 		sqlSessionFactoryRef = "rtksSqlSessionFactory")
 public class MybatisConfigRTKS {
 
@@ -42,8 +47,11 @@ public class MybatisConfigRTKS {
 		configuration.addInterceptor(rtksPaginationInterceptor());
 		sqlSessionFactory.setConfiguration(configuration);
 		sqlSessionFactory.setGlobalConfig(rtksGlobalConfig());
-		sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
-				.getResources("classpath*:mapper/rtks/*.xml"));
+		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+		Resource[] rtks = resolver.getResources("classpath*:mapper/rtks/*.xml");
+		Resource[] evaluate = resolver.getResources("classpath*:mapper/evaluate/*.xml");
+		Resource[] resources = ArrayUtils.addAll(rtks, evaluate);
+		sqlSessionFactory.setMapperLocations(resources);
 		return sqlSessionFactory.getObject();
 	}
 

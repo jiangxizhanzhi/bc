@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.TestInstanceMapper">
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.TestInstance"/>
+
+    <insert id="insert">
+        insert into test_instance
+        (instance_id, info_id, scene_id, start_time, end_time,
+         status, result, result_name, result_desc, create_time,
+         update_time)
+         values
+         (#{instanceId}, #{infoId}, #{sceneId}, #{startTime}, #{endTime},
+         #{status}, #{result}, #{resultName}, #{resultDesc}, now(),
+         now())
+    </insert>
+
+    <select id="selectByInstanceId" resultMap="baseResultMap">
+        select * from test_instance
+        where instance_id = #{instanceId}
+        and status = 1
+    </select>
+
+    <select id="selectAllInstance" resultMap="baseResultMap">
+        select * from test_instance
+        where info_id = #{infoId}
+    </select>
+
+    <select id="selectLastByStatus" resultMap="baseResultMap">
+        select * from test_instance
+        where info_id = #{infoId}
+        and status = #{status}
+        limit 0,1
+    </select>
+
+    <update id="update">
+        update test_instance
+        set update_time = now()
+        <if test="null != infoId">
+            ,info_id = #{infoId}
+        </if>
+        <if test="null != sceneId">
+            ,scene_id = #{sceneId}
+        </if>
+        <if test="null != startTime">
+            ,start_time = #{startTime}
+        </if>
+        <if test="null != endTime">
+            ,end_time = #{endTime}
+        </if>
+        <if test="null != status">
+            ,status = #{status}
+        </if>
+        <if test="null != result">
+            ,result = #{result}
+        </if>
+        <if test="null != resultName">
+            ,result_name = #{resultName}
+        </if>
+        <if test="null != resultDesc">
+            ,result_desc = #{resultDesc}
+        </if>
+        where instance_id = #{instanceId}
+    </update>
+</mapper>

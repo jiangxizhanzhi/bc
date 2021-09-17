@@ -50,6 +50,13 @@ public class SwaggerConfig {
 				.groupName("oj");
 	}
 
+	@Bean
+	public Docket apiEs() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.evaluate"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("es");
+	}
+
 	private ApiSelectorBuilder getDocket() {
 		return new Docket(DocumentationType.OAS_30).apiInfo(apiInfo())
 				.securityContexts(Arrays.asList(SecurityContext.builder()

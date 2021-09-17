@@ -21,6 +21,7 @@
         <common.version>0.0.1-SNAPSHOT</common.version>
         <module.version>0.0.1-SNAPSHOT</module.version>
         <cr.version>0.0.1-SNAPSHOT</cr.version>
+        <evaluation.version>0.0.1-SNAPSHOT</evaluation.version>
     </properties>
     <profiles>
         <profile>
@@ -78,11 +79,6 @@
             <version>${module.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>exam</artifactId>
-            <version>${module.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
             <version>${cr.version}</version>
@@ -111,6 +107,11 @@
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>tool</artifactId>
             <version>${cr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.evaluate</groupId>
+            <artifactId>evaluate</artifactId>
+            <version>${evaluation.version}</version>
         </dependency>
 
         <dependency>

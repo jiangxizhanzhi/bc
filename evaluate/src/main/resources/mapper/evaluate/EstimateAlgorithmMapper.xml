@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.EstimateAlgorithmMapper">
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.EstimateAlgorithm"/>
+
+    <insert id="insert">
+        insert into estimate_algorithm
+        (estimate_algorithm_id,algorithm_name,algorithm_content,params,source_type,
+        algorithm_type,type_extend,language_type,create_time,update_time,
+        param_count, algorithm_desc)
+        values
+        (#{estimateAlgorithmId},#{algorithmName},#{algorithmContent},#{params},#{sourceType},
+        #{algorithmType},#{typeExtend},#{languageType},now(),now(),
+        #{paramCount}, #{algorithmDesc})
+    </insert>
+
+    <select id="selectByType" resultMap="baseResultMap">
+        select * from estimate_algorithm
+        where 1=1
+        <if test="null != algorithmType">
+            and algorithm_type = #{algorithmType}
+        </if>
+        order by update_time desc
+    </select>
+
+    <delete id="deleteById">
+        delete from estimate_algorithm
+        where estimate_algorithm_id = #{algorithmId}
+    </delete>
+
+    <select id="selectById" resultMap="baseResultMap">
+        select * from estimate_algorithm
+        where estimate_algorithm_id = #{algorithmId}
+    </select>
+
+    <select id="selectPageByType" resultMap="baseResultMap">
+        select * from estimate_algorithm
+        where algorithm_type = #{algorithmType}
+        order by update_time desc
+    </select>
+</mapper>

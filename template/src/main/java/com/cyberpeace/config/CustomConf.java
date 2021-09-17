@@ -1,5 +1,6 @@
 package com.cyberpeace.config;
 
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ public class CustomConf {
 				new ClassPathResource("modules/cr.properties"),
 				new ClassPathResource("modules/rtks.properties"),
 				new ClassPathResource("modules/common.properties"),
+				new ClassPathResource("modules/evaluate.properties"),
 				new ClassPathResource("application.properties") };
 		configurer.setLocations(resources);
 

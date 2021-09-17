@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.EstimateInfoMapper">
+
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.EstimateInfo"/>
+
+    <insert id="insert">
+        insert into estimate_info
+        (estimate_id, `name`, `desc`, logo, topo_id,
+        estimate_scheme_id, user_id, create_time, update_time)
+        values
+        (#{estimateId}, #{name}, #{desc}, #{logo}, #{topoId},
+        #{estimateSchemeId}, #{userId}, now(), now())
+    </insert>
+
+    <select id="getByEstimateId" resultMap="baseResultMap">
+        select * from estimate_info
+        where estimate_id = #{estimateId}
+    </select>
+
+    <select id="getByUserId" resultMap="baseResultMap">
+        select * from estimate_info
+        where user_id = #{userId}
+        order by update_time desc
+        <if test="null != pageBase">
+            limit #{pageBase.offset}, #{pageBase.pageSize}
+        </if>
+    </select>
+
+    <select id="getCountByUserId" resultType="java.lang.Integer">
+        select count(id) from estimate_info
+        where user_id = #{userId}
+    </select>
+
+    <select id="pageByUserId" resultMap="baseResultMap">
+        select * from estimate_info
+        where user_id = #{userId}
+        order by update_time desc
+    </select>
+
+    <delete id="deleteById">
+        delete from estimate_info
+        where estimate_id = #{estimateId}
+    </delete>
+
+</mapper>

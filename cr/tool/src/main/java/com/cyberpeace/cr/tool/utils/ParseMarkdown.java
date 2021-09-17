@@ -1,13 +1,10 @@
 package com.cyberpeace.cr.tool.utils;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import lombok.Data;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *  解析Markdown

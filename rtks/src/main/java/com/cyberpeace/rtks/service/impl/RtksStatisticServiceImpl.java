@@ -481,6 +481,14 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 根据权重计算数据根据每个知识点的权重加权平均
 		List<WeightBo> weights = JsonUtil.toJsonObjectArray(role.getKnowledgeIdWeights(),
 				WeightBo.class);
+		Map<String, Integer> weightMap = weights.stream()
+				.collect(Collectors.toMap(WeightBo::getId, WeightBo::getWeight));
+		knowledges.forEach(knowledge -> {
+			if (null != weightMap) {
+				Integer weight = weightMap.get(knowledge.getResourceId());
+				knowledge.setWeight(null == weight ? 1 : weight);
+			}
+		});
 		Integer percent = calculateFinishPercent(knowledges, userId);
 
 		return percent;

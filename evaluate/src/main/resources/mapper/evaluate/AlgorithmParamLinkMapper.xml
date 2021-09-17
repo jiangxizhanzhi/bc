@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.evaluate.dao.mapper.AlgorithmParamLinkMapper">
+
+    <resultMap id="baseResultMap" type="com.cyberpeace.evaluate.dao.entity.AlgorithmParamLink"/>
+
+    <insert id="insert">
+        insert into algorithm_param_link
+        (algorithm_param_link_id, algorithm_id, param_id, serial_number,
+        create_time, update_time)
+        values
+        (#{algorithmParamLinkId}, #{algorithmId}, #{paramId}, #{serialNumber},
+        now(), now())
+    </insert>
+
+    <insert id="batchAdd" parameterType="com.cyberpeace.evaluate.dao.entity.AlgorithmParamLink">
+        insert into algorithm_param_link
+        (algorithm_param_link_id, algorithm_id, param_id, serial_number,
+        create_time, update_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.algorithmParamLinkId}, #{item.algorithmId}, #{item.paramId}, #{item.serialNumber},
+            now(), now())
+        </foreach>
+    </insert>
+
+    <select id="selectByAlgorithm" resultMap="baseResultMap">
+        select * from algorithm_param_link
+        where algorithm_id = #{algorithmId}
+    </select>
+
+    <delete id="deleteByAlgorithm">
+        delete from algorithm_param_link
+        where algorithm_id = #{algorithmId}
+    </delete>
+</mapper>

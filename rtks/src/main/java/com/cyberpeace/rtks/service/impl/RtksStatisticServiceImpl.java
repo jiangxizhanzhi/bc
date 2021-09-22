@@ -21,6 +21,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
+import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
@@ -119,6 +120,50 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 			ret.add(rtksRadarBo);
 		}
+
+		return ret;
+	}
+
+	@Override
+	public List<RtksRadarBo> calculateLgdSkillRadar(String userId, String skillSystemId) {
+
+		List<SkillRes> skillResList = skillMapper.getAllSkillsBySkillSystemId(skillSystemId);
+		List<Skill> skillList = BeanUtils.deepCopyList(skillResList, Skill.class);
+
+		Map<String, List<Skill>> skillMap = skillList.stream()
+				.collect(Collectors.groupingBy(Skill::getCategoryId));
+
+		List<String> categoryIds = skillList.stream().map(Skill::getCategoryId).distinct()
+				.collect(Collectors.toList());
+		List<SkillCategory> categories = skillCategoryMapper.selectBatchIds(categoryIds);
+
+		// 获取技能得分情况 转化为map
+		List<OutSkillScore> scores = getSkillScore(userId, skillList);
+		Map<String, String> scoreMap = scores.stream()
+				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
+
+		// 组装数据
+		List<RtksRadarBo> ret = categories.stream().map(skillCategory -> {
+
+			// Integer matchPercent = calculateLgdRadarByLevel(level.getResourceId(),
+			// userId);
+			List<Skill> skills = skillMap.get(skillCategory.getResourceId());
+
+			// 组装技能得分
+			Integer matchPercent = skills.stream()
+					.collect(Collectors.averagingInt(
+							skill -> Integer.parseInt(scoreMap.get(skill.getResourceId()))))
+					.intValue();
+
+			RtksRadarBo rtksRadarBo = new RtksRadarBo();
+
+			rtksRadarBo.setFirstTreeId(skillCategory.getResourceId());
+			rtksRadarBo.setTreeName(skillCategory.getContent());
+
+			rtksRadarBo.setMatchPercent(matchPercent);
+
+			return rtksRadarBo;
+		}).collect(Collectors.toList());
 
 		return ret;
 	}

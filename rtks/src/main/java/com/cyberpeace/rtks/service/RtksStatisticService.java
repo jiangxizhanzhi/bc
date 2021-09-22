@@ -85,4 +85,11 @@ public interface RtksStatisticService {
     StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime, Date endTime);
 
 	List<RtksRadarBo> calculateLgdRadar(String existRoleId, String userId);
+
+	/**
+	 * 计算技能能力雷达图
+	 * @param skillSystemId
+	 * @return
+	 */
+	List<RtksRadarBo> calculateLgdSkillRadar(String userId, String skillSystemId);
 }

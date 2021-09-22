@@ -101,6 +101,7 @@
             </where>
         </if>
     </select>
+
     <select id="getSkillByCourseId" resultType="com.cyberpeace.rtks.controller.res.CourseRelatedRes">
         select rtks_course_related.related_id,
         rtks_course_related.resource_id,

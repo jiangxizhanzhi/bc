@@ -19,10 +19,7 @@ import com.cyberpeace.rtks.controller.res.PercentRes;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.bo.*;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 
 @RequiresAuthentication
 @RestController
@@ -147,6 +144,22 @@ public class RtksEvaluationController {
 			rsp.setData(percent);
 		}
 		return rsp;
+	}
+
+	@GetMapping("/skill/radar")
+	@ApiOperation("LGD技能点类别六棱图（与岗位无关，与技能体系有关）")
+	public BaseRsp<List<RtksRadarBo>> getSillRadar(@ApiParam(name = "skillSystemId",
+			value = "技能体系id", required = false) String skillSystemId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
+		if (StringUtils.isNotBlank(skillSystemId)) {
+			List<RtksRadarBo> radarBos = rtksStatisticService.calculateLgdSkillRadar(userId,
+					skillSystemId);
+			baseRsp.setData(radarBos);
+		}
+
+		return baseRsp;
 	}
 
 	@GetMapping("/role/skill/score")

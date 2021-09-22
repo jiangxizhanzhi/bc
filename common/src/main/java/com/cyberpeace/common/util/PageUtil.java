@@ -30,6 +30,8 @@ public class PageUtil {
 
 		ret.setList(data.getRecords());
 		ret.setTotal(data.getTotal());
+		ret.setLastPage(data.getPages());
+		ret.setCurrentPage(data.getCurrent());
 
 		return ret;
 	}

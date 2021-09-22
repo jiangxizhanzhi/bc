@@ -38,4 +38,9 @@
         </if>
     </select>
 
+    <select id="getAll" resultType="com.cyberpeace.oj.practice.service.simpleBo.PracticeCategorySimple">
+        select `id`, `resource_id`, `name`, `create_time`, `update_time`, `code`
+        from practice_category where status = 1 and practice_type = 0 and code not like '%|%' order by id desc
+    </select>
+
 </mapper>

@@ -3,8 +3,22 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper">
     <select id="getListByTestPaper" resultType="com.cyberpeace.oj.practice.service.bo.TestPaperPractice">
-        select *, practice_type as 2 from practice_operation_ref where status = 1 and test_paper = #{test_paper}
+        select *, 2 as practice_type from practice_operation_ref where status = 1 and test_paper = #{test_paper}
     </select>
 
+    <insert id="saveBatch">
+        insert into practice_operation_ref
+        (`status`, `builtin`, `public`, `create_user`, `create_time`, `update_time`,
+         `resource_id`, `practice_set`, `category`, `title`, `content`, `answer`, `difficulty`, `knowledge`, `score`, `file`, `file_name`,
+         `writeup`, `is_public_writeup`, `is_dynamic_env`, `oj_scene_config`, `share_mode`, `is_dynamic_flag`, `destroy_delay`,
+         `origin_id`, `test_paper`)
+        values
+        <foreach collection="practice_list" item="p" separator=",">
+            (1, 0, 1, null, #{p.createTime}, #{p.updateTime},
+             #{p.resourceId}, #{p.practiceSet}, #{p.category}, #{p.title}, #{p.content}, #{p.answer}, #{p.difficulty}, #{p.knowledge}, #{p.score}, #{p.file}, #{p.fileName},
+             #{p.writeup}, #{p.isPublicWriteup}, #{p.isDynamicEnv}, #{p.ojSceneConfig}, #{p.shareMode}, #{p.isDynamicFlag}, #{p.destroyDelay},
+             #{p.originId}, #{p.testPaper})
+        </foreach>
+    </insert>
 
 </mapper>

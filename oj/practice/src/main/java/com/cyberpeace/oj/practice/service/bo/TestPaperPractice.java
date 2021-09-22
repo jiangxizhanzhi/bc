@@ -26,4 +26,6 @@ public class TestPaperPractice {
 
     private String file;
 
+    private String fileName;
+
 }

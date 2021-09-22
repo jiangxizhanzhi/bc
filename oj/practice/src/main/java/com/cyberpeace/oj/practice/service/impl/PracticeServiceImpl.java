@@ -152,7 +152,7 @@ class Evaluator {
         boolean isPass = false;
 
         JSONObject jsonAnswer = JSONObject.parseObject(answer);
-        JSONArray blankArray = JSONArray.parseArray(practice.getBlank());
+        JSONArray blankArray = JSONArray.parseArray(practice.getAnswer());
 
         for (int i = 0; i < blankArray.size(); i++) {
             // 获取用户提交的每个填空答案

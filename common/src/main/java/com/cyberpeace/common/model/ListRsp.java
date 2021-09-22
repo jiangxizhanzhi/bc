@@ -16,4 +16,8 @@ public class ListRsp<T> implements Serializable {
 	private List<T> list = Lists.newArrayList();
 
 	private long total;
+
+	private long lastPage;
+
+	private long currentPage;
 }

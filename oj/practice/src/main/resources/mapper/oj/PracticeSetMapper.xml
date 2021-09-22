@@ -24,4 +24,8 @@
         </foreach>
     </update>
 
+    <select id="getAll" resultType="com.cyberpeace.oj.practice.service.simpleBo.PracticeSetSimple">
+        select * from practice_set where status = 1 and practice_type = 0 order by id desc
+    </select>
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.practice.dao.entity.TestPaper;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,7 +13,7 @@ import java.util.List;
 @Repository
 public interface TestPaperMapper extends BaseMapper<TestPaper> {
 
-    ListRsp<TestPaper> getList();
+    ListRsp<TestPaper> getList(Page page, String pattern);
 
     Integer batchDelete();
 }

@@ -3,8 +3,21 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper">
     <select id="getListByTestPaper" resultType="com.cyberpeace.oj.practice.service.bo.TestPaperPractice">
-        select *, practice_type as 0 from practice_theory_ref where status = 1 and test_paper = #{test_paper}
+        select *, 0 as practice_type from practice_theory_ref where status = 1 and test_paper = #{test_paper}
     </select>
+
+    <insert id="saveBatch">
+        insert into practice_theory_ref
+        (`status`, `builtin`, `public`, `create_user`, `create_time`, `update_time`,
+         `resource_id`, `practice_set`, `category`, `content`, `answer`, `difficulty`, `knowledge`, `score`, `question_type`,
+         `option`, `keyword`, `origin_id`, `test_paper`, `is_option_random`)
+        values
+        <foreach collection="practice_list" item="p" separator=",">
+            (1, 0, 1, null, #{p.createTime}, #{p.updateTime},
+             #{p.resourceId}, #{p.practiceSet}, #{p.category}, #{p.content}, #{p.answer}, #{p.difficulty}, #{p.knowledge}, #{p.score}, #{p.questionType},
+             #{p.option}, #{p.keyword}, #{p.originId}, #{p.testPaper}, #{p.isOptionRandom})
+        </foreach>
+    </insert>
 
 
 </mapper>

@@ -17,6 +17,10 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
     IPage<PracticeTheory> getList(Page page, @Param("pattern") String pattern, @Param("practice_set") String practiceSet,
                                   @Param("category") String category, @Param("question_type") Integer questionType);
 
+    List<PracticeTheory> randomChoice(@Param("pattern") String pattern, @Param("practice_set") String practiceSet,
+                                      @Param("category") String category, @Param("question_type") Integer questionType,
+                                      @Param("limit") Integer count);
+
     Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
 
     List<PracticeTheory> batchGet(@Param("resource_ids") List<String> resourceIds);

@@ -23,7 +23,7 @@ public class PracticeTheoryReq{
     @ApiModelProperty(value = "答案", required = true)
     private String answer;
 
-    @ApiModelProperty(value = "题型", required = true)
+    @ApiModelProperty(value = "理论基础题型", required = true)
     private Integer questionType;
 
     @ApiModelProperty("知识点")
@@ -31,9 +31,6 @@ public class PracticeTheoryReq{
 
     @ApiModelProperty("选项 - (判断、单选、多选题型使用)")
     private String option;
-
-    @ApiModelProperty("空 - (填空题型使用)")
-    private String blank;
 
     @ApiModelProperty("关键字 - (简答题题型使用)")
     private String keyword;

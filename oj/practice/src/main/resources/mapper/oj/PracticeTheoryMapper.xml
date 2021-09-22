@@ -38,5 +38,27 @@
         </foreach>
     </select>
 
+    <select id="randomChoice" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+        select * from practice_theory
+        where status = 1
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+            and content like #{pattern}
+        </if>
+        <if test="category != null and category != ''">
+            and category = #{category}
+        </if>
+        <if test="practice_set != null and practice_set != ''">
+            and practice_set = #{practice_set}
+        </if>
+        <if test="question_type != null">
+            and question_type = #{question_type}
+        </if>
+        order by RAND()
+        <if test="limit != null and limit != ''">
+            limit #{limit}
+        </if>
+    </select>
+
 
 </mapper>

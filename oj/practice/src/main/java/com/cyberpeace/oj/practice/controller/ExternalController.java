@@ -15,12 +15,11 @@ import com.cyberpeace.oj.practice.service.simpleBo.PracticeSetSimple;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -38,21 +37,38 @@ public class ExternalController {
     @Autowired
     PracticeCategoryMapper practiceCategoryMapper;
 
+    private final String secretKey = "Cmycjs1bWUHsKb8r";
+
+    private final String headerKey = "OPT-OJ-KEY";
+
+    /**
+     * 接口认证(key获取方式后续可能调整)
+     * @param key headers: OPT-OJ-KEY
+     */
+    private void allowAccess(String key) {
+        if (!key.equals(this.secretKey)) {
+            throw new UnauthorizedException("secretKey is failed.");
+        }
+    }
+
     @ApiOperation("理论基础习题集-全量获取")
     @GetMapping("/theory/practice-set/list")
-    public BaseRsp<List<PracticeSetSimple>> getPracticeSetList() {
+    public BaseRsp<List<PracticeSetSimple>> getPracticeSetList(@RequestHeader(headerKey) @NotBlank String key) {
+        allowAccess(key);
         return new BaseRsp<>(practiceSetMapper.getAll());
     }
 
     @ApiOperation("理论基础分类-全量获取")
     @GetMapping("/theory/category/list")
-    public BaseRsp<List<PracticeCategorySimple>> getCategoryList() {
+    public BaseRsp<List<PracticeCategorySimple>> getCategoryList(@RequestHeader(headerKey) @NotBlank String key) {
+        allowAccess(key);
         return new BaseRsp<>(practiceCategoryMapper.getAll());
     }
 
     @ApiOperation("理论基础题库-分页查询")
     @GetMapping("/theory/list")
-    public BaseRsp<ListRsp<PracticeTheory>> getTheoryList(PracticeTheoryListReq queryParams) {
+    public BaseRsp<ListRsp<PracticeTheory>> getTheoryList(@RequestHeader(headerKey) @NotBlank String key, PracticeTheoryListReq queryParams) {
+        allowAccess(key);
         IPage<PracticeTheory> result = practiceTheoryMapper.getList(
                 queryParams.toPageParam(),
                 queryParams.getPattern(),
@@ -65,7 +81,8 @@ public class ExternalController {
 
     @ApiOperation("理论基础题库-批量查询")
     @GetMapping("/theory/batch-get")
-    public BaseRsp<List<PracticeTheory>> batchGet(@RequestParam("resource_ids") @NotBlank List<String> resourceIds) {
+    public BaseRsp<List<PracticeTheory>> batchGet(@RequestHeader(headerKey) @NotBlank String key, @RequestParam("resource_ids") @NotBlank List<String> resourceIds) {
+        allowAccess(key);
         if (resourceIds == null) {
             return new BaseRsp<>(Lists.newArrayList());
         }
@@ -74,7 +91,8 @@ public class ExternalController {
 
     @ApiOperation("理论基础题库-随机获取数条")
     @GetMapping("/theory/random-choice")
-    public BaseRsp<List<PracticeTheory>> getTheoryRandom(PracticeRandomChoiceReq queryParams) {
+    public BaseRsp<List<PracticeTheory>> getTheoryRandom(@RequestHeader(headerKey) @NotBlank String key, PracticeRandomChoiceReq queryParams) {
+        allowAccess(key);
         List<PracticeTheory> result = practiceTheoryMapper.randomChoice(
                 queryParams.getPattern(),
                 queryParams.getPracticeSet(),

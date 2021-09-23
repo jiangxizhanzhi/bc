@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.CommentLikeMapper">
+
+    <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.CommentLike"/>
+
+    <sql id="baseFiled">
+        select `user`, comment, is_like, create_time
+        from x_comment_commentlike
+    </sql>
+
+    <sql id="orderByTimeDesc">
+        order by create_time desc
+    </sql>
+
+    <select id="listByComment" resultMap="base">
+        <include refid="baseFiled"/>
+        <where>
+            and comment = #{comment}
+            <if test="isLike != null">
+                and is_like = #{isLike}
+            </if>
+        </where>
+        <include refid="orderByTimeDesc"/>
+    </select>
+
+    <select id="selectByCommentAndUser" resultMap="base">
+        <include refid="baseFiled"/>
+        <where>
+            and comment = #{comment}
+            and `user` = #{userId}
+        </where>
+    </select>
+
+</mapper>

@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.controller.web;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -9,11 +10,15 @@ import com.cyberpeace.oj.course.dao.mapper.LessonMapper;
 import com.cyberpeace.oj.course.dao.oj_entity.Lesson;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
-import com.cyberpeace.oj.crbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.crbase.controller.req.CommentReq;
-import com.cyberpeace.oj.crbase.controller.res.CommentRes;
-import com.cyberpeace.oj.crbase.dao.entity.Comment;
-import com.cyberpeace.oj.crbase.service.CommentService;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
+import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
+import com.cyberpeace.oj.ojbase.controller.res.CommentRes;
+import com.cyberpeace.oj.ojbase.dao.entity.Comment;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.service.CommentService;
+import com.cyberpeace.oj.ojbase.service.NoteService;
+import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,9 @@ public class WebLessonController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private NoteService noteService;
 
     @ApiOperation("课时收藏")
     @PostMapping("/collection")
@@ -59,7 +67,7 @@ public class WebLessonController {
     }
 
     @ApiOperation("课时评论")
-    @PostMapping("")
+    @PostMapping("/comment")
     public BaseRsp<CommentRes> lessonComment(@RequestBody @Valid CommentReq commentReq) {
 
         Lesson lesson = lessonMapper.selectById(commentReq.getResource());
@@ -75,5 +83,24 @@ public class WebLessonController {
         CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);
         return new BaseRsp<>(commentRes);
     }
+
+    @ApiOperation("课时笔记新增")
+    @PostMapping("/note")
+    public BaseRsp<NoteAddContext> saveNote(@ApiParam @RequestBody @Valid NoteReq noteReq) {
+
+        Lesson lesson = lessonMapper.selectById(noteReq.getResource());
+        if (null == lesson) {
+            throw new ResourceNotFoundException("未检索到对应课时信息！");
+        }
+
+        String userId = UserInfoContext.getUserContext().getUserId();
+        NoteAddContext addContext = BeanUtils.copy(noteReq, NoteAddContext.class);
+        addContext.setUser(userId);
+        addContext.setResourceType(Note.LESSON);
+
+        NoteAddContext noteAddContext = noteService.updateOrSave(addContext);
+        return new BaseRsp<>(noteAddContext);
+    }
+
 
 }

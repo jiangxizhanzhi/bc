@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.rtks.dao.mapper.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,7 +16,7 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
-import com.cyberpeace.integratation.model.skill.OutSkillScore;
+import com.cyberpeace.rtks.service.bo.SkillScore;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -23,16 +25,13 @@ import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.*;
-import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
-import com.cyberpeace.rtks.dao.mapper.RoleMapper;
-import com.cyberpeace.rtks.dao.mapper.SkillCategoryMapper;
-import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TreeService;
 import com.cyberpeace.rtks.service.bo.*;
 import com.google.common.collect.Lists;
 
 @Service
+@Slf4j
 public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
@@ -61,6 +60,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private LessonRecordService lessonRecordService;
+
+	@Autowired
+	private LevelMapper levelMapper;
 
 	/**
 	 * 角色评分中技能所占百分比
@@ -138,9 +140,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<SkillCategory> categories = skillCategoryMapper.selectBatchIds(categoryIds);
 
 		// 获取技能得分情况 转化为map
-		List<OutSkillScore> scores = getSkillScore(userId, skillList);
+		List<SkillScore> scores = getSkillScore(userId, skillList);
 		Map<String, String> scoreMap = scores.stream()
-				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
+				.collect(Collectors.toMap(SkillScore::getSkillId, SkillScore::getScore));
 
 		// 组装数据
 		List<RtksRadarBo> ret = categories.stream().map(skillCategory -> {
@@ -299,9 +301,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<SkillCategory> categories = skillCategoryMapper.selectBatchIds(categoryIds);
 
 		// 获取技能得分情况 转化为map
-		List<OutSkillScore> scores = getSkillScore(userId, skillList);
+		List<SkillScore> scores = getSkillScore(userId, skillList);
 		Map<String, String> scoreMap = scores.stream()
-				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
+				.collect(Collectors.toMap(SkillScore::getSkillId, SkillScore::getScore));
 
 		// 组装数据
 		List<CategorySkillBo> skillBos = categories.stream().map(skillCategory -> {
@@ -460,9 +462,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		List<Skill> skills = getSkills(roleId);
 		// 2、计算每个技能点的得分
 		// 连接靶场数据库，没有数据点技能点算0分
-		List<OutSkillScore> skillScore = getSkillScore(userId, skills);
+		List<SkillScore> skillScore = getSkillScore(userId, skills);
 		Map<String, String> scoreMap = skillScore.stream()
-				.collect(Collectors.toMap(OutSkillScore::getSkillId, OutSkillScore::getScore));
+				.collect(Collectors.toMap(SkillScore::getSkillId, SkillScore::getScore));
 
 		double sum = skills.stream().mapToDouble(skill -> new Double(skill.getWeight())
 				* Double.parseDouble(scoreMap.get(skill.getResourceId()))).sum();
@@ -479,7 +481,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param skills
 	 * @return
 	 */
-	private List<OutSkillScore> getSkillScore(String userId, List<Skill> skills) {
+	private List<SkillScore> getSkillScore(String userId, List<Skill> skills) {
 		// 查询技能点得分 为空则为零分
 		List<MissionSkillEvaluation> skillScores = skills.stream().map(skill -> {
 			MissionSkillEvaluation skillEvaluation = missionSkillEvaluationMapper
@@ -495,8 +497,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		}).collect(Collectors.toList());
 
 		// 数据类型转换
-		List<OutSkillScore> scores = skillScores.stream().map(missionSkillEvaluation -> {
-			OutSkillScore skillScore = new OutSkillScore();
+		List<SkillScore> scores = skillScores.stream().map(missionSkillEvaluation -> {
+			SkillScore skillScore = new SkillScore();
 			skillScore.setScore(
 					DataTransferUtils.nullToZero(missionSkillEvaluation.getScore()).toString());
 			skillScore.setSkillId(missionSkillEvaluation.getSkill());

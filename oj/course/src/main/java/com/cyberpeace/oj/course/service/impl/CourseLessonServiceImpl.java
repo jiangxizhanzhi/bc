@@ -17,7 +17,7 @@ import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
-import com.cyberpeace.oj.crbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 
 @Service
 public class CourseLessonServiceImpl implements CourseLessonService {

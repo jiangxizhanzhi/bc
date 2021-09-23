@@ -6,14 +6,19 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseDirectionService;
-import com.cyberpeace.oj.crbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.crbase.controller.req.CommentReq;
-import com.cyberpeace.oj.crbase.controller.res.CommentRes;
-import com.cyberpeace.oj.crbase.dao.entity.Comment;
-import com.cyberpeace.oj.crbase.service.CommentService;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
+import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
+import com.cyberpeace.oj.ojbase.controller.res.CommentRes;
+import com.cyberpeace.oj.ojbase.dao.entity.Comment;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.service.CommentService;
+import com.cyberpeace.oj.ojbase.service.NoteService;
+import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,80 +48,102 @@ import io.swagger.annotations.ApiParam;
 @RequiresAuthentication
 public class WebCourseController {
 
-    @Autowired
-    private CourseService courseService;
+	@Autowired
+	private CourseService courseService;
 
-    @Autowired
-    private CourseAuthConstructService courseAuthConstructService;
+	@Autowired
+	private CourseAuthConstructService courseAuthConstructService;
 
-    @Autowired
-    private CourseDirectionService courseDirectionService;
+	@Autowired
+	private CourseDirectionService courseDirectionService;
 
-    @Autowired
-    private CommentService commentService;
+	@Autowired
+	private CommentService commentService;
 
-    @Autowired
-    private CourseMapper courseMapper;
+	@Autowired
+	private CourseMapper courseMapper;
 
-    @ApiOperation("课程收藏")
-    @PostMapping("/collect")
-    public BaseRsp<String> courseCollection(@RequestBody CollectionReq req) {
+	@Autowired
+	private NoteService noteService;
 
-        String userId = UserInfoContext.getUserContext().getUserId();
+	@ApiOperation("课程收藏")
+	@PostMapping("/collect")
+	public BaseRsp<String> courseCollection(@RequestBody CollectionReq req) {
 
-        String courseId = courseService.collectCourse(userId, req.getResource(),
-                req.getIsCollection());
-        return new BaseRsp<>(courseId);
-    }
+		String userId = UserInfoContext.getUserContext().getUserId();
 
-    @ApiOperation("前台课程列表查询")
-    @GetMapping("/list")
-    public BaseRsp<List<CourseInfoBo>> getWebCourse(
-            @ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
-        // 数据组装
-        CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
-        context.setUserId(UserInfoContext.getUserContext().getUserId());
-        context.isWeb();
+		String courseId = courseService.collectCourse(userId, req.getResource(),
+				req.getIsCollection());
+		return new BaseRsp<>(courseId);
+	}
 
-        if (StringUtils.isNotBlank(listReq.getDirection())) {
-            List<String> childrenIds = courseDirectionService.getAllChildrenIds(listReq.getDirection());
-            context.setDirections(childrenIds);
-        }
+	@ApiOperation("前台课程列表查询")
+	@GetMapping("/list")
+	public BaseRsp<List<CourseInfoBo>> getWebCourse(
+			@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
+		// 数据组装
+		CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
+		context.setUserId(UserInfoContext.getUserContext().getUserId());
+		context.isWeb();
 
-        Page page = listReq.toPageParam();
-        AuthContext authContext = courseAuthConstructService
-                .webCourseConstruct(UserInfoContext.getUserContext());
+		if (StringUtils.isNotBlank(listReq.getDirection())) {
+			List<String> childrenIds = courseDirectionService
+					.getAllChildrenIds(listReq.getDirection());
+			context.setDirections(childrenIds);
+		}
 
-        // 数据查询
-        ListRsp<CourseInfoBo> boListRsp = courseService.selectPage(page, context, authContext);
-        return new BaseRsp(boListRsp);
-    }
+		Page page = listReq.toPageParam();
+		AuthContext authContext = courseAuthConstructService
+				.webCourseConstruct(UserInfoContext.getUserContext());
 
-    @GetMapping()
-    @ApiOperation("单条查询")
-    public BaseRsp<CourseInfoBo> getCourse(@ApiParam(name = "resource_id", value = "查询id",
-            required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
-        String userId = UserInfoContext.getUserContext().getUserId();
-        CourseInfoBo course = courseService.selectById(resourceId, userId);
-        BaseRsp rsp = new BaseRsp(course);
-        return rsp;
-    }
+		// 数据查询
+		ListRsp<CourseInfoBo> boListRsp = courseService.selectPage(page, context, authContext);
+		return new BaseRsp(boListRsp);
+	}
 
-    @PostMapping
-    @ApiOperation("/comment")
-    public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
+	@GetMapping()
+	@ApiOperation("单条查询")
+	public BaseRsp<CourseInfoBo> getCourse(@ApiParam(name = "resource_id", value = "查询id",
+			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CourseInfoBo course = courseService.selectById(resourceId, userId);
+		BaseRsp rsp = new BaseRsp(course);
+		return rsp;
+	}
 
-        Course course = courseMapper.selectById(commentReq.getResource());
-        if (null == course) {
-            throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
-        }
+	@PostMapping
+	@ApiOperation("/comment")
+	public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
 
-        Comment comment = BeanUtils.copy(commentReq, Comment.class);
-        comment.setUser(UserInfoContext.getUserContext().getUserId());
-        comment.setCommentType(Comment.COURSE);
+		Course course = courseMapper.selectById(commentReq.getResource());
+		if (null == course) {
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+		}
 
-        Comment newComment = commentService.addNewComment(comment);
-        CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);
-        return new BaseRsp<>(commentRes);
-    }
+		Comment comment = BeanUtils.copy(commentReq, Comment.class);
+		comment.setUser(UserInfoContext.getUserContext().getUserId());
+		comment.setCommentType(Comment.COURSE);
+
+		Comment newComment = commentService.addNewComment(comment);
+		CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);
+		return new BaseRsp<>(commentRes);
+	}
+
+	@PostMapping("/note")
+	@ApiOperation("笔记新增或者修改")
+	public BaseRsp<NoteAddContext> saveNote(@ApiParam @Valid @RequestBody NoteReq noteReq) {
+
+		// 资源校验
+		Course course = courseMapper.selectById(noteReq.getResource());
+		if (null == course) {
+			throw new ResourceNotFoundException("未找到对应的课程资源！");
+		}
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		NoteAddContext addContext = BeanUtils.copy(noteReq, NoteAddContext.class);
+		addContext.setUser(userId);
+
+		NoteAddContext note = noteService.updateOrSave(addContext);
+		return new BaseRsp(note);
+	}
 }

@@ -12,13 +12,16 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.simpleBo.PracticeCategorySimple;
 import com.cyberpeace.oj.practice.service.simpleBo.PracticeSetSimple;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Api(tags = "外部接口-题库引用")
@@ -58,6 +61,15 @@ public class ExternalController {
                 queryParams.getQuestionType()
         );
         return new BaseRsp<>(PageUtil.getListResult(result));
+    }
+
+    @ApiOperation("理论基础题库-批量查询")
+    @GetMapping("/theory/batch-get")
+    public BaseRsp<List<PracticeTheory>> batchGet(@RequestParam("resource_ids") @NotBlank List<String> resourceIds) {
+        if (resourceIds == null) {
+            return new BaseRsp<>(Lists.newArrayList());
+        }
+        return new BaseRsp<>(practiceTheoryMapper.batchGet(resourceIds));
     }
 
     @ApiOperation("理论基础题库-随机获取数条")

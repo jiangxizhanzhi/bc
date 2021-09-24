@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -166,11 +167,17 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Override
 	public RoleDetailRes getLearningPathTree(String resource_id, String type) {
 		Role role = roleMapper.selectById(resource_id);
+		if (null == role) {
+			throw new InvalidParamException("未检索到相应岗位!");
+		}
+
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 
 		List<Level> levelList = roleMapper.selectLevelsByRoleId(resource_id);
-		roleDetailRes.setLevelTreeOutput(getLevelTree(levelList, role.getLevelId()));
+		if (levelList.size() > 0) {
+			roleDetailRes.setLevelTreeOutput(getLevelTree(levelList, role.getLevelId()));
+		}
 
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();

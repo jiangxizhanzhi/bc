@@ -2,6 +2,7 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -12,11 +13,7 @@ import org.apache.commons.collections.SetUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -31,26 +28,9 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
-import com.cyberpeace.rtks.controller.role.RoleAddInput;
-import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
-import com.cyberpeace.rtks.controller.role.RoleInput;
-import com.cyberpeace.rtks.controller.role.RoleModifyInput;
-import com.cyberpeace.rtks.controller.role.RoleOutput;
-import com.cyberpeace.rtks.controller.role.SkillKnowledgeWeight;
-import com.cyberpeace.rtks.dao.entity.Ability;
-import com.cyberpeace.rtks.dao.entity.Knowledge;
-import com.cyberpeace.rtks.dao.entity.Level;
-import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.dao.entity.Skill;
-import com.cyberpeace.rtks.dao.entity.SkillSystem;
-import com.cyberpeace.rtks.dao.entity.Task;
-import com.cyberpeace.rtks.service.AbilityService;
-import com.cyberpeace.rtks.service.KnowledgeService;
-import com.cyberpeace.rtks.service.LevelService;
-import com.cyberpeace.rtks.service.RoleService;
-import com.cyberpeace.rtks.service.SkillService;
-import com.cyberpeace.rtks.service.SkillSystemService;
-import com.cyberpeace.rtks.service.TaskService;
+import com.cyberpeace.rtks.controller.role.*;
+import com.cyberpeace.rtks.dao.entity.*;
+import com.cyberpeace.rtks.service.*;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
@@ -267,7 +247,12 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 
 		String levelId = input.getLevelId();
 		if (levelId != null) {
-			levelService.getOr404(levelId);
+			Level level = levelService.getOr404(levelId);
+
+			if (Objects.equals(ConfigUtil.getContextProperty("roleRelatedSecondLevel"), "true")
+					&& Objects.equals(level.getParent(), level.getFrame())) {
+				throw new InvalidParamException("只允许在第二层级新建岗位");
+			}
 			List<Level> childLevels = levelService.getChildLevelsByLevelId(levelId);
 			if (!CollectionUtils.isEmpty(childLevels)) {
 				throw new InvalidParamException("层级" + levelId + "有子层级，不能绑定岗位");

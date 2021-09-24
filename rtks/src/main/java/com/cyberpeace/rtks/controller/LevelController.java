@@ -1,13 +1,9 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.suit.BaseController;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.frame.LevelAddInput;
 import com.cyberpeace.rtks.controller.frame.LevelInput;
 import com.cyberpeace.rtks.controller.frame.LevelModifyInput;
@@ -86,6 +84,13 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 
 		// 确保parentId对应的框架/层级存在
 		Level parentLevel = levelService.getLevelOrFrameOr404(parentId);
+
+		// 确保当前不超过第二级
+		String maxTwoLevelConfig = ConfigUtil.getContextProperty("maxTwoLevel");
+		if (Objects.equals(maxTwoLevelConfig, "true")) {
+			levelService.ensureLessThanTwoLevel(parentLevel);
+		}
+
 		// 迭代获取当前层级所属框架
 		level.setFrame(levelService.getFrame(parentLevel).getResourceId());
 

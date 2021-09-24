@@ -49,6 +49,13 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
+	public void ensureLessThanTwoLevel(Level level) {
+		int maxLoop = 2;
+		Consumer<Level> collector = level1 -> {};
+		findFrame(level, maxLoop, collector);
+	}
+
+	@Override
 	public List<Level> getChildLevelsByLevelId(String levelId) {
 		return levelMapper.getChildLevels(levelId);
 	}

@@ -57,4 +57,6 @@ public interface LevelService extends IService<Level> {
 	 * 清空level表并导入预置数据
 	 */
 	void initDefaultFromPreset();
+
+	void ensureLessThanTwoLevel(Level parentLevel);
 }

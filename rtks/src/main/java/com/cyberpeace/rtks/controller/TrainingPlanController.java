@@ -79,11 +79,17 @@ public class TrainingPlanController {
 			resource_id = "";
 			String existRoleId = UserInfoContext.getUserContext().getRoleId();
 			if (StringUtils.isNotBlank(existRoleId)) {
-				Role role = trainingPlanService.getRoleByRoleId(existRoleId);
-				if (role != null) {
+				try {
+					Role role = trainingPlanService.getRoleByRoleId(existRoleId);
+					if (role != null) {
 
-					resource_id = levelService.getOr404(role.getLevelId()).getFrame();
+						resource_id = levelService.getOr404(role.getLevelId()).getFrame();
+					}
+
+				} catch (Exception e) {
+					LOG.info("未检索到相应岗位");
 				}
+
 			}
 		}
 		// 如果还是获取不到框架，从框架列表查询第一个框架返回

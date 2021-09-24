@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.rtks.dao.mapper.*;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,7 +14,6 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
-import com.cyberpeace.rtks.service.bo.SkillScore;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -25,10 +22,13 @@ import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.*;
+import com.cyberpeace.rtks.dao.mapper.*;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TreeService;
 import com.cyberpeace.rtks.service.bo.*;
 import com.google.common.collect.Lists;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -287,6 +287,10 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	public List<CategorySkillBo> getRoleSkillScores(String userId, String roleId) {
 
 		Role role = roleMapper.selectById(roleId);
+		if (null == role) {
+			throw new InvalidParamException("未检索到相应岗位!");
+		}
+
 		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
 		if (CollectionUtils.isEmpty(skillIds)) {
 			skillIds = Lists.newArrayList();

@@ -11,7 +11,7 @@
 
     <delete id="removeAll">
         delete
-        * from rtks_role
+        from rtks_role
     </delete>
 
     <select id="listRole" resultType="com.cyberpeace.rtks.dao.entity.Role">

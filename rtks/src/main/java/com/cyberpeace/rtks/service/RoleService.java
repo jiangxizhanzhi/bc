@@ -22,4 +22,8 @@ public interface RoleService extends IService<Role> {
 	IPage<Role> listRoles(Page<Role> page, String keyword, String frameId);
 
 	Role getOr404(String resourceId);
+
+	void removeAll();
+
+	void initDefaultFromPreset();
 }

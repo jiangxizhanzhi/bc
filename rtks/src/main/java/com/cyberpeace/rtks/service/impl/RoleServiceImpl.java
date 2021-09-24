@@ -31,6 +31,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	}
 
 	@Override
+	public void removeAll() {
+		roleMapper.removeAll();
+	}
+
+	@Override
+	public void initDefaultFromPreset() {
+		roleMapper.removeAll();
+		roleMapper.copyFromPreset();
+	}
+
+	@Override
 	public List<Role> getRolesByLevelId(String levelId) {
 		return roleMapper.getRolesUnderLevel(levelId);
 	}

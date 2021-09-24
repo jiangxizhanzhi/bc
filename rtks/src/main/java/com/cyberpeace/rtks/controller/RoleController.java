@@ -251,7 +251,7 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 
 			if (Objects.equals(ConfigUtil.getContextProperty("roleRelatedSecondLevel"), "true")
 					&& Objects.equals(level.getParent(), level.getFrame())) {
-				throw new InvalidParamException("只允许在第二层级新建岗位");
+				throw new InvalidParamException("只允许在二级层级关联岗位");
 			}
 			List<Level> childLevels = levelService.getChildLevelsByLevelId(levelId);
 			if (!CollectionUtils.isEmpty(childLevels)) {

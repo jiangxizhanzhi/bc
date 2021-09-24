@@ -2,6 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.RoleMapper">
+
+    <insert id="copyFromPreset">
+        insert into rtks_role
+        select *
+        from init_rtks_role;
+    </insert>
+
+    <delete id="removeAll">
+        delete
+        * from rtks_role
+    </delete>
+
     <select id="listRole" resultType="com.cyberpeace.rtks.dao.entity.Role">
         select * from rtks_role
         <where>

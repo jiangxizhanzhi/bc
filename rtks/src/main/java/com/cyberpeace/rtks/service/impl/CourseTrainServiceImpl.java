@@ -137,6 +137,9 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	@Override
 	public List<RoleCourseBo> getRoleCoursePath(String roleId) {
 		Role role = roleMapper.selectById(roleId);
+		if (null == role) {
+			throw new InvalidParamException("未检索到相应岗位!");
+		}
 
 		String coursesStr = role.getKnowledgeCourses();
 		List<String> courseIds = JsonUtil.toJsonObjectArray(coursesStr, String.class);

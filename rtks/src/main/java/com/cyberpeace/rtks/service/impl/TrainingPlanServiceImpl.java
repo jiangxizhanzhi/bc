@@ -126,7 +126,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	@Override
 	public RoleDetailRes getRoleOutputByRoleId(String resource_id, String type) {
-		Role role = roleMapper.selectById(resource_id);
+		Role role = getRoleByRoleId(resource_id);
 
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
@@ -166,7 +166,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	@Override
 	public RoleDetailRes getLearningPathTree(String resource_id, String type) {
-		Role role = roleMapper.selectById(resource_id);
+		Role role = getRoleByRoleId(resource_id);
 		if (null == role) {
 			throw new InvalidParamException("未检索到相应岗位!");
 		}
@@ -208,13 +208,16 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	@Override
 	public Role getRoleByRoleId(String existRoleId) {
 		Role role = roleMapper.selectById(existRoleId);
+		if (null == role) {
+			throw new InvalidParamException("未检索到相应岗位!");
+		}
 
 		return role;
 	}
 
 	@Override
 	public RoleDetailRes getRoleDetailResByRoleId(String existRoleId) {
-		Role role = roleMapper.selectById(existRoleId);
+		Role role = getRoleByRoleId(existRoleId);
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 
@@ -288,7 +291,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	 * @return
 	 */
 	private List<String> getKnowledgeIdsByRole(String roleId) {
-		Role role = roleMapper.selectById(roleId);
+		Role role = getRoleByRoleId(roleId);
 		if (null == role) {
 			return Lists.newArrayList();
 		}

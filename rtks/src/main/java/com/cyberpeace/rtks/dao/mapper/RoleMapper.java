@@ -28,4 +28,8 @@ public interface RoleMapper extends BaseMapper<Role> {
 	List<String> getRoleIdsByLevelIds(List<String> levelIds);
 
 	List<Level> selectLevelsByRoleId(String resource_id);
+
+	void removeAll();
+
+	void copyFromPreset();
 }

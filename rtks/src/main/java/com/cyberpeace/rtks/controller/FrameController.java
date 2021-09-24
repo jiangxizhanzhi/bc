@@ -154,6 +154,7 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 		singleFrameOnly();
 		// 除根节点外删除所有框架、层级
 		levelService.removeAllLevels();
+		roleService.removeAll();
 		return retrieve(DEFAULT_FRAME_ID);
 	}
 
@@ -163,6 +164,7 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 		singleFrameOnly();
 		// 重置所有框架、层级
 		levelService.initDefaultFromPreset();
+		roleService.initDefaultFromPreset();
 		return retrieve(DEFAULT_FRAME_ID);
 	}
 }

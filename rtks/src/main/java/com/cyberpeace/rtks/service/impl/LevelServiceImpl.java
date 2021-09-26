@@ -157,7 +157,14 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	@Override
 	public boolean checkHasRole(LevelTreeOutput levelTreeChild) {
 
-		if (levelTreeChild.getChildren() != null) {
+		if (levelTreeChild.getChildren() == null) {
+			List<String> levelIds = Lists.newArrayList();
+			levelIds.add(levelTreeChild.getResourceId());
+			List<String> roleIds = roleMapper.getRoleIdsByLevelIds(levelIds);
+			if (roleIds.size() > 0) {
+				return true;
+			}
+		} else {
 			for (LevelTreeOutput element : levelTreeChild.getChildren()) {
 
 				if (element.getChildren() == null) {

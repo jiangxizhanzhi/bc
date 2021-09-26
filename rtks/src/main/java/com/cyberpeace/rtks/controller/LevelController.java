@@ -139,29 +139,32 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 
 			LevelTreeOutput frame = frameService.getTree(level.getFrame());// 获取框架树
 			LevelTreeOutput levelTreeOutput = new LevelTreeOutput();
-			levelTreeOutput = getLevelTreeChild(levelTreeOutput, frame, level.getResourceId());// 获取层级树
+			levelTreeOutput = getLevelTreeChild(frame, level.getResourceId());// 获取层级树
 			result = levelService.checkHasRole(levelTreeOutput);
 		}
 		return result;
 
 	}
 
-	private LevelTreeOutput getLevelTreeChild(LevelTreeOutput result, LevelTreeOutput frame,
+	private LevelTreeOutput getLevelTreeChild(LevelTreeOutput frame,
 			String levelId) {
 
 		if (StringUtils.equals(levelId, frame.getResourceId())) {
-			result = frame;
-		}
-		if (null != frame.getChildren()) {
-			for (LevelTreeOutput levelTreeOutput : frame.getChildren()) {
-				if (null != levelTreeOutput.getChildren()) {
-					getLevelTreeChild(result, levelTreeOutput, levelId);
+			return frame;
+		} else {
+			List<LevelTreeOutput> children = frame.getChildren();
+			if (!CollectionUtils.isEmpty(children)) {
+				for (LevelTreeOutput child : children) {
+					LevelTreeOutput levelTreeChild = getLevelTreeChild(child, levelId);
+					if (levelTreeChild != null) {
+						return levelTreeChild;
+					}
 				}
-
 			}
+
+			return null;
 		}
 
-		return result;
 	}
 	/*@Override
 	protected void performBatchDelete(List<String> ids) {

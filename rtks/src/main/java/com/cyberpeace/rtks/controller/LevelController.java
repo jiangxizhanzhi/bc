@@ -1,9 +1,12 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,12 +16,10 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.suit.BaseController;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import com.cyberpeace.rtks.controller.frame.LevelAddInput;
-import com.cyberpeace.rtks.controller.frame.LevelInput;
-import com.cyberpeace.rtks.controller.frame.LevelModifyInput;
-import com.cyberpeace.rtks.controller.frame.LevelOutput;
+import com.cyberpeace.rtks.controller.frame.*;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RoleService;
 
@@ -34,6 +35,9 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 
 	@Autowired
 	private RoleService roleService;
+
+	@Autowired
+	private FrameService frameService;
 
 	@Override
 	protected LevelService getService() {
@@ -115,15 +119,67 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 		List<Level> levels = levelService.getLevelsByIds(ids);
 		List<String> levelIds = new ArrayList<>();
 		for (Level level : levels) {
-			levelIds.add(level.getResourceId());
+
+			if (!checkLevelChildren(level)) {
+				levelIds.add(level.getResourceId());
+			}
 		}
 
-		// 如果层级下有岗位绑定，不允许删除
-		List<String> roleIds = roleService.getRoleIdsByLevelIds(ids);
-		if (!CollectionUtils.isEmpty(roleIds)) {
+		if (levelIds.size() == 0) {
 			throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_FRAME);
 		}
 
+		levelService.removeByIds(levelIds);
+	}
+
+	// 检查层级的子层级是否有岗位
+	private boolean checkLevelChildren(Level level) {
+		boolean result = false;
+		if (!StringUtils.isBlank(level.getFrame())) {
+
+			LevelTreeOutput frame = frameService.getTree(level.getFrame());// 获取框架树
+			LevelTreeOutput levelTreeOutput = new LevelTreeOutput();
+			levelTreeOutput = getLevelTreeChild(levelTreeOutput, frame, level.getResourceId());// 获取层级树
+			result = levelService.checkHasRole(levelTreeOutput);
+		}
+		return result;
+
+	}
+
+	private LevelTreeOutput getLevelTreeChild(LevelTreeOutput result, LevelTreeOutput frame,
+			String levelId) {
+
+		if (StringUtils.equals(levelId, frame.getResourceId())) {
+			result = frame;
+		}
+		if (null != frame.getChildren()) {
+			for (LevelTreeOutput levelTreeOutput : frame.getChildren()) {
+				if (null != levelTreeOutput.getChildren()) {
+					getLevelTreeChild(result, levelTreeOutput, levelId);
+				}
+
+			}
+		}
+
+		return result;
+	}
+	/*@Override
+	protected void performBatchDelete(List<String> ids) {
+		// 验证输入层级id合法
+		List<Level> levels = levelService.getLevelsByIds(ids);
+		List<String> levelIds = new ArrayList<>();
+		for (Level level : levels) {
+			levelIds.add(level.getResourceId());
+		}
+	
+		// 如果层级下有岗位绑定，不允许删除
+		List<String> roleIds = roleService.getRoleIdsByLevelIds(ids);
+	
+	
+		if (!CollectionUtils.isEmpty(roleIds)) {
+			throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_FRAME);
+		}
+	
 		// 把待删除层级下的层级绑定到其父层级/框架上
 		// 待删除的层级-转移到的层级映射表
 		Map<String, String> changeMap = new HashMap<>();
@@ -132,15 +188,15 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 			String target = getAncestorExclude(level, levelIds);
 			changeMap.put(levelId, target);
 		}
-
+	
 		// 更改子层级的parent属性
 		for (String levelId : changeMap.keySet()) {
 			String target = changeMap.get(levelId);
 			levelService.changeLevelId(levelId, target);
 		}
-
+	
 		levelService.removeByIds(levelIds);
-	}
+	}*/
 
 	/**
 	 * 给定层级(非框架) 获取其父层级/框架id 如果该id在给定levelIds数组中，则再迭代查找

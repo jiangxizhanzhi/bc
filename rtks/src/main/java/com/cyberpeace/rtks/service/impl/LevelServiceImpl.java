@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.LevelService;
+import com.google.common.collect.Lists;
 
 @Service
 public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements LevelService {
@@ -151,4 +153,28 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 			throw new InvalidParamException("脏数据:层级" + level.getResourceId() + "frame字段不应为空");
 		}
 	}
+
+	@Override
+	public boolean checkHasRole(LevelTreeOutput levelTreeChild) {
+
+		if (levelTreeChild.getChildren() != null) {
+			for (LevelTreeOutput element : levelTreeChild.getChildren()) {
+
+				if (element.getChildren() == null) {
+					// 处理叶子结点
+					List<String> levelIds = Lists.newArrayList();
+					levelIds.add(element.getResourceId());
+					List<String> roleIds = roleMapper.getRoleIdsByLevelIds(levelIds);
+					if (roleIds.size() > 0) {
+						return true;
+					}
+				} else {
+					return checkHasRole(element);
+				}
+			}
+		}
+		return false;
+
+	}
+
 }

@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
 
 public interface LevelService extends IService<Level> {
@@ -59,4 +60,6 @@ public interface LevelService extends IService<Level> {
 	void initDefaultFromPreset();
 
 	void ensureLessThanTwoLevel(Level parentLevel);
+
+	boolean checkHasRole(LevelTreeOutput levelTreeOutput);
 }

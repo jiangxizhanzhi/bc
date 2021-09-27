@@ -42,6 +42,10 @@ public class UserRelateServiceImpl implements UserRelateService {
     @Override
     public UserRole getUserRoleInfo(String userId) {
         UserRole userRole = userRoleMapper.selectById(userId);
+        if (null == userRole) {
+            return null;
+        }
+
 		Role role = roleMapper.selectById(userRole.getRoleId());
 		if (null == role) {
 			return null;

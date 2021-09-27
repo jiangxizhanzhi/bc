@@ -66,7 +66,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 				List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 						String.class);
 				List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
-				role.setSkillCourses(JsonUtil.toJsonString(courseIds));
+				role.setKnowledgeCourses(JsonUtil.toJsonString(courseIds));
 			});
 		}
 		if ("skill".equals(type)) {
@@ -106,12 +106,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		}
 		if ("ability".equals(type)) {
 			roleList.forEach(role -> {
-				role.setSkillIds(deleteIds(role.getSkillIds(), deleteReq.getIds()));
+				role.setAbilityIds(deleteIds(role.getSkillIds(), deleteReq.getIds()));
 			});
 		}
 		if ("task".equals(type)) {
 			roleList.forEach(role -> {
-				role.setSkillIds(deleteIds(role.getTaskIds(), deleteReq.getIds()));
+				role.setTaskIds(deleteIds(role.getTaskIds(), deleteReq.getIds()));
 			});
 		}
 

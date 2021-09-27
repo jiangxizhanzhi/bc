@@ -77,6 +77,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 				role.setSkillCourses(JsonUtil.toJsonString(courseIds));
 			});
 		}
+		this.updateBatchById(roleList);
 
 	}
 

@@ -24,9 +24,9 @@ public interface RoleService extends IService<Role> {
 
 	Role getOr404(String resourceId);
 
-	void removeAll();
+	void removeAll(String table);
 
-	void initDefaultFromPreset();
+	void initDefaultFromPreset(String table);
 
 	/**修改知识点或技能点，重新查询对应的课程，重置相关岗位关联的知识点或技能点课程字符串
 	 * @param id 关联的知识点或技能点id

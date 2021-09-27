@@ -154,7 +154,11 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 		singleFrameOnly();
 		// 除根节点外删除所有框架、层级
 		levelService.removeAllLevels();
-		roleService.removeAll();
+		roleService.removeAll("role");
+		roleService.removeAll("task");
+		roleService.removeAll("knowledge_category");
+		roleService.removeAll("knowledge");
+		roleService.removeAll("course_related");
 		return retrieve(DEFAULT_FRAME_ID);
 	}
 
@@ -164,7 +168,12 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 		singleFrameOnly();
 		// 重置所有框架、层级
 		levelService.initDefaultFromPreset();
-		roleService.initDefaultFromPreset();
+		roleService.initDefaultFromPreset("role");
+		roleService.initDefaultFromPreset("task");
+		roleService.initDefaultFromPreset("knowledge_category");
+		roleService.initDefaultFromPreset("knowledge");
+		roleService.initDefaultFromPreset("course_related");
+
 		return retrieve(DEFAULT_FRAME_ID);
 	}
 }

@@ -29,9 +29,9 @@ public interface RoleMapper extends BaseMapper<Role> {
 
 	List<Level> selectLevelsByRoleId(String resource_id);
 
-	void removeAll();
+	void removeAll(String table);
 
-	void copyFromPreset();
+	void copyFromPreset(String table);
 
 	List<Role> selectRoleListByIds(List<String> ids, String type);
 }

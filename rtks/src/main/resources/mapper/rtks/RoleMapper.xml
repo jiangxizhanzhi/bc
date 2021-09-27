@@ -4,14 +4,14 @@
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.RoleMapper">
 
     <insert id="copyFromPreset">
-        insert into rtks_role
+        insert into rtks_${table}
         select *
-        from init_rtks_role;
+        from init_rtks_${table};
     </insert>
 
     <delete id="removeAll">
         delete
-        from rtks_role
+        from rtks_${table}
     </delete>
 
     <select id="listRole" resultType="com.cyberpeace.rtks.dao.entity.Role">

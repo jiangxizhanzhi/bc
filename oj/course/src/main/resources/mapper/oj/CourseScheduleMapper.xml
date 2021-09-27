@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseScheduleMapper">
+
+    <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.CourseSchedule"/>
+
+    <sql id="baseFiled">
+        select resource_id,
+               `start`,
+               `end`,
+               course,
+               lesson,
+               organization,
+               organization_info,
+               create_user
+        from course_coursesche
+    </sql>
+
+    <select id="listByTime" resultMap="base">
+        <include refid="baseFiled"/>
+        <where>
+            <if test="null != start">
+                and start_time &gt; #{start}
+            </if>
+            <if test="null != end">
+                and start_time &lt; #{end}
+            </if>
+        </where>
+        order by start_time asc
+    </select>
+
+</mapper>

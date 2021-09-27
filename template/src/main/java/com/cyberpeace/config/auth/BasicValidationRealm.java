@@ -71,7 +71,7 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
 			UserInfoContext.setUserContext(userInfo);
 		} catch (Exception e) {
-			log.error("RemoteUserService.doAuthentication error");
+			log.error("RemoteUserService.doAuthentication error", e);
 			throw new AuthenticationException();
 		}
 

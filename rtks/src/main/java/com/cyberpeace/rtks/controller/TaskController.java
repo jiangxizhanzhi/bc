@@ -14,6 +14,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
 import com.cyberpeace.rtks.controller.req.TaskAddReq;
 import com.cyberpeace.rtks.dao.entity.Task;
+import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.TaskService;
 
 import io.swagger.annotations.Api;
@@ -28,6 +29,9 @@ public class TaskController {
 
 	@Autowired
 	private TaskService taskService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@ApiOperation("查询单条任务")
 	@GetMapping("/task")
@@ -64,6 +68,7 @@ public class TaskController {
 	@DeleteMapping("/task")
 	public BaseRsp<String> deleteTask(@RequestBody @Validated DeleteReq deleteReq) {
 		taskService.removeByIds(deleteReq.getIds());
+		roleService.updateBatchByDeleteRelatedIds(deleteReq, "task");
 
 		return new BaseRsp<>();
 	}

@@ -67,5 +67,19 @@
             </foreach>
         </where>
     </select>
+    <select id="selectRoleListByIds" resultType="com.cyberpeace.rtks.dao.entity.Role">
+
+
+        <foreach collection="ids" item="item" separator="union">
+            select *
+            from rtks_role
+            <where>
+                <if test="type == 'knowledge'">
+                    knowledge_ids like '%"${item}"%'
+                </if>
+            </where>
+        </foreach>
+
+    </select>
 
 </mapper>

@@ -2,8 +2,6 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.controller.req.AbilityAddReq;
-import com.cyberpeace.rtks.controller.req.AbilityListReq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.rtks.controller.req.AbilityAddReq;
+import com.cyberpeace.rtks.controller.req.AbilityListReq;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
 import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.service.AbilityService;
+import com.cyberpeace.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +29,9 @@ public class AbilityController {
 
 	@Autowired
 	private AbilityService abilityService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@ApiOperation("查询单条能力")
 	@GetMapping("/ability")
@@ -64,6 +68,7 @@ public class AbilityController {
 	@DeleteMapping("/ability")
 	public BaseRsp<String> deleteAbility(@RequestBody @Validated DeleteReq deleteReq) {
 		abilityService.removeByIds(deleteReq.getIds());
+		roleService.updateBatchByDeleteRelatedIds(deleteReq, "ability");
 
 		return new BaseRsp<>();
 	}

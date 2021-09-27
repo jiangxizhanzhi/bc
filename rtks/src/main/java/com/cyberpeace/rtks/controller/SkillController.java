@@ -19,6 +19,7 @@ import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.service.CourseRelatedService;
+import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.bo.SceneSkillSystem;
 
@@ -37,6 +38,9 @@ public class SkillController {
 
 	@Autowired
 	private CourseRelatedService courseRelatedService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@ApiOperation("查询单条")
 	@GetMapping()
@@ -78,6 +82,7 @@ public class SkillController {
 		String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
 				skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
 		skill.setCourses(courses);
+		roleService.updateBatchByModifyRelatedIds(skillAddReq.getResourceId(), "knowledge");
 
 		skillService.updateById(skill);
 
@@ -90,7 +95,7 @@ public class SkillController {
 		skillService.removeByIds(deleteReq.getIds());
 		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds(),
 				CourseRelated.RELATED_TYPE_SKILL);
-
+		roleService.updateBatchByDeleteRelatedIds(deleteReq, "skill");
 		return new BaseRsp<>();
 	}
 

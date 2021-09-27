@@ -20,6 +20,7 @@ import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.KnowledgeService;
+import com.cyberpeace.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +37,9 @@ public class KnowledgeController {
 
 	@Autowired
 	private CourseRelatedService courseRelatedService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@ApiOperation("查询单条")
 	@GetMapping()
@@ -78,6 +82,7 @@ public class KnowledgeController {
 		String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
 				knowledge.getResourceId(), CourseRelated.RELATED_TYPE_KNOWLEDGE);
 		knowledge.setCourses(courses);
+		roleService.updateBatchByModifyRelatedIds(knowledgeAddReq.getResourceId(), "knowledge");
 
 		knowledgeService.updateById(knowledge);
 
@@ -90,6 +95,7 @@ public class KnowledgeController {
 		knowledgeService.removeByIds(deleteReq.getIds());
 		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds(),
 				CourseRelated.RELATED_TYPE_KNOWLEDGE);
+		roleService.updateBatchByDeleteRelatedIds(deleteReq, "knowledge");
 		return new BaseRsp<>();
 	}
 

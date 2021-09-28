@@ -157,9 +157,13 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 						knowledgeRes.setCourses("");
 						knowledgeRes.setCourseList(null);
 						knowledgeRes.setCourseStudyProcessBoList(processBos);
+						knowledgeRes.setSuggestDuration(relatedCourseList.stream()
+								.mapToInt(RelatedCourse::getCourseDuration).sum());
 					} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(relatedCourseType)) {
 						knowledgeRes.setProcess(calculateProcess(processBos, relatedCourseList));
 						knowledgeRes.setCourseStudyProcessBoList(processBos);
+						knowledgeRes.setSuggestDuration(relatedCourseList.stream()
+								.mapToInt(RelatedCourse::getCourseDuration).sum());
 					}
 
 					if (isDeleted) {

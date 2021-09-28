@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -157,13 +158,18 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 						knowledgeRes.setCourses("");
 						knowledgeRes.setCourseList(null);
 						knowledgeRes.setCourseStudyProcessBoList(processBos);
-						knowledgeRes.setSuggestDuration(relatedCourseList.stream()
-								.mapToInt(RelatedCourse::getCourseDuration).sum());
+						double suggestDuration = relatedCourseList.stream()
+								.mapToInt(RelatedCourse::getCourseDuration).sum() / 60.0;
+						knowledgeRes.setSuggestDuration(new BigDecimal(suggestDuration)
+								.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue());
 					} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(relatedCourseType)) {
 						knowledgeRes.setProcess(calculateProcess(processBos, relatedCourseList));
 						knowledgeRes.setCourseStudyProcessBoList(processBos);
-						knowledgeRes.setSuggestDuration(relatedCourseList.stream()
-								.mapToInt(RelatedCourse::getCourseDuration).sum());
+						double suggestDuration = relatedCourseList.stream()
+								.mapToInt(RelatedCourse::getCourseDuration).sum() / 60.0;
+						knowledgeRes.setSuggestDuration(new BigDecimal(suggestDuration)
+								.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue());
+
 					}
 
 					if (isDeleted) {

@@ -56,28 +56,34 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 				String.class);
 		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
 				userId);
+		Map<String, CourseStudyProcessBo> processBoMap = processBos.stream()
+				.collect(Collectors.toMap(CourseStudyProcessBo::getCourseId, bo -> bo));
 
 		List<CourseInfoBo> courses = courseService.selectByIds(courseIds);
+
 		Map<String, CourseInfoBo> infoMap = courses.stream().collect(
 				Collectors.toMap(CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo));
 
 		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService
 				.getKnowledgeByCourseId(courseIds);
 
-		List<CourseKnowledgeSkillBo> boList = processBos.stream().map(bo -> {
-			CourseKnowledgeSkillBo knowledgeBo = BeanUtils.deepCopy(infoMap.get(bo.getCourseId()),
-					CourseKnowledgeSkillBo.class);
-			knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
-			knowledgeBo.setProcess(MathUtils.ceil(bo.getProcess()));
-			knowledgeBo.setCompleteTheory(bo.getCompleteTheory());
-			knowledgeBo.setCompleteExercise(bo.getCompleteExercise());
-			knowledgeBo.setTheoryCount(DataTransferUtils.nullToZero(bo.getTheoryCount()));
-			knowledgeBo.setExerciseCount(bo.getExerciseCount());
-			knowledgeBo.setCompleteCount(bo.getCompleteCount());
-			knowledgeBo.setLastStudyTime(bo.getLastStudyTime());
+		List<CourseKnowledgeSkillBo> boList = courseIds.stream()
+				.filter(courseId -> null != processBoMap.get(courseId))
+				.map(courseId -> {
+					CourseStudyProcessBo bo = processBoMap.get(courseId);
+					CourseKnowledgeSkillBo knowledgeBo = BeanUtils
+							.deepCopy(infoMap.get(bo.getCourseId()), CourseKnowledgeSkillBo.class);
+					knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
+					knowledgeBo.setProcess(MathUtils.ceil(bo.getProcess()));
+					knowledgeBo.setCompleteTheory(bo.getCompleteTheory());
+					knowledgeBo.setCompleteExercise(bo.getCompleteExercise());
+					knowledgeBo.setTheoryCount(DataTransferUtils.nullToZero(bo.getTheoryCount()));
+					knowledgeBo.setExerciseCount(bo.getExerciseCount());
+					knowledgeBo.setCompleteCount(bo.getCompleteCount());
+					knowledgeBo.setLastStudyTime(bo.getLastStudyTime());
 
-			return knowledgeBo;
-		}).collect(Collectors.toList());
+					return knowledgeBo;
+				}).collect(Collectors.toList());
 		return boList;
 	}
 

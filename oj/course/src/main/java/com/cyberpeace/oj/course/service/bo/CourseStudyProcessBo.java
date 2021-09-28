@@ -43,9 +43,6 @@ public class CourseStudyProcessBo {
     @ApiModelProperty("课程进度")
     private Double process = new Double(0);
 
-    @ApiModelProperty("建议学习时长")
-    private Integer suggestDuration;
-
     @ApiModelProperty("完成学习时长")
     private Integer completeDuration = 0;
 

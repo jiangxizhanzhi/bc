@@ -109,6 +109,7 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 		output.setName(level.getName());
 		output.setDescription(level.getDescription());
 		output.setParent(level.getParent());
+		output.setFrame(level.getFrame());
 
 		return output;
 	}

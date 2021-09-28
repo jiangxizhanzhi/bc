@@ -1,5 +1,7 @@
 package com.cyberpeace.rtks.dao.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -15,4 +17,5 @@ public interface SkillCategoryMapper extends BaseMapper<SkillCategory> {
 
 	IPage<SkillCategory> listSkillCategory(Page page, @Param("pattern") String pattern);
 
+	List<SkillCategory> selectUsedList();
 }

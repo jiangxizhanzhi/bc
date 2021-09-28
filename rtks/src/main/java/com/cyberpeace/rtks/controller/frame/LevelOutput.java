@@ -17,4 +17,6 @@ public class LevelOutput {
 	@ApiModelProperty(value = "层级的父级层级/框架的id")
 	private String parent;
 
+	@ApiModelProperty(value = "框架id")
+	private String frame;
 }

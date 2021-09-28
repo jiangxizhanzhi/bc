@@ -137,7 +137,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		List<String> categoryIds = skillList.stream().map(Skill::getCategoryId).distinct()
 				.collect(Collectors.toList());
-		List<SkillCategory> categories = skillCategoryMapper.selectBatchIds(categoryIds);
+		List<SkillCategory> categories = skillCategoryMapper.selectUsedList();
 
 		// 获取技能得分情况 转化为map
 		List<SkillScore> scores = getSkillScore(userId, skillList);
@@ -152,10 +152,14 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			List<Skill> skills = skillMap.get(skillCategory.getResourceId());
 
 			// 组装技能得分
-			Integer matchPercent = skills.stream().collect(Collectors.averagingInt(skill -> {
-				return scoreMap.get(skill.getResourceId()) == null ? 0
-						: Integer.parseInt(scoreMap.get(skill.getResourceId()));
-			})).intValue();
+			Integer matchPercent = 0;
+
+			if (null != skills) {
+				matchPercent = skills.stream().collect(Collectors.averagingInt(skill -> {
+					return scoreMap.get(skill.getResourceId()) == null ? 0
+							: Integer.parseInt(scoreMap.get(skill.getResourceId()));
+				})).intValue();
+			}
 
 			RtksRadarBo rtksRadarBo = new RtksRadarBo();
 

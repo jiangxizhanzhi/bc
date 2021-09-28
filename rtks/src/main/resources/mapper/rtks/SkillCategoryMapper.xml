@@ -16,5 +16,10 @@
             </if>
         </where>
     </select>
+    <select id="selectUsedList" resultType="com.cyberpeace.rtks.dao.entity.SkillCategory">
+        select resource_id, content
+        from rtks_skill_category
+        where resource_id in (select category_id from rtks_skill)
+    </select>
 
 </mapper>

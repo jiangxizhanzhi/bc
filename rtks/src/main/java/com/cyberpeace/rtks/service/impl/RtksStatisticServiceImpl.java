@@ -152,10 +152,10 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			List<Skill> skills = skillMap.get(skillCategory.getResourceId());
 
 			// 组装技能得分
-			Integer matchPercent = skills.stream()
-					.collect(Collectors.averagingInt(
-							skill -> Integer.parseInt(scoreMap.get(skill.getResourceId()))))
-					.intValue();
+			Integer matchPercent = skills.stream().collect(Collectors.averagingInt(skill -> {
+				return scoreMap.get(skill.getResourceId()) == null ? 0
+						: Integer.parseInt(scoreMap.get(skill.getResourceId()));
+			})).intValue();
 
 			RtksRadarBo rtksRadarBo = new RtksRadarBo();
 

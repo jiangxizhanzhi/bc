@@ -15,14 +15,10 @@
         </foreach>
     </sql>
 
-    <sql id="directions" lang="">
+    <sql id="directions">
         <foreach collection="courseContext.directions" index="index" separator="," item="direction" open="(" close=")">
             #{direction}
         </foreach>
-    </sql>
-
-    <sql id="courseCondition" lang="">
-
     </sql>
 
     <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">

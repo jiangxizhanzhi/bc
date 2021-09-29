@@ -21,10 +21,10 @@ import com.cyberpeace.rtks.service.bo.*;
 
 import io.swagger.annotations.*;
 
-@RequiresAuthentication
 @RestController
 @RequestMapping("/rtks/statistic")
 @Api(tags = "RTKS-作战能力评估")
+@RequiresAuthentication
 public class RtksEvaluationController {
 
 	@Autowired

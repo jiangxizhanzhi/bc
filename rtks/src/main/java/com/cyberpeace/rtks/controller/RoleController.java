@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
 import org.apache.commons.collections.SetUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -75,6 +76,7 @@ interface Fields {
 @Api(tags = "TRKS-岗位管理")
 @RestController
 @RequestMapping("/rtks/role")
+@RequiresAuthentication
 public class RoleController extends BaseListController<Role, RoleAddInput, RoleModifyInput, RoleListReq<Role>, RoleDetailOutput, RoleOutput> {
 
 	@Autowired

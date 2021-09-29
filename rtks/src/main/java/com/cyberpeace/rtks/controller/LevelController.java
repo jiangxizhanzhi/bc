@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ import io.swagger.annotations.Api;
 @Api(tags = "TRKS-框架层级管理")
 @RestController
 @RequestMapping("/rtks/frame/level")
+@RequiresAuthentication
 public class LevelController extends BaseController<Level, LevelAddInput, LevelModifyInput, LevelOutput> {
 
 	@Autowired

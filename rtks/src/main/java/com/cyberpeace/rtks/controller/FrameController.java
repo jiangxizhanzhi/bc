@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "TRKS-框架管理")
 @RestController
 @RequestMapping("/rtks/frame")
+@RequiresAuthentication
 public class FrameController extends ListController<Level, FrameAddInput, FrameModifyInput, FrameOutput, FrameOutput> {
 
 	@Autowired
@@ -87,7 +89,8 @@ public class FrameController extends ListController<Level, FrameAddInput, FrameM
 	}
 
 	@Override
-	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput, Level originEntity) {
+	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput,
+			Level originEntity) {
 		Level frame = new Level();
 		if (!singleFrame) {
 			// 单框架模式下框架名称不可变

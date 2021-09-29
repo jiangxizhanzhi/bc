@@ -12,6 +12,7 @@
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
                 #{courseId}
             </foreach>
+            and pulic = 1
             and status = 1
         </where>
     </select>

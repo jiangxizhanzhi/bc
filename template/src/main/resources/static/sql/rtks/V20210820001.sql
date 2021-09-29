@@ -50,16 +50,70 @@ CREATE TABLE `init_rtks_level`
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8;
 
-CREATE TABLE `rtks_level`
+CREATE TABLE `init_rtks_course_related`
+(
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '课程id',
+    `related_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '知识点id',
+    `type`        int(11) NOT NULL COMMENT '1：知识点;2：技能点',
+    `weight`      int(11) NOT NULL COMMENT '权重',
+    INDEX         `course_id`(`resource_id`) USING BTREE,
+    INDEX         `related_id`(`related_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8;
+
+CREATE TABLE `init_rtks_knowledge`
 (
     `id`          int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `name`        varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `parent`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time` datetime(0) NULL DEFAULT NULL,
-    `update_time` datetime(0) NULL DEFAULT NULL,
-    `frame`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `category_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `content`     varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `courses`     text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `create_time` datetime(0) NOT NULL,
+    `update_time` datetime(0) NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8;
+
+
+CREATE TABLE `init_rtks_knowledge_category`
+(
+    `id`          int(11) NOT NULL AUTO_INCREMENT,
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `content`     varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `create_time` datetime(0) NOT NULL,
+    `update_time` datetime(0) NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8;
+
+CREATE TABLE `init_rtks_role`
+(
+    `id`                   int(11) NOT NULL AUTO_INCREMENT,
+    `resource_id`          varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `name`                 varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `description`          varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `create_time`          datetime(0) NOT NULL,
+    `update_time`          datetime(0) NOT NULL,
+    `level_id`             varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `category`             varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `task_ids`             text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `knowledge_id_weights` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `knowledge_ids`        text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `skill_id_weights`     text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `skill_ids`            text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `ability_ids`          text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `skill_courses`        text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+    `knowledge_courses`    text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8;
+
+CREATE TABLE `init_rtks_task`
+(
+    `id`          int(11) NOT NULL AUTO_INCREMENT,
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `content`     varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `create_time` datetime(0) NOT NULL,
+    `update_time` datetime(0) NOT NULL,
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8;

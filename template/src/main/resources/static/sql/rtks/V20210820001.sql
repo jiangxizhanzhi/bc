@@ -36,6 +36,20 @@ CREATE TABLE `rtks_knowledge_category`
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8;
 
+CREATE TABLE `rtks_level`
+(
+    `id`          int(11) NOT NULL AUTO_INCREMENT,
+    `resource_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `name`        varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `parent`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `create_time` datetime(0) NULL DEFAULT NULL,
+    `update_time` datetime(0) NULL DEFAULT NULL,
+    `frame`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8;
+
 CREATE TABLE `init_rtks_level`
 (
     `id`          int(11) NOT NULL AUTO_INCREMENT,

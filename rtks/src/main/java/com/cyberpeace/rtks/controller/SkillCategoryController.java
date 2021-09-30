@@ -8,14 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.AbilityAddReq;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
 import com.cyberpeace.rtks.controller.req.SkillCategoryOrSystemAddReq;
+import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.SkillCategory;
 import com.cyberpeace.rtks.service.SkillCategoryService;
+import com.cyberpeace.rtks.service.SkillService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +33,9 @@ public class SkillCategoryController {
 
 	@Autowired
 	private SkillCategoryService skillCategoryService;
+
+	@Autowired
+	private SkillService skillService;
 
 	@ApiOperation("查询单条")
 	@GetMapping()
@@ -65,6 +72,13 @@ public class SkillCategoryController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> deleteSkillCategory(@RequestBody @Validated DeleteReq deleteReq) {
+		List<SkillRes> skillList = skillService.getAllSkills();
+		for (SkillRes skillRes : skillList) {
+			if (deleteReq.getIds().contains(skillRes.getCategoryId())) {
+				throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_SKILL);
+			}
+		}
+
 		skillCategoryService.removeByIds(deleteReq.getIds());
 
 		return new BaseRsp<>();

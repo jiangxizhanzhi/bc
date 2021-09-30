@@ -12,15 +12,15 @@ package com.cyberpeace.rtks.constant;
  */
 public interface RtksBusinessErrorCode {
 
-    /** RTKS框架管理中，当前层级下存在角色的时候，用户试图删除该层级*/
-    String UNABLE_DELETE_FRAME = "100001";
+	/** RTKS框架管理中，当前层级下存在角色的时候，用户试图删除该层级*/
+	String UNABLE_DELETE_FRAME = "100001";
 
 	/** 已经绑定了岗位的层级不允许新增子层级*/
 	String UNABLE_ADD_FRAME = "100002";
 
-	/** 已经绑定了岗位的层级不允许新增子层级*/
-	// String UNABLE_ADD_FRAME = "100002";
+	/** 已经绑定了知识点，无法删除*/
+	String UNABLE_DELETE_KNOWLEDGE = "100003";
 
-    /** 已经绑定了岗位的层级不允许新增子层级*/
-	// String UNABLE_ADD_FRAME = "100002";
+	/** 已经绑定了技能点，无法删除*/
+	String UNABLE_DELETE_SKILL = "100004";
 }

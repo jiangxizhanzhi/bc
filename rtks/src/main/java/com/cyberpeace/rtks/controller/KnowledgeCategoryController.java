@@ -2,20 +2,24 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.controller.req.AbilityAddReq;
-import com.cyberpeace.rtks.controller.req.KnowledgeCategoryAddReq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
+import com.cyberpeace.rtks.controller.req.AbilityAddReq;
 import com.cyberpeace.rtks.controller.req.DeleteReq;
+import com.cyberpeace.rtks.controller.req.KnowledgeCategoryAddReq;
+import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.KnowledgeCategory;
 import com.cyberpeace.rtks.service.KnowledgeCategoryService;
+import com.cyberpeace.rtks.service.KnowledgeService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +33,9 @@ public class KnowledgeCategoryController {
 
 	@Autowired
 	private KnowledgeCategoryService knowledgeCategoryService;
+
+	@Autowired
+	private KnowledgeService knowledgeService;
 
 	@ApiOperation("查询单条")
 	@GetMapping()
@@ -65,6 +72,12 @@ public class KnowledgeCategoryController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> deleteKnowledgeCategory(@RequestBody @Validated DeleteReq deleteReq) {
+		List<KnowledgeRes> skillList = knowledgeService.getAllKnowledge();
+		for (KnowledgeRes knowledgeRes : skillList) {
+			if (deleteReq.getIds().contains(knowledgeRes.getCategoryId())) {
+				throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_KNOWLEDGE);
+			}
+		}
 		knowledgeCategoryService.removeByIds(deleteReq.getIds());
 
 		return new BaseRsp<>();

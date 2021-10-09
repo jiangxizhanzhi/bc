@@ -22,10 +22,6 @@ public class TeamTrainFlowschemeTemplate {
 	 */
 	private Integer id;
 
-	/**
-	 * 
-	 */
-	private String resourceId;
 
 	/**
 	 * 

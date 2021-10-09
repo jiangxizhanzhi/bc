@@ -18,10 +18,6 @@ public class TeamTrainGatherschemeTemplate {
 	 */
 	private Integer id;
 
-	/**
-	 * 
-	 */
-	private String resourceId;
 
 	/**
 	 * 

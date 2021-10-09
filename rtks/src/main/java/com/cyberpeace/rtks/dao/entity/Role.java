@@ -1,14 +1,18 @@
 package com.cyberpeace.rtks.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.suit.BaseEntity;
 
 import lombok.Data;
 
 @Data
 @TableName("rtks_role")
-public class Role extends BaseEntity {
+public class Role {
+
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
 	private String name;
 

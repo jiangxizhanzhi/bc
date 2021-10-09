@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.cebase.model.crevent;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.suit.BaseEntity;
 
 import lombok.Data;
 
@@ -10,7 +11,10 @@ import lombok.Data;
  * */
 @Data
 @TableName("cr_event")
-public class CrEvent extends BaseEntity {
+public class CrEvent {
+
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
 	private String name;
 

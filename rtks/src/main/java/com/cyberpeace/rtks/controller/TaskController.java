@@ -9,9 +9,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.rtks.controller.req.DeleteReq;
 import com.cyberpeace.rtks.controller.req.TaskAddReq;
 import com.cyberpeace.rtks.dao.entity.Task;
 import com.cyberpeace.rtks.service.RoleService;

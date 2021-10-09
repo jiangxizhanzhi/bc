@@ -1,13 +1,17 @@
 package com.cyberpeace.cr.teamtrain.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.suit.BaseEntity;
 
 import lombok.Data;
 
 @Data
 @TableName("cr_team_train_template")
-public class TeamTrainTemplate extends BaseEntity {
+public class TeamTrainTemplate {
+
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
 	/**
 	 * 关联com.cyberpeace.cr.cebase.CrEvent的pk

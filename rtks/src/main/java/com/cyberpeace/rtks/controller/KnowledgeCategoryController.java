@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.AbilityAddReq;
-import com.cyberpeace.rtks.controller.req.DeleteReq;
 import com.cyberpeace.rtks.controller.req.KnowledgeCategoryAddReq;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.KnowledgeCategory;

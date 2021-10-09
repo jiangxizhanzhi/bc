@@ -9,10 +9,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.controller.req.AbilityAddReq;
 import com.cyberpeace.rtks.controller.req.AbilityListReq;
-import com.cyberpeace.rtks.controller.req.DeleteReq;
 import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.service.AbilityService;
 import com.cyberpeace.rtks.service.RoleService;

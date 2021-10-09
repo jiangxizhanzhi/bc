@@ -5,7 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.rtks.controller.req.DeleteReq;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.rtks.dao.entity.Role;
 
 public interface RoleService extends IService<Role> {

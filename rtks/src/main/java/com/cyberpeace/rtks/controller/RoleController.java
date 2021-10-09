@@ -20,10 +20,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.suit.BaseListController;
-import com.cyberpeace.common.suit.ListReq;
+import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
@@ -41,12 +43,17 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-class RoleListReq<T> extends ListReq<T> {
+class RoleListReq<T> extends PageReqBase {
 
 	@ApiModelProperty(value = "所属框架id，可以为空")
 	@Getter
 	@Setter
 	private String frameId;
+
+	@ApiModelProperty(value = "模糊查询关键词")
+	@Getter
+	@Setter
+	private String keyword;
 }
 
 @Data
@@ -77,7 +84,7 @@ interface Fields {
 @RestController
 @RequestMapping("/rtks/role")
 @RequiresAuthentication
-public class RoleController extends BaseListController<Role, RoleAddInput, RoleModifyInput, RoleListReq<Role>, RoleDetailOutput, RoleOutput> {
+public class RoleController {
 
 	@Autowired
 	private TaskService taskService;
@@ -111,14 +118,71 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		singleFrame = Boolean.parseBoolean(singleFrameConfig);
 	}
 
-	@Override
 	protected RoleService getService() {
 		return roleService;
 	}
 
-	@Override
 	protected Role getOr404(String resourceId) {
 		return roleService.getOr404(resourceId);
+	}
+
+	@ApiOperation("新增")
+	@PostMapping()
+	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
+		Role entity = getEntityFromAddInput(input);
+
+		getService().save(entity);
+
+		return retrieve(entity.getResourceId());
+	}
+
+	@ApiOperation("修改")
+	@PutMapping()
+	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
+		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
+
+		Role originEntity = getOr404(resourceId);
+
+		Role entity = getEntityFromModifyInput(input, originEntity);
+
+		getService().updateById(entity);
+
+		return retrieve(resourceId);
+	}
+
+	@ApiOperation("查询")
+	@GetMapping()
+	public BaseRsp<RoleDetailOutput> retrieve(String resource_id) {
+		Role t = getOr404(resource_id);
+		return new BaseRsp<>(getOutputFromEntity(t));
+	}
+
+	@ApiOperation("删除")
+	@DeleteMapping()
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+		performBatchDelete(deleteReq.getIds());
+		return new BaseRsp<>();
+	}
+
+	protected void performBatchDelete(List<String> ids) {
+		getService().removeByIds(ids);
+	}
+
+	@ApiOperation("列表查询")
+	@GetMapping("/list")
+	public BaseRsp<ListRsp<RoleOutput>> list(RoleListReq<Role> listReq) {
+		IPage<Role> page = getPage(listReq);
+
+		List<RoleOutput> outputs = new ArrayList<>();
+		for (Role record : page.getRecords()) {
+			outputs.add(getListOutputFromEntity(record));
+		}
+
+		ListRsp<RoleOutput> listRsp = new ListRsp<>();
+		listRsp.setList(outputs);
+		listRsp.setTotal(page.getTotal());
+
+		return new BaseRsp<>(listRsp);
 	}
 
 	@ApiOperation("获取课程列表")
@@ -228,12 +292,10 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		return courseConfigOutputList;
 	}
 
-	@Override
 	protected Role getEntityFromAddInput(RoleAddInput roleAddInput) {
 		return getRoleFromInput(roleAddInput, null);
 	}
 
-	@Override
 	protected Role getEntityFromModifyInput(RoleModifyInput roleModifyInput, Role originEntity) {
 		Role role = getRoleFromInput(roleModifyInput, originEntity);
 		role.setResourceId(roleModifyInput.getResourceId());
@@ -306,7 +368,6 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		return role;
 	}
 
-	@Override
 	public RoleDetailOutput getOutputFromEntity(Role role) {
 		RoleDetailOutput output = outputFromRole(role, new RoleDetailOutput());
 
@@ -336,12 +397,10 @@ public class RoleController extends BaseListController<Role, RoleAddInput, RoleM
 		return output;
 	}
 
-	@Override
 	protected RoleOutput getListOutputFromEntity(Role role) {
 		return outputFromRole(role, new RoleOutput());
 	}
 
-	@Override
 	protected IPage<Role> getPage(RoleListReq<Role> listReq) {
 		String frameId;
 		if (singleFrame) {

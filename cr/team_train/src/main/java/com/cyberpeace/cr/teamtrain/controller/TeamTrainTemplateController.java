@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.suit.DeleteReq;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;

@@ -10,12 +10,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.suit.BaseController;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.frame.*;
 import com.cyberpeace.rtks.dao.entity.Level;
@@ -25,12 +27,13 @@ import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "TRKS-框架层级管理")
 @RestController
 @RequestMapping("/rtks/frame/level")
 @RequiresAuthentication
-public class LevelController extends BaseController<Level, LevelAddInput, LevelModifyInput, LevelOutput> {
+public class LevelController {
 
 	@Autowired
 	private LevelService levelService;
@@ -41,22 +44,56 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 	@Autowired
 	private FrameService frameService;
 
-	@Override
+	@ApiOperation("新增")
+	@PostMapping()
+	public BaseRsp<LevelOutput> create(@RequestBody @Validated LevelAddInput input) {
+		Level entity = getEntityFromAddInput(input);
+
+		getService().save(entity);
+
+		return retrieve(entity.getResourceId());
+	}
+
+	@ApiOperation("修改")
+	@PutMapping()
+	public BaseRsp<LevelOutput> update(@RequestBody @Validated LevelModifyInput input) {
+		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
+
+		Level originEntity = getOr404(resourceId);
+
+		Level entity = getEntityFromModifyInput(input, originEntity);
+
+		getService().updateById(entity);
+
+		return retrieve(resourceId);
+	}
+
+	@ApiOperation("查询")
+	@GetMapping()
+	public BaseRsp<LevelOutput> retrieve(String resource_id) {
+		Level t = getOr404(resource_id);
+		return new BaseRsp<>(getOutputFromEntity(t));
+	}
+
+	@ApiOperation("删除")
+	@DeleteMapping()
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+		performBatchDelete(deleteReq.getIds());
+		return new BaseRsp<>();
+	}
+
 	protected LevelService getService() {
 		return levelService;
 	}
 
-	@Override
 	protected Level getOr404(String resourceId) {
 		return levelService.getOr404(resourceId);
 	}
 
-	@Override
 	protected Level getEntityFromAddInput(LevelAddInput levelAddInput) {
 		return getLevelFromInput(levelAddInput, null);
 	}
 
-	@Override
 	protected Level getEntityFromModifyInput(LevelModifyInput levelModifyInput,
 			Level originEntity) {
 		Level level = getLevelFromInput(levelModifyInput, originEntity);
@@ -103,7 +140,6 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 		return level;
 	}
 
-	@Override
 	protected LevelOutput getOutputFromEntity(Level level) {
 		LevelOutput output = new LevelOutput();
 
@@ -116,7 +152,6 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 		return output;
 	}
 
-	@Override
 	protected void performBatchDelete(List<String> ids) {
 		// 验证输入层级id合法
 		List<Level> levels = levelService.getLevelsByIds(ids);
@@ -149,8 +184,7 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 
 	}
 
-	private LevelTreeOutput getLevelTreeChild(LevelTreeOutput frame,
-			String levelId) {
+	private LevelTreeOutput getLevelTreeChild(LevelTreeOutput frame, String levelId) {
 
 		if (StringUtils.equals(levelId, frame.getResourceId())) {
 			return frame;
@@ -169,7 +203,7 @@ public class LevelController extends BaseController<Level, LevelAddInput, LevelM
 		}
 
 	}
-	/*@Override
+	/*
 	protected void performBatchDelete(List<String> ids) {
 		// 验证输入层级id合法
 		List<Level> levels = levelService.getLevelsByIds(ids);

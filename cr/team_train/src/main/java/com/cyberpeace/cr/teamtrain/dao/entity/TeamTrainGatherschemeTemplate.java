@@ -1,13 +1,17 @@
 package com.cyberpeace.cr.teamtrain.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.suit.BaseEntity;
 
 import lombok.Data;
 
 @Data
 @TableName("cr_team_train_gatherscheme_template")
-public class TeamTrainGatherschemeTemplate extends BaseEntity {
+public class TeamTrainGatherschemeTemplate {
+
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
 	/**
 	 * 

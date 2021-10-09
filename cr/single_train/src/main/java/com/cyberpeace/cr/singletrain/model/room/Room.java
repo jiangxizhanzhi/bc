@@ -2,14 +2,18 @@ package com.cyberpeace.cr.singletrain.model.room;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.suit.BaseEntity;
 
 import lombok.Data;
 
 @Data
 @TableName("single_train_room")
-public class Room extends BaseEntity {
+public class Room {
+
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
 	/**
 	 * 模板id

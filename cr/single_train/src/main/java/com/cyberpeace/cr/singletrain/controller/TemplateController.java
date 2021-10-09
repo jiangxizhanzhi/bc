@@ -1,12 +1,16 @@
 package com.cyberpeace.cr.singletrain.controller;
 
+import java.util.List;
+
+import com.cyberpeace.common.model.DeleteReq;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
-import com.cyberpeace.common.suit.BaseController;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.cr.cebase.model.crevent.CrEvent;
 import com.cyberpeace.cr.cebase.model.crevent.CrEventAddInput;
 import com.cyberpeace.cr.cebase.model.crevent.CrEventModifyInput;
@@ -23,11 +27,12 @@ import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.service.RemoteSceneConfigService;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "单兵训练模板")
 @RestController
 @RequestMapping("/cr/single_train/template")
-public class TemplateController extends BaseController<Template, TemplateAddInput, TemplateModifyInput, TemplateOutput> {
+public class TemplateController {
 
 	@Autowired
 	TemplateService templateService;
@@ -41,12 +46,52 @@ public class TemplateController extends BaseController<Template, TemplateAddInpu
 	@Autowired
 	MissionSchemeService missionSchemeService;
 
-	@Override
+	@ApiOperation("新增")
+	@PostMapping()
+	public BaseRsp<TemplateOutput> create(@RequestBody @Validated TemplateAddInput input) {
+		Template entity = getEntityFromAddInput(input);
+
+		getService().save(entity);
+
+		return retrieve(entity.getResourceId());
+	}
+
+	@ApiOperation("修改")
+	@PutMapping()
+	public BaseRsp<TemplateOutput> update(@RequestBody @Validated TemplateModifyInput input) {
+		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
+
+		Template originEntity = getOr404(resourceId);
+
+		Template entity = getEntityFromModifyInput(input, originEntity);
+
+		getService().updateById(entity);
+
+		return retrieve(resourceId);
+	}
+
+	@ApiOperation("查询")
+	@GetMapping()
+	public BaseRsp<TemplateOutput> retrieve(String resource_id) {
+		Template t = getOr404(resource_id);
+		return new BaseRsp<>(getOutputFromEntity(t));
+	}
+
+	@ApiOperation("删除")
+	@DeleteMapping()
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+		performBatchDelete(deleteReq.getIds());
+		return new BaseRsp<>();
+	}
+
+	protected void performBatchDelete(List<String> ids) {
+		getService().removeByIds(ids);
+	}
+
 	protected IService<Template> getService() {
 		return templateService;
 	}
 
-	@Override
 	protected Template getOr404(String resourceId) {
 		Template template = templateService.getById(resourceId);
 		if (template == null) {
@@ -55,7 +100,6 @@ public class TemplateController extends BaseController<Template, TemplateAddInpu
 		return template;
 	}
 
-	@Override
 	protected Template getEntityFromAddInput(TemplateAddInput input) {
 		Template template = new Template();
 
@@ -74,7 +118,6 @@ public class TemplateController extends BaseController<Template, TemplateAddInpu
 		return template;
 	}
 
-	@Override
 	protected Template getEntityFromModifyInput(TemplateModifyInput input, Template originEntity) {
 		Template template = new Template();
 
@@ -97,7 +140,6 @@ public class TemplateController extends BaseController<Template, TemplateAddInpu
 		return template;
 	}
 
-	@Override
 	protected TemplateOutput getOutputFromEntity(Template template) {
 		TemplateOutput templateOutput = new TemplateOutput();
 

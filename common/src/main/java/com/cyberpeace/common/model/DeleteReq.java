@@ -1,4 +1,4 @@
-package com.cyberpeace.common.suit;
+package com.cyberpeace.common.model;
 
 import java.io.Serializable;
 import java.util.List;

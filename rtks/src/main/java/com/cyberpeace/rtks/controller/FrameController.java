@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +16,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.rtks.controller.frame.FrameAddInput;
@@ -27,13 +30,29 @@ import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RoleService;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
+import lombok.Setter;
+
+class FrameListReq<T> extends PageReqBase {
+
+	@ApiModelProperty(value = "所属框架id，可以为空")
+	@Getter
+	@Setter
+	private String frameId;
+
+	@ApiModelProperty(value = "模糊查询关键词")
+	@Getter
+	@Setter
+	private String keyword;
+}
 
 @Api(tags = "TRKS-框架管理")
 @RestController
 @RequestMapping("/rtks/frame")
 @RequiresAuthentication
-public class FrameController  {
+public class FrameController {
 
 	@Autowired
 	private FrameService frameService;
@@ -69,17 +88,14 @@ public class FrameController  {
 		singleFrame = Objects.equals(singleFrameConfig, "true");
 	}
 
-	
 	protected FrameService getService() {
 		return frameService;
 	}
 
-	
 	protected Level getOr404(String resourceId) {
 		return frameService.getOr404(resourceId);
 	}
 
-	
 	protected Level getEntityFromAddInput(FrameAddInput frameAddInput) {
 		Level frame = new Level();
 		frame.setName(frameAddInput.getName());
@@ -87,7 +103,6 @@ public class FrameController  {
 		return frame;
 	}
 
-	
 	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput,
 			Level originEntity) {
 		Level frame = new Level();
@@ -100,7 +115,6 @@ public class FrameController  {
 		return frame;
 	}
 
-	
 	protected FrameOutput getOutputFromEntity(Level frame) {
 		FrameOutput output = new FrameOutput();
 
@@ -111,18 +125,15 @@ public class FrameController  {
 		return output;
 	}
 
-	
 	protected IPage<Level> listEntity(Page<Level> page, String keyword) {
 		multiFrameOnly();
 		return frameService.listEntity(page, keyword);
 	}
 
-	
 	protected FrameOutput getListOutputFromEntity(Level frame) {
 		return getOutputFromEntity(frame);
 	}
 
-	
 	protected void performBatchDelete(List<String> frameIds) {
 		multiFrameOnly();
 		// 检查输入
@@ -180,6 +191,23 @@ public class FrameController  {
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		getService().removeByIds(deleteReq.getIds());
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("列表查询")
+	@GetMapping("/list")
+	public BaseRsp<ListRsp<FrameOutput>> list(FrameListReq listReq) {
+		IPage<Level> page = listEntity(listReq.toPageParam(), listReq.getKeyword());;
+
+		List<FrameOutput> outputs = new ArrayList<>();
+		for (Level record : page.getRecords()) {
+			outputs.add(getListOutputFromEntity(record));
+		}
+
+		ListRsp<FrameOutput> listRsp = new ListRsp<>();
+		listRsp.setList(outputs);
+		listRsp.setTotal(page.getTotal());
+
+		return new BaseRsp<>(listRsp);
 	}
 
 	@ApiOperation("指定框架层级数据的全量树形展示")

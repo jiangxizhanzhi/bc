@@ -82,7 +82,6 @@ public class TrainingPlanController {
 				try {
 					Role role = trainingPlanService.getRoleByRoleId(existRoleId);
 					if (role != null) {
-
 						resource_id = levelService.getOr404(role.getLevelId()).getFrame();
 					}
 

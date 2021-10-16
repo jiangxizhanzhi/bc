@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,9 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	@Autowired
 	private CourseService courseService;
 
+	@Autowired
+	private CourseLessonMapper courseLessonMapper;
+
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledge(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
@@ -52,15 +57,17 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 			throw new InvalidParamException("未检索到相应岗位!");
 		}
 
-		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(),
-				String.class);
+		List<String> allIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(), String.class);
+		List<String> courseIds = allIds.stream().filter(
+				courseId -> CollectionUtils.isNotEmpty(courseLessonMapper.selectByCourse(courseId)))
+				.collect(Collectors.toList());
+
 		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
 				userId);
 		Map<String, CourseStudyProcessBo> processBoMap = processBos.stream()
 				.collect(Collectors.toMap(CourseStudyProcessBo::getCourseId, bo -> bo));
 
 		List<CourseInfoBo> courses = courseService.selectByIds(courseIds);
-
 		Map<String, CourseInfoBo> infoMap = courses.stream().collect(
 				Collectors.toMap(CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo));
 
@@ -68,8 +75,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 				.getKnowledgeByCourseId(courseIds);
 
 		List<CourseKnowledgeSkillBo> boList = courseIds.stream()
-				.filter(courseId -> null != processBoMap.get(courseId))
-				.map(courseId -> {
+				.filter(courseId -> null != processBoMap.get(courseId)).map(courseId -> {
 					CourseStudyProcessBo bo = processBoMap.get(courseId);
 					CourseKnowledgeSkillBo knowledgeBo = BeanUtils
 							.deepCopy(infoMap.get(bo.getCourseId()), CourseKnowledgeSkillBo.class);
@@ -147,7 +153,10 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		}
 
 		String coursesStr = role.getKnowledgeCourses();
-		List<String> courseIds = JsonUtil.toJsonObjectArray(coursesStr, String.class);
+		List<String> allIds = JsonUtil.toJsonObjectArray(coursesStr, String.class);
+		List<String> courseIds = allIds.stream().filter(
+				courseId -> CollectionUtils.isNotEmpty(courseLessonMapper.selectByCourse(courseId)))
+				.collect(Collectors.toList());
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return Lists.newArrayList();
 		}

@@ -130,7 +130,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		List<Knowledge> knowledgeList = Collections.synchronizedList(new ArrayList<>());
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 创建一个线程池
-		ExecutorService exec = new ThreadPoolExecutor(10, 100, 60L, TimeUnit.SECONDS,
+		ExecutorService exec = new ThreadPoolExecutor(10, 1000, 60L, TimeUnit.SECONDS,
 				new SynchronousQueue<Runnable>());
 		// 定义一个任务集合
 		List<Callable<Integer>> tasks = new ArrayList<>();

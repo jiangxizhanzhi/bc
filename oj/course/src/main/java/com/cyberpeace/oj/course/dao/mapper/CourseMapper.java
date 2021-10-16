@@ -32,5 +32,10 @@ public interface CourseMapper extends BaseMapper<Course> {
 
 	List<String> notDeleteIdsByIds(@NotEmpty @Param("courseIds") List<String> courseIds);
 
+	/**
+	 * 根据前后端权限获取课程编号
+	 * @param authContext
+	 * @return
+	 */
 	List<String> selectByAuth(@Param("authContext") AuthContext authContext);
 }

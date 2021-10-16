@@ -10,15 +10,11 @@
     </sql>
 
     <sql id="courseIds">
-        <foreach collection="courseIds" index="index" separator="," item="courseId" open="(" close=")">
-            #{courseId}
-        </foreach>
+
     </sql>
 
     <sql id="directions">
-        <foreach collection="courseContext.directions" index="index" separator="," item="direction" open="(" close=")">
-            #{direction}
-        </foreach>
+
     </sql>
 
     <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">
@@ -37,7 +33,9 @@
         <where>
             <if test="null != courseIds and courseIds.size() > 0">
                 and resource_id in
-                <include refid="courseIds"/>
+                <foreach collection="courseIds" index="index" separator="," item="courseId" open="(" close=")">
+                    #{courseId}
+                </foreach>
             </if>
             <if test="null != courseContext">
                 <if test="null != courseContext.eBook">
@@ -47,7 +45,11 @@
                     and `difficulty` = #{courseContext.difficulty}
                 </if>
                 <if test="null != courseContext.directions and courseContext.directions.size() > 0">
-                    and `direction` in <include refid="directions"/>
+                    and `direction` in
+                    <foreach collection="courseContext.directions" index="index" separator=","
+                             item="direction" open="(" close=")">
+                        #{direction}
+                    </foreach>
                 </if>
                 <if test="null != courseContext.pattern and courseContext.pattern != ''">
                     and `name` like #{courseContext.pattern}
@@ -108,9 +110,6 @@
     </select>
 
     <select id="selectByAuth" resultType="java.lang.String">
-        <if test="authContext.organization != null and authContext.organization != ''">
-            <bind name="authContext.likeOrganization" value="'%' + authContext.organization + '%'"/>
-        </if>
         <include refid="share_constant"/>
         select resource_id from course_course
         <where>
@@ -120,10 +119,7 @@
                     and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
                 </when>
                 <otherwise>
-                    <if test="authContext.userId != null and authContext.userId != ''">
-                        <bind name="authContext.likeUser" value="'%' + authContext.userId + '%'"/>
-                    </if>
-                    (create_user = #{authContext.userId} or (share_teachers like #{authContext.likeUser}
+                    and (create_user = #{authContext.userId} or (share_teachers like #{authContext.likeUser}
                     and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
                 </otherwise>
             </choose>

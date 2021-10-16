@@ -1,8 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -69,6 +67,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	/**
 	 * 数据转换
+	 *
 	 * @param course
 	 * @return
 	 */
@@ -116,6 +115,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<String> courseIds = null;
 		if (null != authContext) {
 			courseIds = courseMapper.selectByAuth(authContext);
+			courseIds = courseIds.stream().filter(
+					course -> CollectionUtils.isNotEmpty(courseLessonMapper.selectByCourse(course)))
+					.collect(Collectors.toList());
 		}
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds);
 
@@ -125,6 +127,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	/**
 	 * 数据格式转换
+	 *
 	 * @param course
 	 * @param authContext
 	 * @return

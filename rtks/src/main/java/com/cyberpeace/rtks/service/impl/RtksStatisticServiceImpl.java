@@ -273,13 +273,11 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			calculateStudy(List<T> skillOrKnowledgeIds, String userId) {
 
 		// 1、获取课程学习进度
-		List<CourseStudyProcessBo> processBoList = skillOrKnowledgeIds.stream()
-				.map(skillOrKnowledge -> {
-					List<String> courseIds = getCourseIds(skillOrKnowledge);
-					List<CourseStudyProcessBo> processBos = courseStatisticsService
-							.statisticByIds(courseIds, userId);
-					return processBos;
-				}).flatMap(Collection::stream).collect(Collectors.toList());
+		List<String> courseIds = skillOrKnowledgeIds.stream()
+				.map(skillOrKnowledge -> getCourseIds(skillOrKnowledge)).flatMap(Collection::stream)
+				.distinct().collect(Collectors.toList());
+		List<CourseStudyProcessBo> processBoList = courseStatisticsService.statisticByIds(courseIds,
+				userId);
 
 		// 2、获取技能点对应的课程
 		RoleStudyBo studyBo = getStudyBo(processBoList);

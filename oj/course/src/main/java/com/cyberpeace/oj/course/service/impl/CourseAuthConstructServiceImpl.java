@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.model.user.UserInfo;
@@ -18,6 +19,9 @@ public class CourseAuthConstructServiceImpl implements CourseAuthConstructServic
 
         AuthContext authContext = new AuthContext();
         authContext.setOrganization(userInfo.getOrganizationId());
+        if (StringUtils.isNotBlank(userInfo.getOrganizationId())) {
+            authContext.setLikeOrganization("%" + userInfo.getOrganizationId() + "%");
+        }
         authContext.setUserId(userInfo.getUserId());
         authContext.setIsWeb(true);
         return authContext;
@@ -31,6 +35,9 @@ public class CourseAuthConstructServiceImpl implements CourseAuthConstructServic
         AuthContext authContext = new AuthContext();
         authContext.setOrganization(userInfo.getOrganizationId());
         authContext.setUserId(userInfo.getUserId());
+        if (StringUtils.isNotBlank(userInfo.getUserId())) {
+            authContext.setLikeUser("%" + userInfo.getUserId() + "%");
+        }
         authContext.setIsWeb(false);
         return authContext;
     }

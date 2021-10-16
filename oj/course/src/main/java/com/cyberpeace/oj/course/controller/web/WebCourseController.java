@@ -111,8 +111,8 @@ public class WebCourseController {
 		return rsp;
 	}
 
-	@PostMapping
-	@ApiOperation("/comment")
+	@PostMapping("/comment")
+	@ApiOperation("留言新增或者修改")
 	public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
 
 		Course course = courseMapper.selectById(commentReq.getResource());

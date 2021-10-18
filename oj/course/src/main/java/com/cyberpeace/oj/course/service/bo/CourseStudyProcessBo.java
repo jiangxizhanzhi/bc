@@ -46,4 +46,7 @@ public class CourseStudyProcessBo {
     @ApiModelProperty("完成学习时长")
     private Integer completeDuration = 0;
 
+    @ApiModelProperty("是否具有权限访问")
+    private Boolean interview = Boolean.TRUE;
+
 }

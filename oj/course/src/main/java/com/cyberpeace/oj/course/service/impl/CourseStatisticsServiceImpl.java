@@ -7,7 +7,10 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotEmpty;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.course.dao.context.AuthContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,9 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
+	@Autowired
+	private CourseAuthConstructService courseAuthConstructService;
+
 	@Override
 	public List<CourseStudyProcessBo> statisticByIds(@NotEmpty List<String> courseIds,
 			String userId) {
@@ -48,6 +54,10 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		if (CollectionUtils.isEmpty(ids)) {
 			return Lists.newArrayList();
 		}
+
+		// 查询有权访问课程
+		AuthContext authContext = courseAuthConstructService.webCourseConstruct(UserInfoContext.getUserContext());
+		List<String> webCourses = courseMapper.selectByAuth(authContext);
 
 		// 课程数量 以课程编号进行分组
 		List<CourseLesson> courseLessons = courseLessonMapper.listByCourses(ids);
@@ -83,6 +93,13 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 				return false;
 			}).collect(Collectors.toList());
 			studyProcessBo.setCompleteCount(studyRecord.size());
+
+			// 课程为零或者课程无权限,都禁止访问访问
+			if (CollectionUtils.isNotEmpty(lessonList)) {
+				studyProcessBo.setInterview(!webCourses.contains(course.getResourceId()));
+			} else {
+				studyProcessBo.setInterview(Boolean.FALSE);
+			}
 
 			// 计算课时类型数量
 			Map<Integer, List<CourseLesson>> lessonMap = lessonList.stream()

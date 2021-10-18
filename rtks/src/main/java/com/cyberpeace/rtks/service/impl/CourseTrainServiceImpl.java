@@ -57,10 +57,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 			throw new InvalidParamException("未检索到相应岗位!");
 		}
 
-		List<String> allIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(), String.class);
-		List<String> courseIds = allIds.stream().filter(
-				courseId -> CollectionUtils.isNotEmpty(courseLessonMapper.selectByCourse(courseId)))
-				.collect(Collectors.toList());
+		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(), String.class);
 
 		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
 				userId);

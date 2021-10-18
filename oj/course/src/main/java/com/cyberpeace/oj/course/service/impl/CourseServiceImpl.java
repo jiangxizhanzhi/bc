@@ -115,7 +115,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<Course> courses = courseMapper.selectBatchIds(ids);
 		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course))
 				.map(infBo -> {
-					infBo.setInterview(authCourseIds.contains(infBo.getResourceId()));
+					infBo.setInterview(authCourseIds.contains(infBo.getResourceId()) && infBo.getIsPublic());
 					return infBo;
 				}).collect(Collectors.toList());
 		return infoBos;

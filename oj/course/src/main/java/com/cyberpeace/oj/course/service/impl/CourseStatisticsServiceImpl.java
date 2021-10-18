@@ -96,7 +96,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
 			// 课程为零或者课程无权限,都禁止访问访问
 			if (CollectionUtils.isNotEmpty(lessonList)) {
-				studyProcessBo.setInterview(webCourses.contains(course.getResourceId()));
+				studyProcessBo.setInterview(webCourses.contains(course.getResourceId()) && course.getIsPublic());
 			} else {
 				studyProcessBo.setInterview(Boolean.FALSE);
 			}

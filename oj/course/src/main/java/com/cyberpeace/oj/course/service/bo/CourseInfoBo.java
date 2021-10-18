@@ -18,6 +18,9 @@ public class CourseInfoBo implements Serializable {
 	@ApiModelProperty("课程名称")
 	private String name;
 
+	@ApiModelProperty("是否公开")
+	private Boolean isPublic;
+
 	@ApiModelProperty("课程简介")
 	private String description;
 

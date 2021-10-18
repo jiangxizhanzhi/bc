@@ -77,4 +77,7 @@ public class CourseInfoBo implements Serializable {
 
 	@ApiModelProperty("课程权重")
 	private Integer weight = DEFAULT_WEIGHT;
+
+	@ApiModelProperty("是否具有访问权限")
+	private Boolean interview;
 }

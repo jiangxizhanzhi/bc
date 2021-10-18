@@ -70,4 +70,7 @@ public class CourseKnowledgeSkillBo implements Serializable {
 
 	@ApiModelProperty("课程关联技能点信息")
 	private List<CourseRelatedRes> skills;
+
+	@ApiModelProperty("是否具有课程访问权限")
+	private Boolean interview;
 }

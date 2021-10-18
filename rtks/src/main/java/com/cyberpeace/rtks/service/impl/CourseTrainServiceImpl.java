@@ -150,10 +150,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		}
 
 		String coursesStr = role.getKnowledgeCourses();
-		List<String> allIds = JsonUtil.toJsonObjectArray(coursesStr, String.class);
-		List<String> courseIds = allIds.stream().filter(
-				courseId -> CollectionUtils.isNotEmpty(courseLessonMapper.selectByCourse(courseId)))
-				.collect(Collectors.toList());
+		List<String> courseIds = JsonUtil.toJsonObjectArray(coursesStr, String.class);
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return Lists.newArrayList();
 		}

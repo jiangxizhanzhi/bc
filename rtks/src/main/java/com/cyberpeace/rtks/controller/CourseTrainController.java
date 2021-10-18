@@ -44,8 +44,6 @@ public class CourseTrainController {
 	@GetMapping("/getCourseKnowledgeByRoleId")
 	public BaseRsp<OccupationCourseRes> getCourseKnowledgeByRoleId(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String roleId = UserInfoContext.getUserContext().getRoleId();
 		List<CourseKnowledgeSkillBo> courseKnowledges = courseTrainService
 				.getCourseKnowledgeByRoleId(resource_id);
 		return new BaseRsp<>(calculatePercent(courseKnowledges));

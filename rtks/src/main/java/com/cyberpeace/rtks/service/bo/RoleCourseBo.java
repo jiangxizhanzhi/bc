@@ -28,4 +28,7 @@ public class RoleCourseBo implements Serializable {
     @ApiModelProperty("课程难度")
     private Integer difficulty;
 
+    @ApiModelProperty("课程访问权限")
+    private Boolean interview;
+
 }

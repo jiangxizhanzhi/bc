@@ -3,6 +3,8 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseCollectionMapper courseCollectionMapper;
+
+	@Autowired
+	private CourseAuthConstructService courseAuthConstructService;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -103,9 +108,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		if (CollectionUtils.isEmpty(ids)) {
 			return Lists.newArrayList();
 		}
+		AuthContext authContext = courseAuthConstructService
+				.webCourseConstruct(UserInfoContext.getUserContext());
+		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
+
 		List<Course> courses = courseMapper.selectBatchIds(ids);
 		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course))
-				.collect(Collectors.toList());
+				.map(infBo -> {
+					infBo.setInterview(authCourseIds.contains(infBo.getResourceId()));
+					return infBo;
+				}).collect(Collectors.toList());
 		return infoBos;
 	}
 

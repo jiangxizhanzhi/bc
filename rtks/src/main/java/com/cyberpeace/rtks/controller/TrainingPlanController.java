@@ -108,6 +108,7 @@ public class TrainingPlanController {
 		return new BaseRsp<>(frame);
 	}
 
+
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path")
 	public BaseRsp<RoleDetailRes> learningPath(

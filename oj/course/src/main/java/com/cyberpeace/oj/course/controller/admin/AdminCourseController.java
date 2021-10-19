@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.service.CourseDirectionService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -19,11 +21,9 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.CourseAddReq;
 import com.cyberpeace.oj.course.controller.req.CourseAdminListReq;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
-import com.cyberpeace.oj.course.dao.context.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
@@ -42,9 +42,6 @@ public class AdminCourseController extends PracticeMixinController<Course> {
 
 	@Autowired
 	private CourseService courseService;
-
-	@Autowired
-	private CourseAuthConstructService courseAuthConstructService;
 
 	@Autowired
 	private CourseMapper courseMapper;
@@ -93,8 +90,7 @@ public class AdminCourseController extends PracticeMixinController<Course> {
 
 		context.setUserId(UserInfoContext.getUserContext().getUserId());
 		Page page = listReq.toPageParam();
-		AuthContext authContext = courseAuthConstructService
-				.adminCourseConstruct(UserInfoContext.getUserContext());
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
 
 		// 数据查询
 		ListRsp<CourseInfoBo> rsp = courseService.selectPage(page, context, authContext);

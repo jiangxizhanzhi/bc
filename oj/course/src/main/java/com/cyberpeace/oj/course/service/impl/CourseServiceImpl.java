@@ -3,8 +3,9 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.course.service.CourseAuthConstructService;
+import com.cyberpeace.common.util.AuthContextUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.course.dao.context.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCollection;
@@ -52,9 +52,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseCollectionMapper courseCollectionMapper;
-
-	@Autowired
-	private CourseAuthConstructService courseAuthConstructService;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -108,8 +105,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		if (CollectionUtils.isEmpty(ids)) {
 			return Lists.newArrayList();
 		}
-		AuthContext authContext = courseAuthConstructService
-				.webCourseConstruct(UserInfoContext.getUserContext());
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
 
 		List<Course> courses = courseMapper.selectBatchIds(ids);
@@ -133,9 +130,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<String> courseIds = null;
 		if (null != authContext) {
 			courseIds = courseMapper.selectByAuth(authContext);
-			courseIds = courseIds.stream().filter(
-					course -> CollectionUtils.isNotEmpty(courseLessonMapper.selectByCourse(course)))
-					.collect(Collectors.toList());
 		}
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds);
 

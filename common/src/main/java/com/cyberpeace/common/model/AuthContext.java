@@ -1,11 +1,9 @@
-package com.cyberpeace.oj.course.dao.context;
+package com.cyberpeace.common.model;
 
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class AuthContext implements Serializable {
+public class AuthContext {
 
     private String organization;
 

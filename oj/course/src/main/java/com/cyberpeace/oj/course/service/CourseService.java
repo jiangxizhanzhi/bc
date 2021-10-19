@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.oj.course.dao.context.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;

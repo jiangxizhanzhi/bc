@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -9,8 +10,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.oj_entity.Lesson;
-
-import java.util.List;
 
 // 新表对应mapper
 @Mapper

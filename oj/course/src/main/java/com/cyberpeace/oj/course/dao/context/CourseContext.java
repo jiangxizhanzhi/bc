@@ -16,8 +16,6 @@ public class CourseContext implements Serializable {
 
     private String pattern;
 
-    private String sort;
-
     private Boolean isPublic;
 
     private Boolean myCourse;

@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotEmpty;
-
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.course.dao.context.AuthContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,12 +35,8 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
-	@Autowired
-	private CourseAuthConstructService courseAuthConstructService;
-
 	@Override
-	public List<CourseStudyProcessBo> statisticByIds(@NotEmpty List<String> courseIds,
-			String userId) {
+	public List<CourseStudyProcessBo> statisticByIds(List<String> courseIds, String userId) {
 
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return Lists.newArrayList();
@@ -56,8 +50,8 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		}
 
 		// 查询有权访问课程
-		AuthContext authContext = courseAuthConstructService
-				.webCourseConstruct(UserInfoContext.getUserContext());
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
 		List<String> webCourses = courseMapper.selectByAuth(authContext);
 
 		// 课程数量 以课程编号进行分组

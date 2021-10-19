@@ -72,4 +72,35 @@ public class LocalStringUtil {
 		return Arrays.stream(StringUtils.split(data, ',')).map(Integer::parseInt)
 				.collect(Collectors.toList());
 	}
+
+	/**
+	 * 构造like条件
+	 * @param key 条件
+	 * @param leftOrRight 0左 1右 null左右
+	 * @return
+	 */
+	public static String constructLike(String key, Integer leftOrRight) {
+		if (null == leftOrRight) {
+			return constructLike(key);
+		} else {
+			if (leftOrRight.intValue() == 0) {
+				return "%" + key;
+			} else {
+				return key + "%";
+			}
+		}
+	}
+
+	/**
+	 * 构造like条件 左右均带%
+	 * @return
+	 */
+	public static String constructLike(String key) {
+		if (StringUtils.isBlank(key)) {
+			return null;
+		} else {
+			return "%" + key + "%";
+		}
+
+	}
 }

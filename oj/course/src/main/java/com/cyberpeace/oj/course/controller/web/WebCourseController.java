@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseDirectionService;
@@ -15,7 +17,6 @@ import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
 import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
 import com.cyberpeace.oj.ojbase.controller.res.CommentRes;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
-import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.service.CommentService;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
@@ -32,9 +33,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.CollectionReq;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
-import com.cyberpeace.oj.course.dao.context.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
-import com.cyberpeace.oj.course.service.CourseAuthConstructService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 
@@ -50,9 +49,6 @@ public class WebCourseController {
 
 	@Autowired
 	private CourseService courseService;
-
-	@Autowired
-	private CourseAuthConstructService courseAuthConstructService;
 
 	@Autowired
 	private CourseDirectionService courseDirectionService;
@@ -93,8 +89,7 @@ public class WebCourseController {
 		}
 
 		Page page = listReq.toPageParam();
-		AuthContext authContext = courseAuthConstructService
-				.webCourseConstruct(UserInfoContext.getUserContext());
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
 
 		// 数据查询
 		ListRsp<CourseInfoBo> boListRsp = courseService.selectPage(page, context, authContext);

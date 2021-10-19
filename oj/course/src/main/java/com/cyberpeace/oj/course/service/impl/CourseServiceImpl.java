@@ -116,7 +116,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course))
 				.map(infBo -> {
 					if (infBo.getLessonCount().intValue() > 0) {
-						infBo.setInterview(authCourseIds.contains(infBo.getResourceId()) && infBo.getIsPublic());
+						infBo.setInterview(
+								infBo.getIsPublic() && CollectionUtils.isNotEmpty(authCourseIds)
+										&& authCourseIds.contains(infBo.getResourceId()));
 					} else {
 						infBo.setInterview(Boolean.FALSE);
 					}

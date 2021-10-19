@@ -8,6 +8,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
@@ -32,11 +34,11 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 	private CourseStatisticsService courseStatisticsService;
 
 	@Override
-	public boolean setCourseResult(String userId, String courses,
+	public boolean setCourseResult(UserInfo userInfo, String courses,
 			List<RelatedCourse> relatedCourseList, List<CourseStudyProcessBo> processBos,
 			String related_course_type) {
 		boolean isDeleted = false;
-
+		UserInfoContext.setUserContext(userInfo);
 		try {
 			relatedCourseList.addAll(JsonUtil.toJsonObjectArray(courses, RelatedCourse.class));
 		} catch (Exception e) {
@@ -67,7 +69,8 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 				// 查询课程或者学习情况
 				if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)
 						|| RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
-					processBos.addAll(courseStatisticsService.statisticByIds(existIds, userId));
+					processBos.addAll(
+							courseStatisticsService.statisticByIds(existIds, userInfo.getUserId()));
 
 				}
 

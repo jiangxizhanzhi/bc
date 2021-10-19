@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
@@ -71,13 +72,13 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 	@Override
 	public KnowledgeRes getKnowledgeByResourceId(String id) {
-		String userId = UserInfoContext.getUserContext().getUserId();
+		UserInfo userInfo = UserInfoContext.getUserContext();
 		KnowledgeRes knowledgeRes = knowledgeMapper.getKnowledgeByResourceId(id);
 		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 		List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
 		//
-		if (relatedCourseService.setCourseResult(userId, knowledgeRes.getCourses(),
+		if (relatedCourseService.setCourseResult(userInfo, knowledgeRes.getCourses(),
 				relatedCourseList, processBos, RoleDetailRes.RELATED_COURSE_COURSE)) {
 			knowledgeRes.setCourseList(relatedCourseList);
 
@@ -128,7 +129,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	@Override
 	public void checkKnowledgeRes(List<KnowledgeRes> knowledgeResList, String relatedCourseType) {
 		List<Knowledge> knowledgeList = Collections.synchronizedList(new ArrayList<>());
-		String userId = UserInfoContext.getUserContext().getUserId();
+		UserInfo userInfo = UserInfoContext.getUserContext();
 		// 创建一个线程池
 		ExecutorService exec = new ThreadPoolExecutor(10, 1000, 60L, TimeUnit.SECONDS,
 				new SynchronousQueue<Runnable>());
@@ -148,12 +149,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 					List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 					List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-					boolean isDeleted = relatedCourseService.setCourseResult(userId, courses,
+					boolean isDeleted = relatedCourseService.setCourseResult(userInfo, courses,
 							relatedCourseList, processBos, relatedCourseType);
 
 					knowledgeRes.setCourses("");
 					knowledgeRes.setCourseList(relatedCourseList);
-					if (RoleDetailRes.RELATED_COURSE_STUDY.equals(relatedCourseType)) {
+					if (RoleDetailRes.RELATED_COURSE_STUDY.equals(relatedCourseType)) {// 查询学习进度
 						knowledgeRes.setProcess(calculateProcess(processBos, relatedCourseList));
 						knowledgeRes.setCourses("");
 						knowledgeRes.setCourseList(null);
@@ -162,7 +163,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 								.mapToInt(RelatedCourse::getCourseDuration).sum() / 60.0;
 						knowledgeRes.setSuggestDuration(new BigDecimal(suggestDuration)
 								.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue());
-					} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(relatedCourseType)) {
+					} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(relatedCourseType)) {// 查询基本课程和学习进度
 						knowledgeRes.setProcess(calculateProcess(processBos, relatedCourseList));
 						knowledgeRes.setCourseStudyProcessBoList(processBos);
 						double suggestDuration = relatedCourseList.stream()
@@ -183,7 +184,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 					}
 
-					return 123;
+					return 1;
 				}
 
 			};

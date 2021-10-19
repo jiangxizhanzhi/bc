@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
@@ -83,12 +84,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public SkillRes getSkillByResourceId(String id) {
-		String userId = UserInfoContext.getUserContext().getUserId();
+		UserInfo userInfo = UserInfoContext.getUserContext();
 		SkillRes skillRes = skillMapper.getSkillByResourceId(id);
 		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 		List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-		if (relatedCourseDao.setCourseResult(userId, skillRes.getCourses(), relatedCourseList,
+		if (relatedCourseDao.setCourseResult(userInfo, skillRes.getCourses(), relatedCourseList,
 				processBos, RoleDetailRes.RELATED_COURSE_COURSE)) {
 			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 			skillRes.setCourseList(relatedCourseList);
@@ -131,8 +132,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	@Override
 	public void checkSkillRes(List<SkillRes> skillResList, String related_course_type) {
 		List<Skill> skillList = Collections.synchronizedList(new ArrayList<>());
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 创建一个线程池
+		UserInfo userInfo = UserInfoContext.getUserContext(); // 创建一个线程池
 		ExecutorService exec = new ThreadPoolExecutor(10, 100, 60L, TimeUnit.SECONDS,
 				new SynchronousQueue<Runnable>());
 		// 定义一个任务集合
@@ -149,7 +149,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 					List<RelatedCourse> relatedCourseList = Lists.newArrayList();
 					List<CourseStudyProcessBo> processBos = Lists.newArrayList();
 
-					boolean isDeleted = relatedCourseDao.setCourseResult(userId, courses,
+					boolean isDeleted = relatedCourseDao.setCourseResult(userInfo, courses,
 							relatedCourseList, processBos, related_course_type);
 					// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
 					skillRes.setCourseList(relatedCourseList);

@@ -11,7 +11,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.CourseDirectionService;
+import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
 import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
@@ -51,7 +51,7 @@ public class WebCourseController {
 	private CourseService courseService;
 
 	@Autowired
-	private CourseDirectionService courseDirectionService;
+	private CourseCategoryService courseDirectionService;
 
 	@Autowired
 	private CommentService commentService;

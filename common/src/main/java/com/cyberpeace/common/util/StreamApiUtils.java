@@ -1,0 +1,66 @@
+package com.cyberpeace.common.util;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.commons.collections.CollectionUtils;
+import org.checkerframework.checker.units.qual.K;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class StreamApiUtils {
+
+	/**
+	 * 获取集合中的某列 如果集合为空返
+	 * @param collection
+	 * @param mapperValue
+	 * @param <E>
+	 * @param <V>
+	 * @return
+	 */
+	public static <E, V> List<V> columnList(Collection<E> collection, Function<E, V> mapperValue) {
+		if (null == collection) {
+			return Lists.newArrayList();
+		}
+		List<V> list = collection.stream().map(mapperValue).collect(Collectors.toList());
+		return list;
+	}
+
+	/**
+	 * 将集合转为map
+	 * @param collection
+	 * @param keyMapper
+	 * @param valueMapper
+	 * @param <K>
+	 * @param <V>
+	 * @param <E>
+	 * @return
+	 */
+	public static <K, V, E> Map<K, V> columnMap(Collection<E> collection, Function<E, K> keyMapper,
+			Function<E, V> valueMapper) {
+		if (CollectionUtils.isEmpty(collection)) {
+			return Maps.newHashMap();
+		}
+		return collection.stream().collect(Collectors.toMap(keyMapper, valueMapper));
+	}
+
+	/**
+	 * 集合分组
+	 * @param collection
+	 * @param mapperValue
+	 * @param <K>
+	 * @param <E>
+	 * @return
+	 */
+	public static <K, E> Map<K, List<E>> groupByColumn(Collection<E> collection,
+			Function<E, K> mapperValue) {
+		if (CollectionUtils.isEmpty(collection)) {
+			return Maps.newHashMap();
+		}
+		return collection.stream().collect(Collectors.groupingBy(mapperValue));
+	}
+
+}

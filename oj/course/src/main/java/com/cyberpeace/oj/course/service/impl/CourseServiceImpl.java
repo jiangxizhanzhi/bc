@@ -23,12 +23,12 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCollection;
-import com.cyberpeace.oj.course.dao.entity.CourseDirection;
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseCollectionMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.dao.mapper.DirectionMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
@@ -45,7 +45,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseMapper courseMapper;
 
 	@Autowired
-	private DirectionMapper directionMapper;
+	private CourseCategoryMapper directionMapper;
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
@@ -76,7 +76,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseInfoBo courseToBo(Course course) {
 
 		// 转换类别
-		CourseDirection courseDirection = directionMapper.selectByResource(course.getDirection());
+		CourseCategory courseDirection = directionMapper.selectById(course.getDirection());
 
 		CourseInfoBo courseInfoBo = BeanUtils.copy(course, CourseInfoBo.class);
 		courseInfoBo.setDirectionName(courseDirection.getName());

@@ -6,7 +6,7 @@ import javax.validation.Valid;
 
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.oj.course.service.CourseDirectionService;
+import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -47,7 +47,7 @@ public class AdminCourseController extends PracticeMixinController<Course> {
 	private CourseMapper courseMapper;
 
 	@Autowired
-	private CourseDirectionService courseDirectionService;
+	private CourseCategoryService courseDirectionService;
 
 	@Override
 	public Class<Course> getEntityCls() {

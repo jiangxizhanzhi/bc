@@ -74,7 +74,8 @@ public class ExternalController {
                 queryParams.getPattern(),
                 queryParams.getPracticeSet(),
                 queryParams.getCategory(),
-                queryParams.getQuestionType()
+                queryParams.getQuestionType(),
+                queryParams.getDifficulty()
         );
         return new BaseRsp<>(PageUtil.getListResult(result));
     }
@@ -98,6 +99,7 @@ public class ExternalController {
                 queryParams.getPracticeSet(),
                 queryParams.getCategory(),
                 queryParams.getQuestionType(),
+                queryParams.getDifficulty(),
                 queryParams.getCount()
         );
         for (PracticeTheory item : result) {

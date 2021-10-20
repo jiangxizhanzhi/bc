@@ -18,6 +18,9 @@
         <if test="question_type != null">
             and question_type = #{question_type}
         </if>
+        <if test="difficulty != null">
+            and difficulty = #{difficulty}
+        </if>
         order by id desc
     </select>
 
@@ -53,6 +56,9 @@
         </if>
         <if test="question_type != null">
             and question_type = #{question_type}
+        </if>
+        <if test="difficulty != null">
+            and difficulty = #{difficulty}
         </if>
         order by RAND()
         <if test="limit != null and limit != ''">

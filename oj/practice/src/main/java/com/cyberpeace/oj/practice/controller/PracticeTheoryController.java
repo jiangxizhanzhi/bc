@@ -47,7 +47,7 @@ public class PracticeTheoryController extends PracticeMixinController<PracticeTh
     public BaseRsp<ListRsp<PracticeTheory>> getList(PracticeTheoryListReq queryParams) {
         IPage<PracticeTheory> result = practiceTheoryMapper.getList(
                 queryParams.toPageParam(), queryParams.getPattern(), queryParams.getPracticeSet(),
-                queryParams.getCategory(), queryParams.getQuestionType()
+                queryParams.getCategory(), queryParams.getQuestionType(), queryParams.getDifficulty()
         );
 
         return new BaseRsp<>(PageUtil.getListResult(result));

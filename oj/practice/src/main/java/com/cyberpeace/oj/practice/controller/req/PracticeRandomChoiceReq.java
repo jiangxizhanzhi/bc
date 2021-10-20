@@ -16,6 +16,9 @@ public class PracticeRandomChoiceReq {
     @ApiModelProperty(value = "理论基础题型查询: 0-单选, 1-多选, 2-判断, 3-填空, 4-简答", allowableValues = "0, 1, 2, 3, 4")
     private Integer questionType;
 
+    @ApiModelProperty(value = "难度查询", allowableValues = "0, 1, 2")
+    private Integer difficulty;
+
     @ApiModelProperty("内容查询")
     private String pattern;
 

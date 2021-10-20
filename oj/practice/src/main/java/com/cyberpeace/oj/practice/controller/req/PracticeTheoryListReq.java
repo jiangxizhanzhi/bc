@@ -10,7 +10,7 @@ import lombok.Data;
 @ApiModel
 public class PracticeTheoryListReq extends PageReqBase {
 
-    @ApiModelProperty(value = "难度", allowableValues = "0, 1, 2")
+    @ApiModelProperty(value = "难度: 0-初级, 1-中级, 2-高级", allowableValues = "0, 1, 2")
     private Integer difficulty;
 
     @ApiModelProperty("分类")
@@ -19,7 +19,7 @@ public class PracticeTheoryListReq extends PageReqBase {
     @ApiModelProperty("习题集")
     private String practiceSet;
 
-    @ApiModelProperty("题型")
+    @ApiModelProperty(value = "理论基础题型查询: 0-单选, 1-多选, 2-判断, 3-填空, 4-简答", allowableValues = "0, 1, 2, 3, 4")
     private Integer questionType;
 
 }

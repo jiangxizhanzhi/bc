@@ -53,6 +53,32 @@ public class DataTransferUtils {
 	}
 
 	/**
+	 * 无根节点树形转换
+	 * @param treeNodes
+	 * @return
+	 */
+	public static List<? extends AbstractBaseTree>
+			listToListTree(List<? extends AbstractBaseTree> treeNodes) {
+
+		List<? extends AbstractBaseTree> firstTree = treeNodes.stream()
+				.filter(abstractBaseTree -> StringUtils.isBlank(abstractBaseTree.getParentId()))
+				.collect(Collectors.toList());
+
+		List<? extends AbstractBaseTree> cildrens = firstTree.stream()
+				.filter(abstractBaseTree -> StringUtils.isNotBlank(abstractBaseTree.getParentId()))
+				.collect(Collectors.toList());
+
+		Map<String, ? extends List<? extends AbstractBaseTree>> columnMap = StreamApiUtils
+				.groupByColumn(cildrens, AbstractBaseTree::getParentId);
+
+		for (AbstractBaseTree abstractBaseTree : firstTree) {
+			packageData(abstractBaseTree, columnMap);
+		}
+
+		return firstTree;
+	}
+
+	/**
 	 * 获取最顶级节点
 	 * @param treeNodes
 	 * @return

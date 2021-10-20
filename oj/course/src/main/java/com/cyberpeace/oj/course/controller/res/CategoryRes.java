@@ -5,19 +5,18 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @ApiModel
-public class DirectionOutPut implements Serializable {
+public class CategoryRes implements Serializable {
 
-    @ApiModelProperty("分类编号")
+    @ApiModelProperty("资源编号")
     private String resourceId;
 
-    @ApiModelProperty("分类名称")
+    @ApiModelProperty("课程分类名称")
     private String name;
 
-    @ApiModelProperty("子类分类")
-    private List<DirectionOutPut> children;
+    @ApiModelProperty("课程类型 0=基础 2=攻击 3=防御")
+    private Integer courseType;
 
 }

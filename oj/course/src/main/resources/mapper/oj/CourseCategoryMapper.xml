@@ -5,19 +5,29 @@
 
     <resultMap id="category" type="com.cyberpeace.oj.course.dao.entity.CourseCategory"/>
 
-    <select id="selectById" resultMap="category">
-        select * from oj_course_category where resource_id = #{categoryId}
-    </select>
-
     <select id="selectChildrenByCode" resultMap="category">
-        <bind name="directionId" value="code + '%'"/>
+        <bind name="code" value="code + '%'"/>
         select * from oj_course_category where
         code like #{code}
     </select>
 
     <select id="selectFirstLevel" resultMap="category">
         select * from oj_course_category
-        where resource_id = code;
+        where resource_id = code
+    </select>
+
+    <select id="selectAll" resultMap="category">
+        select * from oj_course_category
+    </select>
+
+    <select id="pageBySearch" resultMap="category">
+        select * from oj_course_category
+        <where>
+            <if test="null != pattern">
+                <bind name="pattern" value="'%' + pattern + '%'"/>
+                and `name` like #{pattern}
+            </if>
+        </where>
     </select>
 
 </mapper>

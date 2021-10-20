@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class StreamApiUtils {
@@ -61,6 +62,30 @@ public class StreamApiUtils {
 			return Maps.newHashMap();
 		}
 		return collection.stream().collect(Collectors.groupingBy(mapperValue));
+	}
+
+	/**
+	 * 简单过滤，仅支持一个筛选条件
+	 * @param collection
+	 * @param predicate
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> List<E> simpleFilter(Collection<E> collection,
+			Predicate<? super E> predicate) {
+		return collection.stream().filter(predicate).collect(Collectors.toList());
+	}
+
+	/**
+	 * 简单map操作
+	 * @param collection
+	 * @param mapperValue
+	 * @param <E>
+	 * @param <T>
+	 * @return
+	 */
+	public static <E, T> List<T> simpleMap(Collection<E> collection, Function<E, T> mapperValue) {
+		return collection.stream().map(mapperValue).collect(Collectors.toList());
 	}
 
 }

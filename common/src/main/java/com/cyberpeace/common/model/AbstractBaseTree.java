@@ -1,20 +1,27 @@
 package com.cyberpeace.common.model;
 
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DataTransferUtils;
-import com.google.common.collect.Lists;
-import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
-
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.DataTransferUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 @Data
-public class AbstractBaseTree {
+public abstract class AbstractBaseTree {
 
-	public List<? extends AbstractBaseTree> children;
+	@ApiModelProperty("子信息")
+	private List<? extends AbstractBaseTree> children;
 
-	public String parentId;
+	@JsonIgnore
+	private String parentId;
 
+	@ApiModelProperty("资源编号")
 	private String resourceId;
 
 	/**

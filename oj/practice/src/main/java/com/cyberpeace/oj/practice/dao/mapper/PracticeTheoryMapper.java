@@ -15,11 +15,11 @@ import java.util.List;
 public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
     IPage<PracticeTheory> getList(Page page, @Param("pattern") String pattern, @Param("practice_set") String practiceSet,
-                                  @Param("category") String category, @Param("question_type") Integer questionType);
+                                  @Param("category") String category, @Param("question_type") Integer questionType, @Param("difficulty") Integer difficulty);
 
     List<PracticeTheory> randomChoice(@Param("pattern") String pattern, @Param("practice_set") String practiceSet,
                                       @Param("category") String category, @Param("question_type") Integer questionType,
-                                      @Param("limit") Integer count);
+                                      @Param("difficulty") Integer difficulty, @Param("limit") Integer count);
 
     Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
 

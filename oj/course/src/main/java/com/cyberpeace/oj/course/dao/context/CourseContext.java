@@ -18,17 +18,4 @@ public class CourseContext implements Serializable {
 
     private Boolean isPublic;
 
-    private Boolean myCourse;
-
-    private Boolean systemCourse;
-
-    private Boolean shareCourse;
-
-    private String userId;
-
-    private String likeUser;
-
-    public void isWeb() {
-        this.isPublic = true;
-    }
 }

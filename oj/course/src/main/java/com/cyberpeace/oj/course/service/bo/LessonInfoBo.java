@@ -5,8 +5,9 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.cyberpeace.oj.course.dao.entity.LessonFile;
 
+import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
+import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import lombok.Data;
 
 @Data
@@ -55,7 +56,7 @@ public class LessonInfoBo implements Serializable {
 
     private Boolean isCollection;
 
-    private List<LessonFile> lessonFile;
+    private List<AttachmentBo> lessonFile;
 
     private String next;
 

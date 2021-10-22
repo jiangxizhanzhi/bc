@@ -3,26 +3,47 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper">
 
-    <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.CourseLesson"/>
+    <resultMap id="lesson" type="com.cyberpeace.oj.course.dao.entity.CourseLesson"/>
 
-    <select id="listByCourses" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
-        select * from course_lesson
+    <select id="listByCourses" resultMap="lesson">
+        select * from oj_course_lesson
         <where>
-            and course in
+            and course_id in
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
                 #{courseId}
             </foreach>
-            and `public` = 1
-            and status = 1
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
         </where>
     </select>
 
-    <select id="selectByCourse" resultMap="base">
-        select * from course_lesson
+    <select id="selectByCourse" resultMap="lesson">
+        select * from oj_course_lesson
         <where>
-            and course = #{courseId}
-            and `public` = 1
-            and status = 1
+            course_id = #{courseId}
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageByContext" resultMap="lesson">
+        select * from oj_course_lesson
+        <where>
+            <if test="context.courseId != null and context.courseId != ''">
+                and course_id = #{context.courseId}
+            </if>
+            <if test="context.type != null">
+                and `type` = #{context.type}
+            </if>
+            <if test="context.pattern != null and context.pattern != ''">
+                <bind name="context.pattern" value="'%' + context.pattern + '%'"/>
+                and `name` like #{context.pattern}
+            </if>
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
         </where>
     </select>
 </mapper>

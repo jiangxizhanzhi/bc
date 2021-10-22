@@ -9,14 +9,8 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 @Data
-@TableName("course_lesson")
+@TableName("oj_course_lesson")
 public class CourseLesson extends BaseTable {
-
-	/** 理论课*/
-	public static final int TYPE_THEORY = 0;
-
-	/** 实验课*/
-	public static final int TYPE_EXPERIMENT = 1;
 
 	/** 必修*/
 	public static final int IS_REQUIRED = 2;
@@ -29,50 +23,43 @@ public class CourseLesson extends BaseTable {
 
 	private Integer builtin;
 
-	private String course;
+	private String courseId;
 
 	private String name;
 
 	private Integer type;
 
-	private String pdf;
+	private Integer handoutType;
 
-	private String html;
+	private String handoutUrl;
 
-	private Integer htmlType;
-
-	private String video;
+	private String videoUrl;
 
 	private Integer difficulty;
 
 	@TableField("public")
 	private Integer isPublic;
 
-	private String attachments;
+	private String attachmentIds;
 
-	private Integer lessonType;
-
-	private Integer duration;
+	private Integer compulsory;
 
 	private Integer destroyDelay;
 
-	private String ojSceneConfig;
+	private Integer duration;
 
-	private Integer shareMode;
+	private String topoId;
 
 	private String knowledge;
 
-	private String markdown;
+	private Integer sceneShareMode;
 
-	private String markdownFile;
+	private String originMarkdownFile;
 
-	private String createUser;
+	private String createUserId;
 
-	private String testPaper;
-
-	private Integer testPaperPublic;
+	private String paperId;
 
 	private Integer heat;
 
-	private Integer status;
 }

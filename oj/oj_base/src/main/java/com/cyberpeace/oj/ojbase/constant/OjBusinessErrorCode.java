@@ -13,4 +13,7 @@ public interface OjBusinessErrorCode {
     /** 对应的课时资源未找到*/
     String LESSON_NOT_FOUND = "102002";
 
+    /** 关联的分类资源未找到*/
+    String RELATE_CATEGORY_NOT_FOUNT = "102003";
+
 }

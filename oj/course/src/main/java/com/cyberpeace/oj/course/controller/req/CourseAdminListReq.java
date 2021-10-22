@@ -8,13 +8,13 @@ import lombok.Data;
 @ApiModel("后台参数接收")
 public class CourseAdminListReq extends CourseListReq {
 
-    @ApiModelProperty("我的课程")
-    private Boolean myCourse;
+	@ApiModelProperty("我的课程")
+	private Boolean myCourse = true;
 
-    @ApiModelProperty("系统课程")
-    private Boolean systemCourse;
+	@ApiModelProperty("系统课程")
+	private Boolean systemCourse = true;
 
-    @ApiModelProperty("共享课程")
-    private Boolean shareCourse;
+	@ApiModelProperty("共享课程")
+	private Boolean shareCourse = true;
 
 }

@@ -1,12 +1,15 @@
 package com.cyberpeace.oj.course.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.controller.res.AdminLessonDetailRes;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonScene;
+import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
 import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 
-public interface CourseLessonService {
+public interface CourseLessonService extends IService<CourseLesson> {
 
     /**
      * 根据课程编号和课时编号查询课时基本信息
@@ -25,7 +28,6 @@ public interface CourseLessonService {
     LessonScene getLessonScene(UserInfo user, String lessonId);
 
 
-
     /**
      * 收藏课时
      * @param userId
@@ -41,5 +43,5 @@ public interface CourseLessonService {
      * @param lessonId
      * @return
      */
-    LessonInfoBo getAdminLessonDetail(String courseId, String lessonId);
+    AdminLessonBo selectByCourseAndLesson(String courseId, String lessonId);
 }

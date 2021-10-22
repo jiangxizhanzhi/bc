@@ -3,8 +3,7 @@ package com.cyberpeace.oj.course.controller.res;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.oj.course.dao.entity.LessonFile;
-
+import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -46,7 +45,7 @@ public class AdminLessonDetailRes implements Serializable {
 
     private Integer testPaperPublic;
 
-    private List<LessonFile> lessonFile;
+    private List<AttachmentBo> lessonFile;
 
     private Integer practiceCount;
 

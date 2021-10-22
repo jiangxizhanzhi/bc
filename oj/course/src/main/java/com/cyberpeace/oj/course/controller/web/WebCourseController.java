@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
+import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
 import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
@@ -78,18 +79,19 @@ public class WebCourseController {
 	public BaseRsp<List<CourseInfoBo>> getWebCourse(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
 		// 数据组装
-		CourseContext context = BeanUtils.copy(listReq, CourseContext.class);
+		CourseQueryBo context = BeanUtils.copy(listReq, CourseQueryBo.class);
 		context.setUserId(UserInfoContext.getUserContext().getUserId());
-		context.isWeb();
-
 		if (StringUtils.isNotBlank(listReq.getDirection())) {
 			List<String> childrenIds = courseDirectionService
-					.getAllChildrenIds(listReq.getDirection());
+					.getChildrenIds(listReq.getDirection());
 			context.setDirections(childrenIds);
 		}
 
 		Page page = listReq.toPageParam();
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+
+		// 权限数据获取
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
 
 		// 数据查询
 		ListRsp<CourseInfoBo> boListRsp = courseService.selectPage(page, context, authContext);

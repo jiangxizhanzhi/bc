@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.LessonMapper">
 
-    <resultMap id="base" type="com.cyberpeace.oj.course.dao.oj_entity.Lesson"/>
+    <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.CourseLesson"/>
 
     <select id="pageByContext" resultMap="base">
         select * from course_lesson
@@ -27,7 +27,7 @@
     <select id="selectByCourse" resultMap="base">
         select * from course_lesson
         <where>
-            <if test="null != context.courseId">
+            <if test="null != courseId">
                 and course = #{courseId}
             </if>
             and status = 1

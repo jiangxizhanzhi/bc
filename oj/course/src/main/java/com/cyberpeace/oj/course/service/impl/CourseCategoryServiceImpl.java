@@ -30,7 +30,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	private CourseCategoryMapper courseCategoryMapper;
 
 	@Override
-	public List<String> getAllChildrenIds(String directionId) {
+	public List<String> getChildrenIds(String directionId) {
 		CourseCategory courseCategory = courseCategoryMapper.selectById(directionId);
 		List<CourseCategory> directions = courseCategoryMapper
 				.selectChildrenByCode(courseCategory.getCode());
@@ -78,9 +78,13 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 			courseCategoryMapper.updateById(courseCategory);
 
 		} else {
-			CourseCategory category = courseCategoryMapper.selectById(categoryAddBo.getParentId());
 			String resourceId = IDGeneratorUtil.getID();
-			courseCategory.setCode(category.getCode() + CommonConstant.CODE_COMMA + resourceId);
+			if (StringUtils.isNotBlank(categoryAddBo.getParentId())) {
+				CourseCategory category = courseCategoryMapper.selectById(categoryAddBo.getParentId());
+				courseCategory.setCode(category.getCode() + CommonConstant.CODE_COMMA + resourceId);
+			} else {
+				courseCategory.setCode(resourceId);
+			}
 
 			courseCategory.setResourceId(resourceId);
 			courseCategory.setCourseType(CourseType.BASE.getCode());

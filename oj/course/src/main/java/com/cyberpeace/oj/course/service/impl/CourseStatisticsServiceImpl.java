@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.oj.course.constant.LessonType;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +56,9 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		List<String> webCourses = courseMapper.selectByAuth(authContext);
 
 		// 课程数量 以课程编号进行分组
-		List<CourseLesson> courseLessons = courseLessonMapper.listByCourses(ids);
+		List<CourseLesson> courseLessons = courseLessonMapper.listByCourses(ids, authContext.getIsWeb());
 		Map<String, List<CourseLesson>> courseMap = courseLessons.stream()
-				.collect(Collectors.groupingBy(CourseLesson::getCourse));
+				.collect(Collectors.groupingBy(CourseLesson::getCourseId));
 		List<String> lessonIds = courseLessons.stream().map(CourseLesson::getResourceId)
 				.collect(Collectors.toList());
 
@@ -102,7 +103,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			Map<Integer, List<CourseLesson>> lessonMap = lessonList.stream()
 					.collect(Collectors.groupingBy(CourseLesson::getType));
 			lessonMap.forEach((key, value) -> {
-				if (key.intValue() == CourseLesson.TYPE_THEORY) {
+				if (key.intValue() == LessonType.THEORY.getCode().intValue()) {
 					studyProcessBo.setTheoryCount(value.size());
 				} else {
 					studyProcessBo.setExerciseCount(value.size());
@@ -113,7 +114,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			Map<Integer, List<CourseLesson>> studyLessonMap = study.stream()
 					.collect(Collectors.groupingBy(CourseLesson::getType));
 			studyLessonMap.forEach((key, value) -> {
-				if (key.intValue() == CourseLesson.TYPE_THEORY) {
+				if (key.intValue() == LessonType.THEORY.getCode().intValue()) {
 					studyProcessBo.setCompleteTheory(value.size());
 				} else {
 					studyProcessBo.setCompleteExercise(value.size());

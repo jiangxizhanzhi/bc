@@ -4,32 +4,21 @@
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseMapper">
 
     <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.Course"/>
+
     <sql id="share_constant">
-        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.oj.course.dao.entity.Course@ALL_SHARE_MODE"/>
-        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.oj.course.dao.entity.Course@CUSTOM_SHARE_MODE"/>
-    </sql>
-
-    <sql id="courseIds">
-
-    </sql>
-
-    <sql id="directions">
-
+        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.oj.course.dao.entity.Course@ALL.code"/>
+        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.oj.course.dao.entity.Course@CUSTOM.code"/>
     </sql>
 
     <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">
         select *
-        from course_course
+        from oj_course
         where resource_id = #{courseId}
         and status = 1
     </select>
 
     <select id="listByPage" resultMap="baseResultMap">
-        <if test="courseContext.pattern != null and courseContext.pattern != ''">
-            <bind name="courseContext.pattern" value="'%' + courseContext.pattern + '%'"/>
-        </if>
-
-        select * from course_course
+        select * from oj_course
         <where>
             <if test="null != courseIds and courseIds.size() > 0">
                 and resource_id in
@@ -52,52 +41,18 @@
                     </foreach>
                 </if>
                 <if test="null != courseContext.pattern and courseContext.pattern != ''">
+                    <bind name="courseContext.pattern" value="'%' + courseContext.pattern + '%'"/>
                     and `name` like #{courseContext.pattern}
                 </if>
                 <if test="null != courseContext.isPublic and courseContext.isPublic">
                     and `public` = #{courseContext.isPublic}
                 </if>
-                <choose>
-                    <when test="courseContext.myCourse and courseContext.systemCourse and courseContext.shareCourse">
-                        # 不进行条件过滤
-                    </when>
-                    <otherwise>
-                        <if test="null != courseContext.myCourse">
-                            <choose>
-                                <when test="courseContext.myCourse">
-                                    and `create_user` = #{courseContext.userId}
-                                </when>
-                                <otherwise>
-                                    and `create_user` != #{courseContext.userId}
-                                </otherwise>
-                            </choose>
-                        </if>
-                        <if test="null != courseContext.systemCourse">
-                            and `builtin` = #{courseContext.systemCourse}
-                        </if>
-                        <if test="null != courseContext.shareCourse">
-                            <include refid="share_constant"/>
-                            <bind name="courseContext.likeUser" value="'%' + courseContext.userId + '%'"/>
-                            <choose>
-                                <when test="courseContext.shareCourse">
-                                    and (`share` = ${ALL_SHARE_MODE} or (`share` = ${CUSTOM_SHARE_MODE} and `share_teachers` like
-                                    #{courseContext.likeUser}))
-                                </when>
-                                <otherwise>
-                                    and (`share` = ${CUSTOM_SHARE_MODE} and `share_teachers` not like
-                                    #{courseContext.likeUser})
-                                </otherwise>
-                            </choose>
-                        </if>
-                    </otherwise>
-                </choose>
             </if>
-            and status = 1
         </where>
     </select>
 
     <select id="notDeleteIdsByIds" resultType="java.lang.String">
-        select resource_id from course_course
+        select resource_id from oj_course
         <where>
             <if test="null != courseIds and courseIds.size() > 0">
                 and resource_id in
@@ -111,7 +66,7 @@
 
     <select id="selectByAuth" resultType="java.lang.String">
         <include refid="share_constant"/>
-        select resource_id from course_course
+        select resource_id from oj_course
         <where>
             <choose>
                 <when test="authContext.isWeb">
@@ -121,6 +76,52 @@
                 <otherwise>
                     and (create_user = #{authContext.userId} or (share_teachers like #{authContext.likeUser}
                     and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="selectSpecial" resultMap="baseResultMap">
+        select resource_id from oj_course
+        <where>
+            <if test="null != courseIds and courseIds.size() > 0">
+                and resource_id in
+                <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                    #{courseId}
+                </foreach>
+            </if>
+            <choose>
+                <when test="specialContext.myCourse and specialContext.systemCourse and specialContext.shareCourse">
+                    # 不进行条件过滤
+                </when>
+                <otherwise>
+                    <if test="null != specialContext.myCourse">
+                        <choose>
+                            <when test="specialContext.myCourse">
+                                and `create_user` = #{specialContext.userId}
+                            </when>
+                            <otherwise>
+                                and `create_user` != #{specialContext.userId}
+                            </otherwise>
+                        </choose>
+                    </if>
+                    <if test="null != specialContext.systemCourse">
+                        and `builtin` = #{specialContext.systemCourse}
+                    </if>
+                    <if test="null != specialContext.shareCourse">
+                        <include refid="share_constant"/>
+                        <bind name="specialContext.likeUser" value="'%' + specialContext.userId + '%'"/>
+                        <choose>
+                            <when test="specialContext.shareCourse">
+                                and (`share` = ${ALL_SHARE_MODE} or (`share` = ${CUSTOM_SHARE_MODE} and `share_teachers` like
+                                #{specialContext.likeUser}))
+                            </when>
+                            <otherwise>
+                                and (`share` = ${CUSTOM_SHARE_MODE} and `share_teachers` not like
+                                #{specialContext.likeUser})
+                            </otherwise>
+                        </choose>
+                    </if>
                 </otherwise>
             </choose>
         </where>

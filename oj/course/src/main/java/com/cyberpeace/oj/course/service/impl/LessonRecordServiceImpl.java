@@ -31,7 +31,7 @@ public class LessonRecordServiceImpl implements LessonRecordService {
                 .filter(courseLesson -> recordLesson.contains(courseLesson.getResourceId()))
                 .collect(Collectors.toList());
 
-        List<String> courseIds = lessonList.stream().map(CourseLesson::getCourse).distinct()
+        List<String> courseIds = lessonList.stream().map(CourseLesson::getCourseId).distinct()
                 .collect(Collectors.toList());
         return courseIds;
     }

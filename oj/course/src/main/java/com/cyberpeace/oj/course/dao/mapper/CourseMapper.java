@@ -5,12 +5,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
+import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Mapper
@@ -37,4 +37,13 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @return
 	 */
 	List<String> selectByAuth(@Param("authContext") AuthContext authContext);
+
+	/**
+	 * 查询我的 or 系统 or 共享课程
+	 * @param courseIds
+	 * @param specialContext
+	 * @return
+	 */
+	List<String> selectSpecial(@Param("courseIds") List<String> courseIds,
+			@Param("specialContext") SpecialCourseContext specialContext);
 }

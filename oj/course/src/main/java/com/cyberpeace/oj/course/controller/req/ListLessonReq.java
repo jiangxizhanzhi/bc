@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @ApiModel("课时列表查询")
 public class ListLessonReq extends PageReqBase {
 
-    @ApiModelProperty("课时类型")
+    @ApiModelProperty("课时类型 0=理论课 1=实验课")
     private Integer type;
 
     @ApiModelProperty("课程编号")

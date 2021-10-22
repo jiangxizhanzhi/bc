@@ -7,7 +7,7 @@
 
     <sql id="baseFiled">
         select `user`, comment, is_like, create_time
-        from x_comment_commentlike
+        from oj_
     </sql>
 
     <sql id="orderByTimeDesc">

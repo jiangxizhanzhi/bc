@@ -374,7 +374,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return null;
 		}
-		List<CourseLesson> lessons = courseLessonMapper.listByCourses(courseIds);
+		List<CourseLesson> lessons = courseLessonMapper.listByCourses(courseIds, true);
 
 		Set<String> lessonSet = lessons.stream().map(CourseLesson::getResourceId)
 				.collect(Collectors.toSet());

@@ -1,11 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,25 +13,33 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ModelConstant;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.constant.CourseAuthShare;
+import com.cyberpeace.oj.course.constant.LessonType;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
+import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseCollection;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
+import com.cyberpeace.oj.course.dao.entity.CourseCollection;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseCollectionMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,9 +64,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	public CourseInfoBo selectById(String courseId, String userId) {
 		Course course = courseMapper.selectByCourse(courseId);
 		if (null == course) {
-			throw new InvalidParamException("课程不存在！");
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
 		}
-		CourseInfoBo courseInfoBo = courseToBo(course);
+		CourseInfoBo courseInfoBo = courseToBo(course, true);
 		// 设置是否收藏
 		CourseCollection collection = courseCollectionMapper.selectByUserAndCourse(userId,
 				courseId);
@@ -69,21 +76,20 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	/**
 	 * 数据转换
-	 *
+	 * @param isWeb 前台查询 仅查询公开
 	 * @param course
 	 * @return
 	 */
-	private CourseInfoBo courseToBo(Course course) {
+	private CourseInfoBo courseToBo(Course course, Boolean isWeb) {
 
 		// 转换类别
-		CourseCategory courseDirection = directionMapper.selectById(course.getDirection());
+		CourseCategory courseDirection = directionMapper.selectById(course.getCategoryId());
 
 		CourseInfoBo courseInfoBo = BeanUtils.copy(course, CourseInfoBo.class);
 		courseInfoBo.setDirectionName(courseDirection.getName());
 
 		// 计算课时数量
-		List<CourseLesson> courseLessons = courseLessonMapper
-				.listByCourses(Arrays.asList(course.getResourceId()));
+		List<CourseLesson> courseLessons = courseLessonMapper.selectByCourse(course.getResourceId(), isWeb);
 		courseInfoBo.setLessonCount(courseLessons.size());
 
 		// 计算课程时长
@@ -91,9 +97,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		courseInfoBo.setCourseDuration(sum);
 
 		// 计算实验课和理论课数量
-		List<CourseLesson> theoryCount = courseLessons.stream().filter(
-				courseLesson -> courseLesson.getType().intValue() == CourseLesson.TYPE_THEORY)
+		List<CourseLesson> theoryCount = courseLessons
+				.stream().filter(courseLesson -> courseLesson.getType()
+						.intValue() == LessonType.THEORY.getCode().intValue())
 				.collect(Collectors.toList());
+
 		courseInfoBo.setTheoryCount(theoryCount.size());
 		courseInfoBo
 				.setExerciseCount(courseInfoBo.getLessonCount() - courseInfoBo.getTheoryCount());
@@ -110,7 +118,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
 
 		List<Course> courses = courseMapper.selectBatchIds(ids);
-		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course))
+		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course, true))
 				.map(infBo -> {
 					if (infBo.getLessonCount().intValue() > 0) {
 						infBo.setInterview(
@@ -127,10 +135,21 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Override
 	public ListRsp<CourseInfoBo> selectPage(Page page, CourseContext courseContext,
 			AuthContext authContext) {
+		// 权限过滤
 		List<String> courseIds = null;
 		if (null != authContext) {
 			courseIds = courseMapper.selectByAuth(authContext);
 		}
+
+		// 我的课程 系统课程 共享课程过滤
+		SpecialCourseContext specialContext = BeanUtils.copy(courseContext,
+				SpecialCourseContext.class);
+		if (!specialContext.getMyCourse() || !specialContext.getShareCourse()
+				|| !specialContext.getSystemCourse()) {
+			courseIds = courseMapper.selectSpecial(courseIds, specialContext);
+		}
+
+		// 常规条件过滤
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds);
 
 		iPage.convert(course -> transferToBo(course, authContext));
@@ -147,24 +166,26 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseWebBo transferToBo(Course course, AuthContext authContext) {
 
 		if (null != authContext && !authContext.getIsWeb()) {
-			CourseInfoBo courseInfoBo = courseToBo(course);
+			CourseInfoBo courseInfoBo = courseToBo(course, authContext.getIsWeb());
 			CourseAdminBo courseAdminBo = BeanUtils.copy(courseInfoBo, CourseAdminBo.class);
-			courseAdminBo.setAuth(course.getAuth());
-			courseAdminBo.setShare(course.getShare());
-			if (course.getAuth().intValue() == Course.CUSTOM_SHARE_MODE) {
-				List<String> orgs = JsonUtil.toJsonObjectArray(course.getAuthOrganization(),
+			courseAdminBo.setAuth(course.getReadAuthType());
+			courseAdminBo.setShare(course.getOperationAuthType());
+			if (course.getReadAuthType().intValue() == CourseAuthShare.CUSTOM.getCode()
+					.intValue()) {
+				List<String> orgs = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
 						String.class);
 				courseAdminBo.setAuthCount(orgs.size());
 			}
-			if (course.getShare().intValue() == Course.CUSTOM_SHARE_MODE) {
-				List<String> shares = JsonUtil.toJsonObjectArray(course.getShareTeachers(),
+			if (course.getOperationAuthType().intValue() == CourseAuthShare.CUSTOM.getCode()
+					.intValue()) {
+				List<String> shares = JsonUtil.toJsonObjectArray(course.getOperationAuthIds(),
 						String.class);
 				courseAdminBo.setAuthCount(shares.size());
 			}
 			return courseAdminBo;
 
 		} else {
-			CourseInfoBo courseInfoBo = courseToBo(course);
+			CourseInfoBo courseInfoBo = courseToBo(course, authContext.getIsWeb());
 			CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
 			return courseWebBo;
 		}
@@ -203,18 +224,23 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public Course addCourse(String userId, Course course) {
+	public Course addOrUpdate(String userId, Course course) {
 
 		if (StringUtils.isNotBlank(course.getResourceId())) {
-			courseMapper.updateById(course);
+			Course existCourse = courseMapper.selectById(course.getResourceId());
+			if (null == existCourse) {
+				throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			}
+
+			course.setModifyUserId(userId);
 		} else {
-			course.setCreateUser(userId);
-			course.setLastEditUser(userId);
-			course.setStatus(ModelConstant.NOT_DELETE);
-			course.setHeat(0);
-			courseMapper.insert(course);
+			course.setHeat(CommonConstant.ZERO);
+			course.setBuiltin(CommonConstant.FALSE);
+			course.setCreateUserId(userId);
+			course.setModifyUserId(userId);
 		}
 
+		saveOrUpdate(course);
 		return course;
 	}
 }

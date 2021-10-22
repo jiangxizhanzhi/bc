@@ -31,8 +31,7 @@ public interface CourseService extends IService<Course> {
     /**
      * 根据课程条件信息查询
      * @param page
-     * @param courseContext 检索条件
-     * @param authContext 权限条件 需要进行权限过滤时调用
+     * @param courseContext
      * @return
      */
     ListRsp<CourseInfoBo> selectPage(Page page, CourseContext courseContext, AuthContext authContext);
@@ -59,5 +58,5 @@ public interface CourseService extends IService<Course> {
      * @param userId
      * @return
      */
-    Course addCourse(String userId, Course course);
+    Course addOrUpdate(String userId, Course course);
 }

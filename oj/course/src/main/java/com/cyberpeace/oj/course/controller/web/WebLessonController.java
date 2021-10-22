@@ -6,8 +6,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.CollectionReq;
-import com.cyberpeace.oj.course.dao.mapper.LessonMapper;
-import com.cyberpeace.oj.course.dao.oj_entity.Lesson;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -36,7 +36,7 @@ public class WebLessonController {
     private CourseLessonService courseLessonService;
 
     @Autowired
-    private LessonMapper lessonMapper;
+    private CourseLessonMapper courseLessonMapper;
 
     @Autowired
     private CommentService commentService;
@@ -70,7 +70,7 @@ public class WebLessonController {
     @PostMapping("/comment")
     public BaseRsp<CommentRes> lessonComment(@RequestBody @Valid CommentReq commentReq) {
 
-        Lesson lesson = lessonMapper.selectById(commentReq.getResource());
+        CourseLesson lesson = courseLessonMapper.selectById(commentReq.getResource());
         if (null == lesson) {
             throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FOUND);
         }
@@ -88,7 +88,7 @@ public class WebLessonController {
     @PostMapping("/note")
     public BaseRsp<NoteAddContext> saveNote(@ApiParam @RequestBody @Valid NoteReq noteReq) {
 
-        Lesson lesson = lessonMapper.selectById(noteReq.getResource());
+        CourseLesson lesson = courseLessonMapper.selectById(noteReq.getResource());
         if (null == lesson) {
             throw new ResourceNotFoundException("未检索到对应课时信息！");
         }

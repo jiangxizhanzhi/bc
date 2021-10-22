@@ -15,7 +15,7 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * @param directionId
 	 * @return
 	 */
-	List<String> getAllChildrenIds(String directionId);
+	List<String> getChildrenIds(String directionId);
 
 	/**
 	 * 查询所有课程分类

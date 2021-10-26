@@ -6,8 +6,8 @@
     <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.Course"/>
 
     <sql id="share_constant">
-        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.oj.course.dao.entity.Course@ALL.code"/>
-        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.oj.course.dao.entity.Course@CUSTOM.code"/>
+        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.oj.course.constant.CourseAuthShare@ALL.code"/>
+        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.oj.course.constant.CourseAuthShare@CUSTOM.code"/>
     </sql>
 
     <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">
@@ -68,20 +68,22 @@
         <include refid="share_constant"/>
         select resource_id from oj_course
         <where>
-            <choose>
-                <when test="authContext.isWeb">
-                    and (create_user = #{authContext.userId} or (auth_organization like #{authContext.likeOrganization}
-                    and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
-                </when>
-                <otherwise>
-                    and (create_user = #{authContext.userId} or (share_teachers like #{authContext.likeUser}
-                    and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
-                </otherwise>
-            </choose>
+            <if test="authContext != null">
+                <choose>
+                    <when test="authContext.isWeb">
+                        (create_user = #{authContext.userId} or (auth_organization like #{authContext.likeOrganization}
+                        and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
+                    </when>
+                    <otherwise>
+                        (create_user = #{authContext.userId} or (share_teachers like #{authContext.likeUser}
+                        and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
+                    </otherwise>
+                </choose>
+            </if>
         </where>
     </select>
 
-    <select id="selectSpecial" resultMap="baseResultMap">
+    <select id="selectSpecial" resultType="java.lang.String">
         select resource_id from oj_course
         <where>
             <if test="null != courseIds and courseIds.size() > 0">
@@ -124,6 +126,27 @@
                     </if>
                 </otherwise>
             </choose>
+        </where>
+    </select>
+
+    <select id="selectIdsByCategory" resultType="string">
+        select resource_id from oj_course
+        <where>
+            <if test="courseIds != null and courseIds.size() != 0">
+                resource_id in
+                <foreach collection="courseIds" open="(" close=")" separator="," item="courseId">
+                    #{courseId}
+                </foreach>
+            </if>
+            <if test="categoryIds != null and categoryIds.size() != 0">
+                and category_id in
+                <foreach collection="categoryIds" open="(" close=")" item="categoryId" separator=",">
+                    #{categoryId}
+                </foreach>
+            </if>
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
         </where>
     </select>
 

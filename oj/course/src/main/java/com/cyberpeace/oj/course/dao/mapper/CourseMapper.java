@@ -46,4 +46,15 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 */
 	List<String> selectSpecial(@Param("courseIds") List<String> courseIds,
 			@Param("specialContext") SpecialCourseContext specialContext);
+
+	/**
+	 * 根据分类 和课程列表进一步过滤课程编号
+	 * @param courseIds
+	 * @param categoryIds
+	 * @param isPublic
+	 * @return
+	 */
+	List<String> selectIdsByCategory(@Param("courseIds") List<String> courseIds,
+									 @Param("categoryIds") List<String> categoryIds,
+									 @Param("isPublic") Boolean isPublic);
 }

@@ -11,8 +11,15 @@ public interface AttachmentService extends IService<Attachment> {
     /**
      * 根据附件编号查询附件信息 以,分割
      * @param attachmentIds
+     * @param isWeb
      * @return
      */
-    List<AttachmentBo> selectByIds(String attachmentIds);
+    List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb);
+
+    /**
+     * 删除修改后
+     * @return
+     */
+    Integer deleteDifferenceSet(String oldAttachmentIds, String attachmentIds);
 
 }

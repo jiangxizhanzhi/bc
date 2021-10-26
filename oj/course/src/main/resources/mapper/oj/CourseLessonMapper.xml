@@ -31,8 +31,11 @@
     <select id="pageByContext" resultMap="lesson">
         select * from oj_course_lesson
         <where>
-            <if test="context.courseId != null and context.courseId != ''">
-                and course_id = #{context.courseId}
+            <if test="context.courseIds != null and context.courseIds.size() != 0">
+                course_id in
+                <foreach collection="context.courseIds" separator="," item="courseId" close=")" open="(">
+                    #{courseId}
+                </foreach>
             </if>
             <if test="context.type != null">
                 and `type` = #{context.type}

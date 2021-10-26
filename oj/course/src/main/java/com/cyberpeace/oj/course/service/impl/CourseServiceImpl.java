@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.service.CourseCategoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -52,13 +51,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseMapper courseMapper;
 
 	@Autowired
-	private CourseCategoryMapper directionMapper;
+	private CourseCategoryMapper courseCategoryMapper;
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	@Autowired
 	private CourseCollectionMapper courseCollectionMapper;
+
+	@Autowired
+	private CourseCategoryService courseCategoryService;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -83,13 +85,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseInfoBo courseToBo(Course course, Boolean isWeb) {
 
 		// 转换类别
-		CourseCategory courseDirection = directionMapper.selectById(course.getCategoryId());
+		CourseCategory courseDirection = courseCategoryMapper.selectById(course.getCategoryId());
 
 		CourseInfoBo courseInfoBo = BeanUtils.copy(course, CourseInfoBo.class);
 		courseInfoBo.setDirectionName(courseDirection.getName());
 
 		// 计算课时数量
-		List<CourseLesson> courseLessons = courseLessonMapper.selectByCourse(course.getResourceId(), isWeb);
+		List<CourseLesson> courseLessons = courseLessonMapper.selectByCourse(course.getResourceId(),
+				isWeb);
 		courseInfoBo.setLessonCount(courseLessons.size());
 
 		// 计算课程时长
@@ -185,7 +188,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			return courseAdminBo;
 
 		} else {
-			CourseInfoBo courseInfoBo = courseToBo(course, authContext.getIsWeb());
+			CourseInfoBo courseInfoBo = courseToBo(course, true);
 			CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
 			return courseWebBo;
 		}
@@ -242,5 +245,17 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		saveOrUpdate(course);
 		return course;
+	}
+
+	@Override
+	public List<String> selectIdsByCategory(String category, AuthContext authContext) {
+
+		List<String> authIds = courseMapper.selectByAuth(authContext);
+
+		List<String> childrenIds = courseCategoryService.getChildrenIds(category);
+		List<String> courseIds = courseMapper.selectIdsByCategory(authIds, childrenIds,
+				authContext.getIsWeb());
+
+		return null != childrenIds ? courseIds : Lists.newArrayList();
 	}
 }

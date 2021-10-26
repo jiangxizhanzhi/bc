@@ -59,4 +59,12 @@ public interface CourseService extends IService<Course> {
      * @return
      */
     Course addOrUpdate(String userId, Course course);
+
+    /**
+     * 根据分类查询课程编号
+     * @param category
+     * @param authContext
+     * @return
+     */
+    List<String> selectIdsByCategory(String category, AuthContext authContext);
 }

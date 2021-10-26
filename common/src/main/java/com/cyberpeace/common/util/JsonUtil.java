@@ -41,4 +41,13 @@ public class JsonUtil {
 	public static <T> String arrayToString(List<T> objArr) {
 		return JSONArray.toJSONString(objArr);
 	}
+
+	/**
+	 * 字符串转为jsonArray
+	 * @param text
+	 * @return
+	 */
+	public static JSONArray StringToArray(String text) {
+		return JSONArray.parseArray(text);
+	}
 }

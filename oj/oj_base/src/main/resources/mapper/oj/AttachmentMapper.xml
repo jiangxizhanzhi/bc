@@ -4,4 +4,19 @@
 <mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.AttachmentMapper">
     <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Attachment"/>
 
+    <select id="selectBatchIds" resultMap="base">
+        select * from attachment
+        <where>
+            <if test="attachmentIds != null and attachmentIds.size() != 0">
+                resource_id in
+                <foreach collection="attachmentIds" item="attachmentId" separator="," close=")" open="(">
+                    #{attachmentId}
+                </foreach>
+            </if>
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
+        </where>
+    </select>
+
 </mapper>

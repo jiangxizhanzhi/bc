@@ -21,7 +21,7 @@ public class CourseLesson extends BaseTable {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	private Integer builtin;
+	private Boolean builtin;
 
 	private String courseId;
 
@@ -38,7 +38,7 @@ public class CourseLesson extends BaseTable {
 	private Integer difficulty;
 
 	@TableField("public")
-	private Integer isPublic;
+	private Boolean isPublic;
 
 	private String attachmentIds;
 

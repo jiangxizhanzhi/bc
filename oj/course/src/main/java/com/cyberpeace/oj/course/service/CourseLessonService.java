@@ -1,18 +1,16 @@
 package com.cyberpeace.oj.course.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.oj.course.controller.res.AdminLessonDetailRes;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonScene;
-import com.cyberpeace.oj.course.service.bo.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
+import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
+import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 
 public interface CourseLessonService extends IService<CourseLesson> {
 
@@ -25,15 +23,6 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	LessonInfoBo getLessonDetail(String userId, String courseId, String lessonId);
 
 	/**
-	 * 收藏课时
-	 * @param userId
-	 * @param lessonId
-	 * @param isCollection
-	 * @return
-	 */
-	String collectionLesson(String userId, String lessonId, Boolean isCollection);
-
-	/**
 	 * 查询后台课时详情数据
 	 * @param courseId
 	 * @param lessonId
@@ -42,20 +31,13 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	AdminLessonBo selectByCourseAndLesson(String courseId, String lessonId);
 
 	/**
-	 * 课时文件上传（讲义或者视频）
-	 * @param handout
-	 * @return
-	 */
-	LessonFileBo uploadLessonFile(MultipartFile handout);
-
-	/**
 	 * 课时新增或者修改
 	 * @param courseLesson
 	 * @param ojSceneConfig
 	 * @param practiceList
 	 * @return
 	 */
-	CourseLesson addOrUpdate(CourseLesson courseLesson, String ojSceneConfig, String practiceList);
+	CourseLesson addOrUpdate(CourseLesson courseLesson, String ojSceneConfig, List<PaperPracticeContext> practiceList);
 
 	/**
 	 * 后台课时列表查询

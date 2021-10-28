@@ -1,12 +1,12 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import com.cyberpeace.oj.practice.dao.entity.TestPaper;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class TestPaperInfo extends TestPaper {
+public class TestPaperInfo extends Paper {
     /**
      * 关联练习列表
      */

@@ -1,7 +1,7 @@
 package com.cyberpeace.oj.practice.service;
 
 import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
-import com.cyberpeace.oj.practice.dao.entity.TestPaper;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public interface PracticeService {
 
     EvaluateResult evaluator(String resourceId, Integer practiceType, String answer, String user);
 
-    TestPaper createTestPaper(List<String> resourceIds);
+    Paper createTestPaper(List<String> resourceIds);
 
 }
 

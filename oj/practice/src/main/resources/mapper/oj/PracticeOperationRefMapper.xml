@@ -21,4 +21,10 @@
         </foreach>
     </insert>
 
+
+    <delete id="deleteByPaper">
+        delete from oj_practice_operation_ref
+        where paper_id = #{paperId}
+    </delete>
+
 </mapper>

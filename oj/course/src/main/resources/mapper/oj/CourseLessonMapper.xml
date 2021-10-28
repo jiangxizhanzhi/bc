@@ -3,7 +3,9 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper">
 
-    <resultMap id="lesson" type="com.cyberpeace.oj.course.dao.entity.CourseLesson"/>
+    <resultMap id="lesson" type="com.cyberpeace.oj.course.dao.entity.CourseLesson">
+        <result property="isPublic" column="public"/>
+    </resultMap>
 
     <select id="listByCourses" resultMap="lesson">
         select * from oj_course_lesson

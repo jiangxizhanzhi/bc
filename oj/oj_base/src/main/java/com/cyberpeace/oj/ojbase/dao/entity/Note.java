@@ -18,16 +18,6 @@ public class Note implements Serializable {
     /** 实验报告*/
     public static final int REPORT = 2;
 
-    // 资源类型
-    /** 课程*/
-    public static final int COURSE = 1;
-    /** 课时*/
-    public static final int LESSON = 2;
-    /** 练习(漏洞习题、夺旗习题)*/
-    public static final int PRACTICE = 3;
-    /** 课后练习*/
-    public static final int LESSON_PAPER = 4;
-
     private Integer id;
 
     private String resourceId;

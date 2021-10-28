@@ -19,4 +19,7 @@ public interface OjBusinessErrorCode {
 	/** 数据重复插入*/
 	String DUPLICATE_EXCEPTION = "102004";
 
+	/** 参数数据与数据库数据不一致*/
+	String PARAM_DATABASE_ERROR = "102005";
+
 }

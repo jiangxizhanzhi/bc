@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.req;
 
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -49,10 +50,10 @@ public class LessonAddReq implements Serializable {
     private String courseId;
 
     @ApiModelProperty("讲义")
-    private MultipartFile handout;
+    private String handoutUrl;
 
     @ApiModelProperty("视频")
-    private MultipartFile video;
+    private String videoUrl;
 
     @ApiModelProperty("场景配置信息")
     private String ojSceneConfig;
@@ -64,6 +65,6 @@ public class LessonAddReq implements Serializable {
     private Integer sceneShareMode;
 
     @ApiModelProperty("习题列表")
-    private String practiceList;
+    private List<PaperPracticeContext> practiceList;
 
 }

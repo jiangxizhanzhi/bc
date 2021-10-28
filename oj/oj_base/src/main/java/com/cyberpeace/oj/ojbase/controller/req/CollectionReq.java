@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.course.controller.req;
+package com.cyberpeace.oj.ojbase.controller.req;
 
 import java.io.Serializable;
 
@@ -15,10 +15,14 @@ public class CollectionReq implements Serializable {
 
     @ApiModelProperty("收藏的资源编号 课程、课时")
     @NotBlank
-    private String resource;
+    private String businessId;
 
     @ApiModelProperty("是否进行收藏 true进行收藏，false取消收藏")
     @NotNull
     private Boolean isCollection;
+
+    @ApiModelProperty("资源类型 0=理论题 1=漏洞题(暂时无用) 2=实操题 3=课程 4=课时")
+    @NotNull
+    private Integer businessType;
 
 }

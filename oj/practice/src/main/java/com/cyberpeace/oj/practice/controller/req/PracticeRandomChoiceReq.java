@@ -25,5 +25,5 @@ public class PracticeRandomChoiceReq {
 
     @NotBlank
     @ApiModelProperty("设置默认分值")
-    private float score;
+    private Double score;
 }

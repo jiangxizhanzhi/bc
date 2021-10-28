@@ -39,7 +39,6 @@ public class PracticeTheoryController extends PracticeMixinController<PracticeTh
         if (object == null) {
             throw new ResourceNotFoundException(resourceId);
         }
-        object.setCategoryInfo(practiceCategoryService.nodeInfo(object.getCategory()));
         return new BaseRsp<>(object);
     }
 
@@ -58,7 +57,7 @@ public class PracticeTheoryController extends PracticeMixinController<PracticeTh
     @ApiOperation("新增理论基础练习")
     public BaseRsp<PracticeTheory> create(@RequestBody PracticeTheoryReq requestData) {
         PracticeTheory object = new PracticeTheory();
-        object.setCreateUser(getRequestUserId());
+        object.setCreateUserId(getRequestUserId());
         BeanUtils.copyProperties(requestData, object);
         return practiceTheoryMapper.insert(object) != 0 ? new BaseRsp<>(object) : new BaseRsp<>();
     }

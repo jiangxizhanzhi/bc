@@ -34,7 +34,7 @@
                     and `difficulty` = #{courseContext.difficulty}
                 </if>
                 <if test="null != courseContext.directions and courseContext.directions.size() > 0">
-                    and `direction` in
+                    and `category_id` in
                     <foreach collection="courseContext.directions" index="index" separator=","
                              item="direction" open="(" close=")">
                         #{direction}
@@ -71,12 +71,12 @@
             <if test="authContext != null">
                 <choose>
                     <when test="authContext.isWeb">
-                        (create_user = #{authContext.userId} or (auth_organization like #{authContext.likeOrganization}
-                        and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
+                        (create_user_id = #{authContext.userId} or (read_auth_ids like #{authContext.likeOrganization}
+                        and read_auth_type = ${CUSTOM_SHARE_MODE}) or read_auth_type = ${ALL_SHARE_MODE})
                     </when>
                     <otherwise>
-                        (create_user = #{authContext.userId} or (share_teachers like #{authContext.likeUser}
-                        and auth = ${CUSTOM_SHARE_MODE}) or auth = ${ALL_SHARE_MODE})
+                        (create_user_id = #{authContext.userId} or (operation_auth_ids like #{authContext.likeUser}
+                        and operation_auth_type = ${CUSTOM_SHARE_MODE}) or operation_auth_type = ${ALL_SHARE_MODE})
                     </otherwise>
                 </choose>
             </if>
@@ -100,10 +100,10 @@
                     <if test="null != specialContext.myCourse">
                         <choose>
                             <when test="specialContext.myCourse">
-                                and `create_user` = #{specialContext.userId}
+                                and `create_user_id` = #{specialContext.userId}
                             </when>
                             <otherwise>
-                                and `create_user` != #{specialContext.userId}
+                                and `create_user_id` != #{specialContext.userId}
                             </otherwise>
                         </choose>
                     </if>
@@ -115,11 +115,11 @@
                         <bind name="specialContext.likeUser" value="'%' + specialContext.userId + '%'"/>
                         <choose>
                             <when test="specialContext.shareCourse">
-                                and (`share` = ${ALL_SHARE_MODE} or (`share` = ${CUSTOM_SHARE_MODE} and `share_teachers` like
+                                and (`operation_auth_type` = ${ALL_SHARE_MODE} or (`operation_auth_type` = ${CUSTOM_SHARE_MODE} and `operation_auth_ids` like
                                 #{specialContext.likeUser}))
                             </when>
                             <otherwise>
-                                and (`share` = ${CUSTOM_SHARE_MODE} and `share_teachers` not like
+                                and (`operation_auth_type` = ${CUSTOM_SHARE_MODE} and `operation_auth_ids` not like
                                 #{specialContext.likeUser})
                             </otherwise>
                         </choose>

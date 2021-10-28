@@ -1,44 +1,31 @@
 package com.cyberpeace.oj.ojbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@TableName("x_comment_comment")
-public class Comment implements Serializable {
+@TableName("oj_comment")
+public class Comment extends BaseTable {
 
-    /** 评论类型-课程*/
-    public static final int COURSE = 1;
+	private String resourceId;
 
-    /** 评论类型-课时*/
-    public static final int LESSON = 2;
+	private String replyId;
 
-    /** 评论类型-练习题*/
-    public static final int EXERCISE = 3;
+	private String businessId;
 
-    private String resourceId;
+	private String themeName;
 
-    private String reply;
+	private String userId;
 
-    private String resource;
+	private String content;
 
-    private String themeName;
+	private Integer businessType;
 
-    private String user;
-
-    private String comment;
-
-    private Integer commentType;
-
-    private Integer status;
-
-    private Date createTime;
-
-    private Date updateTime;
-
-    private String parentId;
+	private String rootId;
 
 }

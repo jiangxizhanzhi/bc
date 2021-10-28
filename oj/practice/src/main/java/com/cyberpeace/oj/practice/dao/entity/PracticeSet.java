@@ -5,9 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.oj.practice.dao.constants.Auth;
-import com.cyberpeace.oj.practice.dao.constants.Share;
-import com.cyberpeace.oj.practice.dao.constants.Status;
+import com.cyberpeace.oj.practice.constant.Auth;
+import com.cyberpeace.oj.practice.constant.Share;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -15,16 +14,10 @@ import lombok.Data;
 @TableName("practice_set")
 public class PracticeSet extends BaseTable {
 
-    @JsonIgnore
-    private Integer id;
-
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
     private boolean builtin;
-
-    @JsonIgnore
-    private Integer status = Status.NORMAL.getValue();
 
     /**
      * 名称
@@ -55,12 +48,12 @@ public class PracticeSet extends BaseTable {
     /**
      * 授权访问
      */
-    private Integer auth = Auth.CUSTOM.getValue();
+    private Integer auth = Auth.CUSTOM.getCode();
 
     /**
      * 授权操作
      */
-    private Integer share = Share.CUSTOM.getValue();
+    private Integer share = Share.CUSTOM.getCode();
 
     /**
      * 已授权访问组织

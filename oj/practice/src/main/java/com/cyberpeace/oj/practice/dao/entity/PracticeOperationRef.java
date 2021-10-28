@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.practice.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -7,16 +9,20 @@ import lombok.Data;
  * 派生于PracticeOperation, 在试卷中被引用
  */
 @Data
-@TableName("practice_operation_ref")
-public class PracticeOperationRef extends PracticeOperation {
+@TableName("oj_practice_operation_ref")
+public class PracticeOperationRef {
 
-    /**
-     * 引用原数据resourceID
-     */
-    private String originId;
+	/** 快照 对应习题的快照*/
+	private String snapshot;
 
-    /**
-     * 所属试卷
-     */
-    private String testPaper;
+	/** 资源编号*/
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
+
+	/** 对应原习题编号*/
+	private String originId;
+
+	/** 试卷编号*/
+	private String paperId;
+
 }

@@ -13,6 +13,7 @@ import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
+import com.cyberpeace.oj.ojbase.constant.CommentType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
 import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
@@ -32,9 +33,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.oj.course.controller.req.CollectionReq;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
-import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 
@@ -62,17 +61,6 @@ public class WebCourseController {
 
 	@Autowired
 	private NoteService noteService;
-
-	@ApiOperation("课程收藏")
-	@PostMapping("/collect")
-	public BaseRsp<String> courseCollection(@RequestBody CollectionReq req) {
-
-		String userId = UserInfoContext.getUserContext().getUserId();
-
-		String courseId = courseService.collectCourse(userId, req.getResource(),
-				req.getIsCollection());
-		return new BaseRsp<>(courseId);
-	}
 
 	@ApiOperation("前台课程列表查询")
 	@GetMapping("/list")
@@ -112,14 +100,14 @@ public class WebCourseController {
 	@ApiOperation("留言新增或者修改")
 	public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
 
-		Course course = courseMapper.selectById(commentReq.getResource());
+		Course course = courseMapper.selectById(commentReq.getBusinessId());
 		if (null == course) {
 			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
 		}
 
 		Comment comment = BeanUtils.copy(commentReq, Comment.class);
-		comment.setUser(UserInfoContext.getUserContext().getUserId());
-		comment.setCommentType(Comment.COURSE);
+		comment.setUserId(UserInfoContext.getUserContext().getUserId());
+		comment.setBusinessType(CommentType.COURSE.getCode());
 
 		Comment newComment = commentService.addNewComment(comment);
 		CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);

@@ -1,10 +1,8 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.course.service.CourseCategoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +26,18 @@ import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
-import com.cyberpeace.oj.course.dao.entity.CourseCollection;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseCollectionMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+import com.cyberpeace.oj.ojbase.constant.CollectionType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +56,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseLessonMapper courseLessonMapper;
 
 	@Autowired
-	private CourseCollectionMapper courseCollectionMapper;
+	private ResourceCollectionService resourceCollectionService;
 
 	@Autowired
 	private CourseCategoryService courseCategoryService;
@@ -70,9 +69,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		}
 		CourseInfoBo courseInfoBo = courseToBo(course, true);
 		// 设置是否收藏
-		CourseCollection collection = courseCollectionMapper.selectByUserAndCourse(userId,
-				courseId);
-		courseInfoBo.setIsCollection(null != collection && collection.getIsCollection());
+
+		Boolean collection = resourceCollectionService.selectByUnique(userId,
+				CollectionType.COURSE.getCode(), courseId);
+		courseInfoBo.setIsCollection(collection);
 		return courseInfoBo;
 	}
 
@@ -205,28 +205,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public String collectCourse(String userId, String course, Boolean isCollection) {
-
-		CourseCollection exist = courseCollectionMapper.selectByUserAndCourse(userId, course);
-
-		// 新增或者更新
-		if (null == exist) {
-			CourseCollection collection = new CourseCollection();
-			collection.setUser(userId);
-			collection.setCourse(course);
-			collection.setIsCollection(isCollection);
-			collection.setUpdateTime(new Date());
-			courseCollectionMapper.insert(collection);
-		} else {
-			CourseCollection collection = BeanUtils.copy(exist, CourseCollection.class);
-			collection.setIsCollection(isCollection);
-			courseCollectionMapper.updateById(collection);
-		}
-
-		return course;
-	}
-
-	@Override
 	public Course addOrUpdate(String userId, Course course) {
 
 		if (StringUtils.isNotBlank(course.getResourceId())) {
@@ -252,7 +230,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		List<String> authIds = courseMapper.selectByAuth(authContext);
 
-		List<String> childrenIds = courseCategoryService.getChildrenIds(category);
+		List<String> childrenIds = null;
+		if (StringUtils.isNotBlank(category)) {
+			childrenIds = courseCategoryService.getChildrenIds(category);
+		}
+
 		List<String> courseIds = courseMapper.selectIdsByCategory(authIds, childrenIds,
 				authContext.getIsWeb());
 

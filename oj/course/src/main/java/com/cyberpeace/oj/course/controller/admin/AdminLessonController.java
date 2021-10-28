@@ -139,7 +139,20 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时场景拓扑信息查询")
 	@GetMapping("/scene_topo")
 	public BaseRsp getTopoScene() {
-		// todo
+		// TODO
+		return null;
+	}
+
+	@ApiOperation("实验报告查询")
+	@GetMapping("/lesson_report")
+	public BaseRsp getLessonReport() {
+		// TODO
+		return null;
+	}
+
+	@ApiOperation("课时监控")
+	public BaseRsp getLessonMonitor() {
+		// TODO
 		return null;
 	}
 
@@ -171,22 +184,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
 		courseLesson.setKnowledge(JsonUtil.arrayToString(lessonAddReq.getKnowledge()));
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-
-		// 讲义存储和类型获取
-		if (null != lessonAddReq.getHandout()) {
-			LessonFileBo lessonFileBo = courseLessonService
-					.uploadLessonFile(lessonAddReq.getHandout());
-			courseLesson.setHandoutType(lessonFileBo.getFileType());
-			courseLesson.setHandoutUrl(lessonFileBo.getStoreUrl());
-			courseLesson.setOriginMarkdownFile(lessonFileBo.getOriginUrl());
-		}
-
-		// 视频上传
-		if (null != lessonAddReq.getVideo()) {
-			LessonFileBo lessonFileBo = courseLessonService
-					.uploadLessonFile(lessonAddReq.getVideo());
-			courseLesson.setVideoUrl(lessonFileBo.getStoreUrl());
-		}
 
 		return courseLesson;
 	}

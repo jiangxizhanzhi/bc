@@ -2,8 +2,8 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.oj.practice.dao.constants.PracticeType;
-import com.cyberpeace.oj.practice.dao.constants.TheoryQuestionType;
+import com.cyberpeace.oj.practice.constant.PracticeType;
+import com.cyberpeace.oj.practice.constant.TheoryQuestionType;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeServiceMapper;
@@ -31,10 +31,12 @@ public class PracticeServiceImpl implements PracticeService {
     @Autowired
     PracticeOperationMapper practiceOperationMapper;
 
+    @Override
     public EvaluateResult evaluator(String resourceId, Integer practiceType, String answer) {
         return evaluator(resourceId, practiceType, answer, "");
     }
 
+    @Override
     public EvaluateResult evaluator(String resourceId, Integer practiceType, String answer, String user) {
 
         // 针对同一用户、同一练习, 仅评估一次  TODO 试卷评估等不同形式待处理
@@ -45,11 +47,11 @@ public class PracticeServiceImpl implements PracticeService {
             }
         }
 
-        if (practiceType.equals(PracticeType.THEORY.getValue())) {
+        if (practiceType.equals(PracticeType.THEORY.getCode())) {
             PracticeTheory practiceObject = practiceTheoryMapper.selectById(resourceId);
             return evaluator(practiceObject, answer, user);
 
-        } else if (practiceType.equals(PracticeType.OPERATION.getValue())) {
+        } else if (practiceType.equals(PracticeType.OPERATION.getCode())) {
             PracticeOperation practiceObject = practiceOperationMapper.selectById(resourceId);
             return evaluator(practiceObject, answer, user);
 
@@ -70,19 +72,19 @@ public class PracticeServiceImpl implements PracticeService {
 
         if (practiceObject instanceof PracticeTheory) {
             PracticeTheory origin = (PracticeTheory) practiceObject;
-            if (origin.getQuestionType().equals(TheoryQuestionType.SINGLE.getValue())) {
+            if (origin.getTheoryType().equals(TheoryQuestionType.SINGLE.getValue())) {
                 result = Evaluator.singleEval((PracticeTheory) practiceObject, answer);
 
-            } else if (origin.getQuestionType().equals(TheoryQuestionType.MULTIPLE.getValue())) {
+            } else if (origin.getTheoryType().equals(TheoryQuestionType.MULTIPLE.getValue())) {
                 result = Evaluator.multipleEval((PracticeTheory) practiceObject, answer);
 
-            } else if (origin.getQuestionType().equals(TheoryQuestionType.JUDGMENT.getValue())) {
+            } else if (origin.getTheoryType().equals(TheoryQuestionType.JUDGMENT.getValue())) {
                 result = Evaluator.judgmentEval((PracticeTheory) practiceObject, answer);
 
-            } else if (origin.getQuestionType().equals(TheoryQuestionType.FILL_BLANK.getValue())) {
+            } else if (origin.getTheoryType().equals(TheoryQuestionType.FILL_BLANK.getValue())) {
                 result = Evaluator.fillBlankEval((PracticeTheory) practiceObject, answer);
 
-            } else if (origin.getQuestionType().equals(TheoryQuestionType.SHORT_ANSWER.getValue())) {
+            } else if (origin.getTheoryType().equals(TheoryQuestionType.SHORT_ANSWER.getValue())) {
                 result = Evaluator.shortAnswerEval((PracticeTheory) practiceObject, answer);
 
             } else {
@@ -104,8 +106,8 @@ public class PracticeServiceImpl implements PracticeService {
     }
 
     @Override
-    public TestPaper createTestPaper(List<String> resourceIds) {
-        TestPaper object = new TestPaper();
+    public Paper createTestPaper(List<String> resourceIds) {
+        Paper object = new Paper();
 
         List<PracticeTheory> theoryList = practiceTheoryMapper.selectBatchIds(resourceIds);
         List<PracticeOperation> operationList = practiceOperationMapper.selectBatchIds(resourceIds);
@@ -126,7 +128,7 @@ class Evaluator {
      */
     public static EvaluateResult singleEval(PracticeTheory practice, String answer) {
         Boolean isPass = practice.getAnswer().equalsIgnoreCase(answer);
-        Float score = isPass ? practice.getScore() : 0;
+        Double score = isPass ? practice.getScore() : 0;
         return new EvaluateResult(isPass, score, practice.getScore());
     }
 
@@ -148,7 +150,7 @@ class Evaluator {
      * 填空题评估
      */
     public static EvaluateResult fillBlankEval(PracticeTheory practice, String answer) {
-        float score = 0f;
+        Double score = 0d;
         boolean isPass = false;
 
         JSONObject jsonAnswer = JSONObject.parseObject(answer);
@@ -180,7 +182,7 @@ class Evaluator {
      * 简答题评估, 默认通过, 不设置得分.
      */
     public static EvaluateResult shortAnswerEval(PracticeTheory practice, String answer) {
-        return new EvaluateResult(true, 0f, practice.getScore());
+        return new EvaluateResult(true, 0d, practice.getScore());
     }
 
     /**
@@ -188,6 +190,6 @@ class Evaluator {
      */
     // TODO 处理待定
     public static EvaluateResult operationEval(PracticeOperation practice, String answer) {
-        return new EvaluateResult(true, 0f, practice.getScore());
+        return new EvaluateResult(true, 0d, practice.getScore());
     }
 }

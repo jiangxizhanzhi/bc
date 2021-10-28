@@ -38,7 +38,7 @@ public class AdminLessonListBo implements Serializable {
     private Integer difficulty;
 
     @ApiModelProperty("课时公开和隐藏 true 公开")
-    private Integer isPublic;
+    private Boolean isPublic;
 
     @ApiModelProperty("附件编号")
     private String attachmentIds;

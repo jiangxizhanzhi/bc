@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
 public class StreamApiUtils {
@@ -86,6 +87,21 @@ public class StreamApiUtils {
 	 */
 	public static <E, T> List<T> simpleMap(Collection<E> collection, Function<E, T> mapperValue) {
 		return collection.stream().map(mapperValue).collect(Collectors.toList());
+	}
+
+	/**
+	 * 计算结合某列的double值
+	 * @param collection
+	 * @param mapper
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> Double mapToDouble(Collection<E> collection,
+			ToDoubleFunction<? super E> mapper) {
+
+		double sum = collection.stream().mapToDouble(mapper).sum();
+		return sum;
+
 	}
 
 }

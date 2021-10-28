@@ -13,16 +13,16 @@ public class CommentReq implements Serializable {
 
     @ApiModelProperty("评论内容")
     @NotBlank
-    private String comment;
+    private String content;
 
     @ApiModelProperty("资源编号 课程 课时 练习")
     @NotBlank
-    private String resource;
+    private String businessId;
 
     @ApiModelProperty("资源评论编号")
-    private String parentId;
+    private String rootId;
 
     @ApiModelProperty("被回复评论编号")
-    private String reply;
+    private String replyId;
 
 }

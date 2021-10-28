@@ -2,22 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper">
+    <resultMap id="base" type="com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef"/>
+
     <select id="getListByTestPaper" resultType="com.cyberpeace.oj.practice.service.bo.TestPaperPractice">
-        select *, 0 as practice_type from practice_theory_ref where status = 1 and test_paper = #{test_paper}
+        select *, 0 as practice_type
+        from practice_theory_ref
+        where paper_id = #{paperId}
     </select>
 
     <insert id="saveBatch">
-        insert into practice_theory_ref
-        (`status`, `builtin`, `public`, `create_user`, `create_time`, `update_time`,
-         `resource_id`, `practice_set`, `category`, `content`, `answer`, `difficulty`, `knowledge`, `score`, `question_type`,
-         `option`, `keyword`, `origin_id`, `test_paper`, `is_option_random`)
-        values
-        <foreach collection="practice_list" item="p" separator=",">
-            (1, 0, 1, null, #{p.createTime}, #{p.updateTime},
-             #{p.resourceId}, #{p.practiceSet}, #{p.category}, #{p.content}, #{p.answer}, #{p.difficulty}, #{p.knowledge}, #{p.score}, #{p.questionType},
-             #{p.option}, #{p.keyword}, #{p.originId}, #{p.testPaper}, #{p.isOptionRandom})
+        INSERT INTO oj_practice_theory_ref
+                (`resource_id`, `snapshot`, `origin_id`, `option_random`, `paper_id`,
+                 `create_time`, `update_time`)
+                VALUES
+        <foreach collection="practiceList" item="practice" separator=",">
+            (#{practice.resourceId}, #{practice.snapshot}, #{practice.originId}, #{practice.optionRandom},
+             #{practice.paperId}, now(), now())
         </foreach>
     </insert>
 
-
+    <delete id="deleteByPaper">
+        delete
+        from oj_practice_theory_ref
+        where paper_id = #{paperId}
+    </delete>
 </mapper>

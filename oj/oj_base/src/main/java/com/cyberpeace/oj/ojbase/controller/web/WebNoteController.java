@@ -2,11 +2,10 @@ package com.cyberpeace.oj.ojbase.controller.web;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -27,6 +26,13 @@ public class WebNoteController {
 
 	@Autowired
 	private NoteService noteService;
+
+	@ApiOperation("笔记、实验报告新增")
+	@PostMapping("")
+	public BaseRsp add(@RequestBody NoteReq noteReq) {
+		// todo
+		return null;
+	}
 
 	@ApiOperation("单条笔记查询")
 	@GetMapping

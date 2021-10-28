@@ -1,44 +1,43 @@
-package com.cyberpeace.oj.practice.controller;
+package com.cyberpeace.oj.practice.controller.admin;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.oj.practice.controller.req.TestPaperReq;
-import com.cyberpeace.oj.practice.dao.entity.TestPaper;
-import com.cyberpeace.oj.practice.service.TestPaperService;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.bo.AddOrUpdatePaperContext;
 import com.cyberpeace.oj.practice.service.bo.TestPaperInfo;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import io.swagger.annotations.Api;
 
-@Api(tags = "试卷库")
+@Api(tags = "oj-后台试卷库相关api")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/oj/test-paper")
-public class TestPaperController {
+public class AdminPaperController {
 
     @Autowired
-    TestPaperService testPaperService;
+    private PaperService paperService;
 
     @PostMapping()
     @ApiOperation("创建试卷")
-    public BaseRsp<TestPaperInfo> create(@RequestBody TestPaperReq requestData) {
-        return new BaseRsp<>(testPaperService.create(requestData));
+    public BaseRsp<Paper> create(@RequestBody AddOrUpdatePaperContext requestData) {
+        return new BaseRsp<>(paperService.createOrUpdate(requestData));
     }
 
     @GetMapping()
     @ApiOperation("获取试卷")
     public BaseRsp<TestPaperInfo> get(@RequestParam("resource_id") String resourceId) {
-        return new BaseRsp<>(testPaperService.getSingleInfo(resourceId));
+        return new BaseRsp<>(paperService.getSingleInfo(resourceId));
     }
 
     @GetMapping("/list")
     @ApiOperation("获取试卷列表")
-    public BaseRsp<ListRsp<TestPaper>> getList(PageReqBase queryParams) {
-        return new BaseRsp<>(testPaperService.getList(queryParams.toPageParam(), queryParams.getPattern()));
+    public BaseRsp<ListRsp<Paper>> getList(PageReqBase queryParams) {
+        return new BaseRsp<>(paperService.getList(queryParams.toPageParam(), queryParams.getPattern()));
     }
 }

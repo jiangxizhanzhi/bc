@@ -25,59 +25,58 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/oj/practice-operation")
 @RequiresAuthentication
-public class PracticeOperationController extends PracticeMixinController<PracticeOperation>{
+public class PracticeOperationController extends PracticeMixinController<PracticeOperation> {
 
-    @Autowired
-    PracticeOperationMapper practiceOperationMapper;
+	@Autowired
+	PracticeOperationMapper practiceOperationMapper;
 
-    @Autowired
-    PracticeCategoryService practiceCategoryService;
+	@Autowired
+	PracticeCategoryService practiceCategoryService;
 
-    @GetMapping()
-    @ApiOperation("获取单个实践操作")
-    public BaseRsp<PracticeOperation> get(@RequestParam("resource_id") @NotBlank String resourceId) {
-        PracticeOperation object = practiceOperationMapper.selectById(resourceId);
-        if (object == null) {
-            throw new ResourceNotFoundException(resourceId);
-        }
-        object.setCategoryInfo(practiceCategoryService.nodeInfo(object.getCategory()));
-        return new BaseRsp<>(object);
-    }
+	@GetMapping()
+	@ApiOperation("获取单个实践操作")
+	public BaseRsp<PracticeOperation>
+			get(@RequestParam("resource_id") @NotBlank String resourceId) {
+		PracticeOperation object = practiceOperationMapper.selectById(resourceId);
+		if (object == null) {
+			throw new ResourceNotFoundException(resourceId);
+		}
+		return new BaseRsp<>(object);
+	}
 
-    @GetMapping("/list")
-    @ApiOperation("获取实践操作列表")
-    public BaseRsp<ListRsp<PracticeOperation>> getList(PracticeOperationListReq queryParams) {
-        IPage<PracticeOperation> result = practiceOperationMapper.getList(
-                queryParams.toPageParam(), queryParams.getPattern(), queryParams.getPracticeSet(), queryParams.getCategory()
-        );
+	@GetMapping("/list")
+	@ApiOperation("获取实践操作列表")
+	public BaseRsp<ListRsp<PracticeOperation>> getList(PracticeOperationListReq queryParams) {
+		IPage<PracticeOperation> result = practiceOperationMapper.getList(queryParams.toPageParam(),
+				queryParams.getPattern(), queryParams.getPracticeSet(), queryParams.getCategory());
 
-        return new BaseRsp<>(PageUtil.getListResult(result));
-    }
+		return new BaseRsp<>(PageUtil.getListResult(result));
+	}
 
-    @PostMapping()
-    @ApiOperation("创建实践操作")
-    public BaseRsp<PracticeOperation> create(@RequestBody PracticeOperationReq requestData){
-        PracticeOperation object = new PracticeOperation();
-        object.setCreateUser(getRequestUserId());
-        BeanUtils.copyProperties(requestData, object);
-        practiceOperationMapper.insert(object);
+	@PostMapping()
+	@ApiOperation("创建实践操作")
+	public BaseRsp<PracticeOperation> create(@RequestBody PracticeOperationReq requestData) {
+		PracticeOperation object = new PracticeOperation();
+		object.setCreateUserId(getRequestUserId());
+		BeanUtils.copyProperties(requestData, object);
+		practiceOperationMapper.insert(object);
 
-        return new BaseRsp<>(practiceOperationMapper.selectById(object.getResourceId()));
-    }
+		return new BaseRsp<>(practiceOperationMapper.selectById(object.getResourceId()));
+	}
 
-    @PatchMapping()
-    @ApiOperation("更新实践操作")
-    public BaseRsp<PracticeOperation> partialUpdate(@RequestBody PracticeOperationReq requestData) {
-        PracticeOperation object = new PracticeOperation();
-        BeanUtils.copyProperties(requestData, object);
-        practiceOperationMapper.updateById(object);
+	@PatchMapping()
+	@ApiOperation("更新实践操作")
+	public BaseRsp<PracticeOperation> partialUpdate(@RequestBody PracticeOperationReq requestData) {
+		PracticeOperation object = new PracticeOperation();
+		BeanUtils.copyProperties(requestData, object);
+		practiceOperationMapper.updateById(object);
 
-        return new BaseRsp<>(practiceOperationMapper.selectById(object.getResourceId()));
-    }
+		return new BaseRsp<>(practiceOperationMapper.selectById(object.getResourceId()));
+	}
 
-    @DeleteMapping()
-    @ApiOperation("批量删除实践操作")
-    public BaseRsp<Integer> batchDelete(@RequestBody PracticeDelReq requestData) {
-        return new BaseRsp<>(practiceOperationMapper.batchDelete(requestData.getResourceIds()));
-    }
+	@DeleteMapping()
+	@ApiOperation("批量删除实践操作")
+	public BaseRsp<Integer> batchDelete(@RequestBody PracticeDelReq requestData) {
+		return new BaseRsp<>(practiceOperationMapper.batchDelete(requestData.getResourceIds()));
+	}
 }

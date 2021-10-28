@@ -14,14 +14,14 @@ public class EvaluateResult implements Serializable {
     /**
      * 得分
      */
-    private final Float score;
+    private final Double score;
 
     /**
      * 总分
      */
-    private final Float totalScore;
+    private final Double totalScore;
 
-    public EvaluateResult(Boolean isPass, Float score, Float totalScore) {
+    public EvaluateResult(Boolean isPass, Double score, Double totalScore) {
         this.isPass = isPass;
         this.score = score;
         this.totalScore = totalScore;

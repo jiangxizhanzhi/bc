@@ -66,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
 		CommentBo commentBo = BeanUtils.copy(comment, CommentBo.class);
 
 		// 获取用户信息
-		UserInfo userInfo = remoteUserService.getById(comment.getUser());
+		UserInfo userInfo = remoteUserService.getById(comment.getUserId());
 		commentBo.setAvatar(userInfo.getAvatarUrl());
 		commentBo.setUserName(userInfo.getUserName());
 

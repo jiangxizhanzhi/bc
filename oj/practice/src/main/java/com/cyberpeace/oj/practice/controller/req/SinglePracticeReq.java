@@ -7,6 +7,7 @@ import lombok.Data;
  */
 @Data
 public class SinglePracticeReq {
+
     private String resourceId;
 
     private Integer practiceType;

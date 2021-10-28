@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.practice.dao.constants;
+package com.cyberpeace.oj.practice.constant;
 
 import lombok.Getter;
 

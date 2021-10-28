@@ -7,6 +7,8 @@ public interface CommonConstant {
     /** 分类的code分割符*/
     String CODE_COMMA = ",";
 
+    String LEFT_OBLIQUE_LINE = "/";
+
     /** 整数零*/
     Integer ZERO = 0;
 

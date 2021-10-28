@@ -4,13 +4,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.oj.ojbase.constant.CollectionType;
+import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
+import com.cyberpeace.oj.practice.constant.PaperType;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.service.bo.AddOrUpdatePaperContext;
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +36,6 @@ import com.cyberpeace.oj.course.dao.entity.LessonCollection;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonCollectionMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.LessonConfigService;
@@ -37,7 +43,7 @@ import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
-import com.cyberpeace.oj.practice.service.TestPaperService;
+import com.cyberpeace.oj.practice.service.PaperService;
 
 @Service
 public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, CourseLesson> implements CourseLessonService {
@@ -52,7 +58,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private AttachmentService attachmentService;
 
 	@Autowired
-	private LessonCollectionMapper lessonCollectionMapper;
+	private ResourceCollectionService resourceCollectionService;
 
 	@Autowired
 	private CourseMapper courseMapper;
@@ -64,7 +70,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	private TestPaperService testPaperService;
+	private PaperService paperService;
+
+	@Autowired
+	private PaperMapper paperMapper;
 
 	@Autowired
 	@Qualifier("ojTransactionTemplate")
@@ -94,9 +103,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		infoBo.setPreAndNext(infoBo, sortLessonIds);
 
 		// 是否收藏
-		LessonCollection collection = lessonCollectionMapper.selectByUserAndLesson(userId,
-				lessonId);
-		infoBo.setIsCollection(null != collection && collection.getIsCollection());
+		Boolean collection = resourceCollectionService.selectByUnique(userId,
+				CollectionType.LESSON.getCode(), lessonId);
+		infoBo.setIsCollection(collection);
 
 		// TODO 获取场景信息
 
@@ -113,25 +122,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		return infoBo;
-	}
-
-	@Override
-	public String collectionLesson(String userId, String lessonId, Boolean isCollection) {
-		LessonCollection exist = lessonCollectionMapper.selectByUserAndLesson(userId, lessonId);
-
-		if (null == exist) {
-			LessonCollection newCollection = new LessonCollection();
-			newCollection.setIsCollection(isCollection);
-			newCollection.setLesson(lessonId);
-			newCollection.setUpdateTime(new Date());
-			newCollection.setUser(userId);
-			lessonCollectionMapper.insert(newCollection);
-		} else {
-			exist.setIsCollection(isCollection);
-			lessonCollectionMapper.update(exist);
-		}
-
-		return lessonId;
 	}
 
 	@Override
@@ -152,7 +142,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				false);
 		lessonInfoBo.setAttachments(attachmentBos);
 
-		// TODO 查询习题数量
+		// 习题数据查询
+		Paper paper = paperMapper.selectById(lesson.getPaperId());
+		lessonInfoBo.setPracticeCount(paper.getPracticeCount());
 
 		// TODO 查询场景名称以及场景访问权限
 
@@ -160,29 +152,30 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public LessonFileBo uploadLessonFile(MultipartFile handout) {
-		return null;
-	}
-
-	@Override
 	public CourseLesson addOrUpdate(CourseLesson courseLesson, String ojSceneConfig,
-			String practiceList) {
+			List<PaperPracticeContext> practiceList) {
 
 		if (StringUtils.isBlank(courseLesson.getResourceId())) {
 			courseLesson.setHeat(CommonConstant.ZERO);
 			courseLesson.setBuiltin(CommonConstant.FALSE);
 		}
 
-		// TODO 习题处理 试卷存在习题数据不为空 则为修改
-		if (StringUtils.isNotBlank(practiceList)) {
-			if (StringUtils.isNotBlank(courseLesson.getResourceId())) {
-				CourseLesson lesson = courseLessonMapper.selectById(courseLesson.getResourceId());
-				if (null == lesson) {
-					throw new BusinessException(OjBusinessErrorCode.DUPLICATE_EXCEPTION);
-				}
+		AddOrUpdatePaperContext paperContext = new AddOrUpdatePaperContext();
+		if (StringUtils.isNotBlank(courseLesson.getResourceId())) {
+			CourseLesson lesson = courseLessonMapper.selectById(courseLesson.getResourceId());
+			if (null == lesson) {
+				throw new BusinessException(OjBusinessErrorCode.DUPLICATE_EXCEPTION);
 			}
 
-			courseLesson.setPaperId("");
+			paperContext.setPracticeList(practiceList);
+			paperContext.setResourceId(courseLesson.getPaperId());
+		} else {
+
+			paperContext.setName(courseLesson.getName());
+			paperContext.setDescription(courseLesson.getName());
+			paperContext.setIsPublic(CommonConstant.TRUE);
+			paperContext.setPracticeList(practiceList);
+			paperContext.setType(PaperType.LESSON.getCode());
 		}
 
 		// TODO 场景信息处理
@@ -190,7 +183,18 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			courseLesson.setTopoId("");
 		}
 
-		this.saveOrUpdate(courseLesson);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+
+				Paper paper = paperService.createOrUpdate(paperContext);
+				courseLesson.setPaperId(paper.getResourceId());
+
+				saveOrUpdate(courseLesson);
+			}
+		});
+
 		return courseLesson;
 	}
 
@@ -201,13 +205,16 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		IPage<AdminLessonListBo> boIPage = iPage.convert(courseLesson -> {
 			AdminLessonListBo adminLessonListBo = BeanUtils.copy(courseLesson,
 					AdminLessonListBo.class);
-			// todo 试卷相关
-			// adminLessonListBo.setPracticeCount();
-			// adminLessonListBo.setPaperPublic();
+			// 试卷相关
+			Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+			adminLessonListBo.setPracticeCount(paper.getPracticeCount());
+			adminLessonListBo.setPaperPublic(paper.getIsPublic());
 
+			// 课程相关
 			Course course = courseMapper.selectById(courseLesson.getCourseId());
 			adminLessonListBo.setCourseName(course.getName());
 
+			// 用户相关
 			UserInfo userInfo = remoteUserService.getById(courseLesson.getCreateUserId());
 			adminLessonListBo.setCreateUserName(userInfo.getUserName());
 			return adminLessonListBo;

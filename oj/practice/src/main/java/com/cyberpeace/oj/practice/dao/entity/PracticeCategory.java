@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.oj.practice.dao.constants.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -42,15 +41,6 @@ public class PracticeCategory extends BaseTable {
      */
     @TableField(exist = false)
     private List<PracticeCategory> children;
-
-    @JsonIgnore
-    private Integer id;
-
-    /**
-     * 状态
-     */
-    @JsonIgnore
-    private Integer status = Status.NORMAL.getValue();
 
     /**
      * 练习类型

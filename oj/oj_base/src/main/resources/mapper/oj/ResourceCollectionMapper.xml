@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper">
+    <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection"/>
+
+    <delete id="deleteByUnique">
+        delete from oj_resource_collection
+        where user_id = #{userId}
+        and business_type = #{businessType}
+        and business_id = #{businessId}
+    </delete>
+
+    <select id="selectByUnique" resultMap="base">
+        select * from oj_resource_collection
+        where user_id = #{userId}
+        and business_type = #{businessType}
+        and business_id = #{businessId}
+    </select>
+</mapper>

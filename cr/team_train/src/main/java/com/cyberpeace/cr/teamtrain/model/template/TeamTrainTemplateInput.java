@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.cr.cebase.model.crevent.CrEventAddInput;
 import com.cyberpeace.integratation.model.SceneConfig;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -20,7 +19,7 @@ public class TeamTrainTemplateInput implements Serializable {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private CrEventAddInput baseInfo;
+	private BaseInfoInput baseInfo;
 
 	@ApiModelProperty(required = true)
 	@NotNull

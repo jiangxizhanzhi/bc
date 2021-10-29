@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper">
+
+    <resultMap id="TeamRoomData" type="com.cyberpeace.cr.teamtrain.model.room.TeamRoomData">
+        <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+        <result property="template" column="team_template_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="category" column="sub_type" jdbcType="VARCHAR"/>
+        <result property="preSkill" column="pre_skills" jdbcType="VARCHAR"/>
+        <result property="trainSkill" column="train_skills" jdbcType="VARCHAR"/>
+        <result property="sceneStartTime" column="start_time" jdbcType="VARCHAR"/>
+        <result property="sceneEndTime" column="end_time" jdbcType="VARCHAR"/>
+        <result property="difficult" column="difficulty" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getTeamRoomOutputById" resultMap="TeamRoomData">
+        select cr_team_room.resource_id,
+               cr_team_room.team_template_id,
+               cr_team_room.NAME,
+               cr_team_room.description,
+               cr_team_room.sub_type,
+               cr_team_room.pre_skills,
+               cr_team_room.train_skills,
+               cr_team_room.start_time,
+               cr_team_room.end_time,
+               cr_team_room.difficulty,
+               cr_team_room.time_line_config,
+               cr_team_room.create_user_id,
+               cr_team_room.modify_user_id,
+               cr_team_room.local_scene_id,
+               cr_team_room.copyed_topo_id
+        from cr_team_room
+        where cr_team_room.resource_id = #{resourceId}
+
+
+    </select>
+</mapper>

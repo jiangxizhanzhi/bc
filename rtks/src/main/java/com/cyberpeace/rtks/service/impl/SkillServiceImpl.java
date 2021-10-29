@@ -134,7 +134,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		List<Skill> skillList = Collections.synchronizedList(new ArrayList<>());
 		UserInfo userInfo = UserInfoContext.getUserContext(); // 创建一个线程池
 		ExecutorService exec = new ThreadPoolExecutor(10, 100, 60L, TimeUnit.SECONDS,
-				new SynchronousQueue<Runnable>());
+				new LinkedBlockingQueue<Runnable>());
 		// 定义一个任务集合
 		List<Callable<Integer>> tasks = new ArrayList<>();
 		Callable<Integer> task = null;

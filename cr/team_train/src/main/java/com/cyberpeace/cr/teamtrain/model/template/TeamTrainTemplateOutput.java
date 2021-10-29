@@ -1,15 +1,27 @@
 package com.cyberpeace.cr.teamtrain.model.template;
 
-import com.cyberpeace.cr.cebase.model.crevent.CrEventOutput;
-import com.cyberpeace.integratation.model.SceneConfig;
+import java.util.List;
+
+import com.cyberpeace.cr.teamtrain.dao.entity.BaseRole;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 
 import lombok.Data;
 
 @Data
 public class TeamTrainTemplateOutput {
 
-	private CrEventOutput crEvent;
+	private BaseInfoOutput baseInfo;
 
-	private SceneConfig sceneConfig;
+	private List<TeamTrainTemplateRole> roleList;
+
+	private List<BaseRole> roleStructure;
+
+	// private FlowschemeInput flowSchemesData;
+	//
+	//
+	//
+	// private GatherschemeInput gatherSchemesData;
+
+	private Object timeLineConfig = "{}";
 
 }

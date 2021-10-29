@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper">
+
+    <select id="listTeamTemplate"
+            resultType="com.cyberpeace.cr.teamtrain.model.template.BaseInfoData">
+        <if test="listReq.search != null and listReq.search != ''">
+            <bind name="search" value="'%' + listReq.search + '%'"/>
+        </if>
+        select
+        cr_team_template.resource_id, cr_team_template.business_template_id, cr_team_template.pre_skills,
+        cr_team_template.train_skills, cr_team_template.role_config, cr_team_template.sub_type,
+        cr_team_template.time_line_config, cr_team_template.people_number, cr_team_template.duration_time,
+        cr_business_template.topo_id, cr_business_template.name, cr_business_template.description,
+        cr_business_template.business_type, cr_business_template.difficulty, cr_business_template.create_user
+        from
+        cr_team_template
+        left join cr_business_template on cr_business_template.resource_id = cr_team_template.business_template_id
+        <where>
+            1=1
+            <if test="listReq.search != null and listReq.search != ''">
+                and cr_business_template.name like #{search}
+            </if>
+            <if test="listReq.difficult != null and listReq.difficult != ''">
+                and cr_business_template.difficulty = #{listReq.difficult}
+            </if>
+            <if test="listReq.name != null and listReq.name != ''">
+                and cr_business_template.name = #{listReq.name}
+            </if>
+            <if test="listReq.category != null and listReq.category != ''">
+                and cr_team_template.sub_type = #{listReq.category}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -13,7 +13,7 @@ public class TeamTrainTemplateRole {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	/**
+	/**角色名称
 	 * 
 	 */
 	private String name;

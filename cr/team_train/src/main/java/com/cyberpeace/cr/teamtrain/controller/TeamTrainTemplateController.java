@@ -10,23 +10,20 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
-import com.cyberpeace.cr.cebase.model.crevent.CrEvent;
-import com.cyberpeace.cr.cebase.model.crevent.CrEventAddInput;
-import com.cyberpeace.cr.cebase.model.crevent.CrEventModifyInput;
-import com.cyberpeace.cr.cebase.model.crevent.CrEventOutput;
 import com.cyberpeace.cr.cebase.service.CrEventService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
-import com.cyberpeace.cr.teamtrain.model.template.RoleListInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateAddInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateOutput;
+import com.cyberpeace.cr.teamtrain.model.template.*;
+import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
+import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.TeamTrainTemplateRoleService;
-import com.cyberpeace.cr.teamtrain.service.TeamTrainTemplateService;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.service.RemoteSceneConfigService;
 import com.google.common.collect.Lists;
@@ -40,13 +37,16 @@ import io.swagger.annotations.ApiOperation;
 public class TeamTrainTemplateController {
 
 	@Autowired
-	TeamTrainTemplateService teamTrainTemplateService;
+	TeamTemplateService teamTemplateService;
 
 	@Autowired
 	TeamTrainTemplateRoleService teamTrainTemplateRoleService;
 
 	@Autowired
 	CrEventService crEventService;
+
+	@Autowired
+	BusinessTemplateService businessTemplateService;
 
 	@Autowired
 	RemoteSceneConfigService sceneConfigService;
@@ -58,9 +58,7 @@ public class TeamTrainTemplateController {
 	@PostMapping()
 	public BaseRsp<TeamTrainTemplateOutput>
 			create(@RequestBody @Validated TeamTrainTemplateAddInput input) {
-		TeamTrainTemplate entity = getEntityFromAddInput(input);
-
-		teamTrainTemplateService.save(entity);
+		TeamTemplate entity = getEntityFromAddInput(input);
 
 		return retrieve(entity.getResourceId());
 	}
@@ -70,12 +68,13 @@ public class TeamTrainTemplateController {
 	public BaseRsp<TeamTrainTemplateOutput>
 			update(@RequestBody @Validated TeamTrainTemplateModifyInput input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
-
-		TeamTrainTemplate originEntity = getOr404(resourceId);
-
-		TeamTrainTemplate entity = getEntityFromModifyInput(input, originEntity);
-
-		teamTrainTemplateService.updateById(entity);
+		TeamTemplate template = teamTemplateService.getById(resourceId);
+		BusinessTemplate businessTemplate = businessTemplateService
+				.getById(template.getBusinessTemplateId());
+		if (businessTemplate == null || template == null) {
+			throw new ResourceNotFoundException("团队训练模板" + resourceId + "不存在");
+		}
+		TeamTemplate entity = getEntityFromModifyInput(input, businessTemplate);
 
 		return retrieve(resourceId);
 	}
@@ -83,95 +82,137 @@ public class TeamTrainTemplateController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<TeamTrainTemplateOutput> retrieve(String resource_id) {
-		TeamTrainTemplate t = getOr404(resource_id);
-		return new BaseRsp<>(getOutputFromEntity(t));
+		TeamTrainTemplateOutput t = getOr404(resource_id);
+		return new BaseRsp<>(t);
 	}
 
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		teamTrainTemplateService.removeByIds(deleteReq.getIds());;
+		teamTemplateService.removeByIds(deleteReq.getIds());;
 		return new BaseRsp<>();
 	}
 
-	protected TeamTrainTemplate getOr404(String resourceId) {
-		TeamTrainTemplate template = teamTrainTemplateService.getById(resourceId);
+	@ApiOperation("列表查询")
+	@GetMapping("/list")
+	public BaseRsp<ListRsp<TeamTrainTemplateOutput>> list(TeamTemplateReq listReq) {
+		ListRsp<TeamTrainTemplateOutput> data = teamTemplateService.page(listReq);
+
+		return new BaseRsp<>(data);
+	}
+
+
+	protected TeamTrainTemplateOutput getOr404(String resourceId) {
+		TeamTrainTemplateOutput teamTrainTemplateOutput = new TeamTrainTemplateOutput();
+		TeamTemplate template = teamTemplateService.getById(resourceId);
 		if (template == null) {
 			throw new ResourceNotFoundException("团队训练模板" + resourceId + "不存在");
 		}
-		return template;
+		BusinessTemplate businessTemplate = businessTemplateService
+				.getById(template.getBusinessTemplateId());
+
+		BaseInfoOutput baseInfoOutput = new BaseInfoOutput(template, businessTemplate);
+		String roleString = template.getRoleConfig();
+
+		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
+				.toJsonObjectArray(roleString, TeamTrainTemplateRole.class);
+		teamTrainTemplateOutput.setBaseInfo(baseInfoOutput);
+		teamTrainTemplateOutput.setRoleList(teamTrainTemplateRoleList);
+
+		teamTrainTemplateOutput.setTimeLineConfig(template.getTimeLineConfig());
+
+		return teamTrainTemplateOutput;
 	}
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
-	protected TeamTrainTemplate getEntityFromAddInput(TeamTrainTemplateAddInput input) {
-		TeamTrainTemplate template = new TeamTrainTemplate();
+	public TeamTemplate getEntityFromAddInput(TeamTrainTemplateAddInput input) {
+		TeamTemplate teamTemplate = new TeamTemplate();
 
-		CrEventAddInput crEventAddInput = input.getBaseInfo();
-		CrEvent crEvent = crEventService.create(crEventAddInput, CrEvent.CeType.TRAINING_TEAM);
-		template.setCrEventId(crEvent.getResourceId());
+		BaseInfoInput crEventAddInput = input.getBaseInfo();
+		BusinessTemplate businessTemplate = new BusinessTemplate(crEventAddInput);
 
+		// 拓扑场景id保存获取
 		SceneConfig sceneConfig = input.getSceneConfigData();
 		String sceneConfigId = sceneConfigService.create(sceneConfig);
-		template.setSceneConfig(sceneConfigId);
-		template.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
+
+		// 保存基础模板
+		businessTemplate.setTopoId(sceneConfigId);
+		businessTemplate.setCreateUser(UserInfoContext.getUserContext().getUserId());
+
+		businessTemplateService.save(businessTemplate);
+		// BusinessTemplate businessTemplate = crEventService.create(crEventAddInput,
+		// CrEvent.CeType.TRAINING_TEAM);
+
+		// 保存团队训练模板
+		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+		teamTemplate.setPreSkills(JsonUtil.toJsonString(crEventAddInput.getPre_skill()));
+		teamTemplate.setTrainSkills(JsonUtil.toJsonString(crEventAddInput.getTrain_skill()));
+		teamTemplate.setSubType(crEventAddInput.getCategory());
+		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
+
 		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = Lists.newArrayList();
 
 		for (RoleListInput roleListInput : input.getRoleList()) {
 			TeamTrainTemplateRole teamTrainTemplateRole = BeanUtils.deepCopy(roleListInput,
 					TeamTrainTemplateRole.class);
-			teamTrainTemplateRole.setCrEventId(crEvent.getResourceId());
+			teamTrainTemplateRole.setCrEventId(businessTemplate.getResourceId());
 			teamTrainTemplateRole
 					.setMissionsScheme(JsonUtil.toJsonString(roleListInput.getMissionsScheme()));
 
 			teamTrainTemplateRoleList.add(teamTrainTemplateRole);
 		}
-		teamTrainTemplateRoleService.saveBatch(teamTrainTemplateRoleList);
+		teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateRoleList));
 
+		// 保存任务信息
 		// MissionScheme missionScheme = input.getMissionScheme();
 		// String missionSchemeId = missionSchemeService.create(missionScheme);
 		// template.setMissionSchemeId(missionSchemeId);
+		teamTemplateService.save(teamTemplate);
 
-		return template;
+		return teamTemplate;
 	}
 
-	protected TeamTrainTemplate getEntityFromModifyInput(TeamTrainTemplateModifyInput input,
-			TeamTrainTemplate originEntity) {
-		TeamTrainTemplate template = new TeamTrainTemplate();
+	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
+	public TeamTemplate getEntityFromModifyInput(TeamTrainTemplateModifyInput input,
+			BusinessTemplate businessTemplate) {
+		TeamTemplate teamTemplate = new TeamTemplate();
 
-		CrEventModifyInput crEventModifyInput = input.getCrEvent();
-		crEventService.update(originEntity.getCrEventId(), crEventModifyInput);
-		// 无需更新template的crEvent字段
+		BaseInfoInput baseInfoInput = input.getBaseInfo();
 
 		SceneConfig sceneConfig = input.getSceneConfigData();
+
+		businessTemplate.setTopoId("");
+		businessTemplate.setCreateUser(UserInfoContext.getUserContext().getUserId());
+		businessTemplate.setResourceId(businessTemplate.getResourceId());
+		businessTemplate.setName(baseInfoInput.getName());
+		businessTemplate.setDescription(baseInfoInput.getDescription());
+		businessTemplate.setDifficulty(baseInfoInput.getDifficult());
+
 		if (sceneConfig != null) {
 			String sceneConfigId = sceneConfigService.create(sceneConfig);
-			template.setSceneConfig(sceneConfigId);
+			businessTemplate.setTopoId(sceneConfigId);
 		}
 
+		businessTemplateService.updateById(businessTemplate);
+
+		// 保存团队训练模板
+		teamTemplate.setResourceId(input.getResourceId());
+		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfoInput.getPre_skill()));
+		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfoInput.getTrain_skill()));
+		teamTemplate.setSubType(baseInfoInput.getCategory());
+		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
+		teamTemplate.setDurationTime(baseInfoInput.getDurationTime());
+		teamTemplate.setPeopleNumber(baseInfoInput.getPeopleNumber());
+
+		teamTemplateService.updateById(teamTemplate);
 		// MissionScheme missionScheme = input.getMissionScheme();
 		// if (missionScheme != null) {
 		// String missionSchemeId = missionSchemeService.create(missionScheme);
 		// template.setMissionSchemeId(missionSchemeId);
 		// }
 
-		return template;
+		return teamTemplate;
 	}
 
-	protected TeamTrainTemplateOutput getOutputFromEntity(TeamTrainTemplate template) {
-		TeamTrainTemplateOutput templateOutput = new TeamTrainTemplateOutput();
-
-		CrEvent crEvent = crEventService.getOr404(template.getCrEventId());
-		CrEventOutput crEventOutput = new CrEventOutput(crEvent);
-		templateOutput.setCrEvent(crEventOutput);
-
-		String sceneConfigId = template.getSceneConfig();
-		SceneConfig sceneConfig = sceneConfigService.getById(sceneConfigId);
-		templateOutput.setSceneConfig(sceneConfig);
-
-		// String missionSchemeId = template.getMissionSchemeId();
-		// MissionScheme missionScheme = missionSchemeService.getById(missionSchemeId);
-		// templateOutput.setMissionScheme(missionScheme);
-
-		return templateOutput;
-	}
 }

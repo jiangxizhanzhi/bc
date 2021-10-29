@@ -9,12 +9,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ListUtil;
-import com.cyberpeace.cr.teamtrain.controller.CrRoleOutput;
-import com.cyberpeace.cr.teamtrain.controller.NameElement;
-import com.cyberpeace.cr.teamtrain.controller.RoleOutputData;
 import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.RoleReq;
+import com.cyberpeace.cr.teamtrain.model.role.CrRoleRes;
+import com.cyberpeace.cr.teamtrain.model.role.NameElement;
+import com.cyberpeace.cr.teamtrain.model.role.RoleResData;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -32,8 +32,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	private RemoteUserService remoteUserService;
 
 	@Override
-	public CrRoleOutput getOr404(String roomId) {
-		CrRoleOutput crRoleOutput = new CrRoleOutput();
+	public CrRoleRes getOr404(String roomId) {
+		CrRoleRes crRoleRes = new CrRoleRes();
 		RoleReq roleReq = new RoleReq();
 		roleReq.setRoomId(roomId);
 		roleReq.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
@@ -43,22 +43,22 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			throw new ResourceNotFoundException("团队训练" + roomId + "不存在训练角色");
 		}
 
-		List<RoleOutputData> roleOutputDataList = Lists.newArrayList();
+		List<RoleResData> roleResDataList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
 			String missionSchemeId = crRole.getMissionSchemeId();
 			// 调用获取任务
-			RoleOutputData roleOutputData = new RoleOutputData();
-			roleOutputData.setName(crRole.getName());
-			roleOutputData.setResourceId(crRole.getResourceId());
-			roleOutputData.setMissionsList(missionSchemeId);
-			roleOutputData.setUsers(getUserByRoleUsers(crRole.getUserIds()));
-			roleOutputDataList.add(roleOutputData);
+			RoleResData roleResData = new RoleResData();
+			roleResData.setName(crRole.getName());
+			roleResData.setResourceId(crRole.getResourceId());
+			roleResData.setMissionsList(missionSchemeId);
+			roleResData.setUsers(getUserByRoleUsers(crRole.getUserIds()));
+			roleResDataList.add(roleResData);
 		}
-		crRoleOutput.setRoles(roleOutputDataList);
-		crRoleOutput.setShowWriteupMapping("tode");
-		crRoleOutput.setMissionMapping("todo");
+		crRoleRes.setRoles(roleResDataList);
+		crRoleRes.setShowWriteupMapping("tode");
+		crRoleRes.setMissionMapping("todo");
 
-		return crRoleOutput;
+		return crRoleRes;
 	}
 
 	private List<NameElement> getUserByRoleUsers(String userIds) {

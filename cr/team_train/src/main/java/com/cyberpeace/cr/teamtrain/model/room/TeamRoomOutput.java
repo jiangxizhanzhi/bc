@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
+
 import lombok.Data;
 
 @Data
@@ -29,7 +31,7 @@ public class TeamRoomOutput implements Serializable {
 
 	private Integer difficult;
 
-	private String trainingRoleData;
+	private List<CrRole> trainingRoleData;
 
 	private Integer durationTime;
 

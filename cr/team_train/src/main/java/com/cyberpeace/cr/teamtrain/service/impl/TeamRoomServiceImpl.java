@@ -32,22 +32,25 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public TeamRoomOutput getTeamRoomOutputById(String resourceId) {
 		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resourceId);
+
 		RoleReq roleReq = new RoleReq();
 		roleReq.setRoomId(teamRoomdata.getResourceId());
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
 
 		TeamRoomOutput teamRoomOutput = getTeamRoomOutputFromTeamRoomData(teamRoomdata);
 
-		teamRoomOutput.setTrainingRoleData(JsonUtil.toJsonString(crRoles));
+		teamRoomOutput.setTrainingRoleData(crRoles);
 		return teamRoomOutput;
 	}
 
 	private TeamRoomOutput getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {
 		TeamRoomOutput teamRoomOutput = BeanUtils.copy(teamRoomdata, TeamRoomOutput.class);
+
 		teamRoomOutput
 				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomdata.getPreSkill(), String.class));
 		teamRoomOutput.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamRoomdata.getTrainSkill(), String.class));
+
 		return teamRoomOutput;
 	}
 }

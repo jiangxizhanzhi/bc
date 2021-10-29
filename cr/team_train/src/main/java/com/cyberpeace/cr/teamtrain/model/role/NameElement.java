@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.controller;
+package com.cyberpeace.cr.teamtrain.model.role;
 
 import lombok.Data;
 

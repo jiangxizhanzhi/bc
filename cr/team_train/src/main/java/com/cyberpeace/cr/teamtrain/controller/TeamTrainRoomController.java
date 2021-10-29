@@ -61,8 +61,7 @@ public class TeamTrainRoomController {
 	@ApiOperation("新增")
 	@PostMapping()
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
-	public BaseRsp<TeamRoomOutput>
-			create(@RequestBody @Validated TeamTrainRoomInput input) {
+	public BaseRsp<TeamRoomOutput> create(@RequestBody @Validated TeamTrainRoomInput input) {
 		TeamTemplate entity = getEntityFromAddInput(input);
 
 		return retrieve(entity.getResourceId());
@@ -87,7 +86,7 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<TeamRoomOutput> retrieve(String resource_id) {
-		TeamRoomOutput t = getOr404(resource_id);
+		TeamRoomOutput t = getTeamRoom(resource_id);
 		return new BaseRsp<TeamRoomOutput>(t);
 	}
 
@@ -106,23 +105,11 @@ public class TeamTrainRoomController {
 		return new BaseRsp<>(data);
 	}
 
-	protected TeamRoomOutput getOr404(String resourceId) {
-		TeamRoomOutput teamRoomOutput =   teamRoomService.getTeamRoomOutputById(resourceId);
+	protected TeamRoomOutput getTeamRoom(String resourceId) {
+		TeamRoomOutput teamRoomOutput = teamRoomService.getTeamRoomOutputById(resourceId);
 		if (teamRoomOutput == null) {
 			throw new ResourceNotFoundException("团队训练" + resourceId + "不存在");
 		}
-//		BusinessTemplate businessTemplate = businessTemplateService
-//				.getById(template.getBusinessTemplateId());
-//
-//		BaseInfoOutput baseInfoOutput = new BaseInfoOutput(template, businessTemplate);
-//		String roleString = template.getRoleConfig();
-//
-//		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
-//				.toJsonObjectArray(roleString, TeamTrainTemplateRole.class);
-//		teamTrainTemplateOutput.setBaseInfo(baseInfoOutput);
-//		teamTrainTemplateOutput.setRoleList(teamTrainTemplateRoleList);
-//
-//		teamTrainTemplateOutput.setTimeLineConfig(template.getTimeLineConfig());
 
 		return teamRoomOutput;
 	}
@@ -157,7 +144,7 @@ public class TeamTrainRoomController {
 
 			// teamTrainTemplateRoleList.add(teamTrainTemplateRole);
 		}
-		int r=5/0;
+		int r = 5 / 0;
 		// teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateRoleList));
 
 		// 保存任务信息
@@ -211,6 +198,5 @@ public class TeamTrainRoomController {
 
 		return teamTemplate;
 	}
-
 
 }

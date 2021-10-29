@@ -1,12 +1,12 @@
-package com.cyberpeace.cr.teamtrain.controller;
+package com.cyberpeace.cr.teamtrain.model.role;
 
 import java.util.List;
 
 import lombok.Data;
 @Data
-public class CrRoleOutput {
+public class CrRoleRes {
 
-	List<RoleOutputData> roles;
+	List<RoleResData> roles;
 
 	Object missionMapping;
 

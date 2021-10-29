@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -77,7 +76,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@Override
 	public List<UserInfo> getList() {
-		JSONArray jsonArray = HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONArray.class);
+		List jsonArray = (List) HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONObject.class)
+				.get("list");
 
 		List<UserInfo> userInfoList = new ArrayList<>();
 		for (Object object : jsonArray) {

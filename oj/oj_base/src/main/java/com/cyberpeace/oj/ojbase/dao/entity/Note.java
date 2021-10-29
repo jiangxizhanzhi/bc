@@ -1,60 +1,32 @@
 package com.cyberpeace.oj.ojbase.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 
 @Data
-@TableName("x_note_note")
-public class Note implements Serializable {
+@TableName("oj_note")
+public class Note extends BaseTable {
 
-    // 笔记类型
-    /** 我的笔记*/
-    public static final int NOTE = 1;
-    /** 实验报告*/
-    public static final int REPORT = 2;
+	private String resourceId;
 
-    private Integer id;
+	private Integer readAuthType;
 
-    private String resourceId;
+	private String readAuthIds;
 
-    private Integer auth;
+	private Integer operationAuthType;
 
-    private String authOrganization;
+	private String operationAuthIds;
 
-    private Integer noteType;
+	private Integer noteType;
 
-    private Integer resourceType;
+	private Integer businessType;
 
-    private String content;
+	private String content;
 
-    private String user;
+	private String userId;
 
-    private String resource;
-
-    private Date submitTime;
-
-    @TableField("public")
-    private Boolean isPublic;
-
-    private Date createTime;
-
-    private Date updateTime;
-
-    private Double score;
-
-    private Boolean isPass;
-
-    private String markComment;
-
-    private String teacher;
-
-    private Date markTime;
-
-    private Integer status;
+	private String businessId;
 
 }

@@ -108,6 +108,7 @@ public class WebCourseController {
 		Comment comment = BeanUtils.copy(commentReq, Comment.class);
 		comment.setUserId(UserInfoContext.getUserContext().getUserId());
 		comment.setBusinessType(CommentType.COURSE.getCode());
+		comment.setThemeName(course.getName());
 
 		Comment newComment = commentService.addNewComment(comment);
 		CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);

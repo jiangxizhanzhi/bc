@@ -3,6 +3,7 @@ package com.cyberpeace.oj.ojbase.service.impl;
 import java.util.Date;
 
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.oj.ojbase.constant.NoteType;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.ReportBo;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +43,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			return null;
 		}
 
-		return uniqueContext.getNoteType().intValue() == Note.NOTE
+		return uniqueContext.getNoteType().intValue() == NoteType.NOTE.getCode()
 				? BeanUtils.copy(note, NoteBo.class)
 				: BeanUtils.copy(note, ReportBo.class);
 	}
@@ -58,10 +59,6 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		Note existNote = noteMapper.selectByCondition(uniqueContext);
 		if (existNote == null) {
 			Note note = BeanUtils.copy(addContext, Note.class);
-			note.setSubmitTime(new Date());
-			note.setIsPublic(Boolean.TRUE);
-			note.setScore(0d);
-			note.setIsPass(Boolean.FALSE);
 			noteMapper.insert(note);
 
 		} else {

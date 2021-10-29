@@ -11,11 +11,6 @@ import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
  *
  */
 @Service
-public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMapper, BusinessTemplate>
-    implements BusinessTemplateService{
+public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMapper, BusinessTemplate> implements BusinessTemplateService {
 
 }
-
-
-
-

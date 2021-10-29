@@ -12,33 +12,34 @@ import lombok.Data;
  * 
  * @TableName cr_team_send
  */
-@TableName(value ="cr_team_send")
+@TableName(value = "cr_team_send")
 @Data
 public class TeamSend implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
 
-    /**
-     * 
-     */
-    private String teamInstanceId;
+	/**
+	 * 
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    /**
-     * 
-     */
-    private String missionId;
+	/**
+	 * 
+	 */
+	private String teamInstanceId;
 
-    /**
-     * 
-     */
-    private String releaseTime;
+	/**
+	 * 
+	 */
+	private String missionId;
 
-    /**
-     * 
-     */
-    private String createUserId;
+	/**
+	 * 
+	 */
+	private String releaseTime;
+
+	/**
+	 * 
+	 */
+	private String createUserId;
 
 }

@@ -11,11 +11,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamSendService;
  *
  */
 @Service
-public class TeamSendServiceImpl extends ServiceImpl<TeamSendMapper, TeamSend>
-    implements TeamSendService{
+public class TeamSendServiceImpl extends ServiceImpl<TeamSendMapper, TeamSend> implements TeamSendService {
 
 }
-
-
-
-

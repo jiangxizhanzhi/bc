@@ -27,7 +27,7 @@ public class TeamTrainRoleController {
 	@ApiOperation("团队实例查询角色")
 	@GetMapping()
 	public BaseRsp<CrRoleRes> getRoles(String roomId) {
-		CrRoleRes t = crRoleService.getOr404(roomId);
+		CrRoleRes t = crRoleService.getRoles(roomId);
 		return new BaseRsp<CrRoleRes>(t);
 	}
 

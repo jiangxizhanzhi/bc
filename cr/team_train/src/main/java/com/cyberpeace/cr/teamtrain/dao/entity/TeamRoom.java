@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomInput;
+import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
 
 import lombok.Data;
 
@@ -97,7 +97,7 @@ public class TeamRoom implements Serializable {
 
 	public TeamRoom() {}
 
-	public TeamRoom(TeamTrainRoomInput input, TeamTemplate template,
+	public TeamRoom(TeamTrainRoomReq input, TeamTemplate template,
 			BusinessTemplate businessTemplate) {
 		this.teamTemplateId = template.getResourceId();
 		this.name = input.getName();
@@ -109,9 +109,9 @@ public class TeamRoom implements Serializable {
 		this.endTime = input.getEndTime();
 		this.difficulty = input.getDifficult();
 		this.timeLineConfig = template.getTimeLineConfig();
-//		this.createUserId = createUserId;
-//		this.modifyUserId = modifyUserId;
-//		this.localSceneId = localSceneId;
+		// this.createUserId = createUserId;
+		// this.modifyUserId = modifyUserId;
+		// this.localSceneId = localSceneId;
 		this.copyedTopoId = businessTemplate.getTopoId();
 	}
 }

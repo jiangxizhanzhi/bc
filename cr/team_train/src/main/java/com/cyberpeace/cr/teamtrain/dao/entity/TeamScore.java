@@ -12,54 +12,54 @@ import lombok.Data;
  * 
  * @TableName cr_team_score
  */
-@TableName(value ="cr_team_score")
+@TableName(value = "cr_team_score")
 @Data
 public class TeamScore implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
 
-    /**
-     * 
-     */
-    private String teamInstanceId;
+	/**
+	 * 
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    /**
-     * 
-     */
-    private String userId;
+	/**
+	 * 
+	 */
+	private String teamInstanceId;
 
-    /**
-     * 
-     */
-    private String trainingScore;
+	/**
+	 * 
+	 */
+	private String userId;
 
-    /**
-     * 
-     */
-    private String trainingPercentage;
+	/**
+	 * 
+	 */
+	private String trainingScore;
 
-    /**
-     * 
-     */
-    private String skillPercentage;
+	/**
+	 * 
+	 */
+	private String trainingPercentage;
 
-    /**
-     * 
-     */
-    private String skillScore;
+	/**
+	 * 
+	 */
+	private String skillPercentage;
 
-    /**
-     * 
-     */
-    private String comment;
+	/**
+	 * 
+	 */
+	private String skillScore;
 
-    /**
-     * 
-     */
-    private String finalScore;
+	/**
+	 * 
+	 */
+	private String comment;
 
-    
+	/**
+	 * 
+	 */
+	private String finalScore;
+
 }

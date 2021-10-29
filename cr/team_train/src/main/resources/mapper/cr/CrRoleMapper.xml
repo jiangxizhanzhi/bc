@@ -5,31 +5,40 @@
 <mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper">
 
     <resultMap id="BaseResultMap" type="com.cyberpeace.cr.teamtrain.dao.entity.CrRole">
-            <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="businessInstanceId" column="business_instance_id" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="roleGroup" column="role_group" jdbcType="VARCHAR"/>
-            <result property="nodes" column="nodes" jdbcType="VARCHAR"/>
-            <result property="userIds" column="user_ids" jdbcType="VARCHAR"/>
-            <result property="exercisePaper" column="exercise_paper" jdbcType="VARCHAR"/>
-            <result property="parentResourceId" column="parent_resource_id" jdbcType="VARCHAR"/>
-            <result property="missionSchemeId" column="mission_scheme_id" jdbcType="VARCHAR"/>
-            <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
+        <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="businessInstanceId" column="business_instance_id" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="roleGroup" column="role_group" jdbcType="VARCHAR"/>
+        <result property="nodes" column="nodes" jdbcType="VARCHAR"/>
+        <result property="userIds" column="user_ids" jdbcType="VARCHAR"/>
+        <result property="exercisePaper" column="exercise_paper" jdbcType="VARCHAR"/>
+        <result property="parentResourceId" column="parent_resource_id" jdbcType="VARCHAR"/>
+        <result property="missionSchemeId" column="mission_scheme_id" jdbcType="VARCHAR"/>
+        <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        resource_id,name,business_instance_id,
+        resource_id
+        ,name,business_instance_id,
         description,role_group,nodes,
         user_ids,exercise_paper,parent_resource_id,
         mission_scheme_id,business_type
     </sql>
     <select id="selectCrRoleByRoomId" resultType="com.cyberpeace.cr.teamtrain.dao.entity.CrRole">
-        select resource_id,name,business_instance_id,
-        description,role_group,nodes,
-        user_ids,exercise_paper,parent_resource_id,
-        mission_scheme_id,business_type from cr_role
-where business_instance_id = #{roomId}
+        select resource_id,
+               name,
+               business_instance_id,
+               description,
+               role_group,
+               nodes,
+               user_ids,
+               exercise_paper,
+               parent_resource_id,
+               mission_scheme_id,
+               business_type
+        from cr_role
+        where business_instance_id = #{roomId}
 
     </select>
 </mapper>

@@ -18,7 +18,6 @@ public class TeamTrainGatherschemeTemplate {
 	 */
 	private Integer id;
 
-
 	/**
 	 * 
 	 */

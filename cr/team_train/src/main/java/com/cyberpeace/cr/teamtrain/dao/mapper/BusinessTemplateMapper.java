@@ -14,7 +14,3 @@ import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
 public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 }
-
-
-
-

@@ -11,11 +11,6 @@ import com.cyberpeace.cr.teamtrain.service.MissionSchemeService;
  *
  */
 @Service
-public class MissionSchemeService1Impl extends ServiceImpl<MissionSchemeMapper, MissionScheme>
-    implements MissionSchemeService{
+public class MissionSchemeService1Impl extends ServiceImpl<MissionSchemeMapper, MissionScheme> implements MissionSchemeService {
 
 }
-
-
-
-

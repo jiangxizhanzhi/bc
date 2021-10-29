@@ -9,5 +9,5 @@ import com.cyberpeace.cr.teamtrain.model.role.CrRoleRes;
  */
 public interface CrRoleService extends IService<CrRole> {
 
-	CrRoleRes getOr404(String roomId);
+	CrRoleRes getRoles(String roomId);
 }

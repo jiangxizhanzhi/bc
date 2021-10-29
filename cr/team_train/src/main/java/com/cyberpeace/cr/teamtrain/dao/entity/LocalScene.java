@@ -12,67 +12,66 @@ import lombok.Data;
  * 
  * @TableName local_scene
  */
-@TableName(value ="local_scene")
+@TableName(value = "local_scene")
 @Data
 public class
 
-
 LocalScene implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
 
-    /**
-     * 
-     */
-    private String mpSceneId;
+	/**
+	 * 
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    /**
-     * 
-     */
-    private String businessType;
+	/**
+	 * 
+	 */
+	private String mpSceneId;
 
-    /**
-     * 
-     */
-    private String moduleType;
+	/**
+	 * 
+	 */
+	private String businessType;
 
-    /**
-     * 
-     */
-    private String businessCode;
+	/**
+	 * 
+	 */
+	private String moduleType;
 
-    /**
-     * 
-     */
-    private String startTime;
+	/**
+	 * 
+	 */
+	private String businessCode;
 
-    /**
-     * 
-     */
-    private String destoryTime;
+	/**
+	 * 
+	 */
+	private String startTime;
 
-    /**
-     * 
-     */
-    private String destoryMode;
+	/**
+	 * 
+	 */
+	private String destoryTime;
 
-    /**
-     * 
-     */
-    private String businessInstanceId;
+	/**
+	 * 
+	 */
+	private String destoryMode;
 
-    /**
-     * 
-     */
-    private String sceneStatus;
+	/**
+	 * 
+	 */
+	private String businessInstanceId;
 
-    /**
-     * 
-     */
-    private String pauseTime;
+	/**
+	 * 
+	 */
+	private String sceneStatus;
 
-    
+	/**
+	 * 
+	 */
+	private String pauseTime;
+
 }

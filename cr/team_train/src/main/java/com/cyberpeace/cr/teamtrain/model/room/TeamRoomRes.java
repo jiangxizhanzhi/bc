@@ -9,7 +9,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
 import lombok.Data;
 
 @Data
-public class TeamRoomOutput implements Serializable {
+public class TeamRoomRes implements Serializable {
 
 	private String resourceId;
 
@@ -42,6 +42,5 @@ public class TeamRoomOutput implements Serializable {
 	private Integer trainingStatus;
 
 	private Integer runtime;
-
 
 }

@@ -11,11 +11,6 @@ import com.cyberpeace.cr.teamtrain.service.LocalSceneService;
  *
  */
 @Service
-public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalScene>
-    implements LocalSceneService{
+public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalScene> implements LocalSceneService {
 
 }
-
-
-
-

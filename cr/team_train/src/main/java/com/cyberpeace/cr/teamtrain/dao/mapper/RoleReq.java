@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class RoleReq {
-    String roomId;
-    Integer roleGroup;
+
+	String roomId;
+
+	Integer roleGroup;
 }

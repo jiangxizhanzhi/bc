@@ -5,12 +5,13 @@
 <mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.MissionSchemeMapper">
 
     <resultMap id="BaseResultMap" type="com.cyberpeace.cr.teamtrain.dao.entity.MissionScheme">
-            <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-            <result property="createUserId" column="create_user_id" jdbcType="VARCHAR"/>
-            <result property="schemeData" column="scheme_data" jdbcType="VARCHAR"/>
+        <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+        <result property="createUserId" column="create_user_id" jdbcType="VARCHAR"/>
+        <result property="schemeData" column="scheme_data" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        resource_id,create_user_id,scheme_data
+        resource_id
+        ,create_user_id,scheme_data
     </sql>
 </mapper>

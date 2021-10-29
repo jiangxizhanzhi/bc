@@ -11,11 +11,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
  *
  */
 @Service
-public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore>
-    implements TeamScoreService{
+public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore> implements TeamScoreService {
 
 }
-
-
-
-

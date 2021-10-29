@@ -14,7 +14,3 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamSend;
 public interface TeamSendMapper extends BaseMapper<TeamSend> {
 
 }
-
-
-
-

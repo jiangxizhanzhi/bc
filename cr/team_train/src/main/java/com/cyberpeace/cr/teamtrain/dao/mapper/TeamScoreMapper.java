@@ -14,7 +14,3 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 public interface TeamScoreMapper extends BaseMapper<TeamScore> {
 
 }
-
-
-
-

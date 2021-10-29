@@ -12,44 +12,44 @@ import lombok.Data;
  * 
  * @TableName cr_team_dynamic_event
  */
-@TableName(value ="cr_team_dynamic_event")
+@TableName(value = "cr_team_dynamic_event")
 @Data
 public class TeamDynamicEvent implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
 
-    /**
-     * 
-     */
-    private String teamInstanceId;
+	/**
+	 * 
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    /**
-     * 
-     */
-    private String actionType;
+	/**
+	 * 
+	 */
+	private String teamInstanceId;
 
-    /**
-     * 
-     */
-    private String actionTime;
+	/**
+	 * 
+	 */
+	private String actionType;
 
-    /**
-     * 
-     */
-    private String actionContent;
+	/**
+	 * 
+	 */
+	private String actionTime;
 
-    /**
-     * 
-     */
-    private String missionId;
+	/**
+	 * 
+	 */
+	private String actionContent;
 
-    /**
-     * 
-     */
-    private String userId;
+	/**
+	 * 
+	 */
+	private String missionId;
 
-    
+	/**
+	 * 
+	 */
+	private String userId;
+
 }

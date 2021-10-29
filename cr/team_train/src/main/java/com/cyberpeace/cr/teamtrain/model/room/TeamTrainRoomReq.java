@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamTrainRoomInput {
+public class TeamTrainRoomReq {
 
 	@ApiModelProperty(required = true)
 	@NotNull

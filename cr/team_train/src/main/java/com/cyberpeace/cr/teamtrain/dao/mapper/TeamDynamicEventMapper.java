@@ -14,7 +14,3 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamDynamicEvent;
 public interface TeamDynamicEventMapper extends BaseMapper<TeamDynamicEvent> {
 
 }
-
-
-
-

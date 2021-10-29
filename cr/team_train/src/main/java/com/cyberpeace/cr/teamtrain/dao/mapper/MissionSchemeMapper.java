@@ -14,7 +14,3 @@ import com.cyberpeace.cr.teamtrain.dao.entity.MissionScheme;
 public interface MissionSchemeMapper extends BaseMapper<MissionScheme> {
 
 }
-
-
-
-

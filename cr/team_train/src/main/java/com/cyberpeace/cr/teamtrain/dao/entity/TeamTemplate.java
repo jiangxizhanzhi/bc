@@ -12,52 +12,54 @@ import lombok.Data;
  * 
  * @TableName cr_team_template
  */
-@TableName(value ="cr_team_template")
+@TableName(value = "cr_team_template")
 @Data
 public class TeamTemplate implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
 
-    /**
-     * 
-     */
-    private String businessTemplateId;
+	/**
+	 * 
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    /**
-     * 
-     */
-    private String preSkills;
+	/**
+	 * 
+	 */
+	private String businessTemplateId;
 
-    /**
-     * 
-     */
-    private String trainSkills;
+	/**
+	 * 
+	 */
+	private String preSkills;
 
-    /**
-     * 
-     */
-    private String roleConfig;
+	/**
+	 * 
+	 */
+	private String trainSkills;
 
-    /**
-     * 
-     */
-    private Integer subType;
+	/**
+	 * 
+	 */
+	private String roleConfig;
 
-    /**
-     * 
-     */
-    private String timeLineConfig;
+	/**
+	 * 
+	 */
+	private Integer subType;
 
-    /**
-     *
-     */
-    private Integer durationTime;
-    /**
-     *
-     */
-    private Integer peopleNumber;
-    
+	/**
+	 * 
+	 */
+	private String timeLineConfig;
+
+	/**
+	 *
+	 */
+	private Integer durationTime;
+
+	/**
+	 *
+	 */
+	private Integer peopleNumber;
+
 }

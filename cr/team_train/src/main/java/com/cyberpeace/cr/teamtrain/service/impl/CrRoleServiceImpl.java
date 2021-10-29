@@ -32,7 +32,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	private RemoteUserService remoteUserService;
 
 	@Override
-	public CrRoleRes getOr404(String roomId) {
+	public CrRoleRes getRoles(String roomId) {
 		CrRoleRes crRoleRes = new CrRoleRes();
 		RoleReq roleReq = new RoleReq();
 		roleReq.setRoomId(roomId);
@@ -63,12 +63,10 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	private List<NameElement> getUserByRoleUsers(String userIds) {
 
-
 		List<NameElement> elements = Lists.newArrayList();
 		List<String> userList = ListUtil.string2List(userIds);
 		List<UserInfo> userInfoList = remoteUserService.getList();
 		userInfoList.forEach(userInfo -> {
-
 			if (userList.contains(userInfo.getUserId())) {
 				NameElement element = new NameElement();
 				element.setName(userInfo.getUserName());

@@ -11,11 +11,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamDynamicEventService;
  *
  */
 @Service
-public class TeamDynamicEventServiceImpl extends ServiceImpl<TeamDynamicEventMapper, TeamDynamicEvent>
-    implements TeamDynamicEventService{
+public class TeamDynamicEventServiceImpl extends ServiceImpl<TeamDynamicEventMapper, TeamDynamicEvent> implements TeamDynamicEventService {
 
 }
-
-
-
-

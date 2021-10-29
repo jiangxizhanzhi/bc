@@ -14,7 +14,3 @@ import com.cyberpeace.cr.teamtrain.dao.entity.LocalScene;
 public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 
 }
-
-
-
-

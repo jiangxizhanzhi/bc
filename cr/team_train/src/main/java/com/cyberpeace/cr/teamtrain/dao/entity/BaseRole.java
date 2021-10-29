@@ -23,5 +23,4 @@ public class BaseRole {
 	 */
 	private Integer roleGroup;
 
-
 }

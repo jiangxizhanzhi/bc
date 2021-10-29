@@ -12,24 +12,24 @@ import lombok.Data;
  * 
  * @TableName cr_mission_scheme
  */
-@TableName(value ="cr_mission_scheme")
+@TableName(value = "cr_mission_scheme")
 @Data
 public class MissionScheme implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
 
-    /**
-     * 
-     */
-    private String createUserId;
+	/**
+	 * 
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    /**
-     * 
-     */
-    private String schemeData;
+	/**
+	 * 
+	 */
+	private String createUserId;
 
-    
+	/**
+	 * 
+	 */
+	private String schemeData;
+
 }

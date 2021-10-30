@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.teamtrain.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.teamtrain.controller.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -19,4 +21,6 @@ public interface TeamRoomService extends IService<TeamRoom> {
 
 	TeamTemplate updateTeamRoom(TeamTrainTemplateModifyInput input,
 			BusinessTemplate businessTemplate);
+
+	ListRsp<TeamRoomRes> list(TeamRoomReq listReq);
 }

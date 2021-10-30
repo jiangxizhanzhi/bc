@@ -1,10 +1,15 @@
 package com.cyberpeace.integratation.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -78,6 +83,31 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	public List<UserInfo> getList() {
 		List jsonArray = (List) HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONObject.class)
 				.get("list");
+
+		List<UserInfo> userInfoList = new ArrayList<>();
+		for (Object object : jsonArray) {
+			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+		}
+		return userInfoList;
+	}
+
+	@Override
+	public List<UserInfo> getLazyUserList(List<BasicNameValuePair> nvps) {
+		List jsonArray1 = (List) HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONObject.class)
+				.get("list");
+		String url = USERINFO_LIST_URL;
+		String paramsStr = "";
+		if (nvps.size() > 0) {
+			paramsStr = "";
+			try {
+				HttpEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
+				paramsStr = EntityUtils.toString(urlEncodedFormEntity);
+				url = url + "?" + paramsStr;
+			} catch (IOException e) {
+				log.error("error ", e);
+			}
+		}
+		List jsonArray = (List) HttpClientUtil.rawGet(url, JSONObject.class).get("list");
 
 		List<UserInfo> userInfoList = new ArrayList<>();
 		for (Object object : jsonArray) {

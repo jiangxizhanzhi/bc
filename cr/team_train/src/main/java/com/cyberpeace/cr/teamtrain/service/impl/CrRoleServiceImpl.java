@@ -2,13 +2,14 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.ListUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.RoleReq;
@@ -46,7 +47,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		List<RoleResData> roleResDataList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
 			String missionSchemeId = crRole.getMissionSchemeId();
-			// 调用获取任务
+			// todo 调用获取任务
 			RoleResData roleResData = new RoleResData();
 			roleResData.setName(crRole.getName());
 			roleResData.setResourceId(crRole.getResourceId());
@@ -64,8 +65,15 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	private List<NameElement> getUserByRoleUsers(String userIds) {
 
 		List<NameElement> elements = Lists.newArrayList();
-		List<String> userList = ListUtil.string2List(userIds);
-		List<UserInfo> userInfoList = remoteUserService.getList();
+		List<String> userList = JsonUtil.toJsonObjectArray(userIds, String.class);
+
+		List<BasicNameValuePair> nvps = Lists.newArrayList();
+		// nvps.add(new BasicNameValuePair("ids",
+		// userIds.replaceAll("\"","").substring(1, userIds.length() - 1)));
+		nvps.add(new BasicNameValuePair("perPage", String.valueOf(1000)));
+		nvps.add(new BasicNameValuePair("page", String.valueOf(1)));
+
+		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(nvps);
 		userInfoList.forEach(userInfo -> {
 			if (userList.contains(userInfo.getUserId())) {
 				NameElement element = new NameElement();

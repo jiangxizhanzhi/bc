@@ -15,9 +15,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRes;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTemplateReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateOutput;
 import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -95,8 +93,8 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<TeamTrainTemplateOutput>> list(TeamTemplateReq listReq) {
-		ListRsp<TeamTrainTemplateOutput> data = teamTemplateService.page(listReq);
+	public BaseRsp<ListRsp<TeamRoomRes>> list(TeamRoomReq listReq) {
+		ListRsp<TeamRoomRes> data = teamRoomService.list(listReq);
 
 		return new BaseRsp<>(data);
 	}
@@ -109,5 +107,6 @@ public class TeamTrainRoomController {
 
 		return teamRoomRes;
 	}
+
 
 }

@@ -6,27 +6,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.cebase.model.crevent.CrEvent;
+import com.cyberpeace.cr.teamtrain.controller.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.*;
 import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.RoleReq;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
+import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
 import com.cyberpeace.cr.teamtrain.model.room.RoomRole;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRes;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
 import com.cyberpeace.cr.teamtrain.model.template.BaseInfoInput;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateOutput;
 import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.integratation.model.SceneConfig;
+import com.google.common.collect.Lists;
 
 /**
  *
@@ -51,16 +58,34 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public TeamRoomRes getTeamRoomOutputById(String resourceId) {
+		String userid = UserInfoContext.getUserContext().getUserId();
 		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resourceId);
 
 		RoleReq roleReq = new RoleReq();
 		roleReq.setRoomId(teamRoomdata.getResourceId());
+
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
 
 		TeamRoomRes teamRoomRes = getTeamRoomOutputFromTeamRoomData(teamRoomdata);
+		teamRoomRes.setTrainingRoleData(getSelfRole(crRoles, userid));
+		teamRoomRes.setRolesData(crRoles);
 
-		teamRoomRes.setTrainingRoleData(crRoles);
 		return teamRoomRes;
+	}
+
+	private BaseRole getSelfRole(List<CrRole> crRoles, String userid) {
+		BaseRole baseRole = new BaseRole();
+		crRoles.forEach(crRole -> {
+			if (crRole.getUserIds().contains(userid)) {
+				baseRole.setResourceId(crRole.getResourceId());
+				baseRole.setName(crRole.getName());
+
+				baseRole.setDescription(crRole.getDescription());
+				baseRole.setRoleGroup(crRole.getRoleGroup());
+			}
+		});
+
+		return baseRole;
 	}
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
@@ -145,6 +170,28 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		// }
 
 		return teamTemplate;
+	}
+
+	@Override
+	public ListRsp<TeamRoomRes> list(TeamRoomReq listReq) {
+		Page page = listReq.toPageParam();
+
+		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listReq);
+
+		ListRsp ret = new ListRsp();
+
+		List<TeamTrainTemplateOutput> teamTrainTemplateOutputList = Lists.newArrayList();
+
+		for (TeamRoomData teamRoomData : data.getRecords()) {
+			// teamTrainTemplateOutputList.add(getTeamTrainTemplateOutputByBaseInfoData(teamRoomData));
+		}
+
+		ret.setList(teamTrainTemplateOutputList);
+		ret.setTotal(data.getTotal());
+		ret.setLastPage(data.getPages());
+		ret.setCurrentPage(data.getCurrent());
+
+		return ret;
 	}
 
 	private TeamRoomRes getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {

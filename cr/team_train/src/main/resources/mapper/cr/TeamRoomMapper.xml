@@ -12,6 +12,8 @@
         <result property="category" column="sub_type" jdbcType="VARCHAR"/>
         <result property="preSkill" column="pre_skills" jdbcType="VARCHAR"/>
         <result property="trainSkill" column="train_skills" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
+        <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
         <result property="sceneStartTime" column="start_time" jdbcType="VARCHAR"/>
         <result property="sceneEndTime" column="end_time" jdbcType="VARCHAR"/>
         <result property="difficult" column="difficulty" jdbcType="VARCHAR"/>
@@ -38,4 +40,9 @@
 
 
     </select>
+    <select id="listTeamRoom" resultType="com.cyberpeace.cr.teamtrain.model.room.TeamRoomData">
+
+
+    </select>
+
 </mapper>

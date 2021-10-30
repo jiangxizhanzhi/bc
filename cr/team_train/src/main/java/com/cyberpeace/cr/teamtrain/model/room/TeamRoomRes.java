@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
+import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
@@ -31,7 +33,11 @@ public class TeamRoomRes implements Serializable {
 
 	private Integer difficult;
 
-	private List<CrRole> trainingRoleData;
+	@ApiModelProperty(value = "自己岗位，基本信息，查列表会查询其他学员角色的内容列表")
+	private BaseRole trainingRoleData;
+
+	@ApiModelProperty(value = "所有岗位(包含教员)，单独查时使用")
+	private List<CrRole> rolesData;
 
 	private Integer durationTime;
 

@@ -53,7 +53,7 @@ public class CrRole implements Serializable {
 	/**
 	 * 
 	 */
-	private String roleGroup;
+	private Integer roleGroup;
 
 	/**
 	 * 

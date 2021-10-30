@@ -2,6 +2,8 @@ package com.cyberpeace.integratation.service;
 
 import java.util.List;
 
+import org.apache.http.message.BasicNameValuePair;
+
 import com.cyberpeace.common.model.user.UserInfo;
 
 public interface RemoteUserService {
@@ -17,4 +19,6 @@ public interface RemoteUserService {
 	UserInfo getById(String userId);
 
 	List<UserInfo> getList();
+
+	List<UserInfo> getLazyUserList(List<BasicNameValuePair> nvps);
 }

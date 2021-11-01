@@ -14,9 +14,12 @@
         <result property="trainSkill" column="train_skills" jdbcType="VARCHAR"/>
         <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
         <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
-        <result property="sceneStartTime" column="start_time" jdbcType="VARCHAR"/>
-        <result property="sceneEndTime" column="end_time" jdbcType="VARCHAR"/>
+        <result property="sceneStartTime" column="scene_start_time" jdbcType="VARCHAR"/>
+        <result property="sceneEndTime" column="scene_end_time" jdbcType="VARCHAR"/>
         <result property="difficult" column="difficulty" jdbcType="VARCHAR"/>
+        <result property="durationTime" column="duration_time" jdbcType="VARCHAR"/>
+        <result property="trainingStatus" column="scene_status" jdbcType="VARCHAR"/>
+
     </resultMap>
 
     <select id="getTeamRoomOutputById" resultMap="TeamRoomData">
@@ -34,15 +37,67 @@
                cr_team_room.create_user_id,
                cr_team_room.modify_user_id,
                cr_team_room.local_scene_id,
-               cr_team_room.copyed_topo_id
+               cr_team_room.copyed_topo_id,
+               cr_team_template.duration_time,
+               local_scene.start_time   scene_start_time,
+               local_scene.destory_time scene_end_time,
+               local_scene.scene_status
         from cr_team_room
+                 left join cr_team_template on cr_team_room.team_template_id = cr_team_template.resource_id
+                 left join local_scene on cr_team_room.team_template_id = local_scene.business_instance_id
         where cr_team_room.resource_id = #{resourceId}
 
-
     </select>
-    <select id="listTeamRoom" resultType="com.cyberpeace.cr.teamtrain.model.room.TeamRoomData">
+    <select id="listTeamRoom" resultMap="TeamRoomData">
+        <if test="listReq.search != null and listReq.search != ''">
+            <bind name="search" value="'%' + listReq.search + '%'"/>
+        </if>
+        select cr_team_room.resource_id,
+        cr_team_room.team_template_id,
+        cr_team_room.NAME,
+        cr_team_room.description,
+        cr_team_room.sub_type,
+        cr_team_room.pre_skills,
+        cr_team_room.train_skills,
+        cr_team_room.start_time,
+        cr_team_room.end_time,
+        cr_team_room.difficulty,
+        cr_team_room.time_line_config,
+        cr_team_room.create_user_id,
+        cr_team_room.modify_user_id,
+        cr_team_room.local_scene_id,
+        cr_team_room.copyed_topo_id,
+        cr_team_template.duration_time,
+        local_scene.start_time scene_start_time,
+        local_scene.destory_time scene_end_time,
+        local_scene.scene_status
+        from cr_team_room
+        left join cr_team_template on cr_team_room.team_template_id = cr_team_template.resource_id
+        left join local_scene on cr_team_room.resource_id = local_scene.business_instance_id
+        <where>
 
-
+            cr_team_room.resource_id in
+            <if test="listReq.ids != null and listReq.ids.size() != 0">
+                <foreach collection="listReq.ids" item="roomId" separator="," close=")" open="(">
+                    #{roomId}
+                </foreach>
+            </if>
+            <if test="listReq.ids.size() == 0">
+                ('')
+            </if>
+            <if test="listReq.search != null and listReq.search != ''">
+                and cr_team_room.name like #{search}
+            </if>
+            <if test="listReq.difficult != null and listReq.difficult != ''">
+                and cr_team_room.difficulty = #{listReq.difficult}
+            </if>
+            <if test="listReq.name != null and listReq.name != ''">
+                and cr_team_room.name = #{listReq.name}
+            </if>
+            <if test="listReq.category != null and listReq.category != ''">
+                and cr_team_room.sub_type = #{listReq.category}
+            </if>
+        </where>
     </select>
 
 </mapper>

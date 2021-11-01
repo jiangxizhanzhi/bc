@@ -15,19 +15,15 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.cebase.model.crevent.CrEvent;
-import com.cyberpeace.cr.teamtrain.controller.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.*;
 import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.RoleReq;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
-import com.cyberpeace.cr.teamtrain.model.room.RoomRole;
-import com.cyberpeace.cr.teamtrain.model.room.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRes;
-import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
+import com.cyberpeace.cr.teamtrain.model.role.RoleUsers;
+import com.cyberpeace.cr.teamtrain.model.room.*;
 import com.cyberpeace.cr.teamtrain.model.template.BaseInfoInput;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateOutput;
 import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -73,6 +69,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return teamRoomRes;
 	}
 
+	// 获取单个实例中自己的角色，只包括自己角色的基本信息
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userid) {
 		BaseRole baseRole = new BaseRole();
 		crRoles.forEach(crRole -> {
@@ -85,6 +82,32 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 		});
 
+		return baseRole;
+	}
+	// 先获取实例列表中自己的角色，再获取所有的学员角色
+
+	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userid) {
+		BaseRole baseRole = new BaseRole();
+		List<RoleUsers> roleUsersList = Lists.newArrayList();
+		crRoles.forEach(crRole -> {
+			if (crRole.getUserIds().contains(userid)) {
+				baseRole.setResourceId(crRole.getResourceId());
+				baseRole.setName(crRole.getName());
+
+				baseRole.setDescription(crRole.getDescription());
+				baseRole.setRoleGroup(crRole.getRoleGroup());
+			}
+			if (crRole.getRoleGroup().intValue() != CrRole.RoleGroupCodeInteger.TEACHER
+					.getValue()) {
+				RoleUsers roleUsers = new RoleUsers();
+				roleUsers.setRoleName(crRole.getName());
+				roleUsers.setRoleGroup(crRole.getRoleGroup());
+				roleUsers.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+				roleUsersList.add(roleUsers);
+			}
+		});
+
+		baseRole.setRoleDataList(roleUsersList);
 		return baseRole;
 	}
 
@@ -174,25 +197,36 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public ListRsp<TeamRoomRes> list(TeamRoomReq listReq) {
+		String userid = UserInfoContext.getUserContext().getUserId();
 		Page page = listReq.toPageParam();
-
+		listReq.setIds(crRoleService.getRoomIdsByUserid(userid));
 		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listReq);
 
 		ListRsp ret = new ListRsp();
 
-		List<TeamTrainTemplateOutput> teamTrainTemplateOutputList = Lists.newArrayList();
+		List<TeamRoomRes> teamRoomResList = Lists.newArrayList();
 
 		for (TeamRoomData teamRoomData : data.getRecords()) {
-			// teamTrainTemplateOutputList.add(getTeamTrainTemplateOutputByBaseInfoData(teamRoomData));
+			RoleReq roleReq = new RoleReq();
+			roleReq.setRoomId(teamRoomData.getResourceId());
+
+			List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
+
+			TeamRoomRes teamRoomRes = getTeamRoomOutputFromTeamRoomData(teamRoomData);
+			teamRoomRes.setTrainingRoleData(getSelfRoleUsers(crRoles, userid));
+			teamRoomRes.setRolesData(crRoles);
+
+			teamRoomResList.add(teamRoomRes);
 		}
 
-		ret.setList(teamTrainTemplateOutputList);
+		ret.setList(teamRoomResList);
 		ret.setTotal(data.getTotal());
 		ret.setLastPage(data.getPages());
 		ret.setCurrentPage(data.getCurrent());
 
 		return ret;
 	}
+
 
 	private TeamRoomRes getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {
 		TeamRoomRes teamRoomRes = BeanUtils.copy(teamRoomdata, TeamRoomRes.class);

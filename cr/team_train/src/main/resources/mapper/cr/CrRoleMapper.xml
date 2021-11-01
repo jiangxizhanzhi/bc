@@ -41,4 +41,9 @@
         where business_instance_id = #{roomId}
 
     </select>
+    <select id="getRoomIdsByUserid" resultType="java.lang.String">
+        select business_instance_id
+        from cr_role
+        where user_ids like #{userid}
+    </select>
 </mapper>

@@ -2,10 +2,10 @@ package com.cyberpeace.cr.teamtrain.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.teamtrain.controller.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.model.room.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRes;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;

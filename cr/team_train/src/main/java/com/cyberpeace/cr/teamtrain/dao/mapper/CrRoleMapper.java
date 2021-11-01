@@ -16,4 +16,6 @@ import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
 public interface CrRoleMapper extends BaseMapper<CrRole> {
 
 	List<CrRole> selectCrRoleByRoomId(RoleReq roleReq);
+
+	List<String> getRoomIdsByUserid(String userid);
 }

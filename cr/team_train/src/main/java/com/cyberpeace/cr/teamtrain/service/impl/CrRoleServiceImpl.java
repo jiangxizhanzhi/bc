@@ -62,6 +62,12 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoleRes;
 	}
 
+	@Override
+	public List<String> getRoomIdsByUserid(String userid) {
+		return crRoleMapper.getRoomIdsByUserid(userid);
+
+	}
+
 	private List<NameElement> getUserByRoleUsers(String userIds) {
 
 		List<NameElement> elements = Lists.newArrayList();

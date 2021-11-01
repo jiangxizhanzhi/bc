@@ -16,6 +16,10 @@
     <packaging>jar</packaging>
     <name>cr_base</name>
 
+    <dependencies>
+
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

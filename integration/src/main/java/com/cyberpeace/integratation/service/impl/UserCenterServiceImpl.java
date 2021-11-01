@@ -80,12 +80,6 @@ public class UserCenterServiceImpl implements UserCenterService {
 
 	@Override
 	public Boolean validateToken(String jwtToken) {
-//		try {
-//			cache.get(jwtToken);
-//		} catch (ExecutionException e) {
-//			throw new JwtTokenInvalidException();
-//		}
-
 		String paramString = JSON.toJSONString(getParams(jwtToken));
 
 		String routingKey = SERVICE_NAME + "authenticate_token";

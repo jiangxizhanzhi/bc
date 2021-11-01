@@ -70,9 +70,9 @@ public class DataSourceConfig implements EnvironmentAware {
 
 		log.info(
 				"config loaded! rtksDbConnection={}|{}|{}|{}, ojDbConnetcion={}|{}|{}|{}, crDbConnetcion={}|{}|{}|{}",
-				new Object[] { rtksJdbcUrl, rtksUserName, rtksPassword, rtksDriverClass, ojJdbcUrl,
-						ojUserName, ojPassword, ojDriverClass, crJdbcUrl, crUserName, crPassword,
-						crDriverClass });
+				new Object[] { rtksJdbcUrl, rtksUserName, "password ignored", rtksDriverClass,
+						ojJdbcUrl, ojUserName, "password ignored", ojDriverClass, crJdbcUrl,
+						crUserName, "password ignored", crDriverClass });
 	}
 
 	@Bean(name = "rtks")

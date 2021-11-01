@@ -55,4 +55,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 
 		return true;
 	}
+
+	@Override
+	protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
+
+		return super.isLoginAttempt(request, response);
+	}
 }

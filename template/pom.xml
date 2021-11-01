@@ -94,11 +94,6 @@
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>ce_base</artifactId>
-            <version>${cr.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
             <artifactId>red_vs_blue</artifactId>
             <version>${cr.version}</version>
         </dependency>

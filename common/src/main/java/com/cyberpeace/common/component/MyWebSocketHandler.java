@@ -17,7 +17,6 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 @Component
 public class MyWebSocketHandler implements WebSocketHandler {
@@ -39,7 +38,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		businessSocketSessionMap.putIfAbsent(webSocketContext.getIdentifierId(),
 				Maps.newConcurrentMap());
 
-		Map<String, Set<WebSocketSession>>userSocketSessionMap = businessSocketSessionMap
+		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
 				.get(webSocketContext.getIdentifierId());
 
 		userSocketSessionMap.putIfAbsent(webSocketContext.getUserId(), Sets.newHashSet());

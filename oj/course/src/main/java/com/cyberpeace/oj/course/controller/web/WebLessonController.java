@@ -14,10 +14,9 @@ import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 import com.cyberpeace.oj.ojbase.constant.CommentType;
 import com.cyberpeace.oj.ojbase.constant.NoteResourceType;
-import com.cyberpeace.oj.ojbase.constant.NoteType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
-import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
+import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
 import com.cyberpeace.oj.ojbase.controller.res.CommentRes;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -90,19 +89,19 @@ public class WebLessonController {
 
 	@ApiOperation("课时笔记新增")
 	@PostMapping("/note")
-	public BaseRsp<NoteAddContext> saveNote(@ApiParam @RequestBody @Valid NoteReq noteReq) {
+	public BaseRsp<Note> saveNote(@RequestBody @Valid NoteAddReq noteReq) {
 
-		CourseLesson lesson = courseLessonMapper.selectById(noteReq.getResource());
+		CourseLesson lesson = courseLessonMapper.selectById(noteReq.getBusinessId());
 		if (null == lesson) {
 			throw new ResourceNotFoundException("未检索到对应课时信息！");
 		}
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		NoteAddContext addContext = BeanUtils.copy(noteReq, NoteAddContext.class);
-		addContext.setUser(userId);
-		addContext.setResourceType(NoteResourceType.LESSON.getCode());
+		addContext.setUserId(userId);
+		addContext.setBusinessType(NoteResourceType.LESSON.getCode());
 
-		NoteAddContext noteAddContext = noteService.updateOrSave(addContext);
+		Note noteAddContext = noteService.updateNote(addContext);
 		return new BaseRsp<>(noteAddContext);
 	}
 

@@ -9,10 +9,10 @@ public class NoteUniqueContext implements Serializable {
 
     private Integer noteType;
 
-    private Integer resourceType;
+    private Integer businessType;
 
-    private String user;
+    private String userId;
 
-    private String resource;
+    private String businessId;
 
 }

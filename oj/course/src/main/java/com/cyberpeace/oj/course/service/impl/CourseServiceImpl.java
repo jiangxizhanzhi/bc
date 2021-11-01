@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.ojbase.constant.AuthShare;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.course.constant.CourseAuthShare;
 import com.cyberpeace.oj.course.constant.LessonType;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
@@ -173,14 +173,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			CourseAdminBo courseAdminBo = BeanUtils.copy(courseInfoBo, CourseAdminBo.class);
 			courseAdminBo.setAuth(course.getReadAuthType());
 			courseAdminBo.setShare(course.getOperationAuthType());
-			if (course.getReadAuthType().intValue() == CourseAuthShare.CUSTOM.getCode()
-					.intValue()) {
+			if (course.getReadAuthType().intValue() == AuthShare.CUSTOM.getCode().intValue()) {
 				List<String> orgs = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
 						String.class);
 				courseAdminBo.setAuthCount(orgs.size());
 			}
-			if (course.getOperationAuthType().intValue() == CourseAuthShare.CUSTOM.getCode()
-					.intValue()) {
+			if (course.getOperationAuthType().intValue() == AuthShare.CUSTOM.getCode().intValue()) {
 				List<String> shares = JsonUtil.toJsonObjectArray(course.getOperationAuthIds(),
 						String.class);
 				courseAdminBo.setAuthCount(shares.size());

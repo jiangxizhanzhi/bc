@@ -76,7 +76,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	}
 
 	@ApiOperation("后台课时详情查询接口")
-	@GetMapping("/lesson")
+	@GetMapping("")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号"),
 			@ApiImplicitParam(name = "course_id", value = "课程编号") })
 	public BaseRsp<AdminLessonBo> get(@RequestParam(value = "course_id") String courseId,

@@ -16,9 +16,10 @@ import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.ojbase.constant.CommentType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
-import com.cyberpeace.oj.ojbase.controller.req.NoteReq;
+import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
 import com.cyberpeace.oj.ojbase.controller.res.CommentRes;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.service.CommentService;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
@@ -117,19 +118,19 @@ public class WebCourseController {
 
 	@PostMapping("/note")
 	@ApiOperation("笔记新增或者修改")
-	public BaseRsp<NoteAddContext> saveNote(@ApiParam @Valid @RequestBody NoteReq noteReq) {
+	public BaseRsp<NoteAddContext> saveNote(@ApiParam @Valid @RequestBody NoteAddReq noteReq) {
 
 		// 资源校验
-		Course course = courseMapper.selectById(noteReq.getResource());
+		Course course = courseMapper.selectById(noteReq.getBusinessId());
 		if (null == course) {
 			throw new ResourceNotFoundException("未找到对应的课程资源！");
 		}
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		NoteAddContext addContext = BeanUtils.copy(noteReq, NoteAddContext.class);
-		addContext.setUser(userId);
+		addContext.setUserId(userId);
 
-		NoteAddContext note = noteService.updateOrSave(addContext);
+		Note note = noteService.updateNote(addContext);
 		return new BaseRsp(note);
 	}
 }

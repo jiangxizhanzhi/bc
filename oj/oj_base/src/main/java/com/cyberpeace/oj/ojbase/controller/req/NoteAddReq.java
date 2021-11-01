@@ -10,10 +10,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel
-public class NoteReq implements Serializable {
-
-    @ApiModelProperty("笔记编号 没有则新增 有则修改")
-    private String resourceId;
+public class NoteAddReq implements Serializable {
 
     @ApiModelProperty("笔记内容")
     private String content;
@@ -24,5 +21,8 @@ public class NoteReq implements Serializable {
 
     @ApiModelProperty("资源编号 课程 课时 习题")
     @NotBlank
-    private String resource;
+    private String businessId;
+
+    @ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习")
+    private Integer businessType;
 }

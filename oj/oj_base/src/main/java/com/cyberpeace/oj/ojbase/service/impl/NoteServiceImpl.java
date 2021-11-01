@@ -1,40 +1,26 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
-import java.util.Date;
-
-import com.cyberpeace.common.exception.ResourceNotFoundException;
-import com.cyberpeace.oj.ojbase.constant.NoteType;
-import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
-import com.cyberpeace.oj.ojbase.service.bo.ReportBo;
-import org.apache.commons.lang3.StringUtils;
+import com.cyberpeace.oj.ojbase.constant.AuthShare;
+import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.oj.ojbase.constant.NoteType;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
-import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
+import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
+import com.cyberpeace.oj.ojbase.service.bo.ReportBo;
 
 @Service
 public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements NoteService {
 
 	@Autowired
 	private NoteMapper noteMapper;
-
-	@Override
-	public NoteAddContext updateOrSave(NoteAddContext addContext) {
-		if (StringUtils.isBlank(addContext.getResourceId())) {
-			insert(addContext);
-		} else {
-			Note note = noteMapper.selectById(addContext.getResourceId());
-			update(note, addContext);
-		}
-
-		return addContext;
-	}
 
 	@Override
 	public NoteBo selectByUnique(NoteUniqueContext uniqueContext) {
@@ -48,32 +34,32 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 				: BeanUtils.copy(note, ReportBo.class);
 	}
 
-	/**
-	 * 新增笔记
-	 * @param addContext
-	 */
-	private void insert(NoteAddContext addContext) {
+	@Override
+	public Note addNote(NoteAddContext noteAddContext) {
+		Note note = BeanUtils.copy(noteAddContext, Note.class);
+		note.setReadAuthType(AuthShare.ALL.getCode());
+		note.setOperationAuthType(AuthShare.ALL.getCode());
+		updateOrSave(note);
+		return note;
+	}
 
-		NoteUniqueContext uniqueContext = BeanUtils.copy(addContext, NoteUniqueContext.class);
-
-		Note existNote = noteMapper.selectByCondition(uniqueContext);
-		if (existNote == null) {
-			Note note = BeanUtils.copy(addContext, Note.class);
-			noteMapper.insert(note);
-
-		} else {
-			update(existNote, addContext);
-		}
+	@Override
+	public Note updateNote(NoteAddContext context) {
+		Note note = BeanUtils.copy(context, Note.class);
+		updateOrSave(note);
+		return note;
 	}
 
 	/**
-	 * 更新笔记
-	 * @param existNote
-	 * @param addContext
+	 * 新增或修改笔记信息
+	 * @param note
 	 */
-	private void update(Note existNote, NoteAddContext addContext) {
-		org.springframework.beans.BeanUtils.copyProperties(addContext, existNote);
-		noteMapper.updateById(existNote);
+	private void updateOrSave(Note note) {
+		try {
+			noteMapper.insert(note);
+		} catch (DuplicateKeyException e) {
+			noteMapper.updateById(note);
+		}
 	}
 
 }

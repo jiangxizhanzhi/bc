@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 
 @RestController
 @RequestMapping
@@ -13,7 +14,8 @@ public class BusinessTemplateController {
 	 * 获取所有靶场的业务模板
 	 * @return
 	 */
-	public BaseRsp getTemplate() {
+	public BaseRsp<BusinessTemplate> getTemplate() {
+
 		// TODO
 		return null;
 	}

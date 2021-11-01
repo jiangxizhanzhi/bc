@@ -14,8 +14,12 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.cebase.model.crevent.CrEvent;
-import com.cyberpeace.cr.teamtrain.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.RoleReq;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
@@ -24,7 +28,6 @@ import com.cyberpeace.cr.teamtrain.model.role.RoleUsers;
 import com.cyberpeace.cr.teamtrain.model.room.*;
 import com.cyberpeace.cr.teamtrain.model.template.BaseInfoInput;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
-import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -138,7 +141,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			teamTrainTemplateRole.getResourceId();
 			JsonUtil.toJsonString(teamTrainTemplateRoleList);
 			crRole.setBusinessInstanceId(teamRoom.getResourceId());
-			crRole.setBusinessType(CrEvent.CeType.TRAINING_TEAM);
+			crRole.setBusinessType(
+					com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate.CeType.TRAINING_TEAM);
 			crRoleService.save(crRole);
 
 		}
@@ -162,7 +166,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		SceneConfig sceneConfig = input.getSceneConfigData();
 
 		businessTemplate.setTopoId("");
-		businessTemplate.setCreateUser(UserInfoContext.getUserContext().getUserId());
+		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
 		businessTemplate.setName(baseInfoInput.getName());
 		businessTemplate.setDescription(baseInfoInput.getDescription());
@@ -226,7 +230,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		return ret;
 	}
-
 
 	private TeamRoomRes getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {
 		TeamRoomRes teamRoomRes = BeanUtils.copy(teamRoomdata, TeamRoomRes.class);

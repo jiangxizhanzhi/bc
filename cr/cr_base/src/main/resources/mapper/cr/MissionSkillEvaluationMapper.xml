@@ -6,10 +6,11 @@
     <resultMap id="base" type="com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation"/>
 
     <select id="selectLastOne" resultMap="base">
-        select student_id, skill, score from cr_mission_skillevaluation
-        where student_id = #{userId} and skill = #{skillId}
-        order by create_time desc
-        limit 0,1
+        select student_id, skill, score
+        from cr_mission_skillevaluation
+        where student_id = #{userId}
+          and skill = #{skillId}
+        order by create_time desc limit 0,1
     </select>
 
 </mapper>

@@ -10,8 +10,6 @@ import lombok.Data;
 @TableName("ce_red_vs_blue_redvsblue")
 public class RedVsBlue {
 
-
-
 	private String name;
 
 	private String description;

@@ -7,7 +7,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 
 import lombok.Data;
@@ -55,7 +55,7 @@ public class BaseInfoOutput implements Serializable {
 		this.name = businessTemplate.getName();
 		this.category = template.getSubType();
 		this.description = businessTemplate.getDescription();
-		this.createUser = businessTemplate.getCreateUser();
+		this.createUser = businessTemplate.getCreateUserId();
 		this.createTime = createTime;
 		this.difficult = businessTemplate.getDifficulty();
 		this.durationTime = template.getDurationTime();

@@ -12,8 +12,10 @@ public interface CrBusinessErrorCode {
 
 	// 找不到有效目录
 	String NOT_PATH = "101001";
+
 	// 没有找到md文件
 	String NOT_MD_PATH = "101002";
+
 	// 文件解压失败
 	String ZIP_PATH_NOT_EXTRA = "101003";
 }

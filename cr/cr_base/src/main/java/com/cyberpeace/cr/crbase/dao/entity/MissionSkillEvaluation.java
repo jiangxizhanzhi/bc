@@ -1,29 +1,30 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 
-import java.util.Date;
+import lombok.Data;
 
 @Data
 @TableName("cr_mission_skillevaluation")
 public class MissionSkillEvaluation {
 
-    private Integer id;
+	private Integer id;
 
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    private String studentId;
+	private String studentId;
 
-    private String roomId;
+	private String roomId;
 
-    private String skill;
+	private String skill;
 
-    private Integer score;
+	private Integer score;
 
-    private Date createTime;
+	private Date createTime;
 
 }

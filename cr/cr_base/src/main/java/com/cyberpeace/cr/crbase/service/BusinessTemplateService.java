@@ -1,7 +1,7 @@
-package com.cyberpeace.cr.teamtrain.service;
+package com.cyberpeace.cr.crbase.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 
 /**
  *

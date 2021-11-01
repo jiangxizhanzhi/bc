@@ -97,11 +97,11 @@
             <artifactId>red_vs_blue</artifactId>
             <version>${cr.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>single_train</artifactId>
-            <version>${cr.version}</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.cyberpeace.cr</groupId>-->
+        <!--            <artifactId>single_train</artifactId>-->
+        <!--            <version>${cr.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>team_train</artifactId>

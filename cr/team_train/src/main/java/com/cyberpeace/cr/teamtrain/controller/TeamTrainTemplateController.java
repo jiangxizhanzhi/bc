@@ -9,15 +9,14 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.ObjUtil;
-import com.cyberpeace.cr.cebase.service.CrEventService;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
-import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTemplateReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateAddInput;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateOutput;
-import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.TeamTrainTemplateRoleService;
 import com.cyberpeace.integratation.service.RemoteSceneConfigService;
@@ -35,9 +34,6 @@ public class TeamTrainTemplateController {
 
 	@Autowired
 	TeamTrainTemplateRoleService teamTrainTemplateRoleService;
-
-	@Autowired
-	CrEventService crEventService;
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;
@@ -94,6 +90,5 @@ public class TeamTrainTemplateController {
 
 		return new BaseRsp<>(data);
 	}
-
 
 }

@@ -10,14 +10,14 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
-import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRes;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
-import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -60,8 +60,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("修改")
 	@PutMapping()
-	public BaseRsp<TeamRoomRes>
-			update(@RequestBody @Validated TeamTrainTemplateModifyInput input) {
+	public BaseRsp<TeamRoomRes> update(@RequestBody @Validated TeamTrainTemplateModifyInput input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 		TeamTemplate template = teamTemplateService.getById(resourceId);
 
@@ -108,6 +107,5 @@ public class TeamTrainRoomController {
 
 		return teamRoomRes;
 	}
-
 
 }

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.BusinessTemplateMapper">
 
-    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate">
+    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
         <id property="resourceId" column="resource_id" jdbcType="CHAR"/>
         <result property="topoId" column="topo_id" jdbcType="CHAR"/>
         <result property="name" column="name" jdbcType="CHAR"/>

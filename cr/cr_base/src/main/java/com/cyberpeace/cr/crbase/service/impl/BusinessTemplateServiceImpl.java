@@ -1,11 +1,11 @@
-package com.cyberpeace.cr.teamtrain.service.impl;
+package com.cyberpeace.cr.crbase.service.impl;
 
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.teamtrain.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 
 /**
  *

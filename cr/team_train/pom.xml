@@ -15,18 +15,12 @@
     <name>team_train</name>
 
     <properties>
-        <ce_base.version>0.0.1-SNAPSHOT</ce_base.version>
         <cr_base.version>0.0.1-SNAPSHOT</cr_base.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>ce_base</artifactId>
-            <version>${ce_base.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
+
+    <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
             <version>${cr_base.version}</version>

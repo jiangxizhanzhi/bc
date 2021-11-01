@@ -14,14 +14,14 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.teamtrain.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
 import com.cyberpeace.cr.teamtrain.model.template.*;
-import com.cyberpeace.cr.teamtrain.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.google.common.collect.Lists;
@@ -69,7 +69,8 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		TeamTemplate teamTemplate = new TeamTemplate();
 
 		BaseInfoInput crEventAddInput = input.getBaseInfo();
-		BusinessTemplate businessTemplate = new BusinessTemplate(crEventAddInput);
+
+		BusinessTemplate businessTemplate = getBusinessTemplateFromBaseInfoInput(crEventAddInput);
 
 		// 拓扑场景id保存获取
 		SceneConfig sceneConfig = input.getSceneConfigData();
@@ -77,11 +78,11 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		// 保存基础模板
 		businessTemplate.setTopoId(sceneConfigId);
-		businessTemplate.setCreateUser(UserInfoContext.getUserContext().getUserId());
+		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		businessTemplateService.save(businessTemplate);
 		// BusinessTemplate businessTemplate = crEventService.create(crEventAddInput,
-		// CrEvent.CeType.TRAINING_TEAM);
+		// BusinessTemplate.CeType.TRAINING_TEAM);
 
 		// 保存团队训练模板
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
@@ -112,6 +113,15 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return teamTemplate;
 	}
 
+	private BusinessTemplate getBusinessTemplateFromBaseInfoInput(BaseInfoInput baseInfoInput) {
+		BusinessTemplate businessTemplate = new BusinessTemplate();
+		businessTemplate.setName(baseInfoInput.getName());
+		businessTemplate.setDescription(baseInfoInput.getDescription());
+		businessTemplate.setDifficulty(baseInfoInput.getDifficult());
+		businessTemplate.setBusinessType(BusinessTemplate.CeType.TRAINING_TEAM);
+		return businessTemplate;
+	}
+
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
 	public TeamTemplate updateTeamTemplate(TeamTrainTemplateModifyInput input,
@@ -123,7 +133,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		SceneConfig sceneConfig = input.getSceneConfigData();
 
 		businessTemplate.setTopoId("");
-		businessTemplate.setCreateUser(UserInfoContext.getUserContext().getUserId());
+		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
 		businessTemplate.setName(baseInfoInput.getName());
 		businessTemplate.setDescription(baseInfoInput.getDescription());

@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class RoleResData {
+public class RoleRspData {
 
 	private String resourceId;
 

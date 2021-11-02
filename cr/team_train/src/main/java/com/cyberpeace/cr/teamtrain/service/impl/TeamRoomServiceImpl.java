@@ -26,8 +26,8 @@ import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
 import com.cyberpeace.cr.teamtrain.model.role.RoleUsers;
 import com.cyberpeace.cr.teamtrain.model.room.*;
-import com.cyberpeace.cr.teamtrain.model.template.BaseInfoInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
+import com.cyberpeace.cr.teamtrain.model.template.BaseInfoReq;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -56,7 +56,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	CrRoleService crRoleService;
 
 	@Override
-	public TeamRoomRes getTeamRoomOutputById(String resourceId) {
+	public TeamRoomRsp getTeamRoomOutputById(String resourceId) {
 		String userid = UserInfoContext.getUserContext().getUserId();
 		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resourceId);
 
@@ -65,11 +65,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
 
-		TeamRoomRes teamRoomRes = getTeamRoomOutputFromTeamRoomData(teamRoomdata);
-		teamRoomRes.setTrainingRoleData(getSelfRole(crRoles, userid));
-		teamRoomRes.setRolesData(crRoles);
+		TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomdata);
+		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userid));
+		teamRoomRsp.setRolesData(crRoles);
 
-		return teamRoomRes;
+		return teamRoomRsp;
 	}
 
 	// 获取单个实例中自己的角色，只包括自己角色的基本信息
@@ -141,8 +141,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			teamTrainTemplateRole.getResourceId();
 			JsonUtil.toJsonString(teamTrainTemplateRoleList);
 			crRole.setBusinessInstanceId(teamRoom.getResourceId());
-			crRole.setBusinessType(
-					com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate.CeType.TRAINING_TEAM);
+			crRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 			crRoleService.save(crRole);
 
 		}
@@ -157,20 +156,20 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
-	public TeamTemplate updateTeamRoom(TeamTrainTemplateModifyInput input,
+	public TeamTemplate updateTeamRoom(TeamTrainTemplateModifyReq input,
 			BusinessTemplate businessTemplate) {
 		TeamTemplate teamTemplate = new TeamTemplate();
 
-		BaseInfoInput baseInfoInput = input.getBaseInfo();
+		BaseInfoReq baseInfoReq = input.getBaseInfo();
 
 		SceneConfig sceneConfig = input.getSceneConfigData();
 
 		businessTemplate.setTopoId("");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
-		businessTemplate.setName(baseInfoInput.getName());
-		businessTemplate.setDescription(baseInfoInput.getDescription());
-		businessTemplate.setDifficulty(baseInfoInput.getDifficult());
+		businessTemplate.setName(baseInfoReq.getName());
+		businessTemplate.setDescription(baseInfoReq.getDescription());
+		businessTemplate.setDifficulty(baseInfoReq.getDifficult());
 
 		if (sceneConfig != null) {
 			String sceneConfigId = "todo";
@@ -182,12 +181,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		// 保存团队训练模板
 		teamTemplate.setResourceId(input.getResourceId());
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfoInput.getPre_skill()));
-		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfoInput.getTrain_skill()));
-		teamTemplate.setSubType(baseInfoInput.getCategory());
+		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfoReq.getPre_skill()));
+		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfoReq.getTrain_skill()));
+		teamTemplate.setSubType(baseInfoReq.getCategory());
 		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
-		teamTemplate.setDurationTime(baseInfoInput.getDurationTime());
-		teamTemplate.setPeopleNumber(baseInfoInput.getPeopleNumber());
+		teamTemplate.setDurationTime(baseInfoReq.getDurationTime());
+		teamTemplate.setPeopleNumber(baseInfoReq.getPeopleNumber());
 
 		teamTemplateService.updateById(teamTemplate);
 		// MissionScheme missionScheme = input.getMissionScheme();
@@ -200,7 +199,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public ListRsp<TeamRoomRes> list(TeamRoomReq listReq) {
+	public ListRsp<TeamRoomRsp> list(TeamRoomReq listReq) {
 		String userid = UserInfoContext.getUserContext().getUserId();
 		Page page = listReq.toPageParam();
 		listReq.setIds(crRoleService.getRoomIdsByUserid(userid));
@@ -208,7 +207,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		ListRsp ret = new ListRsp();
 
-		List<TeamRoomRes> teamRoomResList = Lists.newArrayList();
+		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
 
 		for (TeamRoomData teamRoomData : data.getRecords()) {
 			RoleReq roleReq = new RoleReq();
@@ -216,14 +215,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 			List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
 
-			TeamRoomRes teamRoomRes = getTeamRoomOutputFromTeamRoomData(teamRoomData);
-			teamRoomRes.setTrainingRoleData(getSelfRoleUsers(crRoles, userid));
-			teamRoomRes.setRolesData(crRoles);
+			TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomData);
+			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userid));
+			teamRoomRsp.setRolesData(crRoles);
 
-			teamRoomResList.add(teamRoomRes);
+			teamRoomRspList.add(teamRoomRsp);
 		}
 
-		ret.setList(teamRoomResList);
+		ret.setList(teamRoomRspList);
 		ret.setTotal(data.getTotal());
 		ret.setLastPage(data.getPages());
 		ret.setCurrentPage(data.getCurrent());
@@ -231,14 +230,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return ret;
 	}
 
-	private TeamRoomRes getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {
-		TeamRoomRes teamRoomRes = BeanUtils.copy(teamRoomdata, TeamRoomRes.class);
+	private TeamRoomRsp getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {
+		TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomdata, TeamRoomRsp.class);
 
-		teamRoomRes
+		teamRoomRsp
 				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomdata.getPreSkill(), String.class));
-		teamRoomRes.setTrainSkill(
+		teamRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamRoomdata.getTrainSkill(), String.class));
 
-		return teamRoomRes;
+		return teamRoomRsp;
 	}
 }

@@ -5,21 +5,21 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTemplateReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateAddInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateOutput;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateAddReq;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateRsp;
 
 /**
  *
  */
 public interface TeamTemplateService extends IService<TeamTemplate> {
 
-	ListRsp<TeamTrainTemplateOutput> page(TeamTemplateReq listReq);
+	ListRsp<TeamTrainTemplateRsp> page(TeamTemplateReq listReq);
 
-	TeamTemplate create(TeamTrainTemplateAddInput input);
+	TeamTemplate create(TeamTrainTemplateAddReq input);
 
-	TeamTemplate updateTeamTemplate(TeamTrainTemplateModifyInput input,
+	TeamTemplate updateTeamTemplate(TeamTrainTemplateModifyReq input,
 			BusinessTemplate businessTemplate);
 
-	TeamTrainTemplateOutput getTeamTemplate(String resource_id);
+	TeamTrainTemplateRsp getTeamTemplate(String resource_id);
 }

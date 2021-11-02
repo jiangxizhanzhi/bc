@@ -4,8 +4,15 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.model.BusinessTemplateRsp;
+import com.cyberpeace.cr.crbase.model.TemplateReq;
 
 @Mapper
 @Repository
-public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {}
+public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
+
+	IPage<BusinessTemplateRsp> listTeamTemplate(Page page, TemplateReq listReq);
+}

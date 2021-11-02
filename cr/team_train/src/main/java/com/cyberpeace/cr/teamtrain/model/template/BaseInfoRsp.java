@@ -13,7 +13,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import lombok.Data;
 
 @Data
-public class BaseInfoOutput implements Serializable {
+public class BaseInfoRsp implements Serializable {
 
 	@NotBlank
 	private String name;
@@ -36,7 +36,7 @@ public class BaseInfoOutput implements Serializable {
 
 	private Integer peopleNumber;
 
-	public BaseInfoOutput(String name, Integer category, String description, String createUser,
+	public BaseInfoRsp(String name, Integer category, String description, String createUser,
 			Date createTime, Integer difficult, Integer durationTime, List<String> preSkill,
 			List<String> trainSkill, Integer people_number) {
 		this.name = name;
@@ -51,7 +51,7 @@ public class BaseInfoOutput implements Serializable {
 		this.peopleNumber = people_number;
 	}
 
-	public BaseInfoOutput(TeamTemplate template, BusinessTemplate businessTemplate) {
+	public BaseInfoRsp(TeamTemplate template, BusinessTemplate businessTemplate) {
 		this.name = businessTemplate.getName();
 		this.category = template.getSubType();
 		this.description = businessTemplate.getDescription();
@@ -64,7 +64,7 @@ public class BaseInfoOutput implements Serializable {
 		this.peopleNumber = template.getPeopleNumber();
 	}
 
-	public BaseInfoOutput(BaseInfoData baseInfoData) {
+	public BaseInfoRsp(BaseInfoData baseInfoData) {
 		this.name = baseInfoData.getName();
 		this.category = baseInfoData.getSubType();
 		this.description = baseInfoData.getDescription();

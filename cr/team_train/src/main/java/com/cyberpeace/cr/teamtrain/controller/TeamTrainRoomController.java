@@ -15,9 +15,9 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomReq;
-import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRes;
+import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -52,7 +52,7 @@ public class TeamTrainRoomController {
 	@ApiOperation("新增")
 	@PostMapping()
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
-	public BaseRsp<TeamRoomRes> create(@RequestBody @Validated TeamTrainRoomReq input) {
+	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq input) {
 		TeamTemplate entity = teamRoomService.create(input);
 
 		return retrieve(entity.getResourceId());
@@ -60,7 +60,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("修改")
 	@PutMapping()
-	public BaseRsp<TeamRoomRes> update(@RequestBody @Validated TeamTrainTemplateModifyInput input) {
+	public BaseRsp<TeamRoomRsp> update(@RequestBody @Validated TeamTrainTemplateModifyReq input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 		TeamTemplate template = teamTemplateService.getById(resourceId);
 
@@ -77,10 +77,10 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	public BaseRsp<TeamRoomRes> retrieve(String resource_id) {
-		TeamRoomRes t = getTeamRoom(resource_id);
+	public BaseRsp<TeamRoomRsp> retrieve(String resource_id) {
+		TeamRoomRsp t = getTeamRoom(resource_id);
 
-		return new BaseRsp<TeamRoomRes>(t);
+		return new BaseRsp<TeamRoomRsp>(t);
 	}
 
 	@ApiOperation("删除")
@@ -93,19 +93,19 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<TeamRoomRes>> list(TeamRoomReq listReq) {
-		ListRsp<TeamRoomRes> data = teamRoomService.list(listReq);
+	public BaseRsp<ListRsp<TeamRoomRsp>> list(TeamRoomReq listReq) {
+		ListRsp<TeamRoomRsp> data = teamRoomService.list(listReq);
 
 		return new BaseRsp<>(data);
 	}
 
-	protected TeamRoomRes getTeamRoom(String resourceId) {
-		TeamRoomRes teamRoomRes = teamRoomService.getTeamRoomOutputById(resourceId);
-		if (teamRoomRes == null) {
+	protected TeamRoomRsp getTeamRoom(String resourceId) {
+		TeamRoomRsp teamRoomRsp = teamRoomService.getTeamRoomOutputById(resourceId);
+		if (teamRoomRsp == null) {
 			throw new ResourceNotFoundException("团队训练" + resourceId + "不存在");
 		}
 
-		return teamRoomRes;
+		return teamRoomRsp;
 	}
 
 }

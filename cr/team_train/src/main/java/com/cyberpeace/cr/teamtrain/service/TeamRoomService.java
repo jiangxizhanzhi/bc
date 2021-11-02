@@ -6,21 +6,21 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomReq;
-import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRes;
+import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
 
 /**
  *
  */
 public interface TeamRoomService extends IService<TeamRoom> {
 
-	TeamRoomRes getTeamRoomOutputById(String resourceId);
+	TeamRoomRsp getTeamRoomOutputById(String resourceId);
 
 	TeamTemplate create(TeamTrainRoomReq input);
 
-	TeamTemplate updateTeamRoom(TeamTrainTemplateModifyInput input,
+	TeamTemplate updateTeamRoom(TeamTrainTemplateModifyReq input,
 			BusinessTemplate businessTemplate);
 
-	ListRsp<TeamRoomRes> list(TeamRoomReq listReq);
+	ListRsp<TeamRoomRsp> list(TeamRoomReq listReq);
 }

@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamRoomRes implements Serializable {
+public class TeamRoomRsp implements Serializable {
 
 	private String resourceId;
 

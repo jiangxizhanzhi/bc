@@ -9,7 +9,7 @@ import lombok.Data;
  * @TableName cr_team_train_flowscheme_template
  */
 @Data
-public class FlowschemeInput implements Serializable {
+public class FlowschemeReq implements Serializable {
 
 	/**
 	 * 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.AuthTable;
 
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * 靶场模板公共信息模型
@@ -28,18 +29,22 @@ public class BusinessTemplate extends AuthTable {
 
 	private String createUserId;
 
-	public interface CeType {
+	public enum BusinessType {
 
-		int TRAINING_SINGLE = 1;
+		TRAINING_SINGLE(1, "单兵训练"), VULN_VALIDATE(2, ""), TRAINING_TEAM(3, "团队训练"), RED_VS_BLUE(4,
+				"红蓝对抗"), WEAPON_ASSESS(6, "装备测试"), SYSTEM_ASSESS(7, "系统测试");
 
-		int VULN_VALIDATE = 2;
+		@Getter
+		private Integer code;
 
-		int TRAINING_TEAM = 3;
+		@Getter
+		private String desc;
 
-		int RED_VS_BLUE = 4;
+		private BusinessType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
 
-		int WEAPON_ASSESS = 6;
-
-		int SYSTEM_ASSESS = 7;
 	}
+
 }

@@ -8,19 +8,19 @@ import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
 import lombok.Data;
 
 @Data
-public class TeamTrainTemplateOutput {
+public class TeamTrainTemplateRsp {
 
-	private BaseInfoOutput baseInfo;
+	private BaseInfoRsp baseInfo;
 
 	private List<TeamTrainTemplateRole> roleList;
 
 	private List<BaseRole> roleStructure;
 
-	// private FlowschemeInput flowSchemesData;
+	// private FlowschemeReq flowSchemesData;
 	//
 	//
 	//
-	// private GatherschemeInput gatherSchemesData;
+	// private GatherschemeReq gatherSchemesData;
 
 	private Object timeLineConfig = "{}";
 

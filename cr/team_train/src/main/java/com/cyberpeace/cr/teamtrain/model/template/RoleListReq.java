@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class RoleListInput implements Serializable {
+public class RoleListReq implements Serializable {
 
 	/**
 	 *

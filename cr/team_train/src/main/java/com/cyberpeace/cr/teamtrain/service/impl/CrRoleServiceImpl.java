@@ -13,9 +13,9 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.RoleReq;
-import com.cyberpeace.cr.teamtrain.model.role.CrRoleRes;
+import com.cyberpeace.cr.teamtrain.model.role.CrRoleRsp;
 import com.cyberpeace.cr.teamtrain.model.role.NameElement;
-import com.cyberpeace.cr.teamtrain.model.role.RoleResData;
+import com.cyberpeace.cr.teamtrain.model.role.RoleRspData;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -33,8 +33,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	private RemoteUserService remoteUserService;
 
 	@Override
-	public CrRoleRes getRoles(String roomId) {
-		CrRoleRes crRoleRes = new CrRoleRes();
+	public CrRoleRsp getRoles(String roomId) {
+		CrRoleRsp crRoleRes = new CrRoleRsp();
 		RoleReq roleReq = new RoleReq();
 		roleReq.setRoomId(roomId);
 		roleReq.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
@@ -44,11 +44,11 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			throw new ResourceNotFoundException("团队训练" + roomId + "不存在训练角色");
 		}
 
-		List<RoleResData> roleResDataList = Lists.newArrayList();
+		List<RoleRspData> roleResDataList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
 			String missionSchemeId = crRole.getMissionSchemeId();
 			// todo 调用获取任务
-			RoleResData roleResData = new RoleResData();
+			RoleRspData roleResData = new RoleRspData();
 			roleResData.setName(crRole.getName());
 			roleResData.setResourceId(crRole.getResourceId());
 			roleResData.setMissionsList(missionSchemeId);

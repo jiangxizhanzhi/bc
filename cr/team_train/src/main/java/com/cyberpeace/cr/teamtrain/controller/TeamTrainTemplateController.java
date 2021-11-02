@@ -14,9 +14,9 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTemplateReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateAddInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyInput;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateOutput;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateAddReq;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.TeamTrainTemplateRoleService;
 import com.cyberpeace.integratation.service.RemoteSceneConfigService;
@@ -46,8 +46,8 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	public BaseRsp<TeamTrainTemplateOutput>
-			create(@RequestBody @Validated TeamTrainTemplateAddInput input) {
+	public BaseRsp<TeamTrainTemplateRsp>
+			create(@RequestBody @Validated TeamTrainTemplateAddReq input) {
 		TeamTemplate entity = teamTemplateService.create(input);
 
 		return retrieve(entity.getResourceId());
@@ -55,8 +55,8 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("修改")
 	@PutMapping()
-	public BaseRsp<TeamTrainTemplateOutput>
-			update(@RequestBody @Validated TeamTrainTemplateModifyInput input) {
+	public BaseRsp<TeamTrainTemplateRsp>
+			update(@RequestBody @Validated TeamTrainTemplateModifyReq input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 		TeamTemplate template = teamTemplateService.getById(resourceId);
 		BusinessTemplate businessTemplate = businessTemplateService
@@ -71,8 +71,8 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	public BaseRsp<TeamTrainTemplateOutput> retrieve(String resource_id) {
-		TeamTrainTemplateOutput t = teamTemplateService.getTeamTemplate(resource_id);
+	public BaseRsp<TeamTrainTemplateRsp> retrieve(String resource_id) {
+		TeamTrainTemplateRsp t = teamTemplateService.getTeamTemplate(resource_id);
 		return new BaseRsp<>(t);
 	}
 
@@ -85,8 +85,8 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<TeamTrainTemplateOutput>> list(TeamTemplateReq listReq) {
-		ListRsp<TeamTrainTemplateOutput> data = teamTemplateService.page(listReq);
+	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateReq listReq) {
+		ListRsp<TeamTrainTemplateRsp> data = teamTemplateService.page(listReq);
 
 		return new BaseRsp<>(data);
 	}

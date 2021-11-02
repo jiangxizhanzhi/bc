@@ -42,20 +42,20 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	private TeamRoomMapper teamTrainTemplateMapper;
 
 	@Override
-	public ListRsp<TeamTrainTemplateOutput> page(TeamTemplateReq listReq) {
+	public ListRsp<TeamTrainTemplateRsp> page(TeamTemplateReq listReq) {
 		Page page = listReq.toPageParam();
 
 		IPage<BaseInfoData> data = teamTemplateMapper.listTeamTemplate(page, listReq);
 
 		ListRsp ret = new ListRsp();
 
-		List<TeamTrainTemplateOutput> teamTrainTemplateOutputList = Lists.newArrayList();
+		List<TeamTrainTemplateRsp> teamTrainTemplateRspList = Lists.newArrayList();
 
 		for (BaseInfoData baseInfoData : data.getRecords()) {
-			teamTrainTemplateOutputList.add(getTeamTrainTemplateOutputByBaseInfoData(baseInfoData));
+			teamTrainTemplateRspList.add(getTeamTrainTemplateOutputByBaseInfoData(baseInfoData));
 		}
 
-		ret.setList(teamTrainTemplateOutputList);
+		ret.setList(teamTrainTemplateRspList);
 		ret.setTotal(data.getTotal());
 		ret.setLastPage(data.getPages());
 		ret.setCurrentPage(data.getCurrent());
@@ -65,10 +65,10 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
-	public TeamTemplate create(TeamTrainTemplateAddInput input) {
+	public TeamTemplate create(TeamTrainTemplateAddReq input) {
 		TeamTemplate teamTemplate = new TeamTemplate();
 
-		BaseInfoInput crEventAddInput = input.getBaseInfo();
+		BaseInfoReq crEventAddInput = input.getBaseInfo();
 
 		BusinessTemplate businessTemplate = getBusinessTemplateFromBaseInfoInput(crEventAddInput);
 
@@ -81,8 +81,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		businessTemplateService.save(businessTemplate);
-		// BusinessTemplate businessTemplate = crEventService.create(crEventAddInput,
-		// BusinessTemplate.CeType.TRAINING_TEAM);
 
 		// 保存团队训练模板
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
@@ -93,12 +91,12 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = Lists.newArrayList();
 
-		for (RoleListInput roleListInput : input.getRoleList()) {
-			TeamTrainTemplateRole teamTrainTemplateRole = BeanUtils.deepCopy(roleListInput,
+		for (RoleListReq roleListReq : input.getRoleList()) {
+			TeamTrainTemplateRole teamTrainTemplateRole = BeanUtils.deepCopy(roleListReq,
 					TeamTrainTemplateRole.class);
 			teamTrainTemplateRole.setCrEventId(businessTemplate.getResourceId());
 			teamTrainTemplateRole
-					.setMissionsScheme(JsonUtil.toJsonString(roleListInput.getMissionsScheme()));
+					.setMissionsScheme(JsonUtil.toJsonString(roleListReq.getMissionsScheme()));
 
 			teamTrainTemplateRoleList.add(teamTrainTemplateRole);
 		}
@@ -113,31 +111,31 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return teamTemplate;
 	}
 
-	private BusinessTemplate getBusinessTemplateFromBaseInfoInput(BaseInfoInput baseInfoInput) {
+	private BusinessTemplate getBusinessTemplateFromBaseInfoInput(BaseInfoReq baseInfoReq) {
 		BusinessTemplate businessTemplate = new BusinessTemplate();
-		businessTemplate.setName(baseInfoInput.getName());
-		businessTemplate.setDescription(baseInfoInput.getDescription());
-		businessTemplate.setDifficulty(baseInfoInput.getDifficult());
-		businessTemplate.setBusinessType(BusinessTemplate.CeType.TRAINING_TEAM);
+		businessTemplate.setName(baseInfoReq.getName());
+		businessTemplate.setDescription(baseInfoReq.getDescription());
+		businessTemplate.setDifficulty(baseInfoReq.getDifficult());
+		businessTemplate.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		return businessTemplate;
 	}
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
-	public TeamTemplate updateTeamTemplate(TeamTrainTemplateModifyInput input,
+	public TeamTemplate updateTeamTemplate(TeamTrainTemplateModifyReq input,
 			BusinessTemplate businessTemplate) {
 		TeamTemplate teamTemplate = new TeamTemplate();
 
-		BaseInfoInput baseInfoInput = input.getBaseInfo();
+		BaseInfoReq baseInfoReq = input.getBaseInfo();
 
 		SceneConfig sceneConfig = input.getSceneConfigData();
 
 		businessTemplate.setTopoId("");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
-		businessTemplate.setName(baseInfoInput.getName());
-		businessTemplate.setDescription(baseInfoInput.getDescription());
-		businessTemplate.setDifficulty(baseInfoInput.getDifficult());
+		businessTemplate.setName(baseInfoReq.getName());
+		businessTemplate.setDescription(baseInfoReq.getDescription());
+		businessTemplate.setDifficulty(baseInfoReq.getDifficult());
 
 		if (sceneConfig != null) {
 			String sceneConfigId = "场景todo";
@@ -149,12 +147,12 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		// 保存团队训练模板
 		teamTemplate.setResourceId(input.getResourceId());
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfoInput.getPre_skill()));
-		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfoInput.getTrain_skill()));
-		teamTemplate.setSubType(baseInfoInput.getCategory());
+		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfoReq.getPre_skill()));
+		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfoReq.getTrain_skill()));
+		teamTemplate.setSubType(baseInfoReq.getCategory());
 		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
-		teamTemplate.setDurationTime(baseInfoInput.getDurationTime());
-		teamTemplate.setPeopleNumber(baseInfoInput.getPeopleNumber());
+		teamTemplate.setDurationTime(baseInfoReq.getDurationTime());
+		teamTemplate.setPeopleNumber(baseInfoReq.getPeopleNumber());
 
 		updateById(teamTemplate);
 		// MissionScheme missionScheme = input.getMissionScheme();
@@ -167,8 +165,8 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	}
 
 	@Override
-	public TeamTrainTemplateOutput getTeamTemplate(String resourceId) {
-		TeamTrainTemplateOutput teamTrainTemplateOutput = new TeamTrainTemplateOutput();
+	public TeamTrainTemplateRsp getTeamTemplate(String resourceId) {
+		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 		TeamTemplate template = getById(resourceId);
 		if (template == null) {
 			throw new ResourceNotFoundException("团队训练模板" + resourceId + "不存在");
@@ -176,32 +174,32 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
 
-		BaseInfoOutput baseInfoOutput = new BaseInfoOutput(template, businessTemplate);
+		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
 		String roleString = template.getRoleConfig();
 
 		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
 				.toJsonObjectArray(roleString, TeamTrainTemplateRole.class);
-		teamTrainTemplateOutput.setBaseInfo(baseInfoOutput);
-		teamTrainTemplateOutput.setRoleList(teamTrainTemplateRoleList);
+		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleList);
 
-		teamTrainTemplateOutput.setTimeLineConfig(template.getTimeLineConfig());
+		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
 
-		return teamTrainTemplateOutput;
+		return teamTrainTemplateRsp;
 	}
 
-	public TeamTrainTemplateOutput
+	public TeamTrainTemplateRsp
 			getTeamTrainTemplateOutputByBaseInfoData(BaseInfoData baseInfoData) {
-		TeamTrainTemplateOutput teamTrainTemplateOutput = new TeamTrainTemplateOutput();
+		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 
-		BaseInfoOutput baseInfoOutput = new BaseInfoOutput(baseInfoData);
+		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(baseInfoData);
 
-		teamTrainTemplateOutput.setBaseInfo(baseInfoOutput);
+		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		String roleString = baseInfoData.getRoleConfig();
 
 		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
 				BaseRole.class);
-		teamTrainTemplateOutput.setRoleStructure(teamTrainTemplateRoleList);
-		return teamTrainTemplateOutput;
+		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
+		return teamTrainTemplateRsp;
 	}
 
 }

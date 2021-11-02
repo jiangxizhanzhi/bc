@@ -3,48 +3,42 @@ package com.cyberpeace.cr.teamtrain.model.template;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.integratation.model.SceneConfig;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class BaseInfoInput implements Serializable {
+public class TeamTrainTemplateReq implements Serializable {
 
-	@ApiModelProperty(required = true)
-	@NotBlank
-	private String name;
+	// private CrEventInput crEvent;
 
-	@ApiModelProperty(required = true)
-	@NotNull
-	private Integer category;
+	// private SceneConfig sceneConfig;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private String description;
+	private BaseInfoReq baseInfo;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private String logo;
+	private SceneConfig sceneConfigData;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private Integer difficult;
+	private List<RoleListReq> roleList;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private Integer durationTime;
+	private FlowschemeReq flowSchemesData;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<String> pre_skill;
+	private GatherschemeReq gatherSchemesData;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<String> train_skill;
+	private Object timeLineConfig = "{}";
 
-	@ApiModelProperty(required = true)
-	@NotNull
-	private Integer peopleNumber;
 }

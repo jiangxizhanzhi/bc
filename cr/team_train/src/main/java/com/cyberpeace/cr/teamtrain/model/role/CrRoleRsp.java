@@ -5,9 +5,9 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class CrRoleRes {
+public class CrRoleRsp {
 
-	List<RoleResData> roles;
+	List<RoleRspData> roles;
 
 	Object missionMapping;
 

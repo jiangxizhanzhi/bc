@@ -1,12 +1,15 @@
 package com.cyberpeace.common.model;
 
+import lombok.Data;
+
+@Data
 public class AuthTable extends BaseTable {
 
-	private String operationAuthType;
+	private Integer operationAuthType;
 
 	private String operationAuthIds;
 
-	private String readAuthType;
+	private Integer readAuthType;
 
 	private String readAuthIds;
 }

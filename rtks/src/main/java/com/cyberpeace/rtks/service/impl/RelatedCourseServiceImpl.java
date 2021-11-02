@@ -79,10 +79,12 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 				Map<String, CourseInfoBo> allCourseMap = getAllCourseMap(courseList);
 
 				for (RelatedCourse relatedCourse : relatedCourseList) {
-					Integer weight = relatedCourse.getWeight();
-					BeanUtils.copyProperties(allCourseMap.get(relatedCourse.getResourceId()),
-							relatedCourse);
-					relatedCourse.setWeight(weight);
+					if (allCourseMap.get(relatedCourse.getResourceId()) != null) { // 课程的课时可能为0，导致两边结果不一致，查询为null
+						Integer weight = relatedCourse.getWeight();
+						BeanUtils.copyProperties(allCourseMap.get(relatedCourse.getResourceId()),
+								relatedCourse);
+						relatedCourse.setWeight(weight);
+					}
 
 				}
 			}

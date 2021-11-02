@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -120,11 +121,19 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		UserInfo userInfo = new UserInfo();
 		userInfo.setUserId(jsonObject.getObject("id", String.class));
 		userInfo.setUserName(jsonObject.getObject("username", String.class));
+		userInfo.setName(jsonObject.getObject("name", String.class));
 		userInfo.setAvatarUrl(jsonObject.getObject("avatar", String.class));
 		List<String> org_ids = jsonObject.getJSONArray("org_ids").toJavaList(String.class);
 		if (org_ids.size() > 0) {
 			userInfo.setOrganizationId(org_ids.get(0));
-			// userInfo.setOrganizationData("");
+			JSONArray orgs = jsonObject.getJSONArray("orgs");
+
+			for (int i = 0; i < orgs.size(); i++) {
+				JSONObject jsonObject1 = orgs.getJSONObject(i);
+				if (jsonObject1.containsKey("path")) {
+					userInfo.setOrganizationData(jsonObject1.getObject("path", String.class));
+				}
+			}
 		}
 		// userInfo.setRoles();
 		userInfo.setAdmin((int) jsonObject.get("is_admin") == 0);

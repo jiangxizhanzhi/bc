@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class Share {
 
-	Integer shareMode;
+	private Integer shareMode;
 
-	List<String> teachers;
+	private List<ShareTeacher> teachers;
 }

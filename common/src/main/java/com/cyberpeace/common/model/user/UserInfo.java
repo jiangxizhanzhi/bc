@@ -1,10 +1,11 @@
 package com.cyberpeace.common.model.user;
 
-import com.google.common.collect.Lists;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import lombok.Data;
 
 @Data
 public class UserInfo implements Serializable {
@@ -13,10 +14,15 @@ public class UserInfo implements Serializable {
      * 用户id，不要使用自增数字编号（必须）
      */
     private String userId;
+    
+	/**
+	 * 姓名（文字显示）
+	 */
+	private String name;
 
-    /**
-     * 用户姓名（对前端显示）
-     */
+	/**
+	 * 用户名（对前端显示，登录使用）
+	 */
     private String userName;
 
     /**

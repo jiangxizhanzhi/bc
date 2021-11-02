@@ -1,11 +1,8 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import javax.validation.constraints.NotBlank;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
@@ -46,8 +43,8 @@ public class BusinessTemplateController {
 	@ApiOperation("查询权限")
 	@GetMapping("/getShares")
 	public BaseRsp<Share> getShares(@ApiParam(name = "resource_id", value = "查询id",
-			required = true) @RequestParam("resourceId") @NotBlank String resourceId) {
-		Share data = businessTemplateService.getShares(resourceId);
+			required = true) String resource_id) {
+		Share data = businessTemplateService.getShares(resource_id);
 
 		return new BaseRsp<Share>(data);
 	}

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
+import com.cyberpeace.cr.teamtrain.model.role.RoleReq;
 
 /**
  * @Entity com.cyberpeace.cr.teamtrain.dao.entity.Role

@@ -11,13 +11,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.crbase.model.BusinessTemplateRsp;
-import com.cyberpeace.cr.crbase.model.Share;
-import com.cyberpeace.cr.crbase.model.ShareTeacher;
-import com.cyberpeace.cr.crbase.model.TemplateReq;
+import com.cyberpeace.cr.crbase.model.*;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -85,5 +83,16 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		share.setTeachers(shareTeacherList);
 
 		return share;
+	}
+
+	@Override
+	public void batchSetShares(ShareReq shareReq) {
+		String shareTeachers = JsonUtil.toJsonString(shareReq.getShareTeachers());
+		List<BusinessTemplate> businessTemplateList = listByIds(shareReq.getIds());
+		businessTemplateList.forEach(businessTemplate -> {
+			businessTemplate.setOperationAuthType(shareReq.getShareMode());
+			businessTemplate.setOperationAuthIds(shareTeachers);
+		});
+		updateBatchById(businessTemplateList);
 	}
 }

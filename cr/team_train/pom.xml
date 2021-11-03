@@ -20,7 +20,7 @@
 
     <dependencies>
 
-    <dependency>
+        <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
             <version>${cr_base.version}</version>

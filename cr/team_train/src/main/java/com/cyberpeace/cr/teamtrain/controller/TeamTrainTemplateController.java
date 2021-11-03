@@ -11,15 +11,12 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.MissionSchemeService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTemplateReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateAddReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
-import com.cyberpeace.cr.teamtrain.service.TeamTrainTemplateRoleService;
-import com.cyberpeace.integratation.service.RemoteSceneConfigService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,16 +30,7 @@ public class TeamTrainTemplateController {
 	TeamTemplateService teamTemplateService;
 
 	@Autowired
-	TeamTrainTemplateRoleService teamTrainTemplateRoleService;
-
-	@Autowired
 	BusinessTemplateService businessTemplateService;
-
-	@Autowired
-	RemoteSceneConfigService sceneConfigService;
-
-	@Autowired
-	MissionSchemeService missionSchemeService;
 
 	@ApiOperation("新增")
 	@PostMapping()

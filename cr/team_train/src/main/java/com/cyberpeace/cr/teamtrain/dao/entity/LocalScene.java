@@ -58,12 +58,12 @@ LocalScene implements Serializable {
 	/**
 	 * 
 	 */
-	private Date destoryTime;
+	private Date destroyTime;
 
 	/**
 	 * 
 	 */
-	private String destoryMode;
+	private String destroyMode;
 
 	/**
 	 * 

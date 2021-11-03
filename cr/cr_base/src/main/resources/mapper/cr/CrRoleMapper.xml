@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper">
+
+    <select id="selectCrRoleByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        select resource_id,
+               name,
+               business_instance_id,
+               description,
+               role_group,
+               nodes,
+               user_ids,
+               exercise_paper,
+               parent_resource_id,
+               mission_scheme_id,
+               business_type
+        from cr_role
+        where business_instance_id = #{roomId}
+
+    </select>
+    <select id="getRoomIdsByUserid" resultType="java.lang.String">
+        select business_instance_id
+        from cr_role
+        where user_ids like #{userid}
+    </select>
+</mapper>

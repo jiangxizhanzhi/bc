@@ -20,6 +20,6 @@ public class TeamTemplateReq extends PageReqBase {
 	private String name;
 
 	@ApiModelProperty(value = "难度")
-	private String difficult;
+	private Integer difficult;
 
 }

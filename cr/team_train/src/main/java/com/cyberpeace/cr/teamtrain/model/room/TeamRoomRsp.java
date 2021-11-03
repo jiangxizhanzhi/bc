@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
-import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.model.role.BaseRole;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -48,6 +48,5 @@ public class TeamRoomRsp implements Serializable {
 	private Integer trainingStatus;
 
 	private Integer runtime;
-
 
 }

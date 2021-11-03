@@ -30,7 +30,7 @@ public class TeamRoomReq extends PageReqBase {
 	@ApiModelProperty(value = "难度")
 	@Getter
 	@Setter
-	private String difficult;
+	private Integer difficult;
 
 	@Getter
 	@Setter

@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.dao.entity;
+package com.cyberpeace.cr.crbase.dao.entity;
 
 import java.io.Serializable;
 

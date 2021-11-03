@@ -16,17 +16,21 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.crbase.model.role.BaseRole;
+import com.cyberpeace.cr.crbase.model.role.RoleReq;
+import com.cyberpeace.cr.crbase.model.role.RoleUsers;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.teamtrain.dao.entity.*;
-import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.teamtrain.dao.entity.LocalScene;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
-import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
-import com.cyberpeace.cr.teamtrain.model.role.RoleReq;
-import com.cyberpeace.cr.teamtrain.model.role.RoleUsers;
 import com.cyberpeace.cr.teamtrain.model.room.*;
 import com.cyberpeace.cr.teamtrain.model.template.BaseInfoReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
-import com.cyberpeace.cr.teamtrain.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.LocalSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -284,7 +288,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	private TeamRoomRsp getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {
 		TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomdata, TeamRoomRsp.class);
-
 
 		return teamRoomRsp;
 	}

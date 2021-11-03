@@ -40,6 +40,6 @@
                scene_status,
                pause_time
         from local_scene
-        where business_instance_id = #{business_instance_id}
+        where business_instance_id = #{businessInstanceId}
     </select>
 </mapper>

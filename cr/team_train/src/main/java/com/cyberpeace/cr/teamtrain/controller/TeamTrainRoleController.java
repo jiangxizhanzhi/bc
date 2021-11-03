@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.teamtrain.model.role.CrRoleRsp;
-import com.cyberpeace.cr.teamtrain.service.CrRoleService;
+import com.cyberpeace.cr.crbase.model.role.CrRoleRsp;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 
 import io.swagger.annotations.Api;

@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.model.role;
+package com.cyberpeace.cr.crbase.model.role;
 
 import java.util.List;
 

@@ -1,11 +1,11 @@
 package com.cyberpeace.cr.teamtrain.dao.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
@@ -19,7 +19,7 @@ import lombok.Getter;
  */
 @TableName(value = "cr_team_room")
 @Data
-public class TeamRoom implements Serializable {
+public class TeamRoom extends BaseTable {
 
 	/**
 	 * 

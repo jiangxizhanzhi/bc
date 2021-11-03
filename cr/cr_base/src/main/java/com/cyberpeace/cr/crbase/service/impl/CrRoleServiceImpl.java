@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.service.impl;
+package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
@@ -10,13 +10,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
-import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.teamtrain.model.role.CrRoleRsp;
-import com.cyberpeace.cr.teamtrain.model.role.NameElement;
-import com.cyberpeace.cr.teamtrain.model.role.RoleReq;
-import com.cyberpeace.cr.teamtrain.model.role.RoleRspData;
-import com.cyberpeace.cr.teamtrain.service.CrRoleService;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.crbase.model.role.CrRoleRsp;
+import com.cyberpeace.cr.crbase.model.role.NameElement;
+import com.cyberpeace.cr.crbase.model.role.RoleReq;
+import com.cyberpeace.cr.crbase.model.role.RoleRspData;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 

@@ -11,7 +11,7 @@
 
     <groupId>com.cyberpeace.oj</groupId>
     <artifactId>oj_base</artifactId>
-    <version>${oj_base.version}</version>
+    <version>${oj.base.version}</version>
     <packaging>jar</packaging>
     <name>oj_base</name>
 

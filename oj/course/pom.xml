@@ -21,13 +21,13 @@
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>practice</artifactId>
-            <version>${practice.version}</version>
+            <version>${oj.practice.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>oj_base</artifactId>
-            <version>${oj_base.version}</version>
+            <version>${oj.base.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -23,12 +23,15 @@
         <module>oj_base</module>
     </modules>
 
-    <properties>
-        <integration.version>0.0.1-SNAPSHOT</integration.version>
-        <common.version>0.0.1-SNAPSHOT</common.version>
-    </properties>
+    <properties/>
 
     <dependencies>
+        <dependency>
+            <groupId>com.cyberpeace</groupId>
+            <artifactId>integration</artifactId>
+            <version>${integration.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
@@ -88,6 +91,11 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

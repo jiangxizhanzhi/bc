@@ -10,7 +10,7 @@
 
     <groupId>com.cyberpeace.oj</groupId>
     <artifactId>gateway</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${gateway.version}</version>
     <packaging>jar</packaging>
     <name>gateway</name>
 
@@ -18,26 +18,23 @@
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${common.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
             <scope>provided</scope>
-            <version>2.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>provided</scope>
-            <version>2.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <scope>provided</scope>
-            <version>2.2.0</version>
         </dependency>
 
         <dependency>

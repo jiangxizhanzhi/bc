@@ -10,7 +10,7 @@
 
     <groupId>com.cyberpeace</groupId>
     <artifactId>common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${common.version}</version>
     <packaging>jar</packaging>
     <name>common</name>
 
@@ -130,10 +130,10 @@
 
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-jar-plugin</artifactId>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

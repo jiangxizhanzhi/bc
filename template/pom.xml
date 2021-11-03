@@ -12,17 +12,13 @@
 
     <groupId>com.cyberpeace.oj</groupId>
     <artifactId>template</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${template.version}</version>
     <packaging>war</packaging>
     <name>ojj</name>
     <description>靶场</description>
 
-    <properties>
-        <common.version>0.0.1-SNAPSHOT</common.version>
-        <module.version>0.0.1-SNAPSHOT</module.version>
-        <cr.version>0.0.1-SNAPSHOT</cr.version>
-        <evaluation.version>0.0.1-SNAPSHOT</evaluation.version>
-    </properties>
+    <properties/>
+
     <profiles>
         <profile>
             <id>rtks</id>
@@ -59,33 +55,38 @@
         </dependency>
         <dependency>
             <groupId>com.cyberpeace</groupId>
+            <artifactId>common-service</artifactId>
+            <version>${common.service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
             <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>integration</artifactId>
-            <version>${module.version}</version>
+            <version>${integration.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>rtks</artifactId>
-            <version>${module.version}</version>
+            <version>${rtks.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>course</artifactId>
-            <version>${module.version}</version>
+            <version>${oj.course.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>practice</artifactId>
-            <version>${module.version}</version>
+            <version>${practice.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>oj_base</artifactId>
-            <version>${module.version}</version>
+            <version>${oj_base.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
@@ -95,22 +96,22 @@
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>red_vs_blue</artifactId>
-            <version>${cr.version}</version>
+            <version>${cr.redvsvblue.version}</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>com.cyberpeace.cr</groupId>-->
-        <!--            <artifactId>single_train</artifactId>-->
-        <!--            <version>${cr.version}</version>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>single_train</artifactId>
+            <version>${cr.single.train.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>team_train</artifactId>
-            <version>${cr.version}</version>
+            <version>${cr.team.train.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>tool</artifactId>
-            <version>${cr.version}</version>
+            <version>${tool.version}</version>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.cyberpeace.evaluate</groupId>-->

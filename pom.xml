@@ -33,6 +33,25 @@
         <cache.version>2.3.2.RELEASE</cache.version>
         <zip4j.version>1.3.2</zip4j.version>
         <caffeine.version>2.6.2</caffeine.version>
+
+        <!-- 自有模块版本号 -->
+        <common.service.version>0.0.1-SNAPSHOT</common.service.version>
+        <common.version>0.0.2-SNAPSHOT</common.version>
+        <module.version>0.0.1-SNAPSHOT</module.version>
+        <cr.version>0.0.1-SNAPSHOT</cr.version>
+        <evaluation.version>0.0.1-SNAPSHOT</evaluation.version>
+        <cr_base.version>0.0.1-SNAPSHOT</cr_base.version>
+        <oj_base.version>0.0.1-SNAPSHOT</oj_base.version>
+        <practice.version>0.0.1-SNAPSHOT</practice.version>
+        <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
+        <integration.version>0.0.1-SNAPSHOT</integration.version>
+        <template.version>0.0.2-SNAPSHOT</template.version>
+        <rtks.version>0.0.1-SNAPSHOT</rtks.version>
+        <gateway.version>0.0.1-SNAPSHOT</gateway.version>
+        <tool.version>0.0.1-SNAPSHOT</tool.version>
+        <cr.team.train.version>0.0.1-SNAPSHOT</cr.team.train.version>
+        <cr.single.train.version>0.0.1-SNAPSHOT</cr.single.train.version>
+        <cr.redvsvblue.version>0.0.1-SNAPSHOT</cr.redvsvblue.version>
     </properties>
 
     <modules>
@@ -44,6 +63,7 @@
         <module>cr</module>
         <module>oj</module>
         <module>evaluate</module>
+        <module>common-service</module>
     </modules>
 
     <dependencyManagement>

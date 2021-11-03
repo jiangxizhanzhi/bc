@@ -12,12 +12,11 @@
 
     <groupId>com.cyberpeace.cr</groupId>
     <artifactId>cr_base</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${cr_base.version}</version>
     <packaging>jar</packaging>
     <name>cr_base</name>
 
     <dependencies>
-
     </dependencies>
 
     <build>

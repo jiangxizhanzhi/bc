@@ -24,10 +24,7 @@
         <!--        <module>single_train</module>-->
     </modules>
 
-    <properties>
-        <integration.version>0.0.1-SNAPSHOT</integration.version>
-        <common.version>0.0.1-SNAPSHOT</common.version>
-    </properties>
+    <properties/>
 
     <dependencies>
         <dependency>

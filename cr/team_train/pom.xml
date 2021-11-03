@@ -10,16 +10,13 @@
 
     <groupId>com.cyberpeace.cr</groupId>
     <artifactId>team_train</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${cr.team.train.version}</version>
     <packaging>jar</packaging>
     <name>team_train</name>
 
-    <properties>
-        <cr_base.version>0.0.1-SNAPSHOT</cr_base.version>
-    </properties>
+    <properties/>
 
     <dependencies>
-
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>

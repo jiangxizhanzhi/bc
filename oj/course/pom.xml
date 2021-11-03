@@ -10,15 +10,12 @@
 
     <groupId>com.cyberpeace.oj</groupId>
     <artifactId>course</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${oj.course.version}</version>
     <packaging>jar</packaging>
     <name>course</name>
     <description>课程</description>
 
-    <properties>
-        <oj_base.version>0.0.1-SNAPSHOT</oj_base.version>
-        <practice.version>0.0.1-SNAPSHOT</practice.version>
-    </properties>
+    <properties/>
 
     <dependencies>
         <dependency>
@@ -31,11 +28,6 @@
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>oj_base</artifactId>
             <version>${oj_base.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

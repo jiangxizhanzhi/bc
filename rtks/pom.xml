@@ -10,7 +10,7 @@
 
     <groupId>com.cyberpeace.oj</groupId>
     <artifactId>rtks</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${rtks.version}</version>
     <packaging>jar</packaging>
     <name>rtks</name>
 
@@ -33,25 +33,25 @@
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${common.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
             <artifactId>course</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${oj.course.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>integration</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${integration.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${cr_base.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

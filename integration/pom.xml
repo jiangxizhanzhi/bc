@@ -10,13 +10,11 @@
 
     <groupId>com.cyberpeace</groupId>
     <artifactId>integration</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${integration.version}</version>
     <packaging>jar</packaging>
     <name>integration</name>
 
-    <properties>
-        <common.version>0.0.1-SNAPSHOT</common.version>
-    </properties>
+    <properties/>
 
     <dependencies>
         <dependency>

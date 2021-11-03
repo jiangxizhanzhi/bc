@@ -10,7 +10,7 @@
 
     <groupId>com.cyberpeace.cr</groupId>
     <artifactId>tool</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${tool.version}</version>
     <packaging>jar</packaging>
     <name>tool</name>
 

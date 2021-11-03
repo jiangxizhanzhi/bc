@@ -11,7 +11,7 @@ public class ShareTeacher {
 
 	private String organization;
 
-	private String organization_name_all;
+	private String organizationNameAll;
 
 	private String username;
 

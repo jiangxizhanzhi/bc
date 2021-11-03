@@ -20,7 +20,7 @@
         <result property="durationTime" column="duration_time" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <select id="getTeamRoomOutputById" resultMap="TeamRoomData">
+    <select id="getTeamRoomRspByRoomId" resultMap="TeamRoomData">
         select cr_team_room.resource_id,
                cr_team_room.team_template_id,
                cr_team_room.NAME,

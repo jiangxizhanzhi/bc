@@ -12,6 +12,7 @@ import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "团队训练角色")
 @RestController
@@ -26,9 +27,11 @@ public class TeamTrainRoleController {
 
 	@ApiOperation("团队实例查询角色")
 	@GetMapping()
-	public BaseRsp<CrRoleRsp> getRoles(String roomId) {
-		CrRoleRsp t = crRoleService.getRoles(roomId);
-		return new BaseRsp<CrRoleRsp>(t);
+	public BaseRsp<CrRoleRsp> getRoles(
+			@ApiParam(name = "room_id", value = "团队训练id", required = true) String room_id) {
+		CrRoleRsp crRoleRsp = crRoleService.getRoles(room_id);
+
+		return new BaseRsp<CrRoleRsp>(crRoleRsp);
 	}
 
 }

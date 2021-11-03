@@ -13,9 +13,9 @@ public class TestInfoRsp implements Serializable {
 
 	private String name;
 
-	private String desc;;
+	private String desc;
 
-	private String logo;;
+	private String logo;
 
 	private String schemeId;
 }

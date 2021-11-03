@@ -15,16 +15,41 @@ import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
  */
 public interface TeamRoomService extends IService<TeamRoom> {
 
-	TeamRoomRsp getTeamRoomOutputById(String resourceId);
+	/** 通过id获取团队训练
+	 * @param resourceId
+	 * @return
+	 */
+	TeamRoomRsp getTeamRoomRspByRoomId(String resourceId);
 
+	/** 创建实例
+	 * @param input
+	 * @return
+	 */
 	TeamTemplate create(TeamTrainRoomReq input);
 
+	/** 更新实例
+	 * @param input
+	 * @param businessTemplate
+	 * @return
+	 */
 	TeamTemplate updateTeamRoom(TeamTrainTemplateModifyReq input,
 			BusinessTemplate businessTemplate);
 
+	/** 列表查询团队训练
+	 * @param listReq
+	 * @return
+	 */
 	ListRsp<TeamRoomRsp> list(TeamRoomReq listReq);
 
-	int changeTrainingStatus(String resource_id);
+	/** 修改团队训练状态
+	 * @param resourceId
+	 * @return
+	 */
+	Integer changeTrainingStatus(String resourceId);
 
-	int getTrainingStatus(String resource_id);
+	/** 获取团队训练状态
+	 * @param resourceId
+	 * @return
+	 */
+	Integer getTrainingStatus(String resourceId);
 }

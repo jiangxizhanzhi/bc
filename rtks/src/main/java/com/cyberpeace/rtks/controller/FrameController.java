@@ -196,7 +196,7 @@ public class FrameController {
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<FrameOutput>> list(FrameListReq listReq) {
-		IPage<Level> page = listEntity(listReq.toPageParam(), listReq.getKeyword());;
+		IPage<Level> page = listEntity(listReq.toPageParam(), listReq.getKeyword());
 
 		List<FrameOutput> outputs = new ArrayList<>();
 		for (Level record : page.getRecords()) {

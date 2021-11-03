@@ -56,38 +56,39 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			roleResDataList.add(roleResData);
 		}
 		crRoleRes.setRoles(roleResDataList);
-		crRoleRes.setShowWriteupMapping("tode");
-		crRoleRes.setMissionMapping("todo");
+		// "todo任务题解"
+		// crRoleRes.setShowWriteupMapping("todo");
+		// crRoleRes.setMissionMapping("todo");
 
 		return crRoleRes;
 	}
 
 	@Override
-	public List<String> getRoomIdsByUserid(String userid) {
-		return crRoleMapper.getRoomIdsByUserid(userid);
+	public List<String> getRoomIdsByUserId(String userId) {
+		return crRoleMapper.getRoomIdsByUserId(userId);
 
 	}
 
 	private List<NameElement> getUserByRoleUsers(String userIds) {
 
-		List<NameElement> elements = Lists.newArrayList();
+		List<NameElement> userElements = Lists.newArrayList();
 		List<String> userList = JsonUtil.toJsonObjectArray(userIds, String.class);
 
 		List<BasicNameValuePair> nvps = Lists.newArrayList();
-		// nvps.add(new BasicNameValuePair("ids",
-		// userIds.replaceAll("\"","").substring(1, userIds.length() - 1)));
+		nvps.add(new BasicNameValuePair("ids",
+				userIds.substring(1, userIds.length() - 1).replaceAll("\"", "")));
 		nvps.add(new BasicNameValuePair("perPage", String.valueOf(1000)));
 		nvps.add(new BasicNameValuePair("page", String.valueOf(1)));
 
 		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(nvps);
 		userInfoList.forEach(userInfo -> {
 			if (userList.contains(userInfo.getUserId())) {
-				NameElement element = new NameElement();
-				element.setName(userInfo.getUserName());
-				elements.add(element);
+				NameElement nameElement = new NameElement();
+				nameElement.setName(userInfo.getUserName());
+				userElements.add(nameElement);
 			}
 		});
 
-		return elements;
+		return userElements;
 	}
 }

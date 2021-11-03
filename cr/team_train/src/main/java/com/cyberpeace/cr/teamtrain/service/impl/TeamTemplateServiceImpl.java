@@ -19,7 +19,6 @@ import com.cyberpeace.cr.crbase.model.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
-import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.model.template.*;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -37,9 +36,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;
-
-	@Autowired
-	private TeamRoomMapper teamTrainTemplateMapper;
 
 	@Override
 	public ListRsp<TeamTrainTemplateRsp> page(TeamTemplateReq listReq) {
@@ -74,7 +70,8 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		// 拓扑场景id保存获取
 		SceneConfig sceneConfig = input.getSceneConfigData();
-		String sceneConfigId = "todo场景";
+		String sceneConfigId = "";
+		// "todo场景";
 
 		// 保存基础模板
 		businessTemplate.setTopoId(sceneConfigId);
@@ -102,10 +99,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		}
 		teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateRoleList));
 
-		// 保存任务信息
-		// MissionScheme missionScheme = input.getMissionScheme();
-		// String missionSchemeId = missionSchemeService.create(missionScheme);
-		// template.setMissionSchemeId(missionSchemeId);
+		// todo任务相关
 		save(teamTemplate);
 
 		return teamTemplate;
@@ -117,6 +111,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		businessTemplate.setDescription(baseInfoReq.getDescription());
 		businessTemplate.setDifficulty(baseInfoReq.getDifficult());
 		businessTemplate.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+
 		return businessTemplate;
 	}
 
@@ -138,13 +133,13 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		businessTemplate.setDifficulty(baseInfoReq.getDifficult());
 
 		if (sceneConfig != null) {
-			String sceneConfigId = "场景todo";
+			String sceneConfigId = "更新场景todo";
 			businessTemplate.setTopoId(sceneConfigId);
 		}
 
 		businessTemplateService.updateById(businessTemplate);
 
-		// 保存团队训练模板
+		// 更新团队训练模板
 		teamTemplate.setResourceId(input.getResourceId());
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
 		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfoReq.getPre_skill()));
@@ -155,11 +150,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		teamTemplate.setPeopleNumber(baseInfoReq.getPeopleNumber());
 
 		updateById(teamTemplate);
-		// MissionScheme missionScheme = input.getMissionScheme();
-		// if (missionScheme != null) {
-		// String missionSchemeId = missionSchemeService.create(missionScheme);
-		// template.setMissionSchemeId(missionSchemeId);
-		// }
+		// todo更新任务
 
 		return teamTemplate;
 	}
@@ -169,7 +160,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 		TeamTemplate template = getById(resourceId);
 		if (template == null) {
-			throw new ResourceNotFoundException("团队训练模板" + resourceId + "不存在");
+			throw new ResourceNotFoundException(resourceId);
 		}
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
@@ -199,6 +190,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
 				BaseRole.class);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
+
 		return teamTrainTemplateRsp;
 	}
 

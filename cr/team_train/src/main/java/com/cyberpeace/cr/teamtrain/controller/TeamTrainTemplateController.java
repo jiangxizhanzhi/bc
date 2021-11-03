@@ -8,7 +8,6 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -36,38 +35,44 @@ public class TeamTrainTemplateController {
 	@PostMapping()
 	public BaseRsp<TeamTrainTemplateRsp>
 			create(@RequestBody @Validated TeamTrainTemplateAddReq input) {
-		TeamTemplate entity = teamTemplateService.create(input);
+		TeamTemplate teamTemplate = teamTemplateService.create(input);
 
-		return retrieve(entity.getResourceId());
+		return getTeamTemplate(teamTemplate.getResourceId());
 	}
 
 	@ApiOperation("修改")
 	@PutMapping()
 	public BaseRsp<TeamTrainTemplateRsp>
 			update(@RequestBody @Validated TeamTrainTemplateModifyReq input) {
-		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
+		String resourceId = input.getResourceId();
 		TeamTemplate template = teamTemplateService.getById(resourceId);
-		BusinessTemplate businessTemplate = businessTemplateService
-				.getById(template.getBusinessTemplateId());
-		if (businessTemplate == null || template == null) {
+		if (template == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
-		TeamTemplate entity = teamTemplateService.updateTeamTemplate(input, businessTemplate);
 
-		return retrieve(resourceId);
+		BusinessTemplate businessTemplate = businessTemplateService
+				.getById(template.getBusinessTemplateId());
+		if (businessTemplate == null) {
+			throw new ResourceNotFoundException(resourceId);
+		}
+		teamTemplateService.updateTeamTemplate(input, businessTemplate);
+
+		return getTeamTemplate(resourceId);
 	}
 
 	@ApiOperation("查询")
 	@GetMapping()
-	public BaseRsp<TeamTrainTemplateRsp> retrieve(String resource_id) {
-		TeamTrainTemplateRsp t = teamTemplateService.getTeamTemplate(resource_id);
-		return new BaseRsp<>(t);
+	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
+		TeamTrainTemplateRsp data = teamTemplateService.getTeamTemplate(resource_id);
+
+		return new BaseRsp<>(data);
 	}
 
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		teamTemplateService.removeByIds(deleteReq.getIds());;
+		teamTemplateService.removeByIds(deleteReq.getIds());
+
 		return new BaseRsp<>();
 	}
 

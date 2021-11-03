@@ -17,7 +17,7 @@ import com.cyberpeace.cr.teamtrain.model.room.TeamRoomReq;
 @Repository
 public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 
-	TeamRoomData getTeamRoomOutputById(String resourceId);
+	TeamRoomData getTeamRoomRspByRoomId(String resourceId);
 
 	IPage<TeamRoomData> listTeamRoom(Page page, TeamRoomReq listReq);
 }

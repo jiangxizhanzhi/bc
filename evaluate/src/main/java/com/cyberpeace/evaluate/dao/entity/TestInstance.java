@@ -34,7 +34,7 @@ public class TestInstance extends BaseTable {
 
 	private Date endTime;
 
-	private Integer status;;
+	private Integer status;
 
 	private String result;
 

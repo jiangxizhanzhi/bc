@@ -13,9 +13,20 @@ import com.cyberpeace.cr.crbase.model.TemplateReq;
  */
 public interface BusinessTemplateService extends IService<BusinessTemplate> {
 
+	/** 分页获取团队训练模板
+	 * @param listReq 
+	 * @return
+	 */
 	ListRsp<BusinessTemplateRsp> page(TemplateReq listReq);
 
+	/** 获取权限团队训练的操作权限人员
+	 * @param resourceId 
+	 * @return
+	 */
 	Share getShares(String resourceId);
 
+	/** 批量修改多个团队训练的权限
+	 * @param shareReq 
+	 */
 	void batchSetShares(ShareReq shareReq);
 }

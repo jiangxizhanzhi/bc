@@ -76,7 +76,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				shareTeacher.setName(userInfo.getName());
 				shareTeacher.setUsername(userInfo.getUserName());
 				shareTeacher.setOrganization(userInfo.getOrganizationId());
-				shareTeacher.setOrganization_name_all(userInfo.getOrganizationData());
+				shareTeacher.setOrganizationNameAll(userInfo.getOrganizationData());
 				shareTeacherList.add(shareTeacher);
 			});
 
@@ -90,10 +90,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public void batchSetShares(ShareReq shareReq) {
 		String shareTeachers = JsonUtil.toJsonString(shareReq.getShareTeachers());
 		List<BusinessTemplate> businessTemplateList = listByIds(shareReq.getIds());
+
 		businessTemplateList.forEach(businessTemplate -> {
 			businessTemplate.setOperationAuthType(shareReq.getShareMode());
 			businessTemplate.setOperationAuthIds(shareTeachers);
 		});
+
 		updateBatchById(businessTemplateList);
 	}
 }

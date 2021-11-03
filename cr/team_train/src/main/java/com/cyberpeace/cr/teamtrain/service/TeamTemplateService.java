@@ -21,5 +21,5 @@ public interface TeamTemplateService extends IService<TeamTemplate> {
 	TeamTemplate updateTeamTemplate(TeamTrainTemplateModifyReq input,
 			BusinessTemplate businessTemplate);
 
-	TeamTrainTemplateRsp getTeamTemplate(String resource_id);
+	TeamTrainTemplateRsp getTeamTemplate(String resourceId);
 }

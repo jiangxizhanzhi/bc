@@ -3,6 +3,16 @@ package com.cyberpeace.evaluate.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
@@ -14,6 +24,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.evaluate.constant.EstimateConstant;
 import com.cyberpeace.evaluate.dao.*;
+import com.cyberpeace.evaluate.dao.entity.*;
 import com.cyberpeace.evaluate.service.EstimateInstanceService;
 import com.cyberpeace.evaluate.service.bo.EstimateInstanceBO;
 import com.cyberpeace.evaluate.service.bo.EstimateInstanceViewBO;
@@ -21,18 +32,6 @@ import com.cyberpeace.evaluate.service.bo.EstimateReviewBo;
 import com.cyberpeace.evaluate.service.context.EstimateInstanceContext;
 import com.cyberpeace.integratation.service.ProbeService;
 import com.cyberpeace.integratation.service.RemotePythonRuntimeService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import com.alibaba.fastjson.JSON;
-
-import com.cyberpeace.evaluate.dao.entity.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -193,7 +192,7 @@ public class EstimateInstanceServiceImpl implements EstimateInstanceService {
 
 						indexVariableLinksList.forEach(variableLink -> {
 
-							NameValueItem variableItem = new NameValueItem();;
+							NameValueItem variableItem = new NameValueItem();
 							// 填充变量信息
 							EstimateVariable estimateVariable = estimateVariableDao
 									.getById(variableLink.getVariableItemsId());

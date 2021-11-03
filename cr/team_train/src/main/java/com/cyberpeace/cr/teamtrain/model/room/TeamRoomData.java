@@ -42,7 +42,7 @@ public class TeamRoomData implements Serializable {
 
 	private Integer runtime;
 
-	public boolean isUnopend() {
+	public boolean isUnopened() {
 		return trainingStatus.equals(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
 	}
 

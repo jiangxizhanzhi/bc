@@ -62,9 +62,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	LocalSceneService localSceneService;
 
 	@Override
-	public TeamRoomRsp getTeamRoomOutputById(String resourceId) {
-		String userid = UserInfoContext.getUserContext().getUserId();
-		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resourceId);
+	public TeamRoomRsp getTeamRoomRspByRoomId(String resourceId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
 		if (teamRoomdata == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
@@ -73,11 +73,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		roleReq.setRoomId(teamRoomdata.getResourceId());
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
-		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));;
+		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
 
 		TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomdata);
-		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userid));
+		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
 		teamRoomRsp.setRolesData(crRoles);
+
 		return teamRoomRsp;
 	}
 
@@ -92,10 +93,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	// 获取单个实例中自己的角色，只包括自己角色的基本信息
-	private BaseRole getSelfRole(List<CrRole> crRoles, String userid) {
+	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userid)) {
+			if (crRole.getUserIds().contains(userId)) {
 				baseRole.setResourceId(crRole.getResourceId());
 				baseRole.setName(crRole.getName());
 
@@ -108,11 +109,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 	// 先获取实例列表中自己的角色，再获取所有的学员角色
 
-	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userid) {
+	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		List<RoleUsers> roleUsersList = Lists.newArrayList();
 		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userid)) {
+			if (crRole.getUserIds().contains(userId)) {
 				baseRole.setResourceId(crRole.getResourceId());
 				baseRole.setName(crRole.getName());
 
@@ -138,7 +139,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	public TeamTemplate create(TeamTrainRoomReq input) {
 		TeamTemplate template = teamTemplateService.getById(input.getTemplate());
 		if (template == null) {
-			throw new ResourceNotFoundException("团队训练模板" + input.getTemplate() + "不存在");
+			throw new ResourceNotFoundException(input.getTemplate());
 		}
 
 		BusinessTemplate businessTemplate = businessTemplateService
@@ -208,20 +209,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamTemplate.setPeopleNumber(baseInfoReq.getPeopleNumber());
 
 		teamTemplateService.updateById(teamTemplate);
-		// MissionScheme missionScheme = input.getMissionScheme();
-		// if (missionScheme != null) {
-		// String missionSchemeId = missionSchemeService.create(missionScheme);
-		// template.setMissionSchemeId(missionSchemeId);
-		// }
+
+		// todo任务相关
 
 		return teamTemplate;
 	}
 
 	@Override
 	public ListRsp<TeamRoomRsp> list(TeamRoomReq listReq) {
-		String userid = UserInfoContext.getUserContext().getUserId();
+		String userId = UserInfoContext.getUserContext().getUserId();
 		Page page = listReq.toPageParam();
-		listReq.setIds(crRoleService.getRoomIdsByUserid(userid));
+		listReq.setIds(crRoleService.getRoomIdsByUserId(userId));
 		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listReq);
 
 		ListRsp ret = new ListRsp();
@@ -235,7 +233,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
 
 			TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomData);
-			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userid));
+			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
 			teamRoomRsp.setRolesData(crRoles);
 
 			teamRoomRspList.add(teamRoomRsp);
@@ -250,18 +248,19 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public int changeTrainingStatus(String resourceId) {
-		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resourceId);
-		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));;
+	public Integer changeTrainingStatus(String resourceId) {
+		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
+		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
 
-		if (teamRoomdata.isUnopend()) {// 未开始，新增local_scene数据
+		// 未开始，新增local_scene数据
+		if (teamRoomdata.isUnopened()) {
 			LocalScene localScene = new LocalScene();
 			localScene.setStartTime(new Date());
 			localScene.setBusinessInstanceId(teamRoomdata.getResourceId());
 			localSceneService.save(localScene);
 		}
-
-		if (teamRoomdata.isOpening()) {// 已开始，新增local_scene数据
+		// 已开始，新增local_scene数据
+		if (teamRoomdata.isOpening()) {
 			LocalScene localScene = localSceneService
 					.getLocalSceneByBusinessInstanceId(teamRoomdata.getResourceId());
 			localScene.setEndTime(new Date());
@@ -280,9 +279,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public int getTrainingStatus(String resource_id) {
-		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resource_id);
-		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));;
+	public Integer getTrainingStatus(String resourceId) {
+		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
+		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
 		return setTrainingStatus(teamRoomdata);
 	}
 

@@ -54,9 +54,9 @@ public class TeamTrainRoomController {
 	@PostMapping()
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq input) {
-		TeamTemplate entity = teamRoomService.create(input);
+		TeamTemplate teamTemplate = teamRoomService.create(input);
 
-		return getTeamRoom(entity.getResourceId());
+		return getTeamRoom(teamTemplate.getResourceId());
 	}
 
 	@ApiOperation("修改")
@@ -71,7 +71,7 @@ public class TeamTrainRoomController {
 		if (businessTemplate == null || template == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
-		TeamTemplate entity = teamRoomService.updateTeamRoom(input, businessTemplate);
+		teamRoomService.updateTeamRoom(input, businessTemplate);
 
 		return getTeamRoom(resourceId);
 	}
@@ -80,7 +80,7 @@ public class TeamTrainRoomController {
 	@GetMapping()
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		TeamRoomRsp teamRoomRsp = teamRoomService.getTeamRoomOutputById(resource_id);
+		TeamRoomRsp teamRoomRsp = teamRoomService.getTeamRoomRspByRoomId(resource_id);
 
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
 	}
@@ -88,7 +88,7 @@ public class TeamTrainRoomController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		teamTemplateService.removeByIds(deleteReq.getIds());
+		teamRoomService.removeByIds(deleteReq.getIds());
 
 		return new BaseRsp<>();
 	}
@@ -106,6 +106,7 @@ public class TeamTrainRoomController {
 	public BaseRsp<Integer>
 			changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
 		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
+
 		return new BaseRsp<>(status);
 	}
 
@@ -113,7 +114,8 @@ public class TeamTrainRoomController {
 	@GetMapping("/startEndTeam")
 	public BaseRsp<Integer> getTrainingStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		int status = teamRoomService.getTrainingStatus(resource_id);
+		Integer status = teamRoomService.getTrainingStatus(resource_id);
+
 		return new BaseRsp<>(status);
 	}
 }

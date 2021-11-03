@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.teamtrain.dao.entity.CrRole;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
+import com.cyberpeace.cr.teamtrain.dao.entity.*;
 import com.cyberpeace.cr.teamtrain.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.model.role.BaseRole;
@@ -29,6 +27,7 @@ import com.cyberpeace.cr.teamtrain.model.room.*;
 import com.cyberpeace.cr.teamtrain.model.template.BaseInfoReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.service.CrRoleService;
+import com.cyberpeace.cr.teamtrain.service.LocalSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.integratation.model.SceneConfig;
@@ -55,21 +54,37 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Autowired
 	CrRoleService crRoleService;
 
+	@Autowired
+	LocalSceneService localSceneService;
+
 	@Override
 	public TeamRoomRsp getTeamRoomOutputById(String resourceId) {
 		String userid = UserInfoContext.getUserContext().getUserId();
 		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resourceId);
+		if (teamRoomdata == null) {
+			throw new ResourceNotFoundException(resourceId);
+		}
 
 		RoleReq roleReq = new RoleReq();
 		roleReq.setRoomId(teamRoomdata.getResourceId());
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
+		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));;
 
 		TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomdata);
 		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userid));
 		teamRoomRsp.setRolesData(crRoles);
-
 		return teamRoomRsp;
+	}
+
+	private int setTrainingStatus(TeamRoomData teamRoomdata) {
+		if (null == teamRoomdata.getSceneStartTime()) {
+			return TeamRoom.TrainingStatusCode.UNOPENED.getCode();
+		} else if (null == teamRoomdata.getSceneEndTime()) {
+			return TeamRoom.TrainingStatusCode.OPENING.getCode();
+		} else {
+			return TeamRoom.TrainingStatusCode.ENDED.getCode();
+		}
 	}
 
 	// 获取单个实例中自己的角色，只包括自己角色的基本信息
@@ -230,13 +245,46 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return ret;
 	}
 
+	@Override
+	public int changeTrainingStatus(String resourceId) {
+		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resourceId);
+		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));;
+
+		if (teamRoomdata.isUnopend()) {// 未开始，新增local_scene数据
+			LocalScene localScene = new LocalScene();
+			localScene.setStartTime(new Date());
+			localScene.setBusinessInstanceId(teamRoomdata.getResourceId());
+			localSceneService.save(localScene);
+		}
+
+		if (teamRoomdata.isOpening()) {// 已开始，新增local_scene数据
+			LocalScene localScene = localSceneService
+					.getLocalSceneByBusinessInstanceId(teamRoomdata.getResourceId());
+			localScene.setEndTime(new Date());
+			localSceneService.save(localScene);
+		}
+
+		if (teamRoomdata.isOpening()) {
+			// todo 日志
+		}
+
+		else if (teamRoomdata.isEnded()) {
+			// todo 日志
+		}
+		return teamRoomdata.getTrainingStatus();
+
+	}
+
+	@Override
+	public int getTrainingStatus(String resource_id) {
+		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomOutputById(resource_id);
+		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));;
+		return setTrainingStatus(teamRoomdata);
+	}
+
 	private TeamRoomRsp getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {
 		TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomdata, TeamRoomRsp.class);
 
-		teamRoomRsp
-				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomdata.getPreSkill(), String.class));
-		teamRoomRsp.setTrainSkill(
-				JsonUtil.toJsonObjectArray(teamRoomdata.getTrainSkill(), String.class));
 
 		return teamRoomRsp;
 	}

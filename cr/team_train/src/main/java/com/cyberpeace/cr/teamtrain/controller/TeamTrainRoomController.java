@@ -9,11 +9,11 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.model.room.ResourceIdReq;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
@@ -25,6 +25,7 @@ import com.cyberpeace.integratation.service.RemoteSceneConfigService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "团队训练实例")
 @RestController
@@ -55,32 +56,33 @@ public class TeamTrainRoomController {
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq input) {
 		TeamTemplate entity = teamRoomService.create(input);
 
-		return retrieve(entity.getResourceId());
+		return getTeamRoom(entity.getResourceId());
 	}
 
 	@ApiOperation("修改")
 	@PutMapping()
 	public BaseRsp<TeamRoomRsp> update(@RequestBody @Validated TeamTrainTemplateModifyReq input) {
-		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
+		String resourceId = input.getResourceId();
 		TeamTemplate template = teamTemplateService.getById(resourceId);
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
 
 		if (businessTemplate == null || template == null) {
-			throw new ResourceNotFoundException("团队训练模板" + resourceId + "不存在");
+			throw new ResourceNotFoundException(resourceId);
 		}
 		TeamTemplate entity = teamRoomService.updateTeamRoom(input, businessTemplate);
 
-		return retrieve(resourceId);
+		return getTeamRoom(resourceId);
 	}
 
 	@ApiOperation("查询")
 	@GetMapping()
-	public BaseRsp<TeamRoomRsp> retrieve(String resource_id) {
-		TeamRoomRsp t = getTeamRoom(resource_id);
+	public BaseRsp<TeamRoomRsp> getTeamRoom(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		TeamRoomRsp teamRoomRsp = teamRoomService.getTeamRoomOutputById(resource_id);
 
-		return new BaseRsp<TeamRoomRsp>(t);
+		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
 	}
 
 	@ApiOperation("删除")
@@ -99,13 +101,19 @@ public class TeamTrainRoomController {
 		return new BaseRsp<>(data);
 	}
 
-	protected TeamRoomRsp getTeamRoom(String resourceId) {
-		TeamRoomRsp teamRoomRsp = teamRoomService.getTeamRoomOutputById(resourceId);
-		if (teamRoomRsp == null) {
-			throw new ResourceNotFoundException("团队训练" + resourceId + "不存在");
-		}
-
-		return teamRoomRsp;
+	@ApiOperation("修改团队训练状态")
+	@PostMapping("/startEndTeam")
+	public BaseRsp<Integer>
+			changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
+		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
+		return new BaseRsp<>(status);
 	}
 
+	@ApiOperation("查询团队训练状态")
+	@GetMapping("/startEndTeam")
+	public BaseRsp<Integer> getTrainingStatus(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		int status = teamRoomService.getTrainingStatus(resource_id);
+		return new BaseRsp<>(status);
+	}
 }

@@ -13,4 +13,5 @@ import com.cyberpeace.cr.teamtrain.dao.entity.LocalScene;
 @Repository
 public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 
+	LocalScene getLocalSceneByBusinessInstanceId(String business_instance_id);
 }

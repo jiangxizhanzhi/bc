@@ -23,4 +23,8 @@ public interface TeamRoomService extends IService<TeamRoom> {
 			BusinessTemplate businessTemplate);
 
 	ListRsp<TeamRoomRsp> list(TeamRoomReq listReq);
+
+	int changeTrainingStatus(String resource_id);
+
+	int getTrainingStatus(String resource_id);
 }

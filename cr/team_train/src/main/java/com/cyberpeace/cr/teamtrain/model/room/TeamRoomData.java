@@ -3,6 +3,8 @@ package com.cyberpeace.cr.teamtrain.model.room;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+
 import lombok.Data;
 
 @Data
@@ -40,4 +42,15 @@ public class TeamRoomData implements Serializable {
 
 	private Integer runtime;
 
+	public boolean isUnopend() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
+	}
+
+	public boolean isOpening() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.OPENING.getCode());
+	}
+
+	public boolean isEnded() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.ENDED.getCode());
+	}
 }

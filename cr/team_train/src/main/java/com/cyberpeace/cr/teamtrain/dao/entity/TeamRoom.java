@@ -11,6 +11,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
 
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * 
@@ -114,5 +115,22 @@ public class TeamRoom implements Serializable {
 		// this.modifyUserId = modifyUserId;
 		// this.localSceneId = localSceneId;
 		this.copyedTopoId = businessTemplate.getTopoId();
+	}
+
+	public enum TrainingStatusCode {
+
+		UNOPENED(0, "未开始"), OPENING(1, "已开始"), ENDED(2, "已结束");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		private TrainingStatusCode(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
 	}
 }

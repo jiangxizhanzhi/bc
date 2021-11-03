@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.dao.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -47,12 +48,17 @@ LocalScene implements Serializable {
 	/**
 	 * 
 	 */
-	private String startTime;
+	private Date startTime;
+
+	/**
+	 *
+	 */
+	private Date endTime;
 
 	/**
 	 * 
 	 */
-	private String destoryTime;
+	private Date destoryTime;
 
 	/**
 	 * 

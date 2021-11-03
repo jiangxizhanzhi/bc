@@ -18,8 +18,6 @@
         <result property="sceneEndTime" column="scene_end_time" jdbcType="VARCHAR"/>
         <result property="difficult" column="difficulty" jdbcType="VARCHAR"/>
         <result property="durationTime" column="duration_time" jdbcType="VARCHAR"/>
-        <result property="trainingStatus" column="scene_status" jdbcType="VARCHAR"/>
-
     </resultMap>
 
     <select id="getTeamRoomOutputById" resultMap="TeamRoomData">
@@ -44,7 +42,7 @@
                local_scene.scene_status
         from cr_team_room
                  left join cr_team_template on cr_team_room.team_template_id = cr_team_template.resource_id
-                 left join local_scene on cr_team_room.team_template_id = local_scene.business_instance_id
+                 left join local_scene on cr_team_room.resource_id = local_scene.business_instance_id
         where cr_team_room.resource_id = #{resourceId}
 
     </select>

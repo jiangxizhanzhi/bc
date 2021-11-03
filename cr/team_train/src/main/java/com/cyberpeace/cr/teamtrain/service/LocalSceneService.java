@@ -8,4 +8,5 @@ import com.cyberpeace.cr.teamtrain.dao.entity.LocalScene;
  */
 public interface LocalSceneService extends IService<LocalScene> {
 
+	LocalScene getLocalSceneByBusinessInstanceId(String resourceId);
 }

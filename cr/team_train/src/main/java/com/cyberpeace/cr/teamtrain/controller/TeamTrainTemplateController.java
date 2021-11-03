@@ -62,7 +62,7 @@ public class TeamTrainTemplateController {
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
 		if (businessTemplate == null || template == null) {
-			throw new ResourceNotFoundException("团队训练模板" + resourceId + "不存在");
+			throw new ResourceNotFoundException(resourceId);
 		}
 		TeamTemplate entity = teamTemplateService.updateTeamTemplate(input, businessTemplate);
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
@@ -59,7 +60,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		share.setShareMode(businessTemplate.getOperationAuthType());
 		List<ShareTeacher> shareTeacherList = Lists.newArrayList();
 
-		if (businessTemplate.getOperationAuthType() == 2) {
+		if (AuthTable.AuthType.CUSTOM_SHARE_MODE.equals(businessTemplate.getOperationAuthType())) {
 			String teachers = businessTemplate.getOperationAuthIds();
 
 			List<BasicNameValuePair> nvps = Lists.newArrayList();

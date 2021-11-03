@@ -25,4 +25,21 @@
         destory_time,destory_mode,business_instance_id,
         scene_status,pause_time
     </sql>
+    <select id="getLocalSceneByBusinessInstanceId"
+            resultType="com.cyberpeace.cr.teamtrain.dao.entity.LocalScene">
+        select resource_id
+                ,
+               mp_scene_id,
+               business_type,
+               module_type,
+               business_code,
+               start_time,
+               destory_time,
+               destory_mode,
+               business_instance_id,
+               scene_status,
+               pause_time
+        from local_scene
+        where business_instance_id = #{business_instance_id}
+    </select>
 </mapper>

@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.model.Share;
-import com.cyberpeace.cr.crbase.model.ShareReq;
-import com.cyberpeace.cr.crbase.model.TemplateReq;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.crbase.controller.req.ShareReq;
+import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.context.BusinessTemplateContext;
+import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
+import com.cyberpeace.cr.crbase.service.context.Share;
+import com.cyberpeace.cr.crbase.service.context.ShareContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,10 +35,14 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("查询模板列表")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<BusinessTemplateContext>> getTemplate(TemplateReq listReq) {
-		ListRsp<BusinessTemplateContext> data = businessTemplateService.page(listReq);
+	public BaseRsp<ListRsp<BusinessTemplateData>> getTemplate(TemplateReq listReq) {
 
-		return new BaseRsp(data);
+		BusinessTemplateQuery businessTemplateQuery = BeanUtils.copy(listReq,
+				BusinessTemplateQuery.class);
+
+		ListRsp<BusinessTemplateData> data = businessTemplateService.page(businessTemplateQuery);
+
+		return new BaseRsp<ListRsp<BusinessTemplateData>>(data);
 	}
 
 	/**
@@ -45,7 +52,7 @@ public class BusinessTemplateController {
 	@ApiOperation("查询操作权限")
 	@GetMapping("/getShares")
 	public BaseRsp<Share> getShares(
-			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
 		Share data = businessTemplateService.getShares(resource_id);
 
 		return new BaseRsp<Share>(data);
@@ -58,7 +65,9 @@ public class BusinessTemplateController {
 	@ApiOperation("批量修改操作权限")
 	@PostMapping("/batchSetShares")
 	public BaseRsp<String> batchSetShares(ShareReq shareReq) {
-		businessTemplateService.batchSetShares(shareReq);
+		ShareContext shareContext = BeanUtils.copy(shareReq, ShareContext.class);
+
+		businessTemplateService.batchSetShares(shareContext);
 
 		return new BaseRsp<String>();
 	}

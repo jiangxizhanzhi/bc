@@ -1,14 +1,12 @@
 package com.cyberpeace.cr.teamtrain.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 
 /**
  *
@@ -19,26 +17,26 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param resourceId
 	 * @return
 	 */
-	TeamRoomRsp getTeamRoomRspByRoomId(String resourceId);
+	TeamRoomData getTeamRoomRspByRoomId(String resourceId);
 
 	/** 创建实例
-	 * @param input
+	 * @param teamTrainRoomContext
 	 * @return
 	 */
-	TeamTemplate create(TeamTrainRoomContext input);
+	TeamTemplate create(TeamTrainRoomContext teamTrainRoomContext);
 
 	/** 更新实例
-	 * @param input
-	 * @param businessTemplate
+	 * @param teamTrainRoomContext
+	 * @param teamRoom
 	 * @return
 	 */
-	TeamTemplate updateTeamRoom(TeamTrainTemplateContext input, BusinessTemplate businessTemplate);
+	TeamTemplate updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom);
 
 	/** 列表查询团队训练
 	 * @param listQuery
 	 * @return
 	 */
-	ListRsp<TeamRoomRsp> list(ListQuery listQuery);
+	IPage<TeamRoomData> list(ListQuery listQuery);
 
 	/** 修改团队训练状态
 	 * @param resourceId

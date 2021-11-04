@@ -4,10 +4,9 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.cr.teamtrain.controller.req.FlowschemeReq;
+import com.cyberpeace.cr.teamtrain.controller.req.GatherschemeReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
-import com.cyberpeace.cr.teamtrain.model.template.BaseInfo;
-import com.cyberpeace.cr.teamtrain.model.template.FlowschemeReq;
-import com.cyberpeace.cr.teamtrain.model.template.GatherschemeReq;
 import com.cyberpeace.integratation.model.SceneConfig;
 
 import io.swagger.annotations.ApiModelProperty;

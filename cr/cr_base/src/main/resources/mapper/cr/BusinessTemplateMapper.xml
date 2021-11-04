@@ -4,75 +4,41 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper">
 
-    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
-        <id property="resourceId" column="resource_id" jdbcType="CHAR"/>
-        <result property="topoId" column="topo_id" jdbcType="CHAR"/>
-        <result property="name" column="name" jdbcType="CHAR"/>
-        <result property="description" column="description" jdbcType="CHAR"/>
-        <result property="businessType" column="business_type" jdbcType="CHAR"/>
-        <result property="difficulty" column="difficulty" jdbcType="CHAR"/>
-        <result property="createUserId" column="create_user" jdbcType="CHAR"/>
-        <result property="operationAuthType" column="operation_auth_type" jdbcType="CHAR"/>
-        <result property="operationAuthIds" column="operation_auth_ids" jdbcType="CHAR"/>
-        <result property="readAuthType" column="read_auth_type" jdbcType="CHAR"/>
-        <result property="readAuthIds" column="read_auth_ids" jdbcType="CHAR"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        resource_id
-        ,topo_id,name,
-        description,business_type,difficulty,
-        create_user,operation_auth_type,operation_auth_ids,
-        read_auth_type,read_auth_ids
+    <sql id="share_constant">
+        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.common.model.AuthTable$AuthType@ALL_SHARE_MODE.code"/>
+        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.common.model.AuthTable$AuthType@CUSTOM_SHARE_MODE.code"/>
     </sql>
 
-<!--    <select id="listTeamTemplate" resultType="com.cyberpeace.cr.crbase.model.BusinessTemplateRsp">-->
-<!--        <if test="listReq.search != null and listReq.search != ''">-->
-<!--            <bind name="search" value="'%' + listReq.search + '%'"/>-->
-<!--        </if>-->
-<!--        select-->
-<!--        resource_id ,topo_id,name, description,business_type,difficulty,-->
-<!--        create_user,operation_auth_type,operation_auth_ids, read_auth_type, read_auth_ids-->
-<!--        from-->
-<!--        cr_business_template-->
-<!--        <where>-->
-<!--            1=1-->
-<!--            <if test="listReq.search != null and listReq.search != ''">-->
-<!--                and cr_business_template.name like #{search}-->
-<!--            </if>-->
-<!--            <if test="listReq.difficult != null and listReq.difficult != ''">-->
-<!--                and cr_business_template.difficulty = #{listReq.difficult}-->
-<!--            </if>-->
-<!--            <if test="listReq.name != null and listReq.name != ''">-->
-<!--                and cr_business_template.name = #{listReq.name}-->
-<!--            </if>-->
-<!--            <if test="listReq.category != null and listReq.category != ''">-->
-<!--                and cr_business_template.business_type = #{listReq.category}-->
-<!--            </if>-->
-<!--        </where>-->
-
-<!--    </select>-->
-
-    <select id="listTeamTemplate" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
-        <if test="listReq.search != null and listReq.search != ''">
-            <bind name="search" value="'%' + listReq.search + '%'"/>
+    <select id="listTeamTemplate" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData">
+        <if test="businessTemplateQuery.search != null and businessTemplateQuery.search != ''">
+            <bind name="search" value="'%' + businessTemplateQuery.search + '%'"/>
         </if>
-        select * fromcr_business_template
+        select
+        resource_id ,topo_id,`name`, description,business_type,difficulty,
+        create_user_id,operation_auth_type,operation_auth_ids, read_auth_type, read_auth_ids
+        from
+        cr_business_template
         <where>
             1=1
-            <if test="listReq.search != null and listReq.search != ''">
+            <if test="businessTemplateQuery.search != null and businessTemplateQuery.search != ''">
                 and cr_business_template.name like #{search}
             </if>
-            <if test="listReq.difficult != null and listReq.difficult != ''">
-                and cr_business_template.difficulty = #{listReq.difficult}
-            </if>
-            <if test="listReq.name != null and listReq.name != ''">
-                and cr_business_template.name = #{listReq.name}
-            </if>
-            <if test="listReq.category != null and listReq.category != ''">
-                and cr_business_template.business_type = #{listReq.category}
+            <if test="businessTemplateQuery.type != null and businessTemplateQuery.type != ''">
+                and cr_business_template.business_type = #{type}
             </if>
         </where>
 
     </select>
+    <select id="selectIdsByUserId" resultType="java.lang.String" parameterType="java.lang.String">
+        <include refid="share_constant"/>
+        select
+        resource_id
+        from
+        cr_business_template where
+
+        (`operation_auth_type` = ${ALL_SHARE_MODE} or (`operation_auth_type` = ${CUSTOM_SHARE_MODE} and
+        `operation_auth_ids` like
+        #{userId}))
+    </select>
+
 </mapper>

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.model.template.BaseInfoData;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 
 /**
@@ -17,5 +17,5 @@ import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 @Repository
 public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 
-	IPage<BaseInfoData> listTeamTemplate(Page page, ListQuery listQuery);
+	IPage<TeamTemplateData> listTeamTemplate(Page page, ListQuery listQuery);
 }

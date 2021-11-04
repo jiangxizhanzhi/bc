@@ -14,35 +14,25 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.crbase.model.role.BaseRole;
-import com.cyberpeace.cr.crbase.model.role.RoleQuery;
-import com.cyberpeace.cr.crbase.model.role.RoleUsers;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
-import com.cyberpeace.cr.teamtrain.model.room.RoomRole;
-import com.cyberpeace.cr.teamtrain.model.room.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRsp;
-import com.cyberpeace.cr.teamtrain.model.template.BaseInfo;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
+import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.SceneConfig;
-import com.google.common.collect.Lists;
 
 /**
  *
@@ -53,8 +43,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
 
-	@Autowired
-	private CrRoleMapper crRoleMapper;
 
 	@Autowired
 	TeamTemplateService teamTemplateService;
@@ -73,89 +61,28 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private TransactionTemplate transactionTemplate;
 
 	@Override
-	public TeamRoomRsp getTeamRoomRspByRoomId(String resourceId) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
-		if (teamRoomdata == null) {
+	public TeamRoomData getTeamRoomRspByRoomId(String resourceId) {
+
+		TeamRoomData teamRoomData = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
+		if (teamRoomData == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
+		teamRoomData.setTrainingStatus(setTrainingStatus(teamRoomData));
 
-		RoleQuery roleQuery = new RoleQuery();
-		roleQuery.setRoomId(teamRoomdata.getResourceId());
-
-		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
-		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
-
-		TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomdata);
-		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
-		teamRoomRsp.setRolesData(crRoles);
-
-		return teamRoomRsp;
-	}
-
-	private int setTrainingStatus(TeamRoomData teamRoomdata) {
-		if (null == teamRoomdata.getSceneStartTime()) {
-			return TeamRoom.TrainingStatusCode.UNOPENED.getCode();
-		} else if (null == teamRoomdata.getSceneEndTime()) {
-			return TeamRoom.TrainingStatusCode.OPENING.getCode();
-		} else {
-			return TeamRoom.TrainingStatusCode.ENDED.getCode();
-		}
-	}
-
-	// 获取单个实例中自己的角色，只包括自己角色的基本信息
-	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
-		BaseRole baseRole = new BaseRole();
-		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userId)) {
-				baseRole.setResourceId(crRole.getResourceId());
-				baseRole.setName(crRole.getName());
-
-				baseRole.setDescription(crRole.getDescription());
-				baseRole.setRoleGroup(crRole.getRoleGroup());
-			}
-		});
-
-		return baseRole;
-	}
-	// 先获取实例列表中自己的角色，再获取所有的学员角色
-
-	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
-		BaseRole baseRole = new BaseRole();
-		List<RoleUsers> roleUsersList = Lists.newArrayList();
-		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userId)) {
-				baseRole.setResourceId(crRole.getResourceId());
-				baseRole.setName(crRole.getName());
-
-				baseRole.setDescription(crRole.getDescription());
-				baseRole.setRoleGroup(crRole.getRoleGroup());
-			}
-			if (crRole.getRoleGroup().intValue() != CrRole.RoleGroupCodeInteger.TEACHER
-					.getValue()) {
-				RoleUsers roleUsers = new RoleUsers();
-				roleUsers.setRoleName(crRole.getName());
-				roleUsers.setRoleGroup(crRole.getRoleGroup());
-				roleUsers.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
-				roleUsersList.add(roleUsers);
-			}
-		});
-
-		baseRole.setRoleDataList(roleUsersList);
-		return baseRole;
+		return teamRoomData;
 	}
 
 	@Override
-	public TeamTemplate create(TeamTrainRoomContext input) {
-		TeamTemplate template = teamTemplateService.getById(input.getTemplate());
+	public TeamTemplate create(TeamTrainRoomContext teamTrainRoomContext) {
+		TeamTemplate template = teamTemplateService.getById(teamTrainRoomContext.getTemplate());
 		if (template == null) {
-			throw new ResourceNotFoundException(input.getTemplate());
+			throw new ResourceNotFoundException(teamTrainRoomContext.getTemplate());
 		}
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
 
-		TeamRoom teamRoom = new TeamRoom(input, template, businessTemplate);
+		TeamRoom teamRoom = new TeamRoom(teamTrainRoomContext, template, businessTemplate);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -165,7 +92,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 				List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
 						.toJsonObjectArray(template.getRoleConfig(), TeamTrainTemplateRole.class);
-				List<RoomRole> users = input.getRoleConfig();
+				List<RoomRole> users = teamTrainRoomContext.getRoleConfig();
 				int index = 0;
 				for (TeamTrainTemplateRole teamTrainTemplateRole : teamTrainTemplateRoleList) {
 
@@ -180,7 +107,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 				}
 
-				// todo保存任务角色信息
+				// todo 保存任务角色信息
 			}
 		});
 
@@ -188,45 +115,24 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public TeamTemplate updateTeamRoom(TeamTrainTemplateContext input,
-			BusinessTemplate businessTemplate) {
+	public TeamTemplate updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext,
+			TeamRoom teamRoom) {
 		TeamTemplate teamTemplate = new TeamTemplate();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		BaseInfo baseInfo = input.getBaseInfo();
-
-		SceneConfig sceneConfig = input.getSceneConfigData();
-
-		businessTemplate.setTopoId("");
-		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		businessTemplate.setResourceId(businessTemplate.getResourceId());
-		businessTemplate.setName(baseInfo.getName());
-		businessTemplate.setDescription(baseInfo.getDescription());
-		businessTemplate.setDifficulty(baseInfo.getDifficult());
-
-		if (sceneConfig != null) {
-			String sceneConfigId = "todo";
-			businessTemplate.setTopoId(sceneConfigId);
-		}
-
-		// 保存团队训练模板
-		teamTemplate.setResourceId(input.getResourceId());
-		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
-		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
-		teamTemplate.setSubType(baseInfo.getCategory());
-		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
-		teamTemplate.setDurationTime(baseInfo.getDurationTime());
-		teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
+		teamRoom.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		teamRoom.setResourceId(teamTrainRoomContext.getResourceId());
+		teamRoom.setName(teamTrainRoomContext.getName());
+		teamRoom.setDescription(teamTrainRoomContext.getDescription());
+		teamRoom.setDifficulty(teamTrainRoomContext.getDifficult());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				businessTemplateService.updateById(businessTemplate);
+				updateById(teamRoom);
 
-				teamTemplateService.updateById(teamTemplate);
-				// todo任务相关
+				// todo 任务相关
 
 			}
 		});
@@ -235,36 +141,15 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public ListRsp<TeamRoomRsp> list(ListQuery listQuery) {
+	public IPage<TeamRoomData> list(ListQuery listQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		listQuery.setSort("-create_time");
+
 		Page page = listQuery.toPageParam();
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
+
 		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery);
 
-		ListRsp ret = new ListRsp();
-
-		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
-
-		for (TeamRoomData teamRoomData : data.getRecords()) {
-			RoleQuery roleQuery = new RoleQuery();
-			roleQuery.setRoomId(teamRoomData.getResourceId());
-
-			List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
-
-			TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomData);
-			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
-			teamRoomRsp.setRolesData(crRoles);
-
-			teamRoomRspList.add(teamRoomRsp);
-		}
-
-		ret.setList(teamRoomRspList);
-		ret.setTotal(data.getTotal());
-		ret.setLastPage(data.getPages());
-		ret.setCurrentPage(data.getCurrent());
-
-		return ret;
+		return data;
 	}
 
 	@Override
@@ -305,9 +190,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return setTrainingStatus(teamRoomdata);
 	}
 
-	private TeamRoomRsp getTeamRoomOutputFromTeamRoomData(TeamRoomData teamRoomdata) {
-		TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomdata, TeamRoomRsp.class);
-
-		return teamRoomRsp;
+	private int setTrainingStatus(TeamRoomData teamRoomdata) {
+		if (null == teamRoomdata.getSceneStartTime()) {
+			return TeamRoom.TrainingStatusCode.UNOPENED.getCode();
+		} else if (null == teamRoomdata.getSceneEndTime()) {
+			return TeamRoom.TrainingStatusCode.OPENING.getCode();
+		} else {
+			return TeamRoom.TrainingStatusCode.ENDED.getCode();
+		}
 	}
+
 }

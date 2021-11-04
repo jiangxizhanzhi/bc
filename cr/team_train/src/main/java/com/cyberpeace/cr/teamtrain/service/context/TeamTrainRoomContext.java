@@ -6,13 +6,15 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.cr.teamtrain.model.room.RoomRole;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class TeamTrainRoomContext {
+
+	@ApiModelProperty(required = true)
+	@NotNull
+	private String resourceId;
 
 	@ApiModelProperty(required = true)
 	@NotNull

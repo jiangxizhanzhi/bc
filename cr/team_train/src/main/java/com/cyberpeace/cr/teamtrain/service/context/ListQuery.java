@@ -8,11 +8,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/*
+ * 前台使用的查询类
+ */
 @ApiModel
 @Data
 public class ListQuery extends PageReqBase {
 
-	@ApiModelProperty(value = "类别ID")
+	@ApiModelProperty(value = "训练类别ID")
 	private String category;
 
 	@ApiModelProperty(value = "检索参数")

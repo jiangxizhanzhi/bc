@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.crbase.model.role.CrRoleRsp;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 
 import io.swagger.annotations.Api;
@@ -27,11 +27,11 @@ public class TeamTrainRoleController {
 
 	@ApiOperation("团队实例查询角色")
 	@GetMapping()
-	public BaseRsp<CrRoleRsp> getRoles(
+	public BaseRsp<CrRoleContext> getRoles(
 			@ApiParam(name = "room_id", value = "团队训练id", required = true) String room_id) {
-		CrRoleRsp crRoleRsp = crRoleService.getRoles(room_id);
+		CrRoleContext crRoleContext = crRoleService.getRoles(room_id);
 
-		return new BaseRsp<CrRoleRsp>(crRoleRsp);
+		return new BaseRsp<CrRoleContext>(crRoleContext);
 	}
 
 }

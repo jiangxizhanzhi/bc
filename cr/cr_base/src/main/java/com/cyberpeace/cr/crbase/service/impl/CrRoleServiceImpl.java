@@ -12,11 +12,11 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.crbase.model.role.CrRoleRsp;
-import com.cyberpeace.cr.crbase.model.role.NameElement;
-import com.cyberpeace.cr.crbase.model.role.RoleQuery;
-import com.cyberpeace.cr.crbase.model.role.RoleRspData;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
+import com.cyberpeace.cr.crbase.service.context.role.NameElement;
+import com.cyberpeace.cr.crbase.service.context.role.RoleData;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
@@ -33,22 +33,22 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	private RemoteUserService remoteUserService;
 
 	@Override
-	public CrRoleRsp getRoles(String roomId) {
-		CrRoleRsp crRoleRes = new CrRoleRsp();
+	public CrRoleContext getRoles(String roomId) {
+		CrRoleContext crRoleRes = new CrRoleContext();
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(roomId);
 		roleQuery.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 		if (crRoles == null) {
-			throw new ResourceNotFoundException("团队训练" + roomId + "不存在训练角色");
+			throw new ResourceNotFoundException(roomId);
 		}
 
-		List<RoleRspData> roleResDataList = Lists.newArrayList();
+		List<RoleData> roleResDataList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
 			String missionSchemeId = crRole.getMissionSchemeId();
 			// todo 调用获取任务
-			RoleRspData roleResData = new RoleRspData();
+			RoleData roleResData = new RoleData();
 			roleResData.setName(crRole.getName());
 			roleResData.setResourceId(crRole.getResourceId());
 			roleResData.setMissionsList(missionSchemeId);
@@ -56,7 +56,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			roleResDataList.add(roleResData);
 		}
 		crRoleRes.setRoles(roleResDataList);
-		// "todo任务题解"
+		// "todo 任务题解"
 		// crRoleRes.setShowWriteupMapping("todo");
 		// crRoleRes.setMissionMapping("todo");
 
@@ -67,6 +67,11 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	public List<String> getRoomIdsByUserId(String userId) {
 		return crRoleMapper.getRoomIdsByUserId(userId);
 
+	}
+
+	@Override
+	public List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery) {
+		return crRoleMapper.selectCrRoleByRoomId(roleQuery);
 	}
 
 	private List<NameElement> getUserByRoleUsers(String userIds) {

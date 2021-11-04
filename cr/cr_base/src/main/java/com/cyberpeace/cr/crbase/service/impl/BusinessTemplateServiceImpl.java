@@ -12,17 +12,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.crbase.model.Share;
-import com.cyberpeace.cr.crbase.model.ShareReq;
-import com.cyberpeace.cr.crbase.model.ShareTeacher;
-import com.cyberpeace.cr.crbase.model.TemplateReq;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.context.BusinessTemplateContext;
+import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
+import com.cyberpeace.cr.crbase.service.context.Share;
+import com.cyberpeace.cr.crbase.service.context.ShareContext;
+import com.cyberpeace.cr.crbase.service.context.ShareTeacher;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -43,21 +43,18 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private RemoteUserService remoteUserService;
 
 	@Override
-	public ListRsp<BusinessTemplateContext> page(TemplateReq listReq) {
-		Page page = listReq.toPageParam();
+	public ListRsp<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		AuthTable.AuthType d;
+		Page page = businessTemplateQuery.toPageParam();
+		businessTemplateQuery.setIds(businessTemplateMapper.selectIdsByUserId(userId));
 
-		IPage<BusinessTemplate> result = businessTemplateMapper.listTeamTemplate(page, listReq);
+		IPage<BusinessTemplateData> result = businessTemplateMapper.listTeamTemplate(page,
+				businessTemplateQuery);
 
-		List<BusinessTemplateContext> data = Lists.newArrayList();
-
-		for (BusinessTemplate businessTemplate : result.getRecords()) {
-			BusinessTemplateContext context = BeanUtils.copy(businessTemplate,
-					BusinessTemplateContext.class);
-			Integer nodeNum = remoteSceneService.getTopoDigest(businessTemplate.getTopoId())
-					.getNodeCounts();
-			context.setNodesNum(nodeNum);
-
-			data.add(context);
+		for (BusinessTemplateData businessTemplate : result.getRecords()) {
+			businessTemplate.setNodesNum(
+					remoteSceneService.getTopoDigest(businessTemplate.getTopoId()).getNodeCounts());
 		}
 
 		return PageUtil.getListResult(result);
@@ -99,12 +96,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public void batchSetShares(ShareReq shareReq) {
-		String shareTeachers = JsonUtil.toJsonString(shareReq.getShareTeachers());
-		List<BusinessTemplate> businessTemplateList = listByIds(shareReq.getIds());
+	public void batchSetShares(ShareContext shareContext) {
+		String shareTeachers = JsonUtil.toJsonString(shareContext.getShareTeachers());
+
+		List<BusinessTemplate> businessTemplateList = listByIds(shareContext.getIds());
 
 		businessTemplateList.forEach(businessTemplate -> {
-			businessTemplate.setOperationAuthType(shareReq.getShareMode());
+			businessTemplate.setOperationAuthType(shareContext.getShareMode());
 			businessTemplate.setOperationAuthIds(shareTeachers);
 		});
 

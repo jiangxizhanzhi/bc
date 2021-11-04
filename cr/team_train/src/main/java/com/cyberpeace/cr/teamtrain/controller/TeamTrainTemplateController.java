@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -14,9 +15,16 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
+import com.cyberpeace.cr.teamtrain.controller.req.RoleListReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
+import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
-import com.cyberpeace.cr.teamtrain.model.template.*;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
@@ -90,9 +98,24 @@ public class TeamTrainTemplateController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
-		TeamTrainTemplateRsp data = teamTemplateService.getTeamTemplate(resource_id);
+		TeamTemplate template = teamTemplateService.getTeamTemplate(resource_id);
 
-		return new BaseRsp<>(data);
+		BusinessTemplate businessTemplate = businessTemplateService
+				.getById(template.getBusinessTemplateId());
+
+		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
+
+		String roleString = template.getRoleConfig();
+		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
+				.toJsonObjectArray(roleString, TeamTrainTemplateRole.class);
+
+		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
+
+		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleList);
+		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
+
+		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
 	@ApiOperation("删除")
@@ -107,9 +130,39 @@ public class TeamTrainTemplateController {
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
-		ListRsp<TeamTrainTemplateRsp> data = teamTemplateService.page(listQuery);
 
-		return new BaseRsp<>(data);
+		ListRsp<TeamTrainTemplateRsp> teamTrainTemplateRspListRsp = new ListRsp();
+
+		List<TeamTrainTemplateRsp> teamTrainTemplateRspList = Lists.newArrayList();
+		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
+		for (TeamTemplateData teamTemplateData : data.getRecords()) {
+			TeamTrainTemplateRsp teamTrainTemplateRsp = getTeamTrainTemplateOutputByBaseInfoData(
+					teamTemplateData);
+			teamTrainTemplateRspList.add(teamTrainTemplateRsp);
+		}
+
+		teamTrainTemplateRspListRsp.setList(teamTrainTemplateRspList);
+		teamTrainTemplateRspListRsp.setTotal(data.getTotal());
+		teamTrainTemplateRspListRsp.setLastPage(data.getPages());
+		teamTrainTemplateRspListRsp.setCurrentPage(data.getCurrent());
+
+		return new BaseRsp<>(teamTrainTemplateRspListRsp);
+	}
+
+	public TeamTrainTemplateRsp
+			getTeamTrainTemplateOutputByBaseInfoData(TeamTemplateData teamTemplateData) {
+		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
+
+		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
+
+		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+		String roleString = teamTemplateData.getRoleConfig();
+
+		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
+				BaseRole.class);
+		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
+
+		return teamTrainTemplateRsp;
 	}
 
 }

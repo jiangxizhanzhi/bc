@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper">
 
-    <resultMap id="TeamRoomData" type="com.cyberpeace.cr.teamtrain.model.room.TeamRoomData">
+    <resultMap id="TeamRoomData" type="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData">
         <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
         <result property="template" column="team_template_id" jdbcType="VARCHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
@@ -46,6 +46,7 @@
         where cr_team_room.resource_id = #{resourceId}
 
     </select>
+
     <select id="listTeamRoom" resultMap="TeamRoomData">
         <if test="listQuery.search != null and listQuery.search != ''">
             <bind name="search" value="'%' + listQuery.search + '%'"/>

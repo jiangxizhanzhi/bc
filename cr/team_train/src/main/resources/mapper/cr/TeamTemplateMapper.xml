@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper">
 
     <select id="listTeamTemplate"
-            resultType="com.cyberpeace.cr.teamtrain.model.template.BaseInfoData">
+            resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData">
         <if test="listQuery.search != null and listQuery.search != ''">
             <bind name="search" value="'%' + listQuery.search + '%'"/>
         </if>
@@ -14,7 +14,7 @@
         cr_team_template.train_skills, cr_team_template.role_config, cr_team_template.sub_type,
         cr_team_template.time_line_config, cr_team_template.people_number, cr_team_template.duration_time,
         cr_business_template.topo_id, cr_business_template.name, cr_business_template.description,
-        cr_business_template.business_type, cr_business_template.difficulty, cr_business_template.create_user
+        cr_business_template.business_type, cr_business_template.difficulty, cr_business_template.create_user_id
         from
         cr_team_template
         left join cr_business_template on cr_business_template.resource_id = cr_team_template.business_template_id
@@ -34,4 +34,5 @@
             </if>
         </where>
     </select>
+
 </mapper>

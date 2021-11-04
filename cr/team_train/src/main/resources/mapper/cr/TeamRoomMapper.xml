@@ -47,8 +47,8 @@
 
     </select>
     <select id="listTeamRoom" resultMap="TeamRoomData">
-        <if test="listReq.search != null and listReq.search != ''">
-            <bind name="search" value="'%' + listReq.search + '%'"/>
+        <if test="listQuery.search != null and listQuery.search != ''">
+            <bind name="search" value="'%' + listQuery.search + '%'"/>
         </if>
         select cr_team_room.resource_id,
         cr_team_room.team_template_id,
@@ -75,25 +75,25 @@
         <where>
 
             cr_team_room.resource_id in
-            <if test="listReq.ids != null and listReq.ids.size() != 0">
-                <foreach collection="listReq.ids" item="roomId" separator="," close=")" open="(">
+            <if test="listQuery.ids != null and listQuery.ids.size() != 0">
+                <foreach collection="listQuery.ids" item="roomId" separator="," close=")" open="(">
                     #{roomId}
                 </foreach>
             </if>
-            <if test="listReq.ids.size() == 0">
+            <if test="listQuery.ids.size() == 0">
                 ('')
             </if>
-            <if test="listReq.search != null and listReq.search != ''">
+            <if test="listQuery.search != null and listQuery.search != ''">
                 and cr_team_room.name like #{search}
             </if>
-            <if test="listReq.difficult != null and listReq.difficult != ''">
-                and cr_team_room.difficulty = #{listReq.difficult}
+            <if test="listQuery.difficult != null and listQuery.difficult != ''">
+                and cr_team_room.difficulty = #{listQuery.difficult}
             </if>
-            <if test="listReq.name != null and listReq.name != ''">
-                and cr_team_room.name = #{listReq.name}
+            <if test="listQuery.name != null and listQuery.name != ''">
+                and cr_team_room.name = #{listQuery.name}
             </if>
-            <if test="listReq.category != null and listReq.category != ''">
-                and cr_team_room.sub_type = #{listReq.category}
+            <if test="listQuery.category != null and listQuery.category != ''">
+                and cr_team_room.sub_type = #{listQuery.category}
             </if>
         </where>
     </select>

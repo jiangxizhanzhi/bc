@@ -1,16 +1,26 @@
-package com.cyberpeace.cr.teamtrain.model.template;
+package com.cyberpeace.cr.teamtrain.service.context;
 
-import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.cr.teamtrain.model.room.RoomRole;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class BaseInfoReq implements Serializable {
+public class TeamTrainRoomContext {
+
+	@ApiModelProperty(required = true)
+	@NotNull
+	private String template;
+
+	@ApiModelProperty(required = true)
+	@NotNull
+	private Integer category;
 
 	@ApiModelProperty(required = true)
 	@NotBlank
@@ -18,15 +28,11 @@ public class BaseInfoReq implements Serializable {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private Integer category;
+	private List<String> preSkill;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private String description;
-
-	@ApiModelProperty(required = true)
-	@NotNull
-	private String logo;
+	private List<String> trainSkill;
 
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -34,17 +40,17 @@ public class BaseInfoReq implements Serializable {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private Integer durationTime;
+	private Date startTime;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<String> pre_skill;
+	private Date endTime;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<String> train_skill;
+	private String description;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private Integer peopleNumber;
+	private List<RoomRole> roleConfig;
 }

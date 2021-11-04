@@ -12,7 +12,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.model.role.BaseRole;
@@ -20,8 +19,13 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
-import com.cyberpeace.cr.teamtrain.model.template.*;
+import com.cyberpeace.cr.teamtrain.model.template.BaseInfo;
+import com.cyberpeace.cr.teamtrain.model.template.BaseInfoData;
+import com.cyberpeace.cr.teamtrain.model.template.BaseInfoRsp;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
+import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.google.common.collect.Lists;
 
@@ -38,10 +42,10 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	BusinessTemplateService businessTemplateService;
 
 	@Override
-	public ListRsp<TeamTrainTemplateRsp> page(TeamTemplateReq listReq) {
-		Page page = listReq.toPageParam();
+	public ListRsp<TeamTrainTemplateRsp> page(ListQuery listQuery) {
+		Page page = listQuery.toPageParam();
 
-		IPage<BaseInfoData> data = teamTemplateMapper.listTeamTemplate(page, listReq);
+		IPage<BaseInfoData> data = teamTemplateMapper.listTeamTemplate(page, listQuery);
 
 		ListRsp ret = new ListRsp();
 
@@ -61,15 +65,15 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
-	public TeamTemplate create(TeamTrainTemplateAddReq input) {
+	public TeamTemplate create(TeamTrainTemplateContext teamTrainTemplateContext) {
 		TeamTemplate teamTemplate = new TeamTemplate();
 
-		BaseInfoReq crEventAddInput = input.getBaseInfo();
+		BaseInfo crEventAddInput = teamTrainTemplateContext.getBaseInfo();
 
 		BusinessTemplate businessTemplate = getBusinessTemplateFromBaseInfoInput(crEventAddInput);
 
 		// 拓扑场景id保存获取
-		SceneConfig sceneConfig = input.getSceneConfigData();
+		SceneConfig sceneConfig = teamTrainTemplateContext.getSceneConfigData();
 		String sceneConfigId = "";
 		// "todo场景";
 
@@ -81,23 +85,18 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		// 保存团队训练模板
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-		teamTemplate.setPreSkills(JsonUtil.toJsonString(crEventAddInput.getPre_skill()));
-		teamTemplate.setTrainSkills(JsonUtil.toJsonString(crEventAddInput.getTrain_skill()));
+		teamTemplate.setPreSkills(JsonUtil.toJsonString(crEventAddInput.getPreSkill()));
+		teamTemplate.setTrainSkills(JsonUtil.toJsonString(crEventAddInput.getTrainSkill()));
 		teamTemplate.setSubType(crEventAddInput.getCategory());
-		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
+		teamTemplate.setTimeLineConfig(
+				JsonUtil.toJsonString(teamTrainTemplateContext.getTimeLineConfig()));
 
-		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = Lists.newArrayList();
+		for (TeamTrainTemplateRole teamTrainTemplateRole : teamTrainTemplateContext.getRoleList()) {
 
-		for (RoleListReq roleListReq : input.getRoleList()) {
-			TeamTrainTemplateRole teamTrainTemplateRole = BeanUtils.deepCopy(roleListReq,
-					TeamTrainTemplateRole.class);
 			teamTrainTemplateRole.setCrEventId(businessTemplate.getResourceId());
-			teamTrainTemplateRole
-					.setMissionsScheme(JsonUtil.toJsonString(roleListReq.getMissionsScheme()));
 
-			teamTrainTemplateRoleList.add(teamTrainTemplateRole);
 		}
-		teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateRoleList));
+		teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateContext.getRoleList()));
 
 		// todo任务相关
 		save(teamTemplate);
@@ -105,11 +104,11 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return teamTemplate;
 	}
 
-	private BusinessTemplate getBusinessTemplateFromBaseInfoInput(BaseInfoReq baseInfoReq) {
+	private BusinessTemplate getBusinessTemplateFromBaseInfoInput(BaseInfo baseInfo) {
 		BusinessTemplate businessTemplate = new BusinessTemplate();
-		businessTemplate.setName(baseInfoReq.getName());
-		businessTemplate.setDescription(baseInfoReq.getDescription());
-		businessTemplate.setDifficulty(baseInfoReq.getDifficult());
+		businessTemplate.setName(baseInfo.getName());
+		businessTemplate.setDescription(baseInfo.getDescription());
+		businessTemplate.setDifficulty(baseInfo.getDifficult());
 		businessTemplate.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 
 		return businessTemplate;
@@ -117,20 +116,20 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
-	public TeamTemplate updateTeamTemplate(TeamTrainTemplateModifyReq input,
+	public TeamTemplate updateTeamTemplate(TeamTrainTemplateContext input,
 			BusinessTemplate businessTemplate) {
 		TeamTemplate teamTemplate = new TeamTemplate();
 
-		BaseInfoReq baseInfoReq = input.getBaseInfo();
+		BaseInfo baseInfo = input.getBaseInfo();
 
 		SceneConfig sceneConfig = input.getSceneConfigData();
 
 		businessTemplate.setTopoId("");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
-		businessTemplate.setName(baseInfoReq.getName());
-		businessTemplate.setDescription(baseInfoReq.getDescription());
-		businessTemplate.setDifficulty(baseInfoReq.getDifficult());
+		businessTemplate.setName(baseInfo.getName());
+		businessTemplate.setDescription(baseInfo.getDescription());
+		businessTemplate.setDifficulty(baseInfo.getDifficult());
 
 		if (sceneConfig != null) {
 			String sceneConfigId = "更新场景todo";
@@ -142,12 +141,12 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		// 更新团队训练模板
 		teamTemplate.setResourceId(input.getResourceId());
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfoReq.getPre_skill()));
-		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfoReq.getTrain_skill()));
-		teamTemplate.setSubType(baseInfoReq.getCategory());
+		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
+		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
+		teamTemplate.setSubType(baseInfo.getCategory());
 		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
-		teamTemplate.setDurationTime(baseInfoReq.getDurationTime());
-		teamTemplate.setPeopleNumber(baseInfoReq.getPeopleNumber());
+		teamTemplate.setDurationTime(baseInfo.getDurationTime());
+		teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
 
 		updateById(teamTemplate);
 		// todo更新任务

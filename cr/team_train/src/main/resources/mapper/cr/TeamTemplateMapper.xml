@@ -6,8 +6,8 @@
 
     <select id="listTeamTemplate"
             resultType="com.cyberpeace.cr.teamtrain.model.template.BaseInfoData">
-        <if test="listReq.search != null and listReq.search != ''">
-            <bind name="search" value="'%' + listReq.search + '%'"/>
+        <if test="listQuery.search != null and listQuery.search != ''">
+            <bind name="search" value="'%' + listQuery.search + '%'"/>
         </if>
         select
         cr_team_template.resource_id, cr_team_template.business_template_id, cr_team_template.pre_skills,
@@ -20,17 +20,17 @@
         left join cr_business_template on cr_business_template.resource_id = cr_team_template.business_template_id
         <where>
             1=1
-            <if test="listReq.search != null and listReq.search != ''">
+            <if test="listQuery.search != null and listQuery.search != ''">
                 and cr_business_template.name like #{search}
             </if>
-            <if test="listReq.difficult != null and listReq.difficult != ''">
-                and cr_business_template.difficulty = #{listReq.difficult}
+            <if test="listQuery.difficult != null and listQuery.difficult != ''">
+                and cr_business_template.difficulty = #{listQuery.difficult}
             </if>
-            <if test="listReq.name != null and listReq.name != ''">
-                and cr_business_template.name = #{listReq.name}
+            <if test="listQuery.name != null and listQuery.name != ''">
+                and cr_business_template.name = #{listQuery.name}
             </if>
-            <if test="listReq.category != null and listReq.category != ''">
-                and cr_team_template.sub_type = #{listReq.category}
+            <if test="listQuery.category != null and listQuery.category != ''">
+                and cr_team_template.sub_type = #{listQuery.category}
             </if>
         </where>
     </select>

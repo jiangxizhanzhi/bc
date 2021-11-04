@@ -14,7 +14,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.model.role.CrRoleRsp;
 import com.cyberpeace.cr.crbase.model.role.NameElement;
-import com.cyberpeace.cr.crbase.model.role.RoleReq;
+import com.cyberpeace.cr.crbase.model.role.RoleQuery;
 import com.cyberpeace.cr.crbase.model.role.RoleRspData;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -35,11 +35,11 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Override
 	public CrRoleRsp getRoles(String roomId) {
 		CrRoleRsp crRoleRes = new CrRoleRsp();
-		RoleReq roleReq = new RoleReq();
-		roleReq.setRoomId(roomId);
-		roleReq.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(roomId);
+		roleQuery.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
 
-		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
+		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 		if (crRoles == null) {
 			throw new ResourceNotFoundException("团队训练" + roomId + "不存在训练角色");
 		}

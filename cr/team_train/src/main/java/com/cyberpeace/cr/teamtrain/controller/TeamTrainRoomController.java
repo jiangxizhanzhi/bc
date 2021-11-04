@@ -9,6 +9,7 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -18,9 +19,12 @@ import com.cyberpeace.cr.teamtrain.model.room.ResourceIdReq;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
+import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateReq;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
+import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.integratation.service.RemoteSceneConfigService;
 
 import io.swagger.annotations.Api;
@@ -53,16 +57,23 @@ public class TeamTrainRoomController {
 	@ApiOperation("新增")
 	@PostMapping()
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
-	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq input) {
-		TeamTemplate teamTemplate = teamRoomService.create(input);
+	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
+		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
+				TeamTrainRoomContext.class);
+		TeamTemplate teamTemplate = teamRoomService.create(teamTrainRoomContext);
 
 		return getTeamRoom(teamTemplate.getResourceId());
 	}
 
 	@ApiOperation("修改")
 	@PutMapping()
-	public BaseRsp<TeamRoomRsp> update(@RequestBody @Validated TeamTrainTemplateModifyReq input) {
-		String resourceId = input.getResourceId();
+	public BaseRsp<TeamRoomRsp>
+			update(@RequestBody @Validated TeamTrainTemplateReq teamTrainTemplateReq) {
+
+		TeamTrainTemplateContext teamTrainTemplateContext = new TeamTrainTemplateContext();
+		BeanUtils.copy(teamTrainTemplateReq, TeamTrainTemplateContext.class);
+
+		String resourceId = teamTrainTemplateContext.getResourceId();
 		TeamTemplate template = teamTemplateService.getById(resourceId);
 
 		BusinessTemplate businessTemplate = businessTemplateService
@@ -71,7 +82,7 @@ public class TeamTrainRoomController {
 		if (businessTemplate == null || template == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
-		teamRoomService.updateTeamRoom(input, businessTemplate);
+		teamRoomService.updateTeamRoom(teamTrainTemplateContext, businessTemplate);
 
 		return getTeamRoom(resourceId);
 	}
@@ -96,7 +107,8 @@ public class TeamTrainRoomController {
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(TeamRoomReq listReq) {
-		ListRsp<TeamRoomRsp> data = teamRoomService.list(listReq);
+		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
+		ListRsp<TeamRoomRsp> data = teamRoomService.list(listQuery);
 
 		return new BaseRsp<>(data);
 	}

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.model.role.RoleReq;
+import com.cyberpeace.cr.crbase.model.role.RoleQuery;
 
 /**
  * @Entity com.cyberpeace.cr.teamtrain.dao.entity.Role
@@ -16,7 +16,7 @@ import com.cyberpeace.cr.crbase.model.role.RoleReq;
 @Repository
 public interface CrRoleMapper extends BaseMapper<CrRole> {
 
-	List<CrRole> selectCrRoleByRoomId(RoleReq roleReq);
+	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
 
 	List<String> getRoomIdsByUserId(String userId);
 }

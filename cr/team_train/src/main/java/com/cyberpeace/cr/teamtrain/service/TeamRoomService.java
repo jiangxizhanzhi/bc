@@ -5,10 +5,10 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.model.room.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRsp;
-import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
+import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 
 /**
  *
@@ -25,21 +25,20 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param input
 	 * @return
 	 */
-	TeamTemplate create(TeamTrainRoomReq input);
+	TeamTemplate create(TeamTrainRoomContext input);
 
 	/** 更新实例
 	 * @param input
 	 * @param businessTemplate
 	 * @return
 	 */
-	TeamTemplate updateTeamRoom(TeamTrainTemplateModifyReq input,
-			BusinessTemplate businessTemplate);
+	TeamTemplate updateTeamRoom(TeamTrainTemplateContext input, BusinessTemplate businessTemplate);
 
 	/** 列表查询团队训练
-	 * @param listReq
+	 * @param listQuery
 	 * @return
 	 */
-	ListRsp<TeamRoomRsp> list(TeamRoomReq listReq);
+	ListRsp<TeamRoomRsp> list(ListQuery listQuery);
 
 	/** 修改团队训练状态
 	 * @param resourceId

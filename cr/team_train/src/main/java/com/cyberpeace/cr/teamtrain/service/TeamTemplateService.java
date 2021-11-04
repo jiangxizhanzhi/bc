@@ -4,21 +4,20 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTemplateReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateAddReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateRsp;
+import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 
 /**
  *
  */
 public interface TeamTemplateService extends IService<TeamTemplate> {
 
-	ListRsp<TeamTrainTemplateRsp> page(TeamTemplateReq listReq);
+	ListRsp<TeamTrainTemplateRsp> page(ListQuery listQuery);
 
-	TeamTemplate create(TeamTrainTemplateAddReq input);
+	TeamTemplate create(TeamTrainTemplateContext teamTrainTemplateContext);
 
-	TeamTemplate updateTeamTemplate(TeamTrainTemplateModifyReq input,
+	TeamTemplate updateTeamTemplate(TeamTrainTemplateContext teamTrainTemplateContext,
 			BusinessTemplate businessTemplate);
 
 	TeamTrainTemplateRsp getTeamTemplate(String resourceId);

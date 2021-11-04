@@ -19,21 +19,25 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.model.role.BaseRole;
-import com.cyberpeace.cr.crbase.model.role.RoleReq;
+import com.cyberpeace.cr.crbase.model.role.RoleQuery;
 import com.cyberpeace.cr.crbase.model.role.RoleUsers;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.teamtrain.dao.entity.LocalScene;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
-import com.cyberpeace.cr.teamtrain.model.room.*;
-import com.cyberpeace.cr.teamtrain.model.template.BaseInfoReq;
-import com.cyberpeace.cr.teamtrain.model.template.TeamTrainTemplateModifyReq;
-import com.cyberpeace.cr.teamtrain.service.LocalSceneService;
+import com.cyberpeace.cr.teamtrain.model.room.RoomRole;
+import com.cyberpeace.cr.teamtrain.model.room.TeamRoomData;
+import com.cyberpeace.cr.teamtrain.model.room.TeamRoomRsp;
+import com.cyberpeace.cr.teamtrain.model.template.BaseInfo;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
+import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.google.common.collect.Lists;
 
@@ -69,10 +73,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			throw new ResourceNotFoundException(resourceId);
 		}
 
-		RoleReq roleReq = new RoleReq();
-		roleReq.setRoomId(teamRoomdata.getResourceId());
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(teamRoomdata.getResourceId());
 
-		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
+		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
 
 		TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomdata);
@@ -136,7 +140,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
-	public TeamTemplate create(TeamTrainRoomReq input) {
+	public TeamTemplate create(TeamTrainRoomContext input) {
 		TeamTemplate template = teamTemplateService.getById(input.getTemplate());
 		if (template == null) {
 			throw new ResourceNotFoundException(input.getTemplate());
@@ -166,30 +170,27 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		}
 
-		// teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateRoleList));
-
-		// 保存任务信息
-		// todo
+		// todo保存任务角色信息
 
 		return template;
 	}
 
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
-	public TeamTemplate updateTeamRoom(TeamTrainTemplateModifyReq input,
+	public TeamTemplate updateTeamRoom(TeamTrainTemplateContext input,
 			BusinessTemplate businessTemplate) {
 		TeamTemplate teamTemplate = new TeamTemplate();
 
-		BaseInfoReq baseInfoReq = input.getBaseInfo();
+		BaseInfo baseInfo = input.getBaseInfo();
 
 		SceneConfig sceneConfig = input.getSceneConfigData();
 
 		businessTemplate.setTopoId("");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
-		businessTemplate.setName(baseInfoReq.getName());
-		businessTemplate.setDescription(baseInfoReq.getDescription());
-		businessTemplate.setDifficulty(baseInfoReq.getDifficult());
+		businessTemplate.setName(baseInfo.getName());
+		businessTemplate.setDescription(baseInfo.getDescription());
+		businessTemplate.setDifficulty(baseInfo.getDifficult());
 
 		if (sceneConfig != null) {
 			String sceneConfigId = "todo";
@@ -201,12 +202,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		// 保存团队训练模板
 		teamTemplate.setResourceId(input.getResourceId());
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfoReq.getPre_skill()));
-		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfoReq.getTrain_skill()));
-		teamTemplate.setSubType(baseInfoReq.getCategory());
+		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
+		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
+		teamTemplate.setSubType(baseInfo.getCategory());
 		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
-		teamTemplate.setDurationTime(baseInfoReq.getDurationTime());
-		teamTemplate.setPeopleNumber(baseInfoReq.getPeopleNumber());
+		teamTemplate.setDurationTime(baseInfo.getDurationTime());
+		teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
 
 		teamTemplateService.updateById(teamTemplate);
 
@@ -216,21 +217,21 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public ListRsp<TeamRoomRsp> list(TeamRoomReq listReq) {
+	public ListRsp<TeamRoomRsp> list(ListQuery listQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		Page page = listReq.toPageParam();
-		listReq.setIds(crRoleService.getRoomIdsByUserId(userId));
-		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listReq);
+		Page page = listQuery.toPageParam();
+		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
+		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery);
 
 		ListRsp ret = new ListRsp();
 
 		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
 
 		for (TeamRoomData teamRoomData : data.getRecords()) {
-			RoleReq roleReq = new RoleReq();
-			roleReq.setRoomId(teamRoomData.getResourceId());
+			RoleQuery roleQuery = new RoleQuery();
+			roleQuery.setRoomId(teamRoomData.getResourceId());
 
-			List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleReq);
+			List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 
 			TeamRoomRsp teamRoomRsp = getTeamRoomOutputFromTeamRoomData(teamRoomData);
 			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
@@ -261,8 +262,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 		// 已开始，新增local_scene数据
 		if (teamRoomdata.isOpening()) {
-			LocalScene localScene = localSceneService
-					.getLocalSceneByBusinessInstanceId(teamRoomdata.getResourceId());
+			com.cyberpeace.cs.dao.entity.LocalScene localScene = localSceneService
+					.getByBusinessInstanceId(teamRoomdata.getResourceId());
 			localScene.setEndTime(new Date());
 			localSceneService.save(localScene);
 		}

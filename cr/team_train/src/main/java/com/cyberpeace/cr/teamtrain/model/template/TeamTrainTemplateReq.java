@@ -13,13 +13,10 @@ import lombok.Data;
 @Data
 public class TeamTrainTemplateReq implements Serializable {
 
-	// private CrEventInput crEvent;
-
-	// private SceneConfig sceneConfig;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private BaseInfoReq baseInfo;
+	private BaseInfo baseInfo;
 
 	@ApiModelProperty(required = true)
 	@NotNull

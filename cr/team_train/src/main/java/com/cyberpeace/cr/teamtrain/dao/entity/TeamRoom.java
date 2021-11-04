@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.teamtrain.model.room.TeamTrainRoomReq;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 
 import lombok.Data;
 import lombok.Getter;
@@ -99,7 +99,7 @@ public class TeamRoom extends BaseTable {
 
 	public TeamRoom() {}
 
-	public TeamRoom(TeamTrainRoomReq input, TeamTemplate template,
+	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template,
 			BusinessTemplate businessTemplate) {
 		this.teamTemplateId = template.getResourceId();
 		this.name = input.getName();

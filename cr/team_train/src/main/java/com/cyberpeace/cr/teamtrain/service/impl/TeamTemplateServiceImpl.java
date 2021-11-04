@@ -3,8 +3,11 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -41,6 +44,10 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	@Autowired
 	BusinessTemplateService businessTemplateService;
 
+	@Autowired
+	@Qualifier("crTransactionTemplate")
+	private TransactionTemplate transactionTemplate;
+
 	@Override
 	public ListRsp<TeamTrainTemplateRsp> page(ListQuery listQuery) {
 		Page page = listQuery.toPageParam();
@@ -63,7 +70,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return ret;
 	}
 
-	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
 	public TeamTemplate create(TeamTrainTemplateContext teamTrainTemplateContext) {
 		TeamTemplate teamTemplate = new TeamTemplate();
@@ -81,8 +87,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		businessTemplate.setTopoId(sceneConfigId);
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
-		businessTemplateService.save(businessTemplate);
-
 		// 保存团队训练模板
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
 		teamTemplate.setPreSkills(JsonUtil.toJsonString(crEventAddInput.getPreSkill()));
@@ -98,8 +102,18 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		}
 		teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateContext.getRoleList()));
 
-		// todo任务相关
-		save(teamTemplate);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				businessTemplateService.save(businessTemplate);
+
+				// todo任务相关
+
+				save(teamTemplate);
+
+			}
+		});
 
 		return teamTemplate;
 	}
@@ -114,7 +128,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return businessTemplate;
 	}
 
-	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
 	public TeamTemplate updateTeamTemplate(TeamTrainTemplateContext input,
 			BusinessTemplate businessTemplate) {
@@ -136,8 +149,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 			businessTemplate.setTopoId(sceneConfigId);
 		}
 
-		businessTemplateService.updateById(businessTemplate);
-
 		// 更新团队训练模板
 		teamTemplate.setResourceId(input.getResourceId());
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
@@ -148,8 +159,19 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
 		teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
 
-		updateById(teamTemplate);
-		// todo更新任务
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				businessTemplateService.updateById(businessTemplate);
+
+				updateById(teamTemplate);
+
+				// todo更新任务
+
+			}
+		});
 
 		return teamTemplate;
 	}

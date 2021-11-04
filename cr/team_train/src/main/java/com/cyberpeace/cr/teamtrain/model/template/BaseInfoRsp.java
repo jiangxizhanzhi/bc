@@ -56,7 +56,7 @@ public class BaseInfoRsp implements Serializable {
 		this.category = template.getSubType();
 		this.description = businessTemplate.getDescription();
 		this.createUser = businessTemplate.getCreateUserId();
-		this.createTime = createTime;
+		this.createTime = businessTemplate.getCreateTime();
 		this.difficult = businessTemplate.getDifficulty();
 		this.durationTime = template.getDurationTime();
 		this.preSkill = JsonUtil.toJsonObjectArray(template.getPreSkills(), String.class);
@@ -69,7 +69,7 @@ public class BaseInfoRsp implements Serializable {
 		this.category = baseInfoData.getSubType();
 		this.description = baseInfoData.getDescription();
 		this.createUser = baseInfoData.getCreateUser();
-		this.createTime = createTime;
+		this.createTime = baseInfoData.getCreateTime();
 		this.difficult = baseInfoData.getDifficulty();
 		this.durationTime = baseInfoData.getDurationTime();
 		this.preSkill = JsonUtil.toJsonObjectArray(baseInfoData.getPreSkills(), String.class);

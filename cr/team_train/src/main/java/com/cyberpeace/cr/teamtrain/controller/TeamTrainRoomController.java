@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +55,6 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
 		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
 				TeamTrainRoomContext.class);

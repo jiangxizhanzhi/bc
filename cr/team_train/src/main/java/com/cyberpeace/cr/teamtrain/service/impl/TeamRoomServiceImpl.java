@@ -4,8 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -64,6 +67,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	LocalSceneService localSceneService;
+
+	@Autowired
+	@Qualifier("ojTransactionTemplate")
+	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public TeamRoomRsp getTeamRoomRspByRoomId(String resourceId) {
@@ -138,7 +145,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return baseRole;
 	}
 
-	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
 	public TeamTemplate create(TeamTrainRoomContext input) {
 		TeamTemplate template = teamTemplateService.getById(input.getTemplate());
@@ -150,36 +156,42 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				.getById(template.getBusinessTemplateId());
 
 		TeamRoom teamRoom = new TeamRoom(input, template, businessTemplate);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		save(teamRoom);
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
-		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
-				.toJsonObjectArray(template.getRoleConfig(), TeamTrainTemplateRole.class);
-		List<RoomRole> users = input.getRoleConfig();
-		int index = 0;
-		for (TeamTrainTemplateRole teamTrainTemplateRole : teamTrainTemplateRoleList) {
+				save(teamRoom);
 
-			CrRole crRole = BeanUtils.deepCopy(teamTrainTemplateRole, CrRole.class);
-			// crRole.setBusinessInstanceId();
-			crRole.setUserIds(JsonUtil.toJsonString(users.get(index++).getUsers()));
-			teamTrainTemplateRole.getResourceId();
-			JsonUtil.toJsonString(teamTrainTemplateRoleList);
-			crRole.setBusinessInstanceId(teamRoom.getResourceId());
-			crRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-			crRoleService.save(crRole);
+				List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
+						.toJsonObjectArray(template.getRoleConfig(), TeamTrainTemplateRole.class);
+				List<RoomRole> users = input.getRoleConfig();
+				int index = 0;
+				for (TeamTrainTemplateRole teamTrainTemplateRole : teamTrainTemplateRoleList) {
 
-		}
+					CrRole crRole = BeanUtils.deepCopy(teamTrainTemplateRole, CrRole.class);
+					// crRole.setBusinessInstanceId();
+					crRole.setUserIds(JsonUtil.toJsonString(users.get(index++).getUsers()));
+					teamTrainTemplateRole.getResourceId();
+					JsonUtil.toJsonString(teamTrainTemplateRoleList);
+					crRole.setBusinessInstanceId(teamRoom.getResourceId());
+					crRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+					crRoleService.save(crRole);
 
-		// todo保存任务角色信息
+				}
+
+				// todo保存任务角色信息
+			}
+		});
 
 		return template;
 	}
 
-	@Transactional(rollbackFor = { Exception.class }, transactionManager = "crTransactionManager")
 	@Override
 	public TeamTemplate updateTeamRoom(TeamTrainTemplateContext input,
 			BusinessTemplate businessTemplate) {
 		TeamTemplate teamTemplate = new TeamTemplate();
+		String userId = UserInfoContext.getUserContext().getUserId();
 
 		BaseInfo baseInfo = input.getBaseInfo();
 
@@ -197,8 +209,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			businessTemplate.setTopoId(sceneConfigId);
 		}
 
-		businessTemplateService.updateById(businessTemplate);
-
 		// 保存团队训练模板
 		teamTemplate.setResourceId(input.getResourceId());
 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
@@ -209,9 +219,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
 		teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
 
-		teamTemplateService.updateById(teamTemplate);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		// todo任务相关
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				businessTemplateService.updateById(businessTemplate);
+
+				teamTemplateService.updateById(teamTemplate);
+				// todo任务相关
+
+			}
+		});
 
 		return teamTemplate;
 	}
@@ -219,6 +237,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public ListRsp<TeamRoomRsp> list(ListQuery listQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
+		listQuery.setSort("-create_time");
 		Page page = listQuery.toPageParam();
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery);

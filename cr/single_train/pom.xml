@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
-            <version>${cr_base.version}</version>
+            <version>${cr.base.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

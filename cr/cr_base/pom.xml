@@ -12,7 +12,7 @@
 
     <groupId>com.cyberpeace.cr</groupId>
     <artifactId>cr_base</artifactId>
-    <version>${cr_base.version}</version>
+    <version>${cr.base.version}</version>
     <packaging>jar</packaging>
     <name>cr_base</name>
 

@@ -43,7 +43,7 @@
         <rtks.version>0.0.1-SNAPSHOT</rtks.version>
         <gateway.version>0.0.1-SNAPSHOT</gateway.version>
         <cr.version>0.0.1-SNAPSHOT</cr.version>
-        <cr_base.version>0.0.1-SNAPSHOT</cr_base.version>
+        <cr.base.version>0.0.1-SNAPSHOT</cr.base.version>
         <cr.team.train.version>0.0.1-SNAPSHOT</cr.team.train.version>
         <cr.single.train.version>0.0.1-SNAPSHOT</cr.single.train.version>
         <cr.redvsvblue.version>0.0.1-SNAPSHOT</cr.redvsvblue.version>

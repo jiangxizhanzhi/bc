@@ -24,7 +24,7 @@ import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
-import com.cyberpeace.integratation.service.RemoteSceneConfigService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,7 +45,7 @@ public class TeamTrainRoomController {
 	TeamTemplateService teamTemplateService;
 
 	@Autowired
-	RemoteSceneConfigService sceneConfigService;
+	RemoteTopoService sceneConfigService;
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;

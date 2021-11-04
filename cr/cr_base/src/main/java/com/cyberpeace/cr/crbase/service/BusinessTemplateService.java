@@ -7,6 +7,7 @@ import com.cyberpeace.cr.crbase.model.BusinessTemplateRsp;
 import com.cyberpeace.cr.crbase.model.Share;
 import com.cyberpeace.cr.crbase.model.ShareReq;
 import com.cyberpeace.cr.crbase.model.TemplateReq;
+import com.cyberpeace.cr.crbase.service.context.BusinessTemplateContext;
 
 /**
  *
@@ -17,7 +18,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param listReq 
 	 * @return
 	 */
-	ListRsp<BusinessTemplateRsp> page(TemplateReq listReq);
+	ListRsp<BusinessTemplateContext> page(TemplateReq listReq);
 
 	/** 获取权限团队训练的操作权限人员
 	 * @param resourceId 

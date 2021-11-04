@@ -14,5 +14,5 @@ import com.cyberpeace.cr.crbase.model.TemplateReq;
 @Repository
 public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
-	IPage<BusinessTemplateRsp> listTeamTemplate(Page page, TemplateReq listReq);
+	IPage<BusinessTemplate> listTeamTemplate(Page page, TemplateReq listReq);
 }

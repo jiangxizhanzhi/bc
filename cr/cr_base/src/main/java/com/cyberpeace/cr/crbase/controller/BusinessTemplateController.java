@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.model.BusinessTemplateRsp;
 import com.cyberpeace.cr.crbase.model.Share;
 import com.cyberpeace.cr.crbase.model.ShareReq;
 import com.cyberpeace.cr.crbase.model.TemplateReq;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.context.BusinessTemplateContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,10 +32,10 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("查询模板列表")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<BusinessTemplateRsp>> getTemplate(TemplateReq listReq) {
-		ListRsp<BusinessTemplateRsp> data = businessTemplateService.page(listReq);
+	public BaseRsp<ListRsp<BusinessTemplateContext>> getTemplate(TemplateReq listReq) {
+		ListRsp<BusinessTemplateContext> data = businessTemplateService.page(listReq);
 
-		return new BaseRsp<ListRsp<BusinessTemplateRsp>>(data);
+		return new BaseRsp(data);
 	}
 
 	/**

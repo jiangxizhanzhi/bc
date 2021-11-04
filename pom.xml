@@ -19,6 +19,7 @@
     <version>1.0.0</version>
 
     <properties>
+        <!-- 依赖的第三方版本号 -->
         <java.version>1.8</java.version>
         <guava.version>28.2-jre</guava.version>
         <common.lang.version>3.9</common.lang.version>
@@ -33,6 +34,14 @@
         <cache.version>2.3.2.RELEASE</cache.version>
         <zip4j.version>1.3.2</zip4j.version>
         <caffeine.version>2.6.2</caffeine.version>
+        <amqp.version>2.5.2</amqp.version>
+        <springboot.web.version>2.5.2</springboot.web.version>
+        <springboot.mybatis.version>2.2.0</springboot.mybatis.version>
+        <springfox.version>3.0.0</springfox.version>
+        <hibernate.validator.version>6.0.13.Final</hibernate.validator.version>
+        <mysql.connector.version>8.0.25</mysql.connector.version>
+        <lombok.version>1.18.20</lombok.version>
+        <springboot.test.version>2.5.2</springboot.test.version>
 
         <!-- 自有模块版本号 -->
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
@@ -147,49 +156,49 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-amqp</artifactId>
-                <version>2.5.2</version>
+                <version>${amqp.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
-                <version>2.5.2</version>
+                <version>${springboot.web.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>2.2.0</version>
+                <version>${springboot.mybatis.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-boot-starter</artifactId>
-                <version>3.0.0</version>
+                <version>${springfox.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.0.13.Final</version>
+                <version>${hibernate.validator.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.25</version>
+                <version>${mysql.connector.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.20</version>
+                <version>${lombok.version}</version>
                 <optional>true</optional>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
-                <version>2.5.2</version>
+                <version>${springboot.test.version}</version>
                 <scope>test</scope>
             </dependency>
 

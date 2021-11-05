@@ -1,13 +1,16 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.MultiSelectReq;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.controller.req.ShareReq;
 import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
@@ -64,12 +67,45 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("批量修改操作权限")
 	@PostMapping("/batchSetShares")
-	public BaseRsp<String> batchSetShares(ShareReq shareReq) {
+	public BaseRsp<String> batchSetShares(
+			@ApiParam(name = "shareReq", value = "修改权限内容") @RequestBody @Valid ShareReq shareReq) {
 		ShareContext shareContext = BeanUtils.copy(shareReq, ShareContext.class);
 
 		businessTemplateService.batchSetShares(shareContext);
 
 		return new BaseRsp<String>();
+	}
+
+	/**
+	 * 导入业务模板
+	 * @return
+	 */
+	@ApiOperation("导入业务模板")
+	@PostMapping("/batch_loads")
+	public BaseRsp<String> batchLoads(@RequestBody MultipartFile file) {
+		// todo
+
+		return null;
+	}
+
+	/**
+	 * 导出业务模板
+	 * @return
+	 */
+	@ApiOperation("导出业务模板")
+	@PostMapping("/batch_dumps")
+	public BaseRsp<String> batchDumps(@ApiParam(name = "multiSelectReq",
+			value = "模板id") @RequestBody MultiSelectReq multiSelectReq) {
+		// todo
+
+		return null;
+	}
+
+	@DeleteMapping()
+	@ApiOperation("批量删除")
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+		// todo
+		return new BaseRsp<>();
 	}
 
 }

@@ -1,6 +1,13 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.oj.ojbase.constant.AuthShare;
+import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
+import com.cyberpeace.oj.ojbase.dao.entity.Comment;
+import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
+import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -39,6 +46,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		Note note = BeanUtils.copy(noteAddContext, Note.class);
 		note.setReadAuthType(AuthShare.ALL.getCode());
 		note.setOperationAuthType(AuthShare.ALL.getCode());
+		note.setIsPublic(CommonConstant.TRUE);
 		updateOrSave(note);
 		return note;
 	}
@@ -48,6 +56,16 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		Note note = BeanUtils.copy(context, Note.class);
 		updateOrSave(note);
 		return note;
+	}
+
+	@Override
+	public IPage<NoteListBo> pageByUserNameAndcontent(Page page, AdminNoteListQuery noteListQuery,
+			Boolean isWeb) {
+		// 查询用户
+
+		NoteListQuery listQuery = BeanUtils.copy(noteListQuery, NoteListQuery.class);
+		IPage<Note> iPage = noteMapper.pageByUserIdsAndContent(page, listQuery, isWeb);
+		return null;
 	}
 
 	/**

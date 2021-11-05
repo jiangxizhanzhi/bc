@@ -54,7 +54,7 @@ public class WebNoteController {
 	}
 
 	@ApiOperation("单条笔记查询")
-	@GetMapping
+	@GetMapping("")
 	public BaseRsp<NoteBo> getNote(@Valid GetNoteReq getNoteReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		NoteUniqueContext uniqueContext = BeanUtils.copy(getNoteReq, NoteUniqueContext.class);

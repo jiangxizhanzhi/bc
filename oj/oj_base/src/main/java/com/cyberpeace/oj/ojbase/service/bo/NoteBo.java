@@ -12,19 +12,23 @@ public class NoteBo implements Serializable {
 
     private String resourceId;
 
-    private Integer auth;
+    private Integer readAuthType;
 
-    private String authOrganization;
+    private String readAuthIds;
+
+    private Integer operationAuthType;
+
+    private String operationAuthIds;
 
     private Integer noteType;
 
-    private Integer resourceType;
+    private Integer businessType;
 
     private String content;
 
-    private String user;
+    private String userId;
 
-    private String resource;
+    private String businessId;
 
     private Date createTime;
 

@@ -56,7 +56,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@Autowired
 	private CourseService courseService;
 
-	@ApiOperation("查询课程下课时列表")
+	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListLessonReq lessonReq) {
 
@@ -139,13 +139,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时场景拓扑信息查询")
 	@GetMapping("/scene_topo")
 	public BaseRsp getTopoScene() {
-		// TODO
-		return null;
-	}
-
-	@ApiOperation("实验报告查询")
-	@GetMapping("/lesson_report")
-	public BaseRsp getLessonReport() {
 		// TODO
 		return null;
 	}

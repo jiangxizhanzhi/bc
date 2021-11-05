@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.ojbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
@@ -33,5 +34,8 @@ public class Note extends BaseTable {
 	private String userId;
 
 	private String businessId;
+
+	@TableField("public")
+	private Boolean isPublic;
 
 }

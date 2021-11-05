@@ -1,9 +1,13 @@
 package com.cyberpeace.oj.ojbase.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
+import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
+import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 
 public interface NoteService extends IService<Note> {
@@ -28,4 +32,13 @@ public interface NoteService extends IService<Note> {
      * @return
      */
     Note updateNote(NoteAddContext context);
+
+
+    /**
+     * 分页查询笔记信息
+     * @param page
+     * @param noteListQuery
+     * @return
+     */
+    IPage<NoteListBo> pageByUserNameAndcontent(Page page, AdminNoteListQuery noteListQuery, Boolean isWeb);
 }

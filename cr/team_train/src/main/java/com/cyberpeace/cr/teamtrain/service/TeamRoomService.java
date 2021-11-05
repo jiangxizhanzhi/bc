@@ -1,7 +1,10 @@
 package com.cyberpeace.cr.teamtrain.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -49,4 +52,10 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return
 	 */
 	Integer getTrainingStatus(String resourceId);
+
+	/** 通过businessInstanceId获取学员id
+	 * @param resourceId
+	 * @return
+	 */
+	List<UserRole> getUserList(String resourceId);
 }

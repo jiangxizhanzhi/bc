@@ -21,6 +21,7 @@ import com.cyberpeace.cr.crbase.service.MissionSchemeService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
@@ -52,7 +53,6 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	TeamTemplateService teamTemplateService;
-
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;
@@ -169,7 +169,20 @@ public class TeamTrainRoomController {
 		return new BaseRsp<>(status);
 	}
 
-	// 获取单个实例中自己的角色，只包括自己角色的基本信息
+	/**
+	 * 获取靶场业务模板的操作权限
+	 * @return
+	 */
+	@ApiOperation("查询团队训练学员用户列表")
+	@GetMapping("/getUserList")
+	public BaseRsp<List<UserRole>> getUserList(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		List<UserRole> data = teamRoomService.getUserList(resource_id);
+
+		return new BaseRsp<List<UserRole>>(data);
+	}
+
+	// 获取单个实例中自己的角色信息，只包括自己角色的基本信息
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		crRoles.forEach(crRole -> {

@@ -56,6 +56,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			roleResDataList.add(roleResData);
 		}
 		crRoleRes.setRoles(roleResDataList);
+
 		// "todo 任务题解"
 		// crRoleRes.setShowWriteupMapping("todo");
 		// crRoleRes.setMissionMapping("todo");
@@ -74,14 +75,14 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoleMapper.selectCrRoleByRoomId(roleQuery);
 	}
 
+
 	private List<NameElement> getUserByRoleUsers(String userIds) {
 
 		List<NameElement> userElements = Lists.newArrayList();
 		List<String> userList = JsonUtil.toJsonObjectArray(userIds, String.class);
 
 		List<BasicNameValuePair> nvps = Lists.newArrayList();
-		nvps.add(new BasicNameValuePair("ids",
-				userIds.substring(1, userIds.length() - 1).replaceAll("\"", "")));
+		nvps.add(new BasicNameValuePair("ids", String.join(",", userList)));
 		nvps.add(new BasicNameValuePair("perPage", String.valueOf(1000)));
 		nvps.add(new BasicNameValuePair("page", String.valueOf(1)));
 
@@ -91,6 +92,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 				NameElement nameElement = new NameElement();
 				nameElement.setName(userInfo.getUserName());
 				userElements.add(nameElement);
+
 			}
 		});
 

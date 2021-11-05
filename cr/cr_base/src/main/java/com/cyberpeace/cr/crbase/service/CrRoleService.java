@@ -24,5 +24,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	List<String> getRoomIdsByUserId(String userId);
 
+	/** 通过businessInstanceId查询角色用户列表
+	 * @param roleQuery
+	 * @return
+	 */
 	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
 }

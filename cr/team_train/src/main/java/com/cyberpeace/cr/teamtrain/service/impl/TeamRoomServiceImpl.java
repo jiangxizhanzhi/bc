@@ -2,7 +2,10 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -21,6 +25,8 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -33,6 +39,8 @@ import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Lists;
 
 /**
  *
@@ -42,7 +50,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
-
 
 	@Autowired
 	TeamTemplateService teamTemplateService;
@@ -55,6 +62,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	LocalSceneService localSceneService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Autowired
 	@Qualifier("ojTransactionTemplate")
@@ -188,6 +198,49 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
 		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
 		return setTrainingStatus(teamRoomdata);
+	}
+
+	@Override
+	public List<UserRole> getUserList(String resourceId) {
+		List<UserRole> userRoleList = Lists.newArrayList();
+
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(resourceId);
+		List<String> userList = Lists.newArrayList();
+
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+		for (CrRole crRole : crRoles) {
+			// 获取每个学员用户，以及学员id
+			if (crRole.getRoleGroup().intValue() != CrRole.RoleGroupCodeInteger.TEACHER
+					.getValue()) {
+
+				List<String> users = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+				users.forEach(user -> {
+					UserRole userRole = new UserRole();
+					userRole.setResourceId(user);
+					userRole.setRoleName(crRole.getName());
+					userRole.setRoleDesc(crRole.getDescription());
+					userRoleList.add(userRole);
+					userList.add(user);
+				});
+
+			}
+		}
+		List<BasicNameValuePair> nvps = Lists.newArrayList();
+		nvps.add(new BasicNameValuePair("ids", String.join(",", userList)));
+		nvps.add(new BasicNameValuePair("perPage", String.valueOf(1000)));
+		nvps.add(new BasicNameValuePair("page", String.valueOf(1)));
+
+		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(nvps);
+		Map<String, UserInfo> userInfoMap = userInfoList.stream()
+				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
+
+		for (UserRole userRole : userRoleList) {
+			userRole.setName(userInfoMap.get(userRole.getResourceId()).getName());
+			userRole.setLogo(userInfoMap.get(userRole.getResourceId()).getAvatarUrl());
+		}
+
+		return userRoleList;
 	}
 
 	private int setTrainingStatus(TeamRoomData teamRoomdata) {

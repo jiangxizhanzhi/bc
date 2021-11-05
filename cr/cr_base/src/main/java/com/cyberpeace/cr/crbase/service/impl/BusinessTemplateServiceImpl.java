@@ -73,8 +73,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			String teachers = businessTemplate.getOperationAuthIds();
 
 			List<BasicNameValuePair> nvps = Lists.newArrayList();
-			nvps.add(new BasicNameValuePair("ids",
-					teachers.substring(1, teachers.length() - 1).replaceAll("\"", "")));
+			nvps.add(new BasicNameValuePair("ids", String.join(",", teachers)));
 			nvps.add(new BasicNameValuePair("perPage", String.valueOf(1000)));
 			nvps.add(new BasicNameValuePair("page", String.valueOf(1)));
 

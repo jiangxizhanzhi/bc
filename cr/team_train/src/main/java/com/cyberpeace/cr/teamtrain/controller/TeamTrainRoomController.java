@@ -33,7 +33,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
-import com.cyberpeace.integratation.service.RemoteSceneConfigService;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -54,8 +53,6 @@ public class TeamTrainRoomController {
 	@Autowired
 	TeamTemplateService teamTemplateService;
 
-	@Autowired
-	RemoteSceneConfigService sceneConfigService;
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;

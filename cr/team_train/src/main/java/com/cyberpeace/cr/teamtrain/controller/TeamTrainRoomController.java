@@ -23,17 +23,17 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
+import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -65,27 +65,29 @@ public class TeamTrainRoomController {
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
 		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
 				TeamTrainRoomContext.class);
-		TeamTemplate teamTemplate = teamRoomService.create(teamTrainRoomContext);
+		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
 
-		return getTeamRoom(teamTemplate.getResourceId());
+		return getTeamRoom(teamRoom.getResourceId());
 	}
 
 	@ApiOperation("修改")
 	@PutMapping()
-	public BaseRsp<TeamRoomRsp> update(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
+	public BaseRsp<TeamRoomRsp>
+			update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
 
-		TeamTrainTemplateContext teamTrainTemplateContext = new TeamTrainTemplateContext();
-		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
-				TeamTrainRoomContext.class);
-
-		TeamRoom teamRoom = teamRoomService.getById(teamTrainRoomContext.getResourceId());
+		TeamRoom teamRoom = teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
 
 		if (teamRoom == null) {
-			throw new ResourceNotFoundException(teamTrainRoomContext.getResourceId());
+			throw new ResourceNotFoundException(teamTrainRoomModifyReq.getResourceId());
 		}
+		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomModifyReq,
+				TeamTrainRoomContext.class);
+		List<RoomRole> roomRoleList = JsonUtil
+				.toJsonObjectArray(teamTrainRoomModifyReq.getRoleConfig(), RoomRole.class);
+		teamTrainRoomContext.setRoleConfig(roomRoleList);
 		teamRoomService.updateTeamRoom(teamTrainRoomContext, teamRoom);
 
-		return getTeamRoom(teamTrainRoomContext.getResourceId());
+		return getTeamRoom(teamTrainRoomModifyReq.getResourceId());
 	}
 
 	@ApiOperation("查询")
@@ -118,7 +120,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<TeamRoomRsp>> list(TeamRoomReq listReq) {
+	public BaseRsp<ListRsp<TeamRoomRsp>> list(TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -170,7 +172,7 @@ public class TeamTrainRoomController {
 	}
 
 	/**
-	 * 获取靶场业务模板的操作权限
+	 * 查询团队训练学员用户列表
 	 * @return
 	 */
 	@ApiOperation("查询团队训练学员用户列表")

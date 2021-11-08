@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -65,6 +66,8 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		// 保存基础模板
 		businessTemplate.setTopoId(sceneConfigId);
+		businessTemplate.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		businessTemplate.setOperationAuthIds("[]");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		// 保存团队训练模板
@@ -72,6 +75,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		teamTemplate.setPreSkills(JsonUtil.toJsonString(crEventAddInput.getPreSkill()));
 		teamTemplate.setTrainSkills(JsonUtil.toJsonString(crEventAddInput.getTrainSkill()));
 		teamTemplate.setSubType(crEventAddInput.getCategory());
+		teamTemplate.setPeopleNumber(crEventAddInput.getPeopleNumber());
+		teamTemplate.setDurationTime(crEventAddInput.getDurationTime());
+
 		teamTemplate.setTimeLineConfig(
 				JsonUtil.toJsonString(teamTrainTemplateContext.getTimeLineConfig()));
 
@@ -87,7 +93,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.save(businessTemplate);
-
+				teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
 				// todo任务相关
 
 				save(teamTemplate);

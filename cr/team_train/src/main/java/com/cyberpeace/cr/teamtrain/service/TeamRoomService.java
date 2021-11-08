@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 
@@ -26,14 +25,14 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param teamTrainRoomContext
 	 * @return
 	 */
-	TeamTemplate create(TeamTrainRoomContext teamTrainRoomContext);
+	TeamRoom create(TeamTrainRoomContext teamTrainRoomContext);
 
 	/** 更新实例
 	 * @param teamTrainRoomContext
 	 * @param teamRoom
 	 * @return
 	 */
-	TeamTemplate updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom);
+	void updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom);
 
 	/** 列表查询团队训练
 	 * @param listQuery

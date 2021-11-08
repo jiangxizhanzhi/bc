@@ -17,7 +17,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.teamtrain.controller.req.RoleListReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
@@ -78,8 +78,8 @@ public class TeamTrainTemplateController {
 		String resourceId = teamTrainTemplateModifyReq.getResourceId();
 		TeamTemplate template = teamTemplateService.getById(resourceId);
 
-		TeamTrainTemplateContext teamTrainTemplateContext = new TeamTrainTemplateContext();
-		BeanUtils.copy(teamTrainTemplateModifyReq, TeamTrainTemplateContext.class);
+		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils
+				.copy(teamTrainTemplateModifyReq, TeamTrainTemplateContext.class);
 
 		if (template == null) {
 			throw new ResourceNotFoundException(resourceId);
@@ -121,6 +121,7 @@ public class TeamTrainTemplateController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
 		teamTemplateService.removeByIds(deleteReq.getIds());
 
 		return new BaseRsp<>();
@@ -128,7 +129,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateReq listReq) {
+	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 
 		ListRsp<TeamTrainTemplateRsp> teamTrainTemplateRspListRsp = new ListRsp();

@@ -10,7 +10,7 @@ import lombok.Data;
 
 @ApiModel
 @Data
-public class TeamRoomReq extends PageReqBase {
+public class TeamRoomListReq extends PageReqBase {
 
 	@ApiModelProperty(value = "类别ID")
 	private String category;

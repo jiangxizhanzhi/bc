@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,7 +68,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	@Qualifier("ojTransactionTemplate")
+	@Qualifier("crTransactionTemplate")
 	private TransactionTemplate transactionTemplate;
 
 	@Override
@@ -83,7 +84,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public TeamTemplate create(TeamTrainRoomContext teamTrainRoomContext) {
+	public TeamRoom create(TeamTrainRoomContext teamTrainRoomContext) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
 		TeamTemplate template = teamTemplateService.getById(teamTrainRoomContext.getTemplate());
 		if (template == null) {
 			throw new ResourceNotFoundException(teamTrainRoomContext.getTemplate());
@@ -93,6 +96,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				.getById(template.getBusinessTemplateId());
 
 		TeamRoom teamRoom = new TeamRoom(teamTrainRoomContext, template, businessTemplate);
+		teamRoom.setCreateUserId(userId);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -121,33 +125,64 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 		});
 
-		return template;
+		return teamRoom;
 	}
 
 	@Override
-	public TeamTemplate updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext,
-			TeamRoom teamRoom) {
-		TeamTemplate teamTemplate = new TeamTemplate();
+	public void updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom) {
+
 		String userId = UserInfoContext.getUserContext().getUserId();
 
+		if (!StringUtils.isBlank(teamTrainRoomContext.getName())) {
+			teamRoom.setName(teamTrainRoomContext.getName());
+		}
+		if (teamTrainRoomContext.getCategory() != 0) {
+			teamRoom.setSubType(teamTrainRoomContext.getCategory());
+		}
+		if (!StringUtils.isBlank(teamTrainRoomContext.getDescription())) {
+			teamRoom.setDescription(teamTrainRoomContext.getDescription());
+		}
+
+		if (teamTrainRoomContext.getPreSkill().size() > 0) {
+			teamRoom.setPreSkills(JsonUtil.toJsonString(teamTrainRoomContext.getPreSkill()));
+		}
+		if (teamTrainRoomContext.getTrainSkill().size() > 0) {
+			teamRoom.setTrainSkills(JsonUtil.toJsonString(teamTrainRoomContext.getTrainSkill()));
+		}
+		if (teamTrainRoomContext.getStartTime() != null) {
+			teamRoom.setStartTime(teamTrainRoomContext.getStartTime());
+		}
+		if (teamTrainRoomContext.getEndTime() != null) {
+			teamRoom.setEndTime(teamTrainRoomContext.getEndTime());
+		}
 		teamRoom.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		teamRoom.setResourceId(teamTrainRoomContext.getResourceId());
-		teamRoom.setName(teamTrainRoomContext.getName());
-		teamRoom.setDescription(teamTrainRoomContext.getDescription());
-		teamRoom.setDifficulty(teamTrainRoomContext.getDifficult());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				updateById(teamRoom);
+				if (teamTrainRoomContext.getRoleConfig() != null
+						&& teamTrainRoomContext.getRoleConfig().size() > 0) {
 
-				// todo 任务相关
+					Map<String, RoomRole> roomRoleMap = teamTrainRoomContext.getRoleConfig()
+							.stream().collect(Collectors.toMap(RoomRole::getResourceId, bo -> bo));
 
+					RoleQuery roleQuery = new RoleQuery();
+					roleQuery.setRoomId(teamRoom.getResourceId());
+					List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
+
+					crRoleList.forEach(crRole -> {
+						List<String> users = roomRoleMap.get(crRole.getResourceId()).getUsers();
+						crRole.setUserIds(JsonUtil.toJsonString(users));
+						crRoleService.updateById(crRole);
+
+					});
+					// crRoleService.updateBatchById(crRoleList);
+				}
 			}
 		});
 
-		return teamTemplate;
 	}
 
 	@Override
@@ -174,9 +209,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			localScene.setBusinessInstanceId(teamRoomdata.getResourceId());
 			localSceneService.save(localScene);
 		}
-		// 已开始，新增local_scene数据
+		// 已开始，修改local_scene数据
 		if (teamRoomdata.isOpening()) {
-			com.cyberpeace.cs.dao.entity.LocalScene localScene = localSceneService
+			LocalScene localScene = localSceneService
 					.getByBusinessInstanceId(teamRoomdata.getResourceId());
 			localScene.setEndTime(new Date());
 			localSceneService.save(localScene);

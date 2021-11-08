@@ -1,15 +1,12 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -21,6 +18,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -93,22 +91,19 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
-	public List<UserInfo> getLazyUserList(List<BasicNameValuePair> nvps) {
-		List jsonArray1 = (List) HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONObject.class)
-				.get("list");
-		String url = USERINFO_LIST_URL;
-		String paramsStr = "";
-		if (nvps.size() > 0) {
-			paramsStr = "";
-			try {
-				HttpEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
-				paramsStr = EntityUtils.toString(urlEncodedFormEntity);
-				url = url + "?" + paramsStr;
-			} catch (IOException e) {
-				log.error("error ", e);
-			}
+	public List<UserInfo> getLazyUserList(UserPageContext userPageContext) {
+		List<BasicNameValuePair> nvps = Lists.newArrayList();
+		if (!StringUtils.isBlank(userPageContext.getIds())) {
+			nvps.add(new BasicNameValuePair("ids", userPageContext.getIds()));
+
 		}
-		List jsonArray = (List) HttpClientUtil.rawGet(url, JSONObject.class).get("list");
+		nvps.add(new BasicNameValuePair("perPage", userPageContext.getPerPage()));
+		nvps.add(new BasicNameValuePair("page", userPageContext.getPage()));
+
+		String url = USERINFO_LIST_URL;
+
+		List jsonArray = (List) HttpClientUtil.rawGetByParam(nvps, url, JSONObject.class)
+				.get("list");
 
 		List<UserInfo> userInfoList = new ArrayList<>();
 		for (Object object : jsonArray) {

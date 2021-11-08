@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.cr.teamtrain.service.context.BaseInfo;
+import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.integratation.model.SceneConfig;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +13,6 @@ import lombok.Data;
 
 @Data
 public class TeamTrainTemplateReq implements Serializable {
-
 
 	@ApiModelProperty(required = true)
 	@NotNull

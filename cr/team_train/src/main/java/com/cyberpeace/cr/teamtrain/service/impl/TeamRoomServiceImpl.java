@@ -6,9 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -40,6 +38,7 @@ import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
@@ -260,12 +259,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 			}
 		}
-		List<BasicNameValuePair> nvps = Lists.newArrayList();
-		nvps.add(new BasicNameValuePair("ids", String.join(",", userList)));
-		nvps.add(new BasicNameValuePair("perPage", String.valueOf(1000)));
-		nvps.add(new BasicNameValuePair("page", String.valueOf(1)));
 
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(nvps);
+		UserPageContext userPageContext = new UserPageContext();
+		userPageContext.setIds(String.join(",", userList));
+		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 

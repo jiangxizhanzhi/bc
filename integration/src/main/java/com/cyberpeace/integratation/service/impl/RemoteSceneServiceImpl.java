@@ -11,6 +11,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public TopoDigest getTopoDigest(String topoId) {
 		// TODO
-		return null;
+		return new TopoDigest();
 	}
 }

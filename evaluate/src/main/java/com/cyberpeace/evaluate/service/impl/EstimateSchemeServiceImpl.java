@@ -2,22 +2,21 @@ package com.cyberpeace.evaluate.service.impl;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.evaluate.dao.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.evaluate.dao.*;
 import com.cyberpeace.evaluate.dao.entity.Appendix;
 import com.cyberpeace.evaluate.dao.entity.EstimateIndexLinks;
 import com.cyberpeace.evaluate.dao.entity.EstimateScheme;
@@ -48,7 +47,6 @@ public class EstimateSchemeServiceImpl implements EstimateSchemeService {
 	private EstimateIndexLinksDao estimateIndexLinksDao;
 
 	@Autowired
-	@Qualifier("rtksTransactionTemplate")
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired

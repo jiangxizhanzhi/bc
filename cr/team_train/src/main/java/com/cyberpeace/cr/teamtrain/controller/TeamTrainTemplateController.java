@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "团队训练模板")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/cr/team_train/template")
 public class TeamTrainTemplateController {
 
@@ -52,9 +54,12 @@ public class TeamTrainTemplateController {
 				TeamTrainTemplateContext.class);
 		teamTrainTemplateContext
 				.setRoleList(getRoleListFromReq(teamTrainTemplateAddReq.getRoleList()));
-		TeamTemplate teamTemplate = teamTemplateService.create(teamTrainTemplateContext);
 
-		return getTeamTemplate(teamTemplate.getResourceId());
+		// TeamTemplate teamTemplate =
+		// teamTemplateService.create(teamTrainTemplateContext);
+		String resourceId = businessTemplateService.addTemplate(teamTrainTemplateContext);
+
+		return getTeamTemplate(resourceId);
 	}
 
 	private List<TeamTrainTemplateRole> getRoleListFromReq(List<RoleListReq> roleList) {

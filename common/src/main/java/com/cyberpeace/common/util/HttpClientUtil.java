@@ -7,12 +7,15 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,4 +181,23 @@ public class HttpClientUtil {
 	private static boolean isSuccess(BaseRsp baseRsp) {
 		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
 	}
+
+	public static <T> T rawGetByParam(List<BasicNameValuePair> nvps, String url,
+			Class<T> resultType) {
+
+		String paramsStr = "";
+		if (nvps.size() > 0) {
+			paramsStr = "";
+			try {
+				HttpEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
+				paramsStr = EntityUtils.toString(urlEncodedFormEntity);
+				url = url + "?" + paramsStr;
+			} catch (Exception e) {
+				LOG.error("error ", e);
+			}
+		}
+		return rawGet(url, resultType);
+
+	}
+
 }

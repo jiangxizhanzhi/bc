@@ -2,7 +2,6 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.NameElement;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
@@ -81,12 +81,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		List<NameElement> userElements = Lists.newArrayList();
 		List<String> userList = JsonUtil.toJsonObjectArray(userIds, String.class);
 
-		List<BasicNameValuePair> nvps = Lists.newArrayList();
-		nvps.add(new BasicNameValuePair("ids", String.join(",", userList)));
-		nvps.add(new BasicNameValuePair("perPage", String.valueOf(1000)));
-		nvps.add(new BasicNameValuePair("page", String.valueOf(1)));
-
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(nvps);
+		UserPageContext userPageContext = new UserPageContext();
+		userPageContext.setIds(String.join(",", userList));
+		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
 		userInfoList.forEach(userInfo -> {
 			if (userList.contains(userInfo.getUserId())) {
 				NameElement nameElement = new NameElement();

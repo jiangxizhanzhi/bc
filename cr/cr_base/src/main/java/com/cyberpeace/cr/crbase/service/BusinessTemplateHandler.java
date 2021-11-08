@@ -6,7 +6,9 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
 @Service
@@ -22,24 +24,33 @@ public class BusinessTemplateHandler {
 	@PostConstruct
 	public void init() {
 		register.put(setBusinessType(), this);
+		// TeamBusinessTemplateHandler teamBusinessTemplateHandler = new
+		// TeamBusinessTemplateHandler();
+		// register.put(BusinessTemplate.BusinessType.TRAINING_TEAM,
+		// teamBusinessTemplateHandler);
 	}
 
-	public void saveBusiness(Object obj) {
-		BusinessTemplate.BusinessType businessType = getBusinessType(obj);
+	public String saveBusiness(BasicTemplate basicTemplate) {
+		BusinessTemplate.BusinessType businessType = getBusinessType(basicTemplate);
 
 		BusinessTemplateHandler realHandler = register.get(businessType);
 
-		realHandler.saveRealBusiness(obj);
+		return realHandler.saveRealBusiness(basicTemplate);
 	}
 
 	/**
 	 * 保存实际的业务模板。如红蓝对抗、团队训练
 	 */
-	public void saveRealBusiness(Object obj) {
+	public String saveRealBusiness(BasicTemplate obj) {
 		// 业务定义自己的保存操作
+		System.out.println("基本逻辑");
+		return "jiben";
+
 	}
 
-	private BusinessTemplate.BusinessType getBusinessType(Object obj) {
-		return null;
+	private BusinessTemplate.BusinessType getBusinessType(BasicTemplate basicTemplate) {
+		return EnumUtils.getEnumByCode(basicTemplate.getBaseInfo().getCategory(),
+				BusinessTemplate.BusinessType.class);
+
 	}
 }

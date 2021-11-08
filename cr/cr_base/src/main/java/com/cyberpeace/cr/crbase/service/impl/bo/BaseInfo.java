@@ -1,6 +1,5 @@
-package com.cyberpeace.cr.teamtrain.service.context;
+package com.cyberpeace.cr.crbase.service.impl.bo;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -10,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class BaseInfo implements Serializable {
+public class BaseInfo {
 
 	@ApiModelProperty(required = true)
 	@NotBlank

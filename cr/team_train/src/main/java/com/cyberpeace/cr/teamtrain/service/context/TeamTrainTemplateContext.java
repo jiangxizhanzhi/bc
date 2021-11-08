@@ -4,8 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.cr.teamtrain.controller.req.FlowschemeReq;
-import com.cyberpeace.cr.teamtrain.controller.req.GatherschemeReq;
+import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.integratation.model.SceneConfig;
 
@@ -13,15 +12,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamTrainTemplateContext {
+public class TeamTrainTemplateContext extends BasicTemplate {
 
 	@ApiModelProperty(required = true)
 	@NotNull
 	private String resourceId;
-
-	@ApiModelProperty(required = true)
-	@NotNull
-	private BaseInfo baseInfo;
 
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -31,13 +26,13 @@ public class TeamTrainTemplateContext {
 	@NotNull
 	private List<TeamTrainTemplateRole> roleList;
 
-	@ApiModelProperty(required = true)
-	@NotNull
-	private FlowschemeReq flowSchemesData;
-
-	@ApiModelProperty(required = true)
-	@NotNull
-	private GatherschemeReq gatherSchemesData;
+	// @ApiModelProperty(required = true)
+	// @NotNull
+	// private FlowschemeReq flowSchemesData;
+	//
+	// @ApiModelProperty(required = true)
+	// @NotNull
+	// private GatherschemeReq gatherSchemesData;
 
 	@ApiModelProperty(required = true)
 	@NotNull

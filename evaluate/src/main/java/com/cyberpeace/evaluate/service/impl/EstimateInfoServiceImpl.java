@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -31,7 +30,6 @@ public class EstimateInfoServiceImpl implements EstimateInfoService {
 	private EstimateInfoDao estimateInfoDao;
 
 	@Autowired
-	@Qualifier("rtksTransactionTemplate")
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired

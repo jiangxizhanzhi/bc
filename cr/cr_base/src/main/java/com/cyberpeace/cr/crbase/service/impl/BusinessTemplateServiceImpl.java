@@ -2,7 +2,6 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -28,6 +28,9 @@ import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.crbase.service.context.ShareTeacher;
+import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
+import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
+import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -55,9 +58,17 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private BusinessTemplateHandler businessTemplateHandler;
 
 	@Override
-	public void addTemplate(Object obj) {
+	public String addTemplate(BasicTemplate obj) {
+		CrRole crRole = new CrRole();
 		// 1、从输入业务中解析公共模板
 		BusinessTemplate businessTemplate = getBusinessTemplate(obj);
+		// 拓扑场景id保存获取
+
+		String sceneConfigId = "";
+		// todo 场景
+
+		// 保存基础模板
+		businessTemplate.setTopoId(sceneConfigId);
 
 		// 2、执行实际的保存
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -68,12 +79,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				save(businessTemplate);
 
 				// 2、保存业务模板数据
-				businessTemplateHandler.saveBusiness(obj);
-
+				String re = businessTemplateHandler.saveBusiness(obj);
+				crRole.setResourceId(re);
 				// 3、返回业务模板
 				// todo
 			}
 		});
+		return crRole.getResourceId();
 	}
 
 	@Override
@@ -105,12 +117,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (AuthTable.AuthType.CUSTOM_SHARE_MODE.equals(businessTemplate.getOperationAuthType())) {
 			String teachers = businessTemplate.getOperationAuthIds();
 
-			List<BasicNameValuePair> nvps = Lists.newArrayList();
-			nvps.add(new BasicNameValuePair("ids", String.join(",", teachers)));
-			nvps.add(new BasicNameValuePair("perPage", String.valueOf(1000)));
-			nvps.add(new BasicNameValuePair("page", String.valueOf(1)));
-
-			List<UserInfo> userInfoList = remoteUserService.getLazyUserList(nvps);
+			UserPageContext userPageContext = new UserPageContext();
+			userPageContext.setIds(String.join(",", teachers));
+			List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
 			userInfoList.forEach(userInfo -> {
 				ShareTeacher shareTeacher = new ShareTeacher();
 				shareTeacher.setId(userInfo.getUserId());
@@ -141,10 +150,18 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		updateBatchById(businessTemplateList);
 	}
 
-	private BusinessTemplate getBusinessTemplate(Object obj) {
-		// todo
-		// 构造公共模板
-		return new BusinessTemplate();
+	private BusinessTemplate getBusinessTemplate(BasicTemplate basicTemplate) {
+		BaseInfo baseInfo = basicTemplate.getBaseInfo();
+		BusinessTemplate businessTemplate = new BusinessTemplate();
+		businessTemplate.setName(baseInfo.getName());
+		businessTemplate.setDescription(baseInfo.getDescription());
+		businessTemplate.setDifficulty(baseInfo.getDifficult());
+		businessTemplate.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+
+		businessTemplate.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		businessTemplate.setOperationAuthIds("[]");
+		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		return businessTemplate;
 	}
 
 	private BusinessTemplate.BusinessType getBusinessType(Object obj) {

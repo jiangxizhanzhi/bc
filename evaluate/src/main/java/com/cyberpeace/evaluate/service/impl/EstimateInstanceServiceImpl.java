@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -73,7 +72,6 @@ public class EstimateInstanceServiceImpl implements EstimateInstanceService {
 	private IndexVariableLinksDao indexVariableLinksDao;
 
 	@Autowired
-	@Qualifier("rtksTransactionTemplate")
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired

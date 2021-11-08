@@ -68,7 +68,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	@Qualifier("crTransactionTemplate")
 	private TransactionTemplate transactionTemplate;
 
 	@Override

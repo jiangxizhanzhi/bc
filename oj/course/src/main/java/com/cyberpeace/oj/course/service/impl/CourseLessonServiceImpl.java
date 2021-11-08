@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.oj.course.constant.LessonConfigType;
+import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.ojbase.constant.CollectionType;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.constant.PaperType;
@@ -30,10 +32,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonCollection;
-import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
@@ -96,8 +94,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 上节和下节课程查询
 		LessonConfigBo lessonConfig = lessonConfigService.getLessonConfig(courseId, userId, true);
-		List<LessonConfigBo> boList = lessonConfig.getSortListByTree(lessonConfig, false);
-		List<String> sortLessonIds = boList.stream().map(LessonConfigBo::getLesson)
+		List<LessonConfigBo> boList = lessonConfig.sortListByTree(lessonConfig, false);
+		List<String> sortLessonIds = boList.stream().map(LessonConfigBo::getLessonId)
 				.collect(Collectors.toList());
 		infoBo.setPreAndNext(infoBo, sortLessonIds);
 
@@ -151,25 +149,83 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public CourseLesson addOrUpdate(CourseLesson courseLesson, String ojSceneConfig,
+	public CourseLesson addLesson(CourseLesson courseLesson, String ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
 
-		if (StringUtils.isBlank(courseLesson.getResourceId())) {
-			courseLesson.setHeat(CommonConstant.ZERO);
-			courseLesson.setBuiltin(CommonConstant.FALSE);
-		}
+		courseLesson.setHeat(CommonConstant.ZERO);
+		courseLesson.setBuiltin(CommonConstant.FALSE);
+
+		// 处理课后练习数据
+		AddOrUpdatePaperContext paperContext = packagePaperContext(courseLesson, practiceList);
+
+		// 处理课程目录数据
+		courseLesson.setResourceId(IDGeneratorUtil.getID());
+		LessonConfig lessonConfig = packageLessonConfig(courseLesson);
+
+		// TODO 场景数据新增
+
+
+		// 执行数据插入
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				// 课后练习新增或修改
+				Paper paper = paperService.createOrUpdate(paperContext);
+
+				// 课时新增或修改
+				courseLesson.setPaperId(paper.getResourceId());
+				courseLessonMapper.insert(courseLesson);
+
+				// 课程目录数据新增
+				lessonConfigService.save(lessonConfig);
+
+			}
+		});
+
+		return courseLesson;
+	}
+
+	@Override
+	public CourseLesson updateLesson(CourseLesson courseLesson, String ojSceneConfig,
+			List<PaperPracticeContext> practiceList) {
+
+		AddOrUpdatePaperContext paperContext = packagePaperContext(courseLesson, practiceList);
+
+		// TODO 场景数据修改
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				paperService.createOrUpdate(paperContext);
+				courseLessonMapper.updateById(courseLesson);
+			}
+		});
+
+		return courseLesson;
+	}
+
+	/**
+	 * 组装试卷数据
+	 * @param courseLesson
+	 * @param practiceList
+	 * @return
+	 */
+	private AddOrUpdatePaperContext packagePaperContext(CourseLesson courseLesson,
+			List<PaperPracticeContext> practiceList) {
 
 		AddOrUpdatePaperContext paperContext = new AddOrUpdatePaperContext();
+
 		if (StringUtils.isNotBlank(courseLesson.getResourceId())) {
 			CourseLesson lesson = courseLessonMapper.selectById(courseLesson.getResourceId());
 			if (null == lesson) {
-				throw new BusinessException(OjBusinessErrorCode.DUPLICATE_EXCEPTION);
+				throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FOUND);
 			}
-
 			paperContext.setPracticeList(practiceList);
 			paperContext.setResourceId(courseLesson.getPaperId());
 		} else {
 
+			// 试卷数据组装
 			paperContext.setName(courseLesson.getName());
 			paperContext.setDescription(courseLesson.getName());
 			paperContext.setIsPublic(CommonConstant.TRUE);
@@ -177,24 +233,22 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			paperContext.setType(PaperType.LESSON.getCode());
 		}
 
-		// TODO 场景信息处理
-		if (StringUtils.isNotBlank(ojSceneConfig)) {
-			courseLesson.setTopoId("");
-		}
+		return paperContext;
+	}
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+	/**
+	 * 组装课程目录数据
+	 * @param courseLesson
+	 * @return
+	 */
+	private LessonConfig packageLessonConfig(CourseLesson courseLesson) {
 
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
+		// 课程目录数据组装
+		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
+				.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
+				.nodeType(LessonConfigType.NODE_LESSON.getCode()).build();
 
-				Paper paper = paperService.createOrUpdate(paperContext);
-				courseLesson.setPaperId(paper.getResourceId());
-
-				saveOrUpdate(courseLesson);
-			}
-		});
-
-		return courseLesson;
+		return lessonConfigService.packageLessonConfig(configContext);
 	}
 
 	@Override

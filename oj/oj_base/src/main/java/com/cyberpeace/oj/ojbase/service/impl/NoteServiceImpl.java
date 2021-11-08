@@ -3,12 +3,16 @@ package com.cyberpeace.oj.ojbase.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.AuthShare;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -23,11 +27,17 @@ import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.ReportBo;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements NoteService {
 
 	@Autowired
 	private NoteMapper noteMapper;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Override
 	public NoteBo selectByUnique(NoteUniqueContext uniqueContext) {
@@ -59,13 +69,42 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	}
 
 	@Override
-	public IPage<NoteListBo> pageByUserNameAndcontent(Page page, AdminNoteListQuery noteListQuery,
+	public IPage<NoteListBo> pageByUserNameAndContent(Page page, AdminNoteListQuery noteListQuery,
 			Boolean isWeb) {
-		// 查询用户
 
+		// 查询用户
 		NoteListQuery listQuery = BeanUtils.copy(noteListQuery, NoteListQuery.class);
+		Map<String, String> userInfoMap = null;
+		if (StringUtils.isNotBlank(noteListQuery.getUserName())) {
+			// TODO 用户列表查询
+			List<UserInfo> userList = remoteUserService.getLazyUserList(null);
+			List<String> userIds = StreamApiUtils.simpleMap(userList, UserInfo::getUserId);
+			listQuery.setUserIds(userIds);
+
+			userInfoMap = StreamApiUtils.columnMap(userList, UserInfo::getUserId,
+					UserInfo::getUserName);
+		}
+
 		IPage<Note> iPage = noteMapper.pageByUserIdsAndContent(page, listQuery, isWeb);
-		return null;
+
+		if (StringUtils.isNotBlank(noteListQuery.getUserName())) {
+
+			Map<String, String> finalUserInfoMap = userInfoMap;
+			return iPage.convert(note -> {
+				NoteListBo noteBo = BeanUtils.copy(note, NoteListBo.class);
+				noteBo.setUserName(finalUserInfoMap.getOrDefault(note.getUserId(), ""));
+				return noteBo;
+			});
+		} else {
+
+			return iPage.convert(note -> {
+				UserInfo userInfo = remoteUserService.getById(note.getUserId());
+				NoteListBo noteBo = BeanUtils.copy(note, NoteListBo.class);
+				noteBo.setUserName(userInfo.getUserName());
+				return noteBo;
+			});
+		}
+
 	}
 
 	/**

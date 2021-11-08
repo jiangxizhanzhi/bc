@@ -1,27 +1,18 @@
 package com.cyberpeace.oj.ojbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@TableName("x_comment_commentlike")
-public class CommentLike implements Serializable {
+@TableName("oj_comment_like")
+public class CommentLike extends BaseTable {
 
-    private Integer id;
+    private String userId;
 
-    private String resourceId;
-
-    private String user;
-
-    private String comment;
-
-    private Boolean isLike;
-
-    private Date createTime;
-
-    private Date updateTime;
+    private String commentId;
 
 }

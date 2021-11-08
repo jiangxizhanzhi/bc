@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.google.common.collect.Lists;
@@ -19,7 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 public class LessonConfigBo implements Serializable {
 
 	@ApiModelProperty("课程编号")
-	private String course;
+	private String courseId;
 
 	@ApiModelProperty("位置编号")
 	private Integer index;
@@ -31,7 +32,7 @@ public class LessonConfigBo implements Serializable {
 	private boolean isRequired;
 
 	@ApiModelProperty("课程编号")
-	private String lesson;
+	private String lessonId;
 
 	@ApiModelProperty("课时类型 0-理论 1-实验")
 	private Integer type;
@@ -43,7 +44,7 @@ public class LessonConfigBo implements Serializable {
 	private Integer nodeType;
 
 	@ApiModelProperty("父节点编号")
-	private String parent;
+	private String parentId;
 
 	@ApiModelProperty("资源编号")
 	private String resourceId;
@@ -60,13 +61,13 @@ public class LessonConfigBo implements Serializable {
 	 * @param includeChapter true 包含章节 false
 	 * @return
 	 */
-	public List<LessonConfigBo> getSortListByTree(LessonConfigBo configBo, Boolean includeChapter) {
+	public List<LessonConfigBo> sortListByTree(LessonConfigBo configBo, Boolean includeChapter) {
 
 		List<LessonConfigBo> configs = configBo.getLessonConfigs();
 
 		if (CollectionUtils.isNotEmpty(configs)) {
 			List<LessonConfigBo> bos = configs.stream()
-					.map(bo -> getSortListByTree(bo, includeChapter)).flatMap(Collection::stream)
+					.map(bo -> sortListByTree(bo, includeChapter)).flatMap(Collection::stream)
 					.collect(Collectors.toList());
 			// 将跟节点和子节点加入集合
 			configs.addAll(bos);
@@ -74,7 +75,8 @@ public class LessonConfigBo implements Serializable {
 
 			List<LessonConfigBo> configBos = bos.stream()
 					.filter(bo -> includeChapter ? includeChapter
-							: bo.getNodeType().intValue() == LessonConfig.NODE_LESSON)
+							: bo.getNodeType().intValue() == LessonConfigType.NODE_LESSON.getCode()
+									.intValue())
 					.map(bo -> {
 						BeanUtils.copy(bo, LessonConfig.class);
 						bo.setLessonConfigs(null);

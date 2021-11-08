@@ -111,14 +111,17 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			@ApiParam(name = "addReq", value = "课程基本信息") @Valid @RequestBody CourseAddReq addReq) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
+
 		Course course = BeanUtils.copy(addReq, Course.class);
 		course.setReadAuthIds(JsonUtil.arrayToString(addReq.getReadAuthIds()));
 		course.setOperationAuthIds(JsonUtil.arrayToString(addReq.getOperationAuthIds()));
+
 		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
 		if (null == courseCategory) {
 			throw new BusinessException(OjBusinessErrorCode.RELATE_CATEGORY_NOT_FOUNT);
 		}
-		Course courseRsp = courseService.addOrUpdate(userId, course);
+
+		Course courseRsp = courseService.addCourse(userId, course);
 		return new BaseRsp<>(courseRsp);
 	}
 
@@ -126,10 +129,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@PatchMapping("")
 	public BaseRsp<Course> patch(@RequestBody CourseUpdateReq updateReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
+
 		Course course = BeanUtils.copy(updateReq, Course.class);
 		course.setReadAuthIds(JsonUtil.arrayToString(updateReq.getReadAuthIds()));
 		course.setOperationAuthIds(JsonUtil.arrayToString(updateReq.getOperationAuthIds()));
-		Course courseRsp = courseService.addOrUpdate(userId, course);
+
+		Course courseRsp = courseService.updateCourse(userId, course);
 		return new BaseRsp<>(courseRsp);
 	}
 
@@ -139,7 +144,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			value = "课程编号") @RequestParam("resource_id") @Valid @NotBlank String resourceId) {
 
 		Course course = courseMapper.selectById(resourceId);
-		List<Course> courses = courseMapper.selectBatchIds(Arrays.asList(ArrayUtils.EMPTY_BOOLEAN_ARRAY));
+		List<Course> courses = courseMapper
+				.selectBatchIds(Arrays.asList(ArrayUtils.EMPTY_BOOLEAN_ARRAY));
 
 		if (null == course) {
 			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);

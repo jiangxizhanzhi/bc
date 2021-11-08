@@ -16,7 +16,7 @@ public class LessonInfoBo implements Serializable {
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
-    private String course;
+    private String courseId;
 
     private String name;
 
@@ -26,9 +26,9 @@ public class LessonInfoBo implements Serializable {
 
     private Integer handoutType;
 
-    private String handoutFile;
+    private String handoutUrl;
 
-    private String video;
+    private String videoUrl;
 
     private Integer difficulty;
 
@@ -40,17 +40,17 @@ public class LessonInfoBo implements Serializable {
 
     private Integer destroyDelay;
 
-    private String ojSceneConfig;
+    private String topoId;
 
-    private Integer shareMode;
+    private Integer sceneShareMode;
 
     private String knowledge;
 
     private String createUser;
 
-    private String testPaper;
+    private String paperId;
 
-    private Integer testPaperPublic;
+    private Integer paperPublic;
 
     private Integer heat;
 

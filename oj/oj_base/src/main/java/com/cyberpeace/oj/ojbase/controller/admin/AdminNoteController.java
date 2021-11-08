@@ -38,7 +38,7 @@ public class AdminNoteController {
 		AdminNoteListQuery noteListQuery = BeanUtils.copy(noteReq, AdminNoteListQuery.class);
 		noteListQuery.setUserId(UserInfoContext.getUserContext().getUserId());
 
-		IPage<NoteListBo> noteListBos = noteService.pageByUserNameAndcontent(page, noteListQuery, CommonConstant.FALSE);
+		IPage<NoteListBo> noteListBos = noteService.pageByUserNameAndContent(page, noteListQuery, CommonConstant.FALSE);
 		return PageUtil.getListResult(noteListBos);
 	}
 

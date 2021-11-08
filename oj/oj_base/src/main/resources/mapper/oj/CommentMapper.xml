@@ -3,28 +3,28 @@
 
 <mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper">
     <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Comment"/>
-    <sql id="baseFiled">
-        select resource_id, reply, resource, theme_name, `user`,
-               comment, comment_type, create_time, parent_id
-        from x_comment_comment
-    </sql>
 
     <sql id="orderByTimeDesc">
         order by create_time desc
     </sql>
 
     <select id="firstByResource" resultMap="base">
-        <include refid="baseFiled"/>
-        where resource = #{resource} and parent_id is null
-        and status = 1
+        select * from oj_comment
+        <where>
+            <if test="businessId != null and businessId != ''">
+                business_id = #{businessId}
+            </if>
+            <if test="businessType != null">
+                and business_type = #{businessType}
+            </if>
+            and root_id is null
+        </where>
         <include refid="orderByTimeDesc"/>
     </select>
 
     <select id="selectByParent" resultMap="base">
-        <include refid="baseFiled"/>
-        where parent_id = #{parent}
-        and status = 1
+        select * from oj_comment
+        where root_id = #{parent}
         <include refid="orderByTimeDesc"/>
     </select>
-
 </mapper>

@@ -14,14 +14,17 @@ import com.cyberpeace.oj.ojbase.dao.mapper.CommentLikeMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.service.CommentService;
 import com.cyberpeace.oj.ojbase.service.bo.CommentBo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CommentServiceImpl implements CommentService {
 
 	@Autowired
@@ -40,11 +43,18 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public ListRsp<CommentBo> pageComment(Page page, String resource, boolean children) {
-		IPage<Comment> iPage = commentMapper.firstByResource(page, resource);
-		iPage.convert(comment -> commentToBo(comment));
+	public ListRsp<CommentBo> pageComment(Page page, String businessId, Integer businessType,
+			boolean children) {
+		IPage<Comment> iPage = commentMapper.firstByResource(page, businessId, businessType);
 
-		return PageUtil.getListResult(iPage);
+		IPage<CommentBo> convert = iPage.convert(comment -> commentToBo(comment));
+
+		// 是否查询评论下的回复
+		if (children) {
+			setChildrenByFirst(convert.getRecords());
+		}
+
+		return PageUtil.getListResult(convert);
 	}
 
 	@Override
@@ -71,8 +81,7 @@ public class CommentServiceImpl implements CommentService {
 		commentBo.setUserName(userInfo.getUserName());
 
 		// 获取点赞数量
-		List<CommentLike> commentLikes = commentLikeMapper.listByComment(comment.getResourceId(),
-				true);
+		List<CommentLike> commentLikes = commentLikeMapper.listByComment(comment.getResourceId());
 		commentBo.setLikesCount(commentLikes.size());
 		commentBo.setIsLike(CollectionUtils.isNotEmpty(commentLikes));
 
@@ -80,23 +89,23 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public String commentIsLike(String comment, Boolean isLike, String userId) {
-		CommentLike commentLike = commentLikeMapper.selectByCommentAndUser(comment, userId);
+	public String commentIsLike(String commentId, Boolean isLike, String userId) {
 
-		if (commentLike == null) {
-			CommentLike like = new CommentLike();
-			like.setIsLike(isLike);
-			like.setComment(comment);
-			like.setUser(userId);
-			commentLikeMapper.insert(like);
+		CommentLike commentLike = new CommentLike();
+		commentLike.setCommentId(commentId);
+		commentLike.setUserId(userId);
+		if (isLike) {
 
-		} else {
-			if (commentLike.getIsLike().booleanValue() != isLike.booleanValue()) {
-				commentLike.setIsLike(isLike);
-				commentLikeMapper.updateById(commentLike);
+			try {
+				commentLikeMapper.insert(commentLike);
+			} catch (DuplicateKeyException e) {
+				// 保存成功 打印日志 不进行异常抛出
+				log.error("评论失败！comment_id=[{}], user_id=[{}], catch error:", commentId, userId, e);
 			}
+		} else {
+			commentLikeMapper.deleteByUserAndId(userId, commentId);
 		}
 
-		return comment;
+		return commentId;
 	}
 }

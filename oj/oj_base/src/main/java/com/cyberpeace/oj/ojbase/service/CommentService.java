@@ -19,10 +19,12 @@ public interface CommentService {
 	/**
 	 * 分页查询评论信息
 	 * @param page
-	 * @param resource
+	 * @param businessId
+	 * @param businessType
+	 * @param children 是否查询评论下的回复 true=查询 false不查询
 	 * @return
 	 */
-	ListRsp<CommentBo> pageComment(Page page, String resource, boolean children);
+	ListRsp<CommentBo> pageComment(Page page, String businessId, Integer businessType, boolean children);
 
 	/**
 	 * 获取子评论
@@ -32,9 +34,9 @@ public interface CommentService {
 
 	/**
 	 * 点赞留言
-	 * @param comment
+	 * @param commentId
 	 * @param isLike
 	 * @return
 	 */
-	String commentIsLike(String comment, Boolean isLike, String userId);
+	String commentIsLike(String commentId, Boolean isLike, String userId);
 }

@@ -19,7 +19,7 @@ public class CommentRes implements Serializable {
     private String resourceId;
 
     @ApiModelProperty("资源编号 课程、习题")
-    private String resource;
+    private String businessId;
 
     @ApiModelProperty("评论主题名称")
     private String themeName;
@@ -31,7 +31,7 @@ public class CommentRes implements Serializable {
     private String comment;
 
     @ApiModelProperty("评论类型")
-    private Integer commentType;
+    private Integer businessType;
 
     @ApiModelProperty("创建时间")
     private Date createTime;

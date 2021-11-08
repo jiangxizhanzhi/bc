@@ -92,7 +92,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	public BaseRsp add(@RequestBody @Valid LessonAddReq lessonAddReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonAddReq);
-		CourseLesson lesson = courseLessonService.addOrUpdate(courseLesson,
+		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
 				lessonAddReq.getOjSceneConfig(), lessonAddReq.getPracticeList());
 
 		return new BaseRsp(lesson);
@@ -103,7 +103,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	public BaseRsp patch(@RequestBody @Valid LessonUpdateReq lessonUpdateReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonUpdateReq);
-		CourseLesson lesson = courseLessonService.addOrUpdate(courseLesson,
+		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,
 				lessonUpdateReq.getOjSceneConfig(), lessonUpdateReq.getPracticeList());
 		return new BaseRsp(lesson);
 	}

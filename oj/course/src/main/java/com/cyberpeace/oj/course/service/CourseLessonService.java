@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
 import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
@@ -31,13 +32,24 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	AdminLessonBo selectByCourseAndLesson(String courseId, String lessonId);
 
 	/**
-	 * 课时新增或者修改
+	 * 课时数据新增
 	 * @param courseLesson
 	 * @param ojSceneConfig
 	 * @param practiceList
 	 * @return
 	 */
-	CourseLesson addOrUpdate(CourseLesson courseLesson, String ojSceneConfig, List<PaperPracticeContext> practiceList);
+	CourseLesson addLesson(CourseLesson courseLesson, String ojSceneConfig,
+			List<PaperPracticeContext> practiceList);
+
+	/**
+	 * 课时数据修改
+	 * @param courseLesson
+	 * @param ojSceneConfig
+	 * @param practiceList
+	 * @return
+	 */
+	CourseLesson updateLesson(CourseLesson courseLesson, String ojSceneConfig,
+			List<PaperPracticeContext> practiceList);
 
 	/**
 	 * 后台课时列表查询
@@ -46,7 +58,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param isWeb
 	 * @return
 	 */
-    IPage<AdminLessonListBo> pageByContext(Page page, LessonContext context, boolean isWeb);
+	IPage<AdminLessonListBo> pageByContext(Page page, LessonContext context, boolean isWeb);
 
 	/**
 	 * 课后练习公开与隐藏

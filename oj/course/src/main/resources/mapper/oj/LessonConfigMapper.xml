@@ -6,12 +6,12 @@
     <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.LessonConfig"/>
 
     <select id="getFirstNode" resultMap="base">
-        select * from course_lessonconfig
+        select * from oj_lesson_config
         where course = #{courseId} and parent is null
     </select>
 
     <select id="listByParent" resultMap="base">
-        select * from course_lessonconfig
+        select * from oj_lesson_config
         where parent = #{parentId}
         <if test="isPublic">
             and `public` = #{isPublic}
@@ -20,7 +20,7 @@
     </select>
 
     <select id="selectByCourse" resultMap="base">
-        select * from course_lessonconfig
+        select * from oj_lesson_config
         where course = #{courseId}
         <if test="isPublic">
             and `public` = #{isPublic}
@@ -28,4 +28,10 @@
         order by `index` asc
     </select>
 
+    <select id="selectLastByParent" resultMap="base">
+        select * from oj_lesson_config
+        where course = #{course}
+        order by `index` desc
+        limit 0, 1
+    </select>
 </mapper>

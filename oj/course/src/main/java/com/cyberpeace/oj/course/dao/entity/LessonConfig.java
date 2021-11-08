@@ -6,31 +6,21 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@TableName("course_lessonconfig")
+@TableName("oj_lesson_config")
 public class LessonConfig implements Serializable {
-
-    public static final int NODE_COURSE = 0;
-
-    public static final int NODE_CHAPTER = 1;
-
-    public static final int NODE_LESSON = 2;
 
     private String resourceId;
 
-    private String course;
+    private String courseId;
 
-    private String lesson;
+    private String lessonId;
 
     private Integer index;
 
-    private String parent;
+    private String parentId;
 
     private String chapterName;
 
     private Integer nodeType;
-
-    private Integer lessonPublic;
-
-    private Integer status;
 
 }

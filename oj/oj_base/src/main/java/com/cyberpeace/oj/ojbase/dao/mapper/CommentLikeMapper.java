@@ -10,15 +10,15 @@ import java.util.List;
 @Mapper
 public interface CommentLikeMapper extends BaseMapper<CommentLike> {
 
-    /**
-     * 查询点赞列表
-     * @param comment
-     * @param isLike null 全部都查 true仅查点赞 false取消点赞
-     * @return
-     */
-    List<CommentLike> listByComment(@Param("comment") String comment,
-                                    @Param("isLike") Boolean isLike);
+	/**
+	 * 查询点赞列表
+	 * @param comment
+	 * @return
+	 */
+	List<CommentLike> listByComment(@Param("commentId") String comment);
 
-    CommentLike selectByCommentAndUser(@Param("comment") String comment,
-                                       @Param("userId") String userId);
+	CommentLike selectByCommentAndUser(@Param("commentId") String commentId,
+			@Param("userId") String userId);
+
+	void deleteByUserAndId(@Param("userId") String userId, @Param("commentId") String commentId);
 }

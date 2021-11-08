@@ -3,10 +3,16 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.course.constant.LessonConfigType;
+import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
 import com.cyberpeace.oj.ojbase.constant.AuthShare;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -17,10 +23,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.constant.LessonType;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
@@ -41,6 +43,9 @@ import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -60,6 +65,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseCategoryService courseCategoryService;
+
+	@Autowired
+	private LessonConfigService lessonConfigService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -203,23 +214,38 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public Course addOrUpdate(String userId, Course course) {
+	public Course addCourse(String userId, Course course) {
+		// 基本信息组装
+		course.setHeat(CommonConstant.ZERO);
+		course.setBuiltin(CommonConstant.FALSE);
+		course.setCreateUserId(userId);
+		course.setModifyUserId(userId);
+		course.setResourceId(IDGeneratorUtil.getID());
 
-		if (StringUtils.isNotBlank(course.getResourceId())) {
-			Course existCourse = courseMapper.selectById(course.getResourceId());
-			if (null == existCourse) {
-				throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+		// 组装课程目录
+		AddLessonConfigContext configContext = AddLessonConfigContext.builder().courseId(course.getResourceId()).nodeType(LessonConfigType.NODE_COURSE.getCode()).build();
+		LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
+
+		//执行事务存储
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				courseMapper.insert(course);
+				lessonConfigService.save(lessonConfig);
 			}
+		});
+		return course;
+	}
 
-			course.setModifyUserId(userId);
-		} else {
-			course.setHeat(CommonConstant.ZERO);
-			course.setBuiltin(CommonConstant.FALSE);
-			course.setCreateUserId(userId);
-			course.setModifyUserId(userId);
+	@Override
+	public Course updateCourse(String userId, Course course) {
+
+		Course existCourse = courseMapper.selectById(course.getResourceId());
+		if (null == existCourse) {
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
 		}
 
-		saveOrUpdate(course);
+		course.setModifyUserId(userId);
 		return course;
 	}
 

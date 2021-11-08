@@ -44,12 +44,20 @@ public interface CourseService extends IService<Course> {
     List<String> idsByNotDeleteIds(List<String> courseIds);
 
     /**
-     * 新增或修改课程
-     * @param course
+     * 课程新增
      * @param userId
+     * @param course
      * @return
      */
-    Course addOrUpdate(String userId, Course course);
+    Course addCourse(String userId, Course course);
+
+    /**
+     * 课程修改
+     * @param userId
+     * @param course
+     * @return
+     */
+    Course updateCourse(String userId, Course course);
 
     /**
      * 根据分类查询课程编号

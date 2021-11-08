@@ -5,32 +5,28 @@
 
     <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.CommentLike"/>
 
-    <sql id="baseFiled">
-        select `user`, comment, is_like, create_time
-        from oj_
-    </sql>
-
     <sql id="orderByTimeDesc">
         order by create_time desc
     </sql>
 
     <select id="listByComment" resultMap="base">
-        <include refid="baseFiled"/>
-        <where>
-            and comment = #{comment}
-            <if test="isLike != null">
-                and is_like = #{isLike}
-            </if>
-        </where>
+        select * from oj_comment
+        where comment_id = #{commentId}
         <include refid="orderByTimeDesc"/>
     </select>
 
     <select id="selectByCommentAndUser" resultMap="base">
-        <include refid="baseFiled"/>
+        select * from oj_comment
         <where>
-            and comment = #{comment}
-            and `user` = #{userId}
+            `user_id` = #{userId}
+            and comment_id = #{commentId}
         </where>
     </select>
+
+    <delete id="deleteByUserAndId">
+        delete from oj_comment
+        where user_id = #{userId}
+        where comment_id = #{commentId}
+    </delete>
 
 </mapper>

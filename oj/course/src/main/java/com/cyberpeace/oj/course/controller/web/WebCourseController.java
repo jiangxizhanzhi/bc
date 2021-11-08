@@ -87,7 +87,7 @@ public class WebCourseController {
 		return new BaseRsp(boListRsp);
 	}
 
-	@GetMapping()
+	@GetMapping("")
 	@ApiOperation("单条查询")
 	public BaseRsp<CourseInfoBo> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
@@ -97,7 +97,7 @@ public class WebCourseController {
 		return rsp;
 	}
 
-	@PostMapping("/comment")
+//	@PostMapping("/comment")
 	@ApiOperation("留言新增或者修改")
 	public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
 

@@ -12,7 +12,8 @@ import java.util.List;
 @Mapper
 public interface CommentMapper extends BaseMapper<Comment> {
 
-    IPage<Comment> firstByResource(Page page, @Param("resource") String resource);
+	IPage<Comment> firstByResource(Page page, @Param("businessId") String resource,
+			@Param("businessType") Integer businessType);
 
-    List<Comment> selectByParent(@Param("parent") String parent);
+	List<Comment> selectByParent(@Param("parent") String parent);
 }

@@ -9,8 +9,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class PageCommentReq extends PageReqBase {
 
-    @ApiModelProperty("资源编号")
-    @NotBlank
-    private String resource;
+    @ApiModelProperty(value = "资源编号")
+    private String businessId;
+
+    @ApiModelProperty(value = "资源类型 1=课程 2=课时 3=实操题")
+    private Integer businessType;
 
 }

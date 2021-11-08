@@ -5,7 +5,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +53,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		List<LessonConfigBo> configBos = lessonConfigToBo(userId, courseId, isPublic);
 
 		Map<String, List<LessonConfigBo>> boMap = configBos.stream()
-				.collect(Collectors.groupingBy(LessonConfigBo::getParent));
+				.collect(Collectors.groupingBy(LessonConfigBo::getParentId));
 		LessonConfigBo configBo = BeanUtils.copy(firstNode, LessonConfigBo.class);
 
 		assembleLessonLib(configBo, boMap);
@@ -66,23 +69,45 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		if (CollectionUtils.isNotEmpty(lessonConfigs)) {
 			for (LessonConfigBo lessonConfig : lessonConfigs) {
-				if (lessonConfig.getNodeType().intValue() == LessonConfig.NODE_CHAPTER) {
+				if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_CHAPTER
+						.getCode()) {
 					lessonConfig.setIndex(chapterIndex);
-					chapterIndex += 1;
+					chapterIndex += CommonConstant.ONE;
 				}
-				if (lessonConfig.getNodeType().intValue() == LessonConfig.NODE_LESSON) {
+				if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_LESSON
+						.getCode()) {
 					lessonConfig.setIndex(lessonIndex);
-					lessonIndex += 1;
+					lessonIndex += CommonConstant.ONE;
 				}
 			}
 		}
 
-		List<LessonConfigBo> sortListByTree = configBo.getSortListByTree(configBo, true);
+		List<LessonConfigBo> sortListByTree = configBo.sortListByTree(configBo, true);
 		List<LessonConfig> configs = sortListByTree.stream()
 				.map(bo -> BeanUtils.copy(bo, LessonConfig.class)).collect(Collectors.toList());
 
-		this.updateBatchById(configs);
+		this.saveOrUpdateBatch(configs);
 		return configBo;
+	}
+
+	@Override
+	public LessonConfig packageLessonConfig(AddLessonConfigContext configContext) {
+
+		LessonConfig firstNode = lessonConfigMapper.getFirstNode(configContext.getCourseId());
+		if (null == firstNode) {
+			return null;
+		}
+
+		LessonConfig lastLessonConfig = lessonConfigMapper
+				.selectLastByParent(firstNode.getResourceId());
+
+		LessonConfig lessonConfig = BeanUtils.copy(configContext, LessonConfig.class);
+		lessonConfig.setIndex(
+				lastLessonConfig != null ? lastLessonConfig.getIndex() + CommonConstant.ONE
+						: CommonConstant.ZERO);
+		lessonConfig.setParentId(firstNode.getResourceId());
+
+		return lessonConfig;
 	}
 
 	/**
@@ -97,17 +122,18 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			Boolean isPublic) {
 		// 查询课程下所有课时
 		List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId, false);
-		Map<String, CourseLesson> lessonMap = lessons.stream()
-				.collect(Collectors.toMap(CourseLesson::getResourceId, courseLesson -> courseLesson));
+		Map<String, CourseLesson> lessonMap = lessons.stream().collect(
+				Collectors.toMap(CourseLesson::getResourceId, courseLesson -> courseLesson));
 
 		// 查询课程目录数据
 		List<LessonConfig> configs = lessonConfigMapper.selectByCourse(courseId, isPublic);
 		List<LessonConfigBo> configBos = configs.stream()
-				.filter(lessonConfig -> StringUtils.isNotBlank(lessonConfig.getParent()))
+				.filter(lessonConfig -> StringUtils.isNotBlank(lessonConfig.getParentId()))
 				.map(lessonConfig -> {
 					LessonConfigBo configBo = BeanUtils.copy(lessonConfig, LessonConfigBo.class);
-					if (lessonConfig.getNodeType().intValue() == LessonConfig.NODE_LESSON) {
-						CourseLesson lesson = lessonMap.get(lessonConfig.getLesson());
+					if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_LESSON
+							.getCode()) {
+						CourseLesson lesson = lessonMap.get(lessonConfig.getLessonId());
 						if (null != lesson) {
 							configBo.setName(lesson.getName());
 							configBo.setType(lesson.getType());
@@ -127,7 +153,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			Map<String, LessonRecord> recordMap = recordList.stream().collect(
 					Collectors.toMap(LessonRecord::getLesson, lessonRecord -> lessonRecord));
 			configBos.forEach(lessonConfig -> lessonConfig
-					.setLearn(null != recordMap.get(lessonConfig.getLesson())));
+					.setLearn(null != recordMap.get(lessonConfig.getLessonId())));
 		}
 
 		return configBos;
@@ -143,7 +169,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			Map<String, List<LessonConfigBo>> boMap) {
 
 		// 获取子节点
-		List<LessonConfigBo> bos = boMap.get(firstNode.getParent());
+		List<LessonConfigBo> bos = boMap.get(firstNode.getParentId());
 
 		if (CollectionUtils.isNotEmpty(bos)) {
 			bos.forEach(bo -> assembleLessonLib(bo, boMap));

@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Configuration
-@DependsOn({ "dataSourceConfig", "oj", "rtks" })
+@DependsOn({ "dataSourceConfig" })
 public class FlywayConfig {
 
 	@Autowired

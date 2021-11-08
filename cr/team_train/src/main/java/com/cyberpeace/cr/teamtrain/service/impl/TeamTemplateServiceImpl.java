@@ -39,7 +39,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	BusinessTemplateService businessTemplateService;
 
 	@Autowired
-	@Qualifier("crTransactionTemplate")
 	private TransactionTemplate transactionTemplate;
 
 	@Override

@@ -58,7 +58,6 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	private PaperMapper paperMapper;
 
 	@Autowired
-	@Qualifier("ojTransactionTemplate")
 	TransactionTemplate transactionTemplate;
 
 	@Override

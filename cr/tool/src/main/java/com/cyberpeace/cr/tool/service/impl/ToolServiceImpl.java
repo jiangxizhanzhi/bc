@@ -1,4 +1,14 @@
 package com.cyberpeace.cr.tool.service.impl;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,14 +32,6 @@ import com.cyberpeace.cr.tool.service.bo.ToolBo;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 @Service
 public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements ToolService {
@@ -49,7 +51,7 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	@Override
 	@Transactional(
 			rollbackFor = {Exception.class},
-			transactionManager = "crTransactionManager"
+			transactionManager = "transactionManager"
 	)
 	public boolean saveBatch(Collection<Tool> entityList) {
 		return super.saveBatch(entityList);

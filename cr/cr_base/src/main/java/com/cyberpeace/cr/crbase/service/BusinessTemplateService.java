@@ -29,4 +29,6 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param shareContext
 	 */
 	void batchSetShares(ShareContext shareContext);
+
+	void addTemplate(Object obj);
 }

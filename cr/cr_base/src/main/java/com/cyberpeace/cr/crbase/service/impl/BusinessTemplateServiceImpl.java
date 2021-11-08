@@ -4,7 +4,11 @@ import java.util.List;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,6 +22,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.Share;
@@ -42,10 +47,38 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	@Qualifier("businessTemplateHandler")
+	private BusinessTemplateHandler businessTemplateHandler;
+
+	@Override
+	public void addTemplate(Object obj) {
+		// 1、从输入业务中解析公共模板
+		BusinessTemplate businessTemplate = getBusinessTemplate(obj);
+
+		// 2、执行实际的保存
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				// 1、保存公共模版数据
+				save(businessTemplate);
+
+				// 2、保存业务模板数据
+				businessTemplateHandler.saveBusiness(obj);
+
+				// 3、返回业务模板
+				// todo
+			}
+		});
+	}
+
 	@Override
 	public ListRsp<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		AuthTable.AuthType d;
 		Page page = businessTemplateQuery.toPageParam();
 		businessTemplateQuery.setIds(businessTemplateMapper.selectIdsByUserId(userId));
 
@@ -106,5 +139,15 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 
 		updateBatchById(businessTemplateList);
+	}
+
+	private BusinessTemplate getBusinessTemplate(Object obj) {
+		// todo
+		// 构造公共模板
+		return new BusinessTemplate();
+	}
+
+	private BusinessTemplate.BusinessType getBusinessType(Object obj) {
+		return null;
 	}
 }

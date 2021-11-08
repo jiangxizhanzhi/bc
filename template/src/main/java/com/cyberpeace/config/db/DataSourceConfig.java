@@ -1,5 +1,6 @@
 package com.cyberpeace.config.db;
 
+import java.net.URL;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -27,97 +28,34 @@ public class DataSourceConfig implements EnvironmentAware {
 
 	private Map<String, DataSource> dataSourceMap = Maps.newHashMap();
 
-	private String rtksJdbcUrl;
+	private String jdbcUrl;
 
-	private String rtksUserName;
+	private String userName;
 
-	private String rtksPassword;
+	private String password;
 
-	private String rtksDriverClass;
-
-	private String ojJdbcUrl;
-
-	private String ojUserName;
-
-	private String ojPassword;
-
-	private String ojDriverClass;
-
-	private String crJdbcUrl;
-
-	private String crUserName;
-
-	private String crPassword;
-
-	private String crDriverClass;
+	private String driverClass;
 
 	@Override
 	public void setEnvironment(Environment environment) {
-		rtksJdbcUrl = environment.getProperty("spring.datasource.rtks.jdbc-url");
-		rtksUserName = environment.getProperty("spring.datasource.rtks.username");
-		rtksPassword = environment.getProperty("spring.datasource.rtks.password");
-		rtksDriverClass = environment.getProperty("spring.datasource.rtks.driver-class-name");
+		jdbcUrl = environment.getProperty("spring.datasource.bc.jdbc-url");
+		userName = environment.getProperty("spring.datasource.bc.username");
+		password = environment.getProperty("spring.datasource.bc.password");
+		driverClass = environment.getProperty("spring.datasource.bc.driver-class-name");
 
-		ojJdbcUrl = environment.getProperty("spring.datasource.oj.jdbc-url");
-		ojUserName = environment.getProperty("spring.datasource.oj.username");
-		ojPassword = environment.getProperty("spring.datasource.oj.password");
-		ojDriverClass = environment.getProperty("spring.datasource.oj.driver-class-name");
-
-		crJdbcUrl = environment.getProperty("spring.datasource.cr.jdbc-url");
-		crUserName = environment.getProperty("spring.datasource.cr.username");
-		crPassword = environment.getProperty("spring.datasource.cr.password");
-		crDriverClass = environment.getProperty("spring.datasource.cr.driver-class-name");
-
-		log.info(
-				"config loaded! rtksDbConnection={}|{}|{}|{}, ojDbConnetcion={}|{}|{}|{}, crDbConnetcion={}|{}|{}|{}",
-				new Object[] { rtksJdbcUrl, rtksUserName, "password ignored", rtksDriverClass,
-						ojJdbcUrl, ojUserName, "password ignored", ojDriverClass, crJdbcUrl,
-						crUserName, "password ignored", crDriverClass });
+		log.info("config loaded! dbConnection={}|{}|{}|{}",
+				new Object[] { jdbcUrl, userName, "password ignored", driverClass });
 	}
 
-	@Bean(name = "rtks")
-	@ConfigurationProperties(prefix = "spring.datasource.rtks")
-	public DataSource rtksDataSource() {
-		DataSource dataSource = DataSourceBuilder.create().url(rtksJdbcUrl).password(rtksPassword)
-				.username(rtksUserName).driverClassName(rtksDriverClass).build();
+	@Bean
+	@ConfigurationProperties(prefix = "spring.datasource.bc")
+	public DataSource dataSource() {
+		DataSource dataSource = DataSourceBuilder.create().url(jdbcUrl).password(password)
+				.username(userName).driverClassName(driverClass).build();
 
-		log.info("config loaded! rtksDB init success!");
+		log.info("config loaded! dbDB init success!");
 
-		dataSourceMap.put("rtks", dataSource);
-
-		return dataSource;
-	}
-
-	@Bean(name = "oj")
-	@ConfigurationProperties(prefix = "spring.datasource.oj")
-	public DataSource ojDataSource() {
-		if (StringUtils.isBlank(ojJdbcUrl)) {
-			return DataSourceBuilder.create().build();
-		}
-
-		DataSource dataSource = DataSourceBuilder.create().url(ojJdbcUrl).password(ojPassword)
-				.username(ojUserName).driverClassName(ojDriverClass).build();
-
-		log.info("config loaded! ojDB init success!");
-
-		dataSourceMap.put("oj", dataSource);
-
-		return dataSource;
-	}
-
-	@Bean(name = "cr")
-	@ConfigurationProperties(prefix = "spring.datasource.cr")
-	public DataSource crDataSource() {
-		if (StringUtils.isBlank(crJdbcUrl)) {
-			return DataSourceBuilder.create().build();
-		}
-
-		DataSource dataSource = DataSourceBuilder.create().url(crJdbcUrl).password(crPassword)
-				.username(crUserName).driverClassName(crDriverClass).build();
-
-		log.info("config loaded! crDB init success!");
-
-		dataSourceMap.put("cr", dataSource);
+		dataSourceMap.put("bc", dataSource);
 
 		return dataSource;
 	}

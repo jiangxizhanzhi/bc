@@ -7,7 +7,6 @@ import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -24,12 +23,11 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 
 @Configuration
-@MapperScan(basePackages = { "com.cyberpeace.cr.**.mapper", "com.cyberpeace.cs.**.mapper" },
-		sqlSessionFactoryRef = "crSqlSessionFactory")
-public class MybatisConfigCR {
+@MapperScan(basePackages = { "com.cyberpeace.**.mapper" },
+		sqlSessionFactoryRef = "sqlSessionFactory")
+public class MybatisConfig {
 
 	@Autowired
-	@Qualifier("cr")
 	private DataSource dataSource;
 
 	/** 逻辑删除*/
@@ -38,24 +36,24 @@ public class MybatisConfigCR {
 	/** 非删除*/
 	private String NOT_DELETE = "1";
 
-	@Bean(name = "crSqlSessionFactory")
-	public SqlSessionFactory crSqlSessionFactory() throws Exception {
+	@Bean
+	public SqlSessionFactory sqlSessionFactory() throws Exception {
 		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
 		MybatisConfiguration configuration = new MybatisConfiguration();
 		configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
 		// 自定义session，需要手动添加拦截器
-		configuration.addInterceptor(crPaginationInterceptor());
+		configuration.addInterceptor(paginationInterceptor());
 		sqlSessionFactory.setConfiguration(configuration);
-		sqlSessionFactory.setGlobalConfig(crGlobalConfig());
+		sqlSessionFactory.setGlobalConfig(globalConfig());
 		sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
-				.getResources("classpath*:mapper/cr/*.xml"));
+				.getResources("classpath*:mapper/*/*.xml"));
 		return sqlSessionFactory.getObject();
 	}
 
-	@Bean(name = "crPaginationInterceptor")
-	public MybatisPlusInterceptor crPaginationInterceptor() {
+	@Bean
+	public MybatisPlusInterceptor paginationInterceptor() {
 		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
 		// 指定数据库方言为 MYSQL
 		PaginationInnerInterceptor pageInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
@@ -65,10 +63,10 @@ public class MybatisConfigCR {
 		return interceptor;
 	}
 
-	@Bean(name = "crGlobalConfig")
-	public GlobalConfig crGlobalConfig() {
+	@Bean
+	public GlobalConfig globalConfig() {
 		GlobalConfig globalConfig = new GlobalConfig();
-		globalConfig.setMetaObjectHandler(crMetaObjectHandler());
+		globalConfig.setMetaObjectHandler(metaObjectHandler());
 		GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
 		dbConfig.setLogicDeleteField("status");
 		dbConfig.setLogicDeleteValue("UNIX_TIMESTAMP()");
@@ -77,23 +75,23 @@ public class MybatisConfigCR {
 		return globalConfig;
 	}
 
-	@Bean(name = "crSqlSessionTemplate")
-	public SqlSessionTemplate crSqlSessionTemplate() throws Exception {
-		return new SqlSessionTemplate(crSqlSessionFactory());
+	@Bean
+	public SqlSessionTemplate sqlSessionTemplate() throws Exception {
+		return new SqlSessionTemplate(sqlSessionFactory());
 	}
 
-	@Bean(name = "crMetaObjectHandler")
-	public MetaObjectHandler crMetaObjectHandler() {
+	@Bean
+	public MetaObjectHandler metaObjectHandler() {
 		return new MybatisFillHandler();
 	}
 
-	@Bean(name = "crTransactionManager")
-	public DataSourceTransactionManager crTransactionManager() {
+	@Bean
+	public DataSourceTransactionManager transactionManager() {
 		return new DataSourceTransactionManager(dataSource);
 	}
 
-	@Bean(name = "crTransactionTemplate")
-	public TransactionTemplate crTransactionTemplate() {
-		return new TransactionTemplate(crTransactionManager());
+	@Bean
+	public TransactionTemplate transactionTemplate() {
+		return new TransactionTemplate(transactionManager());
 	}
 }

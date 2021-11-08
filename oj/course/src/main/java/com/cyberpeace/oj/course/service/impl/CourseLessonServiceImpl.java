@@ -76,7 +76,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private PaperMapper paperMapper;
 
 	@Autowired
-	@Qualifier("ojTransactionTemplate")
 	private TransactionTemplate transactionTemplate;
 
 	@Override

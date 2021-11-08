@@ -30,7 +30,7 @@ import io.swagger.annotations.ApiParam;
 public class BusinessTemplateController {
 
 	@Autowired
-	BusinessTemplateService businessTemplateService;
+	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 获取所有靶场的业务模板
@@ -45,7 +45,7 @@ public class BusinessTemplateController {
 
 		ListRsp<BusinessTemplateData> data = businessTemplateService.page(businessTemplateQuery);
 
-		return new BaseRsp<ListRsp<BusinessTemplateData>>(data);
+		return new BaseRsp(data);
 	}
 
 	/**
@@ -58,11 +58,11 @@ public class BusinessTemplateController {
 			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
 		Share data = businessTemplateService.getShares(resource_id);
 
-		return new BaseRsp<Share>(data);
+		return new BaseRsp(data);
 	}
 
 	/**
-	 * 获取靶场业务模板的操作权限
+	 * 设置靶场业务模板的操作权限
 	 * @return
 	 */
 	@ApiOperation("批量修改操作权限")
@@ -73,7 +73,7 @@ public class BusinessTemplateController {
 
 		businessTemplateService.batchSetShares(shareContext);
 
-		return new BaseRsp<String>();
+		return new BaseRsp();
 	}
 
 	/**

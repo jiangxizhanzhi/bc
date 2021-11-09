@@ -24,10 +24,6 @@ public class BusinessTemplateHandler {
 	@PostConstruct
 	public void init() {
 		register.put(setBusinessType(), this);
-		// TeamBusinessTemplateHandler teamBusinessTemplateHandler = new
-		// TeamBusinessTemplateHandler();
-		// register.put(BusinessTemplate.BusinessType.TRAINING_TEAM,
-		// teamBusinessTemplateHandler);
 	}
 
 	public String saveBusiness(BasicTemplate basicTemplate) {

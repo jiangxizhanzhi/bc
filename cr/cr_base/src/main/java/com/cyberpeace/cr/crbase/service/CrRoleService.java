@@ -29,4 +29,6 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @return
 	 */
 	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
+
+	CrRole getCrRoleByRoomIdAndUserId(String trainingTeamId, String userId);
 }

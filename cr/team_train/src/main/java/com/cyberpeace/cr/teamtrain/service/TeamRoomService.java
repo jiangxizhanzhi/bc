@@ -9,6 +9,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
 
 /**
  *
@@ -57,4 +58,12 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return
 	 */
 	List<UserRole> getUserList(String resourceId);
+
+	TimeLineData getTimeLine(String resourceId);
+
+	String getTrainingManual(String resourceId);
+
+	void checkTeacherPermission(String trainingTeam, String userId);
+
+	void checkRoomOpening(String trainingTeamId);
 }

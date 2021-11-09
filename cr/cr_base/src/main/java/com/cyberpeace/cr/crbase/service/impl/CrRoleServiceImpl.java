@@ -75,6 +75,11 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoleMapper.selectCrRoleByRoomId(roleQuery);
 	}
 
+	@Override
+	public CrRole getCrRoleByRoomIdAndUserId(String trainingTeamId, String userId) {
+		// todo
+		return null;
+	}
 
 	private List<NameElement> getUserByRoleUsers(String userIds) {
 

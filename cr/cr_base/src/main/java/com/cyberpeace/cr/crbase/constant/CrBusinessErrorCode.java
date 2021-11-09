@@ -18,4 +18,19 @@ public interface CrBusinessErrorCode {
 
 	// 文件解压失败
 	String ZIP_PATH_NOT_EXTRA = "101003";
+
+	// 实例不存在
+	String CASE_DOES_NOT_EXIST = "101004";
+
+	// 权限不存在
+	String PERMISSION_NOT_EXIST = "101005";
+
+	// 训练未开始
+	String TRAIN_NOT_BEGIN = "101006";
+
+	// 训练已结束
+	String TRAIN_IS_OVER = "101007";
+
+	// 训练角色不存在
+	String TRAINING_TEAM_ROLE_NOT_EXIST_ERROR = "101008";
 }

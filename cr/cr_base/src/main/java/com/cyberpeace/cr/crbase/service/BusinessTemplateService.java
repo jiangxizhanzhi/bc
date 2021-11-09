@@ -31,5 +31,6 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
 	void batchSetShares(ShareContext shareContext);
 
-	String addTemplate(BasicTemplate obj);
+	String addTemplate(BasicTemplate basicTemplate);
+
 }

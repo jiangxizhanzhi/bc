@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,15 +16,19 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
+import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -33,9 +38,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
-import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
-import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
-import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+import com.cyberpeace.cr.teamtrain.service.context.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.UserPageContext;
@@ -273,6 +276,67 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 
 		return userRoleList;
+	}
+
+	@Override
+	public TimeLineData getTimeLine(String resourceId) {
+		TimeLineData timeLineData = new TimeLineData();
+		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
+
+		// todo 时间线
+		TeamRoom teamRoom = getById(resourceId);
+
+		timeLineData.setCurrentTime(new Date());
+		timeLineData.setStartTime(teamRoom.getStartTime());
+		timeLineData.setEndTime(teamRoom.getEndTime());
+		timeLineData.setUserTimeLineConfig(timeLineEventList);
+
+		return timeLineData;
+	}
+
+	@Override
+	public String getTrainingManual(String resourceId) {
+		TeamRoom teamRoom = getById(resourceId);
+		CrRoleContext roles = crRoleService.getRoles(resourceId);
+		for (RoleData roleData : roles.getRoles()) {
+			String missionsList = roleData.getMissionsList();
+			// todo 任务
+
+		}
+		return null;
+	}
+
+	@Override
+	public void checkTeacherPermission(String trainingTeamId, String userId) {
+
+		permissionCheck(trainingTeamId, userId, CrRole.RoleGroupCodeInteger.TEACHER.getValue());
+	}
+
+	@Override
+	public void checkRoomOpening(String trainingTeamId) {
+		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(trainingTeamId);
+		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
+
+		// 未开始，新增local_scene数据
+		if (teamRoomdata.isUnopened()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+
+		}
+		if (teamRoomdata.isEnded()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+
+		}
+	}
+
+	private void permissionCheck(String trainingTeamId, String userId, Integer teacher) {
+		TeamRoom teamRoom = getById(trainingTeamId);
+		if (teamRoom == null) {
+			throw new BusinessException(CrBusinessErrorCode.CASE_DOES_NOT_EXIST);
+		}
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(trainingTeamId, userId);
+		if (!crRole.getRoleGroup().equals(teacher)) {
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_NOT_EXIST);
+		}
 	}
 
 	private int setTrainingStatus(TeamRoomData teamRoomdata) {

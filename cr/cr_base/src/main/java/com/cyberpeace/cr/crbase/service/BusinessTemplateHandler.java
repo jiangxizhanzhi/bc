@@ -14,7 +14,7 @@ import com.google.common.collect.Maps;
 @Service
 public class BusinessTemplateHandler {
 
-	private Map<BusinessTemplate.BusinessType, BusinessTemplateHandler> register = Maps
+	private static Map<BusinessTemplate.BusinessType, BusinessTemplateHandler> register = Maps
 			.newHashMap();
 
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -39,8 +39,7 @@ public class BusinessTemplateHandler {
 	 */
 	public String saveRealBusiness(BasicTemplate obj) {
 		// 业务定义自己的保存操作
-		System.out.println("基本逻辑");
-		return "jiben";
+		return "";
 
 	}
 

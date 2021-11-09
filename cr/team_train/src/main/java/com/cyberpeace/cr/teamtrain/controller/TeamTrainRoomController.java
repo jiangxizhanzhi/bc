@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -14,6 +15,9 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.MissionReq;
+import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -34,6 +38,7 @@ import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -120,7 +125,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<TeamRoomRsp>> list(TeamRoomListReq listReq) {
+	public BaseRsp<ListRsp<TeamRoomRsp>> list(@RequestBody @Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -181,7 +186,72 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		List<UserRole> data = teamRoomService.getUserList(resource_id);
 
-		return new BaseRsp<List<UserRole>>(data);
+		return new BaseRsp<>(data);
+	}
+
+	/**
+	 * 查询团队训练时间线
+	 * @return
+	 */
+	@ApiOperation("查询团队训练时间线")
+	@GetMapping("/getTimeLine")
+	public BaseRsp<TimeLineData> getTimeLine(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+
+		TimeLineData data = teamRoomService.getTimeLine(resource_id);
+
+		return new BaseRsp<>(data);
+	}
+
+	/**
+	 * 查询团队训练训练手册
+	 * @return
+	 */
+	@ApiOperation("查询团队训练训练手册")
+	@GetMapping("/getTrainingManual")
+	public BaseRsp<String> getTrainingManual(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+
+		String data = teamRoomService.getTrainingManual(resource_id);
+
+		return new BaseRsp<>(data);
+	}
+
+	/**
+	 * 修改开放题解
+	 * @return
+	 */
+	@ApiOperation("修改开放题解")
+	@PostMapping("/updateShowWriteUp")
+	public BaseRsp<String> updateShowWriteUp(@RequestBody @Validated WriteUpReq writeUpReq) {
+
+		teamRoomService.checkTeacherPermission(writeUpReq.getTrainingTeam(),
+				UserInfoContext.getUserContext().getUserId());
+		teamRoomService.checkRoomOpening(writeUpReq.getTrainingTeam());
+
+		// todo 获取任务，更新字段，记录日志
+		// updateShowWriteUp(writeUpReq.getTrainingTeam(),writeUpReq.getMissionResourceId(),writeUpReq.getWriteUpShow());
+
+		return new BaseRsp<>();
+	}
+
+	/**
+	 * 任务下发
+	 * @return
+	 */
+	@ApiOperation("任务下发")
+	@PostMapping("/missions")
+	public BaseRsp<String> releaseMissions(@RequestBody @Validated MissionReq missionReq) {
+
+		CrRole crRole = crRoleService.getById(missionReq.getRoleResourceId());
+		if (crRole == null) {
+			throw new BusinessException(CrBusinessErrorCode.TRAINING_TEAM_ROLE_NOT_EXIST_ERROR);
+		}
+		// teamRoomService.releaseMissions(missionReq.getMissionResourceId(),missionReq.getMissionResourceId());
+
+		// todo 下发任务， 记录日志
+
+		return new BaseRsp<>();
 	}
 
 	// 获取单个实例中自己的角色信息，只包括自己角色的基本信息

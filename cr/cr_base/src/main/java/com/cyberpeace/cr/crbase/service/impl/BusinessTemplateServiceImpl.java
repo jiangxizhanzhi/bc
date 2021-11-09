@@ -20,7 +20,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -59,7 +58,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Override
 	public String addTemplate(BasicTemplate obj) {
-		CrRole crRole = new CrRole();
 		// 1、从输入业务中解析公共模板
 		BusinessTemplate businessTemplate = getBusinessTemplate(obj);
 		// 拓扑场景id保存获取
@@ -79,14 +77,15 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				save(businessTemplate);
 
 				// 2、保存业务模板数据
-				String re = businessTemplateHandler.saveBusiness(obj);
-				crRole.setResourceId(re);
+				String teamTemplateId = businessTemplateHandler.saveBusiness(obj);
 				// 3、返回业务模板
 				// todo
 			}
 		});
-		return crRole.getResourceId();
+
+		return null;
 	}
+
 
 	@Override
 	public ListRsp<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {

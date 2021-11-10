@@ -1,15 +1,41 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
+import java.io.Serializable;
+import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class MissionReq {
+public class MissionReq implements Serializable {
 
 	@ApiModelProperty(required = true)
-	String roleResourceId;
+	private String title;
 
 	@ApiModelProperty(required = true)
-	String missionResourceId;
+	private String description;
 
+	@ApiModelProperty(required = true)
+	private Integer score;
+
+	@ApiModelProperty(required = true)
+	private List<Integer> skillPoints;
+
+	@ApiModelProperty(required = true)
+	private String answer;
+
+	@ApiModelProperty(required = true)
+	private String option;
+
+	@ApiModelProperty(required = true)
+	private Integer type;
+
+	@ApiModelProperty(required = true)
+	private String category;
+
+	@ApiModelProperty(required = true)
+	private String writeUp;
+
+	@ApiModelProperty(required = true)
+	private Integer missionStage;
 }

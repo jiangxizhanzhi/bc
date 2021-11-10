@@ -16,7 +16,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.req.MissionReq;
+import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -241,13 +241,14 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("任务下发")
 	@PostMapping("/missions")
-	public BaseRsp<String> releaseMissions(@RequestBody @Validated MissionReq missionReq) {
+	public BaseRsp<String>
+			releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
-		CrRole crRole = crRoleService.getById(missionReq.getRoleResourceId());
+		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 		if (crRole == null) {
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_TEAM_ROLE_NOT_EXIST_ERROR);
 		}
-		// teamRoomService.releaseMissions(missionReq.getMissionResourceId(),missionReq.getMissionResourceId());
+		// teamRoomService.releaseMissions(releaseMissionReq.getMissionResourceId(),releaseMissionReq.getMissionResourceId());
 
 		// todo 下发任务， 记录日志
 

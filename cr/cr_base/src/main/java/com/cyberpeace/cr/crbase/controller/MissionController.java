@@ -13,7 +13,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.cr.crbase.controller.req.MissonReq;
+import com.cyberpeace.cr.crbase.controller.req.MissionReq;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.MissonService;
 
@@ -31,8 +31,8 @@ public class MissionController {
 
 	@ApiOperation("新增任务")
 	@PostMapping("/missions")
-	public BaseRsp addMission(@RequestBody @Validated MissonReq missonReq) {
-		Mission toAddMission = requestToMission(missonReq);
+	public BaseRsp addMission(@RequestBody @Validated MissionReq missionReq) {
+		Mission toAddMission = requestToMission(missionReq);
 
 		missonService.addMission(toAddMission);
 
@@ -41,12 +41,12 @@ public class MissionController {
 		return new BaseRsp(result);
 	}
 
-	private Mission requestToMission(MissonReq missonReq) {
-		Mission mission = BeanUtils.copy(missonReq, Mission.class);
+	private Mission requestToMission(MissionReq missionReq) {
+		Mission mission = BeanUtils.copy(missionReq, Mission.class);
 
-		mission.setCategoryId(missonReq.getCategory());
+		mission.setCategoryId(missionReq.getCategory());
 		mission.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		mission.setSkillPoints(JSON.toJSONString(missonReq.getSkillPoints()));
+		mission.setSkillPoints(JSON.toJSONString(missionReq.getSkillPoints()));
 		mission.setResourceId(IDGeneratorUtil.getID());
 
 		return mission;

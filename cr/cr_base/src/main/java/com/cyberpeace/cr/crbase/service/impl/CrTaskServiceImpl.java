@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,15 @@ public class CrTaskServiceImpl implements CrTaskService {
 	@Override
 	public Task getByMissionAndUser(String missionId, String userId) {
 		return crTaskMapper.selectByMissionIdAndUserId(missionId, userId);
+	}
+
+	@Override
+	public void submitMissions(String roomId, String missionId, String answer) {
+
+	}
+
+	@Override
+	public List<Task> getByRoomIdAndUser(String roomId, String userId) {
+		return null;
 	}
 }

@@ -1,0 +1,22 @@
+package com.cyberpeace.cr.crbase.controller.req;
+
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+public class SubmitMissionsReq {
+
+	@ApiModelProperty(required = true)
+	@NotNull
+	String resourceId;
+
+	@ApiModelProperty(required = true)
+	@NotNull
+	String missionHash;
+
+	@ApiModelProperty(required = true)
+	@NotNull
+	String answer;
+}

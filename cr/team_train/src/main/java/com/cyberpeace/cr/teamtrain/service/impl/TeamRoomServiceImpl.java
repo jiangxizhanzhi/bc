@@ -27,6 +27,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.TaskService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -62,6 +63,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	CrRoleService crRoleService;
+
+	@Autowired
+	TaskService taskService;
 
 	@Autowired
 	LocalSceneService localSceneService;
@@ -279,11 +283,29 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
+	public TimeLineData getStudentsTimeLine(String resourceId) {
+		TimeLineData timeLineData = new TimeLineData();
+		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
+		taskService.getByRoomIdAndUser();
+		// todo 时间线
+
+		TeamRoom teamRoom = getById(resourceId);
+
+		timeLineData.setCurrentTime(new Date());
+		timeLineData.setStartTime(teamRoom.getStartTime());
+		timeLineData.setEndTime(teamRoom.getEndTime());
+		timeLineData.setUserTimeLineConfig(timeLineEventList);
+
+		return timeLineData;
+	}
+
+	@Override
 	public TimeLineData getTimeLine(String resourceId) {
 		TimeLineData timeLineData = new TimeLineData();
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
 
 		// todo 时间线
+
 		TeamRoom teamRoom = getById(resourceId);
 
 		timeLineData.setCurrentTime(new Date());

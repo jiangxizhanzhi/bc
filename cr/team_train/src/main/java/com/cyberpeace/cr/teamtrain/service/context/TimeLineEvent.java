@@ -13,5 +13,7 @@ public class TimeLineEvent {
 
 	private String title;
 
+	private String userName;
+
 	private Integer type;
 }

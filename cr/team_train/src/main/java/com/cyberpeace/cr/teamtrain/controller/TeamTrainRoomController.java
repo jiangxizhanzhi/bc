@@ -159,7 +159,7 @@ public class TeamTrainRoomController {
 	}
 
 	@ApiOperation("修改团队训练状态")
-	@PostMapping("/startEndTeam")
+	@PostMapping("/start_end_team")
 	public BaseRsp<Integer>
 			changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
 		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
@@ -168,7 +168,7 @@ public class TeamTrainRoomController {
 	}
 
 	@ApiOperation("查询团队训练状态")
-	@GetMapping("/startEndTeam")
+	@GetMapping("/start_end_team")
 	public BaseRsp<Integer> getTrainingStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		Integer status = teamRoomService.getTrainingStatus(resource_id);
@@ -181,7 +181,7 @@ public class TeamTrainRoomController {
 	 * @return
 	 */
 	@ApiOperation("查询团队训练学员用户列表")
-	@GetMapping("/getUserList")
+	@GetMapping("/get_user_list")
 	public BaseRsp<List<UserRole>> getUserList(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		List<UserRole> data = teamRoomService.getUserList(resource_id);
@@ -194,7 +194,7 @@ public class TeamTrainRoomController {
 	 * @return
 	 */
 	@ApiOperation("查询团队训练时间线")
-	@GetMapping("/getTimeLine")
+	@GetMapping("/get_time_line")
 	public BaseRsp<TimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
@@ -208,7 +208,7 @@ public class TeamTrainRoomController {
 	 * @return
 	 */
 	@ApiOperation("查询团队训练训练手册")
-	@GetMapping("/getTrainingManual")
+	@GetMapping("/get_training_manual")
 	public BaseRsp<String> getTrainingManual(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
@@ -222,7 +222,7 @@ public class TeamTrainRoomController {
 	 * @return
 	 */
 	@ApiOperation("修改开放题解")
-	@PostMapping("/updateShowWriteUp")
+	@PostMapping("/update_show_writeUp")
 	public BaseRsp<String> updateShowWriteUp(@RequestBody @Validated WriteUpReq writeUpReq) {
 
 		teamRoomService.checkTeacherPermission(writeUpReq.getTrainingTeam(),
@@ -254,6 +254,7 @@ public class TeamTrainRoomController {
 
 		return new BaseRsp<>();
 	}
+
 
 	// 获取单个实例中自己的角色信息，只包括自己角色的基本信息
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {

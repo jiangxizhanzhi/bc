@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.util.List;
+
 import com.cyberpeace.cr.crbase.dao.entity.Task;
 
 public interface CrTaskService {
@@ -15,4 +17,19 @@ public interface CrTaskService {
 	 * @return Task 实例
 	 */
 	Task getByMissionAndUser(String missionId, String userId);
+
+	/** 提交任务答案
+	 * @param roomId
+	 * @param missionId
+	 * @param answer
+	 */
+	void submitMissions(String roomId, String missionId, String answer);
+
+	/**
+	 * 根据roomId和user获取task
+	 * @param roomId 
+	 * @param userId 
+	 * @return List<Task>  实例列表
+	 */
+	List<Task> getByRoomIdAndUser(String roomId, String userId);
 }

@@ -66,4 +66,6 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	void checkTeacherPermission(String trainingTeam, String userId);
 
 	void checkRoomOpening(String trainingTeamId);
+
+	TimeLineData getStudentsTimeLine(String resourceId);
 }

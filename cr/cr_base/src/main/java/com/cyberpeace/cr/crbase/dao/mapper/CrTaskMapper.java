@@ -9,7 +9,7 @@ import com.cyberpeace.cr.crbase.dao.entity.Task;
 
 @Mapper
 @Repository
-public interface TaskMapper extends BaseMapper<Task> {
+public interface CrTaskMapper extends BaseMapper<Task> {
 
 	Task selectByMissionIdAndUserId(@Param("mission_id") String missionId,
 			@Param("user_id") String userId);

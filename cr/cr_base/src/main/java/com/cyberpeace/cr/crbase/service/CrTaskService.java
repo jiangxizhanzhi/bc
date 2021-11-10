@@ -2,7 +2,7 @@ package com.cyberpeace.cr.crbase.service;
 
 import com.cyberpeace.cr.crbase.dao.entity.Task;
 
-public interface TaskService {
+public interface CrTaskService {
 
 	void addTask(Task task);
 

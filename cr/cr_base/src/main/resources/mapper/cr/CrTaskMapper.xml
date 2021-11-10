@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.TaskMapper">
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper">
     <select id="selectByMissionIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.Task">
         select *
         from cr_task

@@ -4,27 +4,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.cr.crbase.dao.entity.Task;
-import com.cyberpeace.cr.crbase.dao.mapper.TaskMapper;
-import com.cyberpeace.cr.crbase.service.TaskService;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 
 @Service
-public class TaskServiceImpl implements TaskService {
+public class CrTaskServiceImpl implements CrTaskService {
 
 	@Autowired
-	private TaskMapper taskMapper;
+	private CrTaskMapper crTaskMapper;
 
 	@Override
 	public void addTask(Task task) {
-		taskMapper.insert(task);
+		crTaskMapper.insert(task);
 	}
 
 	@Override
 	public Task getById(String taskId) {
-		return taskMapper.selectById(taskId);
+		return crTaskMapper.selectById(taskId);
 	}
 
 	@Override
 	public Task getByMissionAndUser(String missionId, String userId) {
-		return taskMapper.selectByMissionIdAndUserId(missionId, userId);
+		return crTaskMapper.selectByMissionIdAndUserId(missionId, userId);
 	}
 }

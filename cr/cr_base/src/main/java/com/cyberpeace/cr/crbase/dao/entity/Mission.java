@@ -35,6 +35,8 @@ public class Mission extends BaseTable {
 
 	private String writeUp;
 
+	private Boolean showWriteup;
+
 	private Integer missionStage;
 
 	public enum MissionType {

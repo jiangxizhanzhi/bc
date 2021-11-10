@@ -2,7 +2,6 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +18,7 @@ import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeCategoryReq;
 import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
 import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;

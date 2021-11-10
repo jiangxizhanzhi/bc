@@ -68,12 +68,12 @@ public class WebLessonController {
 
 		CourseLesson lesson = courseLessonMapper.selectById(commentReq.getBusinessId());
 		if (null == lesson) {
-			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FIND);
 		}
 
 		Course course = courseMapper.selectById(lesson.getCourseId());
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 
 		Comment comment = BeanUtils.copy(commentReq, Comment.class);

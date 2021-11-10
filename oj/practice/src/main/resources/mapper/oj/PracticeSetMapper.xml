@@ -3,29 +3,78 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper">
 
-    <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSet">
-        select * from practice_set
-        where status = 1
-        <if test="practiceType != null">
-            and `practice_type` = #{practiceType}
-        </if>
-        <if test="pattern != null and pattern != ''">
-            <bind name="pattern" value="'%' + pattern + '%'"/>
-            and `name` like #{pattern}
-        </if>
+    <resultMap id="set" type="com.cyberpeace.oj.practice.dao.entity.PracticeSet"/>
+
+    <select id="getList" resultMap="set">
+        select * from oj_practice_set
+        <where>
+            <if test="practiceType != null">
+                `practice_type` = #{practiceType}
+            </if>
+            <if test="pattern != null and pattern != ''">
+                <bind name="pattern" value="'%' + pattern + '%'"/>
+                and `name` like #{pattern}
+            </if>
+        </where>
+
         order by id desc
     </select>
 
-    <update id="batchDelete">
-        update practice_set set status = 0
-        where resource_id in
-        <foreach collection="resource_ids" item="resource_id" open="(" close=")" separator=",">
-            #{resource_id}
-        </foreach>
-    </update>
+    <delete id="batchDelete">
+        delete from oj_practice_set
+        <where>
+            <if test="resourceIds != null and resourceIds.size() != 0">
+                <foreach collection="resourceIds" item="resourceId" open="(" close=")" separator=",">
+                    #{resourceId}
+                </foreach>
+            </if>
+        </where>
+    </delete>
 
     <select id="getAll" resultType="com.cyberpeace.oj.practice.service.externalBo.PracticeSetSimple">
         select * from practice_set where status = 1 and practice_type = 0 order by id desc
+    </select>
+
+    <select id="selectByAuthContext" resultType="java.lang.String">
+        select resource_id from oj_practice_set
+        <where>
+            <if test="authContext != null">
+                <choose>
+                    <when test="authContext.isWeb">
+                        (create_user_id = #{authContext.userId} or (read_auth_ids like #{authContext.likeOrganization}
+                        and read_auth_type = 2) or read_auth_type = 1)
+                    </when>
+                    <otherwise>
+                        (create_user_id = #{authContext.userId} or (operation_auth_ids like #{authContext.likeUser}
+                        and operation_auth_type = 2) or operation_auth_type = 1)
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <select id="pageByTypeAndName" resultMap="set">
+        select * from oj_practice_set
+        <where>
+            <if test="listQuery != null">
+                <if test="listQuery.setIds != null and listQuery.setIds.size() > 0">
+                    resource_id in
+                    <foreach collection="listQuery.setIds" separator="," item="setId" open="(" close=")">
+                       #{setId}
+                    </foreach>
+                </if>
+                <if test="listQuery.practiceType != null">
+                    and practice_type = #{listQuery.practiceType}
+                </if>
+                <if test="listQuery.pattern != null and listQuery.pattern != ''">
+                    <bind name="listQuery.pattern" value="'%' + listQuery.pattern + '%'"/>
+                    and `name` like #{listQuery.pattern}
+                </if>
+            </if>
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
+        </where>
     </select>
 
 </mapper>

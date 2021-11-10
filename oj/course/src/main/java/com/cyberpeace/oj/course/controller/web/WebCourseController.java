@@ -103,7 +103,7 @@ public class WebCourseController {
 
 		Course course = courseMapper.selectById(commentReq.getBusinessId());
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 
 		Comment comment = BeanUtils.copy(commentReq, Comment.class);

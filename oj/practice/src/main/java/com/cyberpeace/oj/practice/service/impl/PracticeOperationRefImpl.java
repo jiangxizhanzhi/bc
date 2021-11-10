@@ -15,11 +15,12 @@ import java.util.List;
 @Service
 @Slf4j
 public class PracticeOperationRefImpl extends ServiceImpl<PracticeOperationRefMapper, PracticeOperationRef> implements PracticeOperationRefService {
-    @Autowired
-    PracticeOperationRefMapper practiceOperationRefMapper;
 
-    @Override
-    public List<TestPaperPractice> getListByTestPaper(String testPaper) {
-        return practiceOperationRefMapper.getListByTestPaper(testPaper);
-    }
+	@Autowired
+	private PracticeOperationRefMapper practiceOperationRefMapper;
+
+	@Override
+	public List<TestPaperPractice> getListByTestPaper(String testPaper) {
+		return practiceOperationRefMapper.getListByTestPaper(testPaper);
+	}
 }

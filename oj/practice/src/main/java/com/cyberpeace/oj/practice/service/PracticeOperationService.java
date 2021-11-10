@@ -1,4 +1,7 @@
 package com.cyberpeace.oj.practice.service;
 
-public interface PracticeOperationService {
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+
+public interface PracticeOperationService extends IService<PracticeOperation> {
 }

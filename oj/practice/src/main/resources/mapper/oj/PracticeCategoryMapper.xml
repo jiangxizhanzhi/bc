@@ -5,12 +5,12 @@
 
     <resultMap id="category" type="com.cyberpeace.oj.practice.dao.entity.PracticeCategory"/>
 
-    <select id="getList" resultMap="category">
+    <select id="pageByTypeAndName" resultMap="category">
         select * from oj_practice_category
         <where>
             resource_id = code
-            <if test="practice_type != null">
-                and practice_type = #{practice_type}
+            <if test="practiceType != null">
+                and practice_type = #{practiceType}
             </if>
             <if test="pattern != null and pattern != ''">
                 <bind name="pattern" value="'%' + pattern + '%'"/>
@@ -20,27 +20,25 @@
         order by create_time desc
     </select>
 
-    <update id="batchDelete">
-        update practice_category set status = 0 where status = 1 and resource_id in
-        <foreach collection="resource_ids" item="resource_id" open="(" close=")" separator=",">
-            #{resource_id}
-        </foreach>
-    </update>
+    <select id="listByTypeAndName" resultMap="category">
+        select * from oj_practice_category
+        <where>
+            resource_id = code
+            <if test="practiceType != null">
+                and practice_type = #{practiceType}
+            </if>
+            <if test="pattern != null and pattern != ''">
+                <bind name="pattern" value="'%' + pattern + '%'"/>
+                and `name` like #{pattern}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
 
     <select id="selectByCode" resultMap="category">
         <bind name="code" value="code + ',' + '%'"/>
         select * from practice_category
         where `code` like #{code}
-    </select>
-
-    <select id="batchGetByCode" resultType="com.cyberpeace.oj.practice.service.bo.PracticeCategoryParent">
-        select * from practice_category where status = 1
-        <if test="codes.size() > 0">
-            and code in
-            <foreach collection="codes" item="code" separator="," open="(" close=")">
-                #{code}
-            </foreach>
-        </if>
     </select>
 
     <select id="getAll" resultType="com.cyberpeace.oj.practice.service.externalBo.PracticeCategorySimple">

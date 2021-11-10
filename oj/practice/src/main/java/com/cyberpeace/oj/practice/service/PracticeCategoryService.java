@@ -14,8 +14,6 @@ import java.util.List;
 
 public interface PracticeCategoryService extends IService<PracticeCategory> {
 
-    Integer batchDelete(List<String> resourceIds);
-
     /**
      * 根据类型和名称查询分类信息
      * @param page
@@ -26,7 +24,7 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
     IPage<CategoryListBo> pageByListQuery(Page page, CategoryListQuery query, Boolean children);
 
     /**
-     * 根据
+     * 根据分类编号查询分类信息
      * @param resourceId
      * @param children 是否查询子类信息
      * @return
@@ -54,4 +52,12 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
      * @return
      */
     String getCodeByParent(String parentId);
+
+    /**
+     * 查询列表
+     * @param listQuery
+     * @param children
+     * @return
+     */
+    List<CategoryListBo> listByTypeAndName(CategoryListQuery listQuery, Boolean children);
 }

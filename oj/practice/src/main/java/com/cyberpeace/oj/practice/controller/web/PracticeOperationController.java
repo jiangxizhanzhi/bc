@@ -28,10 +28,10 @@ import javax.validation.constraints.NotBlank;
 public class PracticeOperationController extends PracticeMixinController<PracticeOperation> {
 
 	@Autowired
-	PracticeOperationMapper practiceOperationMapper;
+	private PracticeOperationMapper practiceOperationMapper;
 
 	@Autowired
-	PracticeCategoryService practiceCategoryService;
+	private PracticeCategoryService practiceCategoryService;
 
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")

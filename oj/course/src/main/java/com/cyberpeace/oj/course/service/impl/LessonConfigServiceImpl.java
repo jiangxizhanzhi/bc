@@ -47,7 +47,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 		LessonConfig firstNode = lessonConfigMapper.getFirstNode(courseId);
 		List<LessonConfigBo> configBos = lessonConfigToBo(userId, courseId, isPublic);

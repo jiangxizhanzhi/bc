@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -35,14 +36,9 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	@Override
-	public Integer batchDelete(List<String> resourceIds) {
-		return practiceCategoryMapper.batchDelete(resourceIds);
-	}
-
-	@Override
 	public IPage<CategoryListBo> pageByListQuery(Page page, CategoryListQuery query,
 			Boolean children) {
-		IPage<PracticeCategory> categoryIPage = practiceCategoryMapper.getList(page,
+		IPage<PracticeCategory> categoryIPage = practiceCategoryMapper.pageByTypeAndName(page,
 				query.getPattern(), query.getPracticeType());
 
 		IPage<CategoryListBo> boIPage = categoryIPage
@@ -82,6 +78,17 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		return IDGeneratorUtil.getID();
 	}
 
+	@Override
+	public List<CategoryListBo> listByTypeAndName(CategoryListQuery listQuery, Boolean children) {
+		List<PracticeCategory> categoryList = practiceCategoryMapper
+				.listByTypeAndName(listQuery.getPracticeType(), listQuery.getPattern());
+
+		List<CategoryListBo> listBos = StreamApiUtils.simpleMap(categoryList,
+				practiceCategory -> entityToListBo(practiceCategory, children));
+
+		return listBos;
+	}
+
 	/**
 	 * 实体类转listBo
 	 * @param practiceCategory 习题分类实体类
@@ -104,7 +111,13 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<PracticeCategory> categoryList = practiceCategoryMapper
 				.selectByCode(practiceCategory.getCode());
 
-		List<CategoryListBo> listBos = StreamApiUtils.simpleMap(categoryList,
+		Map<String, List<PracticeCategory>> parentMap = StreamApiUtils.groupByColumn(
+				StreamApiUtils.simpleFilter(categoryList,
+						category -> StringUtils.isNotBlank(category.getParentId())),
+				PracticeCategory::getParentId);
+
+		List<PracticeCategory> childrenList = parentMap.get(practiceCategory.getResourceId());
+		List<CategoryListBo> listBos = StreamApiUtils.simpleMap(childrenList,
 				category -> entityToListBo(category, CommonConstant.TRUE));
 		listBo.setCategoryListBos(listBos);
 

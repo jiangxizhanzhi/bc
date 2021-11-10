@@ -1,28 +1,36 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import javax.validation.Valid;
+
+import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
-import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.practice.controller.req.PracticeSetAddReq;
+import com.cyberpeace.oj.practice.controller.req.PracticeSetPageReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeSetUpdateReq;
 import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Api(tags = "oj-后台习题集相关api")
 @RestController
@@ -73,5 +81,20 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	public BaseRsp<Integer> delete(@RequestBody @Valid ResourceDelReq delReq) {
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());
 		return new BaseRsp(result);
+	}
+
+	@ApiOperation("分页查询习题集")
+	@GetMapping("/list")
+	public ListRsp<PracticeSetRes> list(PracticeSetPageReq setPageReq) {
+
+		Page page = setPageReq.toPageParam();
+		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+		IPage<AdminPracticeSetBo> iPage = practiceSetService.selectByTypeAndName(page,
+				setPageReq.getPracticeType(), setPageReq.getPattern(), auth);
+
+		IPage<PracticeSetRes> resIPage = iPage.convert(
+				adminPracticeSetBo -> BeanUtils.copy(adminPracticeSetBo, PracticeSetRes.class));
+		return PageUtil.getListResult(resIPage);
 	}
 }

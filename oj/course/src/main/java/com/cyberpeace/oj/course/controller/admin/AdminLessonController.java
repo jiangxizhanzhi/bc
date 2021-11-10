@@ -122,7 +122,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		CourseLesson lesson = courseLessonMapper.selectById(resourceId);
 		if (null == lesson) {
-			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FIND);
 		}
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(lesson.getAttachmentIds(),
 				false);

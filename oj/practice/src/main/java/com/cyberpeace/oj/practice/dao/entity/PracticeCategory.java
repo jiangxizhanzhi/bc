@@ -49,7 +49,7 @@ public class PracticeCategory extends BaseTable {
 		THEORY(0, "理论基础"), OPERATION(2, "实践操作");
 
 		@Getter
-		private int code;
+		private Integer code;
 
 		@Getter
 		private String desc;

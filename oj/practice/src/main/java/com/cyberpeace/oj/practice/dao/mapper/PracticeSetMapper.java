@@ -1,30 +1,41 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.practice.dao.context.SetListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.service.externalBo.PracticeSetSimple;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Mapper
 public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
-    /**
-     * 查询获取习题集
-     */
-    IPage<PracticeSet> getList(Page page, @Param("practiceType") Integer type, @Param("pattern") String pattern);
+	/**
+	 * 查询所有习题库 #外部接口使用
+	 * @return
+	 */
+	List<PracticeSetSimple> getAll();
 
-    Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
+	/**
+	 * 根据权限获取可访问的资源数据
+	 * @param authContext
+	 * @return
+	 */
+	List<String> selectByAuthContext(@Param("authContext") AuthContext authContext);
 
-    /**
-     * 查询所有习题库 #外部接口使用
-     * @return
-     */
-    List<PracticeSetSimple> getAll();
-
+	/**
+	 * 根据类型和名称分页查询
+	 * @param page
+	 * @param listQuery
+	 * @param isPublic
+	 * @return
+	 */
+	IPage<PracticeSet> pageByTypeAndName(Page page, @Param("listQuery") SetListQuery listQuery,
+			@Param("isPublic") Boolean isPublic);
 }

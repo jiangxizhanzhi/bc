@@ -1,79 +1,41 @@
 package com.cyberpeace.oj.practice.controller.web;
 
-import javax.validation.constraints.NotBlank;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.practice.controller.req.PracticeCategoryReq;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
+import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
+import io.swagger.annotations.*;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
 
 @Api(tags = "练习分类")
 @RestController
-@RequestMapping("/oj/practice-category")
+@RequestMapping("/oj/practice/category")
 @RequiresAuthentication
 public class PracticeCategoryController {
 
-    @Autowired
-    PracticeCategoryService categoryService;
+	@Autowired
+	private PracticeCategoryService categoryService;
 
-    @ApiOperation("获取练习方向详情")
-    @GetMapping()
-    public BaseRsp<PracticeCategory> get(@ApiParam(name = "资源ID", required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
-        return new BaseRsp<>(categoryService.get(resourceId));
-    }
+	@ApiOperation("查询习题分类列表")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_type", value = "分类类型 0=理论基础 2=实践操作"),
+			@ApiImplicitParam(name = "pattern", value = "模糊搜索内容"),
+			@ApiImplicitParam(name = "children", value = "是否查询子分类") })
+	@GetMapping("/list")
+	public BaseRsp<List<CategoryListBo>> list(@RequestParam("practice_type") Integer practiceType,
+			@RequestParam("pattern") String pattern, @RequestParam("children") Boolean children) {
 
-    @ApiOperation("新增练习方向")
-    @PostMapping()
-    public BaseRsp<PracticeCategory> create(@RequestBody PracticeCategoryReq requestData) {
-        PracticeCategory object = new PracticeCategory();
-        object.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-        BeanUtils.copyProperties(requestData, object);
-        // TODO 具体使用标识待定
-        String code = RandomStringUtils.randomAlphanumeric(16);
+		CategoryListQuery listQuery = CategoryListQuery.builder().practiceType(practiceType)
+				.pattern(pattern).build();
 
-        // 设置节点标识.
-        if (requestData.getParent() != null) {
-            PracticeCategory parent = categoryService.getById(requestData.getParent());
-            if (parent == null) {
-                throw new ResourceNotFoundException(String.format("Category parent node[%s] is not found.", requestData.getParent()));
-            }
-            object.setCode(parent.getCode() + "|" + code);
-        } else {
-            object.setCode(code);
-        }
-
-        categoryService.save(object);
-        return new BaseRsp<>(object);
-    }
-
-    @ApiOperation("更新练习方向")
-    @PatchMapping()
-    public BaseRsp<PracticeCategory> partialUpdate(@RequestBody @Validated PracticeCategoryReq requestData) {
-        PracticeCategory object = new PracticeCategory();
-        BeanUtils.copyProperties(requestData, object);
-        categoryService.updateById(object);
-
-        object = categoryService.getById(object);
-        return new BaseRsp<>(object);
-    }
-
-    @ApiOperation("批量删除练习方向")
-    @DeleteMapping()
-    public BaseRsp<Boolean> batchDelete(@RequestBody @Validated ResourceDelReq requestData) {
-        return new BaseRsp<>(categoryService.batchDelete(requestData.getResourceIds()) >= 1);
-    }
+		List<CategoryListBo> boList = categoryService.listByTypeAndName(listQuery, children);
+		return new BaseRsp<>(boList);
+	}
 }

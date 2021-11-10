@@ -40,7 +40,7 @@ public class PracticeSet extends ReadAndOperation {
 		THEORY(0, "基础理论"), OPERATION(2, "实操练习");
 
 		@Getter
-		private int code;
+		private Integer code;
 
 		@Getter
 		private String desc;

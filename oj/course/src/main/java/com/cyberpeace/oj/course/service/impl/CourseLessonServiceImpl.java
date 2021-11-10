@@ -124,12 +124,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 		if (null == lesson) {
-			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FIND);
 		}
 
 		AdminLessonBo lessonInfoBo = BeanUtils.copy(lesson, AdminLessonBo.class);
@@ -217,7 +217,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (StringUtils.isNotBlank(courseLesson.getResourceId())) {
 			CourseLesson lesson = courseLessonMapper.selectById(courseLesson.getResourceId());
 			if (null == lesson) {
-				throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FOUND);
+				throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FIND);
 			}
 			paperContext.setPracticeList(practiceList);
 			paperContext.setResourceId(courseLesson.getPaperId());
@@ -289,7 +289,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public Boolean importLessons(String courseId, List<String> lessonIds) {
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);

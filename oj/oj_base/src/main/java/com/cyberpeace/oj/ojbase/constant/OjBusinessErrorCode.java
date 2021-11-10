@@ -8,13 +8,16 @@ package com.cyberpeace.oj.ojbase.constant;
 public interface OjBusinessErrorCode {
 
 	/** 对应的课程资源未找到*/
-	String COURSE_NOT_FOUND = "102001";
+	String COURSE_NOT_FIND = "102001";
 
 	/** 对应的课时资源未找到*/
-	String LESSON_NOT_FOUND = "102002";
+	String LESSON_NOT_FIND = "102002";
+
+	/** 习题集未找到*/
+	String PRACTICE_SET_NOT_FIND = "102006";
 
 	/** 关联的分类资源未找到*/
-	String RELATE_CATEGORY_NOT_FOUNT = "102003";
+	String RELATE_CATEGORY_NOT_FIND = "102003";
 
 	/** 数据重复插入*/
 	String DUPLICATE_EXCEPTION = "102004";

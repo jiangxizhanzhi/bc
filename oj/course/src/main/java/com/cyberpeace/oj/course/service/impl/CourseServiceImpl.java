@@ -75,7 +75,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	public CourseInfoBo selectById(String courseId, String userId) {
 		Course course = courseMapper.selectByCourse(courseId);
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 		CourseInfoBo courseInfoBo = courseToBo(course, true);
 		// 设置是否收藏
@@ -244,7 +244,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		Course existCourse = courseMapper.selectById(course.getResourceId());
 		if (null == existCourse) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 
 		course.setModifyUserId(userId);

@@ -118,7 +118,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
 		if (null == courseCategory) {
-			throw new BusinessException(OjBusinessErrorCode.RELATE_CATEGORY_NOT_FOUNT);
+			throw new BusinessException(OjBusinessErrorCode.RELATE_CATEGORY_NOT_FIND);
 		}
 
 		Course courseRsp = courseService.addCourse(userId, course);
@@ -148,7 +148,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 				.selectBatchIds(Arrays.asList(ArrayUtils.EMPTY_BOOLEAN_ARRAY));
 
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 		AdminCourseRes adminCourseRes = BeanUtils.copy(course, AdminCourseRes.class);
 		return new BaseRsp<>(adminCourseRes);

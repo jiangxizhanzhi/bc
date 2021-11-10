@@ -10,8 +10,8 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.cyberpeace.oj.practice.service.simpleBo.PracticeCategorySimple;
-import com.cyberpeace.oj.practice.service.simpleBo.PracticeSetSimple;
+import com.cyberpeace.oj.practice.service.externalBo.PracticeCategorySimple;
+import com.cyberpeace.oj.practice.service.externalBo.PracticeSetSimple;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,11 +19,10 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Api(tags = "外部接口-题库引用")
+@Api(tags = "oj-外部接口-题库引用")
 @RestController
 @RequestMapping("/oj/practice-external")
 public class ExternalController {

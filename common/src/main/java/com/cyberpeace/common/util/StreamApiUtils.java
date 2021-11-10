@@ -86,6 +86,9 @@ public class StreamApiUtils {
 	 * @return
 	 */
 	public static <E, T> List<T> simpleMap(Collection<E> collection, Function<E, T> mapperValue) {
+		if (CollectionUtils.isEmpty(collection)) {
+			return Lists.newArrayList();
+		}
 		return collection.stream().map(mapperValue).collect(Collectors.toList());
 	}
 

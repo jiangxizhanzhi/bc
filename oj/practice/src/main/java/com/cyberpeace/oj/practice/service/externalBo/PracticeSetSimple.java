@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.practice.service.simpleBo;
+package com.cyberpeace.oj.practice.service.externalBo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -6,7 +6,8 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class PracticeCategorySimple {
+public class PracticeSetSimple {
+
     @ApiModelProperty("标识")
     private String resourceId;
 
@@ -18,4 +19,5 @@ public class PracticeCategorySimple {
 
     @ApiModelProperty("更新时间")
     private Date updateTime;
+
 }

@@ -3,9 +3,8 @@ package com.cyberpeace.oj.practice.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.service.simpleBo.PracticeSetSimple;
+import com.cyberpeace.oj.practice.service.externalBo.PracticeSetSimple;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Mapper
-@Repository
 public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
     /**
@@ -23,6 +21,10 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
     Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
 
+    /**
+     * 查询所有习题库 #外部接口使用
+     * @return
+     */
     List<PracticeSetSimple> getAll();
 
 }

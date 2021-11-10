@@ -1,12 +1,12 @@
-package com.cyberpeace.oj.practice.controller;
+package com.cyberpeace.oj.practice.controller.web;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.practice.controller.req.PracticeDelReq;
+import com.cyberpeace.oj.practice.controller.PracticeMixinController;
+import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeOperationListReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeOperationReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -76,7 +76,7 @@ public class PracticeOperationController extends PracticeMixinController<Practic
 
 	@DeleteMapping()
 	@ApiOperation("批量删除实践操作")
-	public BaseRsp<Integer> batchDelete(@RequestBody PracticeDelReq requestData) {
+	public BaseRsp<Integer> batchDelete(@RequestBody ResourceDelReq requestData) {
 		return new BaseRsp<>(practiceOperationMapper.batchDelete(requestData.getResourceIds()));
 	}
 }

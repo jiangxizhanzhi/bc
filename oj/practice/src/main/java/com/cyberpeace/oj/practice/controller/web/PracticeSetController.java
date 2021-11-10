@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.practice.controller;
+package com.cyberpeace.oj.practice.controller.web;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -6,9 +6,10 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.practice.controller.req.PracticeDelReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeSetReq;
+import com.cyberpeace.oj.practice.controller.PracticeMixinController;
+import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
+import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
+import com.cyberpeace.oj.practice.controller.req.PracticeSetUpdateReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import io.swagger.annotations.Api;
@@ -41,16 +42,16 @@ public class PracticeSetController extends PracticeMixinController<PracticeSet> 
 
     @ApiOperation("获取习题集")
     @GetMapping("/list")
-    public BaseRsp<ListRsp<PracticeSet>> getList(PracticeListReq queryParams) {
+    public BaseRsp<ListRsp<PracticeSet>> getList(PracticeCategoryListReq queryParams) {
         IPage<PracticeSet> result = practiceSetMapper.getList(queryParams.toPageParam(), queryParams.getPracticeType(), queryParams.getPattern());
         return new BaseRsp<>(PageUtil.getListResult(result));
     }
 
     @ApiOperation("创建习题集")
     @PostMapping()
-    public BaseRsp<PracticeSet> create(@RequestBody PracticeSetReq requestData) {
+    public BaseRsp<PracticeSet> create(@RequestBody PracticeSetUpdateReq requestData) {
         PracticeSet object = new PracticeSet();
-        object.setCreateUser(UserInfoContext.getUserContext().getUserId());
+        object.setCreateUserId(UserInfoContext.getUserContext().getUserId());
         BeanUtils.copyProperties(requestData, object, "authOrganization", "shareTeachers");
         practiceSetMapper.insert(object);
         return new BaseRsp<>(object);
@@ -58,7 +59,7 @@ public class PracticeSetController extends PracticeMixinController<PracticeSet> 
 
     @ApiOperation("部分更新习题集")
     @PatchMapping()
-    public BaseRsp<PracticeSet> partialUpdate(@RequestBody PracticeSetReq requestData) {
+    public BaseRsp<PracticeSet> partialUpdate(@RequestBody PracticeSetUpdateReq requestData) {
         PracticeSet object = new PracticeSet();
         BeanUtils.copyProperties(requestData, object, "authOrganization", "shareTeachers");
         practiceSetMapper.updateById(object);
@@ -68,7 +69,7 @@ public class PracticeSetController extends PracticeMixinController<PracticeSet> 
 
     @ApiOperation("批量删除习题集")
     @DeleteMapping()
-    public BaseRsp<Integer> batchDelete(@RequestBody PracticeDelReq requestData) {
+    public BaseRsp<Integer> batchDelete(@RequestBody ResourceDelReq requestData) {
         return new BaseRsp<>(practiceSetMapper.batchDelete(requestData.getResourceIds()));
     }
 

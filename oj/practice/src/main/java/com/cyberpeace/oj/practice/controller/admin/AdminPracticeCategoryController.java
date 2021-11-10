@@ -1,0 +1,101 @@
+package com.cyberpeace.oj.practice.controller.admin;
+
+import javax.validation.Valid;
+
+import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.practice.controller.req.CategoryUpdateReq;
+import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
+import com.cyberpeace.oj.practice.controller.req.PracticeCategoryReq;
+import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
+import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
+@Api(tags = "oj-后台习题分类相关api")
+@RestController
+@RequiresAuthentication
+@RequestMapping("/oj/admin/practice/category")
+public class AdminPracticeCategoryController {
+
+	@Autowired
+	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private PracticeCategoryMapper practiceCategoryMapper;
+
+	@ApiOperation("分页查询练习分类")
+	@GetMapping("/list")
+	public ListRsp<CategoryListBo> list(@Valid PracticeCategoryListReq categoryListReq) {
+
+		Page page = categoryListReq.toPageParam();
+		CategoryListQuery query = BeanUtils.copy(categoryListReq, CategoryListQuery.class);
+
+		IPage<CategoryListBo> iPage = practiceCategoryService.pageByListQuery(page, query,
+				categoryListReq.getChildren());
+
+		return PageUtil.getListResult(iPage);
+	}
+
+	@ApiOperation("查询分类详情")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "分类编号"),
+			@ApiImplicitParam(name = "children", value = "是否查询子类") })
+	@GetMapping("")
+	public BaseRsp<CategoryListBo> get(@RequestParam("resource_id") String resourceId,
+			@RequestParam("children") Boolean children) {
+
+		CategoryListBo categoryListBo = practiceCategoryService.selectById(resourceId, children);
+		return new BaseRsp<>(categoryListBo);
+	}
+
+	@ApiOperation("修改分类信息")
+	@PatchMapping("")
+	public BaseRsp<Integer> update(@RequestBody @Valid CategoryUpdateReq updateReq) {
+
+		PracticeCategory category = BeanUtils.copy(updateReq, PracticeCategory.class);
+		String code = practiceCategoryService.getCodeByParent(updateReq.getParentId());
+		category.setCode(code);
+
+		Integer result = practiceCategoryService.updateCategory(category);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("新增分类信息")
+	@PostMapping("")
+	public BaseRsp<Integer> add(@RequestBody @Valid PracticeCategoryReq categoryReq) {
+
+		PracticeCategory practiceCategory = BeanUtils.copy(categoryReq, PracticeCategory.class);
+		String code = practiceCategoryService.getCodeByParent(categoryReq.getParentId());
+		practiceCategory.setCode(code);
+
+		Integer result = practiceCategoryService.addCategory(practiceCategory,
+				UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>(result);
+
+	}
+
+	@ApiOperation("批量删除分类信息")
+	@DeleteMapping("")
+	public BaseRsp<Integer> delete(@RequestBody @Valid ResourceDelReq delReq) {
+
+		int result = practiceCategoryMapper.deleteBatchIds(delReq.getResourceIds());
+		return new BaseRsp<>(result);
+	}
+
+}

@@ -6,8 +6,8 @@
     <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.Course"/>
 
     <sql id="share_constant">
-        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.oj.course.constant.CourseAuthShare@ALL.code"/>
-        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.oj.course.constant.CourseAuthShare@CUSTOM.code"/>
+        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation.AuthShare@ALL.code"/>
+        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation.AuthShare@CUSTOM.code"/>
     </sql>
 
     <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">

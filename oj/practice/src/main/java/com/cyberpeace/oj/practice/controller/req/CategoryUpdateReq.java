@@ -1,0 +1,25 @@
+package com.cyberpeace.oj.practice.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+@Data
+@ApiModel
+public class CategoryUpdateReq implements Serializable {
+
+    @ApiModelProperty("名称")
+    @NotBlank
+    private String name;
+
+    @ApiModelProperty("编号")
+    @NotBlank
+    private String resourceId;
+
+    @ApiModelProperty("父级编号")
+    private String parentId;
+
+}

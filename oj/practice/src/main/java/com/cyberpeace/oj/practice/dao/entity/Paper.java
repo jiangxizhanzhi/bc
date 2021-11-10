@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.oj.practice.constant.Auth;
-import com.cyberpeace.oj.practice.constant.Share;
 import com.cyberpeace.oj.practice.constant.PaperType;
 import lombok.Data;
 

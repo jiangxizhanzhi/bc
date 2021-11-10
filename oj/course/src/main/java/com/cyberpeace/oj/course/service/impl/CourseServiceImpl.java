@@ -8,11 +8,11 @@ import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
-import com.cyberpeace.oj.ojbase.constant.AuthShare;
+import com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation;
+import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -37,7 +37,6 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
-import com.cyberpeace.oj.ojbase.constant.CollectionType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.google.common.collect.Lists;
@@ -82,7 +81,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 设置是否收藏
 
 		Boolean collection = resourceCollectionService.selectByUnique(userId,
-				CollectionType.COURSE.getCode(), courseId);
+				ResourceCollection.BusinessType.COURSE.getCode(), courseId);
 		courseInfoBo.setIsCollection(collection);
 		return courseInfoBo;
 	}
@@ -184,12 +183,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			CourseAdminBo courseAdminBo = BeanUtils.copy(courseInfoBo, CourseAdminBo.class);
 			courseAdminBo.setAuth(course.getReadAuthType());
 			courseAdminBo.setShare(course.getOperationAuthType());
-			if (course.getReadAuthType().intValue() == AuthShare.CUSTOM.getCode().intValue()) {
+			if (course.getReadAuthType().intValue() == ReadAndOperation.AuthShare.CUSTOM.getCode().intValue()) {
 				List<String> orgs = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
 						String.class);
 				courseAdminBo.setAuthCount(orgs.size());
 			}
-			if (course.getOperationAuthType().intValue() == AuthShare.CUSTOM.getCode().intValue()) {
+			if (course.getOperationAuthType().intValue() == ReadAndOperation.AuthShare.CUSTOM.getCode().intValue()) {
 				List<String> shares = JsonUtil.toJsonObjectArray(course.getOperationAuthIds(),
 						String.class);
 				courseAdminBo.setAuthCount(shares.size());
@@ -223,11 +222,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		course.setResourceId(IDGeneratorUtil.getID());
 
 		// 组装课程目录
-		AddLessonConfigContext configContext = AddLessonConfigContext.builder().courseId(course.getResourceId()).nodeType(LessonConfigType.NODE_COURSE.getCode()).build();
+		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
+				.courseId(course.getResourceId()).nodeType(LessonConfigType.NODE_COURSE.getCode())
+				.build();
 		LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
 
-		//执行事务存储
+		// 执行事务存储
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				courseMapper.insert(course);

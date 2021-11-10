@@ -1,34 +1,33 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.constant.AuthShare;
-import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
-import com.cyberpeace.oj.ojbase.dao.entity.Comment;
-import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
-import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
-import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
+import java.util.List;
+import java.util.Map;
+
+import com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.NoteType;
+import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
+import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.bo.ReportBo;
-
-import java.util.List;
-import java.util.Map;
+import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
+import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 
 @Service
 public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements NoteService {
@@ -54,8 +53,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	@Override
 	public Note addNote(NoteAddContext noteAddContext) {
 		Note note = BeanUtils.copy(noteAddContext, Note.class);
-		note.setReadAuthType(AuthShare.ALL.getCode());
-		note.setOperationAuthType(AuthShare.ALL.getCode());
+		note.setReadAuthType(ReadAndOperation.AuthShare.ALL.getCode());
+		note.setOperationAuthType(ReadAndOperation.AuthShare.ALL.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
 		updateOrSave(note);
 		return note;

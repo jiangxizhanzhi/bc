@@ -15,6 +15,9 @@ public interface CommonConstant {
     /** 整数一*/
     Integer ONE = 1;
 
+    /** 整数二*/
+    Integer TWO = 2;
+
     Boolean TRUE = true;
 
     Boolean FALSE = false;

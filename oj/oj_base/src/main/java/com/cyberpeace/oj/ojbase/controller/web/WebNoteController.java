@@ -2,11 +2,6 @@ package com.cyberpeace.oj.ojbase.controller.web;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.oj.ojbase.constant.AuthShare;
-import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
-import com.cyberpeace.oj.ojbase.controller.req.NoteUpdateReq;
-import com.cyberpeace.oj.ojbase.dao.entity.Note;
-import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +10,13 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.ojbase.controller.req.GetNoteReq;
+import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
+import com.cyberpeace.oj.ojbase.controller.req.NoteUpdateReq;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
+import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

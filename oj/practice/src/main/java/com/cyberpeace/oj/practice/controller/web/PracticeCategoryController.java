@@ -1,17 +1,7 @@
-package com.cyberpeace.oj.practice.controller;
+package com.cyberpeace.oj.practice.controller.web;
 
-import com.cyberpeace.common.exception.ResourceNotFoundException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.practice.controller.req.PracticeCategoryReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeDelReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeListReq;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.service.PracticeCategoryService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import javax.validation.constraints.NotBlank;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
@@ -19,7 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.practice.controller.req.PracticeCategoryReq;
+import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "练习分类")
 @RestController
@@ -36,17 +36,11 @@ public class PracticeCategoryController {
         return new BaseRsp<>(categoryService.get(resourceId));
     }
 
-    @ApiOperation("获取练习方向列表")
-    @GetMapping("/list")
-    public BaseRsp<ListRsp<PracticeCategory>> getList(PracticeListReq queryParams) {
-        return new BaseRsp<>(categoryService.search(queryParams));
-    }
-
     @ApiOperation("新增练习方向")
     @PostMapping()
     public BaseRsp<PracticeCategory> create(@RequestBody PracticeCategoryReq requestData) {
         PracticeCategory object = new PracticeCategory();
-        object.setCreateUser(UserInfoContext.getUserContext().getUserId());
+        object.setCreateUserId(UserInfoContext.getUserContext().getUserId());
         BeanUtils.copyProperties(requestData, object);
         // TODO 具体使用标识待定
         String code = RandomStringUtils.randomAlphanumeric(16);
@@ -79,7 +73,7 @@ public class PracticeCategoryController {
 
     @ApiOperation("批量删除练习方向")
     @DeleteMapping()
-    public BaseRsp<Boolean> batchDelete(@RequestBody @Validated PracticeDelReq requestData) {
+    public BaseRsp<Boolean> batchDelete(@RequestBody @Validated ResourceDelReq requestData) {
         return new BaseRsp<>(categoryService.batchDelete(requestData.getResourceIds()) >= 1);
     }
 }

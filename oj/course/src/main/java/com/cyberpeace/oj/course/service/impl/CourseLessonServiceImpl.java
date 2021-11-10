@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.*;
-import com.cyberpeace.oj.ojbase.constant.CollectionType;
+import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.constant.PaperType;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
@@ -16,12 +16,10 @@ import com.cyberpeace.oj.practice.service.bo.AddOrUpdatePaperContext;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -101,7 +99,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 是否收藏
 		Boolean collection = resourceCollectionService.selectByUnique(userId,
-				CollectionType.LESSON.getCode(), lessonId);
+				ResourceCollection.BusinessType.LESSON.getCode(), lessonId);
 		infoBo.setIsCollection(collection);
 
 		// TODO 获取场景信息
@@ -164,7 +162,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// TODO 场景数据新增
 
-
 		// 执行数据插入
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -195,6 +192,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// TODO 场景数据修改
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				paperService.createOrUpdate(paperContext);

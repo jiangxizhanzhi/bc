@@ -3,17 +3,21 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper">
 
-    <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
-        select `id`, `resource_id`, `name`, `create_time`, `update_time`, `code`
-        from practice_category where status = 1 and code not like '%|%'
-        <if test="practice_type != null">
-            and practice_type = #{practice_type}
-        </if>
-        <if test="pattern != null and pattern != ''">
-            <bind name="pattern" value="'%' + pattern + '%'"/>
-            and `name` like #{pattern}
-        </if>
-        order by id desc
+    <resultMap id="category" type="com.cyberpeace.oj.practice.dao.entity.PracticeCategory"/>
+
+    <select id="getList" resultMap="category">
+        select * from oj_practice_category
+        <where>
+            resource_id = code
+            <if test="practice_type != null">
+                and practice_type = #{practice_type}
+            </if>
+            <if test="pattern != null and pattern != ''">
+                <bind name="pattern" value="'%' + pattern + '%'"/>
+                and `name` like #{pattern}
+            </if>
+        </where>
+        order by create_time desc
     </select>
 
     <update id="batchDelete">
@@ -23,9 +27,10 @@
         </foreach>
     </update>
 
-    <select id="containsByCode" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeCategory">
-        <bind name="code" value="code + '|' + '%'"/>
-        select * from practice_category where status = 1 and code like #{code}
+    <select id="selectByCode" resultMap="category">
+        <bind name="code" value="code + ',' + '%'"/>
+        select * from practice_category
+        where `code` like #{code}
     </select>
 
     <select id="batchGetByCode" resultType="com.cyberpeace.oj.practice.service.bo.PracticeCategoryParent">
@@ -38,7 +43,7 @@
         </if>
     </select>
 
-    <select id="getAll" resultType="com.cyberpeace.oj.practice.service.simpleBo.PracticeCategorySimple">
+    <select id="getAll" resultType="com.cyberpeace.oj.practice.service.externalBo.PracticeCategorySimple">
         select `id`, `resource_id`, `name`, `create_time`, `update_time`, `code`
         from practice_category where status = 1 and practice_type = 0 and code not like '%|%' order by id desc
     </select>

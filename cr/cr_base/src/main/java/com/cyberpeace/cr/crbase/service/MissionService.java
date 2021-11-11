@@ -16,4 +16,6 @@ public interface MissionService extends IService<Mission> {
 	List<Mission> batchGetByRoom(String roomId);
 
 	void updateShowWriteup(String missionId, Boolean showWriteup);
+
+	boolean isObjectiveMission(Mission mission);
 }

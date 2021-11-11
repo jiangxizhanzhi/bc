@@ -3,7 +3,6 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 
 public interface CrTaskService {
@@ -34,4 +33,166 @@ public interface CrTaskService {
 	 * @return List<Task>  实例列表
 	 */
 	List<TaskContext> getByRoomIdAndUser(String roomId, String userId);
+
+	/**
+	 * 用户开始任务
+	 * @param task
+	 */
+	void startTask(CrTask task);
+
+	/**
+	 * 用户提交答案时更新
+	 * @param task
+	 * @param answer
+	 * @param score
+	 * @param taskStatus
+	 */
+	void updateWhenSubmit(CrTask task, String answer, Integer score, Integer taskStatus);
+
+	/**
+	 * 判分后更新
+	 * @param task
+	 * @param score
+	 * @param taskStatus
+	 */
+	void updateWhenEvaluate(CrTask task, Integer score, Integer taskStatus);
+
+	/**
+	 * 根据用户id和MissionId查出唯一对应的task
+	 * @param userId
+	 * @param missionId
+	 * @return
+	 */
+	CrTask getByUserIdAndMissionId(String userId, String missionId);
+
+	/**
+	 * 查询某房间某用户的task
+	 * @param userId
+	 * @param roomId
+	 * @return
+	 */
+	List<CrTask> getByRoomIdAndUserId(String roomId, String userId);
+
+	/**
+	 * 统计某用户在某房间的task总数
+	 * @param userId
+	 * @param roomId
+	 * @return
+	 */
+	Integer countByRoomIdAndUserId(String roomId, String userId);
+
+	/**
+	 * 查询某房间完成的task
+	 * @param roomId
+	 * @return
+	 */
+	List<CrTask> getFinished(String roomId);
+
+	/**
+	 * 统计某房间完成的task数量
+	 * @param roomId
+	 * @return
+	 */
+	Integer countFinished(String roomId);
+
+	/**
+	 * 统计某房间未提交的task数量
+	 * @param roomId
+	 * @return
+	 */
+	Integer countNotSubmitted(String roomId);
+
+	/**
+	 * 统计某房间未完成的task数量
+	 * @param roomId
+	 * @return
+	 */
+	Integer countNotFinished(String roomId);
+
+	/**
+	 * 统计某用户在某房间完成的task数量
+	 * @param roomId
+	 * @param userId
+	 * @return
+	 */
+	Integer countFinishedByRoomIdAndUserId(String roomId, String userId);
+
+	/**
+	 * 查询某用户在某房间完成的task
+	 * @param roomId
+	 * @param userId
+	 * @return
+	 */
+	List<CrTask> getFinishedByRoomIdAndUserId(String roomId, String userId);
+
+	/**
+	 * 查询某房间的task
+	 * @param roomId
+	 * @return
+	 */
+	List<CrTask> getByRoomId(String roomId);
+
+	/**
+	 * 查询某角色在某房间的task
+	 * @param roleId
+	 * @return
+	 */
+	List<CrTask> getByRole(String roleId);
+
+	/**
+	 * 查询多个角色在某房间的task
+	 * @param roleIds
+	 * @return
+	 */
+	List<CrTask> getByRoles(List<String> roleIds);
+
+	/**
+	 * 查询某房间多个mission对应的task
+	 * @param roomId
+	 * @param missionIds
+	 * @return
+	 */
+	List<CrTask> getByMissions(String roomId, List<String> missionIds);
+
+	/**
+	 * 查询某房间多个用户提交的多个mission对应的task
+	 * @param roomId
+	 * @param userIds
+	 * @param missionIds
+	 * @return
+	 */
+	List<CrTask> getReportedByUserIdsAndMissions(String roomId, List<String> userIds,
+			List<String> missionIds);
+
+	/**
+	 * 统计该房间多个用户未提交的task数量
+	 * @param roomId 
+	 * @param userIds
+	 * @return
+	 */
+	Integer countUnreportedByUsers(String roomId, List<String> userIds);
+
+	/**
+	 * 判断某房间某mission是否下发
+	 * @param missionId
+	 * @return
+	 */
+	boolean isReleasedByMission(String missionId);
+
+	/**
+	 * 查询某房间多个用户拥有的task的Id列表
+	 * @param roomId 
+	 * @param userIds
+	 * @return
+	 */
+	List<String> getIdsByUserIds(String roomId, List<String> userIds);
+
+	/**
+	 * 查询某房间某用户的task的id列表
+	 * @param roomId 
+	 * @param userId
+	 * @return
+	 */
+	List<String> getIdsByOptionalUserId(String roomId, String userId);
+
 }

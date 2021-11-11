@@ -35,7 +35,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public TaskContext getByMissionAndUser(String missionId, String userId) {
-		CrTask task = crTaskMapper.selectByMissionIdAndUserId(missionId, userId);
+		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 		TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
 		taskContext.setMission(missionService.getById(task.getMissionId()));
 
@@ -50,5 +50,125 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public List<TaskContext> getByRoomIdAndUser(String roomId, String userId) {
 		return new ArrayList<>();
+	}
+
+	@Override
+	public void startTask(CrTask task) {
+		task.setStatus(CrTask.TaskStatus.STARTED.getCode());
+		crTaskMapper.updateById(task);
+	}
+
+	@Override
+	public void updateWhenSubmit(CrTask task, String answer, Integer score, Integer taskStatus) {
+		task.setUserAnswer(answer);
+		task.setScore(score);
+		task.setStatus(taskStatus);
+
+		crTaskMapper.updateById(task);
+	}
+
+	@Override
+	public void updateWhenEvaluate(CrTask task, Integer score, Integer taskStatus) {
+		task.setScore(score);
+		task.setStatus(taskStatus);
+
+		crTaskMapper.updateById(task);
+	}
+
+	@Override
+	public CrTask getByUserIdAndMissionId(String userId, String missionId) {
+		return crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
+	}
+
+	@Override
+	public List<CrTask> getByRoomIdAndUserId(String roomId, String userId) {
+		return crTaskMapper.selectByRoomIdAndUserId(roomId, userId);
+	}
+
+	@Override
+	public Integer countByRoomIdAndUserId(String roomId, String userId) {
+		return crTaskMapper.countByRoomIdAndUserId(roomId, userId);
+	}
+
+	@Override
+	public List<CrTask> getFinished(String roomId) {
+		return crTaskMapper.selectByRoomIdAndStatusList(roomId,
+				CrTask.TaskStatus.getFINISHED_STATUS_LIST());
+	}
+
+	@Override
+	public Integer countFinished(String roomId) {
+		return crTaskMapper.countByRoomIdAndStatusList(roomId,
+				CrTask.TaskStatus.getFINISHED_STATUS_LIST());
+	}
+
+	@Override
+	public Integer countNotSubmitted(String roomId) {
+		return crTaskMapper.countByRoomIdAndStatusList(roomId,
+				CrTask.TaskStatus.getNOT_SUBMITTED_STATUS_LIST());
+	}
+
+	@Override
+	public Integer countNotFinished(String roomId) {
+		return crTaskMapper.countByRoomIdAndStatusList(roomId,
+				CrTask.TaskStatus.getNOT_FINISHED_STATUS_LIST());
+	}
+
+	@Override
+	public Integer countFinishedByRoomIdAndUserId(String roomId, String userId) {
+		return crTaskMapper.countByRoomIdAndUserIdAndStatusList(roomId, userId,
+				CrTask.TaskStatus.getFINISHED_STATUS_LIST());
+	}
+
+	@Override
+	public List<CrTask> getFinishedByRoomIdAndUserId(String roomId, String userId) {
+		return crTaskMapper.selectByRoomIdAndUserIdAndStatusList(roomId, userId,
+				CrTask.TaskStatus.getFINISHED_STATUS_LIST());
+	}
+
+	@Override
+	public List<CrTask> getByRoomId(String roomId) {
+		return crTaskMapper.selectByRoomId(roomId);
+	}
+
+	@Override
+	public List<CrTask> getByRole(String roleId) {
+		return crTaskMapper.selectByRole(roleId);
+	}
+
+	@Override
+	public List<CrTask> getByRoles(List<String> roleIds) {
+		return crTaskMapper.selectByRoles(roleIds);
+	}
+
+	@Override
+	public List<CrTask> getByMissions(String roomId, List<String> missionIds) {
+		return crTaskMapper.selectByRoomIdAndMissionIds(roomId, missionIds);
+	}
+
+	@Override
+	public List<CrTask> getReportedByUserIdsAndMissions(String roomId, List<String> userIds,
+			List<String> missionIds) {
+		return crTaskMapper.selectReportedByUserIdsAndMissionIds(roomId, userIds, missionIds);
+	}
+
+	@Override
+	public Integer countUnreportedByUsers(String roomId, List<String> userIds) {
+		return crTaskMapper.countUnreportedByRoomIdAndUserIds(roomId, userIds);
+	}
+
+	@Override
+	public boolean isReleasedByMission(String missionId) {
+		return crTaskMapper.selectByMissionId(missionId) != null;
+	}
+
+	@Override
+	public List<String> getIdsByUserIds(String roomId, List<String> userIds) {
+		return crTaskMapper.selectIdsByRoomIdAndUserIds(roomId, userIds);
+	}
+
+	@Override
+	public List<String> getIdsByOptionalUserId(String roomId, String userId) {
+		return crTaskMapper.selectIdsByRoomIdAndUserId(roomId, userId);
 	}
 }

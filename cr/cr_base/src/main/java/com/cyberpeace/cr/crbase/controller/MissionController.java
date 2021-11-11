@@ -2,8 +2,6 @@ package com.cyberpeace.cr.crbase.controller;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.controller.req.MissionModifyReq;
-import com.cyberpeace.cr.crbase.service.impl.MissionServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cr.crbase.controller.req.MissionModifyReq;
 import com.cyberpeace.cr.crbase.controller.req.MissionReq;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
@@ -23,8 +22,6 @@ import com.cyberpeace.cr.crbase.service.MissionService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import javax.xml.transform.Result;
 
 @Api(tags = "任务相关接口")
 @RestController
@@ -49,8 +46,9 @@ public class MissionController {
 
 	@ApiOperation("前台更新任务")
 	@PutMapping("/missions")
-	public BaseRsp<Mission> updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
-		if(StringUtils.isBlank(missionModifyReq.getResourceId())) {
+	public BaseRsp<Mission>
+			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
+		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
 			throw new RuntimeException();
 		}
 
@@ -60,7 +58,7 @@ public class MissionController {
 		Mission result = missionService.getById(toUpdateMission.getResourceId());
 
 		return new BaseRsp(result);
- 	}
+	}
 
 	private Mission requestToMission(MissionReq missionReq) {
 		Mission mission = BeanUtils.copy(missionReq, Mission.class);
@@ -75,13 +73,13 @@ public class MissionController {
 
 	private Mission requestToMission(MissionModifyReq missionModifyReq) {
 		Mission mission = missionService.getById(missionModifyReq.getResourceId());
-		if(StringUtils.isNotBlank(missionModifyReq.getTitle())) {
+		if (StringUtils.isNotBlank(missionModifyReq.getTitle())) {
 			mission.setTitle(missionModifyReq.getTitle());
 		}
-		if((missionModifyReq.getScore() != null)) {
+		if ((missionModifyReq.getScore() != null)) {
 			mission.setScore(missionModifyReq.getScore());
 		}
-		if(missionModifyReq.getSkillPoints() != null) {
+		if (missionModifyReq.getSkillPoints() != null) {
 			mission.setSkillPoints(JSON.toJSONString(missionModifyReq.getTitle()));
 		}
 
@@ -99,7 +97,4 @@ public class MissionController {
 
 		return new BaseRsp(data);
 	}
-
-//	@ApiOperation("获取任务类型")
-//	@PostMapping("/")
 }

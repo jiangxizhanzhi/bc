@@ -42,8 +42,8 @@ public class CrTaskSubmit extends BaseTable {
 	private Integer missionScore;
 
 	public enum EvaluateStatus {
-		WAIT(0, "待评估"), SUCCESS(1, "成功"),
-		FAIL(2, "失败"), REJECT(3, "驳回");
+
+		WAIT(0, "待评估"), SUCCESS(1, "成功"), FAIL(2, "失败"), REJECT(3, "驳回");
 
 		@Getter
 		private Integer code;

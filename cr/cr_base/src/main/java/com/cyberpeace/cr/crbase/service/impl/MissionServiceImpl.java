@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public boolean isObjectiveMission(Mission mission) {
-
 
 		return Mission.MissionType.getOBJECTIVE_TYPE_LIST().contains(mission.getType());
 	}

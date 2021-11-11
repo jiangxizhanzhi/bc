@@ -86,7 +86,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return null;
 	}
 
-
 	@Override
 	public ListRsp<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();

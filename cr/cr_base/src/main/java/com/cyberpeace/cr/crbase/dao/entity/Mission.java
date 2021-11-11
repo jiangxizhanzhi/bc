@@ -66,9 +66,8 @@ public class Mission extends BaseTable {
 				Arrays.asList(JUDGE.getCode(), SINGLE_CHOICE.getCode(), MULTIPLE_CHOICE.getCode(),
 						FILE.getCode()));
 
-
-
 	}
+
 	public Boolean isObjective() {
 		boolean result = type.intValue() == MissionType.JUDGE.code;
 		result = result || (type.intValue() == MissionType.SINGLE_CHOICE.code);

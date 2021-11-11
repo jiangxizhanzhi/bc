@@ -1,17 +1,18 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 
 @Mapper
 @Repository
 public interface CrTaskSubmitMapper extends BaseMapper<CrTaskSubmit> {
 
-    List<CrTaskSubmit> selectByRoomId(String roomId);
+	List<CrTaskSubmit> selectByRoomId(String roomId);
 
-    CrTaskSubmit selectLastByTaskId(String taskId);
+	CrTaskSubmit selectLastByTaskId(String taskId);
 }

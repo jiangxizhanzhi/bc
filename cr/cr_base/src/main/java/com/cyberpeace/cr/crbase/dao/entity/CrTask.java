@@ -12,7 +12,7 @@ import lombok.Getter;
 
 @Data
 @TableName("cr_task")
-public class Task extends BaseTable {
+public class CrTask extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;

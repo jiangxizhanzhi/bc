@@ -13,5 +13,7 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 @Repository
 public interface MissionMapper extends BaseMapper<Mission> {
 
-	List<Mission> batchGet(@Param("resource_ids") List<String> resourceIds);
+	List<Mission> batchGet(@Param("resourceIds") List<String> resourceIds);
+
+	List<Mission> batchGetByRoom(String roomId);
 }

@@ -5,9 +5,14 @@
     <select id="batchGet" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
         select * from cr_mission
         where resource_id in
-        <foreach collection="resource_ids" item="resource_id" separator="," open="(" close=")">
-            #{resource_id}
+        <foreach collection="resourceIds" item="resourceId" separator="," open="(" close=")">
+            #{resourceId}
         </foreach>
+    </select>
+    <select id="batchGetByRoom" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
+        select *
+        from cr_mission
+        where room_id = #{roomId}
     </select>
 
 </mapper>

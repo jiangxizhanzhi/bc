@@ -5,12 +5,12 @@ import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.Task;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 
 @Mapper
 @Repository
-public interface CrTaskMapper extends BaseMapper<Task> {
+public interface CrTaskMapper extends BaseMapper<CrTask> {
 
-	Task selectByMissionIdAndUserId(@Param("mission_id") String missionId,
-			@Param("user_id") String userId);
+	CrTask selectByMissionIdAndUserId(@Param("mission_id") String missionId,
+									  @Param("user_id") String userId);
 }

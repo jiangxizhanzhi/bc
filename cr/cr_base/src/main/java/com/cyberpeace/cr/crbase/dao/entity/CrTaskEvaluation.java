@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 @TableName("cr_task_evaluation")
-public class TaskEvaluation extends BaseTable {
+public class CrTaskEvaluation extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;

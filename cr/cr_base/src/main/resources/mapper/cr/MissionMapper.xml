@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.MissionMapper">
-    <select id="batchGet" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
+    <select id="batchSelect" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
         select * from cr_mission
         where resource_id in
         <foreach collection="resourceIds" item="resourceId" separator="," open="(" close=")">
             #{resourceId}
         </foreach>
     </select>
-    <select id="batchGetByRoom" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
+    <select id="batchSelectByRoom" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
         select *
         from cr_mission
         where room_id = #{roomId}

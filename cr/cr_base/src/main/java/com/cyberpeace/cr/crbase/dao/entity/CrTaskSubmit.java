@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 @TableName("cr_task_submit")
@@ -39,5 +40,21 @@ public class CrTaskSubmit extends BaseTable {
 	private Integer score;
 
 	private Integer missionScore;
+
+	public enum EvaluateStatus {
+		WAIT(0, "待评估"), SUCCESS(1, "成功"),
+		FAIL(2, "失败"), REJECT(3, "驳回");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		EvaluateStatus(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 
 }

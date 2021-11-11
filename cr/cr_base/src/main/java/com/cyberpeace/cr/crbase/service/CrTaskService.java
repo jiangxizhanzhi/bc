@@ -195,4 +195,6 @@ public interface CrTaskService {
 	 */
 	List<String> getIdsByOptionalUserId(String roomId, String userId);
 
+	Boolean updateTask(CrTask task);
+
 }

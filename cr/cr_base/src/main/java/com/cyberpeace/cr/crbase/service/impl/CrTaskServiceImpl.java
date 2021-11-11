@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +11,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 
 @Service
@@ -21,7 +22,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	private CrTaskMapper crTaskMapper;
 
 	@Autowired
-	private MissionService missionService;
+	private MissionMapper missionMapper;
 
 	@Override
 	public void addTask(CrTask crTask) {
@@ -37,7 +38,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	public TaskContext getByMissionAndUser(String missionId, String userId) {
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 		TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
-		taskContext.setMission(missionService.getById(task.getMissionId()));
+		taskContext.setMission(missionMapper.selectById(task.getMissionId()));
 
 		return taskContext;
 	}
@@ -93,37 +94,37 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public List<CrTask> getFinished(String roomId) {
 		return crTaskMapper.selectByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.getFINISHED_STATUS_LIST());
+				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
 	@Override
 	public Integer countFinished(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.getFINISHED_STATUS_LIST());
+				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
 	@Override
 	public Integer countNotSubmitted(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.getNOT_SUBMITTED_STATUS_LIST());
+				CrTask.TaskStatus.NOT_SUBMITTED_STATUS_LIST);
 	}
 
 	@Override
 	public Integer countNotFinished(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.getNOT_FINISHED_STATUS_LIST());
+				CrTask.TaskStatus.UNFINISHED_STATUS_LIST);
 	}
 
 	@Override
 	public Integer countFinishedByRoomIdAndUserId(String roomId, String userId) {
 		return crTaskMapper.countByRoomIdAndUserIdAndStatusList(roomId, userId,
-				CrTask.TaskStatus.getFINISHED_STATUS_LIST());
+				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
 	@Override
 	public List<CrTask> getFinishedByRoomIdAndUserId(String roomId, String userId) {
 		return crTaskMapper.selectByRoomIdAndUserIdAndStatusList(roomId, userId,
-				CrTask.TaskStatus.getFINISHED_STATUS_LIST());
+				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
 	@Override
@@ -170,5 +171,16 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public List<String> getIdsByOptionalUserId(String roomId, String userId) {
 		return crTaskMapper.selectIdsByRoomIdAndUserId(roomId, userId);
+	}
+
+	@Override
+	public Boolean updateTask(CrTask task) {
+		if (StringUtils.isBlank(task.getResourceId())) {
+			return false;
+		}
+
+		crTaskMapper.updateById(task);
+
+		return true;
 	}
 }

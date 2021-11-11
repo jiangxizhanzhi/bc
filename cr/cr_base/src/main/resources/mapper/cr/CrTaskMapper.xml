@@ -5,8 +5,8 @@
     <select id="selectByUserIdAndMissionId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
         select *
         from cr_task
-        where mission_id = #{mission_id}
-          and user_id = #{user_id}
+        where mission_id = #{missionId}
+          and user_id = #{userId}
     </select>
 
     <select id="selectByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">

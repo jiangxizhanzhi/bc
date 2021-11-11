@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -58,15 +61,14 @@ public class CrTask extends BaseTable {
 			this.desc = desc;
 		}
 
-		@Getter
-		private static final int[] FINISHED_STATUS_LIST = { SUCCESS.getCode(), FAIL.getCode(), };
+		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
+				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
 
-		@Getter
-		private static final int[] NOT_FINISHED_STATUS_LIST = { WAIT.getCode(), REJECT.getCode(), };
+		public static List<Integer> NOT_SUBMITTED_STATUS_LIST = new ArrayList<>(
+				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
 
-		@Getter
-		private static final int[] NOT_SUBMITTED_STATUS_LIST = { RELEASED.getCode(),
-				STARTED.getCode(), };
+		public static List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(
+				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
 
 	}
 }

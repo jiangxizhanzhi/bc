@@ -2,8 +2,6 @@ package com.cyberpeace.cr.crbase.service.context;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
@@ -43,7 +41,7 @@ public class TaskContext extends BaseTable {
 	private Mission mission;
 
 	public boolean isFinished() {
-		return ArrayUtils.contains(CrTask.TaskStatus.getFINISHED_STATUS_LIST(), status);
+		return CrTask.TaskStatus.FINISHED_STATUS_LIST.contains(status);
 	}
 
 }

@@ -32,12 +32,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<Mission> batchGet(List<String> resourceIds) {
-		return missionMapper.batchGet(resourceIds);
+		return missionMapper.batchSelect(resourceIds);
 	}
 
 	@Override
 	public List<Mission> batchGetByRoom(String roomId) {
-		return missionMapper.batchGetByRoom(roomId);
+		return missionMapper.batchSelectByRoom(roomId);
 	}
 
 	@Override
@@ -49,12 +49,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public boolean isObjectiveMission(Mission mission) {
-		List<Integer> objectiveTypes = new ArrayList<>();
-		objectiveTypes.add(Mission.MissionType.JUDGE.getCode());
-		objectiveTypes.add(Mission.MissionType.SINGLE__CHOICE.getCode());
-		objectiveTypes.add(Mission.MissionType.MULTIPLE_CHOICE.getCode());
-		objectiveTypes.add(Mission.MissionType.FILE.getCode());
 
-		return objectiveTypes.contains(mission.getType());
+
+		return Mission.MissionType.getOBJECTIVE_TYPE_LIST().contains(mission.getType());
 	}
 }

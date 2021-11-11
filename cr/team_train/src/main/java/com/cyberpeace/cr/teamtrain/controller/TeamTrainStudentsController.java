@@ -17,8 +17,8 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
-import com.cyberpeace.cr.crbase.service.TaskService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
@@ -46,7 +46,7 @@ public class TeamTrainStudentsController {
 	CrRoleService crRoleService;
 
 	@Autowired
-	TaskService taskService;
+	CrTaskService crTaskService;
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;
@@ -122,7 +122,7 @@ public class TeamTrainStudentsController {
 		// 获取角色中的任务内容
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, userId);
 		List<String> missionList = Lists.newArrayList();
-		// taskService.(missionList);
+		// crTaskService.ge(missionList);
 
 		// todo 调用任务获取列表
 		// return new BaseRsp<>(data);
@@ -133,7 +133,7 @@ public class TeamTrainStudentsController {
 	@PostMapping("/submit_missions")
 	public BaseRsp<String>
 			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
-		taskService.submitMissions(submitMissionsReq.getResourceId(),
+		crTaskService.submitMissions(submitMissionsReq.getResourceId(),
 				submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
 		// todo 实现提交任务，日志记录
 		return new BaseRsp<>();

@@ -5,12 +5,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.Task;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.TaskContext;
 
 @Service
 public class CrTaskServiceImpl implements CrTaskService {
+
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private CrTaskMapper crTaskMapper;
@@ -26,8 +32,12 @@ public class CrTaskServiceImpl implements CrTaskService {
 	}
 
 	@Override
-	public Task getByMissionAndUser(String missionId, String userId) {
-		return crTaskMapper.selectByMissionIdAndUserId(missionId, userId);
+	public TaskContext getByMissionAndUser(String missionId, String userId) {
+		Task task = crTaskMapper.selectByMissionIdAndUserId(missionId, userId);
+		TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
+		taskContext.setMission(missionService.getById(task.getMissionId()));
+
+		return taskContext;
 	}
 
 	@Override
@@ -36,7 +46,7 @@ public class CrTaskServiceImpl implements CrTaskService {
 	}
 
 	@Override
-	public List<Task> getByRoomIdAndUser(String roomId, String userId) {
+	public List<TaskContext> getByRoomIdAndUser(String roomId, String userId) {
 		return null;
 	}
 }

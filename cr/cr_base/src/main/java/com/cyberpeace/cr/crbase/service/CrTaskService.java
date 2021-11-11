@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.dao.entity.Task;
+import com.cyberpeace.cr.crbase.service.context.TaskContext;
 
 public interface CrTaskService {
 
@@ -16,7 +17,7 @@ public interface CrTaskService {
 	 * @param userId user_id
 	 * @return Task 实例
 	 */
-	Task getByMissionAndUser(String missionId, String userId);
+	TaskContext getByMissionAndUser(String missionId, String userId);
 
 	/** 提交任务答案
 	 * @param roomId
@@ -31,5 +32,5 @@ public interface CrTaskService {
 	 * @param userId 
 	 * @return List<Task>  实例列表
 	 */
-	List<Task> getByRoomIdAndUser(String roomId, String userId);
+	List<TaskContext> getByRoomIdAndUser(String roomId, String userId);
 }

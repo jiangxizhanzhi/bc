@@ -22,4 +22,19 @@
         training_score,training_percentage,skill_percentage,
         skill_score,comment,final_score
     </sql>
+    <select id="getByRoomIdAndUser" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamScore">
+        select resource_id,
+               team_instance_id,
+               user_id,
+               training_score,
+               training_percentage,
+               skill_percentage,
+               skill_score,
+               comment,
+               final_score
+        from cr_team_score
+        where 1 = 1
+          and team_instance_id = {#RoomId}
+          and user_id = {#userId}
+    </select>
 </mapper>

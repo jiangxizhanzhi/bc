@@ -25,11 +25,11 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.Task;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -291,10 +291,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	public TimeLineData getStudentsTimeLine(String resourceId) {
 		TimeLineData timeLineData = new TimeLineData();
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
-		List<Task> taskList = crTaskService.getByRoomIdAndUser(resourceId,
+		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(resourceId,
 				UserInfoContext.getUserContext().getUserId());
 
-		for (Task task : taskList) {
+		for (TaskContext task : taskList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 
 			timeLineEvent.setTime(task.getReportTime());

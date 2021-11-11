@@ -8,4 +8,5 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
  */
 public interface TeamScoreService extends IService<TeamScore> {
 
+	TeamScore getBYRoomIdAndUser(String roomId, String userId);
 }

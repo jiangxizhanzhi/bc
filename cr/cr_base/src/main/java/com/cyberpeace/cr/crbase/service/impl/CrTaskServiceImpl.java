@@ -1,18 +1,18 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
-
-import java.util.List;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.TaskContext;
 
 @Service
 public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> implements CrTaskService {
@@ -49,6 +49,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public List<TaskContext> getByRoomIdAndUser(String roomId, String userId) {
-		return null;
+		return new ArrayList<>();
 	}
 }

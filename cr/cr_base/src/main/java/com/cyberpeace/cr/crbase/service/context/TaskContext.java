@@ -36,4 +36,7 @@ public class TaskContext extends BaseTable {
 	private Integer businessType;
 
 	private Mission mission;
+
+	private Integer score;
+
 }

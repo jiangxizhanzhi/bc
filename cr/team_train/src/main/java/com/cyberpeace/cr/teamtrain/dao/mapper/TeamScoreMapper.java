@@ -13,4 +13,5 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 @Repository
 public interface TeamScoreMapper extends BaseMapper<TeamScore> {
 
+	TeamScore getByRoomIdAndUser(String roomId, String userId);
 }

@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.crbase.model.MissionScheme;
+import com.cyberpeace.cr.crbase.service.context.MissionScheme;
 
 public interface MissionSchemeService {
 

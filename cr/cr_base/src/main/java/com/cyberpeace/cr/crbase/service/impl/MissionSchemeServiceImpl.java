@@ -2,8 +2,8 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.cr.crbase.model.MissionScheme;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
+import com.cyberpeace.cr.crbase.service.context.MissionScheme;
 
 @Service
 public class MissionSchemeServiceImpl implements MissionSchemeService {

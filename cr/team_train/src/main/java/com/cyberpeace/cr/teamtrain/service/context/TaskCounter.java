@@ -1,0 +1,31 @@
+package com.cyberpeace.cr.teamtrain.service.context;
+
+import lombok.Data;
+import lombok.Getter;
+
+@Data
+public class TaskCounter {
+
+	Integer finished;
+
+	Integer released;
+
+	Integer notReleased;
+
+	public enum TaskType {
+
+		FINISHED(0, "已完成"), RELEASED(1, "进行中"), NOTRELEASED(2, "未下发");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		private TaskType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
+}

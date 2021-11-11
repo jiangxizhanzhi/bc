@@ -59,13 +59,32 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 */
 	List<UserRole> getUserList(String resourceId);
 
+	/**教员获取时间线
+	 * @param resourceId
+	 * @return
+	 */
 	TimeLineData getTimeLine(String resourceId);
 
+	/** 获取学习指南
+	 * @param resourceId
+	 * @return
+	 */
 	String getTrainingManual(String resourceId);
 
+	/** 检查是否有教员权限
+	 * @param trainingTeam
+	 * @param userId
+	 */
 	void checkTeacherPermission(String trainingTeam, String userId);
 
+	/** 检查团队训练是否已启动
+	 * @param trainingTeamId
+	 */
 	void checkRoomOpening(String trainingTeamId);
 
+	/** 学员获取时间线
+	 * @param resourceId
+	 * @return
+	 */
 	TimeLineData getStudentsTimeLine(String resourceId);
 }

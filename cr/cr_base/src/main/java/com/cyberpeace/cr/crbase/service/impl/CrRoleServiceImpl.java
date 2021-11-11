@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.MissionScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.NameElement;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
@@ -46,12 +47,15 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		List<RoleData> roleResDataList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
-			String missionSchemeId = crRole.getMissionSchemeId();
+			String missionScheme = crRole.getMissionScheme();
+			List<MissionScheme> missionSchemes = JsonUtil
+					.toJsonObjectArray(crRole.getMissionScheme(), MissionScheme.class);
+
 			// todo 调用获取任务
 			RoleData roleResData = new RoleData();
 			roleResData.setName(crRole.getName());
 			roleResData.setResourceId(crRole.getResourceId());
-			roleResData.setMissionsList(missionSchemeId);
+			roleResData.setMissionsList(missionScheme);
 			roleResData.setUsers(getUserByRoleUsers(crRole.getUserIds()));
 			roleResDataList.add(roleResData);
 		}

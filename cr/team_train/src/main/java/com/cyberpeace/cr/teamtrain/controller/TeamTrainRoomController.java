@@ -19,9 +19,10 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.MissionSchemeService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
@@ -63,7 +64,7 @@ public class TeamTrainRoomController {
 	BusinessTemplateService businessTemplateService;
 
 	@Autowired
-	MissionSchemeService missionSchemeService;
+	MissionService missionService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -222,15 +223,17 @@ public class TeamTrainRoomController {
 	 * @return
 	 */
 	@ApiOperation("修改开放题解")
-	@PostMapping("/update_show_writeUp")
+	@PostMapping("/update_show_write_up")
 	public BaseRsp<String> updateShowWriteUp(@RequestBody @Validated WriteUpReq writeUpReq) {
 
 		teamRoomService.checkTeacherPermission(writeUpReq.getTrainingTeam(),
 				UserInfoContext.getUserContext().getUserId());
 		teamRoomService.checkRoomOpening(writeUpReq.getTrainingTeam());
 
-		// todo 获取任务，更新字段，记录日志
-		// updateShowWriteUp(writeUpReq.getTrainingTeam(),writeUpReq.getMissionResourceId(),writeUpReq.getWriteUpShow());
+		Mission mission = missionService.getById(writeUpReq.getMissionResourceId());
+		missionService.updateShowWriteup(writeUpReq.getMissionResourceId(),
+				writeUpReq.getWriteUpShow());
+		// todo 记录日志
 
 		return new BaseRsp<>();
 	}
@@ -254,7 +257,6 @@ public class TeamTrainRoomController {
 
 		return new BaseRsp<>();
 	}
-
 
 	// 获取单个实例中自己的角色信息，只包括自己角色的基本信息
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {

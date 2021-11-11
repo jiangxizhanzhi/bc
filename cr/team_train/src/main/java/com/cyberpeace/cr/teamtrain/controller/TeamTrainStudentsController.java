@@ -19,6 +19,7 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
@@ -120,12 +121,9 @@ public class TeamTrainStudentsController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		// 获取角色中的任务内容
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, userId);
-		List<String> missionList = Lists.newArrayList();
-		// crTaskService.ge(missionList);
+		List<MissionSchemeObject> missionSchemeObjectList = crRoleService
+				.getCrRoleByRoomIdAndUserId(resource_id, userId);
 
-		// todo 调用任务获取列表
-		// return new BaseRsp<>(data);
 		return null;
 	}
 

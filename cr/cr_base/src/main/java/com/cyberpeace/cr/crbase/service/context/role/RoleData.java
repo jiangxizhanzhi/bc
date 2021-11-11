@@ -2,6 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.role;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+
 import lombok.Data;
 
 @Data
@@ -11,7 +13,7 @@ public class RoleData {
 
 	private String name;
 
-	private String missionsList;
+	private List<MissionSchemeObject> missionsList;
 
 	private List<NameElement> users;
 

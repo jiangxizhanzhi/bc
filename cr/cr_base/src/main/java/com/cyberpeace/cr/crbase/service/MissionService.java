@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.context.MissionMapping;
 
 public interface MissionService extends IService<Mission> {
 
@@ -18,4 +19,7 @@ public interface MissionService extends IService<Mission> {
 	void updateShowWriteup(String missionId, Boolean showWriteup);
 
 	boolean isObjectiveMission(Mission mission);
+
+	MissionMapping getMissionStatusData(String roomId);
+
 }

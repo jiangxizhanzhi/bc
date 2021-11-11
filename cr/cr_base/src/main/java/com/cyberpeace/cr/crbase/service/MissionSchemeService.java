@@ -1,10 +1,10 @@
 package com.cyberpeace.cr.crbase.service;
 
-import com.cyberpeace.cr.crbase.service.context.MissionScheme;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 
 public interface MissionSchemeService {
 
-	String create(MissionScheme missionScheme);
+	String create(MissionStageScheme missionStageScheme);
 
-	MissionScheme getById(String missionSchemeId);
+	MissionStageScheme getById(String missionSchemeId);
 }

@@ -16,6 +16,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.teamtrain.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
@@ -103,7 +104,7 @@ public class TeamTrainScoreController {
 	 */
 	@ApiOperation("获取动态事件")
 	@GetMapping("/get_user_mission_dynamic")
-	public BaseRsp<String> getUserMissionDynamic(
+	public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
 		MissionDynamicRsp missionDynamicRsp = new MissionDynamicRsp();
@@ -129,6 +130,20 @@ public class TeamTrainScoreController {
 
 		List<DynamicData> s = null;
 		missionDynamicRsp.setDynamicData(s);
+
+		return new BaseRsp<>(missionDynamicRsp);
+	}
+
+	/**
+	 * 获取训练报告 - 任务信息统计
+	 *
+	 * @return
+	 */
+	@ApiOperation("获取任务信息统计")
+	@GetMapping("/get_training_mission_report")
+	public BaseRsp<String> getTrainingMissionReport(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		CrRoleContext crRole = crRoleService.getRoles(resource_id);
 
 		return null;
 	}

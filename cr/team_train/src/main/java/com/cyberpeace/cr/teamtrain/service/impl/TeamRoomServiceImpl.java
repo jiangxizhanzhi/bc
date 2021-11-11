@@ -29,6 +29,7 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
@@ -333,13 +334,15 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public String getTrainingManual(String resourceId) {
 		TeamRoom teamRoom = getById(resourceId);
+		List<MissionSchemeObject> missionSchemeList = Lists.newArrayList();
 		CrRoleContext roles = crRoleService.getRoles(resourceId);
 		for (RoleData roleData : roles.getRoles()) {
-			String missionsList = roleData.getMissionsList();
+			List<MissionSchemeObject> missionSchemeObjectList = roleData.getMissionsList();
+			missionSchemeList.addAll(missionSchemeObjectList);
 			// todo 任务
 
 		}
-		return null;
+		return JsonUtil.toJsonString(missionSchemeList);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 
@@ -30,5 +31,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
 
-	CrRole getCrRoleByRoomIdAndUserId(String trainingTeamId, String userId);
+	/** 获取学员在团队训练的角色任务
+	 * @param trainingTeamId
+	 * @param userId
+	 * @return
+	 */
+	List<MissionSchemeObject> getCrRoleByRoomIdAndUserId(String trainingTeamId, String userId);
 }

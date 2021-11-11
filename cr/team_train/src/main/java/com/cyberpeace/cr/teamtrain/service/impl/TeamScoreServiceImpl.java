@@ -10,7 +10,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.context.MissionScheme;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamScoreMapper;
@@ -42,8 +42,8 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 		TaskCounter taskCounter = new TaskCounter();
 
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, studentId);
-		List<MissionScheme> missionSchemes = JsonUtil.toJsonObjectArray(crRole.getMissionScheme(),
-				MissionScheme.class);
+		List<MissionStageScheme> missionStageSchemes = JsonUtil
+				.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
 		Integer finished = 0;
 		Integer released = 0;
 		List<TaskContext> taskContextList = crTaskService.getByRoomIdAndUser(roomId, studentId);
@@ -56,7 +56,7 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 		}
 		taskCounter.setFinished(finished);
 		taskCounter.setReleased(released);
-		taskCounter.setNotReleased(missionSchemes.size() - finished - released);
+		taskCounter.setNotReleased(missionStageSchemes.size() - finished - released);
 
 		return taskCounter;
 	}

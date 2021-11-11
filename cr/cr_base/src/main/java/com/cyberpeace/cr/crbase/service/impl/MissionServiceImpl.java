@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.MissionMapping;
 
 /**
  * @author yinqingrong
@@ -52,5 +53,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 
 		return Mission.MissionType.getOBJECTIVE_TYPE_LIST().contains(mission.getType());
+	}
+
+	@Override
+	public MissionMapping getMissionStatusData(String roomId) {
+		// todo
+		return null;
 	}
 }

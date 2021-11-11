@@ -20,9 +20,27 @@
         where business_instance_id = #{roomId}
 
     </select>
+
     <select id="getRoomIdsByUserId" resultType="java.lang.String">
         select business_instance_id
         from cr_role
         where user_ids like #{userid}
     </select>
+    <select id="getCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        select resource_id,
+               name,
+               business_instance_id,
+               description,
+               role_group,
+               nodes,
+               user_ids,
+               exercise_paper,
+               parent_resource_id,
+               mission_scheme_id,
+               business_type
+        from cr_role
+        where business_instance_id = #{roomId}
+          and user_ids like #{userid}
+    </select>
+
 </mapper>

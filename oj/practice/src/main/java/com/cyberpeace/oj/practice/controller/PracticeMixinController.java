@@ -93,7 +93,7 @@ public abstract class PracticeMixinController<Entity> {
             throw new IllegalArgumentException("无效参数");
         }
         String tableName = getTableName();
-        Integer matchCount = practiceMixinMapper.batchPublic(tableName, requestData.getResourceIds(), requestData.isPublic());
+        Integer matchCount = practiceMixinMapper.batchPublic(tableName, requestData.getResourceIds(), requestData.getIsPublic());
 
         return new BaseRsp<>(matchCount >= 1);
     }

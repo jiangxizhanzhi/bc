@@ -7,9 +7,7 @@ public enum PracticeType implements GenericEnum {
 
     THEORY(0, "理论基础"),
 
-    /**
-     * 真实漏洞 (已弃用, 整合至 实践操作-OPERATION)
-     */
+    /** 真实漏洞 (已弃用, 整合至 实践操作-OPERATION)*/
     @Deprecated
     REAL_VUL(1, "真实漏洞"),
 

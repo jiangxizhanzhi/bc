@@ -19,10 +19,13 @@ public interface OjBusinessErrorCode {
 	/** 关联的分类资源未找到*/
 	String RELATE_CATEGORY_NOT_FIND = "102003";
 
-	/** 数据重复插入*/
-	String DUPLICATE_EXCEPTION = "102004";
+	/** 资源无权限*/
+	String RESOURCE_PERMISSION = "102004";
 
 	/** 参数数据与数据库数据不一致*/
 	String PARAM_DATABASE_ERROR = "102005";
+
+	/** 实践操作习题找不到*/
+	String OPERATION_NOT_FIND = "102007";
 
 }

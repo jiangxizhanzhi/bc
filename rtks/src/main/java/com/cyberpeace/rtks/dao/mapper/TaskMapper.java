@@ -12,7 +12,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 @Mapper
-@Repository
 public interface TaskMapper extends BaseMapper<Task> {
 
 	IPage<Task> listTask(Page page, @Param("pattern") String pattern);

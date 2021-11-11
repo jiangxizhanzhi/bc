@@ -60,4 +60,12 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
      * @return
      */
     List<CategoryListBo> listByTypeAndName(CategoryListQuery listQuery, Boolean children);
+
+    /**
+     * 查询子类分类编号
+     * @param parentId
+     * @param self 是否包含本身 true包含 false不包含
+     * @return
+     */
+    List<String> selectChildrenIds(String parentId, Boolean self);
 }

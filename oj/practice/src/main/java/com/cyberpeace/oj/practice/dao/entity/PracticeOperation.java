@@ -1,7 +1,7 @@
 package com.cyberpeace.oj.practice.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.oj.practice.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
 
 import lombok.Data;
 
@@ -16,10 +16,10 @@ public class PracticeOperation extends PracticeBase {
 	private String writeup;
 
 	/** 是否公开题解*/
-	private boolean writeupPublic = false;
+	private boolean writeupPublic;
 
 	/** 动态答题环境(使用场景)*/
-	private boolean dynamicEnv;
+	private Boolean dynamicEnv;
 
 	/** 关联场景管理ID*/
 	private String topoId;
@@ -28,8 +28,9 @@ public class PracticeOperation extends PracticeBase {
 	private Integer sceneShareMode = SceneShare.PRIVATE.getCode();
 
 	/** 是否使用动态FLAG (拥有场景时使用)*/
-	private boolean dynamicFlag = false;
+	private Boolean dynamicFlag;
 
 	/** 场景存活时间 单位/h (拥有场景时使用)*/
-	private Integer destroyDelay = 2;
+	private Integer destroyDelay;
+
 }

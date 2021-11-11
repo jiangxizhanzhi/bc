@@ -16,6 +16,9 @@ public class PracticeSetAddReq implements Serializable {
 	@NotBlank(groups = {PracticeSetAddReq.class})
 	private String name;
 
+	@ApiModelProperty(value = "封面地址")
+	private String logo;
+
 	@ApiModelProperty(value = "类型 0=理论基础 2=实践操作", allowableValues = "0,2", required = true)
 	@NotNull(groups = {PracticeSetAddReq.class})
 	private Integer practiceType;

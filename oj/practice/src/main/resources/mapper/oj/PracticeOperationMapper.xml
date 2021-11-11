@@ -2,21 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper">
-    <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeOperation">
-        select * from practice_operation
-        where status = 1
-        <if test="pattern != null and pattern != ''">
-            <bind name="pattern" value="'%' + pattern + '%'"/>
-            and title like #{pattern}
-        </if>
-        <if test="category != null and category != ''">
-            and category = #{category}
-        </if>
-        <if test="practice_set != null and practice_set != ''">
-            and practice_set = #{practice_set}
-        </if>
-        order by id desc
-    </select>
+
+    <resultMap id="operation" type="com.cyberpeace.oj.practice.dao.entity.PracticeOperation"/>
 
     <update id="batchDelete">
         update practice_operation set status = 0
@@ -27,12 +14,46 @@
         </foreach>
     </update>
 
-    <select id="batchGet" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeOperation">
+    <select id="batchGet" resultMap="operation">
         select * from practice_operation
         where status = 1 and resource_id in
         <foreach collection="resource_ids" item="resource_id" separator="," open="(" close=")">
             #{resource_id}
         </foreach>
+    </select>
+
+    <select id="pageByQuery" resultMap="operation">
+        select * from oj_practice_operation
+        <where>
+            <if test="query != null ">
+                <if test="query.resourceIds != null and query.resourceIds.size() != 0">
+                    resource_id in
+                    <foreach collection="query.resourceIds" separator="," item="resourceId" open="(" close=")">
+                        #{resourceId}
+                    </foreach>
+                </if>
+                <if test="query.practiceSetId != null and query.practiceSetId != ''">
+                    and practice_set_id = #{query.practiceSetId}
+                </if>
+                <if test="query.difficulty != null">
+                    and difficulty = #{query.difficulty}
+                </if>
+                <if test="query.categoryIds != null and query.categoryIds.size() != 0">
+                    category_id in
+                    <foreach collection="query.categoryIds" open="(" close=")" item="categoryId" separator=",">
+                        #{categoryId}
+                    </foreach>
+                </if>
+                <if test="query.pattern != null and query.pattern != ''">
+                    <bind name="query.pattern" value="'%' + query.pattern + '%'"/>
+                    and title like #{query.pattern}
+                </if>
+            </if>
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
+        </where>
+        order by create_time desc
     </select>
 
 

@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.oj.practice.constant.Difficulty;
-import com.cyberpeace.oj.practice.service.bo.PracticeCategoryParent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,7 +18,7 @@ public class PracticeBase extends BaseTable implements Serializable {
 
     /** 是否内建*/
     @JsonIgnore
-    private boolean builtin;
+    private Boolean builtin = false;
 
     /** 所属分类*/
     private String categoryId;
@@ -31,7 +28,7 @@ public class PracticeBase extends BaseTable implements Serializable {
 
     /** 公开*/
     @TableField("public")
-    private boolean isPublic = true;
+    private Boolean isPublic = true;
 
     /** 所属习题集*/
     private String practiceSetId;

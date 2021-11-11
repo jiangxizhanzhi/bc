@@ -89,6 +89,25 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		return listBos;
 	}
 
+	@Override
+	public List<String> selectChildrenIds(String parentId, Boolean self) {
+
+		if (StringUtils.isBlank(parentId)) {
+			return Lists.newArrayList();
+		}
+
+		PracticeCategory category = practiceCategoryMapper.selectById(parentId);
+		List<PracticeCategory> categories = practiceCategoryMapper.selectByCode(category.getCode());
+
+		List<String> categoryIds = StreamApiUtils.columnList(categories,
+				PracticeCategory::getResourceId);
+		if (self) {
+			categoryIds.add(parentId);
+		}
+
+		return categoryIds;
+	}
+
 	/**
 	 * 实体类转listBo
 	 * @param practiceCategory 习题分类实体类

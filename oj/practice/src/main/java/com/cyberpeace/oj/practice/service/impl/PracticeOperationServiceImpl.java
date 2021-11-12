@@ -6,6 +6,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
+import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
@@ -47,7 +48,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	private ResourceCollectionMapper resourceCollectionMapper;
+	private ResourceCollectionService resourceCollectionService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation, String ojSceneConfig) {
@@ -89,11 +90,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		WebOperationBo webOperationBo = BeanUtils.copy(operationBo, WebOperationBo.class);
 
 		// 收藏信息 解题状态查询
-		CollectionContext context = CollectionContext.builder()
-				.businessType(ResourceCollection.BusinessType.OPERATION.getCode())
-				.businessId(resourceId).userId(userId).build();
-		ResourceCollection collection = resourceCollectionMapper.selectByUnique(context);
-		webOperationBo.setIsCollection(null != collection);
+		Boolean result = resourceCollectionService.selectByUnique(userId,
+				ResourceCollection.BusinessType.OPERATION.getCode(), resourceId);
+
+		webOperationBo.setIsCollection(result);
 
 		// todo 解题状态查询
 		return webOperationBo;

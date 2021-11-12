@@ -28,7 +28,7 @@ public class PracticeBase extends BaseTable implements Serializable {
 
     /** 公开*/
     @TableField("public")
-    private Boolean isPublic = true;
+    private Boolean isPublic;
 
     /** 所属习题集*/
     private String practiceSetId;

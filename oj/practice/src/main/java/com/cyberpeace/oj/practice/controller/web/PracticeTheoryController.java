@@ -1,81 +1,70 @@
 package com.cyberpeace.oj.practice.controller.web;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.practice.controller.PracticeMixinController;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeTheoryListReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeTheoryReq;
+import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
+import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
+import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Api(tags = "理论基础练习")
 @RestController
 @RequestMapping("/oj/practice-theory")
 @RequiresAuthentication
-public class PracticeTheoryController extends PracticeMixinController<PracticeTheory> {
+public class PracticeTheoryController {
 
-    @Autowired
-    PracticeTheoryMapper practiceTheoryMapper;
+	@Autowired
+	private PracticeTheoryService practiceTheoryService;
 
-    @Autowired
-    PracticeCategoryService practiceCategoryService;
+	@Autowired
+	private PracticeCategoryService practiceCategoryService;
 
-    @GetMapping()
-    @ApiOperation("获取单个理论基础练习")
-    public BaseRsp<PracticeTheory> get(@RequestParam("resource_id") @NotBlank String resourceId) {
-        PracticeTheory object = practiceTheoryMapper.selectById(resourceId);
-        if (object == null) {
-            throw new ResourceNotFoundException(resourceId);
-        }
-        return new BaseRsp<>(object);
-    }
+	@GetMapping("")
+	@ApiOperation("查询理论基础练习详细信息")
+	public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {
 
-    @GetMapping("/list")
-    @ApiOperation("获取理论基础练习")
-    public BaseRsp<ListRsp<PracticeTheory>> getList(PracticeTheoryListReq queryParams) {
-        IPage<PracticeTheory> result = practiceTheoryMapper.getList(
-                queryParams.toPageParam(), queryParams.getPattern(), queryParams.getPracticeSet(),
-                queryParams.getCategory(), queryParams.getQuestionType(), queryParams.getDifficulty()
-        );
+		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
+				UserInfoContext.getUserContext().getUserId());
 
-        return new BaseRsp<>(PageUtil.getListResult(result));
-    }
+		return new BaseRsp<>(theoryBo);
+	}
 
-    @PostMapping()
-    @ApiOperation("新增理论基础练习")
-    public BaseRsp<PracticeTheory> create(@RequestBody PracticeTheoryReq requestData) {
-        PracticeTheory object = new PracticeTheory();
-        object.setCreateUserId(getRequestUserId());
-        BeanUtils.copyProperties(requestData, object);
-        return practiceTheoryMapper.insert(object) != 0 ? new BaseRsp<>(object) : new BaseRsp<>();
-    }
+	@GetMapping("/list")
+	@ApiOperation("分页查询理论基础习题")
+	public BaseRsp<ListRsp<PracticeTheory>> getList(WebTheoryListReq listReq) {
 
-    @PatchMapping()
-    @ApiOperation("部分更新理论基础练习")
-    public BaseRsp<PracticeTheory> partialUpdate(@RequestBody PracticeTheoryReq requestData) {
-        PracticeTheory object = new PracticeTheory();
-        BeanUtils.copyProperties(requestData, object);
-        practiceTheoryMapper.updateById(object);
+		Page page = listReq.toPageParam();
+		List<String> categoryIds = practiceCategoryService
+				.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
 
-        return new BaseRsp<>(practiceTheoryMapper.selectById(requestData.getResourceId()));
-    }
+		TheoryListQueryBo listQueryBo = BeanUtils.copy(listReq, TheoryListQueryBo.class);
+		listQueryBo.setCategoryIds(categoryIds);
 
-    @DeleteMapping()
-    @ApiOperation("批量删除理论基础练习")
-    public BaseRsp<Integer> batchDelete(@RequestBody ResourceDelReq requestData) {
-        return new BaseRsp<>(practiceTheoryMapper.batchDelete(requestData.getResourceIds()));
-    }
+		IPage<PracticeTheoryListBo> result = practiceTheoryService.pageByQuery(page, listQueryBo,
+				authContext);
+
+		return new BaseRsp<>(PageUtil.getListResult(result));
+	}
+
 }

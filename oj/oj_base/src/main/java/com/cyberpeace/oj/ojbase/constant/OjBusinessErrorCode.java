@@ -28,4 +28,7 @@ public interface OjBusinessErrorCode {
 	/** 实践操作习题找不到*/
 	String OPERATION_NOT_FIND = "102007";
 
+	/** 理论基础习题找不到*/
+	String THEORY_NOT_FIND = "102008";
+
 }

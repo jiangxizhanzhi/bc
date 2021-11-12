@@ -7,16 +7,18 @@ public interface CommonConstant {
     /** 分类的code分割符*/
     String CODE_COMMA = ",";
 
+    /** 竖线分割符*/
+    String VERTICAL_LINE = "|";
+
     String LEFT_OBLIQUE_LINE = "/";
 
-    /** 整数零*/
     Integer ZERO = 0;
 
-    /** 整数一*/
     Integer ONE = 1;
 
-    /** 整数二*/
     Integer TWO = 2;
+
+    Integer HUNDRED = 100;
 
     Boolean TRUE = true;
 

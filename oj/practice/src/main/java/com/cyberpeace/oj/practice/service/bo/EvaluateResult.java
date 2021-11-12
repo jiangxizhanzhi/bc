@@ -6,24 +6,19 @@ import java.io.Serializable;
 
 @Data
 public class EvaluateResult implements Serializable {
-    /**
-     * 是否通过
-     */
-    private final Boolean isPass;
 
-    /**
-     * 得分
-     */
-    private final Double score;
+	/** 是否通过*/
+	private Boolean solved;
 
-    /**
-     * 总分
-     */
-    private final Double totalScore;
+	/** 得分*/
+	private Double score;
 
-    public EvaluateResult(Boolean isPass, Double score, Double totalScore) {
-        this.isPass = isPass;
-        this.score = score;
-        this.totalScore = totalScore;
-    }
+	/** 总分*/
+	private Double totalScore;
+
+	public EvaluateResult(Boolean solved, Double score, Double totalScore) {
+		this.solved = solved;
+		this.score = score;
+		this.totalScore = totalScore;
+	}
 }

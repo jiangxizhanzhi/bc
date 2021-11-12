@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -41,12 +42,19 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
                                       @Param("category") String category, @Param("question_type") Integer questionType,
                                       @Param("difficulty") Integer difficulty, @Param("limit") Integer count);
 
-    Integer batchDelete(@Param("resource_ids") List<String> resourceIds);
-
     /**
      * 根据编号查询理论习题 #外部接口使用
      * @param resourceIds
      * @return
      */
     List<PracticeTheory> batchGet(@Param("resource_ids") List<String> resourceIds);
+
+    /**
+     * 分页查询习题列表
+     * @param page
+     * @param theoryListQuery
+     * @param isWeb
+     * @return
+     */
+    IPage<PracticeTheory> pageByQuery(Page page, TheoryListQuery theoryListQuery, Boolean isWeb);
 }

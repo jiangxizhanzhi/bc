@@ -3,7 +3,6 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -11,10 +10,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.practice.controller.PracticeMixinController;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
@@ -26,14 +23,13 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Api(tags = "实践操作练习")
 @RestController
 @RequestMapping("/oj/practice-operation")
 @RequiresAuthentication
-public class PracticeOperationController extends PracticeMixinController<PracticeOperation> {
+public class PracticeOperationController {
 
 	@Autowired
 	private PracticeOperationService practiceOperationService;

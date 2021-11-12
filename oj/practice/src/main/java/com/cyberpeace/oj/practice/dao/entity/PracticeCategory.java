@@ -21,6 +21,8 @@ public class PracticeCategory extends BaseTable {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+
+
 	/** 名称*/
 	private String name;
 

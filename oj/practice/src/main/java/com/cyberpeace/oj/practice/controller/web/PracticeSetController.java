@@ -3,37 +3,28 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.practice.controller.PracticeMixinController;
 import com.cyberpeace.oj.practice.controller.req.PracticeSetPageReq;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeSetUpdateReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
 
 @Api(tags = "习题集")
 @RestController
 @RequestMapping("/oj/practice/set")
 @RequiresAuthentication
-public class PracticeSetController extends PracticeMixinController<PracticeSet> {
+public class PracticeSetController {
 
 	@Autowired
 	private PracticeSetService practiceSetService;

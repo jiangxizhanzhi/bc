@@ -98,7 +98,7 @@ public class PracticeServiceImpl implements PracticeService {
         }
 
         // 通过记录写入DB
-        if (!user.isEmpty() && result.getIsPass()) {
+        if (!user.isEmpty() && result.getSolved()) {
             practiceServiceMapper.saveSolved(user, answer, result, practiceObject, new Date());
         }
 

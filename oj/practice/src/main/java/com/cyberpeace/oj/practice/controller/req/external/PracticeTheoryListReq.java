@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.practice.controller.req;
+package com.cyberpeace.oj.practice.controller.req.external;
 
 import com.cyberpeace.common.model.PageReqBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 外部接口使用 无必要勿改
+ */
 @Data
 @ApiModel
 public class PracticeTheoryListReq extends PageReqBase {

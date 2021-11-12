@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.practice.controller.req;
+package com.cyberpeace.oj.practice.controller.req.external;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

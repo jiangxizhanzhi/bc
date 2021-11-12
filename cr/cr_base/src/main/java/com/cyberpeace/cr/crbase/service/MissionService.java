@@ -18,7 +18,9 @@ public interface MissionService extends IService<Mission> {
 
 	void updateShowWriteup(String missionId, Boolean showWriteup);
 
-	boolean isObjectiveMission(Mission mission);
+	Boolean isObjectiveMission(Mission mission);
+
+	void release(String missionId, String roleId, String currentUserId);
 
 	/**
 	 * @param roomId

@@ -32,7 +32,7 @@ public class CrTask extends BaseTable {
 
 	private Date releaseTime;
 
-	private Date reportTime;
+	private Date lastSubmitTime;
 
 	private Date taskStartTime;
 
@@ -50,6 +50,15 @@ public class CrTask extends BaseTable {
 		RELEASED(11, "已下发"), STARTED(12, "已开始"), WAIT(0, "待评估"), SUCCESS(1, "成功"), FAIL(2,
 				"失败"), REJECT(3, "驳回");
 
+		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
+				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
+
+		public static List<Integer> NOT_SUBMITTED_STATUS_LIST = new ArrayList<>(
+				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
+
+		public static List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(
+				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
+
 		@Getter
 		private Integer code;
 
@@ -60,15 +69,6 @@ public class CrTask extends BaseTable {
 			this.code = code;
 			this.desc = desc;
 		}
-
-		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
-				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
-
-		public static List<Integer> NOT_SUBMITTED_STATUS_LIST = new ArrayList<>(
-				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
-
-		public static List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(
-				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
 
 	}
 }

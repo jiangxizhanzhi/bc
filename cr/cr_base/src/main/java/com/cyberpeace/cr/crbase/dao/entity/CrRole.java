@@ -17,6 +17,62 @@ import lombok.Getter;
 @Data
 public class CrRole implements Serializable {
 
+	/**
+	 *
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
+
+	/**
+	 *
+	 */
+	private String name;
+
+	/**
+	 *
+	 */
+	private String businessInstanceId;
+
+	/**
+	 *
+	 */
+	private String description;
+
+	/**
+	 *
+	 */
+	private Integer roleGroup;
+
+	/**
+	 *
+	 */
+	private String nodes;
+
+	/**
+	 *
+	 */
+	private String userIds;
+
+	/**
+	 *
+	 */
+	private String exercisePaper;
+
+	/**
+	 *
+	 */
+	private String parentResourceId;
+
+	/**
+	 *
+	 */
+	private String missionScheme;
+
+	/**
+	 *
+	 */
+	private Integer businessType;
+
 	public enum RoleGroupCodeInteger {
 
 		TEACHER(1), STUDENT(2);
@@ -28,61 +84,5 @@ public class CrRole implements Serializable {
 			this.value = value;
 		}
 	}
-
-	/**
-	 * 
-	 */
-	@TableId(type = IdType.UUID, value = "resource_id")
-	private String resourceId;
-
-	/**
-	 * 
-	 */
-	private String name;
-
-	/**
-	 * 
-	 */
-	private String businessInstanceId;
-
-	/**
-	 * 
-	 */
-	private String description;
-
-	/**
-	 * 
-	 */
-	private Integer roleGroup;
-
-	/**
-	 * 
-	 */
-	private String nodes;
-
-	/**
-	 * 
-	 */
-	private String userIds;
-
-	/**
-	 * 
-	 */
-	private String exercisePaper;
-
-	/**
-	 * 
-	 */
-	private String parentResourceId;
-
-	/**
-	 * 
-	 */
-	private String missionScheme;
-
-	/**
-	 * 
-	 */
-	private Integer businessType;
 
 }

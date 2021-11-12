@@ -177,7 +177,7 @@ public interface CrTaskService {
 	 * @param missionId
 	 * @return
 	 */
-	boolean isReleasedByMission(String missionId);
+	Boolean isReleasedByMission(String missionId);
 
 	/**
 	 * 查询某房间多个用户拥有的task的Id列表
@@ -196,5 +196,16 @@ public interface CrTaskService {
 	List<String> getIdsByOptionalUserId(String roomId, String userId);
 
 	Boolean updateTask(CrTask task);
+
+	/**
+	 * 用户提交答案
+	 * @param roomId
+	 * @param missionId
+	 * @param answer
+	 * @param userId
+	 * @param answerExtension
+	 */
+	void submitAnswer(String roomId, String missionId, String answer, String userId,
+			String answerExtension);
 
 }

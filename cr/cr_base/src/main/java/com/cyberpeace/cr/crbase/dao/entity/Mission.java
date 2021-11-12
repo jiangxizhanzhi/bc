@@ -51,6 +51,10 @@ public class Mission extends BaseTable {
 				"问答"), ATTACK(5, "攻击"), DEFENCE(6, "防御"), FILE(7, "文件");
 
 		@Getter
+		private static final List<Integer> OBJECTIVE_TYPE_LIST = new ArrayList<>(
+				Arrays.asList(JUDGE.code, SINGLE_CHOICE.code, MULTIPLE_CHOICE.code, FILE.code));
+
+		@Getter
 		private Integer code;
 
 		@Getter
@@ -60,12 +64,6 @@ public class Mission extends BaseTable {
 			this.code = code;
 			this.desc = desc;
 		}
-
-		@Getter
-		private static final List<Integer> OBJECTIVE_TYPE_LIST = new ArrayList<>(
-				Arrays.asList(JUDGE.getCode(), SINGLE_CHOICE.getCode(), MULTIPLE_CHOICE.getCode(),
-						FILE.getCode()));
-
 	}
 
 	public Boolean isObjective() {

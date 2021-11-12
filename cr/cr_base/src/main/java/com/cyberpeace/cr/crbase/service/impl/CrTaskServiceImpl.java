@@ -1,16 +1,26 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -23,6 +33,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Autowired
 	private MissionMapper missionMapper;
+
+	@Autowired
+	private CrTaskSubmitMapper crTaskSubmitMapper;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private CrTaskLogMapper crTaskLogMapper;
 
 	@Override
 	public void addTask(CrTask crTask) {
@@ -56,6 +75,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public void startTask(CrTask task) {
 		task.setStatus(CrTask.TaskStatus.STARTED.getCode());
+		task.setReleaseTime(new Date());
 		crTaskMapper.updateById(task);
 	}
 
@@ -159,7 +179,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public boolean isReleasedByMission(String missionId) {
+	public Boolean isReleasedByMission(String missionId) {
 		return crTaskMapper.selectByMissionId(missionId) != null;
 	}
 
@@ -182,5 +202,87 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskMapper.updateById(task);
 
 		return true;
+	}
+
+	private boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType) {
+		// xiantoulan
+		return userAnswer.equals(missionAnswer);
+	}
+
+	@Override
+	public void submitAnswer(String roomId, String missionId, String answer, String userId,
+			String answerExtension) {
+
+		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
+		if (task == null) {
+			throw new RuntimeException();
+		}
+
+		// 校验该task是否可提交
+		CrTaskSubmit lastSubmit = crTaskSubmitMapper.selectLastByTaskId(task.getResourceId());
+		if (lastSubmit != null && !lastSubmit.getEvaluateStatus()
+				.equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
+			throw new RuntimeException("not allowed to be submitted");
+		}
+
+		Mission mission = missionMapper.selectById(missionId);
+		if (mission == null) {
+			throw new RuntimeException();
+		}
+
+		// 创建 taskSubmit
+		CrTaskSubmit crTaskSubmit = new CrTaskSubmit();
+		crTaskSubmit.setTaskId(task.getResourceId());
+		crTaskSubmit.setRoomId(task.getRoomId());
+		crTaskSubmit.setMissionScore(mission.getScore());
+		crTaskSubmit.setAnswer(answer);
+		crTaskSubmit.setAnswerExtension(answerExtension);
+		crTaskSubmit.setResourceId(IDGeneratorUtil.getID());
+
+		// 创建提交log
+		CrTaskLog submitLog = new CrTaskLog();
+		submitLog.setRoomId(task.getRoomId());
+		submitLog.setMissionId(missionId);
+		submitLog.setActionCode(CrTaskLog.ActionCode.SUBMIT.getCode());
+		submitLog.setUserId(userId);
+
+		// 创建可能存在的评估log
+		CrTaskLog evaluateLog = new CrTaskLog();
+
+		if (mission.isObjective()) {
+			// 客观题，可机评
+			evaluateLog.setRoomId(task.getRoomId());
+			evaluateLog.setMissionId(missionId);
+
+			if (isCorrect(answer, mission.getAnswer(), mission.getType())) {
+				task.setScore(mission.getScore());
+				task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
+			} else {
+				task.setScore(0);
+				task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
+				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_FAILURE.getCode());
+			}
+		} else {
+			// 主观题
+			task.setScore(0);
+			task.setStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
+		}
+
+		task.setUserAnswer(answer);
+		task.setLastSubmitTime(new Date());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				crTaskMapper.updateById(task);
+				crTaskSubmitMapper.insert(crTaskSubmit);
+				crTaskLogMapper.insert(submitLog);
+				if (mission.isObjective()) {
+					crTaskLogMapper.insert(evaluateLog);
+				}
+			}
+		});
 	}
 }

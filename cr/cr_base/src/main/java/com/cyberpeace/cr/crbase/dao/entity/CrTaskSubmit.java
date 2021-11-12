@@ -25,8 +25,6 @@ public class CrTaskSubmit extends BaseTable {
 
 	private String answerExtension;
 
-	private Date createTime;
-
 	private String evaluatorId;
 
 	private Date evaluateTime;

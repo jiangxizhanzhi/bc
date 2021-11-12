@@ -198,14 +198,26 @@ public interface CrTaskService {
 	Boolean updateTask(CrTask task);
 
 	/**
-	 * 用户提交答案
-	 * @param roomId
+	 * 学员提交答案
 	 * @param missionId
 	 * @param answer
 	 * @param userId
 	 * @param answerExtension
 	 */
-	void submitAnswer(String roomId, String missionId, String answer, String userId,
-			String answerExtension);
+	void submitAnswer(String missionId, String answer, String userId, String answerExtension);
+
+	/**
+	 * 教员、裁判提交人工评估
+	 * @param taskSubmitId
+	 * @param score
+	 * @param detail
+	 * @param reason
+	 * @param evaluateStatus
+	 * @param currentUserId
+	 */
+	void submitEvaluation(String taskSubmitId, Integer score, String detail, Integer reason,
+			Integer evaluateStatus, String currentUserId);
+
+	void reject();
 
 }

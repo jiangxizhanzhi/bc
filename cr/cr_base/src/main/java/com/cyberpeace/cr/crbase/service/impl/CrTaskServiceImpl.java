@@ -1,8 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +67,26 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public List<TaskContext> getByRoomIdAndUser(String roomId, String userId) {
-		return new ArrayList<>();
+		List<CrTask> taskList = crTaskMapper.selectByRoomIdAndUserId(roomId, userId);
+		List<String> missionIds = new ArrayList<>();
+
+		for (CrTask task : taskList) {
+			missionIds.add(task.getMissionId());
+		}
+		List<Mission> missionList = missionMapper.batchSelect(missionIds);
+		Map<String, Mission> missionMap = new HashMap<>();
+		for (Mission mission : missionList) {
+			missionMap.put(mission.getResourceId(), mission);
+		}
+
+		List<TaskContext> taskContextList = new ArrayList<>();
+		for (CrTask task : taskList) {
+			TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
+			taskContext.setMission(missionMap.get(task.getMissionId()));
+			taskContextList.add(taskContext);
+		}
+
+		return taskContextList;
 	}
 
 	@Override
@@ -210,7 +227,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public void submitAnswer(String roomId, String missionId, String answer, String userId,
+	public void submitAnswer(String missionId, String answer, String userId,
 			String answerExtension) {
 
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
@@ -284,5 +301,44 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				}
 			}
 		});
+	}
+
+	@Override
+	public void submitEvaluation(String taskSubmitId, Integer score, String detail, Integer reason,
+			Integer evaluateStatus, String currentUserId) {
+		// check permission??
+		CrTaskSubmit taskSubmit = crTaskSubmitMapper.selectById(taskSubmitId);
+		if (taskSubmit == null) {
+			throw new RuntimeException();
+		}
+		if (taskSubmit.getEvaluateStatus().equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
+			throw new RuntimeException();
+		}
+
+		CrTask task = crTaskMapper.selectById(taskSubmit.getTaskId());
+		if (task == null) {
+			throw new RuntimeException();
+		}
+
+		taskSubmit.setScore(score);
+		taskSubmit.setDetail(detail);
+		taskSubmit.setReason(reason);
+		taskSubmit.setEvaluateStatus(evaluateStatus);
+		taskSubmit.setEvaluatorId(currentUserId);
+		taskSubmit.setEvaluateTime(new Date());
+
+		task.setStatus(evaluateStatus);
+		task.setScore(score);
+
+		CrTaskLog taskLog = new CrTaskLog();
+		taskLog.setRoomId(taskSubmit.getRoomId());
+		taskLog.setMissionId(task.getMissionId());
+		taskLog.setActionCode();
+
+	}
+
+	private CrTaskLog createTaskLog(String roomId, String missionId, Integer actionCode,
+			String userId) {
+		return null;
 	}
 }

@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,16 +15,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionMapping;
+import com.google.common.collect.Maps;
 
 /**
  * @author yinqingrong
@@ -43,6 +41,22 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private MissionCategoryMapper missionCategoryMapper;
+
+	private Map<String, MissionCategory> categoryCache;
+
+	@PostConstruct
+	public void init() {
+		List<MissionCategory> categories = missionCategoryMapper.listMissionCategories();
+
+		categoryCache = Maps.newHashMap();
+
+		for (MissionCategory item : categories) {
+			categoryCache.put(item.getResourceId(), item);
+		}
+	}
 
 	@Override
 	public void addMission(Mission mission) {
@@ -127,4 +141,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return null;
 	}
 
+	@Override
+	public MissionCategory getCategoryById(String categoryId) {
+		return categoryCache.get(categoryId);
+	}
 }

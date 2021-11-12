@@ -161,6 +161,17 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return missionSchemeObjectList;
 	}
 
+	@Override
+	public Integer getMissionCount(CrRole crRole) {
+		List<MissionStageScheme> missionStageSchemeList = JsonUtil
+				.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
+		Integer count = 0;
+		for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
+			count += missionStageScheme.getMissions().size();
+		}
+		return count;
+	}
+
 	private List<NameElement> getUserByRoleUsers(String userIds) {
 
 		List<NameElement> userElements = Lists.newArrayList();

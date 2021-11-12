@@ -11,4 +11,6 @@ public class MissionContext extends Mission {
 
 	private Integer state;
 
+	private TrainingRecord trainingRecord;
+
 }

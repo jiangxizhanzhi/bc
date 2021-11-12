@@ -8,16 +8,19 @@
         select resource_id,
                name,
                business_instance_id,
-               description,
-               role_group,
-               nodes,
-               user_ids,
-               exercise_paper,
-               parent_resource_id,
-               mission_scheme,
-               business_type
+        description,
+        role_group,
+        nodes,
+        user_ids,
+        exercise_paper,
+        parent_resource_id,
+        mission_scheme,
+        business_type
         from cr_role
         where business_instance_id = #{roomId}
+        <if test="roleGroup != null and roleGroup != ''">
+            and role_group like #{roleGroup}
+        </if>
 
     </select>
 

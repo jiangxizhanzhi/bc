@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,19 +16,20 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
+import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.teamtrain.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 import com.cyberpeace.cr.teamtrain.service.TeamDynamicEventService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
-import com.cyberpeace.cr.teamtrain.service.context.DynamicData;
-import com.cyberpeace.cr.teamtrain.service.context.StatisticalInfo;
-import com.cyberpeace.cr.teamtrain.service.context.TaskCounter;
-import com.cyberpeace.cr.teamtrain.service.context.TrainingScore;
+import com.cyberpeace.cr.teamtrain.service.context.*;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -143,9 +145,26 @@ public class TeamTrainScoreController {
 	@GetMapping("/get_training_mission_report")
 	public BaseRsp<String> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		MissionReport missionReport = new MissionReport();
+		Map<String, Integer> missions_category = Maps.newHashMap();
 		CrRoleContext crRole = crRoleService.getRoles(resource_id);
+		List<String> missionIds = Lists.newArrayList();
+
+		for (RoleData roleData : crRole.getRoles()) {
+			for (MissionSchemeObject missions : roleData.getMissionsList()) {
+				for (MissionContext missionContext : missions.getMissions()) {
+					Integer count = missions_category.getOrDefault(missionContext.getCategoryId(),
+							0) + 1;
+					missions_category.put(missionContext.getCategoryId(), count);
+				}
+
+			}
+		}
+		missionReport.setMissionsCategory(missions_category);
+		missionReport.setMissionsStatistics(teamScoreService.getMissionsStatistics(resource_id));
 
 		return null;
 	}
+
 
 }

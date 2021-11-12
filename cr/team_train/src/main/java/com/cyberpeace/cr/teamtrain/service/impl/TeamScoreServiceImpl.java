@@ -12,9 +12,11 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamScoreMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
+import com.cyberpeace.cr.teamtrain.service.context.MissionsStatistics;
 import com.cyberpeace.cr.teamtrain.service.context.TaskCounter;
 
 /**
@@ -60,6 +62,28 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 		taskCounter.setNotReleased(missionStageSchemes.size() - finished - released);
 
 		return taskCounter;
+	}
+
+	@Override
+	public MissionsStatistics getMissionsStatistics(String roomId) {
+		MissionsStatistics missionsStatistics = new MissionsStatistics();
+
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(roomId);
+		roleQuery.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
+		Integer missionCount = 0;
+		for (CrRole crRole : crRoleList) {
+			Integer roleMissionCount = crRoleService.getMissionCount(crRole);
+			List<String> userList = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			missionCount += roleMissionCount * userList.size();
+		}
+
+		missionsStatistics
+				.setNotFinishProportion(missionCount - crTaskService.getByRoomId(roomId).size());
+		// missionsStatistics.setNotSubmitProportion(crTaskService.countNotSubmitted(roomId));
+
+		return null;
 	}
 
 }

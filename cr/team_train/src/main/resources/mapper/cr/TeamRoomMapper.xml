@@ -48,9 +48,7 @@
     </select>
 
     <select id="listTeamRoom" resultMap="TeamRoomData">
-        <if test="listQuery.search != null and listQuery.search != ''">
-            <bind name="search" value="'%' + listQuery.search + '%'"/>
-        </if>
+
         select cr_team_room.resource_id,
         cr_team_room.team_template_id,
         cr_team_room.NAME,
@@ -85,6 +83,7 @@
                 ('')
             </if>
             <if test="listQuery.search != null and listQuery.search != ''">
+                <bind name="search" value="'%' + listQuery.search + '%'"/>
                 and cr_team_room.name like #{search}
             </if>
             <if test="listQuery.difficult != null and listQuery.difficult != ''">

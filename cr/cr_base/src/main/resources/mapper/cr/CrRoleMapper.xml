@@ -14,7 +14,7 @@
                user_ids,
                exercise_paper,
                parent_resource_id,
-               mission_scheme_id,
+               mission_scheme,
                business_type
         from cr_role
         where business_instance_id = #{roomId}
@@ -22,25 +22,28 @@
     </select>
 
     <select id="getRoomIdsByUserId" resultType="java.lang.String">
+        <bind name="userId" value="'%' + userId + '%'"/>
         select business_instance_id
         from cr_role
-        where user_ids like #{userid}
+        where user_ids like #{userId}
     </select>
     <select id="getCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+
+        <bind name="userId" value="'%' + userId + '%'"/>
         select resource_id,
-               name,
-               business_instance_id,
-               description,
-               role_group,
-               nodes,
-               user_ids,
-               exercise_paper,
-               parent_resource_id,
-               mission_scheme_id,
-               business_type
+        `name` ,
+        business_instance_id,
+        description,
+        role_group,
+        nodes,
+        user_ids,
+        exercise_paper,
+        parent_resource_id,
+        mission_scheme,
+        business_type
         from cr_role
         where business_instance_id = #{roomId}
-          and user_ids like #{userid}
+        and user_ids like #{userId}
     </select>
 
 </mapper>

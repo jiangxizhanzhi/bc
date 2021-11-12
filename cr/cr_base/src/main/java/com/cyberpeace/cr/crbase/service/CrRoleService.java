@@ -31,10 +31,18 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
 
-	/** 获取学员在团队训练的角色任务
-	 * @param trainingTeamId
+	/** 获取学员在团队训练的角色
+	 * @param roomId
 	 * @param userId
 	 * @return
 	 */
-	List<MissionSchemeObject> getCrRoleByRoomIdAndUserId(String trainingTeamId, String userId);
+	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
+
+	/** 获取学员在团队训练的角色任务列表
+	 * @param roomId
+	 * @param userId
+	 * @return
+	 */
+	List<MissionSchemeObject> getCrRoleMissionByRoomIdAndUserId(String roomId, String userId);
+
 }

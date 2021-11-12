@@ -6,9 +6,6 @@
 
     <select id="listTeamTemplate"
             resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData">
-        <if test="listQuery.search != null and listQuery.search != ''">
-            <bind name="search" value="'%' + listQuery.search + '%'"/>
-        </if>
         select
         cr_team_template.resource_id, cr_team_template.business_template_id, cr_team_template.pre_skills,
         cr_team_template.train_skills, cr_team_template.role_config, cr_team_template.sub_type,
@@ -21,6 +18,7 @@
         <where>
             1=1
             <if test="listQuery.search != null and listQuery.search != ''">
+                <bind name="search" value="'%' + listQuery.search + '%'"/>
                 and cr_business_template.name like #{search}
             </if>
             <if test="listQuery.difficult != null and listQuery.difficult != ''">

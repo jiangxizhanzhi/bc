@@ -346,14 +346,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public void checkTeacherPermission(String trainingTeamId, String userId) {
+	public void checkTeacherPermission(String roomId, String userId) {
 
-		permissionCheck(trainingTeamId, userId, CrRole.RoleGroupCodeInteger.TEACHER.getValue());
+		permissionCheck(roomId, userId, CrRole.RoleGroupCodeInteger.TEACHER.getValue());
 	}
 
 	@Override
-	public void checkRoomOpening(String trainingTeamId) {
-		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(trainingTeamId);
+	public void checkRoomOpening(String roomId) {
+		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(roomId);
 		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
 
 		// 未开始，新增local_scene数据
@@ -367,12 +367,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 	}
 
-	private void permissionCheck(String trainingTeamId, String userId, Integer teacher) {
-		TeamRoom teamRoom = getById(trainingTeamId);
+	private void permissionCheck(String roomId, String userId, Integer teacher) {
+		TeamRoom teamRoom = getById(roomId);
 		if (teamRoom == null) {
 			throw new BusinessException(CrBusinessErrorCode.CASE_DOES_NOT_EXIST);
 		}
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(trainingTeamId, userId);
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!crRole.getRoleGroup().equals(teacher)) {
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_NOT_EXIST);
 		}

@@ -20,6 +20,10 @@ public interface MissionService extends IService<Mission> {
 
 	boolean isObjectiveMission(Mission mission);
 
+	/**
+	 * @param roomId
+	 * @return
+	 */
 	MissionMapping getMissionStatusData(String roomId);
 
 }

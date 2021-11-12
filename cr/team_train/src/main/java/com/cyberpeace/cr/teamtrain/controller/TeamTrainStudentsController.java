@@ -20,6 +20,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
@@ -35,6 +36,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 
+ */
 @Api(tags = "学员团队训练")
 @RestController
 @RequestMapping("/cr/training_team/training_team_students")
@@ -116,15 +120,15 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("获取任务列表")
 	@GetMapping("/get_mission_scheme")
-	public BaseRsp<String> getMissionScheme(
+	public BaseRsp<List<MissionSchemeObject>> getMissionScheme(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		// 获取角色中的任务内容
 		List<MissionSchemeObject> missionSchemeObjectList = crRoleService
-				.getCrRoleByRoomIdAndUserId(resource_id, userId);
+				.getCrRoleMissionByRoomIdAndUserId(resource_id, userId);
 
-		return null;
+		return new BaseRsp<>(missionSchemeObjectList);
 	}
 
 	@ApiOperation("提交任务答案")
@@ -142,10 +146,25 @@ public class TeamTrainStudentsController {
 	public BaseRsp<MissionRsp> getMissionDetail(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "mission_id", value = "任务id", required = true) String mission_id) {
-		MissionRsp data = new MissionRsp();
-		// todo 调用任务获取详情
+		String userId = UserInfoContext.getUserContext().getUserId();
 
-		return new BaseRsp<>(data);
+		TaskContext taskContext = crTaskService.getByMissionAndUser(mission_id, resource_id);
+
+		MissionRsp missionRsp = new MissionRsp();
+		missionRsp.setResourceId(taskContext.getMission().getRoomId());
+		missionRsp.setTitle(taskContext.getMission().getTitle());
+		missionRsp.setOption(taskContext.getMission().getOption());
+		missionRsp.setType(taskContext.getMission().getType());
+		missionRsp.setCategory(taskContext.getMission().getCategoryId());
+		missionRsp.setShowWriteup(taskContext.getMission().getShowWriteup());
+		missionRsp.setWriteUp(taskContext.getMission().getWriteUp());
+
+		missionRsp.setUserAnswer(taskContext.getUserAnswer());
+		if (!taskContext.getMission().getShowWriteup()) {
+			missionRsp.setWriteUp("");
+		}
+
+		return new BaseRsp<>(missionRsp);
 	}
 
 	/**
@@ -162,7 +181,11 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(data);
 	}
 
-	// 获取单个实例中自己的角色信息，只包括自己角色的基本信息
+	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息
+	 * @param crRoles 
+	 * @param userId
+	 * @return
+	 */
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		crRoles.forEach(crRole -> {
@@ -178,8 +201,11 @@ public class TeamTrainStudentsController {
 		return baseRole;
 	}
 
-	// 先获取实例列表中自己的角色，再获取所有的学员角色
-
+	/** 先获取实例列表中自己的角色，再获取所有的学员角色
+	 * @param crRoles 
+	 * @param userId
+	 * @return
+	 */
 	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		List<RoleUsers> roleUsersList = Lists.newArrayList();

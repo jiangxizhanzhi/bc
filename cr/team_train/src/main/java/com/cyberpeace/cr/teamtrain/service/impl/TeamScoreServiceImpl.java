@@ -47,6 +47,7 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 		Integer finished = 0;
 		Integer released = 0;
 		List<TaskContext> taskContextList = crTaskService.getByRoomIdAndUser(roomId, studentId);
+
 		for (TaskContext taskContext : taskContextList) {
 			if (taskContext.isFinished()) {
 				finished++;

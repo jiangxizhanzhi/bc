@@ -126,11 +126,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public Integer countNotSubmitted(String roomId) {
+	public Integer countUnsubmitted(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.NOT_SUBMITTED_STATUS_LIST);
+				CrTask.TaskStatus.UNSUBMITTED_STATUS_LIST);
 	}
-
 	@Override
 	public Integer countUnfinished(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,

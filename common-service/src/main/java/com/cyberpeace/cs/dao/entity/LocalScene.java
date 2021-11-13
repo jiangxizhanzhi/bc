@@ -1,75 +1,66 @@
 package com.cyberpeace.cs.dao.entity;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
-@TableName("local_scene_manager")
+@TableName("local_scene")
 public class LocalScene extends BaseTable {
 
-    /**
-     *
-     */
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	/**
+	 *
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    /**
-     *
-     */
-    private String mpSceneId;
+	/**
+	 *
+	 */
+	private String mpSceneId;
 
-    /**
-     *
-     */
-    private String businessType;
+	/**
+	 *
+	 */
+	private String businessCode;
 
-    /**
-     *
-     */
-    private String moduleType;
+	/**
+	 *
+	 */
+	private Date startTime;
 
-    /**
-     *
-     */
-    private String businessCode;
+	/**
+	 *
+	 */
+	private Date endTime;
 
-    /**
-     *
-     */
-    private Date startTime;
+	/**
+	 *
+	 */
+	private Date destoryTime;
 
-    /**
-     *
-     */
-    private Date endTime;
+	/**
+	 *
+	 */
+	private String destoryMode;
 
-    /**
-     *
-     */
-    private Date destoryTime;
+	/**
+	 *
+	 */
+	private String businessInstanceId;
 
-    /**
-     *
-     */
-    private String destoryMode;
+	/**
+	 *
+	 */
+	private String sceneStatus;
 
-    /**
-     *
-     */
-    private String businessInstanceId;
-
-    /**
-     *
-     */
-    private String sceneStatus;
-
-    /**
-     *
-     */
-    private String pauseTime;
+	/**
+	 *
+	 */
+	private String pauseTime;
 }

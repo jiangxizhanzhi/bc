@@ -19,6 +19,12 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	CrRoleContext getRoles(String roomId);
 
+	/**获取学员在团队训练的角色任务列表(目前只去掉了答案)
+	 * @param crRole 
+	 * @return
+	 */
+	List<MissionSchemeObject> getBaseMissionByRole(CrRole crRole);
+
 	/** 获取用户有权限的团队训练列表
 	 * @param userId
 	 * @return
@@ -38,7 +44,7 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 
-	/** 获取学员在团队训练的角色任务列表
+	/** 获取学员在团队训练的角色任务列表(去掉了很多属性)
 	 * @param roomId
 	 * @param userId
 	 * @return

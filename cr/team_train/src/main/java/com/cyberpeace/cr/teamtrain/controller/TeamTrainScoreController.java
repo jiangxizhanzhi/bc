@@ -1,16 +1,20 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.util.ArrayList;
+import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -19,8 +23,10 @@ import com.cyberpeace.cr.crbase.service.MissionSchemeService;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.TrainingRecord;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
+import com.cyberpeace.cr.teamtrain.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
@@ -99,6 +105,75 @@ public class TeamTrainScoreController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("提交学员评分")
+	@PostMapping("/student_score")
+	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
+			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
+
+		teamRoomService.checkRoomOpening(studentScoreReq.getTrainingTeam());
+
+		Integer trainingPercentage = Integer
+				.parseInt(studentScoreReq.getTrainingPercentage().replace("%", ""));
+		if (trainingPercentage < TeamScore.ScoreValue.MIN_PERCENTAGE.getCode()
+				|| trainingPercentage > TeamScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
+			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+		}
+		Integer abilityPercentage = Integer
+				.parseInt(studentScoreReq.getAbilityPercentage().replace("%", ""));
+		if (abilityPercentage < TeamScore.ScoreValue.MIN_PERCENTAGE.getCode()
+				|| abilityPercentage > TeamScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
+			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+		}
+		if (abilityPercentage + trainingPercentage != TeamScore.ScoreValue.SUM_OF_PERCENTAGE_INT
+				.getCode()) {
+			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+
+		}
+
+		List<Integer> abilityScoreList = JsonUtil
+				.toJsonObjectArray(studentScoreReq.getAbilityScore(), Integer.class);
+
+		if (abilityScoreList.size() != TeamScore.ScoreValue.ABILITY_SCORE_NUM.getCode()) {
+			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+		}
+		IntSummaryStatistics stats = abilityScoreList.stream().mapToInt((x) -> x)
+				.summaryStatistics();
+		if (stats.getMax() > TeamScore.ScoreValue.MAX_ABILITY_SCORE_VALUE.getCode()
+				|| stats.getMin() > TeamScore.ScoreValue.MIN_ABILITY_SCORE_VALUE.getCode()) {
+			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+		}
+
+		if (studentScoreReq.getComment().length() > TeamScore.ScoreValue.MAX_COMMENT_LEN
+				.getCode()) {
+			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+		}
+
+		TeamScore teamScore = teamScoreService.getByRoomIdAndUser(studentScoreReq.getTrainingTeam(),
+				studentScoreReq.getUser());
+		TeamScore newTeamScore = getTeamScoreFromReq(studentScoreReq);
+
+		if (teamScore == null) {
+			teamScoreService.save(newTeamScore);
+		} else {
+			newTeamScore.setResourceId(teamScore.getResourceId());
+			teamScoreService.updateById(newTeamScore);
+
+		}
+
+		return new BaseRsp<>();
+	}
+
+	private TeamScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
+		TeamScore teamScore = BeanUtils.copy(studentScoreReq, TeamScore.class);
+		teamScore.setTeamInstanceId(studentScoreReq.getTrainingTeam());
+		teamScore.setUserId(studentScoreReq.getUser());
+		teamScore.setSkillScore(studentScoreReq.getAbilityScore());
+		teamScore.setSkillPercentage(studentScoreReq.getAbilityPercentage());
+		teamScore.setTeamInstanceId(studentScoreReq.getTrainingTeam());
+
+		return teamScore;
+	}
+
 	/**
 	 * 获取动态事件
 	 *
@@ -143,7 +218,7 @@ public class TeamTrainScoreController {
 	 */
 	@ApiOperation("获取任务信息统计")
 	@GetMapping("/get_training_mission_report")
-	public BaseRsp<String> getTrainingMissionReport(
+	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		MissionReport missionReport = new MissionReport();
 		Map<String, Integer> missions_category = Maps.newHashMap();
@@ -163,8 +238,47 @@ public class TeamTrainScoreController {
 		missionReport.setMissionsCategory(missions_category);
 		missionReport.setMissionsStatistics(teamScoreService.getMissionsStatistics(resource_id));
 
-		return null;
+		return new BaseRsp<>(missionReport);
 	}
 
+	/**
+	 * 获取训练报告 - 任务信息统计
+	 *
+	 * @return
+	 */
+	@ApiOperation("获取用户训练记录")
+	@GetMapping("/get_training_record")
+	public BaseRsp<List<MissionSchemeObject>> getTrainingRecord(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
+			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_hash);
 
+		List<MissionSchemeObject> missionSchemeObjectList = crRoleService
+				.getBaseMissionByRole(crRole);
+
+		missionSchemeObjectList.forEach(missionSchemeObject -> {
+
+			List<MissionContext> missionContextList = new ArrayList<>();
+			missionSchemeObject.getMissions().forEach(mission -> {
+				MissionContext newMission = new MissionContext();
+				newMission.setResourceId(mission.getResourceId());
+				newMission.setTitle(mission.getTitle());
+				newMission.setDescription(mission.getDescription());
+				CrTask crTask = crTaskService.getByUserIdAndMissionId(user_hash,
+						mission.getResourceId());
+
+				TrainingRecord trainingRecord = new TrainingRecord();
+				if (crTask != null) {
+					trainingRecord.setRecord(crTask.getUserAnswer());
+					trainingRecord.setTime(crTask.getLastSubmitTime());
+				}
+				newMission.setTrainingRecord(trainingRecord);
+				missionContextList.add(newMission);
+
+			});
+			missionSchemeObject.setMissions(missionContextList);
+
+		});
+		return new BaseRsp<>(missionSchemeObjectList);
+	}
 }

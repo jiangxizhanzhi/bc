@@ -217,6 +217,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (teamRoomdata.isUnopened()) {
 			LocalScene localScene = new LocalScene();
 			localScene.setStartTime(new Date());
+			localScene.setBusinessCode("103todo");
+
 			localScene.setBusinessInstanceId(teamRoomdata.getResourceId());
 			localSceneService.save(localScene);
 		}
@@ -353,9 +355,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public void checkRoomOpening(String roomId) {
-		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(roomId);
-		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
-
+		TeamRoomData teamRoomdata = getTeamRoomRspByRoomId(roomId);
 		// 未开始，新增local_scene数据
 		if (teamRoomdata.isUnopened()) {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);

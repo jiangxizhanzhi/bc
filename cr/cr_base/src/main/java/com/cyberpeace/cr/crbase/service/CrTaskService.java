@@ -81,7 +81,7 @@ public interface CrTaskService {
 	 * @param roomId
 	 * @return
 	 */
-	Integer countNotSubmitted(String roomId);
+	Integer countUnsubmitted(String roomId);
 
 	/**
 	 * 统计某房间未完成的task数量

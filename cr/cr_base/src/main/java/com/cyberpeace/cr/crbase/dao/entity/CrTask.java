@@ -53,7 +53,7 @@ public class CrTask extends BaseTable {
 		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
 
-		public static List<Integer> NOT_SUBMITTED_STATUS_LIST = new ArrayList<>(
+		public static List<Integer> UNSUBMITTED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
 
 		public static List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(

@@ -18,7 +18,10 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
+import com.cyberpeace.cr.crbase.service.context.MissionMapping;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -58,7 +61,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		List<RoleData> roleResDataList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
 
-			List<MissionSchemeObject> missionSchemeObjectList = getMissionByRole(crRole);
+			List<MissionSchemeObject> missionSchemeObjectList = getBaseMissionByRole(crRole);
 
 			RoleData roleResData = new RoleData();
 			roleResData.setName(crRole.getName());
@@ -91,7 +94,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoleContext;
 	}
 
-	private List<MissionSchemeObject> getMissionByRole(CrRole crRole) {
+	@Override
+	public List<MissionSchemeObject> getBaseMissionByRole(CrRole crRole) {
 		List<MissionSchemeObject> missionSchemeObjectList = Lists.newArrayList();
 		List<MissionStageScheme> missionStageSchemeList = JsonUtil
 				.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
@@ -139,9 +143,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		CrRole crRole = getCrRoleByRoomIdAndUserId(roomId, userId);
 
-		List<MissionSchemeObject> missionSchemeObjectList = getMissionByRole(crRole);
+		List<MissionSchemeObject> missionSchemeObjectList = getBaseMissionByRole(crRole);
 
-		List<TaskContext> taskContextList = crTaskService.getByRoomIdAndUser(roomId, userId);
 		missionSchemeObjectList.forEach(missionSchemeObject -> {
 
 			List<MissionContext> missionContextList = new ArrayList<>();

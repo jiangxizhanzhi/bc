@@ -33,4 +33,7 @@ public interface CrBusinessErrorCode {
 
 	// 训练角色不存在
 	String TRAINING_TEAM_ROLE_NOT_EXIST_ERROR = "101008";
+
+	// 评分范围出错
+	String SCORE_RANGE_ERROR = "101009";
 }

@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class MissionReq implements Serializable {
+public class MissionTemplateReq implements Serializable {
 
 	@ApiModelProperty(required = true)
 	private String title;

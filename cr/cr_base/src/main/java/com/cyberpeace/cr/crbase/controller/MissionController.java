@@ -14,10 +14,12 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.controller.req.MissionModifyReq;
-import com.cyberpeace.cr.crbase.controller.req.MissionReq;
+import com.cyberpeace.cr.crbase.controller.req.MissionTemplateModifyReq;
+import com.cyberpeace.cr.crbase.controller.req.MissionTemplateReq;
 import com.cyberpeace.cr.crbase.controller.res.MissionCategoryRes;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.MissionService;
 
 import io.swagger.annotations.Api;
@@ -34,18 +36,51 @@ public class MissionController {
 
 	@ApiOperation("新增任务")
 	@PostMapping("/missions")
-	public BaseRsp<Mission> addMission(@RequestBody @Validated MissionReq missionReq) {
-		Mission toAddMission = requestToMission(missionReq);
+	public BaseRsp<MissionTemplate>
+			addMission(@RequestBody @Validated MissionTemplateReq missionTemplateReq) {
+		MissionTemplate toAddMissionTemplate = requestToMissionTemplate(missionTemplateReq);
 
-		missionService.addMission(toAddMission);
+		missionService.addMissionTemplate(toAddMissionTemplate);
 
-		Mission result = missionService.getById(toAddMission.getResourceId());
+		return new BaseRsp();
+	}
 
-		return new BaseRsp(result);
+	@ApiOperation("后台更新任务")
+	@PutMapping("/missions")
+	public BaseRsp<MissionTemplate>
+			updateMissionTemplate(@RequestBody @Validated MissionTemplateModifyReq modifyReq) {
+		if (StringUtils.isBlank(modifyReq.getResourceId())) {
+			throw new RuntimeException();
+		}
+
+		MissionTemplate toUpdateMissionTemplate = requestToMissionTemplate(modifyReq);
+		missionService.updateMissionTemplate(toUpdateMissionTemplate);
+
+		return new BaseRsp();
+	}
+
+	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {
+		MissionTemplate missionTemplate = BeanUtils.copy(missionTemplateReq, MissionTemplate.class);
+
+		missionTemplate.setCategoryId(missionTemplateReq.getCategory());
+		missionTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		missionTemplate.setSkillPoints(JSON.toJSONString(missionTemplateReq.getSkillPoints()));
+		missionTemplate.setResourceId(IDGeneratorUtil.getID());
+
+		return missionTemplate;
+	}
+
+	private MissionTemplate requestToMissionTemplate(MissionTemplateModifyReq modifyReq) {
+		MissionTemplate missionTemplate = BeanUtils.copy(modifyReq, MissionTemplate.class);
+
+		missionTemplate.setCategoryId(modifyReq.getCategory());
+		missionTemplate.setSkillPoints(JSON.toJSONString(modifyReq.getSkillPoints()));
+
+		return missionTemplate;
 	}
 
 	@ApiOperation("前台更新任务")
-	@PutMapping("/missions")
+	@PutMapping("/mission_update")
 	public BaseRsp<Mission>
 			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
@@ -54,21 +89,8 @@ public class MissionController {
 
 		Mission toUpdateMission = requestToMission(missionModifyReq);
 		missionService.updateById(toUpdateMission);
-		// ??
-		Mission result = missionService.getById(toUpdateMission.getResourceId());
 
-		return new BaseRsp(result);
-	}
-
-	private Mission requestToMission(MissionReq missionReq) {
-		Mission mission = BeanUtils.copy(missionReq, Mission.class);
-
-		mission.setCategoryId(missionReq.getCategory());
-		mission.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		mission.setSkillPoints(JSON.toJSONString(missionReq.getSkillPoints()));
-		mission.setResourceId(IDGeneratorUtil.getID());
-
-		return mission;
+		return new BaseRsp();
 	}
 
 	private Mission requestToMission(MissionModifyReq missionModifyReq) {
@@ -80,7 +102,7 @@ public class MissionController {
 			mission.setScore(missionModifyReq.getScore());
 		}
 		if (missionModifyReq.getSkillPoints() != null) {
-			mission.setSkillPoints(JSON.toJSONString(missionModifyReq.getTitle()));
+			mission.setSkillPoints(JSON.toJSONString(missionModifyReq.getSkillPoints()));
 		}
 
 		return mission;

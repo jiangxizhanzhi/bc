@@ -49,7 +49,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@PostConstruct
 	public void init() {
-		List<MissionCategory> categories = missionCategoryMapper.listMissionCategories();
+		List<MissionCategory> categories = missionCategoryMapper.selectAll();
 
 		categoryCache = Maps.newHashMap();
 
@@ -83,12 +83,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		Mission mission = missionMapper.selectById(missionId);
 		mission.setShowWriteup(showWriteup);
 		missionMapper.updateById(mission);
-	}
-
-	@Override
-	public Boolean isObjectiveMission(Mission mission) {
-
-		return Mission.MissionType.getOBJECTIVE_TYPE_LIST().contains(mission.getType());
 	}
 
 	@Override
@@ -134,6 +128,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				crTaskLogMapper.insert(taskLog);
 			}
 		});
+	}
+
+	@Override
+	public List<MissionCategory> listCategories() {
+		return new ArrayList<>(categoryCache.values());
 	}
 
 	@Override

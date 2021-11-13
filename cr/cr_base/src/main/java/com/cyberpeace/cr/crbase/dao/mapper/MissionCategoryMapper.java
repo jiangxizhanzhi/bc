@@ -15,5 +15,6 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
 @Repository
 public interface MissionCategoryMapper extends BaseMapper<MissionCategory> {
 
-	List<MissionCategory> listMissionCategories();
+	List<MissionCategory> selectAll();
+
 }

@@ -7,8 +7,6 @@ import com.cyberpeace.cr.crbase.service.context.TaskContext;
 
 public interface CrTaskService {
 
-	void addTask(CrTask task);
-
 	CrTask getById(String taskId);
 
 	/**
@@ -39,23 +37,6 @@ public interface CrTaskService {
 	 * @param task
 	 */
 	void startTask(CrTask task);
-
-	/**
-	 * 用户提交答案时更新
-	 * @param task
-	 * @param answer
-	 * @param score
-	 * @param taskStatus
-	 */
-	void updateWhenSubmit(CrTask task, String answer, Integer score, Integer taskStatus);
-
-	/**
-	 * 判分后更新
-	 * @param task
-	 * @param score
-	 * @param taskStatus
-	 */
-	void updateWhenEvaluate(CrTask task, Integer score, Integer taskStatus);
 
 	/**
 	 * 根据用户id和MissionId查出唯一对应的task
@@ -107,7 +88,7 @@ public interface CrTaskService {
 	 * @param roomId
 	 * @return
 	 */
-	Integer countNotFinished(String roomId);
+	Integer countUnfinished(String roomId);
 
 	/**
 	 * 统计某用户在某房间完成的task数量
@@ -195,8 +176,6 @@ public interface CrTaskService {
 	 */
 	List<String> getIdsByOptionalUserId(String roomId, String userId);
 
-	Boolean updateTask(CrTask task);
-
 	/**
 	 * 学员提交答案
 	 * @param missionId
@@ -217,7 +196,5 @@ public interface CrTaskService {
 	 */
 	void submitEvaluation(String taskSubmitId, Integer score, String detail, Integer reason,
 			Integer evaluateStatus, String currentUserId);
-
-	void reject();
 
 }

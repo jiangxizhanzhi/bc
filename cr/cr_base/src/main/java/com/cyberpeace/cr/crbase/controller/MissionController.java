@@ -15,9 +15,9 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.controller.req.MissionModifyReq;
 import com.cyberpeace.cr.crbase.controller.req.MissionReq;
+import com.cyberpeace.cr.crbase.controller.res.MissionCategoryRes;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
-import com.cyberpeace.cr.crbase.service.MissionCategoryService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 
 import io.swagger.annotations.Api;
@@ -86,14 +86,13 @@ public class MissionController {
 		return mission;
 	}
 
-	@Autowired
-	private MissionCategoryService missionCategoryService;
-
 	@ApiOperation("获取任务类型")
 	@GetMapping("/missions/get_category/")
 	public BaseRsp<List<MissionCategory>> list() {
 
-		List<MissionCategory> data = missionCategoryService.list();
+		List<MissionCategory> categories = missionService.listCategories();
+		List<MissionCategoryRes> data = BeanUtils.deepCopyList(categories,
+				MissionCategoryRes.class);
 
 		return new BaseRsp(data);
 	}

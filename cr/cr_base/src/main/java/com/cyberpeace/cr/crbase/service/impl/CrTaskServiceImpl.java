@@ -22,6 +22,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.google.common.collect.ImmutableMap;
 
 @Service
 public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> implements CrTaskService {
@@ -40,11 +41,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
-
-	@Override
-	public void addTask(CrTask crTask) {
-		crTaskMapper.insert(crTask);
-	}
 
 	@Override
 	public CrTask getById(String taskId) {
@@ -97,23 +93,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public void updateWhenSubmit(CrTask task, String answer, Integer score, Integer taskStatus) {
-		task.setUserAnswer(answer);
-		task.setScore(score);
-		task.setStatus(taskStatus);
-
-		crTaskMapper.updateById(task);
-	}
-
-	@Override
-	public void updateWhenEvaluate(CrTask task, Integer score, Integer taskStatus) {
-		task.setScore(score);
-		task.setStatus(taskStatus);
-
-		crTaskMapper.updateById(task);
-	}
-
-	@Override
 	public CrTask getByUserIdAndMissionId(String userId, String missionId) {
 		return crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 	}
@@ -147,7 +126,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public Integer countNotFinished(String roomId) {
+	public Integer countUnfinished(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
 				CrTask.TaskStatus.UNFINISHED_STATUS_LIST);
 	}
@@ -210,18 +189,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return crTaskMapper.selectIdsByRoomIdAndUserId(roomId, userId);
 	}
 
-	@Override
-	public Boolean updateTask(CrTask task) {
-		if (StringUtils.isBlank(task.getResourceId())) {
-			return false;
-		}
-
-		crTaskMapper.updateById(task);
-
-		return true;
-	}
-
-	private boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType) {
+	private Boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType) {
 		// xiantoulan
 		return userAnswer.equals(missionAnswer);
 	}
@@ -257,20 +225,14 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskSubmit.setResourceId(IDGeneratorUtil.getID());
 
 		// 创建提交log
-		CrTaskLog submitLog = new CrTaskLog();
-		submitLog.setRoomId(task.getRoomId());
-		submitLog.setMissionId(missionId);
-		submitLog.setActionCode(CrTaskLog.ActionCode.SUBMIT.getCode());
-		submitLog.setUserId(userId);
+		CrTaskLog submitLog = createTaskLog(task.getRoomId(), missionId,
+				CrTaskLog.ActionCode.SUBMIT.getCode(), userId);
 
 		// 创建可能存在的评估log
-		CrTaskLog evaluateLog = new CrTaskLog();
+		CrTaskLog evaluateLog = createTaskLog(task.getRoomId(), missionId, null, null);;
 
 		if (mission.isObjective()) {
 			// 客观题，可机评
-			evaluateLog.setRoomId(task.getRoomId());
-			evaluateLog.setMissionId(missionId);
-
 			if (isCorrect(answer, mission.getAnswer(), mission.getType())) {
 				task.setScore(mission.getScore());
 				task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
@@ -320,6 +282,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			throw new RuntimeException();
 		}
 
+		// 驳回??
+		if (score == null) {
+			score = 0;
+		}
+		// 校验分数
+		if (taskSubmit.getMissionScore() < score || score < 0) {
+			throw new RuntimeException();
+		}
+
 		taskSubmit.setScore(score);
 		taskSubmit.setDetail(detail);
 		taskSubmit.setReason(reason);
@@ -330,15 +301,37 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		task.setStatus(evaluateStatus);
 		task.setScore(score);
 
-		CrTaskLog taskLog = new CrTaskLog();
-		taskLog.setRoomId(taskSubmit.getRoomId());
-		taskLog.setMissionId(task.getMissionId());
-		taskLog.setActionCode();
+		CrTaskLog evaluationLog = createTaskLog(taskSubmit.getRoomId(), task.getMissionId(),
+				evaluateStatusToActionCode.get(evaluateStatus), currentUserId);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				crTaskMapper.updateById(task);
+				crTaskSubmitMapper.updateById(taskSubmit);
+				crTaskLogMapper.insert(evaluationLog);
+			}
+		});
 
 	}
 
 	private CrTaskLog createTaskLog(String roomId, String missionId, Integer actionCode,
 			String userId) {
-		return null;
+		CrTaskLog crTaskLog = new CrTaskLog();
+		crTaskLog.setRoomId(roomId);
+		crTaskLog.setMissionId(missionId);
+		crTaskLog.setActionCode(actionCode);
+		crTaskLog.setUserId(userId);
+
+		return crTaskLog;
 	}
+
+	private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
+			CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
+			CrTaskLog.ActionCode.MAN_SUCCESS.getCode(), CrTaskSubmit.EvaluateStatus.FAIL.getCode(),
+			CrTaskLog.ActionCode.MAN_FAILURE.getCode(),
+			CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
+			CrTaskLog.ActionCode.MAN_REJECT.getCode());
+
 }

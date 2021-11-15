@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,11 @@ import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
+/**
+ * @author SN
+ */
 @Service
 public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> implements CrTaskService {
 
@@ -69,7 +76,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			missionIds.add(task.getMissionId());
 		}
 		List<Mission> missionList = missionMapper.batchSelect(missionIds);
-		Map<String, Mission> missionMap = new HashMap<>();
+		Map<String, Mission> missionMap = Maps.newHashMap();
 		for (Mission mission : missionList) {
 			missionMap.put(mission.getResourceId(), mission);
 		}

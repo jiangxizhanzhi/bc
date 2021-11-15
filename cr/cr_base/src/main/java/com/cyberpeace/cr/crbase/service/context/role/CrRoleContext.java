@@ -12,7 +12,7 @@ public class CrRoleContext {
 
 	List<RoleData> roles;
 
-	Map<String, MissionCompletion> missionCompletionMapping;
+	Map<String, MissionCompletion> missionMapping;
 
 	List<Map<String, ShowWriteup>> showWriteupMapping;
 

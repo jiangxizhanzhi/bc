@@ -72,6 +72,7 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 		roleQuery.setRoomId(roomId);
 		roleQuery.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
+
 		Integer missionCount = 0;
 		for (CrRole crRole : crRoleList) {
 			Integer roleMissionCount = crRoleService.getMissionCount(crRole);
@@ -86,4 +87,8 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 		return null;
 	}
 
+	@Override
+	public List<TeamScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds) {
+		return teamScoreMapper.selectByRoomIdAndUserIds(roomId, userIds);
+	}
 }

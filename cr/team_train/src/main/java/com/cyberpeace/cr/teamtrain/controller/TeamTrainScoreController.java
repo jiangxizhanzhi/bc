@@ -1,15 +1,15 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.ArrayList;
-import java.util.IntSummaryStatistics;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -20,20 +20,21 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
-import com.cyberpeace.cr.crbase.service.context.MissionContext;
-import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import com.cyberpeace.cr.crbase.service.context.TaskContext;
-import com.cyberpeace.cr.crbase.service.context.TrainingRecord;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.teamtrain.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.StudentScoreRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 import com.cyberpeace.cr.teamtrain.service.TeamDynamicEventService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
 import com.cyberpeace.cr.teamtrain.service.context.*;
+import com.cyberpeace.integratation.model.UserPageContext;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -63,6 +64,9 @@ public class TeamTrainScoreController {
 
 	@Autowired
 	TeamDynamicEventService teamDynamicEventService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Autowired
 	MissionSchemeService missionSchemeService;
@@ -139,7 +143,7 @@ public class TeamTrainScoreController {
 		IntSummaryStatistics stats = abilityScoreList.stream().mapToInt((x) -> x)
 				.summaryStatistics();
 		if (stats.getMax() > TeamScore.ScoreValue.MAX_ABILITY_SCORE_VALUE.getCode()
-				|| stats.getMin() > TeamScore.ScoreValue.MIN_ABILITY_SCORE_VALUE.getCode()) {
+				|| stats.getMin() < TeamScore.ScoreValue.MIN_ABILITY_SCORE_VALUE.getCode()) {
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
@@ -281,4 +285,91 @@ public class TeamTrainScoreController {
 		});
 		return new BaseRsp<>(missionSchemeObjectList);
 	}
+
+	/**
+	 * 获取训练报告 - 任务信息统计
+	 *
+	 * @return
+	 */
+	@ApiOperation("获取用户训练报告")
+	@GetMapping("/get_training_report")
+	public BaseRsp<TrainingReport> getTrainingReport(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		TrainingReport trainingReport = new TrainingReport();
+		TeamRoomData teamRoomdata = teamRoomService.getTeamRoomRspByRoomId(resource_id);
+		if (null == teamRoomdata.getSceneStartTime()) {
+			return new BaseRsp<>(new TrainingReport());
+		}
+
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(resource_id);
+		roleQuery.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+
+		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
+
+		List<String> userIds = Lists.newArrayList();
+		for (CrRole crRole : crRoleList) {
+			userIds.addAll(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+		}
+
+		UserPageContext userPageContext = new UserPageContext();
+		userPageContext.setIds(String.join(",", userIds));
+		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		Map<String, UserInfo> userInfoMap = userInfoList.stream()
+				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
+
+		// 获取每个学员的任务信息
+		List<TeamScore> studentScoreList = teamScoreService.selectByRoomIdAndUserIds(resource_id,
+				userIds);
+		Map<String, TeamScore> studentScoreMap = studentScoreList.stream()
+				.collect(Collectors.toMap(TeamScore::getUserId, bo -> bo));
+
+		// 获取每个学员已完成的任务数量
+		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(resource_id,
+				userIds);
+		Map<String, Integer> studentTaskMap = Maps.newHashMap();
+		for (CrTask crRole : finishedTasks) {
+			Integer count = studentTaskMap.getOrDefault(crRole.getUserId(), 0) + 1;
+			studentTaskMap.put(crRole.getUserId(), count);
+		}
+		List<UserReport> userReportList = Lists.newArrayList();
+
+		// 遍历每个学员，设置任务统计结果
+		for (CrRole crRole : crRoleList) {
+			List<MissionStageScheme> missionStageSchemes = JsonUtil
+					.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
+			Integer missionCount = 0;
+			for (MissionStageScheme stage : missionStageSchemes) {
+				missionCount += stage.getMissions().size();
+			}
+			List<String> userList = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			for (String userId : userList) {
+				TeamScore teamScore = studentScoreMap.get(userId);
+				UserReport userReport = new UserReport();
+				userReport.setUserId(userId);
+				userReport.setUserName(userInfoMap.get(userId).getName());
+				userReport.setRoleName(crRole.getName());
+				List<Integer> list = Lists.newArrayList();
+				list.add(studentTaskMap.getOrDefault(userId, 0));
+				list.add(missionCount);
+				userReport.setMissionCompleted(list);
+				userReport.setComment(teamScore == null ? "" : teamScore.getComment());
+				userReport.setScore(teamScore == null ? 0 : teamScore.getFinalScore());
+				userReportList.add(userReport);
+			}
+
+		}
+
+		trainingReport.setSceneStartTime(teamRoomdata.getSceneStartTime());
+		Date endTime = teamRoomdata.getEndTime() == null ? new Date()
+				: teamRoomdata.getSceneStartTime();
+		Integer timeSeconds = Math.toIntExact(
+				(endTime.getTime() - teamRoomdata.getSceneStartTime().getTime()) / 1000);
+		trainingReport.setTeacherName(UserInfoContext.getUserContext().getUserName());
+		trainingReport.setTrainingTime(timeSeconds);
+		trainingReport.setUsers(userReportList);
+
+		return new BaseRsp<>(trainingReport);
+	}
+
 }

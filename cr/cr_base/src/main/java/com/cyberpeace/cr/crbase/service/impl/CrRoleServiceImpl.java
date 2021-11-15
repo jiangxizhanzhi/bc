@@ -18,8 +18,8 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
-import com.cyberpeace.cr.crbase.service.context.MissionMapping;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.role.*;
@@ -89,7 +89,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		});
 
 		crRoleContext.setShowWriteupMapping(showWriteupMapping);
-		crRoleContext.setMissionCompletionMapping(missionCompletionMapping);
+		crRoleContext.setMissionMapping(missionCompletionMapping);
 
 		return crRoleContext;
 	}

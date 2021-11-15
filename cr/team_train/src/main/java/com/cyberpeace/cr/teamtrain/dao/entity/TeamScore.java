@@ -60,7 +60,7 @@ public class TeamScore extends BaseTable {
 	/**
 	 * 
 	 */
-	private String finalScore;
+	private Integer finalScore;
 
 	public enum ScoreValue {
 

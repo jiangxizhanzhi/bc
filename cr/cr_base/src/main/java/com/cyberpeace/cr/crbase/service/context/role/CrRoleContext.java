@@ -3,7 +3,7 @@ package com.cyberpeace.cr.crbase.service.context.role;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.cr.crbase.service.context.MissionMapping;
+import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ public class CrRoleContext {
 
 	List<RoleData> roles;
 
-	MissionMapping missionMapping;
+	Map<String, MissionCompletion> missionCompletionMapping;
 
 	List<Map<String, ShowWriteup>> showWriteupMapping;
 

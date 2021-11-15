@@ -106,6 +106,8 @@ public interface CrTaskService {
 	 */
 	List<CrTask> getFinishedByRoomIdAndUserId(String roomId, String userId);
 
+	List<CrTask> getFinishedByRoomIdAndUserIds(String roomId, List<String> userIds);
+
 	/**
 	 * 查询某房间的task
 	 * @param roomId

@@ -28,6 +28,9 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	List<CrTask> selectByRoomIdAndUserIdAndStatusList(String roomId, String userId,
 			List<Integer> statusList);
 
+	List<CrTask> selectByRoomIdAndUserIdsAndStatusList(String roomId, List<String> userIds,
+			List<Integer> statusList);
+
 	List<CrTask> selectByRoomId(String roomId);
 
 	List<CrTask> selectByRole(String roleId);

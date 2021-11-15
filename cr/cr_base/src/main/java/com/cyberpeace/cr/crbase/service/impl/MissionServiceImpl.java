@@ -20,7 +20,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.MissionMapping;
+import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.google.common.collect.Maps;
 
 /**
@@ -151,8 +151,22 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public MissionMapping getMissionStatusData(String roomId) {
-		return null;
+	public Map<String, MissionCompletion> getMissionStatusData(String roomId) {
+
+		List<CrTask> tasks = crTaskMapper.selectByRoomId(roomId);
+		Map<String, MissionCompletion> missionMap = Maps.newHashMap();
+		for (CrTask task : tasks) {
+			if (!missionMap.containsKey(task.getMissionId())) {
+				missionMap.put(task.getMissionId(), new MissionCompletion(1, 0));
+			}
+		}
+
+		for (CrTask task : tasks) {
+			if (task.isFinished()) {
+				missionMap.get(task.getResourceId()).addCompletionNum();
+			}
+		}
+		return missionMap;
 	}
 
 	@Override

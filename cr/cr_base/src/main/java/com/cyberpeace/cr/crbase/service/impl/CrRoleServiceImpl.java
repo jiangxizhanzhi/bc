@@ -69,7 +69,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		}
 		crRoleContext.setRoles(roleResDataList);
 
-		MissionMapping missionMapping = missionService.getMissionStatusData(roomId);
+		Map<String, MissionCompletion> missionCompletionMapping = missionService
+				.getMissionStatusData(roomId);
 
 		List<Mission> missionList = missionService.batchGetByRoom(roomId);
 		ShowWriteup showWriteup = new ShowWriteup();
@@ -85,7 +86,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		});
 
 		crRoleContext.setShowWriteupMapping(showWriteupMapping);
-		crRoleContext.setMissionMapping(missionMapping);
+		crRoleContext.setMissionCompletionMapping(missionCompletionMapping);
 
 		return crRoleContext;
 	}

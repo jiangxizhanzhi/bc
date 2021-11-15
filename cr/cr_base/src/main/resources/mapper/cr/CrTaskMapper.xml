@@ -146,4 +146,18 @@
           and user_id = #{userId}
     </select>
 
+    <select id="selectByRoomIdAndUserIdsAndStatusList" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
+        select *
+        from cr_task
+        where room_id = #{roomId}
+        and user_id in
+        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+        and status in
+        <foreach collection="statusList" item="status" separator="," open="(" close=")">
+            #{status}
+        </foreach>
+    </select>
+
 </mapper>

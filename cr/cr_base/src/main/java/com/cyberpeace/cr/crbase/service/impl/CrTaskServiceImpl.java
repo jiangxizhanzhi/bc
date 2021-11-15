@@ -2,7 +2,6 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.*;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -140,6 +139,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public List<CrTask> getFinishedByRoomIdAndUserId(String roomId, String userId) {
 		return crTaskMapper.selectByRoomIdAndUserIdAndStatusList(roomId, userId,
+				CrTask.TaskStatus.FINISHED_STATUS_LIST);
+	}
+
+	@Override
+	public List<CrTask> getFinishedByRoomIdAndUserIds(String roomId, List<String> userIds) {
+		return crTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, userIds,
 				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 

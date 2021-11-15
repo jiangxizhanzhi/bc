@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
-import com.cyberpeace.cr.crbase.service.context.MissionMapping;
+import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
 public interface MissionService extends IService<Mission> {
 
@@ -27,27 +27,29 @@ public interface MissionService extends IService<Mission> {
 
 	/**
 	 * 下发任务
-	 * @param missionId
-	 * @param roleId
-	 * @param currentUserId
 	 */
 	void release(String missionId, String roleId, String currentUserId);
 
 	/**
 	 * mission category 列表
-	 * @return
 	 */
 	List<MissionCategory> listCategories();
 
 	/**
-	 * @param roomId
-	 * @return
+	 * mission完成数量统计
 	 */
-	MissionMapping getMissionStatusData(String roomId);
+	Map<String, MissionCompletion> getMissionStatusData(String roomId);
 
 	MissionCategory getCategoryById(String categoryId);
 
+	/**
+	 * 复制模板任务为靶场实例任务
+	 * @return map{旧模板任务id：复制任务id}
+	 */
 	Map<String, String> copyScheme(List<String> missionTemplateIds, String userId, String roomId);
 
+	/**
+	 * 开放、关闭题解
+	 */
 	void openOrCloseWriteup(String missionId, Boolean showWriteup);
 }

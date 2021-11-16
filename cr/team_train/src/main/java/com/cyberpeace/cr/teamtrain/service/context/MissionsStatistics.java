@@ -5,12 +5,12 @@ import lombok.Data;
 @Data
 public class MissionsStatistics {
 
-	Integer finishProportion;
+	private Integer finishProportion;
 
-	Integer notFinishProportion;
+	private Integer notFinishProportion;
 
-	Integer notSubmitProportion;
+	private Integer notSubmitProportion;
 
-	Integer unpublishedProportion;
+	private Integer unpublishedProportion;
 
 }

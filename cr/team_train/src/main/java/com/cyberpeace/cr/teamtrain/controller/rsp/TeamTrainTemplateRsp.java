@@ -3,7 +3,7 @@ package com.cyberpeace.cr.teamtrain.controller.rsp;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
 
 import lombok.Data;
 

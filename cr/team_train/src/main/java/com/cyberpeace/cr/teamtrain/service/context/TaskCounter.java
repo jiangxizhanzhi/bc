@@ -6,11 +6,11 @@ import lombok.Getter;
 @Data
 public class TaskCounter {
 
-	Integer finished;
+	private Integer finished;
 
-	Integer released;
+	private Integer released;
 
-	Integer notReleased;
+	private Integer notReleased;
 
 	public enum TaskType {
 

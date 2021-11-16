@@ -15,9 +15,9 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
-import com.cyberpeace.cr.teamtrain.controller.req.RoleListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
@@ -25,10 +25,10 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -53,27 +53,11 @@ public class TeamTrainTemplateController {
 		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils.copy(teamTrainTemplateAddReq,
 				TeamTrainTemplateContext.class);
 		teamTrainTemplateContext
-				.setRoleList(getRoleListFromReq(teamTrainTemplateAddReq.getRoleList()));
+				.setRoleList(JsonUtil.toJsonString(teamTrainTemplateAddReq.getRoleList()));
 
-		// TeamTemplate teamTemplate =
-		// teamTemplateService.create(teamTrainTemplateContext);
-		String resourceId = businessTemplateService.addTemplate(teamTrainTemplateContext);
+		businessTemplateService.addTemplate(teamTrainTemplateContext);
 
-		return getTeamTemplate(resourceId);
-	}
-
-	private List<TeamTrainTemplateRole> getRoleListFromReq(List<RoleListReq> roleList) {
-		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = Lists.newArrayList();
-
-		for (RoleListReq roleListReq : roleList) {
-			TeamTrainTemplateRole teamTrainTemplateRole = BeanUtils.deepCopy(roleListReq,
-					TeamTrainTemplateRole.class);
-			teamTrainTemplateRole
-					.setMissionsScheme(JsonUtil.toJsonString(roleListReq.getMissionsScheme()));
-
-			teamTrainTemplateRoleList.add(teamTrainTemplateRole);
-		}
-		return teamTrainTemplateRoleList;
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("修改")
@@ -166,6 +150,11 @@ public class TeamTrainTemplateController {
 
 		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
 				BaseRole.class);
+		BaseRole baseRole = new BaseRole();
+		baseRole.setName("教员");
+		baseRole.setRoleGroup(CrRole.RoleGroupCodeInteger.TEACHER.getValue());
+
+		teamTrainTemplateRoleList.add(0, baseRole);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
 
 		return teamTrainTemplateRsp;

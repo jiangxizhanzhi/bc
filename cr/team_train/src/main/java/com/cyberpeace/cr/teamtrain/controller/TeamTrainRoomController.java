@@ -125,12 +125,13 @@ public class TeamTrainRoomController {
 	}
 
 	@ApiOperation("列表查询")
-	@GetMapping("/list")
+	@PostMapping("/list")
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@RequestBody @Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		listQuery.setSort("-create_time");
+		// 默认时间排序4
+		listQuery.setSort("-cr_team_room.create_time");
 
 		IPage<TeamRoomData> data = teamRoomService.list(listQuery);
 

@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class StatisticalInfo {
 
-	Integer statistical_state;
+	private Integer statistical_state;
 
-	Integer value;
+	private Integer value;
 }

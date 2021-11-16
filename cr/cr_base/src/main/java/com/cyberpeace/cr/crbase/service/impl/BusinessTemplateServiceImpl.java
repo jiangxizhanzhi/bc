@@ -77,7 +77,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				save(businessTemplate);
 
 				// 2、保存业务模板数据
-				String teamTemplateId = businessTemplateHandler.saveBusiness(obj);
+				String teamTemplateId = businessTemplateHandler.saveBusiness(obj,
+						businessTemplate.getResourceId());
 				// 3、返回业务模板
 				// todo
 			}

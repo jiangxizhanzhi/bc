@@ -7,15 +7,15 @@ import lombok.Data;
 @Data
 public class UserReport {
 
-	String userId;
+	private String userId;
 
-	String userName;
+	private String userName;
 
-	String roleName;
+	private String roleName;
 
-	List<Integer> missionCompleted;
+	private List<Integer> missionCompleted;
 
-	String comment;
+	private String comment;
 
-	Integer score;
+	private Integer score;
 }

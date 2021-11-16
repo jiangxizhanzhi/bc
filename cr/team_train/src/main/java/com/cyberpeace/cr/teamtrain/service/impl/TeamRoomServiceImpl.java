@@ -29,7 +29,9 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
@@ -38,7 +40,6 @@ import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -119,6 +120,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 						.toJsonObjectArray(template.getRoleConfig(), TeamTrainTemplateRole.class);
 				List<RoomRole> users = teamTrainRoomContext.getRoleConfig();
 				int index = 0;
+				TeamTrainTemplateRole teacherRole = new TeamTrainTemplateRole();
+				teacherRole.setName("教员");
+				teacherRole.setRoleGroup(CrRole.RoleGroupCodeInteger.TEACHER.getValue());
+
+				teamTrainTemplateRoleList.add(0, teacherRole);
+
 				for (TeamTrainTemplateRole teamTrainTemplateRole : teamTrainTemplateRoleList) {
 
 					CrRole crRole = BeanUtils.deepCopy(teamTrainTemplateRole, CrRole.class);
@@ -128,15 +135,65 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 					JsonUtil.toJsonString(teamTrainTemplateRoleList);
 					crRole.setBusinessInstanceId(teamRoom.getResourceId());
 					crRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+					crRole.setMissionScheme(getNewRoomScheme(
+							teamTrainTemplateRole.getMissionsScheme(), teamRoom.getResourceId()));
 					crRoleService.save(crRole);
 
 				}
 
 				// todo 循环替换新的scheme，保存任务角色信息
 			}
+
 		});
 
 		return teamRoom;
+	}
+
+	/** 根据模板的任务id，复制任务并获取新的id，返回新的json字符串
+	 * @param missionsScheme 
+	 * @return
+	 */
+	private String getNewRoomScheme(String missionsScheme, String roomId) {
+
+		MissionColor missionColor = JsonUtil.toJsonObject(missionsScheme, MissionColor.class);
+		if (null == missionColor) {
+			return "[]";
+		}
+		List<MissionStageScheme> missionStageSchemes = Lists.newArrayList();
+		List<String> originMissionIds = Lists.newArrayList();
+		// 遍历每个阶段
+		for (MissionSchemeObject schemeDatum : missionColor.getSchemeData()) {
+
+			List<MissionContext> missions = schemeDatum.getMissions();
+			// 遍历每个任务
+			for (MissionContext mission : missions) {
+				originMissionIds.add(mission.getResourceId());
+			}
+		}
+
+		Map<String, String> originMissionMaps = missionService.copyScheme(originMissionIds,
+				UserInfoContext.getUserContext().getUserId(), roomId);
+
+		// 遍历每个阶段设置新的任务id
+		for (MissionSchemeObject schemeDatum : missionColor.getSchemeData()) {
+			MissionStageScheme missionStageScheme = new MissionStageScheme();
+
+			List<MissionContext> missions = schemeDatum.getMissions();
+			List<String> targetMissionIds = Lists.newArrayList();
+			missionStageScheme.setStage(schemeDatum.getStage());
+			missionStageScheme.setDynamic(schemeDatum.getDynamic());
+
+			// 遍历每个任务设置新的任务id
+			for (MissionContext mission : missions) {
+				targetMissionIds.add(originMissionMaps.getOrDefault(mission.getResourceId(),
+						mission.getResourceId()));
+			}
+			missionStageScheme.setMissions(targetMissionIds);
+			missionStageSchemes.add(missionStageScheme);
+		}
+
+		return JsonUtil.toJsonString(missionStageSchemes);
+
 	}
 
 	@Override

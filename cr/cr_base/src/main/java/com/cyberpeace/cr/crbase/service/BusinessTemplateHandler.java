@@ -26,18 +26,18 @@ public class BusinessTemplateHandler {
 		register.put(setBusinessType(), this);
 	}
 
-	public String saveBusiness(BasicTemplate basicTemplate) {
+	public String saveBusiness(BasicTemplate basicTemplate, String businessId) {
 		BusinessTemplate.BusinessType businessType = getBusinessType(basicTemplate);
 
 		BusinessTemplateHandler realHandler = register.get(businessType);
 
-		return realHandler.saveRealBusiness(basicTemplate);
+		return realHandler.saveRealBusiness(basicTemplate, businessId);
 	}
 
 	/**
 	 * 保存实际的业务模板。如红蓝对抗、团队训练
 	 */
-	public String saveRealBusiness(BasicTemplate obj) {
+	public String saveRealBusiness(BasicTemplate obj, String businessId) {
 		// 业务定义自己的保存操作
 		return "";
 

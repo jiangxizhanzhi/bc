@@ -18,7 +18,6 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainTemplateRole;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
@@ -79,11 +78,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		teamTemplate.setTimeLineConfig(
 				JsonUtil.toJsonString(teamTrainTemplateContext.getTimeLineConfig()));
 
-		for (TeamTrainTemplateRole teamTrainTemplateRole : teamTrainTemplateContext.getRoleList()) {
-
-			teamTrainTemplateRole.setCrEventId(businessTemplate.getResourceId());
-
-		}
 		teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateContext.getRoleList()));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

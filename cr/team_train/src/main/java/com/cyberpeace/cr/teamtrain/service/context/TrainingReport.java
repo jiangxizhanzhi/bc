@@ -10,11 +10,11 @@ import lombok.Data;
 @Data
 public class TrainingReport {
 
-	String teacherName = "";
+	private String teacherName = "";
 
-	Date sceneStartTime;
+	private Date sceneStartTime;
 
-	Integer trainingTime = 0;
+	private Integer trainingTime = 0;
 
-	List<UserReport> users = Lists.newArrayList();
+	private List<UserReport> users = Lists.newArrayList();
 }

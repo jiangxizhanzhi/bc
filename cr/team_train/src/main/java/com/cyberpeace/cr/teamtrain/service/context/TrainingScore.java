@@ -5,12 +5,12 @@ import lombok.Data;
 @Data
 public class TrainingScore {
 
-	Integer getScoreObjective;
+	private Integer getScoreObjective;
 
-	Integer getScoreSubjective;
+	private Integer getScoreSubjective;
 
-	Integer sumScoreObjective;
+	private Integer sumScoreObjective;
 
-	Integer sumScoreSubjective;
+	private Integer sumScoreSubjective;
 
 }

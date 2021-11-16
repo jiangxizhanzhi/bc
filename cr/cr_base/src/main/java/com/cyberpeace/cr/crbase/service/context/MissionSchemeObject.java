@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class MissionSchemeObject {
 
-	String stage;
+	private String stage;
 
-	List<MissionContext> missions;
+	private List<MissionContext> missions;
 
-	List<String> dynamic;
+	private List<String> dynamic;
 }

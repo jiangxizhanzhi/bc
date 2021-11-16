@@ -174,7 +174,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 		for (CrTask task : tasks) {
 			if (task.isFinished()) {
-				missionMap.get(task.getResourceId()).addCompletionNum();
+				missionMap.get(task.getMissionId()).addCompletionNum();
 			}
 		}
 		return missionMap;
@@ -192,21 +192,23 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		if (missionTemplateIds.size() > 0) {
 			List<MissionTemplate> missionTemplates = missionTemplateMapper
 					.selectBatchIds(missionTemplateIds);
+			if (missionTemplates.size() > 0) {
+				List<Mission> missions = new ArrayList<>();
 
-			List<Mission> missions = new ArrayList<>();
+				for (MissionTemplate missionTemplate : missionTemplates) {
+					Mission mission = BeanUtils.copy(missionTemplate, Mission.class);
+					mission.setShowWriteup(false);
+					mission.setCreateUserId(userId);
+					mission.setRoomId(roomId);
+					mission.setResourceId(IDGeneratorUtil.getID());
 
-			for (MissionTemplate missionTemplate : missionTemplates) {
-				Mission mission = BeanUtils.copy(missionTemplate, Mission.class);
-				mission.setShowWriteup(false);
-				mission.setCreateUserId(userId);
-				mission.setRoomId(roomId);
-				mission.setResourceId(IDGeneratorUtil.getID());
+					missions.add(mission);
+					missionCopyMap.put(missionTemplate.getResourceId(), mission.getResourceId());
+				}
 
-				missions.add(mission);
-				missionCopyMap.put(missionTemplate.getResourceId(), mission.getResourceId());
+				missionMapper.batchInsert(missions);
 			}
 
-			missionMapper.batchInsert(missions);
 		}
 		return missionCopyMap;
 	}

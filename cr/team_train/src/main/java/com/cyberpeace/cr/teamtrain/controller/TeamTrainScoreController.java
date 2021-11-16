@@ -100,13 +100,15 @@ public class TeamTrainScoreController {
 		}
 
 		TeamScore teamScore = teamScoreService.getByRoomIdAndUser(resource_id, user_hash);
+		StudentScoreRsp studentScoreRsp = new StudentScoreRsp();
+		if (teamScore != null) {
+			studentScoreRsp = BeanUtils.copy(teamScore, StudentScoreRsp.class);
+			studentScoreRsp.setAbilityScore(
+					JsonUtil.toJsonObjectArray(teamScore.getSkillScore(), Integer.class));
 
-		StudentScoreRsp studentScoreRsp = BeanUtils.copy(teamScore, StudentScoreRsp.class);
-		studentScoreRsp.setAbilityScore(
-				JsonUtil.toJsonObjectArray(teamScore.getSkillScore(), Integer.class));
-		studentScoreRsp.setTrainingScore(trainingScore);
-
-		return new BaseRsp<>();
+			studentScoreRsp.setTrainingScore(trainingScore);
+		}
+		return new BaseRsp<>(studentScoreRsp);
 	}
 
 	@ApiOperation("提交学员评分")

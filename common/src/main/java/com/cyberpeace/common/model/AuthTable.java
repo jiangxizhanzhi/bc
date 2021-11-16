@@ -1,5 +1,6 @@
 package com.cyberpeace.common.model;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Data;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ public class AuthTable extends BaseTable {
 
 	private String readAuthIds;
 
-	public enum AuthType {
+	public enum AuthType implements GenericEnum {
 
 		ALL_SHARE_MODE(1, "授权所有"), CUSTOM_SHARE_MODE(2, "自定义");
 

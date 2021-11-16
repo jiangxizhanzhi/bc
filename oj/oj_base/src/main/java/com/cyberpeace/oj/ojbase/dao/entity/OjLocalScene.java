@@ -14,7 +14,7 @@ public class OjLocalScene extends BaseTable {
 
     private Boolean shared;
 
-    private Integer fromWeb;
+    private Boolean fromWeb;
 
     private String flags;
 

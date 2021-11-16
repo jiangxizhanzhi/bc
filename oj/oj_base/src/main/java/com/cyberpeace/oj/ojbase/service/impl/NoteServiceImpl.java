@@ -3,7 +3,7 @@ package com.cyberpeace.oj.ojbase.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation;
+import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,7 +17,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.constant.NoteType;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -45,7 +44,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			return null;
 		}
 
-		return uniqueContext.getNoteType().intValue() == NoteType.NOTE.getCode()
+		return uniqueContext.getNoteType().intValue() == Note.NoteType.NOTE.getCode()
 				? BeanUtils.copy(note, NoteBo.class)
 				: BeanUtils.copy(note, ReportBo.class);
 	}
@@ -53,8 +52,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	@Override
 	public Note addNote(NoteAddContext noteAddContext) {
 		Note note = BeanUtils.copy(noteAddContext, Note.class);
-		note.setReadAuthType(ReadAndOperation.AuthShare.ALL.getCode());
-		note.setOperationAuthType(ReadAndOperation.AuthShare.ALL.getCode());
+		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
 		updateOrSave(note);
 		return note;

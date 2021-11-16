@@ -13,9 +13,13 @@ import java.util.List;
 @Repository
 public interface PracticeTheoryRefMapper extends BaseMapper<PracticeTheoryRef> {
 
-	List<TestPaperPractice> getListByTestPaper(@Param("paperId") String paperId);
-
 	Integer saveBatch(@Param("practiceList") List<PracticeTheoryRef> practiceList);
 
 	void deleteByPaper(@Param("paperId") String paperId);
+
+	List<PracticeTheoryRef> selectByPracticeIds(@Param("paperId") String paperId,
+			@Param("practiceIds") List<String> practiceIds);
+
+	PracticeTheoryRef selectByPracticeId(@Param("paperId") String paperId,
+			@Param("practiceId") String practiceIds);
 }

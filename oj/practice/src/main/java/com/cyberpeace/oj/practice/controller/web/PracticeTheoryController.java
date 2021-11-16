@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -10,19 +11,28 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+import com.cyberpeace.oj.practice.service.impl.TheoryEvaluateHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -30,6 +40,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/oj/practice-theory")
 @RequiresAuthentication
+@Slf4j
 public class PracticeTheoryController {
 
 	@Autowired
@@ -37,6 +48,9 @@ public class PracticeTheoryController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private PracticeTheoryMapper practiceTheoryMapper;
 
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
@@ -65,6 +79,17 @@ public class PracticeTheoryController {
 				authContext);
 
 		return new BaseRsp<>(PageUtil.getListResult(result));
+	}
+
+	@ApiOperation("理论基础练习题提交")
+	@PostMapping("/submit_answer")
+	public BaseRsp<EvaluateResult> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
+
+		EvaluateResult evaluateResult = practiceTheoryService.submitAnswer(
+				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
+				answerReq.getSubmitAnswer());
+
+		return new BaseRsp<>(evaluateResult);
 	}
 
 }

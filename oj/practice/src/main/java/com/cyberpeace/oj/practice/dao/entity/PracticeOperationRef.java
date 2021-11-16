@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 /**
@@ -10,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @TableName("oj_practice_operation_ref")
-public class PracticeOperationRef {
+public class PracticeOperationRef extends BaseTable {
 
 	/** 快照 对应习题的快照*/
 	private String snapshot;

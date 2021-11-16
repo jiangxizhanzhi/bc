@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -13,10 +14,14 @@ import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
@@ -24,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
@@ -41,6 +47,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
+
+	@Resource(name = "theory")
+	private TheoryEvaluateHandler theoryEvaluateHandler;
+
+	@Autowired
+	private PracticeSolvedMapper practiceSolvedMapper;
 
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
@@ -88,5 +100,36 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// todo 习题解决详情
 
 		return webTheoryBo;
+	}
+
+	@Override
+	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer) {
+
+		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(theoryId);
+		if (null == practiceTheory) {
+			log.info("Theory practice not found! practice_id=[{}]", theoryId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		// 判断是否已完成答题
+		PracticeSolved solvedPractice = practiceSolvedMapper.selectUserAndId(userId, theoryId);
+		if (solvedPractice.getSolved()) {
+			return BeanUtils.copy(solvedPractice, EvaluateResult.class);
+		}
+
+		EvaluateResult evaluateResult = theoryEvaluateHandler.evaluateByBusiness(userId,
+				practiceTheory, userAnswer);
+
+		// 将评估记录存储
+		PracticeSolved practiceSolved = BeanUtils.copy(evaluateResult, PracticeSolved.class);
+		practiceSolved.setPracticeId(practiceTheory.getResourceId());
+		practiceSolved.setSubmitUserId(userId);
+		practiceSolved.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+
+		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
+				ResourceCollection.BusinessType.THEORY.getCode(), practiceTheory.getResourceId()));
+		practiceSolvedMapper.insert(practiceSolved);
+
+		return evaluateResult;
 	}
 }

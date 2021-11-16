@@ -1,14 +1,10 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.oj.ojbase.constant.CommentType;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.CommentIsLikeReq;
 import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
 import com.cyberpeace.oj.ojbase.controller.req.PageCommentReq;
@@ -20,12 +16,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Api(tags = "oj-评论相关api")
 @RestController

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
@@ -28,4 +29,13 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	WebTheoryBo selectById(String resourceId, String userId);
+
+	/**
+	 * 答案提交评估
+	 * @param userId
+	 * @param theoryId
+	 * @param userAnswer
+	 * @return
+	 */
+	EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer);
 }

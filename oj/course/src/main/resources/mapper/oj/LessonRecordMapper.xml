@@ -49,7 +49,7 @@
     <select id="selectByLessonAndUser" resultMap="baseResultMap">
         select * from course_lessonrecord
         <where>
-            and user = #{userId}
+            and `user` = #{userId}
             and lesson = #{lessonId}
         </where>
     </select>

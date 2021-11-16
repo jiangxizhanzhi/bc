@@ -2,7 +2,6 @@ package com.cyberpeace.oj.practice.service.bo;
 
 import java.io.Serializable;
 
-import com.cyberpeace.oj.practice.component.PracticeEvaluateHandler;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

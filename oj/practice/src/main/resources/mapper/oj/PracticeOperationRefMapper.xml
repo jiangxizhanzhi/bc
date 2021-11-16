@@ -2,9 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper">
-    <select id="getListByTestPaper" resultType="com.cyberpeace.oj.practice.service.bo.TestPaperPractice">
-        select *, 2 as practice_type from practice_operation_ref where status = 1 and test_paper = #{test_paper}
-    </select>
+
+    <resultMap id="operationRef" type="com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef"/>
 
     <insert id="saveBatch">
         insert into practice_operation_ref
@@ -27,4 +26,24 @@
         where paper_id = #{paperId}
     </delete>
 
+    <select id="selectByPracticeIds" resultMap="operationRef">
+        select * from oj_practice_operation_ref
+        <where>
+            <if test="paperId != null and paperId != ''">
+                paper_id = #{paperId}
+            </if>
+            <if test="practiceIds != null and practiceIds.size() != 0">
+                and origin_id in
+                <foreach collection="practiceIds" item="practiceId" separator="," close=")" open="(">
+                    #{practiceId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByPracticeId" resultMap="operationRef">
+        select * from oj_practice_operation_ref
+        where paper_id = #{paperId}
+        and origin_id = #{practiceId}
+    </select>
 </mapper>

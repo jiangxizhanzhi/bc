@@ -4,12 +4,6 @@
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper">
     <resultMap id="base" type="com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef"/>
 
-    <select id="getListByTestPaper" resultType="com.cyberpeace.oj.practice.service.bo.TestPaperPractice">
-        select *, 0 as practice_type
-        from practice_theory_ref
-        where paper_id = #{paperId}
-    </select>
-
     <insert id="saveBatch">
         INSERT INTO oj_practice_theory_ref
                 (`resource_id`, `snapshot`, `origin_id`, `option_random`, `paper_id`,
@@ -22,8 +16,29 @@
     </insert>
 
     <delete id="deleteByPaper">
-        delete
-        from oj_practice_theory_ref
+        delete from oj_practice_theory_ref
         where paper_id = #{paperId}
     </delete>
+
+    <select id="selectByPracticeIds" resultMap="base">
+        select * from oj_practice_theory_ref
+        <where>
+            <if test="paperId != null and paperId != ''">
+                paper_id = #{paperId}
+            </if>
+            <if test="practiceIds != null and practiceIds.size() != 0">
+                and origin_id in
+                <foreach collection="practiceIds" item="practiceId" open="(" close=")" separator=",">
+                    #{practiceId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByPracticeId" resultMap="base">
+        select *
+        from oj_practice_theory_ref
+        where paper_id = #{paperId}
+        and origin_id = #{practiceId}
+    </select>
 </mapper>

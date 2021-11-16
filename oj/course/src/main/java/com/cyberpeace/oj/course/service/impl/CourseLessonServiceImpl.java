@@ -2,18 +2,29 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.*;
+import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.constant.PaperType;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
-import com.cyberpeace.oj.practice.service.bo.AddOrUpdatePaperContext;
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+import com.cyberpeace.oj.practice.service.*;
+import com.cyberpeace.oj.practice.service.bo.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,9 +50,11 @@ import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
-import com.cyberpeace.oj.practice.service.PaperService;
+
+import javax.annotation.Resource;
 
 @Service
+@Slf4j
 public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, CourseLesson> implements CourseLessonService {
 
 	@Autowired
@@ -72,7 +85,22 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private PaperMapper paperMapper;
 
 	@Autowired
+	private LessonPaperEvaluateMapper lessonPaperEvaluateMapper;
+
+	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Resource(name = "theory")
+	private PracticeEvaluateHandler theoryEvaluateHandler;
+
+	@Resource(name = "operation")
+	private PracticeEvaluateHandler operationEvaluateHandler;
+
+	@Autowired
+	private PracticeTheoryRefService practiceTheoryRefService;
+
+	@Autowired
+	private PracticeOperationRefService practiceOperationRefService;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String userId, String courseId, String lessonId) {
@@ -300,5 +328,175 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		boolean result = saveBatch(courseLessons);
 		return result;
+	}
+
+	@Override
+	public EvaluateResult submitLessonPractice(SubmitAnswerContext answerContext,
+			List<PracticeAnswerContext> answers, AuthContext authContext) {
+
+		// 数据校验
+		Course course = validateCourse(answerContext.getCourseId(), authContext);
+		CourseLesson lesson = validateLesson(answerContext.getLessonId(), CommonConstant.TRUE);
+		Paper paper = validatePaper(lesson, CommonConstant.TRUE);
+
+		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
+				.selectByUserAndLesson(answerContext.getUserId(), answerContext.getLessonId());
+		if (null != paperEvaluate) {
+			EvaluateResult evaluateResult = BeanUtils.copy(paperEvaluate, EvaluateResult.class);
+			evaluateResult.setSolved(CommonConstant.TRUE);
+			evaluateResult.setTotalScore(paper.getTotalScore());
+
+			return evaluateResult;
+		}
+
+		List<PracticeSolvedBo> practiceSolvedBos = Lists.newArrayList();
+
+		List<EvaluateResult> evaluateResultList = StreamApiUtils.simpleMap(answers,
+				submitContext -> {
+
+					if (submitContext.getPracticeType()
+							.intValue() == PracticeCategory.PracticeType.THEORY.getCode()
+									.intValue()) {
+
+						PracticeTheory practiceTheory = practiceTheoryRefService.selectByPracticeId(
+								paper.getResourceId(), submitContext.getPracticeId());
+						EvaluateResult evaluateResult = theoryEvaluateHandler.evaluateByBusiness(
+								authContext.getUserId(), practiceTheory,
+								submitContext.getSubmitAnswer());
+
+						PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult,
+								PracticeSolvedBo.class);
+						solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
+						practiceSolvedBos.add(solvedBo);
+						return evaluateResult;
+
+					} else {
+						PracticeOperation operation = practiceOperationRefService
+								.selectByPracticeId(paper.getResourceId(),
+										submitContext.getPracticeId());
+						EvaluateResult evaluateResult = operationEvaluateHandler.evaluateByBusiness(
+								answerContext.getUserId(), operation,
+								submitContext.getSubmitAnswer());
+
+						PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult,
+								PracticeSolvedBo.class);
+						solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
+						practiceSolvedBos.add(solvedBo);
+						return evaluateResult;
+					}
+				});
+
+		Double totalScore = StreamApiUtils.mapToDouble(evaluateResultList,
+				EvaluateResult::getTotalScore);
+		Double score = StreamApiUtils.mapToDouble(evaluateResultList, EvaluateResult::getScore);
+		EvaluateResult evaluateResult = EvaluateResult.builder().solved(CommonConstant.TRUE)
+				.score(score).totalScore(totalScore).build();
+
+		LessonPaperEvaluate evaluate = BeanUtils.copy(evaluateResult, LessonPaperEvaluate.class);
+		evaluate.setLessonId(answerContext.getLessonId());
+		evaluate.setRecord(JsonUtil.toJsonString(practiceSolvedBos));
+		evaluate.setSubmitUserId(answerContext.getUserId());
+
+		lessonPaperEvaluateMapper.insert(evaluate);
+
+		return evaluateResult;
+	}
+
+	@Override
+	public LessonPracticeBo practiceByLesson(String courseId, String lessonId,
+			AuthContext authContext) {
+
+		// 数据校验
+		Course course = validateCourse(courseId, authContext);
+		CourseLesson lesson = validateLesson(lessonId, authContext.getIsWeb());
+		Paper paper = validatePaper(lesson, authContext.getIsWeb());
+
+		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
+				.selectByUserAndLesson(authContext.getUserId(), lessonId);
+
+		List<PracticeSolvedBo> solvedBos = JsonUtil.toJsonObjectArray(paperEvaluate.getRecord(),
+				PracticeSolvedBo.class);
+		Map<String, PracticeSolvedBo> solvedBoMap = StreamApiUtils.columnMap(solvedBos,
+				PracticeSolvedBo::getResourceId, practiceSolvedBo -> practiceSolvedBo);
+
+		// 查询习题内容 转换数据类型
+		List<OperationLessonBo> operationLessonBos = practiceOperationRefService
+				.selectByPaperId(paper.getResourceId());
+
+		List<LessonOperationBo> lessonOperationBos = StreamApiUtils.simpleMap(operationLessonBos,
+				operationBo -> {
+					LessonOperationBo lessonOperationBo = BeanUtils.copy(operationBo,
+							LessonOperationBo.class);
+					lessonOperationBo
+							.setResolvedDetail(solvedBoMap.get(operationBo.getResourceId()));
+					return lessonOperationBo;
+				});
+
+		List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService
+				.selectByPaper(paper.getResourceId());
+		List<LessonTheoryBo> theoryBoList = StreamApiUtils.simpleMap(theoryLessonBos,
+				theoryLessonBo -> {
+					LessonTheoryBo theoryBo = BeanUtils.copy(theoryLessonBo, LessonTheoryBo.class);
+					theoryBo.setResolvedDetail(solvedBoMap.get(theoryBo.getResolvedDetail()));
+					return theoryBo;
+				});
+
+		Map<Integer, List<LessonTheoryBo>> practiceMap = StreamApiUtils.groupByColumn(theoryBoList,
+				TheoryLessonBo::getQuestionType);
+		Map<Integer, List<? extends TheoryLessonBo>> map = Maps.newHashMap();
+		map.putAll(practiceMap);
+		map.put(PracticeTheory.TheoryType.OPERATION.getCode(), lessonOperationBos);
+
+		// 计算课程基本数据
+
+
+		return null;
+	}
+
+	/**
+	 * 课程校验
+	 * @param courseId
+	 * @param authContext
+	 */
+	private Course validateCourse(String courseId, AuthContext authContext) {
+
+		List<String> courseIds = courseMapper.selectByAuth(authContext);
+		if (!courseIds.contains(courseId)) {
+			log.error("Course No Permission！course_id=[{}]", courseId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		return courseMapper.selectById(courseId);
+	}
+
+	/**
+	 * 校验课时
+	 * @param lessonId
+	 * @param isWeb
+	 */
+	private CourseLesson validateLesson(String lessonId, Boolean isWeb) {
+		CourseLesson lesson = courseLessonMapper.selectByPublic(lessonId, isWeb);
+		if (null == lesson) {
+			log.error("Lesson not found! lesson_id=[{}]", lessonId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		return lesson;
+	}
+
+	/**
+	 * 试卷数据校验
+	 * @return
+	 */
+	private Paper validatePaper(CourseLesson lesson, Boolean isWeb) {
+
+		Paper paper = paperMapper.selectById(lesson.getPaperId());
+		if (isWeb && !paper.getIsPublic()) {
+			log.error("The paper was not made public！lesson_id=[{}], paper_id=[{}]",
+					lesson.getResourceId(), lesson.getPaperId());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		return paper;
 	}
 }

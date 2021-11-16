@@ -31,4 +31,7 @@ public interface OjBusinessErrorCode {
 	/** 理论基础习题找不到*/
 	String THEORY_NOT_FIND = "102008";
 
+	/** 资源未找到*/
+	String RESOURCE_NOT_FIND = "102001";
+
 }

@@ -16,7 +16,7 @@ import lombok.Data;
 public class CourseAddReq implements Serializable {
 
     @NotNull
-    @ApiModelProperty("授权访问类型 1=全部 2=自定义")
+    @ApiModelProperty(value = "授权访问类型 1=全部 2=自定义")
     private Integer readAuthType;
 
     @ApiModelProperty("授权访问组织")

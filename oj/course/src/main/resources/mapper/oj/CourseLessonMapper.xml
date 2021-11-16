@@ -51,4 +51,12 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByPublic" resultMap="lesson">
+        select * from oj_course_lesson
+        where resource_id = #{resourceId}
+        <if test="isPublic != null and isPublic">
+            and `public` = #{isPublic}
+        </if>
+    </select>
 </mapper>

@@ -13,7 +13,6 @@ import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
-import com.cyberpeace.oj.ojbase.constant.CommentType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
 import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
@@ -25,6 +24,7 @@ import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -97,7 +97,7 @@ public class WebCourseController {
 		return rsp;
 	}
 
-//	@PostMapping("/comment")
+	// @PostMapping("/comment")
 	@ApiOperation("留言新增或者修改")
 	public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
 
@@ -108,7 +108,7 @@ public class WebCourseController {
 
 		Comment comment = BeanUtils.copy(commentReq, Comment.class);
 		comment.setUserId(UserInfoContext.getUserContext().getUserId());
-		comment.setBusinessType(CommentType.COURSE.getCode());
+		comment.setBusinessType(Comment.CommentType.COURSE.getCode());
 		comment.setThemeName(course.getName());
 
 		Comment newComment = commentService.addNewComment(comment);

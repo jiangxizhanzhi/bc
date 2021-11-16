@@ -3,12 +3,12 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
-import com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -165,8 +165,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 常规条件过滤
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds);
 
-		iPage.convert(course -> transferToBo(course, authContext));
-		return PageUtil.getListResult(iPage);
+		IPage<CourseWebBo> webBoIPage = iPage.convert(course -> transferToBo(course, authContext));
+		return PageUtil.getListResult(webBoIPage);
 	}
 
 	/**
@@ -183,12 +183,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			CourseAdminBo courseAdminBo = BeanUtils.copy(courseInfoBo, CourseAdminBo.class);
 			courseAdminBo.setAuth(course.getReadAuthType());
 			courseAdminBo.setShare(course.getOperationAuthType());
-			if (course.getReadAuthType().intValue() == ReadAndOperation.AuthShare.CUSTOM.getCode().intValue()) {
+			if (course.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
+					.getCode().intValue()) {
 				List<String> orgs = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
 						String.class);
 				courseAdminBo.setAuthCount(orgs.size());
 			}
-			if (course.getOperationAuthType().intValue() == ReadAndOperation.AuthShare.CUSTOM.getCode().intValue()) {
+			if (course.getOperationAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
+					.getCode().intValue()) {
 				List<String> shares = JsonUtil.toJsonObjectArray(course.getOperationAuthIds(),
 						String.class);
 				courseAdminBo.setAuthCount(shares.size());

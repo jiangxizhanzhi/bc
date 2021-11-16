@@ -5,12 +5,13 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.course.controller.req.PracticeSubmitReq;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
-import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
-import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
+import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 
 public interface CourseLessonService extends IService<CourseLesson> {
@@ -75,4 +76,23 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @return
 	 */
 	Boolean importLessons(String courseId, List<String> lessonIds);
+
+	/**
+	 * 课后练习答案校验
+	 * @param answerContext
+	 * @param authContext
+	 * @param answers
+	 * @return
+	 */
+	EvaluateResult submitLessonPractice(SubmitAnswerContext answerContext,
+			List<PracticeAnswerContext> answers, AuthContext authContext);
+
+	/**
+	 * 课后练习数据查询
+	 * @param courseId
+	 * @param lessonId
+	 * @param authContext
+	 * @return
+	 */
+	LessonPracticeBo practiceByLesson(String courseId, String lessonId, AuthContext authContext);
 }

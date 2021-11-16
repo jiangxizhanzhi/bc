@@ -5,14 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation;
+import com.cyberpeace.common.model.AuthTable;
 import lombok.Data;
 import lombok.Getter;
 
 @Data
 @TableName("oj_practice_set")
-public class PracticeSet extends ReadAndOperation {
+public class PracticeSet extends AuthTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;

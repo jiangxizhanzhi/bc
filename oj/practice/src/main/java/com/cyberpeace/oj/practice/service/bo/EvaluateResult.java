@@ -1,10 +1,16 @@
 package com.cyberpeace.oj.practice.service.bo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class EvaluateResult implements Serializable {
 
 	/** 是否通过*/
@@ -16,9 +22,6 @@ public class EvaluateResult implements Serializable {
 	/** 总分*/
 	private Double totalScore;
 
-	public EvaluateResult(Boolean solved, Double score, Double totalScore) {
-		this.solved = solved;
-		this.score = score;
-		this.totalScore = totalScore;
-	}
+	/** 资源编号*/
+	private String resourceId;
 }

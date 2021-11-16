@@ -11,7 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PaperMapper extends BaseMapper<Paper> {
 
-    ListRsp<Paper> getList(Page page, String pattern);
 
-    Integer batchDelete();
 }

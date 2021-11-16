@@ -8,10 +8,12 @@ import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
-import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
-import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
-import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
+import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
+import com.cyberpeace.oj.practice.service.bo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,8 @@ import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
-import com.cyberpeace.oj.practice.service.bo.OperationBo;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
@@ -47,8 +49,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Resource(name = "operation")
+	private PracticeEvaluateHandler practiceEvaluateHandler;
+
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
+
+	@Autowired
+	private PracticeSolvedMapper practiceSolvedMapper;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation, String ojSceneConfig) {
@@ -135,5 +143,36 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		});
 
 		return listBoIPage;
+	}
+
+	@Override
+	public EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer) {
+
+		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
+		if (null == operation) {
+			log.error("Operation practice not found! practice_id=[{}]", resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		PracticeSolved solved = practiceSolvedMapper.selectUserAndId(userId, resourceId);
+		if (solved.getSolved()) {
+			EvaluateResult evaluateResult = BeanUtils.copy(solved, EvaluateResult.class);
+			return evaluateResult;
+		}
+
+		EvaluateResult evaluateResult = practiceEvaluateHandler.evaluateByBusiness(userId,
+				operation, submitAnswer);
+
+		// 将评估记录存储
+		PracticeSolved practiceSolved = BeanUtils.copy(evaluateResult, PracticeSolved.class);
+		practiceSolved.setPracticeId(operation.getResourceId());
+		practiceSolved.setSubmitUserId(userId);
+		practiceSolved.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+
+		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
+				ResourceCollection.BusinessType.OPERATION.getCode(), operation.getResourceId()));
+		practiceSolvedMapper.insert(practiceSolved);
+
+		return evaluateResult;
 	}
 }

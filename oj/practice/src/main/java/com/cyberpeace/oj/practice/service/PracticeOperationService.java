@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.service.bo.OperationBo;
-import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
-import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
-import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
+import com.cyberpeace.oj.practice.service.bo.*;
 
 public interface PracticeOperationService extends IService<PracticeOperation> {
 
@@ -52,4 +49,13 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 */
 	IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery,
 			AuthContext authContext);
+
+	/**
+	 * 实操练习习题解答
+	 * @param userId
+	 * @param resourceId
+	 * @param submitAnswer
+	 * @return
+	 */
+	EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer);
 }

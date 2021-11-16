@@ -62,23 +62,6 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	TransactionTemplate transactionTemplate;
 
 	@Override
-	public TestPaperInfo getSingleInfo(String resourceId) {
-
-		TestPaperInfo object = BeanUtils.copy(getById(resourceId), TestPaperInfo.class);
-
-		List<TestPaperPractice> practiceList = Lists.newArrayList();
-		List<TestPaperPractice> theoryPractices = practiceTheoryRefMapper
-				.getListByTestPaper(object.getResourceId());
-		List<TestPaperPractice> operationPractices = practiceOperationRefMapper
-				.getListByTestPaper(object.getResourceId());
-		practiceList.addAll(theoryPractices);
-		practiceList.addAll(operationPractices);
-
-		object.setPracticeList(practiceList);
-		return object;
-	}
-
-	@Override
 	public Paper createOrUpdate(AddOrUpdatePaperContext paperContext) {
 
 		boolean insert = false;
@@ -188,8 +171,4 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		return refList;
 	}
 
-	@Override
-	public ListRsp<Paper> getList(Page page, String pattern) {
-		return getBaseMapper().getList(page, pattern);
-	}
 }

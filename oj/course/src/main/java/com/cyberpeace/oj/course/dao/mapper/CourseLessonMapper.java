@@ -30,4 +30,7 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 
 	IPage<CourseLesson> pageByContext(Page page, @Param("context") LessonContext context,
 			@Param("isPublic") Boolean isPublic);
+
+	CourseLesson selectByPublic(@Param("resourceId") String resourceId,
+			@Param("isPublic") Boolean isPublic);
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper">
+    <resultMap id="ojScene" type="com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene"/>
+
+    <select id="selectByUserAndBid" resultMap="ojScene">
+        select * from oj_local_Scene
+        where user_id = #{userId}
+        and business_id = #{businessId}
+        and from_web = #{isWeb}
+    </select>
+
+    <select id="selectByBidAndShared" resultMap="ojScene">
+        select * from oj_local_scene
+        where user_id = #{userId}
+        and shared = #{shared}
+        and from_web = #{isWeb}
+    </select>
+</mapper>

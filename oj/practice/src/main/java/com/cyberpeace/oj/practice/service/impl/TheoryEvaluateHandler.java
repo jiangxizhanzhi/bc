@@ -1,34 +1,26 @@
-package com.cyberpeace.oj.practice.component;
+package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
-import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateService;
+import com.cyberpeace.oj.practice.service.bo.BlankAnswer;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.google.common.collect.Maps;
 
-import lombok.Data;
-
-public class TheoryEvaluateHandler extends PracticeEvaluateHandler {
+@Service("theory")
+public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 
 	private static Map<Integer, PracticeEvaluateService> evaluateMap = Maps.newHashMap();
 
@@ -41,46 +33,17 @@ public class TheoryEvaluateHandler extends PracticeEvaluateHandler {
 				new ShortAnswerEvaluate());
 	}
 
-	@Autowired
-	private PracticeTheoryMapper practiceTheoryMapper;
-
-	@Autowired
-	private ResourceCollectionService resourceCollectionService;
-
-	@Autowired
-	private PracticeSolvedMapper practiceSolvedMapper;
-
 	@Override
-	EvaluateResult evaluatePracticeId(String practiceId, String userAnswer) {
+	public EvaluateResult evaluateByBusiness(String userId, PracticeBase practiceBase,
+			String userAnswer) {
 
-		// 判断是否已完成答题
-		PracticeSolved solvedPractice = practiceSolvedMapper
-				.selectUserAndId(UserInfoContext.getUserContext().getUserId(), practiceId);
-		if (solvedPractice.getSolved()) {
-			return BeanUtils.copy(solvedPractice, EvaluateResult.class);
-		}
-
-		// 判断习题是否存在
-		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
-		if (null == practiceTheory) {
-			throw new BusinessException(OjBusinessErrorCode.THEORY_NOT_FIND);
-		}
+		PracticeTheory practiceTheory = (PracticeTheory) practiceBase;
 
 		// 获取对应评估示例进行评估
 		PracticeEvaluateService evaluateService = evaluateMap.get(practiceTheory.getTheoryType());
 		EvaluateResult evaluateResult = evaluateService.evaluate(userAnswer,
 				practiceTheory.getAnswer(), practiceTheory.getScore());
-
-		// 将评估记录存储
-		PracticeSolved practiceSolved = BeanUtils.copy(evaluateResult, PracticeSolved.class);
-		practiceSolved.setPracticeId(practiceId);
-		practiceSolved.setSubmitUserId(UserInfoContext.getUserContext().getUserId());
-		practiceSolved.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
-
-		practiceSolved.setCollection(resourceCollectionService.selectByUnique(
-				UserInfoContext.getUserContext().getUserId(),
-				ResourceCollection.BusinessType.THEORY.getCode(), practiceId));
-		practiceSolvedMapper.insert(practiceSolved);
+		evaluateResult.setResourceId(practiceBase.getResourceId());
 
 		// 返回评估结果
 		return evaluateResult;
@@ -95,13 +58,14 @@ public class TheoryEvaluateHandler extends PracticeEvaluateHandler {
 		public EvaluateResult evaluate(String userAnswer, String realAnswer, Double totalScore) {
 
 			if (StringUtils.isBlank(userAnswer) || StringUtils.isBlank(realAnswer)) {
-				return new EvaluateResult(CommonConstant.FALSE, CommonConstant.ZERO.doubleValue(),
-						totalScore);
+				return EvaluateResult.builder().solved(CommonConstant.FALSE)
+						.score(CommonConstant.ZERO.doubleValue()).totalScore(totalScore).build();
 			}
+
 			Boolean solved = userAnswer.equals(realAnswer);
 			Double score = solved ? totalScore : CommonConstant.ZERO.doubleValue();
-			return new EvaluateResult(solved, score, totalScore);
-
+			return EvaluateResult.builder().solved(solved).score(score).totalScore(totalScore)
+					.build();
 		}
 	}
 
@@ -139,17 +103,18 @@ public class TheoryEvaluateHandler extends PracticeEvaluateHandler {
 		public EvaluateResult evaluate(String userAnswer, String realAnswer, Double totalScore) {
 
 			if (StringUtils.isBlank(userAnswer) || StringUtils.isBlank(realAnswer)) {
-				return new EvaluateResult(CommonConstant.FALSE, CommonConstant.ZERO.doubleValue(),
-						totalScore);
+				return EvaluateResult.builder().solved(CommonConstant.FALSE).totalScore(totalScore)
+						.score(CommonConstant.ZERO.doubleValue()).build();
 			}
 
 			Map<String, String> submitAnswer = (Map<String, String>) JsonUtil
 					.toJsonObjectArray(userAnswer, Map.class);
+
 			List<BlankAnswer> correctAnswer = JsonUtil.toJsonObjectArray(realAnswer,
 					BlankAnswer.class);
 			if (submitAnswer.isEmpty() || CollectionUtils.isEmpty(correctAnswer)) {
-				return new EvaluateResult(CommonConstant.FALSE, CommonConstant.ZERO.doubleValue(),
-						totalScore);
+				return EvaluateResult.builder().solved(CommonConstant.FALSE)
+						.score(CommonConstant.ZERO.doubleValue()).totalScore(totalScore).build();
 			}
 
 			List<String> submits = (List<String>) submitAnswer.values();
@@ -164,7 +129,8 @@ public class TheoryEvaluateHandler extends PracticeEvaluateHandler {
 				}
 			}
 
-			return new EvaluateResult(solved, score, totalScore);
+			return EvaluateResult.builder().solved(solved).score(score).totalScore(totalScore)
+					.build();
 		}
 	}
 
@@ -174,21 +140,11 @@ public class TheoryEvaluateHandler extends PracticeEvaluateHandler {
 	private static class ShortAnswerEvaluate implements PracticeEvaluateService {
 
 		@Override
-		public EvaluateResult evaluate(String userAnswer, String realAnswer, Double score) {
+		public EvaluateResult evaluate(String userAnswer, String realAnswer, Double totalScore) {
 
-			return new EvaluateResult(CommonConstant.TRUE, CommonConstant.ZERO.doubleValue(),
-					score);
+			return EvaluateResult.builder().solved(CommonConstant.TRUE)
+					.score(CommonConstant.ZERO.doubleValue()).totalScore(totalScore).build();
 		}
-	}
-
-	@Data
-	class BlankAnswer {
-
-		/** 权重*/
-		private Integer weight;
-
-		/** 答案*/
-		private String value;
 	}
 
 }

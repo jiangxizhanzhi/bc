@@ -1,0 +1,14 @@
+package com.cyberpeace.oj.ojbase.dao.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import org.apache.ibatis.annotations.Param;
+
+public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
+
+	OjLocalScene selectByUserAndBid(@Param("userId") String userId,
+			@Param("businessId") String businessId, @Param("isWeb") Boolean isWeb);
+
+	OjLocalScene selectByBidAndShared(@Param("userId") String businessId,
+			@Param("shared") Boolean shared, @Param("isWeb") Boolean isWeb);
+}

@@ -1,14 +1,13 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation;
-
+import com.cyberpeace.common.model.AuthTable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 @ApiModel
-public class AdminPracticeSetBo extends ReadAndOperation {
+public class AdminPracticeSetBo extends AuthTable {
 
 	@ApiModelProperty("名称")
 	private String name;

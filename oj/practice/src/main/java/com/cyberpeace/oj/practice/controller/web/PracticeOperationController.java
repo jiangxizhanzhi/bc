@@ -13,16 +13,21 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
+import com.cyberpeace.oj.practice.service.impl.OperationEvaluateHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "实践操作练习")
@@ -65,5 +70,16 @@ public class PracticeOperationController {
 				listQueryBo, authContext);
 
 		return new BaseRsp<>(PageUtil.getListResult(listBoIPage));
+	}
+
+	@ApiOperation("实操练习解答")
+	@PostMapping("/submit_answer")
+	public BaseRsp<EvaluateResult> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
+
+		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(
+				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
+				answerReq.getSubmitAnswer());
+
+		return new BaseRsp<>(evaluateResult);
 	}
 }

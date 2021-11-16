@@ -173,13 +173,17 @@ public class MissionController {
 
 	private MissionSchemeTemplate
 			requestToSchemeTemplate(MissionSchemeTemplateModifyReq templateModifyReq) {
+		if (StringUtils.isBlank(templateModifyReq.getResourceId())) {
+			throw new RuntimeException();
+		}
+
 		MissionSchemeTemplate schemeTemplate = missionService
 				.getSchemeTemplateById(templateModifyReq.getResourceId());
 		if (StringUtils.isNotBlank(templateModifyReq.getTitle())) {
 			schemeTemplate.setTitle(templateModifyReq.getTitle());
 		}
-		if (StringUtils.isNotBlank(templateModifyReq.getResourceId())) {
-			schemeTemplate.setTitle(templateModifyReq.getResourceId());
+		if (StringUtils.isNotBlank(templateModifyReq.getDescription())) {
+			schemeTemplate.setDescription(templateModifyReq.getDescription());
 		}
 		if (templateModifyReq.getTemplate() != null || templateModifyReq.getColor() != null) {
 			MissionSchemeTemplateConfig config = JsonUtil.toJsonObject(

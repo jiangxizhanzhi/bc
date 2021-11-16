@@ -22,6 +22,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
@@ -115,12 +116,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public void release(String missionId, String roleId, String currentUserId) {
 		Mission mission = missionMapper.selectById(missionId);
 		if (mission == null) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
 		CrRole role = crRoleMapper.selectById(roleId);
 		if (role == null) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 
 		Date releaseTime = new Date();

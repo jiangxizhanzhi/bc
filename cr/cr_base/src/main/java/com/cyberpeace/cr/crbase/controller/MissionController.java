@@ -20,6 +20,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.*;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionCategoryRes;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
@@ -64,7 +65,7 @@ public class MissionController {
 	public BaseRsp<MissionTemplate>
 			updateMissionTemplate(@RequestBody @Validated MissionTemplateModifyReq modifyReq) {
 		if (StringUtils.isBlank(modifyReq.getResourceId())) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
 		MissionTemplate toUpdateMissionTemplate = requestToMissionTemplate(modifyReq);
@@ -98,7 +99,7 @@ public class MissionController {
 	public BaseRsp<Mission>
 			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
 		Mission toUpdateMission = requestToMission(missionModifyReq);
@@ -174,7 +175,7 @@ public class MissionController {
 	private MissionSchemeTemplate
 			requestToSchemeTemplate(MissionSchemeTemplateModifyReq templateModifyReq) {
 		if (StringUtils.isBlank(templateModifyReq.getResourceId())) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
 		MissionSchemeTemplate schemeTemplate = missionService

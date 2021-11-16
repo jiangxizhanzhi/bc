@@ -215,22 +215,21 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public void submitAnswer(String missionId, String answer, String userId,
 			String answerExtension) {
+		Mission mission = missionMapper.selectById(missionId);
+		if (mission == null) {
+			throw new RuntimeException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
 
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 		if (task == null) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 
 		// 校验该task是否可提交
 		CrTaskSubmit lastSubmit = crTaskSubmitMapper.selectLastByTaskId(task.getResourceId());
 		if (lastSubmit != null && !lastSubmit.getEvaluateStatus()
 				.equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
-			throw new RuntimeException("not allowed to be submitted");
-		}
-
-		Mission mission = missionMapper.selectById(missionId);
-		if (mission == null) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.CANNOT_SUBMIT_FINISHED_TASK);
 		}
 
 		// 创建 taskSubmit
@@ -289,15 +288,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		// check permission??
 		CrTaskSubmit taskSubmit = crTaskSubmitMapper.selectById(taskSubmitId);
 		if (taskSubmit == null) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.MISSION_SUBMIT_NOT_FOUND);
 		}
 		if (taskSubmit.getEvaluateStatus().equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.TASK_REJECTED);
 		}
 
 		CrTask task = crTaskMapper.selectById(taskSubmit.getTaskId());
 		if (task == null) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
 		}
 
 		// 驳回??
@@ -306,7 +305,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		}
 		// 校验分数
 		if (taskSubmit.getMissionScore() < score || score < 0) {
-			throw new RuntimeException();
+			throw new RuntimeException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
 		taskSubmit.setScore(score);

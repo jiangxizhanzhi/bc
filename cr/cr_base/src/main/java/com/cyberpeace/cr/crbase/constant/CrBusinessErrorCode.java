@@ -34,8 +34,27 @@ public interface CrBusinessErrorCode {
 	// 训练角色不存在
 	String ROLE_NOT_EXIST_ERROR = "101008";
 
-	// 训练角色不存在
+	// 任务（Task）不存在
 	String TASK_NOT_EXIST_ERROR = "101009";
+
 	// 评分范围出错
 	String SCORE_RANGE_ERROR = "101010";
+
+	// 更新实例时没有传入resource_id字段
+	String RESOURCE_ID_MISSING = "101011";
+
+	// 任务未下发，不能提交答案
+	String MISSION_UNRELEASED = "101012";
+
+	// 任务处于完成状态，不可再次提交答案
+	String CANNOT_SUBMIT_FINISHED_TASK = "101013";
+
+	// 指定任务不存在
+	String MISSION_NOT_EXIST = "101014";
+
+	// 找不到指定的用户提交
+	String MISSION_SUBMIT_NOT_FOUND = "101015";
+
+	// 任务处于驳回状态不可评分
+	String TASK_REJECTED = "101016";
 }

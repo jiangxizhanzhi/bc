@@ -78,6 +78,7 @@ public class TeamTrainScoreController {
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
 
 		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(resource_id, user_hash);
+
 		Integer getScoreObjective = 0;
 
 		Integer getScoreSubjective = 0;
@@ -85,6 +86,7 @@ public class TeamTrainScoreController {
 		Integer sumScoreObjective = 0;
 
 		Integer sumScoreSubjective = 0;
+
 		TrainingScore trainingScore = new TrainingScore();
 		// studentScoreRsp.setTraining_percentage();
 
@@ -99,15 +101,21 @@ public class TeamTrainScoreController {
 
 		}
 
+		trainingScore.setSumScoreSubjective(sumScoreSubjective);
+		trainingScore.setSumScoreObjective(sumScoreObjective);
+		trainingScore.setGetScoreSubjective(getScoreSubjective);
+		trainingScore.setGetScoreObjective(getScoreObjective);
+
 		TeamScore teamScore = teamScoreService.getByRoomIdAndUser(resource_id, user_hash);
 		StudentScoreRsp studentScoreRsp = new StudentScoreRsp();
 		if (teamScore != null) {
 			studentScoreRsp = BeanUtils.copy(teamScore, StudentScoreRsp.class);
 			studentScoreRsp.setAbilityScore(
 					JsonUtil.toJsonObjectArray(teamScore.getSkillScore(), Integer.class));
-
-			studentScoreRsp.setTrainingScore(trainingScore);
+			studentScoreRsp.setAbilityPercentage(teamScore.getSkillPercentage());
 		}
+		studentScoreRsp.setTrainingScore(trainingScore);
+
 		return new BaseRsp<>(studentScoreRsp);
 	}
 

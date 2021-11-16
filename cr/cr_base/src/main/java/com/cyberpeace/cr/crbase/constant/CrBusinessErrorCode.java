@@ -20,7 +20,7 @@ public interface CrBusinessErrorCode {
 	String ZIP_PATH_NOT_EXTRA = "101003";
 
 	// 实例不存在
-	String CASE_DOES_NOT_EXIST = "101004";
+	String ROOM_NOT_EXIST = "101004";
 
 	// 权限不存在
 	String PERMISSION_NOT_EXIST = "101005";

@@ -273,7 +273,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (teamRoomdata.isUnopened()) {
 			LocalScene localScene = new LocalScene();
 			localScene.setStartTime(new Date());
-			localScene.setBusinessCode("103todo");
+			localScene.setBusinessCode("103");
+			// todo
 
 			localScene.setBusinessInstanceId(teamRoomdata.getResourceId());
 			localSceneService.save(localScene);
@@ -426,7 +427,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private void permissionCheck(String roomId, String userId, Integer teacher) {
 		TeamRoom teamRoom = getById(roomId);
 		if (teamRoom == null) {
-			throw new BusinessException(CrBusinessErrorCode.CASE_DOES_NOT_EXIST);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!crRole.getRoleGroup().equals(teacher)) {

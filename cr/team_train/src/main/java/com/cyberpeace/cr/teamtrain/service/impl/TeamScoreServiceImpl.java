@@ -81,10 +81,11 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 		}
 
 		missionsStatistics
-				.setNotFinishProportion(missionCount - crTaskService.getByRoomId(roomId).size());
-		// missionsStatistics.setNotSubmitProportion(crTaskService.countNotSubmitted(roomId));
-
-		return null;
+				.setUnpublishedProportion(missionCount - crTaskService.getByRoomId(roomId).size());
+		missionsStatistics.setNotSubmitProportion(crTaskService.countUnsubmitted(roomId));
+		missionsStatistics.setNotFinishProportion(crTaskService.countUnfinished(roomId));
+		missionsStatistics.setFinishProportion(crTaskService.countFinished(roomId));
+		return missionsStatistics;
 	}
 
 	@Override

@@ -29,7 +29,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
-import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -123,18 +122,10 @@ public class TeamTrainTemplateController {
 
 		ListRsp<TeamTrainTemplateRsp> teamTrainTemplateRspListRsp = new ListRsp();
 
-		List<TeamTrainTemplateRsp> teamTrainTemplateRspList = Lists.newArrayList();
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
-		for (TeamTemplateData teamTemplateData : data.getRecords()) {
-			TeamTrainTemplateRsp teamTrainTemplateRsp = getTeamTrainTemplateOutputByBaseInfoData(
-					teamTemplateData);
-			teamTrainTemplateRspList.add(teamTrainTemplateRsp);
-		}
 
-		teamTrainTemplateRspListRsp.setList(teamTrainTemplateRspList);
-		teamTrainTemplateRspListRsp.setTotal(data.getTotal());
-		teamTrainTemplateRspListRsp.setLastPage(data.getPages());
-		teamTrainTemplateRspListRsp.setCurrentPage(data.getCurrent());
+		data.convert(
+				teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData));
 
 		return new BaseRsp<>(teamTrainTemplateRspListRsp);
 	}

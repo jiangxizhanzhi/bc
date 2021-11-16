@@ -7,9 +7,9 @@ import lombok.Data;
 public class ReleaseMissionReq {
 
 	@ApiModelProperty(required = true)
-	String roleResourceId;
+	private String roleResourceId;
 
 	@ApiModelProperty(required = true)
-	String missionResourceId;
+	private String missionResourceId;
 
 }

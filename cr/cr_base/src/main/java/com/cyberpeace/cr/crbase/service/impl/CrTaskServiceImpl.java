@@ -12,8 +12,11 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
@@ -56,6 +59,9 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public TaskContext getByMissionAndUser(String missionId, String userId) {
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
+		if (null == task) {
+			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
+		}
 		TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
 		taskContext.setMission(missionMapper.selectById(task.getMissionId()));
 
@@ -64,7 +70,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public void submitMissions(String roomId, String missionId, String answer) {
-
+		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "");
 	}
 
 	@Override
@@ -130,6 +136,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
 				CrTask.TaskStatus.UNSUBMITTED_STATUS_LIST);
 	}
+
 	@Override
 	public Integer countUnfinished(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,

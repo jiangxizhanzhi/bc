@@ -2,16 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper">
+
     <insert id="batchInsert">
         insert into cr_task
         (resource_id, status, score, mission_id, user_id,
         release_time, room_id, role_id, business_type, create_time, update_time)
         values
         <foreach collection="tasks" item="task" separator=",">
-            (#{task.resource_id}, #{task.status}, #{task.score}, #{task.missionId}, #{task.userId},
-            #{task.releaseTime}, #{task.roomId}, #{task.businessType}, now(), now())
+            (#{task.resourceId}, #{task.status}, #{task.score}, #{task.missionId}, #{task.userId},
+            #{task.releaseTime}, #{task.roomId},#{task.roleId}, #{task.businessType}, now(), now())
         </foreach>
     </insert>
+
     <select id="selectByUserIdAndMissionId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
         select *
         from cr_task

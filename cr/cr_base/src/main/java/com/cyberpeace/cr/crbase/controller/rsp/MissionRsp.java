@@ -5,21 +5,21 @@ import lombok.Data;
 @Data
 public class MissionRsp {
 
-	String resourceId;
+	private String resourceId;
 
-	String title;
+	private String title;
 
-	String option;
+	private String option;
 
-	Integer type;
+	private Integer type;
 
-	String category;
+	private String category;
 
-	String description;
+	private String description;
 
-	String writeUp;
+	private String writeUp;
 
-	Boolean showWriteup;
+	private Boolean showWriteup;
 
-	String userAnswer;
+	private String userAnswer;
 }

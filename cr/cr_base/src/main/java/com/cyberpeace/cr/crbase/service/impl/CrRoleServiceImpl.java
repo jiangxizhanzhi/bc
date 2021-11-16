@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -147,7 +146,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		missionSchemeObjectList.forEach(missionSchemeObject -> {
 
-			List<MissionContext> missionContextList = new ArrayList<>();
+			List<MissionContext> missionContextList = Lists.newArrayList();
 			missionSchemeObject.getMissions().forEach(mission -> {
 				MissionContext newMission = new MissionContext();
 				newMission.setResourceId(mission.getResourceId());

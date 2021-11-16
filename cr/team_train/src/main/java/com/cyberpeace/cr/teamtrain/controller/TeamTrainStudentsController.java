@@ -81,11 +81,11 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<TeamRoomRsp>> list(@RequestBody @Validated TeamRoomListReq listReq) {
+	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		listQuery.setSort("-create_time");
+		listQuery.setSort("-cr_team_room.create_time");
 
 		IPage<TeamRoomData> data = teamRoomService.list(listQuery);
 
@@ -148,7 +148,7 @@ public class TeamTrainStudentsController {
 			@ApiParam(name = "mission_id", value = "任务id", required = true) String mission_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		TaskContext taskContext = crTaskService.getByMissionAndUser(mission_id, resource_id);
+		TaskContext taskContext = crTaskService.getByMissionAndUser(mission_id, userId);
 
 		MissionRsp missionRsp = new MissionRsp();
 		missionRsp.setResourceId(taskContext.getMission().getRoomId());

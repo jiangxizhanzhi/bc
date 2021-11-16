@@ -7,12 +7,12 @@ import lombok.Data;
 public class WriteUpReq {
 
 	@ApiModelProperty(required = true)
-	String trainingTeam;
+	private String trainingTeam;
 
 	@ApiModelProperty(required = true)
-	String missionResourceId;
+	private String missionResourceId;
 
 	@ApiModelProperty(required = true)
-	Boolean writeUpShow;
+	private Boolean writeUpShow;
 
 }

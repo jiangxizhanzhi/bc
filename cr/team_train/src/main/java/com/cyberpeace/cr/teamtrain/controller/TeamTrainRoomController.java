@@ -126,7 +126,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("列表查询")
 	@PostMapping("/list")
-	public BaseRsp<ListRsp<TeamRoomRsp>> list(@RequestBody @Validated TeamRoomListReq listReq) {
+	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -250,9 +250,11 @@ public class TeamTrainRoomController {
 
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 		if (crRole == null) {
-			throw new BusinessException(CrBusinessErrorCode.TRAINING_TEAM_ROLE_NOT_EXIST_ERROR);
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
-		// teamRoomService.releaseMissions(releaseMissionReq.getMissionResourceId(),releaseMissionReq.getMissionResourceId());
+		missionService.release(releaseMissionReq.getMissionResourceId(),
+				releaseMissionReq.getRoleResourceId(),
+				UserInfoContext.getUserContext().getUserId());
 
 		// todo 下发任务， 记录日志
 

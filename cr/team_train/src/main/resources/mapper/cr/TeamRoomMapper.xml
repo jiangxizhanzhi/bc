@@ -79,9 +79,7 @@
                     #{roomId}
                 </foreach>
             </if>
-            <if test="listQuery.ids.size() == 0">
-                ('')
-            </if>
+
             <if test="listQuery.search != null and listQuery.search != ''">
                 <bind name="search" value="'%' + listQuery.search + '%'"/>
                 and cr_team_room.name like #{search}

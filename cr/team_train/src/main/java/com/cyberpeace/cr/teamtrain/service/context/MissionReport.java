@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class MissionReport {
 
-	Map<String, Integer> missionsCategory;
+	private Map<String, Integer> missionsCategory;
 
-	MissionsStatistics missionsStatistics;
+	private MissionsStatistics missionsStatistics;
 }

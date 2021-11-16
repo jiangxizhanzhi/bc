@@ -10,13 +10,13 @@ public class SubmitMissionsReq {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	String resourceId;
+	private String resourceId;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	String missionHash;
+	private String missionHash;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	String answer;
+	private String answer;
 }

@@ -93,6 +93,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
+	@Cacheable(key = "#p0")
 	public List<UserInfo> getLazyUserList(UserPageContext userPageContext) {
 		List<BasicNameValuePair> nvps = Lists.newArrayList();
 		if (!StringUtils.isBlank(userPageContext.getIds())) {

@@ -5,17 +5,17 @@ import lombok.Data;
 @Data
 public class StudentScoreReq {
 
-	String abilityPercentage;
+	private String abilityPercentage;
 
-	String abilityScore;
+	private String abilityScore;
 
-	String comment;
+	private String comment;
 
-	Integer finalScore;
+	private Integer finalScore;
 
-	String trainingPercentage;
+	private String trainingPercentage;
 
-	String trainingTeam;
+	private String trainingTeam;
 
-	String user;
+	private String user;
 }

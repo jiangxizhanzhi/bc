@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class MissionDynamicRsp {
 
-	List<StatisticalInfo> statisticalInfo;
+	private List<StatisticalInfo> statisticalInfo;
 
-	List<DynamicData> dynamicData;
+	private List<DynamicData> dynamicData;
 }

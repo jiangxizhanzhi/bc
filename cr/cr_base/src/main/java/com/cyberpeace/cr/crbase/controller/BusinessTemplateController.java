@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -67,8 +65,7 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("批量修改操作权限")
 	@PostMapping("/batchSetShares")
-	public BaseRsp<String> batchSetShares(
-			@ApiParam(name = "shareReq", value = "修改权限内容") @RequestBody @Valid ShareReq shareReq) {
+	public BaseRsp<String> batchSetShares(@RequestBody @Validated ShareReq shareReq) {
 		ShareContext shareContext = BeanUtils.copy(shareReq, ShareContext.class);
 
 		businessTemplateService.batchSetShares(shareContext);

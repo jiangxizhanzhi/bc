@@ -9,16 +9,16 @@ import lombok.Data;
 @Data
 public class StudentScoreRsp {
 
-	String abilityPercentage;
+	private String abilityPercentage;
 
-	List<Integer> abilityScore;
+	private List<Integer> abilityScore;
 
-	String comment;
+	private String comment;
 
-	Integer finalScore;
+	private Integer finalScore;
 
-	String trainingPercentage;
+	private String trainingPercentage;
 
-	TrainingScore trainingScore;
+	private TrainingScore trainingScore;
 
 }

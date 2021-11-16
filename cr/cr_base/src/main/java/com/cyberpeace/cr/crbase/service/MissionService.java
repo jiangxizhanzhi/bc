@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
+import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
@@ -52,4 +56,16 @@ public interface MissionService extends IService<Mission> {
 	 * 开放、关闭题解
 	 */
 	void openOrCloseWriteup(String missionId, Boolean showWriteup);
+
+	void addSchemeTemplate(MissionSchemeTemplate schemeTemplate);
+
+	void batchDeleteSchemeTemplate(List<String> ids);
+
+	MissionSchemeTemplate getSchemeTemplateById(String schemeTemplateId);
+
+	void updateMissionSchemeTemplateById(MissionSchemeTemplate toUpdateSchemeTemplate);
+
+	ListRsp<MissionSchemeTemplateRsp> pageSchemeTemplateRsp(PageReqBase pageReqBase);
+
+	MissionSchemeTemplateRsp getSchemeTemplateRspById(String resourceId);
 }

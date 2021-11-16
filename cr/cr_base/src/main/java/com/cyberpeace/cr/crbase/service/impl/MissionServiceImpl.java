@@ -13,14 +13,22 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.google.common.collect.Maps;
 
 /**
@@ -43,6 +51,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
+
+	@Autowired
+	private MissionSchemeTemplateMapper missionSchemeTemplateMapper;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -177,24 +188,26 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public Map<String, String> copyScheme(List<String> missionTemplateIds, String userId,
 			String roomId) {
-		List<MissionTemplate> missionTemplates = missionTemplateMapper
-				.selectBatchIds(missionTemplateIds);
-
-		List<Mission> missions = new ArrayList<>();
 		Map<String, String> missionCopyMap = Maps.newHashMap();
+		if (missionTemplateIds.size() > 0) {
+			List<MissionTemplate> missionTemplates = missionTemplateMapper
+					.selectBatchIds(missionTemplateIds);
 
-		for (MissionTemplate missionTemplate : missionTemplates) {
-			Mission mission = BeanUtils.copy(missionTemplate, Mission.class);
-			mission.setShowWriteup(false);
-			mission.setCreateUserId(userId);
-			mission.setRoomId(roomId);
-			mission.setResourceId(IDGeneratorUtil.getID());
+			List<Mission> missions = new ArrayList<>();
 
-			missions.add(mission);
-			missionCopyMap.put(missionTemplate.getResourceId(), mission.getResourceId());
+			for (MissionTemplate missionTemplate : missionTemplates) {
+				Mission mission = BeanUtils.copy(missionTemplate, Mission.class);
+				mission.setShowWriteup(false);
+				mission.setCreateUserId(userId);
+				mission.setRoomId(roomId);
+				mission.setResourceId(IDGeneratorUtil.getID());
+
+				missions.add(mission);
+				missionCopyMap.put(missionTemplate.getResourceId(), mission.getResourceId());
+			}
+
+			missionMapper.batchInsert(missions);
 		}
-
-		missionMapper.batchInsert(missions);
 		return missionCopyMap;
 	}
 
@@ -203,5 +216,56 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		Mission mission = missionMapper.selectById(missionId);
 		mission.setShowWriteup(showWriteup);
 		missionMapper.updateById(mission);
+	}
+
+	@Override
+	public void addSchemeTemplate(MissionSchemeTemplate schemeTemplate) {
+		missionSchemeTemplateMapper.insert(schemeTemplate);
+	}
+
+	@Override
+	public void batchDeleteSchemeTemplate(List<String> schemeTemplateIds) {
+		missionSchemeTemplateMapper.deleteBatchIds(schemeTemplateIds);
+	}
+
+	@Override
+	public MissionSchemeTemplate getSchemeTemplateById(String schemeTemplateId) {
+		return missionSchemeTemplateMapper.selectById(schemeTemplateId);
+	}
+
+	@Override
+	public void updateMissionSchemeTemplateById(MissionSchemeTemplate toUpdateSchemeTemplate) {
+		missionSchemeTemplateMapper.updateById(toUpdateSchemeTemplate);
+	}
+
+	@Override
+	public ListRsp<MissionSchemeTemplateRsp> pageSchemeTemplateRsp(PageReqBase pageReqBase) {
+		Page page = pageReqBase.toPageParam();
+		IPage<MissionSchemeTemplate> iPage = missionSchemeTemplateMapper.list(page,
+				pageReqBase.getPattern());
+		iPage.convert(this::schemeTemplateToRsp);
+
+		return PageUtil.getListResult(iPage);
+	}
+
+	@Override
+	public MissionSchemeTemplateRsp getSchemeTemplateRspById(String resourceId) {
+		MissionSchemeTemplate template = missionSchemeTemplateMapper.selectById(resourceId);
+		return schemeTemplateToRsp(template);
+	}
+
+	private MissionSchemeTemplateRsp schemeTemplateToRsp(MissionSchemeTemplate schemeTemplate) {
+		MissionSchemeTemplateRsp templateRsp = BeanUtils.deepCopy(schemeTemplate,
+				MissionSchemeTemplateRsp.class);
+		MissionSchemeTemplateConfig config = JsonUtil.toJsonObject(
+				schemeTemplate.getTemplateConfig(), MissionSchemeTemplateConfig.class);
+		templateRsp.setTemplate(config.getTemplate());
+		templateRsp.setColor(config.getColor());
+		templateRsp.setConfig(schemeTemplate.getTemplateData());
+		templateRsp.setCombatConfig(JsonUtil.toJsonObjectArray(schemeTemplate.getTemplateData(),
+				MissionSchemeStage.class));
+		templateRsp.setCreateUser(schemeTemplate.getCreateUserId());
+		// templateRsp.setRepName(remoteUserService.getById(schemeTemplate.getCreateUserId()).getName());
+		return templateRsp;
 	}
 }

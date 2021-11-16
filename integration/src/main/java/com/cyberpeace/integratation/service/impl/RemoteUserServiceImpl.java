@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -22,6 +23,7 @@ import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -110,6 +112,23 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
 		}
 		return userInfoList;
+	}
+
+	@Override
+	public List<UserInfo> getByIdList(List<String> ids) {
+		UserPageContext userPageContext = new UserPageContext();
+		userPageContext.setIds(String.join(",", ids));
+		return getLazyUserList(userPageContext);
+	}
+
+	@Override
+	public Map<String, String> getIdNameMap(List<String> ids) {
+		List<UserInfo> userInfos = getByIdList(ids);
+		Map<String, String> idNameMap = Maps.newHashMap();
+		for (UserInfo info : userInfos) {
+			idNameMap.put(info.getUserId(), info.getName());
+		}
+		return idNameMap;
 	}
 
 	private UserInfo userInfoFromJsonObject(JSONObject jsonObject) {

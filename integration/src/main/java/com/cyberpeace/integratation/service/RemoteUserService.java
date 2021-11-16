@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
@@ -20,4 +21,8 @@ public interface RemoteUserService {
 	List<UserInfo> getList();
 
 	List<UserInfo> getLazyUserList(UserPageContext userPageContext);
+
+	List<UserInfo> getByIdList(List<String> ids);
+
+	Map<String, String> getIdNameMap(List<String> ids);
 }

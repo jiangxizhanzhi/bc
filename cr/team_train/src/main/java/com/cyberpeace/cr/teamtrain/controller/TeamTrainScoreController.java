@@ -4,8 +4,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -13,8 +15,11 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
+import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -173,6 +178,46 @@ public class TeamTrainScoreController {
 			teamScoreService.updateById(newTeamScore);
 
 		}
+
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("提交任务的人工评估")
+	@PostMapping("/submit_evaluation")
+	public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
+			value = "学员评分") @RequestBody SubmitEvaluationReq submitEvaluationReq) {
+		teamRoomService.checkRoomOpening(submitEvaluationReq.getRoomId());
+
+		crTaskService.submitEvaluation(submitEvaluationReq.getSubmitId(),
+				submitEvaluationReq.getScore(), submitEvaluationReq.getDetail(),
+				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
+				UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("获取学员的评估提交记录")
+	@GetMapping("/scene_mission_evaluations")
+	public BaseRsp<String>
+			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
+		MissionEvaluationQuery missionEvaluationQuery = BeanUtils.copy(missionEvaluationListReq,
+				MissionEvaluationQuery.class);
+		if (missionEvaluationListReq.getIsShowEvaluated()) {
+			missionEvaluationQuery.setEvaluateStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
+		}
+		if (CrTaskSubmit.EvaluateType.MACHINE_EVALUATION.getCode()
+				.equals(missionEvaluationListReq.getEvaluateType())) {
+			missionEvaluationQuery.setEvaluateType("MACHINE");
+		}
+		if (CrTaskSubmit.EvaluateType.MANUAL_EVALUATION.getCode()
+				.equals(missionEvaluationListReq.getEvaluateType())) {
+			missionEvaluationQuery.setEvaluateType("MANUAL");
+		}
+
+		teamRoomService.checkTeacherPermission(missionEvaluationListReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+
+		IPage<MissionEvaluationContext> data = crTaskService
+				.getMissionEvaluationList(missionEvaluationQuery);
 
 		return new BaseRsp<>();
 	}

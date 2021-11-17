@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper">
 
-    <insert id="batchInsert">
+    <insert id="batchInsert" parameterType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
         insert into cr_task
         (resource_id, status, score, mission_id, user_id,
         release_time, room_id, role_id, business_type, create_time, update_time)

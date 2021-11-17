@@ -2,7 +2,10 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
+import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 
 public interface CrTaskService {
@@ -199,4 +202,6 @@ public interface CrTaskService {
 	void submitEvaluation(String taskSubmitId, Integer score, String detail, Integer reason,
 			Integer evaluateStatus, String currentUserId);
 
+	IPage<MissionEvaluationContext>
+			getMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery);
 }

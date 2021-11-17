@@ -77,7 +77,7 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 */
 	void checkTeacherPermission(String roomId, String userId);
 
-	/** 检查团队训练是否已启动
+	/** 检查团队训练是否是已启动状态
 	 * @param roomId
 	 */
 	void checkRoomOpening(String roomId);

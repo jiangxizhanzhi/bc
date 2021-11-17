@@ -22,7 +22,7 @@ public interface CrBusinessErrorCode {
 	// 实例不存在
 	String ROOM_NOT_EXIST = "101004";
 
-	// 权限不存在
+	// 无权限操作
 	String PERMISSION_NOT_EXIST = "101005";
 
 	// 训练未开始
@@ -57,4 +57,8 @@ public interface CrBusinessErrorCode {
 
 	// 任务处于驳回状态不可评分
 	String TASK_REJECTED = "101016";
+
+	// 任务已下发
+	String MISSION_ISSUED = "101017";
+
 }

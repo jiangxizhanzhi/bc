@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
@@ -116,12 +117,17 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public void release(String missionId, String roleId, String currentUserId) {
 		Mission mission = missionMapper.selectById(missionId);
 		if (mission == null) {
-			throw new RuntimeException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
 		CrRole role = crRoleMapper.selectById(roleId);
 		if (role == null) {
-			throw new RuntimeException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+		List<CrTask> crTasks = crTaskMapper.selectByMissionId(missionId);
+
+		if (crTasks.size() > 0) {
+			throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 		}
 
 		Date releaseTime = new Date();

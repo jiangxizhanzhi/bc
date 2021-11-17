@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -65,7 +66,7 @@ public class MissionController {
 	public BaseRsp<MissionTemplate>
 			updateMissionTemplate(@RequestBody @Validated MissionTemplateModifyReq modifyReq) {
 		if (StringUtils.isBlank(modifyReq.getResourceId())) {
-			throw new RuntimeException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
 		MissionTemplate toUpdateMissionTemplate = requestToMissionTemplate(modifyReq);
@@ -99,7 +100,7 @@ public class MissionController {
 	public BaseRsp<Mission>
 			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
-			throw new RuntimeException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
 		Mission toUpdateMission = requestToMission(missionModifyReq);
@@ -175,7 +176,7 @@ public class MissionController {
 	private MissionSchemeTemplate
 			requestToSchemeTemplate(MissionSchemeTemplateModifyReq templateModifyReq) {
 		if (StringUtils.isBlank(templateModifyReq.getResourceId())) {
-			throw new RuntimeException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
 		MissionSchemeTemplate schemeTemplate = missionService

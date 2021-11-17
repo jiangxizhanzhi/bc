@@ -55,4 +55,19 @@ public class CrTaskSubmit extends BaseTable {
 		}
 	}
 
+	public enum EvaluateType {
+
+		MACHINE_EVALUATION(0, "机器评估"), MANUAL_EVALUATION(1, "人工评估");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		EvaluateType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 }

@@ -14,5 +14,32 @@
         where task_id = #{taskId}
         order by evaluate_time desc limit 1
     </select>
+    <select id="listCrTaskSubmit" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit">
+        select cr_task_submit.*
+        from cr_task_submit,cr_task
+        <where>
+
+            cr_task_submit.task_id=cr_task.resource_id
+
+            and cr_task.room_id = #{listQuery.roomId}
+            <if test="listQuery.studentHash != null and listQuery.studentHash != ''">
+                and cr_task.user_id = #{listQuery.studentHash}
+            </if>
+
+            <if test="listQuery.evaluateType != null and listQuery.evaluateType != ''">
+                <if test="listQuery.evaluateType == 'MACHINE'">
+                    and cr_task_submit.score is not null and cr_task_submit.evaluator_id is null
+                </if>
+                <if test="listQuery.evaluateType == 'MANUAL'">
+                    and cr_task_submit.evaluator_id is not null
+                </if>
+            </if>
+
+            <if test="listQuery.evaluateStatus != null and listQuery.evaluateStatus != ''">
+                and cr_task_submit.evaluate_status = #{listQuery.evaluateStatus}
+            </if>
+        </where>
+
+    </select>
 
 </mapper>

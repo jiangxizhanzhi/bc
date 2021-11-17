@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -26,6 +29,8 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
+import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -217,19 +222,19 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			String answerExtension) {
 		Mission mission = missionMapper.selectById(missionId);
 		if (mission == null) {
-			throw new RuntimeException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 		if (task == null) {
-			throw new RuntimeException(CrBusinessErrorCode.MISSION_UNRELEASED);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 
 		// 校验该task是否可提交
 		CrTaskSubmit lastSubmit = crTaskSubmitMapper.selectLastByTaskId(task.getResourceId());
 		if (lastSubmit != null && !lastSubmit.getEvaluateStatus()
 				.equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
-			throw new RuntimeException(CrBusinessErrorCode.CANNOT_SUBMIT_FINISHED_TASK);
+			throw new BusinessException(CrBusinessErrorCode.CANNOT_SUBMIT_FINISHED_TASK);
 		}
 
 		// 创建 taskSubmit
@@ -288,15 +293,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		// check permission??
 		CrTaskSubmit taskSubmit = crTaskSubmitMapper.selectById(taskSubmitId);
 		if (taskSubmit == null) {
-			throw new RuntimeException(CrBusinessErrorCode.MISSION_SUBMIT_NOT_FOUND);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_SUBMIT_NOT_FOUND);
 		}
 		if (taskSubmit.getEvaluateStatus().equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
-			throw new RuntimeException(CrBusinessErrorCode.TASK_REJECTED);
+			throw new BusinessException(CrBusinessErrorCode.TASK_REJECTED);
 		}
 
 		CrTask task = crTaskMapper.selectById(taskSubmit.getTaskId());
 		if (task == null) {
-			throw new RuntimeException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
+			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
 		}
 
 		// 驳回??
@@ -305,7 +310,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		}
 		// 校验分数
 		if (taskSubmit.getMissionScore() < score || score < 0) {
-			throw new RuntimeException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
 		taskSubmit.setScore(score);
@@ -331,6 +336,20 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			}
 		});
 
+	}
+
+	@Override
+	public IPage<MissionEvaluationContext>
+			getMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery) {
+		missionEvaluationQuery.setSort("-evaluate_time");
+		Page page = missionEvaluationQuery.toPageParam();
+		IPage<CrTaskSubmit> data = crTaskSubmitMapper.listCrTaskSubmit(page,
+				missionEvaluationQuery);
+
+		List<String> taskIds = data.getRecords().stream().map(CrTaskSubmit::getTaskId)
+				.collect(Collectors.toList());
+
+		return null;
 	}
 
 	private CrTaskLog createTaskLog(String roomId, String missionId, Integer actionCode,

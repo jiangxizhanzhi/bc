@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.req;
 
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -11,14 +12,14 @@ import java.io.Serializable;
 @ApiModel
 public class SaveCourseCategoryReq implements Serializable {
 
-    @ApiModelProperty("课程分类名称")
-    @NotBlank
-    private String name;
+	@ApiModelProperty("课程分类名称")
+	@NotBlank
+	private String name;
 
-    @ApiModelProperty("父级分类编号 第一级则不传值")
-    private String parentId;
+	@ApiModelProperty("父级分类编号 第一级则不传值")
+	private String parentId;
 
-    @ApiModelProperty(value = "课程类型", hidden = true)
-    private Integer courseType;
+	@ApiModelProperty(value = "课程类型", hidden = true)
+	private Integer courseType = CourseCategory.CourseType.BASE.getCode();
 
 }

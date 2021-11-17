@@ -1,19 +1,25 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.controller.req.BatchDeleteReq;
+import com.cyberpeace.oj.course.controller.req.CourseCategoryListReq;
 import com.cyberpeace.oj.course.controller.req.SaveCourseCategoryReq;
 import com.cyberpeace.oj.course.controller.req.UpdateCategoryReq;
 import com.cyberpeace.oj.course.controller.res.CategoryRes;
 import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
+import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
@@ -34,31 +40,32 @@ public class AdminCourseCategoryController {
 	private CourseCategoryService courseCategoryService;
 
 	@Autowired
-	private CourseCategoryMapper categoryMapper;
+	private CourseCategoryMapper courseCategoryMapper;
 
 	@ApiOperation("课程分类分页查询")
 	@GetMapping("/list")
-	public BaseRsp<List<CategoryRes>> list(PageReqBase pageReqBase) {
-		Page page = pageReqBase.toPageParam();
-		List<CourseCategory> courseCategories = courseCategoryService.pageBySearch(page,
-				pageReqBase.getPattern());
-		List<CategoryRes> categoryRes = StreamApiUtils.simpleMap(courseCategories,
-				courseCategory -> BeanUtils.copy(courseCategory, CategoryRes.class));
+	public BaseRsp<List<CourseCategoryBo>> list(@Validated CourseCategoryListReq listReq) {
+		Page page = listReq.toPageParam();
+		List<CourseCategoryBo> courseCategories = courseCategoryService.pageBySearch(page,
+				listReq.getPattern(), listReq.getChildren());
 
-		return new BaseRsp<>(categoryRes);
+		return new BaseRsp<>(courseCategories);
 	}
 
 	@ApiOperation("课程分类详细信息查询")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "分类编号"),
+			@ApiImplicitParam(name = "children", value = "是否查询子类 true查询 false仅查当前级") })
 	@GetMapping("")
-	public BaseRsp<CategoryRes> get(@RequestParam("resource_id") String resourceId) {
-		CourseCategory courseCategory = categoryMapper.selectById(resourceId);
-		CategoryRes categoryRes = BeanUtils.copy(courseCategory, CategoryRes.class);
-		return new BaseRsp(categoryRes);
+	public BaseRsp<CourseCategoryBo> get(@RequestParam("resource_id") String resourceId,
+			@RequestParam("children") Boolean children) {
+
+		CourseCategoryBo courseCategoryBo = courseCategoryService.selectById(resourceId, children);
+		return new BaseRsp(courseCategoryBo);
 	}
 
 	@ApiOperation("课程分类批量删除")
 	@DeleteMapping("/batch")
-	public BaseRsp<Integer> delete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
+	public BaseRsp<Integer> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
 		Integer row = courseCategoryService.batchDeleteByIds(batchDeleteReq.getResourceIds());
 		return new BaseRsp<>(row);
@@ -68,6 +75,13 @@ public class AdminCourseCategoryController {
 	@PostMapping("")
 	public BaseRsp<CategoryRes> add(@RequestBody @Valid SaveCourseCategoryReq categoryReq) {
 
+		// 名称校验
+		CourseCategory existCategory = courseCategoryMapper.selectByName(categoryReq.getName());
+		if (null != existCategory) {
+			throw new InvalidParamException("分类名称名称已存在！");
+		}
+
+		// 数据新增
 		CategoryAddBo categoryAddBo = BeanUtils.copy(categoryReq, CategoryAddBo.class);
 		CourseCategory courseCategory = courseCategoryService.saveOrUpdate(categoryAddBo);
 		CategoryRes categoryRes = BeanUtils.copy(courseCategory, CategoryRes.class);
@@ -76,7 +90,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类修改")
 	@PatchMapping("")
-	public BaseRsp<CategoryRes> patch(@RequestBody @Valid UpdateCategoryReq updateCategoryReq) {
+	public BaseRsp<CategoryRes> patch(@RequestBody @Validated UpdateCategoryReq updateCategoryReq) {
 		CategoryAddBo categoryAddBo = BeanUtils.copy(updateCategoryReq, CategoryAddBo.class);
 		CourseCategory courseCategory = courseCategoryService.saveOrUpdate(categoryAddBo);
 		CategoryRes categoryRes = BeanUtils.copy(courseCategory, CategoryRes.class);

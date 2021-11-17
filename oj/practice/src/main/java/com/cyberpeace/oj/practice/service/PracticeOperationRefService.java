@@ -13,9 +13,10 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
     /**
      * 根据试卷查询查询课后练习习题数据
      * @param paperId
+     * @param viewAnswer
      * @return
      */
-    List<OperationLessonBo> selectByPaperId(String paperId);
+    List<OperationLessonBo> selectByPaperId(String paperId, Boolean viewAnswer);
 
     /**
      * 根据习题编号查询

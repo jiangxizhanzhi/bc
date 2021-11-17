@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "习题集")
+@Api(tags = "oj-前台习题集相关api")
 @RestController
 @RequestMapping("/oj/practice/set")
 @RequiresAuthentication

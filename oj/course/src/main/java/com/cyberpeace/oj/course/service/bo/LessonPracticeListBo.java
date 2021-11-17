@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -10,10 +11,10 @@ import java.util.List;
 @ApiModel
 public class LessonPracticeListBo implements Serializable {
 
-    private String resourceId;
+	private Integer count;
 
-    private Double totalScore;
+	private Double totalScore;
 
-    private List<? extends LessonTheoryBo> practiceBos;
+	private List<? extends TheoryLessonBo> practiceBos;
 
 }

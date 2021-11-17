@@ -15,7 +15,7 @@ import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 
 import java.util.List;
 
-@Api(tags = "练习分类")
+@Api(tags = "oj-前台练习分类相关api")
 @RestController
 @RequestMapping("/oj/practice/category")
 @RequiresAuthentication

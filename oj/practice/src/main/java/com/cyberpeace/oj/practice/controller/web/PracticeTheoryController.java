@@ -36,9 +36,9 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Api(tags = "理论基础练习")
+@Api(tags = "oj-前台理论基础练习相关")
 @RestController
-@RequestMapping("/oj/practice-theory")
+@RequestMapping("/oj/practice/theory")
 @RequiresAuthentication
 @Slf4j
 public class PracticeTheoryController {

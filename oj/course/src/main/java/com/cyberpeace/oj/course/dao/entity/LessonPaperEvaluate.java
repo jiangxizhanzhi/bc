@@ -15,6 +15,8 @@ public class LessonPaperEvaluate extends BaseTable {
 
 	private Double score;
 
+	private Double totalScore;
+
 	private String record;
 
 	private String submitUserId;

@@ -411,18 +411,57 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		CourseLesson lesson = validateLesson(lessonId, authContext.getIsWeb());
 		Paper paper = validatePaper(lesson, authContext.getIsWeb());
 
+		LessonPracticeBo lessonPracticeBo = new LessonPracticeBo();
+
+		// 计算评估结果
 		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
 				.selectByUserAndLesson(authContext.getUserId(), lessonId);
+		if (paperEvaluate != null && authContext.getIsWeb()) {
+			EvaluateResult evaluateResult = BeanUtils.copy(paperEvaluate, EvaluateResult.class);
+			evaluateResult.setSolved(CommonConstant.TRUE);
+			evaluateResult.setResourceId(lessonId);
+			lessonPracticeBo.setEvaluateResult(evaluateResult);
+		}
 
-		List<PracticeSolvedBo> solvedBos = JsonUtil.toJsonObjectArray(paperEvaluate.getRecord(),
-				PracticeSolvedBo.class);
-		Map<String, PracticeSolvedBo> solvedBoMap = StreamApiUtils.columnMap(solvedBos,
-				PracticeSolvedBo::getResourceId, practiceSolvedBo -> practiceSolvedBo);
+		// 处理习题数据
+		Map<Integer, LessonPracticeListBo> handlerPractice = handlerPractice(paperEvaluate, paper,
+				null != paperEvaluate);
+		lessonPracticeBo.setPracticeList(handlerPractice);
+
+		// 计算课时基本数据
+		LessonBriefBo lessonBriefBo = new LessonBriefBo();
+		lessonBriefBo.setCourseId(course.getResourceId());
+		lessonBriefBo.setCourseName(course.getName());
+		lessonBriefBo.setLessonId(lesson.getResourceId());
+		lessonBriefBo.setLessonName(lesson.getName());
+		lessonPracticeBo.setLessonInfo(lessonBriefBo);
+
+		return lessonPracticeBo;
+	}
+
+	/**
+	 * 习题数据处理
+	 * @param paperEvaluate
+	 * @param paper
+	 * @return
+	 */
+	private Map<Integer, LessonPracticeListBo> handlerPractice(LessonPaperEvaluate paperEvaluate,
+			Paper paper, Boolean viewAnswer) {
+
+		Map<String, PracticeSolvedBo> solvedBoMap = Maps.newHashMap();
+		if (null != paperEvaluate) {
+			// 获取解题记录
+			List<PracticeSolvedBo> solvedBos = JsonUtil.toJsonObjectArray(paperEvaluate.getRecord(),
+					PracticeSolvedBo.class);
+			solvedBoMap.putAll(StreamApiUtils.columnMap(solvedBos, PracticeSolvedBo::getResourceId,
+					practiceSolvedBo -> practiceSolvedBo));
+		}
 
 		// 查询习题内容 转换数据类型
 		List<OperationLessonBo> operationLessonBos = practiceOperationRefService
-				.selectByPaperId(paper.getResourceId());
+				.selectByPaperId(paper.getResourceId(), viewAnswer);
 
+		// 实操习题转换
 		List<LessonOperationBo> lessonOperationBos = StreamApiUtils.simpleMap(operationLessonBos,
 				operationBo -> {
 					LessonOperationBo lessonOperationBo = BeanUtils.copy(operationBo,
@@ -432,8 +471,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					return lessonOperationBo;
 				});
 
+		// 理论习题转换
 		List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService
-				.selectByPaper(paper.getResourceId());
+				.selectByPaper(paper.getResourceId(), viewAnswer);
 		List<LessonTheoryBo> theoryBoList = StreamApiUtils.simpleMap(theoryLessonBos,
 				theoryLessonBo -> {
 					LessonTheoryBo theoryBo = BeanUtils.copy(theoryLessonBo, LessonTheoryBo.class);
@@ -441,16 +481,27 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					return theoryBo;
 				});
 
+		// 组装习题数据
+		Map<Integer, LessonPracticeListBo> listBoMap = Maps.newHashMap();
 		Map<Integer, List<LessonTheoryBo>> practiceMap = StreamApiUtils.groupByColumn(theoryBoList,
 				TheoryLessonBo::getQuestionType);
-		Map<Integer, List<? extends TheoryLessonBo>> map = Maps.newHashMap();
-		map.putAll(practiceMap);
-		map.put(PracticeTheory.TheoryType.OPERATION.getCode(), lessonOperationBos);
 
-		// 计算课程基本数据
+		// 新建map存储数据
+		Map<Integer, List<? extends TheoryLessonBo>> allMap = Maps.newHashMap();
+		allMap.putAll(practiceMap);
+		allMap.put(PracticeCategory.PracticeType.OPERATION.getCode(), lessonOperationBos);
 
+		// 组装习题数据
+		allMap.forEach((key, value) -> {
+			Double totalScore = StreamApiUtils.mapToDouble(value, TheoryLessonBo::getScore);
+			LessonPracticeListBo practiceListBo = new LessonPracticeListBo();
+			practiceListBo.setPracticeBos(value);
+			practiceListBo.setCount(value.size());
+			practiceListBo.setTotalScore(totalScore);
+			listBoMap.put(key, practiceListBo);
+		});
 
-		return null;
+		return listBoMap;
 	}
 
 	/**

@@ -29,7 +29,7 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	@Override
-	public List<TheoryLessonBo> selectByPaper(String paperId) {
+	public List<TheoryLessonBo> selectByPaper(String paperId, Boolean viewAnswer) {
 
 		List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper.selectByPracticeIds(paperId,
 				null);
@@ -53,6 +53,10 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 						List<BlankAnswer> answers = JsonUtil
 								.toJsonObjectArray(practiceTheory.getAnswer(), BlankAnswer.class);
 						theoryLesonBo.setBlankCount(answers.size());
+					}
+
+					if (!viewAnswer) {
+						theoryLesonBo.setAnswer(null);
 					}
 
 					return theoryLesonBo;

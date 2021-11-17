@@ -12,9 +12,10 @@ public interface PracticeTheoryRefService extends IService<PracticeTheoryRef> {
 	/**
 	 * 获取试卷基础理论习题
 	 * @param paperId
+	 * @param viewAnswer
 	 * @return
 	 */
-	List<TheoryLessonBo> selectByPaper(String paperId);
+	List<TheoryLessonBo> selectByPaper(String paperId, Boolean viewAnswer);
 
 	/**
 	 * 根据习题编号查询试卷习题

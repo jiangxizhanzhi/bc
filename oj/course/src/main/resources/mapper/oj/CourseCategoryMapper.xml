@@ -6,7 +6,7 @@
     <resultMap id="category" type="com.cyberpeace.oj.course.dao.entity.CourseCategory"/>
 
     <select id="selectChildrenByCode" resultMap="category">
-        <bind name="code" value="code + '%'"/>
+        <bind name="code" value="code + ',' + '%'"/>
         select * from oj_course_category where
         code like #{code}
     </select>
@@ -23,6 +23,7 @@
     <select id="pageBySearch" resultMap="category">
         select * from oj_course_category
         <where>
+            resource_id = code
             <if test="null != pattern">
                 <bind name="pattern" value="'%' + pattern + '%'"/>
                 and `name` like #{pattern}
@@ -30,4 +31,8 @@
         </where>
     </select>
 
+    <select id="selectByName" resultMap="category">
+        select * from oj_course_category
+        where `name` = #{name}
+    </select>
 </mapper>

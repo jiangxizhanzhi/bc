@@ -13,6 +13,6 @@ public class CategoryAddBo implements Serializable {
 
 	private String parentId;
 
-	private Integer courseType = 0;
+	private Integer courseType;
 
 }

@@ -21,4 +21,6 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
     List<CourseCategory> selectAll();
 
     List<CourseCategory> pageBySearch(Page page, @Param("pattern") String pattern);
+
+    CourseCategory selectByName(@Param("name") String name);
 }

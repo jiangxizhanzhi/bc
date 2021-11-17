@@ -2,14 +2,15 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
-import com.cyberpeace.oj.course.service.bo.AdminLessonListQuery;
+import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
@@ -33,8 +34,6 @@ import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
-import com.cyberpeace.oj.course.service.bo.LessonFileBo;
 
 import java.util.List;
 
@@ -131,9 +130,16 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课后练习查询")
 	@GetMapping("/practice")
-	public BaseRsp getPracticeList() {
-		// TODO
-		return null;
+	public BaseRsp<LessonPracticeBo> getPracticeList(@RequestParam("course_id") String courseId,
+			@RequestParam("lesson_id") String lessonId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+
+		LessonPracticeBo practiceByLesson = courseLessonService.practiceByLesson(courseId, lessonId,
+				authContext);
+
+		return new BaseRsp(practiceByLesson);
 	}
 
 	@ApiOperation("课时场景拓扑信息查询")

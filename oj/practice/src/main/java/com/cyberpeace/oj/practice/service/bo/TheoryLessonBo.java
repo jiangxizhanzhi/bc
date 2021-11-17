@@ -44,5 +44,5 @@ public class TheoryLessonBo implements Serializable {
     private String resourceId;
 
     @ApiModelProperty("分值")
-    private String score;
+    private Double score;
 }

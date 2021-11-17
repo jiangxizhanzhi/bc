@@ -21,15 +21,16 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * 查询所有课程分类
 	 * @return
 	 */
-	List<CourseCategoryBo> selectAll();
+	List<CourseCategoryBo> selectAll(Boolean children);
 
 	/**
 	 * 根据名称模糊搜索课程分类
 	 * @param page
 	 * @param pattern
+	 * @param children true包含子类数据 false不包含
 	 * @return
 	 */
-	List<CourseCategory> pageBySearch(Page page, String pattern);
+	List<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children);
 
 	/**
 	 * 新增或者修改数据
@@ -44,4 +45,12 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * @return
 	 */
 	Integer batchDeleteByIds(List<String> resourceIds);
+
+	/**
+	 * 根绝课程分类编号查询详细信息
+	 * @param resourceId
+	 * @param children 是否查询下级分类
+	 * @return
+	 */
+	CourseCategoryBo selectById(String resourceId, Boolean children);
 }

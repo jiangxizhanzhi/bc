@@ -30,9 +30,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-@Api(tags = "实践操作练习")
+@Api(tags = "oj-前台实践操作练习相关api")
 @RestController
-@RequestMapping("/oj/practice-operation")
+@RequestMapping("/oj/practice/operation")
 @RequiresAuthentication
 public class PracticeOperationController {
 

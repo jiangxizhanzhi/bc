@@ -32,7 +32,7 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 	private AttachmentMapper attachmentMapper;
 
 	@Override
-	public List<OperationLessonBo> selectByPaperId(String paperId) {
+	public List<OperationLessonBo> selectByPaperId(String paperId, Boolean viewAnswer) {
 
 		List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
 				.selectByPracticeIds(paperId, null);
@@ -54,6 +54,11 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 
 					if (StringUtils.isNotBlank(operation.getTopoId())) {
 						// TODO 场景信息查询
+					}
+
+					// 是否展示答案
+					if (!viewAnswer) {
+						operationLessonBo.setAnswer(null);
 					}
 
 					return operationLessonBo;

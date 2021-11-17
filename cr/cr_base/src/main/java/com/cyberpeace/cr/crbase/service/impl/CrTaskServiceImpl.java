@@ -7,11 +7,9 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
@@ -22,16 +20,14 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -212,8 +208,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	private Boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType) {
-		// xiantoulan
-		return userAnswer.equals(missionAnswer);
+		if (missionType.equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
+			List<String> userChoices = JsonUtil.toJsonObjectArray(userAnswer, String.class);
+			Set<String> userChoiceSet = Sets.newHashSet(userChoices);
+			List<String> choices = JsonUtil.toJsonObjectArray(missionAnswer, String.class);
+			Set<String> choiceSet = Sets.newHashSet(choices);
+			return userChoiceSet.equals(choiceSet);
+		} else {
+			return userAnswer.equals(missionAnswer);
+		}
 	}
 
 	@Override

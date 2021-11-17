@@ -12,7 +12,7 @@ import java.util.List;
 public class TimeScheduleBo implements Serializable {
 
     @ApiModelProperty("课堂信息")
-    private List<CourseScheduleBo> classrooms;
+    private List<ClassroomBo> classrooms;
 
     @ApiModelProperty("时间")
     private String date;

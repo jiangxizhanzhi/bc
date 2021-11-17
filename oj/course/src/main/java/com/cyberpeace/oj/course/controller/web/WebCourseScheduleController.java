@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.course.service.CourseScheduleService;
+import com.cyberpeace.oj.course.service.ClassroomService;
 
 import io.swagger.annotations.Api;
 
@@ -27,7 +27,7 @@ import java.util.List;
 public class WebCourseScheduleController {
 
 	@Autowired
-	private CourseScheduleService courseScheduleService;
+	private ClassroomService classroomService;
 
 	@ApiOperation("查询课堂信息")
 	@GetMapping("/list")
@@ -37,7 +37,7 @@ public class WebCourseScheduleController {
 
 		Date startOfDay = TimeUtil.getStartOfDay(TimeUtil.toDate2(TimeUtil.getHeadOrTailDayOfSepecificMonth(month, true)));
 		Date endOfDay = TimeUtil.getEndOfDay(TimeUtil.toDate2(TimeUtil.getHeadOrTailDayOfSepecificMonth(month, false)));
-		List<TimeScheduleBo> boList = courseScheduleService.listByTime(startOfDay, endOfDay);
+		List<TimeScheduleBo> boList = classroomService.listByTime(startOfDay, endOfDay);
 
 		return new BaseRsp(boList);
 	}

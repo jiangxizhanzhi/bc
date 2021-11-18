@@ -11,6 +11,7 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.service.context.DynamicData;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
 public interface MissionService extends IService<Mission> {
@@ -68,6 +69,8 @@ public interface MissionService extends IService<Mission> {
 	ListRsp<MissionSchemeTemplateRsp> pageSchemeTemplateRsp(PageReqBase pageReqBase);
 
 	MissionSchemeTemplateRsp getSchemeTemplateRspById(String resourceId);
+
+	List<DynamicData> getTaskLogByRoomIdAndUserId(String roomId, String studentId);
 
 	String getTeamTrainingManual(String roomId);
 }

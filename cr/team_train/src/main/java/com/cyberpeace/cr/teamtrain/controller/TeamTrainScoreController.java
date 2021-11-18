@@ -24,7 +24,7 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionSchemeService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
@@ -74,7 +74,7 @@ public class TeamTrainScoreController {
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	MissionSchemeService missionSchemeService;
+	MissionService missionService;
 
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
@@ -292,7 +292,8 @@ public class TeamTrainScoreController {
 		// getByRoomIdAndUserId(resource_id, student_id);
 		// todo 获取动态事件日志
 
-		List<DynamicData> s = null;
+		List<DynamicData> s = missionService.getTaskLogByRoomIdAndUserId(resource_id, student_id);
+
 		missionDynamicRsp.setDynamicData(s);
 
 		return new BaseRsp<>(missionDynamicRsp);

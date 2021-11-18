@@ -11,4 +11,13 @@
             #{actionCode}
         </foreach>
     </select>
+    <select id="getTaskLogByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.service.context.DynamicData">
+        select cr_task_log.action_code actionType, cr_task_log.create_time actionTime, cr_mission.title missionName
+        from cr_task_log,
+             cr_mission
+        where cr_task_log.mission_id = cr_mission.resource_id
+          and cr_task_log.room_id = #{roomId}
+          and cr_task_log.user_id = #{studentId}
+        order by cr_task_log.create_time desc
+    </select>
 </mapper>

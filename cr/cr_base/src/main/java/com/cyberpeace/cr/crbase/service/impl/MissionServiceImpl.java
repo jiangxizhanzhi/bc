@@ -29,6 +29,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.DynamicData;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
@@ -264,7 +265,16 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public MissionSchemeTemplateRsp getSchemeTemplateRspById(String resourceId) {
 		MissionSchemeTemplate template = missionSchemeTemplateMapper.selectById(resourceId);
+
 		return schemeTemplateToRsp(template);
+	}
+
+	@Override
+	public List<DynamicData> getTaskLogByRoomIdAndUserId(String roomId, String studentId) {
+		List<DynamicData> dynamicDataList = crTaskLogMapper.getTaskLogByRoomIdAndUserId(roomId,
+				studentId);
+
+		return dynamicDataList;
 	}
 
 	private MissionSchemeTemplateRsp schemeTemplateToRsp(MissionSchemeTemplate schemeTemplate) {
@@ -278,6 +288,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		templateRsp.setCombatConfig(JsonUtil.toJsonObjectArray(schemeTemplate.getTemplateData(),
 				MissionSchemeStage.class));
 		templateRsp.setCreateUser(schemeTemplate.getCreateUserId());
+
 		return templateRsp;
 	}
 

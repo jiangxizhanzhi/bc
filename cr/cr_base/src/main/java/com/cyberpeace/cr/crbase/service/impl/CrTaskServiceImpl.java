@@ -1,5 +1,14 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,6 +17,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
@@ -21,14 +31,6 @@ import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author SN
@@ -348,13 +350,24 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			getMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery) {
 		missionEvaluationQuery.setSort("-evaluate_time");
 		Page page = missionEvaluationQuery.toPageParam();
-		IPage<CrTaskSubmit> data = crTaskSubmitMapper.listCrTaskSubmit(page,
+		IPage<MissionEvaluationContext> data = crTaskSubmitMapper.listCrTaskSubmit(page,
 				missionEvaluationQuery);
 
-		List<String> taskIds = data.getRecords().stream().map(CrTaskSubmit::getTaskId)
+		List<String> missionIds = data.getRecords().stream()
+				.map(MissionEvaluationContext::getMissionHash).distinct()
 				.collect(Collectors.toList());
 
-		return null;
+		List<Mission> missions = missionMapper.batchSelect(missionIds);
+		Map<String, Mission> missionMap = StreamApiUtils.columnMap(missions, Mission::getResourceId,
+				pc -> pc);
+
+		data.convert(missionEvaluationContext -> {
+			missionEvaluationContext
+					.setMission(missionMap.get(missionEvaluationContext.getMissionHash()));
+			return missionEvaluationContext;
+		});
+
+		return data;
 	}
 
 	private CrTaskLog createTaskLog(String roomId, String missionId, Integer actionCode,

@@ -197,7 +197,7 @@ public class TeamTrainScoreController {
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
-	public BaseRsp<String>
+	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
 		MissionEvaluationQuery missionEvaluationQuery = BeanUtils.copy(missionEvaluationListReq,
 				MissionEvaluationQuery.class);
@@ -219,7 +219,35 @@ public class TeamTrainScoreController {
 		IPage<MissionEvaluationContext> data = crTaskService
 				.getMissionEvaluationList(missionEvaluationQuery);
 
-		return new BaseRsp<>();
+		List<String> userIds = data.getRecords().stream()
+				.map(MissionEvaluationContext::getSubmitUser).distinct()
+				.collect(Collectors.toList());
+
+		userIds.addAll(data.getRecords().stream().map(MissionEvaluationContext::getEvaluatorId)
+				.distinct().collect(Collectors.toList()));
+		Map<String, String> userInfoMap = remoteUserService.getIdNameMap(userIds);
+
+		data.convert(missionEvaluationContext -> {
+			MissionEvaluationRsp missionEvaluationRsp = BeanUtils.copy(missionEvaluationContext,
+					MissionEvaluationRsp.class);
+			missionEvaluationRsp
+					.setEvaluatorName(userInfoMap.get(missionEvaluationContext.getEvaluatorId()));
+			missionEvaluationRsp.setEvaluator(missionEvaluationContext.getEvaluatorId());
+			missionEvaluationRsp
+					.setSubmitUserName(userInfoMap.get(missionEvaluationContext.getSubmitUser()));
+			missionEvaluationRsp.setSubmitLogHash(missionEvaluationContext.getMissionHash());
+			missionEvaluationRsp.setTotalScore(missionEvaluationContext.getMission().getScore());
+
+			SubmitInfo submitInfo = new SubmitInfo();
+			submitInfo.setCreateTime(missionEvaluationContext.getCreateTime());
+			submitInfo.setUserAnswer(missionEvaluationContext.getAnswer());
+
+			missionEvaluationRsp.setSubmitInfo(submitInfo);
+
+			missionEvaluationRsp.setMissionData(missionEvaluationContext.getMission());
+			return missionEvaluationRsp;
+		});
+		return new BaseRsp(data);
 	}
 
 	private TeamScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {

@@ -73,7 +73,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
-		Course course = courseMapper.selectByCourse(courseId);
+		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
 			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
@@ -152,6 +152,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<String> courseIds = null;
 		if (null != authContext) {
 			courseIds = courseMapper.selectByAuth(authContext);
+			if (CollectionUtils.isEmpty(courseIds)) {
+				return PageUtil.getNullResult();
+			}
 		}
 
 		// 我的课程 系统课程 共享课程过滤
@@ -160,10 +163,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		if (!specialContext.getMyCourse() || !specialContext.getShareCourse()
 				|| !specialContext.getSystemCourse()) {
 			courseIds = courseMapper.selectSpecial(courseIds, specialContext);
+			if (CollectionUtils.isEmpty(courseIds)) {
+				return PageUtil.getNullResult();
+			}
 		}
 
 		// 常规条件过滤
-		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds);
+		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds,
+				authContext.getIsWeb());
 
 		IPage<CourseWebBo> webBoIPage = iPage.convert(course -> transferToBo(course, authContext));
 		return PageUtil.getListResult(webBoIPage);
@@ -193,7 +200,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 					.getCode().intValue()) {
 				List<String> shares = JsonUtil.toJsonObjectArray(course.getOperationAuthIds(),
 						String.class);
-				courseAdminBo.setAuthCount(shares.size());
+				courseAdminBo.setShareCount(shares.size());
 			}
 			return courseAdminBo;
 
@@ -226,7 +233,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 组装课程目录
 		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
 				.courseId(course.getResourceId()).nodeType(LessonConfigType.NODE_COURSE.getCode())
-				.build();
+				.chapterName(course.getName()).build();
 		LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
 
 		// 执行事务存储
@@ -246,10 +253,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		Course existCourse = courseMapper.selectById(course.getResourceId());
 		if (null == existCourse) {
+			log.error("Course not found! course_id=[{}]", course.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
 		}
 
 		course.setModifyUserId(userId);
+		courseMapper.updateById(course);
 		return course;
 	}
 
@@ -260,7 +269,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		List<String> childrenIds = null;
 		if (StringUtils.isNotBlank(category)) {
-			childrenIds = courseCategoryService.getChildrenIds(category);
+			childrenIds = courseCategoryService.getChildrenIds(category, CommonConstant.TRUE);
 		}
 
 		List<String> courseIds = courseMapper.selectIdsByCategory(authIds, childrenIds,

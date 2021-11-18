@@ -3,19 +3,9 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.CourseMapper">
 
-    <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.Course"/>
-
-    <sql id="share_constant">
-        <bind name="ALL_SHARE_MODE" value="@com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation.AuthShare@ALL.code"/>
-        <bind name="CUSTOM_SHARE_MODE" value="@com.cyberpeace.oj.ojbase.dao.entity.ReadAndOperation.AuthShare@CUSTOM.code"/>
-    </sql>
-
-    <select id="selectByCourse" resultType="com.cyberpeace.oj.course.dao.entity.Course">
-        select *
-        from oj_course
-        where resource_id = #{courseId}
-        and status = 1
-    </select>
+    <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.Course">
+        <result property="isPublic" column="public"/>
+    </resultMap>
 
     <select id="listByPage" resultMap="baseResultMap">
         select * from oj_course
@@ -28,7 +18,7 @@
             </if>
             <if test="null != courseContext">
                 <if test="null != courseContext.eBook">
-                    and `e_book` = #{courseContext.eBook}
+                    and `course_type` = #{courseContext.eBook}
                 </if>
                 <if test="null != courseContext.difficulty">
                     and `difficulty` = #{courseContext.difficulty}
@@ -44,9 +34,9 @@
                     <bind name="courseContext.pattern" value="'%' + courseContext.pattern + '%'"/>
                     and `name` like #{courseContext.pattern}
                 </if>
-                <if test="null != courseContext.isPublic and courseContext.isPublic">
-                    and `public` = #{courseContext.isPublic}
-                </if>
+            </if>
+            <if test="null != isPublic and isPublic">
+                and `public` = #{isPublic}
             </if>
         </where>
     </select>
@@ -65,18 +55,17 @@
     </select>
 
     <select id="selectByAuth" resultType="java.lang.String">
-        <include refid="share_constant"/>
         select resource_id from oj_course
         <where>
             <if test="authContext != null">
                 <choose>
                     <when test="authContext.isWeb">
                         (create_user_id = #{authContext.userId} or (read_auth_ids like #{authContext.likeOrganization}
-                        and read_auth_type = ${CUSTOM_SHARE_MODE}) or read_auth_type = ${ALL_SHARE_MODE})
+                        and read_auth_type = 2) or read_auth_type = 1)
                     </when>
                     <otherwise>
                         (create_user_id = #{authContext.userId} or (operation_auth_ids like #{authContext.likeUser}
-                        and operation_auth_type = ${CUSTOM_SHARE_MODE}) or operation_auth_type = ${ALL_SHARE_MODE})
+                        and operation_auth_type = 2) or operation_auth_type = 1)
                     </otherwise>
                 </choose>
             </if>
@@ -87,7 +76,7 @@
         select resource_id from oj_course
         <where>
             <if test="null != courseIds and courseIds.size() > 0">
-                and resource_id in
+                resource_id in
                 <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
                     #{courseId}
                 </foreach>
@@ -111,15 +100,15 @@
                         and `builtin` = #{specialContext.systemCourse}
                     </if>
                     <if test="null != specialContext.shareCourse">
-                        <include refid="share_constant"/>
-                        <bind name="specialContext.likeUser" value="'%' + specialContext.userId + '%'"/>
                         <choose>
                             <when test="specialContext.shareCourse">
-                                and (`operation_auth_type` = ${ALL_SHARE_MODE} or (`operation_auth_type` = ${CUSTOM_SHARE_MODE} and `operation_auth_ids` like
+                                <bind name="specialContext.likeUser" value="'%' + specialContext.userId + '%'"/>
+                                and (`operation_auth_type` = 1 or (`operation_auth_type` = 2 and `operation_auth_ids` like
                                 #{specialContext.likeUser}))
                             </when>
                             <otherwise>
-                                and (`operation_auth_type` = ${CUSTOM_SHARE_MODE} and `operation_auth_ids` not like
+                                <bind name="specialContext.likeUser" value="'%' + specialContext.userId + '%'"/>
+                                and (`operation_auth_type` = 2 and `operation_auth_ids` not like
                                 #{specialContext.likeUser})
                             </otherwise>
                         </choose>

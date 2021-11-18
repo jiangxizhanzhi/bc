@@ -18,7 +18,6 @@ public class ResourceAuthReq {
 	private List<String> resourceIds;
 
 	@ApiModelProperty("授权资源")
-	@NotEmpty
 	private List<String> readAuthIds;
 
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")

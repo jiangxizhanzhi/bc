@@ -95,7 +95,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		LessonConfig firstNode = lessonConfigMapper.getFirstNode(configContext.getCourseId());
 		if (null == firstNode) {
-			return null;
+			LessonConfig newConfig = BeanUtils.copy(configContext, LessonConfig.class);
+			newConfig.setIndex(CommonConstant.ZERO);
+			return newConfig;
 		}
 
 		LessonConfig lastLessonConfig = lessonConfigMapper

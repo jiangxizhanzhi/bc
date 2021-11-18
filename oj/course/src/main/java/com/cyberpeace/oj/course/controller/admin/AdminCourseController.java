@@ -6,10 +6,16 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -39,11 +45,13 @@ import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import sun.rmi.runtime.Log;
 
 @Api(tags = "oj-后台课程相关api")
 @RestController
 @RequestMapping("/oj/admin/course")
 @RequiresAuthentication
+@Slf4j
 public class AdminCourseController extends AuthAndPublicController<CourseService, Course> {
 
 	@Autowired
@@ -70,7 +78,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		if (StringUtils.isNotBlank(courseListReq.getDirection())) {
 			List<String> childrenIds = courseCategoryService
-					.getChildrenIds(courseListReq.getDirection());
+					.getChildrenIds(courseListReq.getDirection(), CommonConstant.TRUE);
 			context.setDirections(childrenIds);
 		}
 		Page page = courseListReq.toPageParam();
@@ -81,7 +89,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return rsp;
 	}
 
-	@ApiOperation("后台课程列表查询")
+	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
 	public BaseRsp<List<CourseAdminBo>>
 			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
@@ -90,7 +98,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		CourseQueryBo adminQueryBo = BeanUtils.copy(listReq, CourseQueryBo.class);
 		adminQueryBo.setUserId(UserInfoContext.getUserContext().getUserId());
 		if (StringUtils.isNotBlank(listReq.getDirection())) {
-			List<String> childrenIds = courseCategoryService.getChildrenIds(listReq.getDirection());
+			List<String> childrenIds = courseCategoryService.getChildrenIds(listReq.getDirection(),
+					CommonConstant.TRUE);
 			adminQueryBo.setDirections(childrenIds);
 		}
 
@@ -107,8 +116,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程新增")
 	@PostMapping("")
-	public BaseRsp<Course> add(
-			@ApiParam(name = "addReq", value = "课程基本信息") @Valid @RequestBody CourseAddReq addReq) {
+	public BaseRsp<Course> add(@ApiParam(name = "addReq",
+			value = "课程基本信息") @Validated(Create.class) @RequestBody CourseAddReq addReq) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 
@@ -118,6 +127,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
 		if (null == courseCategory) {
+			log.error("When add course but category not found! category_id=[{}]",
+					addReq.getCategoryId());
 			throw new BusinessException(OjBusinessErrorCode.RELATE_CATEGORY_NOT_FIND);
 		}
 
@@ -127,12 +138,17 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程信息修改")
 	@PatchMapping("")
-	public BaseRsp<Course> patch(@RequestBody CourseUpdateReq updateReq) {
+	public BaseRsp<Course>
+			patch(@RequestBody @Validated(Update.class) CourseUpdateReq updateReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(updateReq, Course.class);
-		course.setReadAuthIds(JsonUtil.arrayToString(updateReq.getReadAuthIds()));
-		course.setOperationAuthIds(JsonUtil.arrayToString(updateReq.getOperationAuthIds()));
+		if (CollectionUtils.isNotEmpty(updateReq.getOperationAuthIds())) {
+			course.setOperationAuthIds(JsonUtil.arrayToString(updateReq.getOperationAuthIds()));
+		}
+		if (CollectionUtils.isNotEmpty(updateReq.getReadAuthIds())) {
+			course.setReadAuthIds(JsonUtil.arrayToString(updateReq.getReadAuthIds()));
+		}
 
 		Course courseRsp = courseService.updateCourse(userId, course);
 		return new BaseRsp<>(courseRsp);
@@ -144,11 +160,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			value = "课程编号") @RequestParam("resource_id") @Valid @NotBlank String resourceId) {
 
 		Course course = courseMapper.selectById(resourceId);
-		List<Course> courses = courseMapper
-				.selectBatchIds(Arrays.asList(ArrayUtils.EMPTY_BOOLEAN_ARRAY));
 
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
+			log.error("Course not found! course_id=[{}]", resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 		AdminCourseRes adminCourseRes = BeanUtils.copy(course, AdminCourseRes.class);
 		return new BaseRsp<>(adminCourseRes);

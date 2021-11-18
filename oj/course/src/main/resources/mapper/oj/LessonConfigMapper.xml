@@ -7,7 +7,7 @@
 
     <select id="getFirstNode" resultMap="base">
         select * from oj_lesson_config
-        where course = #{courseId} and parent is null
+        where course_id = #{courseId} and parent_id is null
     </select>
 
     <select id="listByParent" resultMap="base">
@@ -30,7 +30,7 @@
 
     <select id="selectLastByParent" resultMap="base">
         select * from oj_lesson_config
-        where course = #{course}
+        where course_id = #{courseId}
         order by `index` desc
         limit 0, 1
     </select>

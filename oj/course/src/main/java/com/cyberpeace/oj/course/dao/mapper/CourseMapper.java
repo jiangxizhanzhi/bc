@@ -17,44 +17,16 @@ import java.util.List;
 @Repository
 public interface CourseMapper extends BaseMapper<Course> {
 
-	Course selectByCourse(@Param("courseId") String courseId);
-
-	/**
-	 * 分页查询课程信息
-	 * @param page
-	 * @param courseContext 筛选条件
-	 * @param courseIds
-	 * @return
-	 */
 	IPage<Course> listByPage(Page page, @Param("courseContext") CourseContext courseContext,
-			@Param("courseIds") List<String> courseIds);
+			@Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic);
 
 	List<String> notDeleteIdsByIds(@Param("courseIds") List<String> courseIds);
 
-	/**
-	 * 根据前后端权限获取课程编号
-	 * @param authContext
-	 * @return
-	 */
 	List<String> selectByAuth(@Param("authContext") AuthContext authContext);
 
-	/**
-	 * 查询我的 or 系统 or 共享课程
-	 * @param courseIds
-	 * @param specialContext
-	 * @return
-	 */
 	List<String> selectSpecial(@Param("courseIds") List<String> courseIds,
 			@Param("specialContext") SpecialCourseContext specialContext);
 
-	/**
-	 * 根据分类 和课程列表进一步过滤课程编号
-	 * @param courseIds
-	 * @param categoryIds
-	 * @param isPublic
-	 * @return
-	 */
 	List<String> selectIdsByCategory(@Param("courseIds") List<String> courseIds,
-									 @Param("categoryIds") List<String> categoryIds,
-									 @Param("isPublic") Boolean isPublic);
+			@Param("categoryIds") List<String> categoryIds, @Param("isPublic") Boolean isPublic);
 }

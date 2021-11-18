@@ -13,9 +13,10 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	/**
 	 * 根据当前课程方向 获取所有子节点的方向编号
 	 * @param directionId
+	 * @param self 是否包含自身
 	 * @return
 	 */
-	List<String> getChildrenIds(String directionId);
+	List<String> getChildrenIds(String directionId, Boolean self);
 
 	/**
 	 * 查询所有课程分类

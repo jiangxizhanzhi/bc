@@ -25,7 +25,7 @@ public class CourseInfoBo implements Serializable {
 	private String description;
 
 	@ApiModelProperty("课程方向")
-	private String direction;
+	private String categoryId;
 
 	@ApiModelProperty("课程海报")
 	private String logo;
@@ -37,13 +37,13 @@ public class CourseInfoBo implements Serializable {
 	private Integer difficulty;
 
 	@ApiModelProperty("课程创建人")
-	private String createUser;
+	private String createUserId;
 
 	@ApiModelProperty("课程最后编辑人")
-	private String lastEditUser;
+	private String modifyUserId;
 
-	@ApiModelProperty("课程类型")
-	private Integer eBook;
+	@ApiModelProperty("课程类型 0=")
+	private Integer courseType;
 
 	@ApiModelProperty("课程热度")
 	private Integer heat;

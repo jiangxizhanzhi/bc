@@ -8,14 +8,12 @@ import lombok.Data;
 @Data
 public class CourseContext implements Serializable {
 
-    private Integer eBook;
+	private Integer eBook;
 
-    private List<String> directions;
+	private List<String> directions;
 
-    private Integer difficulty;
+	private Integer difficulty;
 
-    private String pattern;
-
-    private Boolean isPublic;
+	private String pattern;
 
 }

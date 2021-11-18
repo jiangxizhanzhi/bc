@@ -1,5 +1,14 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -8,22 +17,14 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
+import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
+import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
 import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.google.common.collect.Lists;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
-import com.cyberpeace.oj.course.service.CourseCategoryService;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -33,11 +34,17 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	private CourseCategoryMapper courseCategoryMapper;
 
 	@Override
-	public List<String> getChildrenIds(String directionId) {
+	public List<String> getChildrenIds(String directionId, Boolean self) {
 		CourseCategory courseCategory = courseCategoryMapper.selectById(directionId);
 		List<CourseCategory> directions = courseCategoryMapper
 				.selectChildrenByCode(courseCategory.getCode());
-		return directions.stream().map(CourseCategory::getResourceId).collect(Collectors.toList());
+
+		List<String> directionIds = (List<String>) StreamApiUtils.simpleMap(directions,
+				CourseCategory::getResourceId);
+		if (self) {
+			directionIds.add(directionId);
+		}
+		return directionIds;
 	}
 
 	@Override

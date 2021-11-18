@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseTable;
 
 import com.cyberpeace.common.util.ConfigUtil;
@@ -12,20 +14,12 @@ import org.apache.commons.lang3.StringUtils;
 
 @Data
 @TableName("oj_course")
-public class Course extends BaseTable {
+public class Course extends AuthTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	private Boolean builtin;
-
-	private Integer operationAuthType;
-
-	private String operationAuthIds;
-
-	private Integer readAuthType;
-
-	private String readAuthIds;
 
 	private String name;
 

@@ -17,7 +17,7 @@ public class CourseWebBo implements Serializable {
     private String name;
 
     @ApiModelProperty("课程方向")
-    private String direction;
+    private String categoryId;
 
     @ApiModelProperty("课程方向名称")
     private String directionName;
@@ -29,13 +29,13 @@ public class CourseWebBo implements Serializable {
     private Integer difficulty;
 
     @ApiModelProperty("课程创建人")
-    private String createUser;
+    private String createUserId;
 
     @ApiModelProperty("讲师")
     private String lecturer;
 
     @ApiModelProperty("课程类型")
-    private Integer eBook;
+    private Integer courseType;
 
     @ApiModelProperty("课程课时数量")
     private Integer lessonCount;

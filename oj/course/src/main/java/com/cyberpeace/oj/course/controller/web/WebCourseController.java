@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.AuthContext;
@@ -72,7 +73,7 @@ public class WebCourseController {
 		context.setUserId(UserInfoContext.getUserContext().getUserId());
 		if (StringUtils.isNotBlank(listReq.getDirection())) {
 			List<String> childrenIds = courseDirectionService
-					.getChildrenIds(listReq.getDirection());
+					.getChildrenIds(listReq.getDirection(), CommonConstant.TRUE);
 			context.setDirections(childrenIds);
 		}
 

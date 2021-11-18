@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.ListRsp;
+import com.google.common.collect.Lists;
 
 public class PageUtil {
 
@@ -26,6 +28,11 @@ public class PageUtil {
 	}
 
 	public static <K> ListRsp<K> getListResult(IPage data) {
+
+		if (null == data) {
+			return getNullResult();
+		}
+
 		ListRsp ret = new ListRsp();
 
 		ret.setList(data.getRecords());
@@ -35,4 +42,10 @@ public class PageUtil {
 
 		return ret;
 	}
+
+	public static ListRsp getNullResult() {
+		return ListRsp.builder().list(Lists.newArrayList()).lastPage(CommonConstant.ZERO)
+				.currentPage(CommonConstant.ZERO).total(CommonConstant.ZERO).build();
+	}
+
 }

@@ -31,7 +31,7 @@ public class CrRole implements Serializable {
 	/**
 	 *
 	 */
-	private String businessInstanceId;
+	private String roomId;
 
 	/**
 	 *

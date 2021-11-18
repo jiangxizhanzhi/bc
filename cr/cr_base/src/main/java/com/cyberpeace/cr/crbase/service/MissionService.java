@@ -68,4 +68,6 @@ public interface MissionService extends IService<Mission> {
 	ListRsp<MissionSchemeTemplateRsp> pageSchemeTemplateRsp(PageReqBase pageReqBase);
 
 	MissionSchemeTemplateRsp getSchemeTemplateRspById(String resourceId);
+
+	String getTeamTrainingManual(String roomId);
 }

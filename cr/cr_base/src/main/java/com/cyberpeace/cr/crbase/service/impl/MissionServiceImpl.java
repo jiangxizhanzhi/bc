@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
@@ -31,6 +32,9 @@ import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
+import com.cyberpeace.cr.crbase.service.context.mission.TrainingManualTeam;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -103,7 +107,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<Mission> batchGetByRoom(String roomId) {
-		return missionMapper.batchSelectByRoom(roomId);
+		return missionMapper.selectByRoomId(roomId);
 	}
 
 	@Override
@@ -274,7 +278,28 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		templateRsp.setCombatConfig(JsonUtil.toJsonObjectArray(schemeTemplate.getTemplateData(),
 				MissionSchemeStage.class));
 		templateRsp.setCreateUser(schemeTemplate.getCreateUserId());
-		// templateRsp.setRepName(remoteUserService.getById(schemeTemplate.getCreateUserId()).getName());
 		return templateRsp;
+	}
+
+	@Override
+	public String getTeamTrainingManual(String roomId) {
+		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+		List<CrRole> roles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
+		List<CrRoleMissionSchemeStage> allStages = Lists.newArrayList();
+		for (CrRole role : roles) {
+			List<CrRoleMissionSchemeStage> stages = JsonUtil
+					.toJsonObjectArray(role.getMissionScheme(), CrRoleMissionSchemeStage.class);
+			allStages.addAll(stages);
+		}
+
+		List<Mission> missions = missionMapper.selectByRoomId(roomId);
+		Map<String, Mission> missionMap = Maps.newHashMap();
+		for (Mission mission : missions) {
+			missionMap.put(mission.getResourceId(), mission);
+		}
+
+		TrainingManualTeam manual = new TrainingManualTeam(allStages, missionMap,
+				CommonContext.getLanguage());
+		return manual.toMarkDown();
 	}
 }

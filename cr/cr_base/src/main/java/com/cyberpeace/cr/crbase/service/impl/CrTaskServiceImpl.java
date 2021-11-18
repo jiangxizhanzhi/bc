@@ -251,11 +251,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskSubmit.setResourceId(IDGeneratorUtil.getID());
 
 		// 创建提交log
-		CrTaskLog submitLog = createTaskLog(task.getRoomId(), missionId,
-				CrTaskLog.ActionCode.SUBMIT.getCode(), userId);
+		CrTaskLog submitLog = CrTaskLog.builder().roomId(task.getRoomId()).missionId(missionId)
+				.actionCode(CrTaskLog.ActionCode.SUBMIT.getCode()).userId(userId).build();
 
 		// 创建可能存在的评估log
-		CrTaskLog evaluateLog = createTaskLog(task.getRoomId(), missionId, null, null);;
+		CrTaskLog evaluateLog = CrTaskLog.builder().roomId(task.getRoomId()).missionId(missionId)
+				.build();
 
 		if (mission.isObjective()) {
 			// 客观题，可机评
@@ -330,8 +331,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		task.setStatus(evaluateStatus);
 		task.setScore(score);
 
-		CrTaskLog evaluationLog = createTaskLog(taskSubmit.getRoomId(), task.getMissionId(),
-				evaluateStatusToActionCode.get(evaluateStatus), currentUserId);
+		CrTaskLog evaluationLog = CrTaskLog.builder().roomId(taskSubmit.getRoomId())
+				.missionId(task.getMissionId())
+				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
+				.build();
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -368,17 +371,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		});
 
 		return data;
-	}
-
-	private CrTaskLog createTaskLog(String roomId, String missionId, Integer actionCode,
-			String userId) {
-		CrTaskLog crTaskLog = new CrTaskLog();
-		crTaskLog.setRoomId(roomId);
-		crTaskLog.setMissionId(missionId);
-		crTaskLog.setActionCode(actionCode);
-		crTaskLog.setUserId(userId);
-
-		return crTaskLog;
 	}
 
 	private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(

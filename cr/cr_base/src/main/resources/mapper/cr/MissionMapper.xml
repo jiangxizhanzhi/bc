@@ -20,7 +20,7 @@
             #{resourceId}
         </foreach>
     </select>
-    <select id="batchSelectByRoom" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
+    <select id="selectByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
         select *
         from cr_mission
         where room_id = #{roomId}

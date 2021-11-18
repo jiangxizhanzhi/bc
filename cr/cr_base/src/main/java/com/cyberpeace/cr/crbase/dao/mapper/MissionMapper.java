@@ -14,7 +14,7 @@ public interface MissionMapper extends BaseMapper<Mission> {
 
     List<Mission> batchSelect(List<String> resourceIds);
 
-    List<Mission> batchSelectByRoom(String roomId);
+    List<Mission> selectByRoomId(String roomId);
 
 
     void batchInsert(List<Mission> missions);

@@ -133,7 +133,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 					crRole.setUserIds(JsonUtil.toJsonString(users.get(index++).getUsers()));
 					teamTrainTemplateRole.getResourceId();
 					JsonUtil.toJsonString(teamTrainTemplateRoleList);
-					crRole.setBusinessInstanceId(teamRoom.getResourceId());
+					crRole.setRoomId(teamRoom.getResourceId());
 					crRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 					crRole.setMissionScheme(getNewRoomScheme(
 							teamTrainTemplateRole.getMissionsScheme(), teamRoom.getResourceId()));

@@ -2,43 +2,29 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.oj.course.controller.res.WebCourseRes;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.CourseCategoryService;
-import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
-import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
-import com.cyberpeace.oj.ojbase.controller.res.CommentRes;
-import com.cyberpeace.oj.ojbase.dao.entity.Comment;
-import com.cyberpeace.oj.ojbase.dao.entity.Note;
-import com.cyberpeace.oj.ojbase.service.CommentService;
-import com.cyberpeace.oj.ojbase.service.NoteService;
-import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
+import com.cyberpeace.oj.course.controller.res.WebCourseRes;
+import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,15 +41,6 @@ public class WebCourseController {
 
 	@Autowired
 	private CourseCategoryService courseDirectionService;
-
-	@Autowired
-	private CommentService commentService;
-
-	@Autowired
-	private CourseMapper courseMapper;
-
-	@Autowired
-	private NoteService noteService;
 
 	@ApiOperation("前台课程列表查询")
 	@GetMapping("/list")
@@ -102,40 +79,4 @@ public class WebCourseController {
 		return rsp;
 	}
 
-	// @PostMapping("/comment")
-	@ApiOperation("留言新增或者修改")
-	public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
-
-		Course course = courseMapper.selectById(commentReq.getBusinessId());
-		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
-		}
-
-		Comment comment = BeanUtils.copy(commentReq, Comment.class);
-		comment.setUserId(UserInfoContext.getUserContext().getUserId());
-		comment.setBusinessType(Comment.CommentType.COURSE.getCode());
-		comment.setThemeName(course.getName());
-
-		Comment newComment = commentService.addNewComment(comment);
-		CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);
-		return new BaseRsp<>(commentRes);
-	}
-
-	// @PostMapping("/note")
-	@ApiOperation("笔记新增或者修改")
-	public BaseRsp<NoteAddContext> saveNote(@Validated @RequestBody NoteAddReq noteReq) {
-
-		// 资源校验
-		Course course = courseMapper.selectById(noteReq.getBusinessId());
-		if (null == course) {
-			throw new ResourceNotFoundException("未找到对应的课程资源！");
-		}
-
-		String userId = UserInfoContext.getUserContext().getUserId();
-		NoteAddContext addContext = BeanUtils.copy(noteReq, NoteAddContext.class);
-		addContext.setUserId(userId);
-
-		Note note = noteService.updateNote(addContext);
-		return new BaseRsp(note);
-	}
 }

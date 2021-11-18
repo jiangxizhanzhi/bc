@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +31,9 @@ public class WebNoteController {
 	@Autowired
 	private NoteService noteService;
 
+	@Autowired
+	private NoteMapper noteMapper;
+
 	@ApiOperation("笔记、实验报告新增")
 	@PostMapping("")
 	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
@@ -45,12 +49,13 @@ public class WebNoteController {
 
 	@ApiOperation("实验报告笔记修改")
 	@PatchMapping("")
-	public BaseRsp<Note> update(@RequestBody @Validated NoteUpdateReq noteUpdateReq) {
+	public BaseRsp<Integer> update(@RequestBody @Validated NoteUpdateReq noteUpdateReq) {
 
-		NoteAddContext context = BeanUtils.copy(noteUpdateReq, NoteAddContext.class);
-		Note note = noteService.updateNote(context);
+		Note note = BeanUtils.copy(noteUpdateReq, Note.class);
 
-		return new BaseRsp<>(note);
+		Integer result = noteMapper.updateById(note);
+
+		return new BaseRsp<>(result);
 
 	}
 

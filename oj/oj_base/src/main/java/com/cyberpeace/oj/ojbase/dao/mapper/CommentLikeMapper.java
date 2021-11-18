@@ -20,5 +20,5 @@ public interface CommentLikeMapper extends BaseMapper<CommentLike> {
 	CommentLike selectByCommentAndUser(@Param("commentId") String commentId,
 			@Param("userId") String userId);
 
-	void deleteByUserAndId(@Param("userId") String userId, @Param("commentId") String commentId);
+	int deleteByUserAndId(@Param("userId") String userId, @Param("commentId") String commentId);
 }

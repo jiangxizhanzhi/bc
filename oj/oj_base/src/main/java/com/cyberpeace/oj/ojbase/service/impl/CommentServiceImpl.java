@@ -37,9 +37,9 @@ public class CommentServiceImpl implements CommentService {
 	private RemoteUserService remoteUserService;
 
 	@Override
-	public Comment addNewComment(Comment comment) {
-		commentMapper.insert(comment);
-		return comment;
+	public Integer addNewComment(Comment comment) {
+
+		return commentMapper.insert(comment);
 	}
 
 	@Override
@@ -89,23 +89,13 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public String commentIsLike(String commentId, Boolean isLike, String userId) {
+	public Integer commentIsLike(String commentId, Boolean isLike, String userId) {
 
 		CommentLike commentLike = new CommentLike();
 		commentLike.setCommentId(commentId);
 		commentLike.setUserId(userId);
-		if (isLike) {
 
-			try {
-				commentLikeMapper.insert(commentLike);
-			} catch (DuplicateKeyException e) {
-				// 保存成功 打印日志 不进行异常抛出
-				log.error("评论失败！comment_id=[{}], user_id=[{}], catch error:", commentId, userId, e);
-			}
-		} else {
-			commentLikeMapper.deleteByUserAndId(userId, commentId);
-		}
-
-		return commentId;
+		return isLike ? commentLikeMapper.insert(commentLike)
+				: commentLikeMapper.deleteByUserAndId(userId, commentId);
 	}
 }

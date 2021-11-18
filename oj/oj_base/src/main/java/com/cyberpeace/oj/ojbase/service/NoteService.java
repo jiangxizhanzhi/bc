@@ -27,14 +27,6 @@ public interface NoteService extends IService<Note> {
     Note addNote(NoteAddContext noteAddContext);
 
     /**
-     * 笔记信息修改
-     * @param context
-     * @return
-     */
-    Note updateNote(NoteAddContext context);
-
-
-    /**
      * 分页查询笔记信息
      * @param page
      * @param noteListQuery

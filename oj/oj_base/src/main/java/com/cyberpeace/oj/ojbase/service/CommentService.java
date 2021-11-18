@@ -14,7 +14,7 @@ public interface CommentService {
 	 * @param comment
 	 * @return
 	 */
-	Comment addNewComment(Comment comment);
+	Integer addNewComment(Comment comment);
 
 	/**
 	 * 分页查询评论信息
@@ -38,5 +38,5 @@ public interface CommentService {
 	 * @param isLike
 	 * @return
 	 */
-	String commentIsLike(String commentId, Boolean isLike, String userId);
+	Integer commentIsLike(String commentId, Boolean isLike, String userId);
 }

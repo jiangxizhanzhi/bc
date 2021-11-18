@@ -33,4 +33,24 @@
         </where>
     </select>
 
+    <update id="updateById">
+        update oj_note
+        <set>
+            content = #{content}
+            <if test="operationAuthType != null">
+                , operation_auth_type = #{operationAuthType}
+            </if>
+            <if test="operationAuthIds != null and operationAuthIds != ''">
+                , operation_auth_ids = #{operationAuthIds}
+            </if>
+            <if test="readAuthType != null">
+                , read_auth_type = #{readAuthType}
+            </if>
+            <if test="readAuthIds != null and readAuthIds != ''">
+                , read_auth_ids = #{readAuthIds}
+            </if>
+        </set>
+        where resource_id = #{resourceId}
+    </update>
+
 </mapper>

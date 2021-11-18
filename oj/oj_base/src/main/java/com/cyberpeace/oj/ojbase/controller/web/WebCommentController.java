@@ -17,11 +17,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Api(tags = "oj-评论相关api")
+@Api(tags = "oj-前台评论相关api")
 @RestController
 @RequestMapping("/oj/comment/")
 @RequiresAuthentication
@@ -32,7 +33,8 @@ public class WebCommentController {
 
 	@ApiOperation("查询所有留言")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<CommentBo>> listComment(@ApiParam @Valid PageCommentReq pageCommentReq) {
+	public BaseRsp<ListRsp<CommentBo>>
+			listComment(@ApiParam @Validated PageCommentReq pageCommentReq) {
 
 		Page page = pageCommentReq.toPageParam();
 		ListRsp<CommentBo> listRsp = commentService.pageComment(page,
@@ -43,25 +45,26 @@ public class WebCommentController {
 
 	@ApiOperation("留言点赞")
 	@PostMapping("/is_like")
-	public BaseRsp<String> commentIsLike(@ApiParam @RequestBody CommentIsLikeReq commentIsLikeReq) {
+	public BaseRsp<Integer>
+			commentIsLike(@ApiParam @RequestBody CommentIsLikeReq commentIsLikeReq) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		String resource = commentService.commentIsLike(commentIsLikeReq.getResourceId(),
+
+		Integer result = commentService.commentIsLike(commentIsLikeReq.getResourceId(),
 				commentIsLikeReq.getIsLike(), userId);
 
-		return new BaseRsp<>(resource);
+		return new BaseRsp<>(result);
 	}
 
 	@PostMapping("")
-	@ApiOperation("留言新增或者修改")
-	public BaseRsp<CommentRes> getCourseComment(@RequestBody @Valid CommentReq commentReq) {
+	@ApiOperation("留言新增")
+	public BaseRsp<Integer> getCourseComment(@RequestBody @Validated CommentReq commentReq) {
 
 		Comment comment = BeanUtils.copy(commentReq, Comment.class);
 		comment.setUserId(UserInfoContext.getUserContext().getUserId());
 
-		Comment newComment = commentService.addNewComment(comment);
-		CommentRes commentRes = BeanUtils.copy(newComment, CommentRes.class);
-		return new BaseRsp<>(commentRes);
+		Integer result = commentService.addNewComment(comment);
+		return new BaseRsp<>(result);
 	}
 
 }

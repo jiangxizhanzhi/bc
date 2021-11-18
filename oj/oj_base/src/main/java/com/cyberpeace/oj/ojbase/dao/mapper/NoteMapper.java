@@ -19,4 +19,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 	IPage<Note> pageByUserIdsAndContent(Page page,
 			@Param("noteListQuery") NoteListQuery noteListQuery,
 			@Param("isPublic") Boolean isPublic);
+
+	@Override
+	int updateById(Note note);
 }

@@ -10,13 +10,13 @@
     </sql>
 
     <select id="listByComment" resultMap="base">
-        select * from oj_comment
+        select * from oj_comment_like
         where comment_id = #{commentId}
         <include refid="orderByTimeDesc"/>
     </select>
 
     <select id="selectByCommentAndUser" resultMap="base">
-        select * from oj_comment
+        select * from oj_comment_like
         <where>
             `user_id` = #{userId}
             and comment_id = #{commentId}
@@ -24,9 +24,9 @@
     </select>
 
     <delete id="deleteByUserAndId">
-        delete from oj_comment
+        delete from oj_comment_like
         where user_id = #{userId}
-        where comment_id = #{commentId}
+        and comment_id = #{commentId}
     </delete>
 
 </mapper>

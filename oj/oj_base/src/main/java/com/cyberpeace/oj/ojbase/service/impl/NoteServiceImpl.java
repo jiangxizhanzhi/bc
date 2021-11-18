@@ -55,14 +55,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
-		updateOrSave(note);
-		return note;
-	}
-
-	@Override
-	public Note updateNote(NoteAddContext context) {
-		Note note = BeanUtils.copy(context, Note.class);
-		updateOrSave(note);
+		noteMapper.insert(note);
 		return note;
 	}
 
@@ -104,17 +97,4 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		}
 
 	}
-
-	/**
-	 * 新增或修改笔记信息
-	 * @param note
-	 */
-	private void updateOrSave(Note note) {
-		try {
-			noteMapper.insert(note);
-		} catch (DuplicateKeyException e) {
-			noteMapper.updateById(note);
-		}
-	}
-
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.config.db;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -43,6 +44,7 @@ public class MybatisConfig {
 		MybatisConfiguration configuration = new MybatisConfiguration();
 		configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
+		configuration.setLogImpl(StdOutImpl.class);
 		// 自定义session，需要手动添加拦截器
 		configuration.addInterceptor(paginationInterceptor());
 		sqlSessionFactory.setConfiguration(configuration);

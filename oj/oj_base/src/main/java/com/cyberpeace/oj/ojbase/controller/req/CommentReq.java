@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.req;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,7 +14,7 @@ import java.io.Serializable;
 @ApiModel("资源评论信息")
 public class CommentReq implements Serializable {
 
-    @ApiModelProperty("评论内容")
+    @ApiModelProperty(value = "评论内容")
     @NotBlank
     private String content;
 

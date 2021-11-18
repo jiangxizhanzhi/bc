@@ -10,6 +10,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.oj.course.controller.res.WebCourseRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
@@ -72,8 +73,8 @@ public class WebCourseController {
 		CourseQueryBo context = BeanUtils.copy(listReq, CourseQueryBo.class);
 		context.setUserId(UserInfoContext.getUserContext().getUserId());
 		if (StringUtils.isNotBlank(listReq.getDirection())) {
-			List<String> childrenIds = courseDirectionService
-					.getChildrenIds(listReq.getDirection(), CommonConstant.TRUE);
+			List<String> childrenIds = courseDirectionService.getChildrenIds(listReq.getDirection(),
+					CommonConstant.TRUE);
 			context.setDirections(childrenIds);
 		}
 
@@ -90,11 +91,14 @@ public class WebCourseController {
 
 	@GetMapping("")
 	@ApiOperation("单条查询")
-	public BaseRsp<CourseInfoBo> getCourse(@ApiParam(name = "resource_id", value = "查询id",
-			required = true) @RequestParam("resource_id") @NotBlank String resourceId) {
+	public BaseRsp<WebCourseRes> getCourse(@ApiParam(name = "resource_id", value = "查询id",
+			required = true) @RequestParam("resource_id") String resourceId) {
+
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CourseInfoBo course = courseService.selectById(resourceId, userId);
-		BaseRsp rsp = new BaseRsp(course);
+
+		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);
+		BaseRsp rsp = new BaseRsp(courseRes);
 		return rsp;
 	}
 
@@ -117,9 +121,9 @@ public class WebCourseController {
 		return new BaseRsp<>(commentRes);
 	}
 
-	@PostMapping("/note")
+	// @PostMapping("/note")
 	@ApiOperation("笔记新增或者修改")
-	public BaseRsp<NoteAddContext> saveNote(@ApiParam @Valid @RequestBody NoteAddReq noteReq) {
+	public BaseRsp<NoteAddContext> saveNote(@Validated @RequestBody NoteAddReq noteReq) {
 
 		// 资源校验
 		Course course = courseMapper.selectById(noteReq.getBusinessId());

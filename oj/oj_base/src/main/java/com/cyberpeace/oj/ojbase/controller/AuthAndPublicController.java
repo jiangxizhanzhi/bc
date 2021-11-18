@@ -1,10 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller;
 
-import javax.validation.Valid;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;

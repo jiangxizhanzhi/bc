@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
@@ -14,18 +15,10 @@ import java.lang.reflect.Type;
 
 @Data
 @TableName("oj_note")
-public class Note extends BaseTable {
+public class Note extends AuthTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
-
-	private Integer readAuthType;
-
-	private String readAuthIds;
-
-	private Integer operationAuthType;
-
-	private String operationAuthIds;
 
 	private Integer noteType;
 

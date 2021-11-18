@@ -52,6 +52,7 @@ public class WebLessonController {
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	@Autowired
 	private CourseMapper courseMapper;
 
 	@Autowired
@@ -72,7 +73,7 @@ public class WebLessonController {
 		return new BaseRsp<>(infoBo);
 	}
 
-	@ApiOperation("课时评论")
+	// @ApiOperation("课时评论")
 	@PostMapping("/comment")
 	public BaseRsp<CommentRes> lessonComment(@RequestBody @Valid CommentReq commentReq) {
 
@@ -99,7 +100,7 @@ public class WebLessonController {
 		return new BaseRsp<>(commentRes);
 	}
 
-	@ApiOperation("课时笔记新增")
+	// @ApiOperation("课时笔记新增")
 	@PostMapping("/note")
 	public BaseRsp<Note> saveNote(@RequestBody @Valid NoteAddReq noteReq) {
 

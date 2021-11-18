@@ -39,7 +39,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		List<CourseCategory> directions = courseCategoryMapper
 				.selectChildrenByCode(courseCategory.getCode());
 
-		List<String> directionIds = (List<String>) StreamApiUtils.simpleMap(directions,
+		List<String> directionIds = StreamApiUtils.simpleMap(directions,
 				CourseCategory::getResourceId);
 		if (self) {
 			directionIds.add(directionId);

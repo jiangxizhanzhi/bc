@@ -1,9 +1,9 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
-import javax.validation.Valid;
-
+import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
@@ -32,18 +32,20 @@ public class WebNoteController {
 
 	@ApiOperation("笔记、实验报告新增")
 	@PostMapping("")
-	public BaseRsp<Note> add(@RequestBody @Valid NoteAddReq noteReq) {
+	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
 
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
 		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
 		Note newNote = noteService.addNote(noteAddContext);
 
-		return new BaseRsp<>(newNote);
+		WebNoteRes webNoteRes = BeanUtils.copy(newNote, WebNoteRes.class);
+
+		return new BaseRsp<>(webNoteRes);
 	}
 
 	@ApiOperation("实验报告笔记修改")
 	@PatchMapping("")
-	public BaseRsp<Note> update(@RequestBody @Valid NoteUpdateReq noteUpdateReq) {
+	public BaseRsp<Note> update(@RequestBody @Validated NoteUpdateReq noteUpdateReq) {
 
 		NoteAddContext context = BeanUtils.copy(noteUpdateReq, NoteAddContext.class);
 		Note note = noteService.updateNote(context);
@@ -54,15 +56,15 @@ public class WebNoteController {
 
 	@ApiOperation("单条笔记查询")
 	@GetMapping("")
-	public BaseRsp<NoteBo> getNote(@Valid GetNoteReq getNoteReq) {
+	public BaseRsp<WebNoteRes> getNote(@Validated GetNoteReq getNoteReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		NoteUniqueContext uniqueContext = BeanUtils.copy(getNoteReq, NoteUniqueContext.class);
-		uniqueContext.setUserId(userId);
+		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
+				.noteType(getNoteReq.getNoteType()).businessType(getNoteReq.getResourceType())
+				.businessId(getNoteReq.getResourceId()).userId(userId).build();
 
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
-		return new BaseRsp<>(noteBo);
+		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
+		return new BaseRsp<>(noteRes);
 	}
-
-
 
 }

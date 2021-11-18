@@ -7,6 +7,7 @@ import java.util.function.Function;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -35,7 +36,7 @@ public abstract class PublicController<T extends IService<E>, E> {
 
 	@PatchMapping("/batch-public")
 	@ApiOperation("资源公开/隐藏")
-	public BaseRsp<Boolean> batchPublic(@RequestBody @Valid ResourcePublicReq requestData) {
+	public BaseRsp<Boolean> batchPublic(@RequestBody @Validated ResourcePublicReq requestData) {
 
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {
 			AuthAndPublicController.AuthAndPublicData data = new AuthAndPublicController.AuthAndPublicData();

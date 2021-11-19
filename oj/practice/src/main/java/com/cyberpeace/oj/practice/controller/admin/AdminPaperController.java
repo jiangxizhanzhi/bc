@@ -12,10 +12,12 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.practice.controller.req.LibPracticeListReq;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.LibPracticeListBo;
 import com.cyberpeace.oj.practice.service.bo.LibPracticeQueryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,10 +33,10 @@ import java.util.List;
 public class AdminPaperController {
 
 	@Autowired
-	private PracticeSetMapper practiceSetMapper;
+	private PaperService paperService;
 
 	@Autowired
-	private PaperService paperService;
+	private PracticeCategoryService practiceCategoryService;
 
 	@ApiOperation("获取习题库习题列表")
 	@GetMapping("/practice/list")
@@ -45,6 +47,13 @@ public class AdminPaperController {
 		Page page = practiceListReq.toPageParam();
 
 		LibPracticeQueryBo queryBo = BeanUtils.copy(practiceListReq, LibPracticeQueryBo.class);
+
+		if (StringUtils.isNotBlank(practiceListReq.getCategoryId())) {
+			List<String> categoryIds = practiceCategoryService
+					.selectChildrenIds(practiceListReq.getCategoryId(), true);
+			queryBo.setCategoryIds(categoryIds);
+		}
+
 		IPage<LibPracticeListBo> iPage = paperService.selectLibPractice(page, queryBo, authContext);
 
 		return new BaseRsp(PageUtil.getListResult(iPage));

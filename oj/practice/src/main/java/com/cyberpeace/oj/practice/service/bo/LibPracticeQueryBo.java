@@ -8,6 +8,8 @@ import java.util.List;
 @Data
 public class LibPracticeQueryBo implements Serializable {
 
+    private List<String> resourceIds;
+
     private String practiceSetId;
 
     private List<String> categoryIds;

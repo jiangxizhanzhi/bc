@@ -4,9 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.oj.practice.constant.PaperType;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 @TableName("oj_paper")
@@ -29,5 +30,25 @@ public class Paper extends AuthTable {
 	private Boolean isPublic;
 
 	private Integer type = PaperType.LIB.getCode();
+
+	public enum PaperType implements GenericEnum {
+
+		LIB(1, "试卷库"),
+
+		EXAM(2, "考试"),
+
+		LESSON(3, "课后练习");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		PaperType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 
 }

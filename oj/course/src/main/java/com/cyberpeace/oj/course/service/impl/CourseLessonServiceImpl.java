@@ -16,7 +16,6 @@ import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
-import com.cyberpeace.oj.practice.constant.PaperType;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -273,7 +272,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			paperContext.setDescription(courseLesson.getName());
 			paperContext.setIsPublic(CommonConstant.TRUE);
 			paperContext.setPracticeList(practiceList);
-			paperContext.setType(PaperType.LESSON.getCode());
+			paperContext.setType(Paper.PaperType.LESSON.getCode());
 		}
 
 		return paperContext;

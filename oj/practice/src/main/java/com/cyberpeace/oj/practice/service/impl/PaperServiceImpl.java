@@ -126,31 +126,22 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	public IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo,
 			AuthContext authContext) {
 
-		if (StringUtils.isBlank(queryBo.getPracticeSetId())) {
-			return null;
-		}
-
 		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
 		if (CollectionUtils.isEmpty(permissionIds)
 				|| !permissionIds.contains(queryBo.getPracticeSetId())) {
 			return null;
 		}
 
+		if (StringUtils.isBlank(queryBo.getPracticeSetId())) {
+			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds);
+			queryBo.setResourceIds(theoryIds);
+			return theoryConvert(queryBo, page, authContext);
+		}
+
 		PracticeSet practiceSet = practiceSetMapper.selectById(queryBo.getPracticeSetId());
 		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
 				.getCode()) {
-			TheoryListQuery theoryListQuery = BeanUtils.copy(queryBo, TheoryListQuery.class);
-			IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
-					authContext.getIsWeb());
-
-			IPage<LibPracticeListBo> convert = iPage.convert(practiceTheory -> {
-				LibPracticeListBo bo = BeanUtils.copy(practiceTheory, LibPracticeListBo.class);
-				bo.setTitle(practiceTheory.getContent());
-				bo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
-				return bo;
-			});
-
-			return convert;
+			return theoryConvert(queryBo, page, authContext);
 		} else {
 			OperationListQuery listQuery = BeanUtils.copy(queryBo, OperationListQuery.class);
 			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
@@ -165,6 +156,23 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			return convert;
 		}
+	}
+
+	private IPage<LibPracticeListBo> theoryConvert(LibPracticeQueryBo queryBo, Page page,
+			AuthContext authContext) {
+
+		TheoryListQuery theoryListQuery = BeanUtils.copy(queryBo, TheoryListQuery.class);
+		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
+				authContext.getIsWeb());
+
+		IPage<LibPracticeListBo> convert = iPage.convert(practiceTheory -> {
+			LibPracticeListBo bo = BeanUtils.copy(practiceTheory, LibPracticeListBo.class);
+			bo.setTitle(practiceTheory.getContent());
+			bo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+			return bo;
+		});
+
+		return convert;
 	}
 
 	/**

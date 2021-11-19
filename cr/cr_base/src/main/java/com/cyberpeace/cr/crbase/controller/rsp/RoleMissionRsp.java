@@ -1,0 +1,41 @@
+package com.cyberpeace.cr.crbase.controller.rsp;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+public class RoleMissionRsp implements Serializable {
+
+	@ApiModelProperty("任务id")
+	private String resourceId;
+
+	@ApiModelProperty("任务名称")
+	private String title;
+
+	@ApiModelProperty("选项")
+	private String option;
+
+	@ApiModelProperty("任务类别")
+	private String category;
+
+	@ApiModelProperty("任务描述")
+	private String description;
+
+	@ApiModelProperty("任务状态")
+	private Integer missionStatus;
+
+	@ApiModelProperty("任务类别")
+	private Integer type;
+
+	@ApiModelProperty("任务技能分数")
+	private String skillPoints;
+
+	@ApiModelProperty("任务题解")
+	private String writeUp;
+
+	@ApiModelProperty("任务分数")
+	private Integer score;
+
+}

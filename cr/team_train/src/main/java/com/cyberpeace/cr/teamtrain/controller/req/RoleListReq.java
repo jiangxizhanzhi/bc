@@ -3,7 +3,7 @@ package com.cyberpeace.cr.teamtrain.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.cr.teamtrain.service.context.MissionColor;
+import com.cyberpeace.cr.teamtrain.service.context.ColorMission;
 
 import lombok.Data;
 
@@ -32,6 +32,6 @@ public class RoleListReq implements Serializable {
 
 	private String type;
 
-	private MissionColor missionsScheme;
+	private ColorMission missionsScheme;
 
 }

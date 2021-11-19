@@ -8,9 +8,9 @@ import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import lombok.Data;
 
 @Data
-public class CrRoleContext {
+public class CrRoleContext<T> {
 
-	private List<RoleData> roles;
+	private List<RoleData<T>> roles;
 
 	private Map<String, MissionCompletion> missionMapping;
 

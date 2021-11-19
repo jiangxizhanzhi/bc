@@ -15,7 +15,6 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
@@ -42,12 +41,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Autowired
 	private RemoteUserService remoteUserService;
 
-	@Autowired
-	private CrTaskService crTaskService;
-
 	@Override
-	public CrRoleContext getRoles(String roomId) {
-		CrRoleContext crRoleContext = new CrRoleContext();
+	public CrRoleContext<MissionContext> getRoles(String roomId) {
+		CrRoleContext<MissionContext> crRoleContext = new CrRoleContext();
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(roomId);
 		roleQuery.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
@@ -57,12 +53,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			throw new ResourceNotFoundException(roomId);
 		}
 
-		List<RoleData> roleResDataList = Lists.newArrayList();
+		List<RoleData<MissionContext>> roleResDataList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
 
-			List<MissionSchemeObject> missionSchemeObjectList = getBaseMissionByRole(crRole);
+			List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole(
+					crRole);
 
-			RoleData roleResData = new RoleData();
+			RoleData<MissionContext> roleResData = new RoleData();
 			roleResData.setName(crRole.getName());
 			roleResData.setResourceId(crRole.getResourceId());
 			roleResData.setMissionsList(missionSchemeObjectList);
@@ -75,6 +72,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 				.getMissionStatusData(roomId);
 
 		List<Mission> missionList = missionService.batchGetByRoom(roomId);
+
 		ShowWriteup showWriteup = new ShowWriteup();
 		showWriteup.setShowWriteup(true);
 		List<Map<String, ShowWriteup>> showWriteupMapping = Lists.newArrayList();
@@ -94,8 +92,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public List<MissionSchemeObject> getBaseMissionByRole(CrRole crRole) {
-		List<MissionSchemeObject> missionSchemeObjectList = Lists.newArrayList();
+	public List<MissionSchemeObject<MissionContext>> getBaseMissionByRole(CrRole crRole) {
+		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = Lists.newArrayList();
 		List<MissionStageScheme> missionStageSchemeList = JsonUtil
 				.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
 
@@ -137,12 +135,14 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public List<MissionSchemeObject> getCrRoleMissionByRoomIdAndUserId(String roomId,
+	public List<MissionSchemeObject<MissionContext>>
+			getCrRoleMissionByRoomIdAndUserId(String roomId,
 			String userId) {
 
 		CrRole crRole = getCrRoleByRoomIdAndUserId(roomId, userId);
 
-		List<MissionSchemeObject> missionSchemeObjectList = getBaseMissionByRole(crRole);
+		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole(
+				crRole);
 
 		missionSchemeObjectList.forEach(missionSchemeObject -> {
 

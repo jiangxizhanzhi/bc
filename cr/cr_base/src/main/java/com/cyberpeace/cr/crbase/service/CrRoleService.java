@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -17,13 +18,13 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId
 	 * @return
 	 */
-	CrRoleContext getRoles(String roomId);
+	CrRoleContext<MissionContext> getRoles(String roomId);
 
 	/**获取学员在团队训练的角色任务列表(目前只去掉了答案)
 	 * @param crRole 
 	 * @return
 	 */
-	List<MissionSchemeObject> getBaseMissionByRole(CrRole crRole);
+	List<MissionSchemeObject<MissionContext>> getBaseMissionByRole(CrRole crRole);
 
 	/** 获取用户有权限的团队训练ID列表
 	 * @param userId
@@ -49,7 +50,8 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param userId
 	 * @return
 	 */
-	List<MissionSchemeObject> getCrRoleMissionByRoomIdAndUserId(String roomId, String userId);
+	List<MissionSchemeObject<MissionContext>> getCrRoleMissionByRoomIdAndUserId(String roomId,
+			String userId);
 
 	/** 计算当前角色的任务数量
 	 * @param crRole

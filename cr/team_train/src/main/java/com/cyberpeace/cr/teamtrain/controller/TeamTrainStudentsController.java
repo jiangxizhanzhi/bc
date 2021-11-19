@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -14,11 +15,13 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionSchemeService;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
@@ -120,15 +123,27 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("获取任务列表")
 	@GetMapping("/get_mission_scheme")
-	public BaseRsp<List<MissionSchemeObject>> getMissionScheme(
+	public BaseRsp<List<MissionSchemeObject<SchemeListMissionRsp>>> getMissionScheme(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		// 获取角色中的任务内容
-		List<MissionSchemeObject> missionSchemeObjectList = crRoleService
+		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = crRoleService
 				.getCrRoleMissionByRoomIdAndUserId(resource_id, userId);
 
-		return new BaseRsp<>(missionSchemeObjectList);
+		List<MissionSchemeObject<SchemeListMissionRsp>> missionSchemeList = missionSchemeObjectList
+				.stream().map(missionSchemeObject -> {
+					MissionSchemeObject<SchemeListMissionRsp> schemeListMissionRsp = new MissionSchemeObject<>();
+					schemeListMissionRsp.setStage(missionSchemeObject.getStage());
+					schemeListMissionRsp.setDynamic(missionSchemeObject.getDynamic());
+					List<SchemeListMissionRsp> schemeListMissionRsps = BeanUtils.deepCopyList(
+							missionSchemeObject.getMissions(), SchemeListMissionRsp.class);
+					schemeListMissionRsp.setMissions(schemeListMissionRsps);
+
+					return schemeListMissionRsp;
+				}).collect(Collectors.toList());
+
+		return new BaseRsp(missionSchemeList);
 	}
 
 	@ApiOperation("提交任务答案")

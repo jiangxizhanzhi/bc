@@ -60,16 +60,10 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	List<UserRole> getUserList(String resourceId);
 
 	/**教员获取时间线
-	 * @param resourceId
+	 * @param roomId
 	 * @return
 	 */
-	TimeLineData getTimeLine(String resourceId);
-
-	/** 获取学习指南
-	 * @param resourceId
-	 * @return
-	 */
-	String getTrainingManual(String resourceId);
+	TimeLineData getTimeLine(String roomId);
 
 	/** 检查是否有教员权限
 	 * @param roomId
@@ -83,8 +77,8 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	void checkRoomOpening(String roomId);
 
 	/** 学员获取时间线
-	 * @param resourceId
+	 * @param roomId
 	 * @return
 	 */
-	TimeLineData getStudentsTimeLine(String resourceId);
+	TimeLineData getStudentsTimeLine(String roomId);
 }

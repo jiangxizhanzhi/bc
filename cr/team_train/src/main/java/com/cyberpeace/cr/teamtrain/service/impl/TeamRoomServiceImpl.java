@@ -25,12 +25,14 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.MissionContext;
-import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMissionScheme;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -80,6 +82,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	CrTaskLogMapper crTaskLogMapper;
 
 	@Override
 	public TeamRoomData getTeamRoomRspByRoomId(String resourceId) {
@@ -152,18 +157,18 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 */
 	private String getNewRoomScheme(String missionsScheme, String roomId) {
 
-		MissionColor missionColor = JsonUtil.toJsonObject(missionsScheme, MissionColor.class);
-		if (null == missionColor) {
+		ColorMission colorMission = JsonUtil.toJsonObject(missionsScheme, ColorMission.class);
+		if (null == colorMission) {
 			return "[]";
 		}
 		List<MissionStageScheme> missionStageSchemes = Lists.newArrayList();
 		List<String> originMissionIds = Lists.newArrayList();
 		// 遍历每个阶段
-		for (MissionSchemeObject schemeDatum : missionColor.getSchemeData()) {
+		for (AddTemplateMissionScheme schemeDatum : colorMission.getSchemeData()) {
 
-			List<MissionContext> missions = schemeDatum.getMissions();
+			List<AddTemplateMission> missions = schemeDatum.getMissions();
 			// 遍历每个任务
-			for (MissionContext mission : missions) {
+			for (AddTemplateMission mission : missions) {
 				originMissionIds.add(mission.getResourceId());
 			}
 		}
@@ -172,16 +177,16 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				UserInfoContext.getUserContext().getUserId(), roomId);
 
 		// 遍历每个阶段设置新的任务id
-		for (MissionSchemeObject schemeDatum : missionColor.getSchemeData()) {
+		for (AddTemplateMissionScheme schemeDatum : colorMission.getSchemeData()) {
 			MissionStageScheme missionStageScheme = new MissionStageScheme();
 
-			List<MissionContext> missions = schemeDatum.getMissions();
+			List<AddTemplateMission> missions = schemeDatum.getMissions();
 			List<String> targetMissionIds = Lists.newArrayList();
 			missionStageScheme.setStage(schemeDatum.getStage());
 			missionStageScheme.setDynamic(schemeDatum.getDynamic());
 
 			// 遍历每个任务设置新的任务id
-			for (MissionContext mission : missions) {
+			for (AddTemplateMission mission : missions) {
 				targetMissionIds.add(originMissionMaps.getOrDefault(mission.getResourceId(),
 						mission.getResourceId()));
 			}
@@ -346,10 +351,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public TimeLineData getStudentsTimeLine(String resourceId) {
+	public TimeLineData getStudentsTimeLine(String roomId) {
 		TimeLineData timeLineData = new TimeLineData();
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
-		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(resourceId,
+		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
 				UserInfoContext.getUserContext().getUserId());
 
 		for (TaskContext task : taskList) {
@@ -361,37 +366,72 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 			timeLineEventList.add(timeLineEvent);
 		}
-		TeamRoom teamRoom = getById(resourceId);
-
-		timeLineData.setCurrentTime(new Date());
-		timeLineData.setStartTime(teamRoom.getStartTime());
-		timeLineData.setEndTime(teamRoom.getEndTime());
+		setTime(timeLineData, roomId);
 		timeLineData.setUserTimeLineConfig(timeLineEventList);
 
 		return timeLineData;
 	}
 
+	private void setTime(TimeLineData timeLineData, String roomId) {
+		TeamRoomData teamRoom = getTeamRoomRspByRoomId(roomId);
+
+		timeLineData.setCurrentTime(new Date());
+		timeLineData.setStartTime(teamRoom.getSceneStartTime() == null ? teamRoom.getStartTime()
+				: teamRoom.getSceneStartTime());
+
+		Date endTime = teamRoom.getEndTime();
+
+		if (teamRoom.getSceneStartTime() != null) {
+			if (teamRoom.getSceneEndTime() == null) {
+				long startToEnd = teamRoom.getEndTime().getTime()
+						- teamRoom.getStartTime().getTime();
+				long now = new Date().getTime();
+				long sceneStartToNow = new Date().getTime()
+						- teamRoom.getSceneStartTime().getTime();
+				// 训练时长大于实际开始时间到当前时间的时长，时间间隔取训练时长,否则取当前时间
+				if (startToEnd >= sceneStartToNow) {
+					endTime = new Date(startToEnd + teamRoom.getSceneStartTime().getTime());
+				} else {
+					endTime = new Date(now);
+				}
+			}
+			if (teamRoom.getSceneEndTime() != null
+					&& teamRoom.getSceneEndTime().compareTo(teamRoom.getSceneStartTime()) > 0) {
+				endTime = teamRoom.getSceneStartTime();
+
+			}
+		}
+
+		timeLineData.setEndTime(endTime);
+	}
+
 	@Override
-	public TimeLineData getTimeLine(String resourceId) {
+	public TimeLineData getTimeLine(String roomId) {
 		TimeLineData timeLineData = new TimeLineData();
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
 
-		// todo 时间线
+		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
+				UserInfoContext.getUserContext().getUserId());
 
-		TeamRoom teamRoom = getById(resourceId);
+		List<Integer> actionCodes = Lists.newArrayList();
+		actionCodes.add(CrTaskLog.ActionCode.RELEASE.getCode());
+		List<CrTaskLog> crTaskLogList = crTaskLogMapper.selectReleaseByRoomIdAndActionCodes(roomId,
+				actionCodes);
 
-		timeLineData.setCurrentTime(new Date());
-		timeLineData.setStartTime(teamRoom.getStartTime());
-		timeLineData.setEndTime(teamRoom.getEndTime());
+		for (CrTaskLog crTaskLog : crTaskLogList) {
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
+
+			timeLineEvent.setTime(crTaskLog.getCreateTime());
+			timeLineEvent.setTitle(missionService.getById(crTaskLog.getMissionId()).getTitle());
+			timeLineEvent.setUserName("");
+			timeLineEvent.setType(TimeLineEvent.SendDataType.SEND_DATA_IS_MISSION.getCode());
+
+			timeLineEventList.add(timeLineEvent);
+		}
+
 		timeLineData.setUserTimeLineConfig(timeLineEventList);
 
 		return timeLineData;
-	}
-
-	@Override
-	public String getTrainingManual(String resourceId) {
-
-		return null;
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.*;
+import java.util.Date;
+import java.util.IntSummaryStatistics;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
@@ -320,38 +324,44 @@ public class TeamTrainScoreController {
 	 */
 	@ApiOperation("获取用户训练记录")
 	@GetMapping("/get_training_record")
-	public BaseRsp<List<MissionSchemeObject>> getTrainingRecord(
+	public BaseRsp<List<MissionSchemeObject<TrainingRecordMissionRsp>>> getTrainingRecord(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_hash);
 
-		List<MissionSchemeObject> missionSchemeObjectList = crRoleService
+		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = crRoleService
 				.getBaseMissionByRole(crRole);
 
-		missionSchemeObjectList.forEach(missionSchemeObject -> {
+		List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList = missionSchemeObjectList
+				.stream().map(bo -> {
+					MissionSchemeObject<TrainingRecordMissionRsp> schemeListMissionRsp = new MissionSchemeObject<>();
+					schemeListMissionRsp.setStage(bo.getStage());
+					schemeListMissionRsp.setDynamic(bo.getDynamic());
 
-			List<MissionContext> missionContextList = new ArrayList<>();
-			missionSchemeObject.getMissions().forEach(mission -> {
-				MissionContext newMission = new MissionContext();
-				newMission.setResourceId(mission.getResourceId());
-				newMission.setTitle(mission.getTitle());
-				newMission.setDescription(mission.getDescription());
-				CrTask crTask = crTaskService.getByUserIdAndMissionId(user_hash,
-						mission.getResourceId());
+					List<TrainingRecordMissionRsp> trainingRecordMissionRsps = BeanUtils
+							.deepCopyList(bo.getMissions(), TrainingRecordMissionRsp.class);
 
-				TrainingRecord trainingRecord = new TrainingRecord();
-				if (crTask != null) {
-					trainingRecord.setRecord(crTask.getUserAnswer());
-					trainingRecord.setTime(crTask.getLastSubmitTime());
-				}
-				newMission.setTrainingRecord(trainingRecord);
-				missionContextList.add(newMission);
+					trainingRecordMissionRsps.forEach(trainingRecordMissionRsp -> {
 
-			});
-			missionSchemeObject.setMissions(missionContextList);
+						CrTask crTask = crTaskService.getByUserIdAndMissionId(user_hash,
+								trainingRecordMissionRsp.getResourceId());
 
-		});
-		return new BaseRsp<>(missionSchemeObjectList);
+						TrainingRecord trainingRecord = new TrainingRecord();
+						if (crTask != null) {
+							trainingRecord.setRecord(crTask.getUserAnswer());
+							trainingRecord.setTime(crTask.getLastSubmitTime());
+						}
+						trainingRecordMissionRsp.setTrainingRecord(trainingRecord);
+
+					});
+
+					schemeListMissionRsp.setMissions(trainingRecordMissionRsps);
+
+					return schemeListMissionRsp;
+				}).collect(Collectors.toList());
+
+		return new BaseRsp(missionSchemeList);
 	}
 
 	/**

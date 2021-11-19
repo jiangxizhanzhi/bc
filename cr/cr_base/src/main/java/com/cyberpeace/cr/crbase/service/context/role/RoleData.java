@@ -7,13 +7,13 @@ import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import lombok.Data;
 
 @Data
-public class RoleData {
+public class RoleData<T> {
 
 	private String resourceId;
 
 	private String name;
 
-	private List<MissionSchemeObject> missionsList;
+	private List<MissionSchemeObject<T>> missionsList;
 
 	private List<NameElement> users;
 

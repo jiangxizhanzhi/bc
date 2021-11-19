@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class TrainingRecord {
 
-	Date time;
+	private Date time;
 
-	String record;
+	private String record;
 }

@@ -44,6 +44,8 @@ public class BusinessTemplateHandler {
 	}
 
 	private BusinessTemplate.BusinessType getBusinessType(BasicTemplate basicTemplate) {
+		// TODO
+		// 校验外部传入的类型在BusinessTemplate.BusinessType声明的范围内
 		return EnumUtils.getEnumByCode(basicTemplate.getBaseInfo().getCategory(),
 				BusinessTemplate.BusinessType.class);
 

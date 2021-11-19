@@ -66,6 +66,11 @@ public class TeamTrainRoomController {
 	@Autowired
 	MissionService missionService;
 
+	public BaseRsp startScene() {
+		// TODO
+		return new BaseRsp();
+	}
+
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {

@@ -19,6 +19,11 @@
     <dependencies>
         <dependency>
             <groupId>com.cyberpeace</groupId>
+            <artifactId>integration</artifactId>
+            <version>${integration.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
             <version>${common.version}</version>
         </dependency>

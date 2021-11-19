@@ -7,8 +7,6 @@ import lombok.Data;
 @Data
 public class MissionContext extends Mission {
 
-	private String resourceId;
-
 	private Integer state;
 
 	private TrainingRecord trainingRecord;

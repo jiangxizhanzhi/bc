@@ -5,11 +5,11 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class MissionSchemeObject {
+public class MissionSchemeObject<T> {
 
 	private String stage;
 
-	private List<MissionContext> missions;
+	private List<T> missions;
 
 	private List<String> dynamic;
 }

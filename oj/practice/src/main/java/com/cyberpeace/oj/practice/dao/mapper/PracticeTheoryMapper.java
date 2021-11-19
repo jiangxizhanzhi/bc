@@ -53,8 +53,8 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
      * 分页查询习题列表
      * @param page
      * @param theoryListQuery
-     * @param isWeb
+     * @param isPublic
      * @return
      */
-    IPage<PracticeTheory> pageByQuery(Page page, TheoryListQuery theoryListQuery, Boolean isWeb);
+    IPage<PracticeTheory> pageByQuery(Page page, @Param("listQuery") TheoryListQuery theoryListQuery, @Param("isPublic") Boolean isPublic);
 }

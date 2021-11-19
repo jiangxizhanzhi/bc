@@ -3,6 +3,13 @@ package com.cyberpeace.oj.practice.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
+import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
+import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.service.bo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +27,8 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.constant.PracticeType;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
-import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PaperService;
-import com.cyberpeace.oj.practice.service.bo.AddOrUpdatePaperContext;
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,22 +38,25 @@ import lombok.extern.slf4j.Slf4j;
 public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements PaperService {
 
 	@Autowired
-	PracticeTheoryMapper practiceTheoryMapper;
+	private PracticeTheoryMapper practiceTheoryMapper;
 
 	@Autowired
-	PracticeTheoryRefMapper practiceTheoryRefMapper;
+	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
 	@Autowired
-	PracticeOperationMapper practiceOperationMapper;
+	private PracticeOperationMapper practiceOperationMapper;
 
 	@Autowired
-	PracticeOperationRefMapper practiceOperationRefMapper;
+	private PracticeOperationRefMapper practiceOperationRefMapper;
 
 	@Autowired
 	private PaperMapper paperMapper;
 
 	@Autowired
-	TransactionTemplate transactionTemplate;
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private PracticeSetMapper practiceSetMapper;
 
 	@Override
 	public Paper create(AddOrUpdatePaperContext paperContext) {
@@ -119,6 +122,51 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		return paper;
 	}
 
+	@Override
+	public IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo,
+			AuthContext authContext) {
+
+		if (StringUtils.isBlank(queryBo.getPracticeSetId())) {
+			return null;
+		}
+
+		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(permissionIds)
+				|| !permissionIds.contains(queryBo.getPracticeSetId())) {
+			return null;
+		}
+
+		PracticeSet practiceSet = practiceSetMapper.selectById(queryBo.getPracticeSetId());
+		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
+				.getCode()) {
+			TheoryListQuery theoryListQuery = BeanUtils.copy(queryBo, TheoryListQuery.class);
+			IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
+					authContext.getIsWeb());
+
+			IPage<LibPracticeListBo> convert = iPage.convert(practiceTheory -> {
+				LibPracticeListBo bo = BeanUtils.copy(practiceTheory, LibPracticeListBo.class);
+				bo.setTitle(practiceTheory.getContent());
+				bo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+				return bo;
+			});
+
+			return convert;
+		} else {
+			OperationListQuery listQuery = BeanUtils.copy(queryBo, OperationListQuery.class);
+			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
+					authContext.getIsWeb());
+
+			IPage<LibPracticeListBo> convert = iPage.convert(practiceOperation -> {
+				LibPracticeListBo listBo = BeanUtils.copy(practiceOperation,
+						LibPracticeListBo.class);
+				listBo.setPracticeType(PracticeCategory.PracticeType.OPERATION.getCode());
+				return listBo;
+			});
+
+			return convert;
+		}
+	}
+
 	/**
 	 * 设置相关参数
 	 * @param paper
@@ -145,15 +193,15 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 				.groupByColumn(practiceContextList, PaperPracticeContext::getPracticeType);
 
 		// 生成理论习题练习
-		List<PaperPracticeContext> theoryContextList = columnMap
-				.getOrDefault(PracticeType.THEORY.getCode().intValue(), Lists.newArrayList());
+		List<PaperPracticeContext> theoryContextList = columnMap.getOrDefault(
+				PracticeCategory.PracticeType.THEORY.getCode().intValue(), Lists.newArrayList());
 		List<PracticeTheoryRef> theoryRefList = contextToEntity(practiceTheoryMapper,
 				theoryContextList, paper, PracticeTheoryRef.class);
 		theoryRefs.addAll(theoryRefList);
 
 		// 生成实践操作练习
-		List<PaperPracticeContext> operationContextList = columnMap
-				.getOrDefault(PracticeType.OPERATION.getCode(), Lists.newArrayList());
+		List<PaperPracticeContext> operationContextList = columnMap.getOrDefault(
+				PracticeCategory.PracticeType.OPERATION.getCode(), Lists.newArrayList());
 		List<PracticeOperationRef> operationRefList = contextToEntity(practiceOperationMapper,
 				operationContextList, paper, PracticeOperationRef.class);
 		operationRefs.addAll(operationRefList);

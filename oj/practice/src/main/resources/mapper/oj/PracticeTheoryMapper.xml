@@ -64,6 +64,33 @@
 
     <select id="pageByQuery" resultMap="theory">
         select * from oj_practice_theory
+        <where>
+            <if test="listQuery.resourceIds != null and listQuery.resourceIds.size() != 0">
+                resource_id in
+                <foreach collection="listQuery.resourceIds" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="listQuery.practiceSetId != null and listQuery.practiceSetId != ''">
+                and practice_set_id = #{listQuery.practiceSetId}
+            </if>
+            <if test="listQuery.categoryIds != null and listQuery.categoryIds.size() != 0">
+                and category_id in
+                <foreach collection="listQuery.categoryIds" open="(" close=")" separator="," item="categoryId">
+                    #{categoryId}
+                </foreach>
+            </if>
+            <if test="listQuery.questionType != null">
+                and theory_type = #{listQuery.questionType}
+            </if>
+            <if test="listQuery.pattern != null and listQuery.pattern != ''">
+                <bind name="listQuery.pattern" value="'%' + listQuery.pattern + '%'"/>
+                and content like #{listQuery.pattern}
+            </if>
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
+        </where>
     </select>
 
 

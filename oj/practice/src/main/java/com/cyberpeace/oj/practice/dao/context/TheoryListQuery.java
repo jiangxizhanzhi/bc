@@ -14,6 +14,8 @@ public class TheoryListQuery implements Serializable {
 
 	private List<String> categoryIds;
 
+	private Integer questionType;
+
 	private String pattern;
 
 }

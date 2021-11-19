@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class MissionTemplateModifyReq extends MissionTemplateReq {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务id", required = true)
 	private String resourceId;
 
 }

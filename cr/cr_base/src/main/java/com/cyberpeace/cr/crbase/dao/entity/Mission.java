@@ -10,8 +10,6 @@ public class Mission extends MissionBase {
 
 	private Boolean showWriteup;
 
-	private Integer missionStage;
-
 	private String roomId;
 
 	public Boolean isObjective() {

@@ -9,33 +9,30 @@ import lombok.Data;
 @Data
 public class MissionTemplateReq implements Serializable {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "标题", required = true)
 	private String title;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "描述", required = true)
 	private String description;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "分值", required = true)
 	private Integer score;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "技能点", required = true)
 	private List<Integer> skillPoints;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "标准答案", required = true)
 	private String answer;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "选择题选项，非选择题为\"null\"", required = true)
 	private String option;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务类型（单选、填空等）", required = true)
 	private Integer type;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务类别（密码破解、网络侦查等）", required = true)
 	private String category;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "题解", required = true)
 	private String writeUp;
-
-	@ApiModelProperty(required = true)
-	private Integer missionStage;
 }

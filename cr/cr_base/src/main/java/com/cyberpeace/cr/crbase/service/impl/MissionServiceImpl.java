@@ -82,13 +82,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public void addMission(Mission mission) {
-		missionMapper.insert(mission);
-	}
-
-	@Override
-	public void addMissionTemplate(MissionTemplate missionTemplate) {
+	public String addMissionTemplate(MissionTemplate missionTemplate) {
 		missionTemplateMapper.insert(missionTemplate);
+		return missionTemplate.getResourceId();
 	}
 
 	@Override
@@ -140,7 +136,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<CrTask> tasks = new ArrayList<>();
 		for (String userId : JsonUtil.toJsonObjectArray(role.getUserIds(), String.class)) {
 			CrTask task = new CrTask();
-			task.setScore(mission.getScore());
 			task.setMissionId(mission.getResourceId());
 			task.setUserId(userId);
 			task.setStatus(CrTask.TaskStatus.RELEASED.getCode());

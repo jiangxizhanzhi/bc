@@ -16,9 +16,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
 public interface MissionService extends IService<Mission> {
 
-	void addMission(Mission mission);
-
-	void addMissionTemplate(MissionTemplate missionTemplate);
+	String addMissionTemplate(MissionTemplate missionTemplate);
 
 	void updateMissionTemplate(MissionTemplate missionTemplate);
 
@@ -72,5 +70,10 @@ public interface MissionService extends IService<Mission> {
 
 	List<DynamicData> getTaskLogByRoomIdAndUserId(String roomId, String studentId);
 
+	/**
+	 * 获取某个团队训练的训练手册
+	 * @param roomId
+	 * @return
+	 */
 	String getTeamTrainingManual(String roomId);
 }

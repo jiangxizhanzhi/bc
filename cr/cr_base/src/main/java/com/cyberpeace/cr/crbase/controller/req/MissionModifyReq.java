@@ -9,16 +9,16 @@ import lombok.Data;
 @Data
 public class MissionModifyReq implements Serializable {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "标题", required = true)
 	private String title;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务id", required = true)
 	private String resourceId;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "分值", required = true)
 	private Integer score;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "技能点", required = true)
 	private List<Integer> skillPoints;
 
 }

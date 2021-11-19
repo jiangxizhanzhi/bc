@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public class ReleaseMissionReq {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "角色id", required = true)
 	private String roleResourceId;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务id", required = true)
 	private String missionResourceId;
 
 }

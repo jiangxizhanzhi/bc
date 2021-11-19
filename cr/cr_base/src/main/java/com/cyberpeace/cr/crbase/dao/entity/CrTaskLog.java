@@ -10,7 +10,6 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @TableName("cr_task_log")
 public class CrTaskLog extends BaseTable {

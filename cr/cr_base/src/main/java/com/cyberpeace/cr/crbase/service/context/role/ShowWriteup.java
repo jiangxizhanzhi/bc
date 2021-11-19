@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class ShowWriteup {
 
-	Boolean showWriteup;
+	private Boolean showWriteup;
 }

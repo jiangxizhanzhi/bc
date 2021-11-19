@@ -137,7 +137,7 @@ public class TeamTrainStudentsController {
 			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		crTaskService.submitMissions(submitMissionsReq.getResourceId(),
 				submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
-		// todo 实现提交任务，日志记录
+
 		return new BaseRsp<>();
 	}
 

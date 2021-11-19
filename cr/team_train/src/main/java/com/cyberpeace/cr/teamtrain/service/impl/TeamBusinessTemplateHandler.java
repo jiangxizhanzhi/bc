@@ -25,13 +25,13 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public String saveRealBusiness(BasicTemplate obj, String businessId) {
+	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 
-		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils.copy(obj,
+		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils.copy(basicTemplate,
 				TeamTrainTemplateContext.class);
 		TeamTemplate teamTemplate = new TeamTemplate();
 
-		BaseInfo baseInfo = obj.getBaseInfo();
+		BaseInfo baseInfo = basicTemplate.getBaseInfo();
 
 		// 保存团队训练模板
 		teamTemplate.setBusinessTemplateId(businessId);
@@ -44,13 +44,6 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 		teamTemplate.setTimeLineConfig(
 				JsonUtil.toJsonString(teamTrainTemplateContext.getTimeLineConfig()));
-		// 是否去掉多余字段
-		// for (RoleListReq teamTrainTemplateRole :
-		// teamTrainTemplateContext.getRoleList()) {
-		// List<MissionSchemeObject> missionsSchemeList =
-		// teamTrainTemplateRole.getMissionsScheme();
-		//
-		// }
 
 		teamTemplateService.save(teamTemplate);
 

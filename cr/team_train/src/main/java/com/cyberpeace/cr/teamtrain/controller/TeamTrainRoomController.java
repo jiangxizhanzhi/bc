@@ -219,7 +219,7 @@ public class TeamTrainRoomController {
 	public BaseRsp<String> getTrainingManual(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
-		String data = teamRoomService.getTrainingManual(resource_id);
+		String data = missionService.getTeamTrainingManual(resource_id);
 
 		return new BaseRsp<>(data);
 	}
@@ -260,8 +260,6 @@ public class TeamTrainRoomController {
 		missionService.release(releaseMissionReq.getMissionResourceId(),
 				releaseMissionReq.getRoleResourceId(),
 				UserInfoContext.getUserContext().getUserId());
-
-		// todo 下发任务， 记录日志
 
 		return new BaseRsp<>();
 	}

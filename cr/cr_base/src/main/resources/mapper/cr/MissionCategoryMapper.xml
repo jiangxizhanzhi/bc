@@ -7,4 +7,14 @@
         select *
         from cr_mission_category
     </select>
+
+    <select id="selectByIds" resultType="com.cyberpeace.cr.crbase.dao.entity.MissionCategory">
+        select *
+        from cr_mission_category
+        where resource_id in
+        <foreach collection="missionsCategoryIds" item="resource_id" separator="," open="(" close=")">
+            #{resource_id}
+        </foreach>
+    </select>
+
 </mapper>

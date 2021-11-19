@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoleQuery {
 
-	String roomId;
+	private String roomId;
 
-	Integer roleGroup;
+	private Integer roleGroup;
 
 	public RoleQuery(String roomId, Integer roleGroup) {
 		this.roomId = roomId;

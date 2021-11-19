@@ -57,9 +57,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private BusinessTemplateHandler businessTemplateHandler;
 
 	@Override
-	public String addTemplate(BasicTemplate obj) {
+	public String addTemplate(BasicTemplate basicTemplate) {
 		// 1、从输入业务中解析公共模板
-		BusinessTemplate businessTemplate = getBusinessTemplate(obj);
+		BusinessTemplate businessTemplate = getBusinessTemplate(basicTemplate);
 		// 拓扑场景id保存获取
 
 		String sceneConfigId = "";
@@ -77,10 +77,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				save(businessTemplate);
 
 				// 2、保存业务模板数据
-				String teamTemplateId = businessTemplateHandler.saveBusiness(obj,
+				String teamTemplateId = businessTemplateHandler.saveBusiness(basicTemplate,
 						businessTemplate.getResourceId());
-				// 3、返回业务模板
-				// todo
+
 			}
 		});
 

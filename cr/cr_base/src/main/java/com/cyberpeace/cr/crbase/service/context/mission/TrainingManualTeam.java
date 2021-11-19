@@ -22,7 +22,8 @@ public class TrainingManualTeam {
 	private TemplateLocale locale;
 
 	public void addStage(CrRoleMissionSchemeStage stage, Integer index) {
-		String head = String.format("## %s%d： %s\n\n", locale.getStage(), index, stage.getStage());
+		String head = String.format("\n\n## %s%d： %s\n\n\n", locale.getStage(), index,
+				stage.getStage());
 		text.append(head);
 
 		for (int i = 1; i <= stage.getMissions().size(); i++) {
@@ -33,7 +34,8 @@ public class TrainingManualTeam {
 
 	public void addMission(String missionId, Integer index) {
 		Mission mission = missionMap.get(missionId);
-		String missionText = String.format("#### %s%d： %s\n%s\n%s\n\n\n", locale.getTask(), index,
+		String missionText = String.format("#### %s%d： %s\n\n%s: \n%s\n\n\n", locale.getTask(),
+				index,
 				mission.getTitle(), locale.getWriteup(), mission.getWriteUp());
 		text.append(missionText);
 	}

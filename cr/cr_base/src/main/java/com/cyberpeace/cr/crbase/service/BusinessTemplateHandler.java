@@ -37,7 +37,7 @@ public class BusinessTemplateHandler {
 	/**
 	 * 保存实际的业务模板。如红蓝对抗、团队训练
 	 */
-	public String saveRealBusiness(BasicTemplate obj, String businessId) {
+	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 		// 业务定义自己的保存操作
 		return "";
 

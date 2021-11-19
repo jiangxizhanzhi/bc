@@ -6,8 +6,8 @@
 
     <select id="selectCrRoleByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
         select resource_id,
-               name,
-               business_instance_id,
+        `name`,
+        room_id,
         description,
         role_group,
         nodes,
@@ -17,7 +17,7 @@
         mission_scheme,
         business_type
         from cr_role
-        where business_instance_id = #{roomId}
+        where room_id = #{roomId}
         <if test="roleGroup != null and roleGroup != ''">
             and role_group like #{roleGroup}
         </if>
@@ -26,16 +26,17 @@
 
     <select id="getRoomIdsByUserId" resultType="java.lang.String">
         <bind name="userId" value="'%' + userId + '%'"/>
-        select business_instance_id
+        select room_id
         from cr_role
         where user_ids like #{userId}
     </select>
+
     <select id="getCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
 
         <bind name="userId" value="'%' + userId + '%'"/>
         select resource_id,
         `name` ,
-        business_instance_id,
+        room_id,
         description,
         role_group,
         nodes,
@@ -45,7 +46,7 @@
         mission_scheme,
         business_type
         from cr_role
-        where business_instance_id = #{roomId}
+        where room_id = #{roomId}
         and user_ids like #{userId}
     </select>
 

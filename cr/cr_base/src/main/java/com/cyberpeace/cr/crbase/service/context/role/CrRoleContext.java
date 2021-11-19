@@ -10,10 +10,10 @@ import lombok.Data;
 @Data
 public class CrRoleContext {
 
-	List<RoleData> roles;
+	private List<RoleData> roles;
 
-	Map<String, MissionCompletion> missionMapping;
+	private Map<String, MissionCompletion> missionMapping;
 
-	List<Map<String, ShowWriteup>> showWriteupMapping;
+	private List<Map<String, ShowWriteup>> showWriteupMapping;
 
 }

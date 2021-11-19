@@ -9,12 +9,12 @@ import lombok.Data;
 public class ShareContext {
 
 	@ApiModelProperty(value = "模板id")
-	List<String> ids;
+	private List<String> ids;
 
 	@ApiModelProperty(value = "授权类别")
-	Integer shareMode;
+	private Integer shareMode;
 
 	@ApiModelProperty(value = "授权人员id")
-	List<String> shareTeachers;
+	private List<String> shareTeachers;
 
 }

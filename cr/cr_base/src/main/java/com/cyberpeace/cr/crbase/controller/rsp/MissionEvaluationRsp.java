@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.controller;
+package com.cyberpeace.cr.crbase.controller.rsp;
 
 import java.util.Date;
 
@@ -44,4 +44,11 @@ public class MissionEvaluationRsp {
 
 	private SubmitInfo submitInfo;
 
+	@Data
+	public class SubmitInfo {
+
+		private Date createTime;
+
+		private String userAnswer;
+	}
 }

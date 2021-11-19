@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,16 +10,24 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionCategoryMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
+import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamScoreMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
 import com.cyberpeace.cr.teamtrain.service.context.MissionsStatistics;
 import com.cyberpeace.cr.teamtrain.service.context.TaskCounter;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  *
@@ -27,6 +37,9 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 
 	@Autowired
 	TeamScoreMapper teamScoreMapper;
+
+	@Autowired
+	MissionCategoryMapper missionCategoryMapper;
 
 	@Autowired
 	CrRoleService crRoleService;
@@ -91,5 +104,34 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 	@Override
 	public List<TeamScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds) {
 		return teamScoreMapper.selectByRoomIdAndUserIds(roomId, userIds);
+	}
+
+	@Override
+	public Map<String, Integer> getMissionsCategory(String roomId) {
+		Map<String, Integer> missionsCategory = Maps.newHashMap();
+		CrRoleContext crRole = crRoleService.getRoles(roomId);
+		List<String> missionIds = Lists.newArrayList();
+
+		for (RoleData roleData : crRole.getRoles()) {
+			for (MissionSchemeObject missions : roleData.getMissionsList()) {
+				for (MissionContext missionContext : missions.getMissions()) {
+					Integer count = missionsCategory.getOrDefault(missionContext.getCategoryId(), 0)
+							+ 1;
+					missionsCategory.put(missionContext.getCategoryId(), count);
+				}
+
+			}
+		}
+
+		List<String> missionsCategoryIds = new ArrayList(missionsCategory.keySet());
+		List<MissionCategory> missionCategories = missionCategoryMapper
+				.selectByIds(missionsCategoryIds);
+
+		missionCategories.forEach(missionCategory -> {
+			missionsCategory.put(missionCategory.getName(),
+					missionsCategory.remove(missionCategory.getResourceId()));
+		});
+
+		return missionsCategory;
 	}
 }

@@ -78,22 +78,25 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public List<TaskContext> getByRoomIdAndUser(String roomId, String userId) {
 		List<CrTask> taskList = crTaskMapper.selectByRoomIdAndUserId(roomId, userId);
+		List<TaskContext> taskContextList = new ArrayList<>();
+
 		List<String> missionIds = new ArrayList<>();
 
 		for (CrTask task : taskList) {
 			missionIds.add(task.getMissionId());
 		}
-		List<Mission> missionList = missionMapper.batchSelect(missionIds);
-		Map<String, Mission> missionMap = Maps.newHashMap();
-		for (Mission mission : missionList) {
-			missionMap.put(mission.getResourceId(), mission);
-		}
+		if (missionIds.size() > 0) {
+			List<Mission> missionList = missionMapper.batchSelect(missionIds);
+			Map<String, Mission> missionMap = Maps.newHashMap();
+			for (Mission mission : missionList) {
+				missionMap.put(mission.getResourceId(), mission);
+			}
 
-		List<TaskContext> taskContextList = new ArrayList<>();
-		for (CrTask task : taskList) {
-			TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
-			taskContext.setMission(missionMap.get(task.getMissionId()));
-			taskContextList.add(taskContext);
+			for (CrTask task : taskList) {
+				TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
+				taskContext.setMission(missionMap.get(task.getMissionId()));
+				taskContextList.add(taskContext);
+			}
 		}
 
 		return taskContextList;

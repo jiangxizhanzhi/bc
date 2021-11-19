@@ -17,4 +17,5 @@ public interface MissionCategoryMapper extends BaseMapper<MissionCategory> {
 
 	List<MissionCategory> selectAll();
 
+	List<MissionCategory> selectByIds(List<String> missionsCategoryIds);
 }

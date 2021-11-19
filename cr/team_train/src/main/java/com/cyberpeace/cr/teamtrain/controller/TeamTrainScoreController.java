@@ -17,6 +17,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
@@ -26,8 +27,6 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
-import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.teamtrain.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.MissionDynamicRsp;
@@ -238,7 +237,8 @@ public class TeamTrainScoreController {
 			missionEvaluationRsp.setSubmitLogHash(missionEvaluationContext.getMissionHash());
 			missionEvaluationRsp.setTotalScore(missionEvaluationContext.getMission().getScore());
 
-			SubmitInfo submitInfo = new SubmitInfo();
+			MissionEvaluationRsp.SubmitInfo submitInfo = missionEvaluationRsp.new SubmitInfo();
+
 			submitInfo.setCreateTime(missionEvaluationContext.getCreateTime());
 			submitInfo.setUserAnswer(missionEvaluationContext.getAnswer());
 
@@ -289,9 +289,6 @@ public class TeamTrainScoreController {
 		statisticalInfo.setValue(taskCounter.getNotReleased());
 		statisticalInfoList.add(statisticalInfo);
 
-		// getByRoomIdAndUserId(resource_id, student_id);
-		// todo 获取动态事件日志
-
 		List<DynamicData> s = missionService.getTaskLogByRoomIdAndUserId(resource_id, student_id);
 
 		missionDynamicRsp.setDynamicData(s);
@@ -309,21 +306,8 @@ public class TeamTrainScoreController {
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		MissionReport missionReport = new MissionReport();
-		Map<String, Integer> missions_category = Maps.newHashMap();
-		CrRoleContext crRole = crRoleService.getRoles(resource_id);
-		List<String> missionIds = Lists.newArrayList();
 
-		for (RoleData roleData : crRole.getRoles()) {
-			for (MissionSchemeObject missions : roleData.getMissionsList()) {
-				for (MissionContext missionContext : missions.getMissions()) {
-					Integer count = missions_category.getOrDefault(missionContext.getCategoryId(),
-							0) + 1;
-					missions_category.put(missionContext.getCategoryId(), count);
-				}
-
-			}
-		}
-		missionReport.setMissionsCategory(missions_category);
+		missionReport.setMissionsCategory(teamScoreService.getMissionsCategory(resource_id));
 		missionReport.setMissionsStatistics(teamScoreService.getMissionsStatistics(resource_id));
 
 		return new BaseRsp<>(missionReport);

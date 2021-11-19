@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
@@ -33,4 +34,6 @@ public interface TeamScoreService extends IService<TeamScore> {
 	MissionsStatistics getMissionsStatistics(String roomId);
 
 	List<TeamScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
+
+	Map<String, Integer> getMissionsCategory(String roomId);
 }

@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class NameElement {
 
-	String name;
+	private String name;
 }

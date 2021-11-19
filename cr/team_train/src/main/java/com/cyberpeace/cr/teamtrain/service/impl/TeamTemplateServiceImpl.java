@@ -86,7 +86,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.save(businessTemplate);
 				teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
-				// todo任务相关
 
 				save(teamTemplate);
 

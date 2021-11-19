@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class MissionStageScheme {
 
-	String stage;
+	private String stage;
 
-	List<String> missions;
+	private List<String> missions;
 
-	List<String> dynamic;
+	private List<String> dynamic;
 }

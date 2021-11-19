@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /** 在获取任务列表接口使用
- * @author 张晋宝
+ * @author
  */
 @Data
 public class SchemeListMissionRsp implements Serializable {

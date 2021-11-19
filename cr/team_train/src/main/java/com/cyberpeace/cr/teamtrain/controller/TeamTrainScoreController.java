@@ -379,9 +379,8 @@ public class TeamTrainScoreController {
 			return new BaseRsp<>(new TrainingReport());
 		}
 
-		RoleQuery roleQuery = new RoleQuery();
-		roleQuery.setRoomId(resource_id);
-		roleQuery.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+		RoleQuery roleQuery = new RoleQuery(resource_id,
+				CrRole.RoleGroupCodeInteger.STUDENT.getValue());
 
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 

@@ -44,9 +44,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Override
 	public CrRoleContext<MissionContext> getRoles(String roomId) {
 		CrRoleContext<MissionContext> crRoleContext = new CrRoleContext();
-		RoleQuery roleQuery = new RoleQuery();
-		roleQuery.setRoomId(roomId);
-		roleQuery.setRoleGroup(CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.RoleGroupCodeInteger.STUDENT.getValue());
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 		if (crRoles == null) {
@@ -64,6 +62,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			roleResData.setResourceId(crRole.getResourceId());
 			roleResData.setMissionsList(missionSchemeObjectList);
 			roleResData.setUsers(getUserByRoleUsers(crRole.getUserIds()));
+
 			roleResDataList.add(roleResData);
 		}
 		crRoleContext.setRoles(roleResDataList);
@@ -103,6 +102,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			missionList.forEach(mission -> {
 				mission.setAnswer("");
 			});
+
 			List<MissionContext> missionContextList = BeanUtils.deepCopyList(missionList,
 					MissionContext.class);
 			MissionSchemeObject missionSchemeObject = BeanUtils.copy(missionStageScheme,
@@ -136,8 +136,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	@Override
 	public List<MissionSchemeObject<MissionContext>>
-			getCrRoleMissionByRoomIdAndUserId(String roomId,
-			String userId) {
+			getCrRoleMissionByRoomIdAndUserId(String roomId, String userId) {
 
 		CrRole crRole = getCrRoleByRoomIdAndUserId(roomId, userId);
 

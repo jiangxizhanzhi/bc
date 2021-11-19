@@ -29,6 +29,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -363,7 +364,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.map(MissionEvaluationContext::getMissionHash).distinct()
 				.collect(Collectors.toList());
 
-		List<Mission> missions = missionMapper.batchSelect(missionIds);
+		List<Mission> missions = Lists.newArrayList();
+		if (missionIds.size() > 0) {
+			missions = missionMapper.batchSelect(missionIds);
+		}
 		Map<String, Mission> missionMap = StreamApiUtils.columnMap(missions, Mission::getResourceId,
 				pc -> pc);
 

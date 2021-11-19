@@ -1,15 +1,16 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 
 @Mapper
 @Repository
 public interface MissionSchemeTemplateMapper extends BaseMapper<MissionSchemeTemplate> {
-    IPage<MissionSchemeTemplate> list(Page page, String pattern);
+
+	IPage<MissionSchemeTemplate> list(Page page, String pattern);
 }

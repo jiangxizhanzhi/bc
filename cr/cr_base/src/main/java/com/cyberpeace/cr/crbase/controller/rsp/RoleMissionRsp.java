@@ -26,7 +26,7 @@ public class RoleMissionRsp implements Serializable {
 	@ApiModelProperty("任务状态")
 	private Integer missionStatus;
 
-	@ApiModelProperty("任务类别")
+	@ApiModelProperty("任务类型")
 	private Integer type;
 
 	@ApiModelProperty("任务技能分数")

@@ -12,10 +12,9 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 @Repository
 public interface MissionMapper extends BaseMapper<Mission> {
 
-    List<Mission> batchSelect(List<String> resourceIds);
+	List<Mission> batchSelect(List<String> resourceIds);
 
-    List<Mission> selectByRoomId(String roomId);
+	List<Mission> selectByRoomId(String roomId);
 
-
-    void batchInsert(List<Mission> missions);
+	void batchInsert(List<Mission> missions);
 }

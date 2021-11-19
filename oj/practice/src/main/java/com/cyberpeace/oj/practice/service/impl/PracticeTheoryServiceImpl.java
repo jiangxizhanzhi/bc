@@ -88,7 +88,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
 		if (null == practiceTheory) {
-			throw new BusinessException(OjBusinessErrorCode.THEORY_NOT_FIND);
+			log.error("Theory practice not found! practice_id=[{}]", resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
 		WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);

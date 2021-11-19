@@ -61,7 +61,7 @@ public class LessonAddReq implements Serializable {
     @ApiModelProperty("场景存活时间 单位小时")
     private Integer destroyDelay;
 
-    @ApiModelProperty("场景隔离类型")
+    @ApiModelProperty("场景隔离类型 1=共享 2=个人")
     private Integer sceneShareMode;
 
     @ApiModelProperty("习题列表")

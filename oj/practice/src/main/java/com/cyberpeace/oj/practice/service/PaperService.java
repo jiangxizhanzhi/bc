@@ -11,6 +11,13 @@ public interface PaperService extends IService<Paper> {
 	 * @param paperContext 修改传入子类
 	 * @return
 	 */
-	Paper createOrUpdate(AddOrUpdatePaperContext paperContext);
+	Paper create(AddOrUpdatePaperContext paperContext);
+
+	/**
+	 * 试卷修改
+	 * @param paperContext
+	 * @return
+	 */
+	Paper update(AddOrUpdatePaperContext paperContext);
 
 }

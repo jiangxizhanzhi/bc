@@ -78,7 +78,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
-			throw new BusinessException(OjBusinessErrorCode.OPERATION_NOT_FIND);
+			log.error("Operation practice not found! practice_id=[{}]", resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 		OperationBo operationBo = BeanUtils.copy(operation, OperationBo.class);
 

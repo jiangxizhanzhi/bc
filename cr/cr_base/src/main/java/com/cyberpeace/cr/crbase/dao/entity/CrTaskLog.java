@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.*;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

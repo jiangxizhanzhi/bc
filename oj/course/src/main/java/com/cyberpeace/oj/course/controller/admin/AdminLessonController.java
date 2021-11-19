@@ -17,10 +17,12 @@ import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -41,6 +43,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/oj/admin/lesson")
 @RequiresAuthentication
+@Slf4j
 public class AdminLessonController extends PublicController<CourseLessonService, CourseLesson> {
 
 	@Autowired
@@ -88,7 +91,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
-	public BaseRsp add(@RequestBody @Valid LessonAddReq lessonAddReq) {
+	public BaseRsp add(@RequestBody @Validated LessonAddReq lessonAddReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonAddReq);
 		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
@@ -121,7 +124,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		CourseLesson lesson = courseLessonMapper.selectById(resourceId);
 		if (null == lesson) {
-			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FIND);
+			log.error("Lesson not found! lesson_id=[{}]", resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(lesson.getAttachmentIds(),
 				false);

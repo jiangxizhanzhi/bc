@@ -9,6 +9,7 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 
 @Service
+@Slf4j
 public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, LessonConfig> implements LessonConfigService {
 
 	@Autowired
@@ -47,7 +49,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
+			log.error("Course not found! course_id=[{}]", courseId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 		LessonConfig firstNode = lessonConfigMapper.getFirstNode(courseId);
 		List<LessonConfigBo> configBos = lessonConfigToBo(userId, courseId, isPublic);

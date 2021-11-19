@@ -9,6 +9,8 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.model.SceneConfig;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
@@ -102,9 +104,16 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String userId, String courseId, String lessonId) {
+
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
+		if (null == lesson) {
+			// throw new BusinessException("")
+		}
 
 		// 增加热度
 		lesson.setHeat(lesson.getHeat() + 1);
@@ -130,7 +139,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				ResourceCollection.BusinessType.LESSON.getCode(), lessonId);
 		infoBo.setIsCollection(collection);
 
-		// TODO 获取场景信息
+		// todo 场景信息处理
 
 		// 添加学习记录
 		LessonRecord record = lessonRecordMapper.selectByLessonAndUser(lessonId, userId);
@@ -152,12 +161,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
+			log.error("Course not found! course_id=[{}]", courseId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 		if (null == lesson) {
-			throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FIND);
+			log.error("Lesson not found! lesson_id=[{}]", lessonId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
 		AdminLessonBo lessonInfoBo = BeanUtils.copy(lesson, AdminLessonBo.class);
@@ -188,7 +199,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		courseLesson.setResourceId(IDGeneratorUtil.getID());
 		LessonConfig lessonConfig = packageLessonConfig(courseLesson);
 
-		// TODO 场景数据新增
+		// 场景数据新增
+		if (StringUtils.isNotBlank(ojSceneConfig)) {
+			String topoId = remoteTopoService
+					.create(JsonUtil.toJsonObject(ojSceneConfig, SceneConfig.class));
+			courseLesson.setTopoId(topoId);
+		}
 
 		// 执行数据插入
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -196,7 +212,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				// 课后练习新增或修改
-				Paper paper = paperService.createOrUpdate(paperContext);
+				Paper paper = paperService.create(paperContext);
 
 				// 课时新增或修改
 				courseLesson.setPaperId(paper.getResourceId());
@@ -223,7 +239,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				paperService.createOrUpdate(paperContext);
+				paperService.update(paperContext);
 				courseLessonMapper.updateById(courseLesson);
 			}
 		});
@@ -245,7 +261,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (StringUtils.isNotBlank(courseLesson.getResourceId())) {
 			CourseLesson lesson = courseLessonMapper.selectById(courseLesson.getResourceId());
 			if (null == lesson) {
-				throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FIND);
+				log.error("Lesson not found! lesson_id=[{}]", courseLesson.getResourceId());
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 			}
 			paperContext.setPracticeList(practiceList);
 			paperContext.setResourceId(courseLesson.getPaperId());
@@ -318,7 +335,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public Boolean importLessons(String courseId, List<String> lessonIds) {
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
+			log.error("Course not found! course_id=[{}]", courseId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);

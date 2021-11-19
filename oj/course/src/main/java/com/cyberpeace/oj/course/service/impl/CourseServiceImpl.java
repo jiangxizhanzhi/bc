@@ -255,7 +255,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		Course existCourse = courseMapper.selectById(course.getResourceId());
 		if (null == existCourse) {
 			log.error("Course not found! course_id=[{}]", course.getResourceId());
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
 		course.setModifyUserId(userId);

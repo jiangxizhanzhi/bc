@@ -129,7 +129,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		if (null == courseCategory) {
 			log.error("When add course but category not found! category_id=[{}]",
 					addReq.getCategoryId());
-			throw new BusinessException(OjBusinessErrorCode.RELATE_CATEGORY_NOT_FIND);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
 		Course courseRsp = courseService.addCourse(userId, course);

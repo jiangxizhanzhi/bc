@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,5 +59,16 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			return row;
 		}
 		return CommonConstant.ZERO;
+	}
+
+	@Override
+	public AttachmentBo create(String filename, String filePath) {
+		Attachment attachment = Attachment.builder().resourceId(IDGeneratorUtil.getID())
+				.fileName(filename).filePath(filePath).isPublic(CommonConstant.TRUE).build();
+		int insert = attachmentMapper.insert(attachment);
+		if (insert > 0) {
+			return BeanUtils.copy(attachment, AttachmentBo.class);
+		}
+		return null;
 	}
 }

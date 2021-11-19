@@ -1,24 +1,20 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -33,8 +29,6 @@ import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.bo.AddOrUpdatePaperContext;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
-import com.cyberpeace.oj.practice.service.bo.TestPaperInfo;
-import com.cyberpeace.oj.practice.service.bo.TestPaperPractice;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -62,19 +56,79 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	TransactionTemplate transactionTemplate;
 
 	@Override
-	public Paper createOrUpdate(AddOrUpdatePaperContext paperContext) {
-
-		boolean insert = false;
+	public Paper create(AddOrUpdatePaperContext paperContext) {
 
 		// 解析试卷信息
 		Paper paper = BeanUtils.copy(paperContext, Paper.class);
-		if (StringUtils.isBlank(paper.getResourceId())) {
-			insert = true;
-			paper.setResourceId(IDGeneratorUtil.getID());
-			paper.setIsPublic(CommonConstant.TRUE);
-		}
+		paper.setResourceId(IDGeneratorUtil.getID());
+		paper.setIsPublic(CommonConstant.TRUE);
 
-		List<PaperPracticeContext> practiceContextList = paperContext.getPracticeList();
+		// 数据设置
+		List<PracticeTheoryRef> theoryRefList = Lists.newArrayList();
+		List<PracticeOperationRef> operationRefs = Lists.newArrayList();
+		setPaperRelateData(paper, theoryRefList, operationRefs, paperContext.getPracticeList());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				paperMapper.insert(paper);
+
+				if (CollectionUtils.isNotEmpty(theoryRefList)) {
+					practiceTheoryRefMapper.saveBatch(theoryRefList);
+				}
+				if (CollectionUtils.isNotEmpty(operationRefs)) {
+					practiceOperationRefMapper.saveBatch(operationRefs);
+				}
+			}
+		});
+
+		return paper;
+	}
+
+	@Override
+	public Paper update(AddOrUpdatePaperContext paperContext) {
+
+		// 数据拷贝
+		Paper paper = BeanUtils.copy(paperContext, Paper.class);
+
+		// 参数设置
+		List<PracticeTheoryRef> theoryRefList = Lists.newArrayList();
+		List<PracticeOperationRef> operationRefs = Lists.newArrayList();
+		setPaperRelateData(paper, theoryRefList, operationRefs, paperContext.getPracticeList());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				paperMapper.updateById(paper);
+				practiceTheoryRefMapper.deleteByPaper(paper.getResourceId());
+				practiceOperationRefMapper.deleteByPaper(paper.getResourceId());
+
+				if (CollectionUtils.isNotEmpty(theoryRefList)) {
+					practiceTheoryRefMapper.saveBatch(theoryRefList);
+				}
+				if (CollectionUtils.isNotEmpty(operationRefs)) {
+					practiceOperationRefMapper.saveBatch(operationRefs);
+				}
+			}
+		});
+
+		return paper;
+	}
+
+	/**
+	 * 设置相关参数
+	 * @param paper
+	 * @param theoryRefs
+	 * @param operationRefs
+	 */
+	private void setPaperRelateData(Paper paper, List<PracticeTheoryRef> theoryRefs,
+			List<PracticeOperationRef> operationRefs,
+			List<PaperPracticeContext> practiceContextList) {
+
 		if (CollectionUtils.isNotEmpty(practiceContextList)) {
 			Double totalScore = StreamApiUtils.mapToDouble(practiceContextList,
 					PaperPracticeContext::getScore);
@@ -95,36 +149,15 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 				.getOrDefault(PracticeType.THEORY.getCode().intValue(), Lists.newArrayList());
 		List<PracticeTheoryRef> theoryRefList = contextToEntity(practiceTheoryMapper,
 				theoryContextList, paper, PracticeTheoryRef.class);
+		theoryRefs.addAll(theoryRefList);
 
 		// 生成实践操作练习
 		List<PaperPracticeContext> operationContextList = columnMap
 				.getOrDefault(PracticeType.OPERATION.getCode(), Lists.newArrayList());
-		List<PracticeOperationRef> operationRefs = contextToEntity(practiceOperationMapper,
+		List<PracticeOperationRef> operationRefList = contextToEntity(practiceOperationMapper,
 				operationContextList, paper, PracticeOperationRef.class);
+		operationRefs.addAll(operationRefList);
 
-		boolean finalInsert = insert;
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				if (finalInsert) {
-					paperMapper.insert(paper);
-				} else {
-					paperMapper.updateById(paper);
-					practiceTheoryRefMapper.deleteByPaper(paper.getResourceId());
-					practiceOperationRefMapper.deleteByPaper(paper.getResourceId());
-				}
-
-				if (CollectionUtils.isNotEmpty(theoryRefList)) {
-					practiceTheoryRefMapper.saveBatch(theoryRefList);
-				}
-				if (CollectionUtils.isNotEmpty(operationRefs)) {
-					practiceOperationRefMapper.saveBatch(operationRefs);
-				}
-			}
-		});
-
-		return paper;
 	}
 
 	/**

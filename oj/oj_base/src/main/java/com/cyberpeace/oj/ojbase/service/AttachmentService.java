@@ -22,4 +22,11 @@ public interface AttachmentService extends IService<Attachment> {
      */
     Integer deleteDifferenceSet(String oldAttachmentIds, String attachmentIds);
 
+    /**
+     *
+     * @param filename
+     * @param filePath
+     * @return
+     */
+    AttachmentBo create(String filename, String filePath);
 }

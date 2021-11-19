@@ -14,4 +14,6 @@ public interface AttachmentMapper extends BaseMapper<Attachment> {
 	List<Attachment> selectBatchIds(@Param("attachmentIds") List<String> attachmentIds,
 			@Param("isPublic") Boolean isPublic);
 
+	Attachment selectByPath(@Param("filePath") String filePath);
+
 }

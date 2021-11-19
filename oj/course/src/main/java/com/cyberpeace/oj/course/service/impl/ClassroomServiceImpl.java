@@ -55,16 +55,16 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			String courseId = classroom.getCourseId();
 			Course course = courseMapper.selectById(courseId);
 			if (course == null) {
-				log.error("该课程{}没有课程名", courseId);
-				throw new BusinessException(OjBusinessErrorCode.COURSE_NOT_FIND);
+				log.error("Course not found! course_id=[{}]", courseId);
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 			}
 			copy.setCourseName(course.getName());
 
 			String lessonId = classroom.getLessonId();
 			CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 			if (lesson == null) {
-				log.error("该课时{}没有课程名", lessonId);
-				throw new BusinessException(OjBusinessErrorCode.LESSON_NOT_FIND);
+				log.error("Lesson not found! lesson_id=[{}]", lessonId);
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 			}
 			copy.setLessonName(lesson.getName());
 			copy.setLessonType(lesson.getType());

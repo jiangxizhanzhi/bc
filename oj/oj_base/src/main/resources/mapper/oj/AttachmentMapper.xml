@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.AttachmentMapper">
-    <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Attachment"/>
+    <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Attachment">
+        <result property="isPublic" column="public"/>
+    </resultMap>
 
     <select id="selectBatchIds" resultMap="base">
         select * from attachment
@@ -19,4 +21,8 @@
         </where>
     </select>
 
+    <select id="selectByPath" resultMap="base">
+        select * from attachment
+        where file_path = #{filePath}
+    </select>
 </mapper>

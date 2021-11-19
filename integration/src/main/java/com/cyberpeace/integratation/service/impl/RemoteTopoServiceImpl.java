@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service.impl;
 
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.integratation.model.SceneConfig;
@@ -10,7 +11,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	@Override
 	public String create(SceneConfig sceneConfig) {
-		return "todo";
+		return IDGeneratorUtil.getID();
 		// todo
 	}
 

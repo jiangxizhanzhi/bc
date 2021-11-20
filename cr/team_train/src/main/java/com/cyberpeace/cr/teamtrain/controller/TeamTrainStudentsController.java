@@ -68,7 +68,7 @@ public class TeamTrainStudentsController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		TeamRoomData teamRoomData = teamRoomService.getTeamRoomRspByRoomId(resource_id);
+		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(teamRoomData.getResourceId());

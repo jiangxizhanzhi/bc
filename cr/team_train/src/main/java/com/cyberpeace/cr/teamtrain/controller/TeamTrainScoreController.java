@@ -374,7 +374,7 @@ public class TeamTrainScoreController {
 	public BaseRsp<TrainingReport> getTrainingReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		TrainingReport trainingReport = new TrainingReport();
-		TeamRoomData teamRoomdata = teamRoomService.getTeamRoomRspByRoomId(resource_id);
+		TeamRoomData teamRoomdata = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 		if (null == teamRoomdata.getSceneStartTime()) {
 			return new BaseRsp<>(new TrainingReport());
 		}

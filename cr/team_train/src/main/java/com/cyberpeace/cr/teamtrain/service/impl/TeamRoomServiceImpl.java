@@ -87,7 +87,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	CrTaskLogMapper crTaskLogMapper;
 
 	@Override
-	public TeamRoomData getTeamRoomRspByRoomId(String resourceId) {
+	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
 
 		TeamRoomData teamRoomData = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
 		if (teamRoomData == null) {
@@ -263,14 +263,16 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 
 		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery);
+		for (TeamRoomData teamRoomData : data.getRecords()) {
+			teamRoomData.setTrainingStatus(setTrainingStatus(teamRoomData));
+		}
 
 		return data;
 	}
 
 	@Override
 	public Integer changeTrainingStatus(String resourceId) {
-		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
-		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
+		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(resourceId);
 
 		// 未开始，新增local_scene数据
 		if (teamRoomdata.isUnopened()) {
@@ -303,9 +305,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public Integer getTrainingStatus(String resourceId) {
-		TeamRoomData teamRoomdata = teamRoomMapper.getTeamRoomRspByRoomId(resourceId);
-		teamRoomdata.setTrainingStatus(setTrainingStatus(teamRoomdata));
-		return setTrainingStatus(teamRoomdata);
+		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(resourceId);
+
+		return teamRoomdata.getTrainingStatus();
 	}
 
 	@Override
@@ -373,7 +375,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	private void setTime(TimeLineData timeLineData, String roomId) {
-		TeamRoomData teamRoom = getTeamRoomRspByRoomId(roomId);
+		TeamRoomData teamRoom = getTeamRoomDataByRoomId(roomId);
 
 		timeLineData.setCurrentTime(new Date());
 		timeLineData.setStartTime(teamRoom.getSceneStartTime() == null ? teamRoom.getStartTime()
@@ -442,7 +444,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public void checkRoomOpening(String roomId) {
-		TeamRoomData teamRoomdata = getTeamRoomRspByRoomId(roomId);
+		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(roomId);
 		// 未开始，新增local_scene数据
 		if (teamRoomdata.isUnopened()) {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);

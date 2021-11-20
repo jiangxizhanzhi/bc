@@ -107,7 +107,7 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		TeamRoomData teamRoomData = teamRoomService.getTeamRoomRspByRoomId(resource_id);
+		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(teamRoomData.getResourceId());
@@ -117,6 +117,10 @@ public class TeamTrainRoomController {
 		TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
 		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
 		teamRoomRsp.setRolesData(crRoles);
+		teamRoomRsp
+				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
+		teamRoomRsp.setTrainSkill(
+				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
 	}
@@ -150,9 +154,16 @@ public class TeamTrainRoomController {
 
 			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
+			crRoles.forEach(crRole -> {
+				crRole.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIds()));
+			});
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
 			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
 			teamRoomRsp.setRolesData(crRoles);
+			teamRoomRsp.setPreSkill(
+					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
+			teamRoomRsp.setTrainSkill(
+					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 
 			teamRoomRspList.add(teamRoomRsp);
 		}
@@ -254,9 +265,15 @@ public class TeamTrainRoomController {
 			releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
+
+		teamRoomService.checkTeacherPermission(crRole.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		teamRoomService.checkRoomOpening(crRole.getRoomId());
+
 		if (crRole == null) {
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
+
 		missionService.release(releaseMissionReq.getMissionResourceId(),
 				releaseMissionReq.getRoleResourceId(),
 				UserInfoContext.getUserContext().getUserId());

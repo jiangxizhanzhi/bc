@@ -32,7 +32,7 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	List<String> getRoomIdsByUserId(String userId);
 
-	/** 通过businessInstanceId查询角色用户列表
+	/** 通过roomId查询角色用户列表
 	 * @param roleQuery
 	 * @return
 	 */
@@ -58,4 +58,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @return
 	 */
 	Integer getMissionCount(CrRole crRole);
+
+	/** 将用户id替换为用户名字
+	 * @param userIds
+	 * @return
+	 */
+	String getUserNamesByRoleUsers(String userIds);
 }

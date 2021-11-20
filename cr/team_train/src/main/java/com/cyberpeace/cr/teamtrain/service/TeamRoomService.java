@@ -20,7 +20,7 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param resourceId
 	 * @return
 	 */
-	TeamRoomData getTeamRoomRspByRoomId(String resourceId);
+	TeamRoomData getTeamRoomDataByRoomId(String resourceId);
 
 	/** 创建实例
 	 * @param teamTrainRoomContext

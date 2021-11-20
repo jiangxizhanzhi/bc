@@ -192,4 +192,22 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		return userElements;
 	}
+
+	@Override
+	public String getUserNamesByRoleUsers(String userIds) {
+
+		List<String> userNames = Lists.newArrayList();
+		List<String> userList = JsonUtil.toJsonObjectArray(userIds, String.class);
+
+		UserPageContext userPageContext = new UserPageContext();
+		userPageContext.setIds(String.join(",", userList));
+		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		userInfoList.forEach(userInfo -> {
+			if (userList.contains(userInfo.getUserId())) {
+				userNames.add(userInfo.getUserName());
+			}
+		});
+
+		return JsonUtil.toJsonString(userNames);
+	}
 }

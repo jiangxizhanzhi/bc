@@ -3,7 +3,9 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper">
 
-    <resultMap id="theory" type="com.cyberpeace.oj.practice.dao.entity.PracticeTheory"/>
+    <resultMap id="theory" type="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+        <result property="isPublic" column="public"/>
+    </resultMap>
 
     <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
         select * from oj_practice_theory

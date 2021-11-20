@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.bo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,9 +36,9 @@ public class PracticeTheoryListBo implements Serializable {
     private String createUserName;
 
     @ApiModelProperty("创建时间")
-    private String createTime;
+    private Date createTime;
 
     @ApiModelProperty("更新时间")
-    private String updateTime;
+    private Date updateTime;
 
 }

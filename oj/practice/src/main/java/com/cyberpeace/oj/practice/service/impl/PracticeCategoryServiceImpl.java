@@ -31,10 +31,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,10 +136,14 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		}
 
 		PracticeCategory category = practiceCategoryMapper.selectById(parentId);
-		List<PracticeCategory> categories = practiceCategoryMapper.selectByCode(category.getCode());
+		if (null == category) {
+			return Arrays.asList(parentId);
+		}
 
+		List<PracticeCategory> categories = practiceCategoryMapper.selectByCode(category.getCode());
 		List<String> categoryIds = StreamApiUtils.columnList(categories,
 				PracticeCategory::getResourceId);
+
 		if (self) {
 			categoryIds.add(parentId);
 		}

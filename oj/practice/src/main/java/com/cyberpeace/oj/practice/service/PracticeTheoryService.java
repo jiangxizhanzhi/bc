@@ -46,4 +46,12 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	Boolean create(PracticeTheory practiceTheory, AuthContext authContext);
+
+	/**
+	 * 理论基础习题修改
+	 * @param practiceTheory
+	 * @param authContext
+	 * @return
+	 */
+	int updateTheory(PracticeTheory practiceTheory, AuthContext authContext);
 }

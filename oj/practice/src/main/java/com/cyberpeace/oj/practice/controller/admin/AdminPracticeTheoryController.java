@@ -6,6 +6,8 @@ import java.util.List;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.checkerframework.checker.units.qual.C;
@@ -60,6 +62,12 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 			add(@RequestBody @Validated({ Create.class }) TheoryAddReq theoryAddReq) {
 
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryAddReq, PracticeTheory.class);
+		practiceTheory.setTitle(theoryAddReq.getContent());
+		practiceTheory.setDifficulty(Difficulty.PRIMARY.getCode());
+
+		if (CollectionUtils.isNotEmpty(theoryAddReq.getBlank())) {
+			practiceTheory.setBlank(JsonUtil.arrayToString(theoryAddReq.getBlank()));
+		}
 		if (CollectionUtils.isNotEmpty(theoryAddReq.getKeyword())) {
 			practiceTheory.setKeyword(JsonUtil.arrayToString(theoryAddReq.getKeyword()));
 		}
@@ -81,8 +89,11 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	public BaseRsp<Integer>
 			update(@RequestBody @Validated({ Update.class }) TheoryUpdateReq theoryUpdateReq) {
 
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryUpdateReq, PracticeTheory.class);
-		int result = practiceTheoryMapper.updateById(practiceTheory);
+
+		int result = practiceTheoryService.updateTheory(practiceTheory, authContext);
 
 		return new BaseRsp(result);
 	}

@@ -7,7 +7,8 @@ public class WebTheoryBo extends AdminTheoryBo {
 
 	private Boolean isCollection;
 
-	// TODO 解题信息
-	private String solved;
+	private Boolean solved;
+
+	private String submitAnswer;
 
 }

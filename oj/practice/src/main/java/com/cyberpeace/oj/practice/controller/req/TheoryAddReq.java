@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.controller.req;
 
 import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.oj.practice.service.bo.BlankAnswer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class TheoryAddReq implements Serializable {
 	private String content;
 
 	@ApiModelProperty(value = "填空题答案", required = true)
-	private String blank;
+	private List<BlankAnswer> blank;
 
 	@ApiModelProperty(value = "习题集", required = true)
 	@NotBlank(groups = { Create.class })
@@ -33,7 +34,7 @@ public class TheoryAddReq implements Serializable {
 	@NotBlank(groups = { Create.class })
 	private String answer;
 
-	@ApiModelProperty(value = "理论基础题型 0=单选 1=多选 2=判断 3=填空 4=简单", required = true)
+	@ApiModelProperty(value = "理论基础题型 0=单选 1=多选 2=判断 3=填空 4=简答", required = true)
 	@NotNull(groups = { Create.class })
 	private Integer theoryType;
 

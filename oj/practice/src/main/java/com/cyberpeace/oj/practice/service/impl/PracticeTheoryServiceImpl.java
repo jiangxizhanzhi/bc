@@ -1,5 +1,15 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,12 +18,10 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
-import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
@@ -29,12 +37,8 @@ import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -67,15 +71,37 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		// 过滤习题集
 		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (!authSetIds.contains(listQuery.getPracticeSetId())) {
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())
+				&& !authSetIds.contains(listQuery.getPracticeSetId())) {
 			log.error("The current resource has no permission！practice_set_id=[{}]",
 					listQuery.getPracticeSetId());
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
-		// TODO 根据习题状态过滤习题
-
+		// 习题集过滤习题
 		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
+		if (StringUtils.isBlank(listQuery.getPracticeSetId())) {
+			List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
+					authContext.getIsWeb());
+			theoryListQuery.setResourceIds(practiceIds);
+		}
+
+		// 答题记录过滤习题
+		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
+			List<String> practiceIds = practiceSolvedMapper.selectUserAndSolved(
+					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
+					listQuery.getSolved());
+
+			if (CollectionUtils.isNotEmpty(theoryListQuery.getResourceIds())) {
+				theoryListQuery.getResourceIds().addAll(practiceIds);
+				List<String> distinctIds = theoryListQuery.getResourceIds().stream().distinct()
+						.collect(Collectors.toList());
+				theoryListQuery.setResourceIds(distinctIds);
+			} else {
+				theoryListQuery.setResourceIds(practiceIds);
+			}
+		}
+
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
 				authContext.getIsWeb());
 
@@ -105,7 +131,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				ResourceCollection.BusinessType.OPERATION.getCode(), resourceId);
 		webTheoryBo.setIsCollection(result);
 
-		// todo 习题解决详情
+		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
+				PracticeCategory.PracticeType.THEORY.getCode(), resourceId);
+		webTheoryBo.setSolved(practiceSolved.getSolved());
+		webTheoryBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
 
 		return webTheoryBo;
 	}
@@ -120,7 +149,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		}
 
 		// 判断是否已完成答题
-		PracticeSolved solvedPractice = practiceSolvedMapper.selectUserAndId(userId, theoryId);
+		PracticeSolved solvedPractice = practiceSolvedMapper.selectUserAndId(userId,
+				PracticeCategory.PracticeType.THEORY.getCode(), theoryId);
 		if (solvedPractice.getSolved()) {
 			return BeanUtils.copy(solvedPractice, EvaluateResult.class);
 		}
@@ -150,36 +180,59 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
 		}
 
-		List<String> permissionSets = practiceSetMapper.selectByAuthContext(authContext);
-		if (!permissionSets.contains(practiceTheory.getPracticeSetId())) {
-			log.error("When add theory practice, the practice set not permission! practice_id=[{}]",
-					practiceTheory.getPracticeSetId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
-		}
+		validatePracticeTheory(practiceTheory, authContext);
+		return practiceTheoryMapper.insert(practiceTheory) > 0;
+	}
 
-		PracticeSet practiceSet = practiceSetMapper.selectById(practiceTheory.getPracticeSetId());
-		if (practiceSet.getPracticeType().intValue() != PracticeSet.PracticeType.THEORY.getCode()
-				.intValue()) {
-			log.error(
-					"When add theory practice, the practice set type error! practice_set_id=[{}], practice_type=[{}], theory_type=[{}]",
-					practiceTheory.getPracticeSetId(), practiceSet.getPracticeType(),
-					PracticeSet.PracticeType.THEORY.getCode());
-			throw new InvalidParamException("习题类型与习题集类型不匹配！");
-		}
+	@Override
+	public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
 
-		PracticeCategory category = practiceCategoryMapper
-				.selectById(practiceTheory.getCategoryId());
-		if (null == category) {
-			log.error("When add practice theory, the category not found! category_id=[{}]",
-					practiceTheory.getCategoryId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
-		} else {
-			if (category.getPracticeType().intValue() != PracticeCategory.PracticeType.THEORY
+		validatePracticeTheory(practiceTheory, authContext);
+		return practiceTheoryMapper.updateById(practiceTheory);
+	}
+
+	/**
+	 * 数据校验
+	 * @param practiceTheory
+	 * @param authContext
+	 */
+	private void validatePracticeTheory(PracticeTheory practiceTheory, AuthContext authContext) {
+
+		if (StringUtils.isNotBlank(practiceTheory.getPracticeSetId())) {
+			List<String> permissionSets = practiceSetMapper.selectByAuthContext(authContext);
+			if (!permissionSets.contains(practiceTheory.getPracticeSetId())) {
+				log.error(
+						"When add theory practice, the practice set not permission! practice_id=[{}]",
+						practiceTheory.getPracticeSetId());
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+			}
+
+			PracticeSet practiceSet = practiceSetMapper
+					.selectById(practiceTheory.getPracticeSetId());
+			if (practiceSet.getPracticeType().intValue() != PracticeSet.PracticeType.THEORY
 					.getCode().intValue()) {
-				throw new InvalidParamException("习题类型与分类类型不一致！");
+				log.error(
+						"When add theory practice, the practice set type error! practice_set_id=[{}], practice_type=[{}], theory_type=[{}]",
+						practiceTheory.getPracticeSetId(), practiceSet.getPracticeType(),
+						PracticeSet.PracticeType.THEORY.getCode());
+				throw new InvalidParamException("习题类型与习题集类型不匹配！");
 			}
 		}
 
-		return practiceTheoryMapper.insert(practiceTheory) > 0;
+		if (StringUtils.isNotBlank(practiceTheory.getCategoryId())) {
+			PracticeCategory category = practiceCategoryMapper
+					.selectById(practiceTheory.getCategoryId());
+			if (null == category) {
+				log.error("When add practice theory, the category not found! category_id=[{}]",
+						practiceTheory.getCategoryId());
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			} else {
+				if (category.getPracticeType().intValue() != PracticeCategory.PracticeType.THEORY
+						.getCode().intValue()) {
+					throw new InvalidParamException("习题类型与分类类型不一致！");
+				}
+			}
+		}
+
 	}
 }

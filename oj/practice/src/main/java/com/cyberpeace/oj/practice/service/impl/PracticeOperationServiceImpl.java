@@ -155,7 +155,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
-		PracticeSolved solved = practiceSolvedMapper.selectUserAndId(userId, resourceId);
+		PracticeSolved solved = practiceSolvedMapper.selectUserAndId(userId,
+				PracticeCategory.PracticeType.OPERATION.getCode(), resourceId);
 		if (solved.getSolved()) {
 			EvaluateResult evaluateResult = BeanUtils.copy(solved, EvaluateResult.class);
 			return evaluateResult;

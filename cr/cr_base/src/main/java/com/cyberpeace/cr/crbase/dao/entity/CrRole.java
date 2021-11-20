@@ -85,4 +85,20 @@ public class CrRole implements Serializable {
 		}
 	}
 
+	public enum RbRoleGroupCode {
+
+		ADMIN(1, "管理员"), DIRECTOR(2, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5, "蓝方");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String role;
+
+		RbRoleGroupCode(Integer code, String role) {
+			this.code = code;
+			this.role = role;
+		}
+	}
+
 }

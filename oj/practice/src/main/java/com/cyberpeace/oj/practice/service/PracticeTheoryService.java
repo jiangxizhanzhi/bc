@@ -38,4 +38,12 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer);
+
+	/**
+	 * 理论基础习题新增
+	 * @param practiceTheory
+	 * @param authContext
+	 * @return
+	 */
+	Boolean create(PracticeTheory practiceTheory, AuthContext authContext);
 }

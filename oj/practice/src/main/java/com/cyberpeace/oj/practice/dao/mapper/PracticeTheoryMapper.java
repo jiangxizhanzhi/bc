@@ -15,48 +15,49 @@ import java.util.List;
 @Repository
 public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
-    /**
-     * 分页查询理论基础习题 #外部接口使用
-     * @param page
-     * @param pattern
-     * @param practiceSet
-     * @param category
-     * @param questionType
-     * @param difficulty
-     * @return
-     */
-    IPage<PracticeTheory> getList(Page page, @Param("pattern") String pattern, @Param("practice_set") String practiceSet,
-                                  @Param("category") String category, @Param("question_type") Integer questionType, @Param("difficulty") Integer difficulty);
+	/**
+	 * 分页查询理论基础习题 #外部接口使用
+	 * @param page
+	 * @param pattern
+	 * @param practiceSet
+	 * @param category
+	 * @param questionType
+	 * @param difficulty
+	 * @return
+	 */
+	IPage<PracticeTheory> getList(Page page, @Param("pattern") String pattern,
+			@Param("practice_set") String practiceSet, @Param("category") String category,
+			@Param("question_type") Integer questionType, @Param("difficulty") Integer difficulty);
 
-    /**
-     * 随机查询理论习题 #外部接口使用
-     * @param pattern
-     * @param practiceSet
-     * @param category
-     * @param questionType
-     * @param difficulty
-     * @param count
-     * @return
-     */
-    List<PracticeTheory> randomChoice(@Param("pattern") String pattern, @Param("practice_set") String practiceSet,
-                                      @Param("category") String category, @Param("question_type") Integer questionType,
-                                      @Param("difficulty") Integer difficulty, @Param("limit") Integer count);
+	/**
+	 * 随机查询理论习题 #外部接口使用
+	 * @param pattern
+	 * @param practiceSet
+	 * @param category
+	 * @param questionType
+	 * @param difficulty
+	 * @param count
+	 * @return
+	 */
+	List<PracticeTheory> randomChoice(@Param("pattern") String pattern,
+			@Param("practice_set") String practiceSet, @Param("category") String category,
+			@Param("question_type") Integer questionType, @Param("difficulty") Integer difficulty,
+			@Param("limit") Integer count);
 
-    /**
-     * 根据编号查询理论习题 #外部接口使用
-     * @param resourceIds
-     * @return
-     */
-    List<PracticeTheory> batchGet(@Param("resource_ids") List<String> resourceIds);
+	/**
+	 * 根据编号查询理论习题 #外部接口使用
+	 * @param resourceIds
+	 * @return
+	 */
+	List<PracticeTheory> batchGet(@Param("resource_ids") List<String> resourceIds);
 
-    /**
-     * 分页查询习题列表
-     * @param page
-     * @param theoryListQuery
-     * @param isPublic
-     * @return
-     */
-    IPage<PracticeTheory> pageByQuery(Page page, @Param("listQuery") TheoryListQuery theoryListQuery, @Param("isPublic") Boolean isPublic);
+	IPage<PracticeTheory> pageByQuery(Page page,
+			@Param("listQuery") TheoryListQuery theoryListQuery,
+			@Param("isPublic") Boolean isPublic);
 
-    List<String> selectBySetIds(@Param("setIds") List<String> setIds, @Param("isPublic") Boolean isPublic);
+	List<String> selectBySetIds(@Param("setIds") List<String> setIds,
+			@Param("isPublic") Boolean isPublic);
+
+	List<String> selectByCategoryIds(@Param("categoryIds") List<String> categoryIds,
+			@Param("isPublic") Boolean isPublic);
 }

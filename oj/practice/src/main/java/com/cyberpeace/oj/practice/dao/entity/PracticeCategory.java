@@ -35,14 +35,7 @@ public class PracticeCategory extends BaseTable {
 	@JsonIgnore
 	private Integer practiceType;
 
-	/** 数据库无parentId 此处手动计算*/
-	public String getParentId() {
-		String[] resourceIds = this.code.split(",");
-		if (resourceIds.length > CommonConstant.ONE) {
-			return resourceIds[resourceIds.length - CommonConstant.TWO];
-		}
-		return null;
-	}
+	private String parentId;
 
 	public enum PracticeType implements GenericEnum {
 

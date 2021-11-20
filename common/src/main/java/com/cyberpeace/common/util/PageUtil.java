@@ -45,7 +45,7 @@ public class PageUtil {
 
 	public static ListRsp getNullResult() {
 		return ListRsp.builder().list(Lists.newArrayList()).lastPage(CommonConstant.ZERO)
-				.currentPage(CommonConstant.ZERO).total(CommonConstant.ZERO).build();
+				.currentPage(CommonConstant.ONE).total(CommonConstant.ZERO).build();
 	}
 
 }

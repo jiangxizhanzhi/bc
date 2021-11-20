@@ -2,8 +2,11 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -42,7 +45,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("分页查询练习分类")
 	@GetMapping("/list")
-	public ListRsp<CategoryListBo> list(@Valid PracticeCategoryListReq categoryListReq) {
+	public ListRsp<CategoryListBo> list(@Validated PracticeCategoryListReq categoryListReq) {
 
 		Page page = categoryListReq.toPageParam();
 		CategoryListQuery query = BeanUtils.copy(categoryListReq, CategoryListQuery.class);
@@ -66,11 +69,13 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("修改分类信息")
 	@PatchMapping("")
-	public BaseRsp<Integer> update(@RequestBody @Valid CategoryUpdateReq updateReq) {
+	public BaseRsp<Integer> update(@RequestBody @Validated CategoryUpdateReq updateReq) {
 
 		PracticeCategory category = BeanUtils.copy(updateReq, PracticeCategory.class);
-		String code = practiceCategoryService.getCodeByParent(updateReq.getParentId());
-		category.setCode(code);
+		if (StringUtils.isNotBlank(updateReq.getParentId())) {
+			String code = practiceCategoryService.getCodeByParent(updateReq.getParentId());
+			category.setCode(code);
+		}
 
 		Integer result = practiceCategoryService.updateCategory(category);
 		return new BaseRsp<>(result);
@@ -78,11 +83,16 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("新增分类信息")
 	@PostMapping("")
-	public BaseRsp<Integer> add(@RequestBody @Valid PracticeCategoryReq categoryReq) {
+	public BaseRsp<Integer> add(@RequestBody @Validated PracticeCategoryReq categoryReq) {
 
 		PracticeCategory practiceCategory = BeanUtils.copy(categoryReq, PracticeCategory.class);
-		String code = practiceCategoryService.getCodeByParent(categoryReq.getParentId());
-		practiceCategory.setCode(code);
+		if (StringUtils.isNotBlank(categoryReq.getParentId())) {
+			String code = practiceCategoryService.getCodeByParent(categoryReq.getParentId());
+			practiceCategory.setCode(code);
+		} else {
+			practiceCategory.setResourceId(IDGeneratorUtil.getID());
+			practiceCategory.setCode(practiceCategory.getResourceId());
+		}
 
 		Integer result = practiceCategoryService.addCategory(practiceCategory,
 				UserInfoContext.getUserContext().getUserId());
@@ -92,9 +102,9 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("批量删除分类信息")
 	@DeleteMapping("")
-	public BaseRsp<Integer> delete(@RequestBody @Valid ResourceDelReq delReq) {
+	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
-		int result = practiceCategoryMapper.deleteBatchIds(delReq.getResourceIds());
+		int result = practiceCategoryService.batchDelete(delReq.getResourceIds());
 		return new BaseRsp<>(result);
 	}
 

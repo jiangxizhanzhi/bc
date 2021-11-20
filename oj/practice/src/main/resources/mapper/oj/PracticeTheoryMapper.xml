@@ -100,4 +100,15 @@
             #{setId}
         </foreach>
     </select>
+
+    <select id="selectByCategoryIds" resultType="java.lang.String">
+        select resource_id from oj_practice_theory
+        where category_id in
+        <foreach collection="categoryIds" item="categoryId" open="(" close=")" separator=",">
+            #{categoryId}
+        </foreach>
+        <if test="isPublic != null and isPublic">
+            and `public` = #{isPublic}
+        </if>
+    </select>
 </mapper>

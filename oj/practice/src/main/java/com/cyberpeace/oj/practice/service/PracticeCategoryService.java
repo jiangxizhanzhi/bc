@@ -68,4 +68,11 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
      * @return
      */
     List<String> selectChildrenIds(String parentId, Boolean self);
+
+    /**
+     * 批量删除分类
+     * @param resourceIds
+     * @return
+     */
+    int batchDelete(List<String> resourceIds);
 }

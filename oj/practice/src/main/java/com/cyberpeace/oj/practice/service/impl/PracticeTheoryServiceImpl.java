@@ -3,7 +3,9 @@ package com.cyberpeace.oj.practice.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -15,8 +17,10 @@ import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
@@ -53,6 +57,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	@Autowired
 	private PracticeSolvedMapper practiceSolvedMapper;
+
+	@Autowired
+	private PracticeCategoryMapper practiceCategoryMapper;
 
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
@@ -132,5 +139,47 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceSolvedMapper.insert(practiceSolved);
 
 		return evaluateResult;
+	}
+
+	@Override
+	public Boolean create(PracticeTheory practiceTheory, AuthContext authContext) {
+		if (null == practiceTheory.getBuiltin()) {
+			practiceTheory.setBuiltin(CommonConstant.FALSE);
+		}
+		if (null == practiceTheory.getScore()) {
+			practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
+		}
+
+		List<String> permissionSets = practiceSetMapper.selectByAuthContext(authContext);
+		if (!permissionSets.contains(practiceTheory.getPracticeSetId())) {
+			log.error("When add theory practice, the practice set not permission! practice_id=[{}]",
+					practiceTheory.getPracticeSetId());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		PracticeSet practiceSet = practiceSetMapper.selectById(practiceTheory.getPracticeSetId());
+		if (practiceSet.getPracticeType().intValue() != PracticeSet.PracticeType.THEORY.getCode()
+				.intValue()) {
+			log.error(
+					"When add theory practice, the practice set type error! practice_set_id=[{}], practice_type=[{}], theory_type=[{}]",
+					practiceTheory.getPracticeSetId(), practiceSet.getPracticeType(),
+					PracticeSet.PracticeType.THEORY.getCode());
+			throw new InvalidParamException("习题类型与习题集类型不匹配！");
+		}
+
+		PracticeCategory category = practiceCategoryMapper
+				.selectById(practiceTheory.getCategoryId());
+		if (null == category) {
+			log.error("When add practice theory, the category not found! category_id=[{}]",
+					practiceTheory.getCategoryId());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		} else {
+			if (category.getPracticeType().intValue() != PracticeCategory.PracticeType.THEORY
+					.getCode().intValue()) {
+				throw new InvalidParamException("习题类型与分类类型不一致！");
+			}
+		}
+
+		return practiceTheoryMapper.insert(practiceTheory) > 0;
 	}
 }

@@ -4,9 +4,13 @@ import javax.validation.Valid;
 
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -42,6 +46,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/oj/admin/practice/set")
 @RequiresAuthentication
+@Slf4j
 public class AdminPracticeSetController extends AuthAndPublicController<PracticeSetService, PracticeSet> {
 
 	@Autowired
@@ -65,8 +70,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("习题集更新")
 	@PatchMapping("")
-	public BaseRsp
-			update(@RequestBody @Validated(Update.class) PracticeSetUpdateReq updateReq) {
+	public BaseRsp update(@RequestBody @Validated(Update.class) PracticeSetUpdateReq updateReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
@@ -92,6 +96,17 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@ApiOperation("批量删除习题集")
 	@DeleteMapping("")
 	public BaseRsp<Integer> delete(@RequestBody @Valid ResourceDelReq delReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(permissionIds)
+				|| !permissionIds.containsAll(delReq.getResourceIds())) {
+			log.error("Batch delete practice set failed! Because not permission! practice_set_ids=",
+					delReq.getResourceIds().toString());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());
 		return new BaseRsp(result);
 	}

@@ -6,7 +6,7 @@
     <resultMap id="category" type="com.cyberpeace.oj.practice.dao.entity.PracticeCategory"/>
 
     <select id="pageByTypeAndName" resultMap="category">
-        select b1.resource_id resource_id from oj_practice_category b1 b2
+        select * from oj_practice_category
         <where>
             resource_id = code
             <if test="practiceType != null">
@@ -37,7 +37,7 @@
 
     <select id="selectByCode" resultMap="category">
         <bind name="code" value="code + ',' + '%'"/>
-        select * from practice_category
+        select * from oj_practice_category
         where `code` like #{code}
     </select>
 

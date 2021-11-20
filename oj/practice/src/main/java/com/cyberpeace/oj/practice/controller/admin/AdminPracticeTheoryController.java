@@ -1,8 +1,14 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import java.util.Collections;
 import java.util.List;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.util.JsonUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,19 +56,30 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论基础习题新增")
 	@PostMapping("")
-	public BaseRsp<Integer>
-			add(@RequestBody @Validated({ TheoryAddReq.class }) TheoryAddReq theoryAddReq) {
+	public BaseRsp<Boolean>
+			add(@RequestBody @Validated({ Create.class }) TheoryAddReq theoryAddReq) {
 
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryAddReq, PracticeTheory.class);
+		if (CollectionUtils.isNotEmpty(theoryAddReq.getKeyword())) {
+			practiceTheory.setKeyword(JsonUtil.arrayToString(theoryAddReq.getKeyword()));
+		}
+		if (CollectionUtils.isNotEmpty(theoryAddReq.getKnowledge())) {
+			practiceTheory.setKnowledge(JsonUtil.arrayToString(theoryAddReq.getKnowledge()));
+		}
+
 		practiceTheory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		int result = practiceTheoryMapper.insert(practiceTheory);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+
+		Boolean result = practiceTheoryService.create(practiceTheory, authContext);
 
 		return new BaseRsp(result);
 	}
 
 	@ApiOperation("理论基础习题修改")
 	@PatchMapping("")
-	public BaseRsp<Integer> update(@RequestBody @Validated TheoryUpdateReq theoryUpdateReq) {
+	public BaseRsp<Integer>
+			update(@RequestBody @Validated({ Update.class }) TheoryUpdateReq theoryUpdateReq) {
 
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryUpdateReq, PracticeTheory.class);
 		int result = practiceTheoryMapper.updateById(practiceTheory);

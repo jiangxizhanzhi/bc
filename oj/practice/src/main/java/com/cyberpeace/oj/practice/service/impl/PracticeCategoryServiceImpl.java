@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
@@ -13,6 +14,8 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
 import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
@@ -23,10 +26,16 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,6 +43,15 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private PracticeTheoryMapper practiceTheoryMapper;
+
+	@Autowired
+	private PracticeOperationMapper practiceOperationMapper;
 
 	@Override
 	public IPage<CategoryListBo> pageByListQuery(Page page, CategoryListQuery query,
@@ -55,13 +73,36 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 	@Override
 	public Integer updateCategory(PracticeCategory category) {
-		return practiceCategoryMapper.updateById(category);
+
+		List<PracticeCategory> categoryList = Lists.newArrayList();
+		if (StringUtils.isNotBlank(category.getParentId())) {
+			PracticeCategory existCategory = practiceCategoryMapper
+					.selectById(category.getResourceId());
+			List<PracticeCategory> categories = practiceCategoryMapper
+					.selectByCode(existCategory.getCode());
+
+			categories.forEach(practiceCategory -> {
+				practiceCategory.setCode(practiceCategory.getCode().replace(existCategory.getCode(),
+						category.getCode()));
+			});
+
+			categoryList.addAll(categories);
+		}
+
+		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+				updateBatchById(categoryList);
+				return practiceCategoryMapper.updateById(category);
+			}
+		});
 	}
 
 	@Override
 	public Integer addCategory(PracticeCategory practiceCategory, String userId) {
 		practiceCategory.setCreateUserId(userId);
-		return practiceCategoryMapper.updateById(practiceCategory);
+		return practiceCategoryMapper.insert(practiceCategory);
 	}
 
 	@Override
@@ -69,13 +110,14 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 		if (StringUtils.isNotBlank(parentId)) {
 			PracticeCategory parentCategory = practiceCategoryMapper.selectById(parentId);
-			return null != parentCategory
-					? parentCategory.getCode() + CommonConstant.CODE_COMMA
-							+ parentCategory.getResourceId()
-					: null;
+			if (null == parentCategory) {
+				throw new InvalidParamException("父级分类不存在！");
+			}
+			return parentCategory.getCode() + CommonConstant.CODE_COMMA
+					+ parentCategory.getResourceId();
 		}
 
-		return IDGeneratorUtil.getID();
+		return null;
 	}
 
 	@Override
@@ -106,6 +148,37 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		}
 
 		return categoryIds;
+	}
+
+	@Override
+	public int batchDelete(List<String> categoryIds) {
+
+		// 查询所有的子集分类
+		List<String> allDeleteIds = categoryIds.stream().map(categoryId -> {
+			PracticeCategory category = practiceCategoryMapper.selectById(categoryId);
+			return practiceCategoryMapper.selectByCode(category.getCode());
+		}).flatMap(Collection::stream).map(PracticeCategory::getResourceId)
+				.collect(Collectors.toList());
+
+		// 加入父级分类
+		allDeleteIds.addAll(categoryIds);
+
+		// 查询是否存在基础理论题
+		List<String> theoryIds = practiceTheoryMapper.selectByCategoryIds(allDeleteIds,
+				CommonConstant.FALSE);
+		if (CollectionUtils.isNotEmpty(theoryIds)) {
+			throw new UnsupportedOperationException("习题集下存在习题！");
+		}
+
+		// 查询是否存在实操题
+		List<String> operationIds = practiceOperationMapper.selectByCategoryIds(allDeleteIds,
+				CommonConstant.FALSE);
+		if (CollectionUtils.isNotEmpty(operationIds)) {
+			throw new UnsupportedOperationException("习题集下存在习题！");
+		}
+
+		// 数据删除
+		return practiceCategoryMapper.deleteBatchIds(allDeleteIds);
 	}
 
 	/**

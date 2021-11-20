@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -19,5 +20,8 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	List<PracticeOperation> batchGet(@Param("resource_ids") List<String> resourceIds);
 
 	IPage<PracticeOperation> pageByQuery(Page page, @Param("query") OperationListQuery listQuery,
+			@Param("isPublic") Boolean isPublic);
+
+	List<String> selectBySetIds(@Param("setIds") List<String> setIds,
 			@Param("isPublic") Boolean isPublic);
 }

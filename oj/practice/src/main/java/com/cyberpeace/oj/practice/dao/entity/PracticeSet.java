@@ -29,7 +29,7 @@ public class PracticeSet extends AuthTable {
 
 	/** 是否公开*/
 	@TableField("public")
-	private boolean isPublic;
+	private Boolean isPublic;
 
 	/** 创建者*/
 	private String createUserId;

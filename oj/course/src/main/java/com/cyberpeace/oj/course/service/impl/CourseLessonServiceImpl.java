@@ -111,7 +111,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 		if (null == lesson) {
-			// throw new BusinessException("")
+			log.error("Lesson not found! lesson_id=[{}]", lessonId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
 		// 增加热度

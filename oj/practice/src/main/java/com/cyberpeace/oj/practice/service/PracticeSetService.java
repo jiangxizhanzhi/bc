@@ -26,4 +26,12 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 */
 	IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType, String pattern,
 			AuthContext authContext);
+
+	/**
+	 * 习题集更新
+	 * @param practiceSet
+	 * @param authContext
+	 * @return
+	 */
+    Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext);
 }

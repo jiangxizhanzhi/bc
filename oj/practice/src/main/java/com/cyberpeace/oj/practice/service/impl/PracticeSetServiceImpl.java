@@ -3,15 +3,20 @@ package com.cyberpeace.oj.practice.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -30,6 +36,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private PracticeOperationMapper practiceOperationMapper;
+
+	@Autowired
+	private PracticeTheoryMapper practiceTheoryMapper;
 
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
@@ -46,7 +58,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
-		return entityToSetBo(practiceSet);
+		return entityToSetBo(practiceSet, authContext);
 	}
 
 	/**
@@ -54,13 +66,22 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param practiceSet
 	 * @return
 	 */
-	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet) {
+	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext) {
 
 		AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
 		UserInfo userInfo = remoteUserService.getById(practiceSet.getCreateUserId());
 		setBo.setCreateUserName(userInfo.getUserName());
 
-		// todo 习题数量查询
+		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION.getCode()
+				.intValue()) {
+			List<String> practiceOperations = practiceOperationMapper.selectBySetIds(
+					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
+			setBo.setPracticeCount(practiceOperations.size());
+		} else {
+			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(
+					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
+			setBo.setPracticeCount(theoryIds.size());
+		}
 
 		return setBo;
 	}
@@ -70,13 +91,38 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			String pattern, AuthContext authContext) {
 
 		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(authIds)) {
+			return null;
+		}
+
 		SetListQuery listQuery = SetListQuery.builder().practiceType(practiceType).setIds(authIds)
 				.pattern(pattern).build();
 		IPage<PracticeSet> iPage = practiceSetMapper.pageByTypeAndName(page, listQuery,
 				authContext.getIsWeb());
 
 		IPage<AdminPracticeSetBo> boIPage = iPage
-				.convert(practiceSet -> entityToSetBo(practiceSet));
+				.convert(practiceSet -> entityToSetBo(practiceSet, authContext));
 		return boIPage;
+	}
+
+	@Override
+	public Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext) {
+
+		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(permissionIds)
+				|| !permissionIds.contains(practiceSet.getResourceId())) {
+			log.error("This practice not permission! practice_set_id=[{}]",
+					practiceSet.getResourceId());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		if (null != practiceSet.getPracticeType()) {
+			PracticeSet existSet = practiceSetMapper.selectById(practiceSet.getResourceId());
+			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()) {
+				throw new InvalidParamException("非法操作,习题集下存在不兼容类型习题！");
+			}
+		}
+
+		return practiceSetMapper.updateById(practiceSet) > CommonConstant.ZERO;
 	}
 }

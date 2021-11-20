@@ -58,5 +58,5 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
      */
     IPage<PracticeTheory> pageByQuery(Page page, @Param("listQuery") TheoryListQuery theoryListQuery, @Param("isPublic") Boolean isPublic);
 
-    List<String> selectBySetIds(@Param("setIds") List<String> setIds);
+    List<String> selectBySetIds(@Param("setIds") List<String> setIds, @Param("isPublic") Boolean isPublic);
 }

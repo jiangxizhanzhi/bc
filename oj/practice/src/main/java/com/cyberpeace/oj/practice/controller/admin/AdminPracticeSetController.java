@@ -2,6 +2,10 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.util.List;
+
 @Api(tags = "oj-后台习题集相关api")
 @RestController
 @RequestMapping("/oj/admin/practice/set")
@@ -46,10 +52,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("习题集新增")
 	@PostMapping("")
-	public BaseRsp<Integer>
-			add(@RequestBody @Validated({ PracticeSetAddReq.class }) PracticeSetAddReq setAddReq) {
+	public BaseRsp<Integer> add(@RequestBody @Validated(Create.class) PracticeSetAddReq setAddReq) {
 
 		PracticeSet practiceSet = BeanUtils.copy(setAddReq, PracticeSet.class);
+		practiceSet.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		int result = practiceSetMapper.insert(practiceSet);
 
 		return new BaseRsp(result);
@@ -57,10 +65,15 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("习题集更新")
 	@PatchMapping("")
-	public BaseRsp update(@RequestBody @Validated({
-			PracticeSetUpdateReq.class }) PracticeSetUpdateReq updateReq) {
+	public BaseRsp
+			update(@RequestBody @Validated(Update.class) PracticeSetUpdateReq updateReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+
 		PracticeSet practiceSet = BeanUtils.copy(updateReq, PracticeSet.class);
-		int result = practiceSetMapper.updateById(practiceSet);
+
+		Boolean result = practiceSetService.updateByAuth(practiceSet, authContext);
 		return new BaseRsp(result);
 	}
 
@@ -73,7 +86,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 				false);
 
 		AdminPracticeSetBo setBo = practiceSetService.selectById(resourceId, authContext);
-		return null;
+		return new BaseRsp<>(setBo);
 	}
 
 	@ApiOperation("批量删除习题集")

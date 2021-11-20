@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.practice.controller.req;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,18 +15,18 @@ import java.io.Serializable;
 public class PracticeSetAddReq implements Serializable {
 
 	@ApiModelProperty(value = "名称", required = true)
-	@NotBlank(groups = {PracticeSetAddReq.class})
+	@NotBlank(groups = { Create.class })
 	private String name;
 
 	@ApiModelProperty(value = "封面地址")
 	private String logo;
 
 	@ApiModelProperty(value = "类型 0=理论基础 2=实践操作", allowableValues = "0,2", required = true)
-	@NotNull(groups = {PracticeSetAddReq.class})
+	@NotNull(groups = { Create.class })
 	private Integer practiceType;
 
 	@ApiModelProperty(value = "公开", required = true)
-	@NotNull(groups = {PracticeSetAddReq.class})
+	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
 }

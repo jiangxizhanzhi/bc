@@ -9,6 +9,9 @@ import lombok.Data;
 @ApiModel
 public class AdminPracticeSetBo extends AuthTable {
 
+	@ApiModelProperty("资源编号")
+	private String resourceId;
+
 	@ApiModelProperty("名称")
 	private String name;
 
@@ -19,7 +22,7 @@ public class AdminPracticeSetBo extends AuthTable {
 	private Integer practiceType;
 
 	@ApiModelProperty("是否公开")
-	private boolean isPublic;
+	private Boolean isPublic;
 
 	@ApiModelProperty("创建人")
 	private String createUserId;
@@ -28,6 +31,6 @@ public class AdminPracticeSetBo extends AuthTable {
 	private String createUserName;
 
 	@ApiModelProperty("习题数量")
-	private String practiceCount;
+	private Integer practiceCount;
 
 }

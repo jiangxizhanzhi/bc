@@ -133,7 +133,8 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		}
 
 		if (StringUtils.isBlank(queryBo.getPracticeSetId())) {
-			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds);
+			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds,
+					authContext.getIsWeb());
 			queryBo.setResourceIds(theoryIds);
 			return theoryConvert(queryBo, page, authContext);
 		}

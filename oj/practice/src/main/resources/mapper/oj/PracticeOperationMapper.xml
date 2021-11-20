@@ -56,5 +56,14 @@
         order by create_time desc
     </select>
 
-
+    <select id="selectBySetIds" resultType="java.lang.String">
+        select resource_id from oj_practice_operation
+        where practice_set_id in
+        <foreach collection="setIds" item="setId" open="(" close=")" separator=",">
+            #{setId}
+        </foreach>
+        <if test="isPublic != null and isPublic">
+            and `public` = #{isPublic}
+        </if>
+    </select>
 </mapper>

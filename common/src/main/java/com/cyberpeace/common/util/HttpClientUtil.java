@@ -1,9 +1,7 @@
 package com.cyberpeace.common.util;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -12,6 +10,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
@@ -25,6 +26,8 @@ import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.HttpclientContext;
+import com.cyberpeace.common.model.HttpclientModel;
 
 public class HttpClientUtil {
 
@@ -37,6 +40,31 @@ public class HttpClientUtil {
 	private static final String SUCCESS_POSTFIX = "-000000";
 
 	/**
+	 * 执行post请求
+	 * @param url 请求的url地址
+	 * @param body 输入参数
+	 * @param resultType 返回的数据类型
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T post(String url, Object body, Class<T> resultType) {
+		// 1、设置请求线程数据
+		setContext(url);
+
+		// 2、设置请求参数
+		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
+
+		HttpPost post = new HttpPost(url);
+		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		post.setEntity(entity);
+
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(post, resultType);
+
+	}
+
+	/**
 	 * 所有参数都放在url中都get方法
 	 *
 	 * @param resultType
@@ -45,52 +73,48 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static <T> T rawGet(String url, Class<T> resultType) {
-		// 定义输出日志类型
-		// 分别为调用耗时、url、返回结果
-		String logFormatter = "httpclient rawGet |{}|{}|{}";
-		long startTime = System.currentTimeMillis();
-		long callTimeCost;
+		// 1、设置请求线程数据
+		setContext(url);
 
-		if (StringUtils.isBlank(TraceIdContext.getTraceId())) {
-			TraceIdContext.setTraceId(UUID.randomUUID().toString());
-		}
-
-		// 1、生成get请求
+		// 2、生成get请求
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 
-		// 2、生成httpclient对象
-		HttpClient httpClient = getClient();
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(httpGet, resultType);
+	}
 
-		// 3、执行实际调用
+	/**
+	 * 设置请求上下文
+	 * @param url
+	 */
+	private static void setContext(String url) {
+		HttpclientModel httpclientModel = new HttpclientModel(TraceIdContext.getTraceId(), url);
+		HttpclientContext.setContext(httpclientModel);
+	}
+
+	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
 		HttpResponse response = null;
 		try {
-			response = httpClient.execute(httpGet);
+			// 1、调用远程服务
+			response = getClient().execute(httpRequest);
+
+			// 2、解析远程服务的返回值
+			String httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
+
+			// 3、记录调用日志
+			HttpclientContext.getContext().addLog(httpResponse);
+
+			// 4、解析结果并返回
+			return parseHttpResponse(httpResponse, resultType);
 		} catch (Exception e) {
-			callTimeCost = System.currentTimeMillis() - startTime;
-			LOG.error(logFormatter, new Object[] { callTimeCost, url, null }, e);
-
-			throw new RemoteServiceException();
+			HttpclientContext.getContext().doRemoteException(e);
+		} finally {
+			HttpclientContext.removeContext();
 		}
 
-		// 4、从流中读取返回值
-		String httpResponse = null;
-		try {
-			httpResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
-		} catch (IOException e) {
-			callTimeCost = System.currentTimeMillis() - startTime;
-			LOG.error(logFormatter, new Object[] { callTimeCost, url, null }, e);
-
-			throw new RemoteServiceException();
-		}
-
-		callTimeCost = System.currentTimeMillis() - startTime;
-		LOG.info(logFormatter, new Object[] { callTimeCost, url, httpResponse });
-
-		// 5、返回数据序列化
-		T ret = parseHttpResponse(httpResponse, resultType, url);
-
-		return ret;
+		// 发生错误在catch就中断了，不会执行到这里
+		return null;
 	}
 
 	/**
@@ -98,15 +122,10 @@ public class HttpClientUtil {
 	 *
 	 * @param httpResponse http返回
 	 * @param resultType   需要序列化的类型
-	 * @param url          接口url，出错的时候打印
 	 * @param <T>          返回结果类型
 	 * @return
 	 */
-	private static <T> T parseHttpResponse(String httpResponse, Class<T> resultType, String url) {
-		if (resultType.equals(String.class)) {
-			return (T) httpResponse;
-		}
-
+	private static <T> T parseHttpResponse(String httpResponse, Class<T> resultType) {
 		T result = null;
 
 		try {
@@ -114,21 +133,30 @@ public class HttpClientUtil {
 
 			if (!isSuccess(baseRsp)) {
 				// 只要中台的错误码不是000000，都认为是有问题的
-				LOG.error("url=[{}], result=[{}] error, code=[{}]",
-						new Object[] { url, httpResponse, baseRsp.getCode() });
+				LOG.error("url=[{}], result=[{}] error, code=[{}]", new Object[] {
+						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode() });
 				throw new RemoteServiceException();
 			}
 
 			String realData = baseRsp.getData().toString();
+
+			if (resultType.equals(String.class)) {
+				return (T) realData;
+			}
+
 			result = JSON.parseObject(realData, resultType);
 
 			return result;
 		} catch (Exception e) {
 			// 遇到不能解析的返回结果，直接报错
 			LOG.error("parse httpResponse error, url=[{}], result=[{}], resultType=[{}]",
-					new Object[] { url, httpResponse, resultType }, e);
+					new Object[] { HttpclientContext.getContext().getUrl(), httpResponse,
+							resultType },
+					e);
 
 			throw new RemoteServiceException();
+		} finally {
+			HttpclientContext.removeContext();
 		}
 	}
 

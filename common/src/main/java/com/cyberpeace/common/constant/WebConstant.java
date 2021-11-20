@@ -25,4 +25,6 @@ public interface WebConstant {
 	 * mp鉴权参数
 	 */
 	String CLIENT_SECRET = "clientSecret";
+
+	String ENCODING = "UTF-8";
 }

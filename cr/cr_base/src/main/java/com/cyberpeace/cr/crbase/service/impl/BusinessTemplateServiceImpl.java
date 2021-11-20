@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private BusinessTemplateMapper businessTemplateMapper;
 
 	@Autowired
-	private RemoteSceneService remoteSceneService;
+	private RemoteTopoService remoteTopoService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -97,7 +98,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 		for (BusinessTemplateData businessTemplate : result.getRecords()) {
 			businessTemplate.setNodesNum(
-					remoteSceneService.getTopoDigest(businessTemplate.getTopoId()).getNodeCounts());
+					remoteTopoService.getTopoDigest(businessTemplate.getTopoId()).getNodeCounts());
 		}
 
 		return PageUtil.getListResult(result);

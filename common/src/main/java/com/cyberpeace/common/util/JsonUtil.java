@@ -2,10 +2,10 @@ package com.cyberpeace.common.util;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 
@@ -17,6 +17,10 @@ public class JsonUtil {
 	private JsonUtil() {}
 
 	public static String toJsonString(Object obj) {
+		if (null == obj) {
+			return "{}";
+		}
+
 		return JSON.toJSONString(obj);
 	}
 

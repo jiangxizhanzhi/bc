@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,6 @@ import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -38,23 +38,17 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String USERINFO_LIST_URL;
 
-	private String MP_HOST;
-
-	private String MP_PORT;
-
-	private String MP_URL;
+	@Autowired
+	private MpEnvService mpEnvService;
 
 	@PostConstruct
 	public void init() {
-		MP_HOST = SystemPropUtil.getProp("MP_HOST");
-		MP_PORT = SystemPropUtil.getProp("MP_PORT");
-		MP_URL = "http://" + MP_HOST + ":" + MP_PORT;
-
-		TOKEN_AUTHENTICATE_URL = MP_URL + ConfigUtil.getContextProperty("token.authenticate");
-		USERINFO_BY_ID_URL = MP_URL + ConfigUtil.getContextProperty("userinfo.by.id");
-		USERINFO_LIST_URL = MP_URL + ConfigUtil.getContextProperty("userinfo.list");
-
-		log.info("mp host=[{}], port=[{}]", MP_HOST, MP_PORT);
+		TOKEN_AUTHENTICATE_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("token.authenticate");
+		USERINFO_BY_ID_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("userinfo.by.id");
+		USERINFO_LIST_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("userinfo.list");
 	}
 
 	@Override

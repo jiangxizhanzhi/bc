@@ -1,8 +1,8 @@
 package com.cyberpeace.integratation.model.scene;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 /**
  * 拓扑摘要数据
@@ -10,8 +10,10 @@ import java.io.Serializable;
 @Data
 public class TopoDigest implements Serializable {
 
-    /**
-     * 拓扑中节点数
-     */
-    private Integer nodeCounts;
+	/**
+	 * 拓扑中节点数
+	 */
+	private Integer nodeCounts;
+
+	private String topoId;
 }

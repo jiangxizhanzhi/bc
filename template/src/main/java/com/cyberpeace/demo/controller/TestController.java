@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import io.swagger.annotations.Api;
@@ -22,6 +23,9 @@ public class TestController {
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	@Autowired
+	private RemoteSceneService remoteSceneService;
+
 	String testTopoId = "1dd035784f5b44869c4e96aa07c31fd5";
 
 	@PostMapping("/copytopo")
@@ -31,10 +35,23 @@ public class TestController {
 		return new BaseRsp(result);
 	}
 
-	@GetMapping()
+	@GetMapping("topoStatistic")
 	public BaseRsp topoStatistic() {
 		TopoDigest digest = remoteTopoService.getTopoDigest(testTopoId);
 
 		return new BaseRsp(digest);
+	}
+
+	@GetMapping("/startScene")
+	public BaseRsp<String> startScene() {
+		String sceneId = remoteSceneService.startScene(testTopoId, null);
+		return new BaseRsp<>(sceneId);
+	}
+
+	@GetMapping("/stopScene")
+	public BaseRsp<Boolean> stopScene() {
+		Boolean result = remoteSceneService.stopScene("b3304280b0a14d5aa7cd4dcf03ddd8f", null);
+
+		return new BaseRsp<>(result);
 	}
 }

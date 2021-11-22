@@ -1,13 +1,11 @@
 package com.cyberpeace.integratation.service;
 
-import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.model.scene.SceneOpsContext;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
 public interface RemoteSceneService {
 
-	/**
-	 * 获取拓扑的摘要信息。如拓扑中节点规模数等
-	 * @param topoId
-	 * @return
-	 */
-	TopoDigest getTopoDigest(String topoId);
+    String startScene(String topoId, SceneStartContext sceneStartContext);
+
+    Boolean stopScene(String sceneId, SceneOpsContext sceneOpsContext);
 }

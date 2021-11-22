@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.HttpDeleteWithBody;
 import com.cyberpeace.common.model.HttpclientContext;
 import com.cyberpeace.common.model.HttpclientModel;
 
@@ -61,7 +62,21 @@ public class HttpClientUtil {
 
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(post, resultType);
+	}
 
+	public static <T> T delete(String url, Object body, Class<T> resultType) {
+		// 1、设置请；线程数据
+		setContext(url);
+
+		// 2、设置请求参数
+		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
+
+		HttpDeleteWithBody delete = new HttpDeleteWithBody(url);
+		delete.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		delete.setEntity(entity);
+
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(delete, resultType);
 	}
 
 	/**

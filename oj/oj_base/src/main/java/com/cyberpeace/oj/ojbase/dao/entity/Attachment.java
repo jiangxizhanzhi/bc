@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.util.ConfigUtil;
 import lombok.*;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.PostConstruct;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Builder
 public class Attachment extends BaseTable {
 
-	public static String PARENT_PATH = "/Users/chenzhuo/home";
+	public static String PARENT_PATH;
+
+	@PostConstruct
+	public void init() {
+		PARENT_PATH = ConfigUtil.getContextProperty("oj.file.root.path");
+	}
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -42,7 +50,6 @@ public class Attachment extends BaseTable {
 			this.code = code;
 			this.desc = desc;
 		}
-
 	}
 
 }

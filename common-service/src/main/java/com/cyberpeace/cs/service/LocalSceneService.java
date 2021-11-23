@@ -7,5 +7,5 @@ public interface LocalSceneService extends IService<LocalScene> {
 
     LocalScene getByBusinessInstanceId(String businessInstanceId);
 
-    String startScene(String topoId);
+    Boolean startScene(String localSceneId);
 }

@@ -21,7 +21,7 @@ public class PracticeSolved extends BaseTable {
 
 	private Double score;
 
-	private String totalScore;
+	private Double totalScore;
 
 	private Boolean solved;
 

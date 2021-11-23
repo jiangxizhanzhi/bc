@@ -10,7 +10,10 @@ import lombok.Data;
 @ApiModel
 public class PracticeSetPageReq extends PageReqBase {
 
-    @ApiModelProperty("习题集类型 0=理论基础 2=实践操作")
-    private Integer practiceType;
+	@ApiModelProperty(name = "practice_type", value = "习题集类型 0=理论基础 2=实践操作")
+	private Integer practiceType;
 
+	public void setPractice_type(Integer practiceType) {
+		this.practiceType = practiceType;
+	}
 }

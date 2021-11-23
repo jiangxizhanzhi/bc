@@ -16,7 +16,7 @@ public class PracticeOperation extends PracticeBase {
 	private String writeup;
 
 	/** 是否公开题解*/
-	private boolean writeupPublic;
+	private Boolean writeupPublic;
 
 	/** 动态答题环境(使用场景)*/
 	private Boolean dynamicEnv;

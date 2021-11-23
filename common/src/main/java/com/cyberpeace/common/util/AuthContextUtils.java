@@ -22,6 +22,7 @@ public class AuthContextUtils {
 				.setLikeOrganization(LocalStringUtil.constructLike(userInfo.getOrganizationId()));
 		authContext.setLikeUser(LocalStringUtil.constructLike(userInfo.getUserId()));
 		authContext.setIsWeb(isWeb);
+		authContext.setIsSuperAdmin(userInfo.isSuperuser());
 
 		return authContext;
 	}

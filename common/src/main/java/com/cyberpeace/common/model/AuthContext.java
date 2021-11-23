@@ -15,7 +15,13 @@ public class AuthContext {
 
 	private Boolean isWeb;
 
+	private Boolean isSuperAdmin;
+
 	public Boolean getWeb() {
 		return null == isWeb ? false : isWeb;
+	}
+
+	public Boolean getSuperAdmin() {
+		return null == isSuperAdmin ? false : isSuperAdmin;
 	}
 }

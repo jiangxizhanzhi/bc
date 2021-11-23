@@ -10,10 +10,17 @@ import lombok.Data;
 @ApiModel
 public class AdminOperationListReq extends PageReqBase {
 
-    @ApiModelProperty("习题集")
+    @ApiModelProperty(name = "practice_set_id", value = "习题集")
     private String practiceSetId;
 
-    @ApiModelProperty("方向")
+    @ApiModelProperty(name = "category_id", value = "方向")
     private String categoryId;
 
+    public void setPractice_set_id(String practiceSetId) {
+        this.practiceSetId = practiceSetId;
+    }
+
+    public void setCategory_id(String categoryId) {
+        this.categoryId = categoryId;
+    }
 }

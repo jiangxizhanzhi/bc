@@ -1,15 +1,22 @@
 package com.cyberpeace.oj.practice.service.bo;
 
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class WebOperationBo extends OperationBo {
 
-    private Boolean solved;
+	@ApiModelProperty("是否解答完成")
+	private Boolean isSolved;
 
-    private Boolean isCollection;
+	@ApiModelProperty("用户提交的答案")
+	private String submitAnswer;
 
-    private JSONObject sceneData;
+	@ApiModelProperty("是否收藏")
+	private Boolean isCollection;
+
+	@ApiModelProperty("场景数据")
+	private JSONObject sceneData;
 
 }

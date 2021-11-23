@@ -49,9 +49,6 @@ public class PracticeTheoryController {
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
-	private PracticeTheoryMapper practiceTheoryMapper;
-
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
 	public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {

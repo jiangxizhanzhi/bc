@@ -2,17 +2,22 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.practice.controller.req.*;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.OperationBo;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +49,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	@Autowired
+	private PracticeSetMapper practiceSetMapper;
+
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
 	public BaseRsp<OperationBo> get(@ApiParam(name = "resource_id",
@@ -55,11 +63,14 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("实践操作习题新增")
 	@PostMapping("")
-	public BaseRsp add(@RequestBody @Validated(OperationAddReq.class) OperationAddReq addReq) {
+	public BaseRsp add(@RequestBody @Validated(Create.class) OperationAddReq addReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
 
 		PracticeOperation addOperation = convertReq(addReq);
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
-				addReq.getOjSceneConfig());
+				addReq.getOjSceneConfig(), authContext);
 
 		return new BaseRsp(result);
 	}
@@ -74,13 +85,15 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		PracticeOperation practiceOperation = BeanUtils.copy(addReq, PracticeOperation.class);
 		practiceOperation.setKnowledge(JsonUtil.toJsonString(addReq.getKnowledge()));
 		practiceOperation.setAnswer(JsonUtil.toJsonString(addReq.getAnswer()));
+		practiceOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		return practiceOperation;
 	}
 
 	@ApiOperation("实践操作习题修改")
 	@PatchMapping("")
-	public BaseRsp<Integer> update(@RequestBody @Validated OperationUpdateReq updateReq) {
+	public BaseRsp<Integer>
+			update(@RequestBody @Validated(Update.class) OperationUpdateReq updateReq) {
 
 		PracticeOperation updateOperation = convertReq(updateReq);
 		Integer result = practiceOperationService.updateOperation(updateOperation,
@@ -104,9 +117,11 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 
-		List<String> categoryIds = practiceCategoryService
-				.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
-		listQuery.setCategoryIds(categoryIds);
+		if (StringUtils.isNotBlank(listReq.getCategoryId())) {
+			List<String> categoryIds = practiceCategoryService
+					.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
+			listQuery.setCategoryIds(categoryIds);
+		}
 
 		Page page = listReq.toPageParam();
 

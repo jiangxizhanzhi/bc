@@ -58,16 +58,18 @@
         select resource_id from oj_course
         <where>
             <if test="authContext != null">
-                <choose>
-                    <when test="authContext.isWeb">
-                        (create_user_id = #{authContext.userId} or (read_auth_ids like #{authContext.likeOrganization}
-                        and read_auth_type = 2) or read_auth_type = 1)
-                    </when>
-                    <otherwise>
-                        (create_user_id = #{authContext.userId} or (operation_auth_ids like #{authContext.likeUser}
-                        and operation_auth_type = 2) or operation_auth_type = 1)
-                    </otherwise>
-                </choose>
+                <if test="!authContext.isSuperAdmin">
+                    <choose>
+                        <when test="authContext.isWeb">
+                            (create_user_id = #{authContext.userId} or (read_auth_ids like #{authContext.likeOrganization}
+                            and read_auth_type = 2) or read_auth_type = 1)
+                        </when>
+                        <otherwise>
+                            (create_user_id = #{authContext.userId} or (operation_auth_ids like #{authContext.likeUser}
+                            and operation_auth_type = 2) or operation_auth_type = 1)
+                        </otherwise>
+                    </choose>
+                </if>
             </if>
         </where>
     </select>

@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -15,7 +16,8 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param ojSceneConfig
 	 * @return
 	 */
-	Integer addPracticeOperation(PracticeOperation practiceOperation, String ojSceneConfig);
+	Integer addPracticeOperation(PracticeOperation practiceOperation, JSONObject ojSceneConfig,
+			AuthContext authContext);
 
 	/**
 	 * 实践操作习题修改
@@ -23,7 +25,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param ojSceneConfig
 	 * @return
 	 */
-	Integer updateOperation(PracticeOperation updateOperation, String ojSceneConfig);
+	Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig);
 
 	/**
 	 * 根据id查询实践操作信息

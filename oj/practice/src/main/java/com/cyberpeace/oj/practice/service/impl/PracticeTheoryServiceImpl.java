@@ -133,10 +133,28 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
 				PracticeCategory.PracticeType.THEORY.getCode(), resourceId);
-		webTheoryBo.setSolved(practiceSolved.getSolved());
-		webTheoryBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
+
+		answerToNull(webTheoryBo, practiceSolved);
 
 		return webTheoryBo;
+	}
+
+	/**
+	 * 答案置空
+	 * @param webTheoryBo
+	 * @param practiceSolved
+	 */
+	private void answerToNull(WebTheoryBo webTheoryBo, PracticeSolved practiceSolved) {
+
+		if (null == practiceSolved || !practiceSolved.getSolved()) {
+			webTheoryBo.setAnswer(null);
+			webTheoryBo.setBlank(null);
+			webTheoryBo.setKeyword(null);
+		} else {
+			webTheoryBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
+			webTheoryBo.setIsSolved(practiceSolved.getSolved());
+		}
+
 	}
 
 	@Override
@@ -151,7 +169,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 判断是否已完成答题
 		PracticeSolved solvedPractice = practiceSolvedMapper.selectUserAndId(userId,
 				PracticeCategory.PracticeType.THEORY.getCode(), theoryId);
-		if (solvedPractice.getSolved()) {
+		if (null != solvedPractice && solvedPractice.getSolved()) {
 			return BeanUtils.copy(solvedPractice, EvaluateResult.class);
 		}
 
@@ -163,6 +181,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceSolved.setPracticeId(practiceTheory.getResourceId());
 		practiceSolved.setSubmitUserId(userId);
 		practiceSolved.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+		practiceSolved.setSubmitAnswer(userAnswer);
 
 		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.THEORY.getCode(), practiceTheory.getResourceId()));

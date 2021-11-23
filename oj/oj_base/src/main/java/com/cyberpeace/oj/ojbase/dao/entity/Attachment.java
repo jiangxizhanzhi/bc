@@ -7,6 +7,8 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.ConfigUtil;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
@@ -15,13 +17,14 @@ import javax.annotation.PostConstruct;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Component
 public class Attachment extends BaseTable {
 
-	public static String PARENT_PATH;
+	public static String parentPath;
 
-	@PostConstruct
-	public void init() {
-		PARENT_PATH = ConfigUtil.getContextProperty("oj.file.root.path");
+	@Value("${oj.file.root.path}")
+	public void setParentPath(String parentPath) {
+		Attachment.parentPath = parentPath;
 	}
 
 	@TableId(type = IdType.UUID, value = "resource_id")
@@ -36,9 +39,9 @@ public class Attachment extends BaseTable {
 
 	public enum AttachmentType implements GenericEnum {
 
-		HANDOUT(1, Attachment.PARENT_PATH + "/course/handout/"),
-		VIDEO(2, Attachment.PARENT_PATH + "/course/video/"),
-		ATTACHMENT(3, Attachment.PARENT_PATH + "/course/attachment/");
+		HANDOUT(1, Attachment.parentPath + "/course/handout/"), VIDEO(2,
+				Attachment.parentPath + "/course/video/"), ATTACHMENT(3,
+						Attachment.parentPath + "/course/attachment/");
 
 		@Getter
 		private Integer code;

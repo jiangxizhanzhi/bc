@@ -25,11 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Slf4j
 @Api(tags = "oj-后台附件相关api")
 @RestController
 @RequestMapping("/oj/admin/attachment")
 @RequiresAuthentication
-@Slf4j
 public class AdminAttachmentController extends PublicController<AttachmentService, Attachment> {
 
 	@Autowired

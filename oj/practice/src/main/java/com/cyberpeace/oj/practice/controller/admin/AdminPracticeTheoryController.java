@@ -62,16 +62,6 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		practiceTheory.setTitle(theoryAddReq.getContent());
 		practiceTheory.setDifficulty(Difficulty.PRIMARY.getCode());
 
-		if (CollectionUtils.isNotEmpty(theoryAddReq.getBlank())) {
-			practiceTheory.setBlank(JsonUtil.arrayToString(theoryAddReq.getBlank()));
-		}
-		if (CollectionUtils.isNotEmpty(theoryAddReq.getKeyword())) {
-			practiceTheory.setKeyword(JsonUtil.arrayToString(theoryAddReq.getKeyword()));
-		}
-		if (CollectionUtils.isNotEmpty(theoryAddReq.getKnowledge())) {
-			practiceTheory.setKnowledge(JsonUtil.arrayToString(theoryAddReq.getKnowledge()));
-		}
-
 		practiceTheory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);

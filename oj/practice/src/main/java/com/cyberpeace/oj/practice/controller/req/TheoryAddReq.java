@@ -20,7 +20,7 @@ public class TheoryAddReq implements Serializable {
 	private String content;
 
 	@ApiModelProperty(value = "填空题答案", required = true)
-	private List<BlankAnswer> blank;
+	private String blank;
 
 	@ApiModelProperty(value = "习题集", required = true)
 	@NotBlank(groups = { Create.class })
@@ -39,13 +39,13 @@ public class TheoryAddReq implements Serializable {
 	private Integer theoryType;
 
 	@ApiModelProperty("知识点")
-	private List<String> knowledge;
+	private String knowledge;
 
 	@ApiModelProperty("选项 - (判断、单选、多选题型使用)")
 	private String option;
 
 	@ApiModelProperty("关键字 - (简答题题型使用)")
-	private List<String> keyword;
+	private String keyword;
 
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;

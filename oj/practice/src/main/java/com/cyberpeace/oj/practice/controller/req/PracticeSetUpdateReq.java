@@ -12,7 +12,7 @@ import java.io.Serializable;
 @ApiModel
 public class PracticeSetUpdateReq extends PracticeSetAddReq {
 
-    @ApiModelProperty(value = "资源编号", required = true)
-    @NotBlank(groups = {Update.class})
-    private String resourceId;
+	@ApiModelProperty(value = "资源编号", required = true)
+	@NotBlank(groups = { Update.class })
+	private String resourceId;
 }

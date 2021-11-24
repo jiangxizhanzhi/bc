@@ -1,15 +1,10 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +13,19 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.cyberpeace.oj.practice.controller.req.PracticeSetAddReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeSetPageReq;
@@ -39,8 +39,7 @@ import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台习题集相关api")
 @RestController
@@ -122,5 +121,18 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 				setPageReq.getPracticeType(), setPageReq.getPattern(), auth);
 
 		return new BaseRsp<>(PageUtil.getListResult(iPage));
+	}
+
+	@GetMapping("/all")
+	@ApiOperation("获取全部的习题集信息")
+	public BaseRsp<List<PracticeSetRes>>
+			allList(@ApiParam(name = "practice_type", value = "习题集类型 0=理论基础 2=实操练习") @RequestParam(
+					value = "practice_type", required = false) Integer practiceType) {
+
+		List<PracticeSet> practiceSets = practiceSetMapper.selectByType(practiceType,
+				CommonConstant.FALSE);
+		List<PracticeSetRes> setRes = BeanUtils.deepCopyList(practiceSets, PracticeSetRes.class);
+		return new BaseRsp(setRes);
+
 	}
 }

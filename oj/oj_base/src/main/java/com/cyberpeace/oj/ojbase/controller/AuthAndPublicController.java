@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller;
 
+import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -45,7 +46,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 			value = "资源编号") @RequestParam("resource_id") String resourceId) {
 
 		E entity = (E) baseService.getById(resourceId);
-		AuthAndPublicData publicData = BeanUtils.copy(entity, AuthAndPublicData.class);
+		AuthTable publicData = BeanUtils.copy(entity, AuthTable.class);
 
 		ReadAuthInfo authInfo = new ReadAuthInfo();
 		authInfo.setReadAuthType(publicData.getReadAuthType());
@@ -63,7 +64,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 			value = "资源编号") @RequestParam("resource_id") String resourceId) {
 
 		E entity = (E) baseService.getById(resourceId);
-		AuthAndPublicData publicData = BeanUtils.copy(entity, AuthAndPublicData.class);
+		AuthTable publicData = BeanUtils.copy(entity, AuthTable.class);
 
 		OperationAuthInfo authInfo = new OperationAuthInfo();
 		authInfo.setOperationAuthType(publicData.getReadAuthType());

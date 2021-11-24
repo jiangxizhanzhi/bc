@@ -88,6 +88,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 						OperationUserInfo readUserInfo = BeanUtils.copy(userInfo,
 								OperationUserInfo.class);
 						readUserInfo.setId(userInfo.getUserId());
+						readUserInfo.setUsername(userInfo.getUserName());
 						return readUserInfo;
 					});
 

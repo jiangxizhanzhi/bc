@@ -150,7 +150,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			}
 		}
 		// userInfo.setRoles();
-		userInfo.setOrgpaths((List<String>) jsonObject.get("orgpaths"));
+		userInfo.setOrgpaths((List<List<String>>) jsonObject.get("orgpaths"));
 		userInfo.setAdmin((int) jsonObject.get("is_admin") == 0);
 		userInfo.setSuperuser((int) jsonObject.get("is_super_user") == 0);
 		return userInfo;

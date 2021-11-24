@@ -1,10 +1,9 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import lombok.Getter;
  */
 @TableName(value = "cr_role")
 @Data
-public class CrRole implements Serializable {
+public class CrRole extends BaseTable {
 
 	/**
 	 *

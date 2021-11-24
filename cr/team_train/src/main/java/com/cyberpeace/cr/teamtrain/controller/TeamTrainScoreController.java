@@ -270,7 +270,7 @@ public class TeamTrainScoreController {
 	 *
 	 * @return
 	 */
-	@ApiOperation("获取动态事件")
+	@ApiOperation("获取学员动态事件")
 	@GetMapping("/get_user_mission_dynamic")
 	public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,

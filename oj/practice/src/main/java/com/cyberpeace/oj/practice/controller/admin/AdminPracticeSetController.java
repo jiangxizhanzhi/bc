@@ -113,7 +113,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("分页查询习题集")
 	@GetMapping("/list")
-	public ListRsp<PracticeSetRes> list(PracticeSetPageReq setPageReq) {
+	public BaseRsp<ListRsp<PracticeSetRes>> list(PracticeSetPageReq setPageReq) {
 
 		Page page = setPageReq.toPageParam();
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -121,8 +121,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		IPage<AdminPracticeSetBo> iPage = practiceSetService.selectByTypeAndName(page,
 				setPageReq.getPracticeType(), setPageReq.getPattern(), auth);
 
+		if (null == iPage) {
+			return new BaseRsp<>(PageUtil.getNullResult());
+		}
+
 		IPage<PracticeSetRes> resIPage = iPage.convert(
 				adminPracticeSetBo -> BeanUtils.copy(adminPracticeSetBo, PracticeSetRes.class));
-		return PageUtil.getListResult(resIPage);
+		return new BaseRsp<>(PageUtil.getListResult(resIPage));
 	}
 }

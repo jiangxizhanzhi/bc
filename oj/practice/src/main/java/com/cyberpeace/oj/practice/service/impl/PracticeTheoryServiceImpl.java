@@ -71,11 +71,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		// 过滤习题集
 		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-				&& !authSetIds.contains(listQuery.getPracticeSetId())) {
+		if (CollectionUtils.isEmpty(authSetIds) || (StringUtils.isNotBlank(listQuery.getPracticeSetId())
+				&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
 			log.error("The current resource has no permission！practice_set_id=[{}]",
 					listQuery.getPracticeSetId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+			return null;
 		}
 
 		// 习题集过滤习题
@@ -83,6 +83,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (StringUtils.isBlank(listQuery.getPracticeSetId())) {
 			List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
 					authContext.getIsWeb());
+			if (CollectionUtils.isEmpty(practiceIds)) {
+				return null;
+			}
 			theoryListQuery.setResourceIds(practiceIds);
 		}
 

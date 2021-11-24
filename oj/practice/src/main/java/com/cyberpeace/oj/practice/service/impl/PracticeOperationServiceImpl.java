@@ -249,7 +249,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 						&& !authIds.contains(listQuery.getPracticeSetId()))) {
 			log.error("The current practice set no permission！practice_set_id=[{}]",
 					listQuery.getPracticeSetId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+			return null;
 		}
 
 		// 习题集过滤

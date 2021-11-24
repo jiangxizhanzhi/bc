@@ -41,4 +41,10 @@ public class PracticeTheoryListBo implements Serializable {
     @ApiModelProperty("更新时间")
     private Date updateTime;
 
+    @ApiModelProperty("习题集名称")
+    private String practiceSetName;
+
+    @ApiModelProperty("是否完成解题")
+    private Boolean solved;
+
 }

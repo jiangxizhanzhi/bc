@@ -71,8 +71,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		// 过滤习题集
 		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authSetIds) || (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-				&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
+		if (CollectionUtils.isEmpty(authSetIds)
+				|| (StringUtils.isNotBlank(listQuery.getPracticeSetId())
+						&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
 			log.error("The current resource has no permission！practice_set_id=[{}]",
 					listQuery.getPracticeSetId());
 			return null;
@@ -111,6 +112,22 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		IPage<PracticeTheoryListBo> listBoIPage = iPage.convert(practiceTheory -> {
 			PracticeTheoryListBo theoryListBo = BeanUtils.copy(practiceTheory,
 					PracticeTheoryListBo.class);
+
+			if (authContext.getIsWeb()) {
+				// 解题状态设置
+				if (null != listQuery.getSolved()) {
+					theoryListBo.setSolved(listQuery.getSolved());
+				} else {
+					PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
+							authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
+							practiceTheory.getResourceId());
+					theoryListBo.setSolved(null != practiceSolved ? practiceSolved.getSolved()
+							: CommonConstant.FALSE);
+				}
+			}
+			PracticeSet practiceSet = practiceSetMapper
+					.selectById(practiceTheory.getPracticeSetId());
+			theoryListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 			UserInfo userInfo = remoteUserService.getById(practiceTheory.getCreateUserId());
 			theoryListBo.setCreateUserName(userInfo.getUserName());
 			return theoryListBo;
@@ -222,7 +239,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		if (StringUtils.isNotBlank(practiceTheory.getPracticeSetId())) {
 			List<String> permissionSets = practiceSetMapper.selectByAuthContext(authContext);
-			if (!permissionSets.contains(practiceTheory.getPracticeSetId())) {
+			if (CollectionUtils.isEmpty(permissionSets)
+					|| !permissionSets.contains(practiceTheory.getPracticeSetId())) {
 				log.error(
 						"When add theory practice, the practice set not permission! practice_id=[{}]",
 						practiceTheory.getPracticeSetId());

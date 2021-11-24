@@ -54,7 +54,7 @@ public class PracticeOperationController {
 
 	@GetMapping("/list")
 	@ApiOperation("获取实践操作列表")
-	public BaseRsp<ListRsp<PracticeOperation>> list(WebOperationListReq listReq) {
+	public BaseRsp<ListRsp<AdminOperationListBo>> list(WebOperationListReq listReq) {
 
 		Page page = listReq.toPageParam();
 		OperationListQueryBo listQueryBo = BeanUtils.copy(listReq, OperationListQueryBo.class);

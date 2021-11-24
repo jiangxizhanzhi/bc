@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.security.Escape;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -282,6 +283,22 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		IPage<AdminOperationListBo> listBoIPage = iPage.convert(practiceOperation -> {
 			AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 					AdminOperationListBo.class);
+			if (authContext.getIsWeb()) {
+				if (null != listQuery.getSolved()) {
+					operationListBo.setSolved(listQuery.getSolved());
+				} else {
+					PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
+							authContext.getUserId(),
+							PracticeCategory.PracticeType.OPERATION.getCode(),
+							practiceOperation.getResourceId());
+					operationListBo.setSolved(null != practiceSolved ? practiceSolved.getSolved()
+							: CommonConstant.FALSE);
+				}
+			}
+
+			PracticeSet practiceSet = practiceSetMapper
+					.selectById(practiceOperation.getPracticeSetId());
+			operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 			UserInfo userInfo = remoteUserService.getById(practiceOperation.getCreateUserId());
 
 			operationListBo.setCreateUserName(userInfo.getUserName());

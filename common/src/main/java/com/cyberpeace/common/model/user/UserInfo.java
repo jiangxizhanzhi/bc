@@ -67,6 +67,6 @@ public class UserInfo implements Serializable {
     /**
      * 组织结构信息
      */
-    private List<String> orgPaths;
+    private List<String> orgpaths;
 
 }

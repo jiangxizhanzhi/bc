@@ -64,4 +64,9 @@ public class UserInfo implements Serializable {
      */
     private String roleId;
 
+    /**
+     * 组织结构信息
+     */
+    private List<String> orgPaths;
+
 }

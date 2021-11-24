@@ -1,6 +1,11 @@
 package com.cyberpeace.oj.ojbase.controller;
 
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.ojbase.controller.res.ReadUserInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +25,8 @@ import com.cyberpeace.oj.ojbase.controller.res.ReadAuthInfo;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import java.util.List;
 
 public abstract class AuthAndPublicController<T extends IService<E>, E> extends PublicController {
 
@@ -51,8 +58,19 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 		ReadAuthInfo authInfo = new ReadAuthInfo();
 		authInfo.setReadAuthType(publicData.getReadAuthType());
 		if (StringUtils.isNotBlank(publicData.getReadAuthIds())) {
-			authInfo.setReadAuthIds(
-					JsonUtil.toJsonObjectArray(publicData.getReadAuthIds(), String.class));
+			RemoteUserService userService = SpringContextUtil
+					.getBeanByClass(RemoteUserService.class);
+			List<String> userIds = JsonUtil.toJsonObjectArray(publicData.getReadAuthIds(),
+					String.class);
+
+			List<UserInfo> userInfos = userService.getByIdList(userIds);
+			List<ReadUserInfo> readUserInfos = StreamApiUtils.simpleMap(userInfos, userInfo -> {
+				ReadUserInfo readUserInfo = BeanUtils.copy(userInfo, ReadUserInfo.class);
+				readUserInfo.setId(userInfo.getUserId());
+				return readUserInfo;
+			});
+
+			authInfo.setReadAuthIds(readUserInfos);
 		}
 
 		return new BaseRsp<>(authInfo);

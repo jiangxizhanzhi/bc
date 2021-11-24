@@ -12,11 +12,14 @@ import javax.validation.constraints.NotNull;
 @ApiModel
 public class PracticeCategoryListReq extends PageReqBase {
 
-	@ApiModelProperty(value = "练习分类类型 0=理论基础 2=实操练习", required = true)
+	@ApiModelProperty(name = "practice_type", value = "练习分类类型 0=理论基础 2=实操练习", required = true)
 	@NotNull
 	private Integer practiceType;
 	
 	@ApiModelProperty("是否查询子分类 保留字段预置功能")
-	private Boolean children = CommonConstant.FALSE; 
+	private Boolean children = CommonConstant.FALSE;
 
+	public void setPractice_type(Integer practiceType) {
+		this.practiceType = practiceType;
+	}
 }

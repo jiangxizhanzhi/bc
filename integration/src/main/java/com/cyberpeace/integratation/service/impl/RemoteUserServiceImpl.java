@@ -3,6 +3,8 @@ package com.cyberpeace.integratation.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -23,7 +25,7 @@ import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -118,12 +120,15 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@Override
 	public Map<String, String> getIdNameMap(List<String> ids) {
+		Set<String> idsSet = Sets.newHashSet(ids);
 		List<UserInfo> userInfos = getByIdList(ids);
-		Map<String, String> idNameMap = Maps.newHashMap();
-		for (UserInfo info : userInfos) {
-			idNameMap.put(info.getUserId(), info.getName());
+		if (idsSet.size() != userInfos.size()) {
+			for (UserInfo info : userInfos) {
+				idsSet.remove(info.getUserId());
+			}
+			log.error("invalid user_id: " + idsSet);
 		}
-		return idNameMap;
+		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
 	}
 
 	private UserInfo userInfoFromJsonObject(JSONObject jsonObject) {

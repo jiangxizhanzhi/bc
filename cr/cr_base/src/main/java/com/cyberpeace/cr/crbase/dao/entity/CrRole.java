@@ -73,14 +73,14 @@ public class CrRole implements Serializable {
 	 */
 	private Integer businessType;
 
-	public enum RoleGroupCodeInteger {
+	public enum TeamRoleGroupCode {
 
 		TEACHER(1), STUDENT(2);
 
 		@Getter
 		private final Integer value;
 
-		RoleGroupCodeInteger(Integer value) {
+		TeamRoleGroupCode(Integer value) {
 			this.value = value;
 		}
 	}

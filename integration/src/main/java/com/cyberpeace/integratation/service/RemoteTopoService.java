@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 
@@ -7,7 +8,7 @@ public interface RemoteTopoService {
 
 	String create(SceneConfig sceneConfig);
 
-	SceneConfig getById(String sceneConfigId);
+	JSONObject getTopoById(String topoId);
 
 	/**
 	 * 根据现有的topoid，生成一份新的拓扑拷贝数据
@@ -18,4 +19,8 @@ public interface RemoteTopoService {
 	String copyTopo(String originTopoId);
 
 	TopoDigest getTopoDigest(String topoId);
+
+	String save(JSONObject json);
+
+	SceneConfig getById(String topoId);
 }

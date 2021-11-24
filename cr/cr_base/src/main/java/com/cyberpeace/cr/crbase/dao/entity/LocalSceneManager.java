@@ -14,7 +14,7 @@ public class LocalSceneManager extends BaseTable {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	private String appId;
+	private Integer appId;
 
 	private String topoId;
 

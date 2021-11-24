@@ -26,11 +26,15 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_DELETE_URL;
 
+	private String SCENE_RETRIEVE;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.start");
 
 		SCENE_DELETE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.delete");
+
+		SCENE_RETRIEVE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.retrieve");
 	}
 
 	@Override
@@ -56,5 +60,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		Boolean result = HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
 
 		return result;
+	}
+
+	@Override
+	public JSONObject getById(String sceneId, String userId) {
+		String targetUrl = SCENE_RETRIEVE + "?id=" + sceneId + "&accessUserId=" + userId;
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+
 	}
 }

@@ -28,6 +28,10 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String TOPO_DIGEST_URL;
 
+	private String TOPO_SYNC;
+
+	private String TOPO_RETRIEVE;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -36,6 +40,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		COPY_TOPO_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.copy");
 		TOPO_DIGEST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.terminal.statistic");
+		TOPO_SYNC = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.sync");
+		TOPO_RETRIEVE = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
 	}
 
 	@Override
@@ -45,9 +52,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 	@Override
-	public SceneConfig getById(String sceneConfigId) {
-		return null;
-		// todo
+	public JSONObject getTopoById(String topoId) {
+		String targetUrl = TOPO_RETRIEVE + "?id=" + topoId;
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
 	@Override
@@ -82,5 +89,17 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		topoDigest.setNodeCounts(mpTopoStatistic.getTerminalCount());
 
 		return topoDigest;
+	}
+
+	@Override
+	public String save(JSONObject json) {
+		String targetUrl = TOPO_SYNC;
+		JSONObject jsonObject = HttpClientUtil.post(targetUrl, json, JSONObject.class);
+		return jsonObject.getString("id");
+	}
+
+	@Override
+	public SceneConfig getById(String topoId) {
+		return null;
 	}
 }

@@ -125,7 +125,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				int index = 0;
 				TeamTrainTemplateRole teacherRole = new TeamTrainTemplateRole();
 				teacherRole.setName("教员");
-				teacherRole.setRoleGroup(CrRole.RoleGroupCodeInteger.TEACHER.getValue());
+				teacherRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getValue());
 
 				teamTrainTemplateRoleList.add(0, teacherRole);
 
@@ -317,7 +317,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		for (CrRole crRole : crRoles) {
 			// 获取每个学员用户，以及学员id
-			if (crRole.getRoleGroup().intValue() != CrRole.RoleGroupCodeInteger.TEACHER
+			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER
 					.getValue()) {
 
 				List<String> users = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
@@ -435,7 +435,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
 
-		permissionCheck(roomId, userId, CrRole.RoleGroupCodeInteger.TEACHER.getValue());
+		permissionCheck(roomId, userId, CrRole.TeamRoleGroupCode.TEACHER.getValue());
 	}
 
 	@Override

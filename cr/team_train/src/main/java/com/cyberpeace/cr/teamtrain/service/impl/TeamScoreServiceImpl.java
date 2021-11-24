@@ -81,7 +81,7 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 	public MissionsStatistics getMissionsStatistics(String roomId) {
 		MissionsStatistics missionsStatistics = new MissionsStatistics();
 
-		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.TeamRoleGroupCode.STUDENT.getValue());
 
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 

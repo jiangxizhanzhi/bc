@@ -95,5 +95,10 @@
             </if>
         </where>
     </select>
+    <select id="selectbySceneManagerId" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">
+        select *
+        from cr_team_room
+        where scene_manager_id = #{sceneManagerId}
+    </select>
 
 </mapper>

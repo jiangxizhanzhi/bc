@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
@@ -24,6 +25,12 @@ public class BusinessTemplateHandler {
 	@PostConstruct
 	public void init() {
 		register.put(setBusinessType(), this);
+	}
+
+	public BusinessTemplateHandler getHandler(Integer appId) {
+		BusinessTemplate.BusinessType businessType = BusinessTemplate.BusinessType
+				.getByAppId(appId);
+		return register.get(businessType);
 	}
 
 	public String saveBusiness(BasicTemplate basicTemplate, String businessId) {
@@ -50,4 +57,14 @@ public class BusinessTemplateHandler {
 				BusinessTemplate.BusinessType.class);
 
 	}
+
+	public String getRoomIdBySceneManagerId(String sceneManagerId) {
+		return null;
+	}
+
+	public CrRoleNodesData getNodes(String userId, String roomId, String roleId) {
+		// null 代表所有节点可见
+		return null;
+	}
+
 }

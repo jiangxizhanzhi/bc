@@ -10,7 +10,7 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 @Data
-@TableName("cr_rb_instance")
+@TableName("cr_rb_room")
 public class RbRoom extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

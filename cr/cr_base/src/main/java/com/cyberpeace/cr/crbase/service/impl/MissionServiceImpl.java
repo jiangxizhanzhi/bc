@@ -20,6 +20,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -224,7 +225,24 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public void openOrCloseWriteup(String missionId, Boolean showWriteup) {
 		Mission mission = missionMapper.selectById(missionId);
 		mission.setShowWriteup(showWriteup);
-		missionMapper.updateById(mission);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrTaskLog taskLog = CrTaskLog.builder().roomId(mission.getRoomId()).missionId(missionId)
+				.userId(userId).build();
+		if (showWriteup) {
+			taskLog.setActionCode(CrTaskLog.ActionCode.OPEN_WRITEUP.getCode());
+		} else {
+			taskLog.setActionCode(CrTaskLog.ActionCode.CLOSE_WRITEUP.getCode());
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				missionMapper.updateById(mission);
+				crTaskLogMapper.insert(taskLog);
+
+			}
+		});
 	}
 
 	@Override
@@ -289,7 +307,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public String getTeamTrainingManual(String roomId) {
-		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.TeamRoleGroupCode.STUDENT.getValue());
 		List<CrRole> roles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 		List<CrRoleMissionSchemeStage> allStages = Lists.newArrayList();
 		for (CrRole role : roles) {

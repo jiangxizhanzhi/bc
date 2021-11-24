@@ -380,7 +380,7 @@ public class TeamTrainScoreController {
 		}
 
 		RoleQuery roleQuery = new RoleQuery(resource_id,
-				CrRole.RoleGroupCodeInteger.STUDENT.getValue());
+				CrRole.TeamRoleGroupCode.STUDENT.getValue());
 
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 

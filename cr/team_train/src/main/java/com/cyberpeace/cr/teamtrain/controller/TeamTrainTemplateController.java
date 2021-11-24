@@ -143,7 +143,7 @@ public class TeamTrainTemplateController {
 				BaseRole.class);
 		BaseRole baseRole = new BaseRole();
 		baseRole.setName("教员");
-		baseRole.setRoleGroup(CrRole.RoleGroupCodeInteger.TEACHER.getValue());
+		baseRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getValue());
 
 		teamTrainTemplateRoleList.add(0, baseRole);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);

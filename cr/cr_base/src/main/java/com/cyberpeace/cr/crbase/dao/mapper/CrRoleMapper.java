@@ -16,9 +16,9 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 @Repository
 public interface CrRoleMapper extends BaseMapper<CrRole> {
 
-    List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
+	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
 
-    List<String> getRoomIdsByUserId(String userId);
+	List<String> getRoomIdsByUserId(String userId);
 
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 }

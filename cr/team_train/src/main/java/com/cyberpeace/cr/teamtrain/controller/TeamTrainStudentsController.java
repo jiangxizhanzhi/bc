@@ -232,7 +232,7 @@ public class TeamTrainStudentsController {
 				baseRole.setDescription(crRole.getDescription());
 				baseRole.setRoleGroup(crRole.getRoleGroup());
 			}
-			if (crRole.getRoleGroup().intValue() != CrRole.RoleGroupCodeInteger.TEACHER
+			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER
 					.getValue()) {
 				RoleUsers roleUsers = new RoleUsers();
 				roleUsers.setRoleName(crRole.getName());

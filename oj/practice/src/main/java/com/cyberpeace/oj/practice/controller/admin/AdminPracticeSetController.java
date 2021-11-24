@@ -113,7 +113,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("分页查询习题集")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<PracticeSetRes>> list(PracticeSetPageReq setPageReq) {
+	public BaseRsp<ListRsp<AdminPracticeSetBo>> list(PracticeSetPageReq setPageReq) {
 
 		Page page = setPageReq.toPageParam();
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

@@ -276,12 +276,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		// 未开始，新增local_scene数据
 		if (teamRoomdata.isUnopened()) {
-			LocalScene localScene = new LocalScene();
-			localScene.setStartTime(new Date());
-			localScene.setBusinessCode("103");
-			// todo
+			LocalScene localScene = getLocalScene(resourceId);
 
-			localScene.setBusinessInstanceId(teamRoomdata.getResourceId());
 			localSceneService.save(localScene);
 		}
 		// 已开始，修改local_scene数据
@@ -475,6 +471,22 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		} else {
 			return TeamRoom.TrainingStatusCode.ENDED.getCode();
 		}
+	}
+
+	private LocalScene getLocalScene(String teamRoomId) {
+		TeamRoom teamRoom = teamRoomMapper.selectById(teamRoomId);
+
+		LocalScene localScene = new LocalScene();
+		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
+		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		//TODO
+		localScene.setBusinessCode("123");
+		//TODO
+		localScene.setDestoryMode(1);
+		localScene.setBusinessInstanceId(teamRoomId);
+		localScene.setTopoId(teamRoom.getCopyedTopoId());
+
+		return localScene;
 	}
 
 }

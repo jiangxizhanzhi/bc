@@ -5,7 +5,9 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
-    LocalScene getByBusinessInstanceId(String businessInstanceId);
+	LocalScene getByBusinessInstanceId(String businessInstanceId);
 
-    Boolean startScene(String localSceneId);
+	Boolean startScene(String localSceneId);
+
+	Boolean closeScene(String localSceneId);
 }

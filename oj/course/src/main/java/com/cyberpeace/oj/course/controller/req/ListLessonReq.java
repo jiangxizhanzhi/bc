@@ -25,4 +25,15 @@ public class ListLessonReq extends PageReqBase {
     @ApiModelProperty("课程方向筛选条件 用于课时导入筛选")
     private String categoryId;
 
+    public void setCourse_id(String courseId) {
+        this.courseId = courseId;
+    }
+
+    public void setExcept_course(String exceptCourse) {
+        this.exceptCourse = exceptCourse;
+    }
+
+    public void setCategory_id(String categoryId) {
+        this.categoryId = categoryId;
+    }
 }

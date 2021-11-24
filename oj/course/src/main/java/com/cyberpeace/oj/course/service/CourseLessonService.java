@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -39,7 +40,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param practiceList
 	 * @return
 	 */
-	CourseLesson addLesson(CourseLesson courseLesson, String ojSceneConfig,
+	CourseLesson addLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList);
 
 	/**
@@ -49,7 +50,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param practiceList
 	 * @return
 	 */
-	CourseLesson updateLesson(CourseLesson courseLesson, String ojSceneConfig,
+	CourseLesson updateLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList);
 
 	/**

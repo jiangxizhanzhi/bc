@@ -1,17 +1,11 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +13,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -45,7 +42,7 @@ import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import sun.rmi.runtime.Log;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台课程相关api")
 @RestController

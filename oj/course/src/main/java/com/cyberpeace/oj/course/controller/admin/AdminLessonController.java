@@ -2,6 +2,8 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
@@ -91,7 +93,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
-	public BaseRsp add(@RequestBody @Validated LessonAddReq lessonAddReq) {
+	public BaseRsp add(@RequestBody @Validated({ Create.class }) LessonAddReq lessonAddReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonAddReq);
 		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
@@ -102,12 +104,14 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
-	public BaseRsp patch(@RequestBody @Valid LessonUpdateReq lessonUpdateReq) {
+	public BaseRsp
+			patch(@RequestBody @Validated({ Update.class }) LessonUpdateReq lessonUpdateReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonUpdateReq);
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,
 				lessonUpdateReq.getOjSceneConfig(), lessonUpdateReq.getPracticeList());
 		return new BaseRsp(lesson);
+
 	}
 
 	@ApiOperation("课时信息删除")
@@ -162,7 +166,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时练习公开与隐藏")
 	@PatchMapping("/practice/batch_public")
 	public BaseRsp<Integer>
-			publicPractice(@RequestBody @Valid ResourcePublicReq resourcePublicReq) {
+			publicPractice(@RequestBody @Validated ResourcePublicReq resourcePublicReq) {
 		Integer row = courseLessonService.batchPublicPractice(resourcePublicReq.getResourceIds(),
 				resourcePublicReq.getIsPublic());
 		return new BaseRsp<>(row);

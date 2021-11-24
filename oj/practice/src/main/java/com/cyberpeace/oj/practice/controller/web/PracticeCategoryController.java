@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.controller.web;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
 import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
@@ -29,13 +30,16 @@ public class PracticeCategoryController {
 			@ApiImplicitParam(name = "pattern", value = "模糊搜索内容"),
 			@ApiImplicitParam(name = "children", value = "是否查询子分类") })
 	@GetMapping("/list")
-	public BaseRsp<List<CategoryListBo>> list(@RequestParam("practice_type") Integer practiceType,
-			@RequestParam("pattern") String pattern, @RequestParam("children") Boolean children) {
+	public BaseRsp<List<CategoryListBo>> list(
+			@RequestParam(value = "practice_type") Integer practiceType,
+			@RequestParam(value = "pattern", required = false) String pattern,
+			@RequestParam(value = "children", required = false) Boolean children) {
 
 		CategoryListQuery listQuery = CategoryListQuery.builder().practiceType(practiceType)
 				.pattern(pattern).build();
 
-		List<CategoryListBo> boList = categoryService.listByTypeAndName(listQuery, children);
+		List<CategoryListBo> boList = categoryService.listByTypeAndName(listQuery,
+				null == children ? CommonConstant.FALSE : children);
 		return new BaseRsp<>(boList);
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -15,6 +16,7 @@ import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
@@ -106,6 +108,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	@Autowired
+	private NoteService noteService;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String userId, String courseId, String lessonId) {
 
@@ -186,7 +191,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public CourseLesson addLesson(CourseLesson courseLesson, String ojSceneConfig,
+	public CourseLesson addLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
 
 		courseLesson.setHeat(CommonConstant.ZERO);
@@ -200,9 +205,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		LessonConfig lessonConfig = packageLessonConfig(courseLesson);
 
 		// 场景数据新增
-		if (StringUtils.isNotBlank(ojSceneConfig)) {
-			String topoId = remoteTopoService
-					.create(JsonUtil.toJsonObject(ojSceneConfig, SceneConfig.class));
+		if (null != ojSceneConfig) {
+			String topoId = remoteTopoService.create(
+					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
 			courseLesson.setTopoId(topoId);
 		}
 
@@ -228,12 +233,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public CourseLesson updateLesson(CourseLesson courseLesson, String ojSceneConfig,
+	public CourseLesson updateLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
 
 		AddOrUpdatePaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 
-		// TODO 场景数据修改
+		if (null != ojSceneConfig) {
+			remoteTopoService.create(
+					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -314,6 +322,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 用户相关
 			UserInfo userInfo = remoteUserService.getById(courseLesson.getCreateUserId());
 			adminLessonListBo.setCreateUserName(userInfo.getUserName());
+
+			// 是否具有实验报告
 			return adminLessonListBo;
 		});
 		return boIPage;

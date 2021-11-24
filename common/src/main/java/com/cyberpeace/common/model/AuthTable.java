@@ -30,7 +30,7 @@ public class AuthTable extends BaseTable {
 		@Getter
 		private String desc;
 
-		private AuthType(Integer code, String desc) {
+		AuthType(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

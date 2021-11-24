@@ -61,7 +61,7 @@ public class PracticeTheoryController {
 
 	@GetMapping("/list")
 	@ApiOperation("分页查询理论基础习题")
-	public BaseRsp<ListRsp<PracticeTheory>> getList(WebTheoryListReq listReq) {
+	public BaseRsp<ListRsp<PracticeTheoryListBo>> getList(WebTheoryListReq listReq) {
 
 		Page page = listReq.toPageParam();
 		List<String> categoryIds = practiceCategoryService

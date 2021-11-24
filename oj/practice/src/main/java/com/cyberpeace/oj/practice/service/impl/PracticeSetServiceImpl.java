@@ -85,19 +85,15 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			setBo.setPracticeCount(theoryIds.size());
 		}
 
-		if (practiceSet.getOperationAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
-				.getCode().intValue()) {
-			List<String> operationIds = JsonUtil
-					.toJsonObjectArray(practiceSet.getOperationAuthIds(), String.class);
-			setBo.setOperationCount(operationIds.size());
-		}
 
-		if (practiceSet.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
-				.getCode().intValue()) {
-			List<String> readIds = JsonUtil.toJsonObjectArray(practiceSet.getReadAuthIds(),
-					String.class);
-			setBo.setOperationCount(readIds.size());
-		}
+		List<String> operationIds = JsonUtil
+				.toJsonObjectArray(practiceSet.getOperationAuthIds(), String.class);
+		setBo.setOperationCount(operationIds.size());
+
+		List<String> readIds = JsonUtil.toJsonObjectArray(practiceSet.getReadAuthIds(),
+				String.class);
+		setBo.setReadCount(readIds.size());
+
 
 		return setBo;
 	}

@@ -1,27 +1,24 @@
 package com.cyberpeace.oj.ojbase.controller;
 
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.oj.ojbase.controller.res.OperationAuthInfo;
-import com.cyberpeace.oj.ojbase.controller.res.ReadAuthInfo;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.ojbase.controller.req.ResourceAuthReq;
 import com.cyberpeace.oj.ojbase.controller.req.ResourceShareReq;
+import com.cyberpeace.oj.ojbase.controller.res.OperationAuthInfo;
+import com.cyberpeace.oj.ojbase.controller.res.ReadAuthInfo;
 
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Arrays;
+import io.swagger.annotations.ApiParam;
 
 public abstract class AuthAndPublicController<T extends IService<E>, E> extends PublicController {
 

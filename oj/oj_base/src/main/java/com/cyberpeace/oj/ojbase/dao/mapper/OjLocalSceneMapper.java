@@ -2,8 +2,10 @@ package com.cyberpeace.oj.ojbase.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+@Mapper
 public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
 	OjLocalScene selectByUserAndBid(@Param("userId") String userId,

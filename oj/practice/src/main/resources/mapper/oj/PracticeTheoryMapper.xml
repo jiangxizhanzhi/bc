@@ -98,7 +98,7 @@
     <select id="selectBySetIds" resultType="java.lang.String">
         select resource_id from oj_practice_theory
         where practice_set_id in
-        <foreach collection="setIds" separator="setId" open="(" close=")" item="setId">
+        <foreach collection="setIds" separator="," open="(" close=")" item="setId">
             #{setId}
         </foreach>
     </select>

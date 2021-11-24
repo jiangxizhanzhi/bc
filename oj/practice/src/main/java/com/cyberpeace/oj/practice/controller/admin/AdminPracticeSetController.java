@@ -121,12 +121,6 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		IPage<AdminPracticeSetBo> iPage = practiceSetService.selectByTypeAndName(page,
 				setPageReq.getPracticeType(), setPageReq.getPattern(), auth);
 
-		if (null == iPage) {
-			return new BaseRsp<>(PageUtil.getNullResult());
-		}
-
-		IPage<PracticeSetRes> resIPage = iPage.convert(
-				adminPracticeSetBo -> BeanUtils.copy(adminPracticeSetBo, PracticeSetRes.class));
-		return new BaseRsp<>(PageUtil.getListResult(resIPage));
+		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}
 }

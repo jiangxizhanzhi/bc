@@ -7,8 +7,10 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
@@ -81,6 +83,20 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(
 					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
 			setBo.setPracticeCount(theoryIds.size());
+		}
+
+		if (practiceSet.getOperationAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
+				.getCode().intValue()) {
+			List<String> operationIds = JsonUtil
+					.toJsonObjectArray(practiceSet.getOperationAuthIds(), String.class);
+			setBo.setOperationCount(operationIds.size());
+		}
+
+		if (practiceSet.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
+				.getCode().intValue()) {
+			List<String> readIds = JsonUtil.toJsonObjectArray(practiceSet.getReadAuthIds(),
+					String.class);
+			setBo.setOperationCount(readIds.size());
 		}
 
 		return setBo;

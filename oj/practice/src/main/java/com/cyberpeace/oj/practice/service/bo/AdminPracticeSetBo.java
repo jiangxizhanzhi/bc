@@ -33,4 +33,10 @@ public class AdminPracticeSetBo extends AuthTable {
 	@ApiModelProperty("习题数量")
 	private Integer practiceCount;
 
+	@ApiModelProperty("授权操作人数量")
+	private Integer operationCount;
+
+	@ApiModelProperty("授权访问人数量")
+	private Integer readCount;
+
 }

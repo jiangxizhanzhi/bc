@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @ApiModel
-public class ReadUserInfo implements Serializable {
+public class OperationUserInfo implements Serializable {
 
 	@ApiModelProperty("用户编号")
 	private String id;

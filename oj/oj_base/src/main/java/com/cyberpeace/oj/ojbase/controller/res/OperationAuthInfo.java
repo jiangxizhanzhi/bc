@@ -13,6 +13,6 @@ public class OperationAuthInfo implements Serializable {
 	private Integer operationAuthType;
 
 	@ApiModelProperty("授权操作用户编号")
-	private List<String> operationAuthIds;
+	private List<OperationUserInfo> operationAuthIds;
 
 }

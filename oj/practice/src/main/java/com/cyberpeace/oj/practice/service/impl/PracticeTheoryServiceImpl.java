@@ -95,15 +95,14 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			List<String> practiceIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
 					listQuery.getSolved());
-
-			if (CollectionUtils.isNotEmpty(theoryListQuery.getResourceIds())) {
-				theoryListQuery.getResourceIds().addAll(practiceIds);
-				List<String> distinctIds = theoryListQuery.getResourceIds().stream().distinct()
-						.collect(Collectors.toList());
-				theoryListQuery.setResourceIds(distinctIds);
-			} else {
-				theoryListQuery.setResourceIds(practiceIds);
+			if (CollectionUtils.isEmpty(practiceIds)) {
+				return null;
 			}
+
+			theoryListQuery.getResourceIds().addAll(practiceIds);
+			List<String> distinctIds = theoryListQuery.getResourceIds().stream().distinct()
+					.collect(Collectors.toList());
+			theoryListQuery.setResourceIds(distinctIds);
 		}
 
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,

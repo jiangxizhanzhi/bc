@@ -39,8 +39,7 @@
     </select>
 
     <select id="pageByTypeAndName" resultMap="set">
-        select *
-        from oj_practice_set
+        select * from oj_practice_set
         <where>
             <if test="listQuery != null">
                 <if test="listQuery.setIds != null and listQuery.setIds.size() > 0">

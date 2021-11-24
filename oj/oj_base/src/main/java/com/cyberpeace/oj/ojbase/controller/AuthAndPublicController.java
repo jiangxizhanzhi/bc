@@ -5,7 +5,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.controller.res.ReadUserInfo;
+import com.cyberpeace.oj.ojbase.controller.res.OperationUserInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -58,19 +58,8 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 		ReadAuthInfo authInfo = new ReadAuthInfo();
 		authInfo.setReadAuthType(publicData.getReadAuthType());
 		if (StringUtils.isNotBlank(publicData.getReadAuthIds())) {
-			RemoteUserService userService = SpringContextUtil
-					.getBeanByClass(RemoteUserService.class);
-			List<String> userIds = JsonUtil.toJsonObjectArray(publicData.getReadAuthIds(),
-					String.class);
-
-			List<UserInfo> userInfos = userService.getByIdList(userIds);
-			List<ReadUserInfo> readUserInfos = StreamApiUtils.simpleMap(userInfos, userInfo -> {
-				ReadUserInfo readUserInfo = BeanUtils.copy(userInfo, ReadUserInfo.class);
-				readUserInfo.setId(userInfo.getUserId());
-				return readUserInfo;
-			});
-
-			authInfo.setReadAuthIds(readUserInfos);
+			authInfo.setReadAuthIds(
+					JsonUtil.toJsonObjectArray(publicData.getReadAuthIds(), String.class));
 		}
 
 		return new BaseRsp<>(authInfo);
@@ -86,9 +75,23 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 		OperationAuthInfo authInfo = new OperationAuthInfo();
 		authInfo.setOperationAuthType(publicData.getReadAuthType());
+
 		if (StringUtils.isNotBlank(publicData.getOperationAuthIds())) {
-			authInfo.setOperationAuthIds(
-					JsonUtil.toJsonObjectArray(publicData.getOperationAuthIds(), String.class));
+			RemoteUserService userService = SpringContextUtil
+					.getBeanByClass(RemoteUserService.class);
+			List<String> userIds = JsonUtil.toJsonObjectArray(publicData.getOperationAuthIds(),
+					String.class);
+
+			List<UserInfo> userInfos = userService.getByIdList(userIds);
+			List<OperationUserInfo> operationUserInfos = StreamApiUtils.simpleMap(userInfos,
+					userInfo -> {
+						OperationUserInfo readUserInfo = BeanUtils.copy(userInfo,
+								OperationUserInfo.class);
+						readUserInfo.setId(userInfo.getUserId());
+						return readUserInfo;
+					});
+
+			authInfo.setOperationAuthIds(operationUserInfos);
 		}
 
 		return new BaseRsp<>(authInfo);

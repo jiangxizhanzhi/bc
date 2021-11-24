@@ -13,6 +13,6 @@ public class ReadAuthInfo implements Serializable {
 	private Integer readAuthType;
 
 	@ApiModelProperty("授权访问组织编号")
-	private List<ReadUserInfo> readAuthIds;
+	private List<String> readAuthIds;
 
 }

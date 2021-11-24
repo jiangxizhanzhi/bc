@@ -101,6 +101,9 @@
         <foreach collection="setIds" separator="," open="(" close=")" item="setId">
             #{setId}
         </foreach>
+        <if test="isPublic != null and isPublic">
+            and `public` = #{isPublic}
+        </if>
     </select>
 
     <select id="selectByCategoryIds" resultType="java.lang.String">

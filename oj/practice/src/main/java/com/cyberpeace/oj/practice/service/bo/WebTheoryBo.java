@@ -9,10 +9,7 @@ public class WebTheoryBo extends AdminTheoryBo {
 	@ApiModelProperty("是否收藏")
 	private Boolean isCollection;
 
-	@ApiModelProperty("是否完成解题")
-	private Boolean isSolved;
-
-	@ApiModelProperty("用户提交的答案")
-	private String submitAnswer;
+	@ApiModelProperty("解题信息")
+	private PracticeNoSolvedBo resolvedDetail;
 
 }

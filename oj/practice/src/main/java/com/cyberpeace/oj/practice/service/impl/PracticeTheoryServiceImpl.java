@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,10 +35,6 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
-import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
-import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
-import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
-import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -148,8 +145,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);
 
 		Boolean result = resourceCollectionService.selectByUnique(userId,
-				ResourceCollection.BusinessType.OPERATION.getCode(), resourceId);
-		webTheoryBo.setIsCollection(result);
+				ResourceCollection.BusinessType.THEORY.getCode(), resourceId);
+		webTheoryBo.setIsCollection(null == result ? CommonConstant.FALSE : result);
 
 		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
 				PracticeCategory.PracticeType.THEORY.getCode(), resourceId);
@@ -166,15 +163,37 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 */
 	private void answerToNull(WebTheoryBo webTheoryBo, PracticeSolved practiceSolved) {
 
-		if (null == practiceSolved || !practiceSolved.getSolved()) {
-			webTheoryBo.setAnswer(null);
-			webTheoryBo.setBlank(null);
-			webTheoryBo.setKeyword(null);
+		if (null == practiceSolved) {
+			answerToNull(webTheoryBo);
 		} else {
-			webTheoryBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
-			webTheoryBo.setIsSolved(practiceSolved.getSolved());
+			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
+			if (practiceSolved.getSolved()) {
+				detailBo.setCorrectAnswer(webTheoryBo.getAnswer());
+				detailBo.setIsSolved(practiceSolved.getSolved());
+				detailBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
+				if (webTheoryBo.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
+						.getCode().intValue()) {
+					detailBo.setKeyword(webTheoryBo.getKeyword());
+				}
+				webTheoryBo.setResolvedDetail(detailBo);
+			} else {
+				PracticeNoSolvedBo practiceNoSolvedBo = new PracticeNoSolvedBo();
+				practiceNoSolvedBo.setIsSolved(practiceSolved.getSolved());
+				answerToNull(webTheoryBo);
+				webTheoryBo.setResolvedDetail(practiceNoSolvedBo);
+			}
 		}
 
+	}
+
+	/**
+	 * 答案置空
+	 * @param webTheoryBo
+	 */
+	private void answerToNull(WebTheoryBo webTheoryBo) {
+		webTheoryBo.setAnswer(null);
+		webTheoryBo.setBlank(null);
+		webTheoryBo.setKeyword(null);
 	}
 
 	@Override

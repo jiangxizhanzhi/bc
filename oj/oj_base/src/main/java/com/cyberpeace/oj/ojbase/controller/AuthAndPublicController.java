@@ -74,7 +74,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 		AuthTable publicData = BeanUtils.copy(entity, AuthTable.class);
 
 		OperationAuthInfo authInfo = new OperationAuthInfo();
-		authInfo.setOperationAuthType(publicData.getReadAuthType());
+		authInfo.setOperationAuthType(publicData.getOperationAuthType());
 
 		if (StringUtils.isNotBlank(publicData.getOperationAuthIds())) {
 			RemoteUserService userService = SpringContextUtil

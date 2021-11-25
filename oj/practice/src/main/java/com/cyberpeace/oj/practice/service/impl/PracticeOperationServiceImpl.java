@@ -187,8 +187,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 获取附件信息
 		Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
-		operationBo.setFileName(attachment.getFileName());
-		operationBo.setFileUrl(attachment.getFilePath());
+		if (null != attachment) {
+			operationBo.setFileName(attachment.getFileName());
+			operationBo.setFileUrl(attachment.getFilePath());
+		}
 		return operationBo;
 	}
 

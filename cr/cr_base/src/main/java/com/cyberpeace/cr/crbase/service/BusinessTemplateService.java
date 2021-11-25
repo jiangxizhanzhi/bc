@@ -36,4 +36,6 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	String addTemplate(BasicTemplate basicTemplate);
 
 	List<String> selectAuthIdsByUserId(String userId);
+
+	void validateNamePatch(String name, Integer type);
 }

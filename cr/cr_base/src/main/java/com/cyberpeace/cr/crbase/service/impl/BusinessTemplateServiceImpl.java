@@ -12,10 +12,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -88,6 +90,15 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public List<String> selectAuthIdsByUserId(String userId) {
 
 		return businessTemplateMapper.selectIdsByUserId(userId);
+	}
+
+	@Override
+	public void validateNamePatch(String name, Integer type) {
+		BusinessTemplate businessTemplate = businessTemplateMapper.selectByNameAndType(name, type);
+		if (businessTemplate != null) {
+			throw new BusinessException(CrBusinessErrorCode.NAME_EXIST_ERROR);
+		}
+
 	}
 
 	@Override

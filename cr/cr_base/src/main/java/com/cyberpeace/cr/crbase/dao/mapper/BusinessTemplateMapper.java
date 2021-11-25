@@ -21,4 +21,6 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 			@Param("listQuery") BusinessTemplateQuery listQuery);
 
 	List<String> selectIdsByUserId(@Param("userId") String userId);
+
+	BusinessTemplate selectByNameAndType(String name, Integer type);
 }

@@ -110,11 +110,12 @@ public class TeamTrainTemplateController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		List<TeamTemplate> teamTemplates = teamTemplateService.listByIds(deleteReq.getIds());
-		List<String> businessIds = teamTemplates.stream().map(TeamTemplate::getBusinessTemplateId)
-				.distinct().collect(Collectors.toList());
+		List<TeamTemplate> teamTemplates = teamTemplateService
+				.getTeamTemplateByBusinessIds(deleteReq.getIds());
+		List<String> roomIds = teamTemplates.stream().map(TeamTemplate::getResourceId).distinct()
+				.collect(Collectors.toList());
 
-		teamTemplateService.batchDelete(businessIds, deleteReq.getIds());
+		teamTemplateService.batchDelete(deleteReq.getIds(), roomIds);
 
 		return new BaseRsp<>();
 	}
@@ -138,6 +139,7 @@ public class TeamTrainTemplateController {
 
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
 
+		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		String roleString = teamTemplateData.getRoleConfig();
 

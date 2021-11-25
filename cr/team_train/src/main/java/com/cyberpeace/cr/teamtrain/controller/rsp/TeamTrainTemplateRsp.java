@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class TeamTrainTemplateRsp {
 
+	private String resourceId;
+
 	private BaseInfoRsp baseInfo;
 
 	private List<TeamTrainTemplateRole> roleList;

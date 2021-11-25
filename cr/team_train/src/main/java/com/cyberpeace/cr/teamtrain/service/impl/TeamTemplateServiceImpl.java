@@ -169,16 +169,21 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	}
 
 	@Override
-	public void batchDelete(List<String> businessIds, List<String> ids) {
+	public void batchDelete(List<String> businessIds, List<String> roomIds) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.removeByIds(businessIds);
-				removeByIds(ids);
+				removeByIds(roomIds);
 
 			}
 		});
+	}
+
+	@Override
+	public List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> businessIds) {
+		return teamTemplateMapper.getTeamTemplateByBusinessIds(businessIds);
 	}
 
 }

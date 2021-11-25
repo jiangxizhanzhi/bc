@@ -10,7 +10,7 @@
         <foreach collection="missions" item="mission" separator=",">
             (#{mission.resourceId}, #{mission.title}, #{mission.description}, #{mission.score}, #{mission.skillPoints},
             #{mission.answer}, #{mission.option}, #{mission.type}, #{mission.categoryId}, #{mission.writeUp},
-            #{mission.createUserId}, #{mission.showWriteup}, #{mission.missionStage}, #{mission.roomId}, now(), now())
+            #{mission.createUserId}, #{mission.showWriteup}, 0, #{mission.roomId}, now(), now())
         </foreach>
     </insert>
     <select id="batchSelect" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">

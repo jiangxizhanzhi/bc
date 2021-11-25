@@ -142,6 +142,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 				}
 
+				LocalScene localScene = getLocalScene(teamRoom.getResourceId());
+
+				localSceneService.save(localScene);
+
 			}
 
 		});
@@ -272,19 +276,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	public Integer changeTrainingStatus(String resourceId) {
 		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(resourceId);
 
-		// 未开始，新增local_scene数据
+		LocalScene localScene = localSceneService
+				.getByBusinessInstanceId(teamRoomdata.getResourceId());
 		if (teamRoomdata.isUnopened()) {
-			LocalScene localScene = getLocalScene(resourceId);
-
-			localSceneService.save(localScene);
+			localScene.setStartTime(new Date());
 		}
 		// 已开始，修改local_scene数据
 		if (teamRoomdata.isOpening()) {
-			LocalScene localScene = localSceneService
-					.getByBusinessInstanceId(teamRoomdata.getResourceId());
 			localScene.setEndTime(new Date());
-			localSceneService.save(localScene);
 		}
+		localSceneService.updateById(localScene);
+
 		if (teamRoomdata.isEnded()) {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}

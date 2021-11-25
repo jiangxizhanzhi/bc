@@ -24,5 +24,7 @@ public interface TeamTemplateService extends IService<TeamTemplate> {
 
 	TeamTemplate getTeamTemplateByBusinessId(String resourceId);
 
-	void batchDelete(List<String> businessIds, List<String> ids);
+	void batchDelete(List<String> businessIds, List<String> roomIds);
+
+	List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> businessIds);
 }

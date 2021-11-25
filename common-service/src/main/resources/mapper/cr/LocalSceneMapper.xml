@@ -8,7 +8,7 @@
 
     <select id="getByBusinessInstanceId" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
         select *
-        from local_scene_manager
+        from local_scene
         where business_instance_id = #{businessInstanceId}
     </select>
 </mapper>

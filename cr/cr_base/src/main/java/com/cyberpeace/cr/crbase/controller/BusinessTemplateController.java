@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -141,4 +144,14 @@ public class BusinessTemplateController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("查询单个任务方案")
+	@PatchMapping("/validate_name_patch/")
+	public BaseRsp<String> validateNamePatch(
+			@ApiParam(name = "name",
+					value = "名称") @RequestParam("name") @Valid @NotBlank String name,
+			@ApiParam(name = "type",
+					value = "类型") @RequestParam("type") @Valid @NotBlank Integer type) {
+		businessTemplateService.validateNamePatch(name, type);
+		return new BaseRsp();
+	}
 }

@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.teamtrain.dao.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +22,6 @@ public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 	IPage<TeamTemplateData> listTeamTemplate(Page page, ListQuery listQuery);
 
 	TeamTemplate getByBusinessId(String resourceId);
+
+	List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> ids);
 }

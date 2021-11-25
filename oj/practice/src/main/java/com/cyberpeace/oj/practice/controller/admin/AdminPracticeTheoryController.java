@@ -65,10 +65,26 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		practiceTheory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
+		replaceAnswer(practiceTheory);
 
 		Boolean result = practiceTheoryService.create(practiceTheory, authContext);
 
 		return new BaseRsp(result);
+	}
+
+	/**
+	 * 替换答案
+	 * @param practiceTheory
+	 */
+	private void replaceAnswer(PracticeTheory practiceTheory) {
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+				.getCode().intValue()) {
+			practiceTheory.setAnswer(practiceTheory.getBlank());
+		}
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
+				.getCode().intValue()) {
+			practiceTheory.setAnswer(practiceTheory.getKeyword());
+		}
 	}
 
 	@ApiOperation("理论基础习题修改")

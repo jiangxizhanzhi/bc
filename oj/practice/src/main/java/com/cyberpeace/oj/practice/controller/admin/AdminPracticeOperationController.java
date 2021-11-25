@@ -18,6 +18,7 @@ import com.cyberpeace.oj.practice.service.bo.OperationBo;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +85,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	private PracticeOperation convertReq(OperationAddReq addReq) {
 
 		PracticeOperation practiceOperation = BeanUtils.copy(addReq, PracticeOperation.class);
-		practiceOperation.setKnowledge(JsonUtil.toJsonString(addReq.getKnowledge()));
-		practiceOperation.setAnswer(JsonUtil.toJsonString(addReq.getAnswer()));
+		if (CollectionUtils.isNotEmpty(addReq.getAnswer())) {
+			practiceOperation.setAnswer(JsonUtil.toJsonString(addReq.getAnswer()));
+		}
+		if (CollectionUtils.isNotEmpty(addReq.getKnowledge())) {
+			practiceOperation.setKnowledge(JsonUtil.toJsonString(addReq.getKnowledge()));
+		}
 		practiceOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		return practiceOperation;

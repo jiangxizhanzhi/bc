@@ -28,7 +28,7 @@ public class OperationAddReq implements Serializable {
 	private String categoryId;
 
 	@ApiModelProperty("知识点")
-	private String knowledge;
+	private List<String> knowledge;
 
 	@ApiModelProperty("难度")
 	@NotNull(groups = { Create.class })
@@ -62,7 +62,7 @@ public class OperationAddReq implements Serializable {
 	private Integer destroyDelay;
 
 	@ApiModelProperty("答案")
-	private String answer;
+	private List<String> answer;
 
 	@ApiModelProperty("分数")
 	@NotNull(groups = { Create.class })

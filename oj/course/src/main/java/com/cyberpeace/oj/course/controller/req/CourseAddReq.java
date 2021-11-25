@@ -17,21 +17,7 @@ import lombok.Data;
 @ApiModel("课程新增信息")
 public class CourseAddReq implements Serializable {
 
-	@NotNull(groups = {Create.class})
-	@ApiModelProperty(value = "授权访问类型 1=全部 2=自定义")
-	private Integer readAuthType;
-
-	@ApiModelProperty("授权访问组织")
-	private List<String> readAuthIds;
-
-	@NotNull(groups = {Create.class})
-	@ApiModelProperty("授权操作类型 1=全部 2=自定义")
-	private Integer operationAuthType;
-
-	@ApiModelProperty("被授权人")
-	private List<String> operationAuthIds;
-
-	@NotBlank(groups = {Create.class})
+	@NotBlank(groups = { Create.class })
 	@ApiModelProperty("课程名称")
 	private String name;
 
@@ -39,7 +25,7 @@ public class CourseAddReq implements Serializable {
 	private String description;
 
 	@ApiModelProperty("课程方向")
-	@NotBlank(groups = {Create.class})
+	@NotBlank(groups = { Create.class })
 	private String categoryId;
 
 	@ApiModelProperty("课程封面")
@@ -48,15 +34,15 @@ public class CourseAddReq implements Serializable {
 	@ApiModelProperty("课程大纲")
 	private String outline;
 
-	@NotNull(groups = {Create.class})
+	@NotNull(groups = { Create.class })
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
 	@ApiModelProperty("是否公开")
-	@NotNull(groups = {Create.class})
+	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
-	@NotNull(groups = {Create.class})
+	@NotNull(groups = { Create.class })
 	@ApiModelProperty("课程分类 0=基础 2=攻击 3=防御")
 	private Integer courseType;
 

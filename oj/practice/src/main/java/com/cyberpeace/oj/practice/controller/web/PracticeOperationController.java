@@ -10,6 +10,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
@@ -93,4 +94,10 @@ public class PracticeOperationController {
 
 		return new BaseRsp<>(practiceIds);
 	}
+
+//	@ApiOperation("实操习题附件上传")
+//	@PostMapping("")
+//	public BaseRsp<AttachmentBo> uploadAttachment() {
+//
+//	}
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.model.AuthTable;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -119,8 +121,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(addReq, Course.class);
-		course.setReadAuthIds(JsonUtil.arrayToString(addReq.getReadAuthIds()));
-		course.setOperationAuthIds(JsonUtil.arrayToString(addReq.getOperationAuthIds()));
+		course.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setOperationAuthIds("[]");
+		course.setReadAuthIds("[]");
+		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 
 		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
 		if (null == courseCategory) {
@@ -135,17 +139,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程信息修改")
 	@PatchMapping("")
-	public BaseRsp<Course>
-			patch(@RequestBody @Validated(Update.class) CourseUpdateReq updateReq) {
+	public BaseRsp<Course> patch(@RequestBody @Validated(Update.class) CourseUpdateReq updateReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(updateReq, Course.class);
-		if (CollectionUtils.isNotEmpty(updateReq.getOperationAuthIds())) {
-			course.setOperationAuthIds(JsonUtil.arrayToString(updateReq.getOperationAuthIds()));
-		}
-		if (CollectionUtils.isNotEmpty(updateReq.getReadAuthIds())) {
-			course.setReadAuthIds(JsonUtil.arrayToString(updateReq.getReadAuthIds()));
-		}
 
 		Course courseRsp = courseService.updateCourse(userId, course);
 		return new BaseRsp<>(courseRsp);

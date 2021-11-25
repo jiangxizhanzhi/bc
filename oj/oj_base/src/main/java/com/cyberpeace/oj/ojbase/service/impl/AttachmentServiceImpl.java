@@ -1,12 +1,20 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +27,10 @@ import com.cyberpeace.oj.ojbase.dao.mapper.AttachmentMapper;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import com.google.common.collect.Lists;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Slf4j
 public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachment> implements AttachmentService {
 
 	@Autowired
@@ -69,6 +79,47 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		if (insert > 0) {
 			return BeanUtils.copy(attachment, AttachmentBo.class);
 		}
+		return null;
+	}
+
+	@Override
+	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file) {
+
+		if (file.isEmpty()) {
+			throw new InvalidParamException("请选择文件上传！");
+		}
+
+		String filePath = EnumUtils.getEnumDescByCode(type, Attachment.AttachmentType.class);
+		if (StringUtils.isBlank(filePath)) {
+			throw new InvalidParamException("不支持此类型文件上传！");
+		}
+
+		File uploadFile = new File(filePath + file.getOriginalFilename());
+		if (uploadFile.exists()) {
+			log.error("Upload file exist! upload_file_path=[{}]", uploadFile.getAbsolutePath());
+			Attachment attachment = attachmentMapper.selectByPath(uploadFile.getAbsolutePath());
+			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
+			return attachmentBo;
+		}
+
+		if (!uploadFile.getParentFile().exists()) {
+			uploadFile.getParentFile().mkdirs();
+		}
+
+		try {
+			file.transferTo(uploadFile);
+		} catch (IOException e) {
+			log.error("Upload file error, upload_file_path=[{}]. catch error:",
+					uploadFile.getAbsolutePath(), e);
+			throw new BusinessException(OjBusinessErrorCode.FILE_UPLOAD_ERROR);
+		}
+
+		if (null != insert && insert) {
+			AttachmentBo attachmentBo = create(file.getOriginalFilename(),
+					uploadFile.getAbsolutePath());
+			return attachmentBo;
+		}
+
 		return null;
 	}
 }

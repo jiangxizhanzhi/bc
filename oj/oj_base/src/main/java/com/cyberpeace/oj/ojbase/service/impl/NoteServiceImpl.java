@@ -58,7 +58,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		try {
 			noteMapper.insert(note);
 		} catch (DuplicateKeyException e) {
-			noteMapper.updateById(note);
+			noteMapper.updateNote(note);
 		}
 
 		return note;

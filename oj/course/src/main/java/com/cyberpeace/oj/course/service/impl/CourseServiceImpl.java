@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.service.LessonConfigService;
@@ -70,6 +72,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -203,6 +208,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 						String.class);
 				courseAdminBo.setShareCount(shares.size());
 			}
+
+			UserInfo userInfo = remoteUserService.getById(course.getCreateUserId());
+			courseAdminBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 			return courseAdminBo;
 
 		} else {

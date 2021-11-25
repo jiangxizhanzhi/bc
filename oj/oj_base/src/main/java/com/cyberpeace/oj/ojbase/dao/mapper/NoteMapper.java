@@ -21,4 +21,6 @@ public interface NoteMapper extends BaseMapper<Note> {
 
 	@Override
 	int updateById(Note note);
+
+	int updateNote(Note note);
 }

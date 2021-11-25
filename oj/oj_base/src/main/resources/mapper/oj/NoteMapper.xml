@@ -5,18 +5,20 @@
     <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Note"/>
 
     <select id="selectByCondition" resultMap="base">
-        select * from oj_note
+        select *
+        from oj_note
         where business_id = #{context.businessId}
-        and `user_id` = #{context.userId}
-        and business_type = #{context.businessType}
-        and note_type = #{context.noteType}
+          and `user_id` = #{context.userId}
+          and business_type = #{context.businessType}
+          and note_type = #{context.noteType}
     </select>
 
     <select id="pageByUserIdsAndContent" resultMap="base">
-        select * from oj_note
+        select *
+        from oj_note
         <where>
             note_type = #{noteListQuery.noteType}
-            and business_type = #{noteListQuery.businessType}
+                    and business_type = #{noteListQuery.businessType}
             <if test="noteListQuery.userIds != null and noteListQuery.userIds.size() != 0">
                 and user_id in
                 <foreach collection="noteListQuery.userIds" open="(" close=")" item="userId" separator=",">
@@ -53,4 +55,26 @@
         where resource_id = #{resourceId}
     </update>
 
+    <update id="updateNote">
+        update oj_note
+        <set>
+            content = #{content}
+            <if test="operationAuthType != null">
+                , operation_auth_type = #{operationAuthType}
+            </if>
+            <if test="operationAuthIds != null and operationAuthIds != ''">
+                , operation_auth_ids = #{operationAuthIds}
+            </if>
+            <if test="readAuthType != null">
+                , read_auth_type = #{readAuthType}
+            </if>
+            <if test="readAuthIds != null and readAuthIds != ''">
+                , read_auth_ids = #{readAuthIds}
+            </if>
+        </set>
+        where business_id = #{businessId}
+          and `user_id` = #{userId}
+          and business_type = #{businessType}
+          and note_type = #{noteType}
+    </update>
 </mapper>

@@ -97,7 +97,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
-	public BaseRsp<List<CourseAdminBo>>
+	public BaseRsp<List<CourseInfoBo>>
 			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
 
 		// 查询数据组装

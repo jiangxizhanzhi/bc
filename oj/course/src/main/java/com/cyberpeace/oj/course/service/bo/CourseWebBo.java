@@ -49,4 +49,7 @@ public class CourseWebBo implements Serializable {
     @ApiModelProperty("课程课时时长")
     private Integer courseDuration;
 
+    @ApiModelProperty("是否公开")
+    private Boolean isPublic;
+
 }

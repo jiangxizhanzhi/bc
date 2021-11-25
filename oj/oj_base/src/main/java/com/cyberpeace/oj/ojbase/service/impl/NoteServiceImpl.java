@@ -55,7 +55,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
-		noteMapper.insert(note);
+		try {
+			noteMapper.insert(note);
+		} catch (DuplicateKeyException e) {
+			noteMapper.updateById(note);
+		}
+
 		return note;
 	}
 

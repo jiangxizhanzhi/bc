@@ -2,8 +2,8 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
@@ -20,7 +20,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param businessTemplateQuery
 	 * @return
 	 */
-	IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery);
+	ListRsp<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery);
 
 	/** 获取权限团队训练的操作权限人员
 	 * @param resourceId 

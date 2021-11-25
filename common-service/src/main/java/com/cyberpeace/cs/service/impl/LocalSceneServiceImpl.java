@@ -45,9 +45,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			throw new RuntimeException();
 		}
 
-		String sceneId = "";
-		// remoteSceneService.startScene(localScene.getTopoId(),
-		// sceneOpsContext());
+		String sceneId = remoteSceneService.startScene(localScene.getTopoId(), sceneOpsContext());
 		LocalScene toUpdate = new LocalScene();
 
 		toUpdate.setResourceId(localScene.getResourceId());

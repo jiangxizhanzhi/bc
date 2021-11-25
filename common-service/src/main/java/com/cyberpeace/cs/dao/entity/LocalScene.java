@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
-import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.Getter;
 
@@ -30,7 +29,7 @@ public class LocalScene extends BaseTable {
 	/**
 	 *
 	 */
-	private String businessCode;
+	private Integer businessCode;
 
 	/**
 	 * mp场景启动时间，只有在场景启动后才会有该值
@@ -97,4 +96,48 @@ public class LocalScene extends BaseTable {
 		}
 
 	}
+
+	public enum BusinessCode implements GenericEnum {
+
+		DEFAULT(0, "默认"), PRACTICE(110, "练习"), LESSON(120, "课程"), EXAM(130, "考试"), LESSON_PRACTICE(
+				140, "课程练习"), INDIVIDUAL_TRAINING(211, "个人训练"), LIVE_VULN(212, "漏洞"), TEAM_TRAINING(
+						213, "团队训练"), READ_VS_BLUE(214, "红蓝对抗"), WEAPON_TEST(216,
+								"武器"), SYSTEM_TEST(217, "系统"), SOFT_TEST(221,
+										"软件"), COURSE_TRAINING(150, "课程训练"), SKILLS_ASSESSMENT(231,
+												"技能评估"), TACTICAL_ASSESSMENT(232,
+														" 战术评估"), COMPREHENSIVE_ASSESSMENT(233,
+																"综合评估"), TACTICAL_TRAINING(234,
+																		"战术训练"), COMPREHENSIVE_TRAINING(
+																				235, "综合训练");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		private BusinessCode(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
+
+	public enum DestoryMode implements GenericEnum {
+
+		MANUAL(1, "手动销毁"), AUTO(2, "自动销毁");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		private DestoryMode(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
+
 }

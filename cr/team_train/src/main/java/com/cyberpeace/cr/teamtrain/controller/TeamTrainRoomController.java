@@ -250,7 +250,6 @@ public class TeamTrainRoomController {
 		Mission mission = missionService.getById(writeUpReq.getMissionResourceId());
 		missionService.updateShowWriteup(writeUpReq.getMissionResourceId(),
 				writeUpReq.getWriteUpShow());
-		// todo 记录日志
 
 		return new BaseRsp<>();
 	}

@@ -61,4 +61,6 @@ public interface CrBusinessErrorCode {
 	// 任务已下发
 	String MISSION_ISSUED = "101017";
 
+	// 模板类型不支持
+	String TEMPLETE_TYPE_NOT_SUPPORTED = "101018";
 }

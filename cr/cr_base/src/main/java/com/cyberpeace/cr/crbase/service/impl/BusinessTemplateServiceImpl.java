@@ -2,7 +2,6 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ import com.cyberpeace.cr.crbase.service.context.ShareTeacher;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.integratation.model.UserPageContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
@@ -85,6 +84,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 
 		return null;
+	}
+
+	@Override
+	public List<String> selectAuthIdsByUserId(String userId) {
+
+		return businessTemplateMapper.selectIdsByUserId(userId);
 	}
 
 	@Override

@@ -287,13 +287,16 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			localScene.setEndTime(new Date());
 			localSceneService.save(localScene);
 		}
+		if (teamRoomdata.isEnded()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+		}
 
 		if (teamRoomdata.isOpening()) {
-			// todo 日志
+			// todo 审计日志
 		}
 
 		else if (teamRoomdata.isEnded()) {
-			// todo 日志
+			// todo 审计日志
 		}
 		return teamRoomdata.getTrainingStatus();
 
@@ -479,10 +482,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		LocalScene localScene = new LocalScene();
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
-		//TODO
-		localScene.setBusinessCode("123");
-		//TODO
-		localScene.setDestoryMode(1);
+		localScene.setBusinessCode(LocalScene.BusinessCode.TEAM_TRAINING.getCode());
+
+		localScene.setDestoryMode(LocalScene.DestoryMode.MANUAL.getCode());
 		localScene.setBusinessInstanceId(teamRoomId);
 		localScene.setTopoId(teamRoom.getCopyedTopoId());
 

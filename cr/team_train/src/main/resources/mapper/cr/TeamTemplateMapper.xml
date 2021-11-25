@@ -16,7 +16,15 @@
         cr_team_template
         left join cr_business_template on cr_business_template.resource_id = cr_team_template.business_template_id
         <where>
-            1=1
+            cr_business_template.resource_id in
+            <if test="listQuery.ids != null and listQuery.ids.size() != 0">
+                <foreach collection="listQuery.ids" item="templateId" separator="," close=")" open="(">
+                    #{templateId}
+                </foreach>
+            </if>
+            <if test="listQuery.ids.size() == 0">
+                ('')
+            </if>
             <if test="listQuery.search != null and listQuery.search != ''">
                 <bind name="search" value="'%' + listQuery.search + '%'"/>
                 and cr_business_template.name like #{search}

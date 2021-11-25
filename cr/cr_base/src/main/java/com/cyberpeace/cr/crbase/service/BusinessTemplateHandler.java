@@ -6,7 +6,9 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
@@ -51,10 +53,14 @@ public class BusinessTemplateHandler {
 	}
 
 	private BusinessTemplate.BusinessType getBusinessType(BasicTemplate basicTemplate) {
-		// TODO
 		// 校验外部传入的类型在BusinessTemplate.BusinessType声明的范围内
-		return EnumUtils.getEnumByCode(basicTemplate.getBaseInfo().getCategory(),
+		BusinessTemplate.BusinessType enumByCode = EnumUtils.getEnumByCode(
+				basicTemplate.getBaseInfo().getCategory(),
 				BusinessTemplate.BusinessType.class);
+		if (enumByCode == null) {
+			throw new BusinessException(CrBusinessErrorCode.TEMPLETE_TYPE_NOT_SUPPORTED);
+		}
+		return enumByCode;
 
 	}
 

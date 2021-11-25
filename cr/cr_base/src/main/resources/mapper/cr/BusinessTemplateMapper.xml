@@ -10,8 +10,8 @@
     </sql>
 
     <select id="listTeamTemplate" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData">
-        <if test="businessTemplateQuery.search != null and businessTemplateQuery.search != ''">
-            <bind name="search" value="'%' + businessTemplateQuery.search + '%'"/>
+        <if test="listQuery.search != null and listQuery.search != ''">
+            <bind name="search" value="'%' + listQuery.search + '%'"/>
         </if>
         select
         resource_id ,topo_id,`name`, description,business_type,difficulty,
@@ -19,11 +19,20 @@
         from
         cr_business_template
         <where>
-            1=1
-            <if test="businessTemplateQuery.search != null and businessTemplateQuery.search != ''">
+            cr_business_template.resource_id in
+            <if test="listQuery.ids != null and listQuery.ids.size() != 0">
+                <foreach collection="listQuery.ids" item="templateId" separator="," close=")" open="(">
+                    #{templateId}
+                </foreach>
+            </if>
+            <if test="listQuery.ids.size() == 0">
+                ('')
+            </if>
+
+            <if test="listQuery.search != null and listQuery.search != ''">
                 and cr_business_template.name like #{search}
             </if>
-            <if test="businessTemplateQuery.type != null and businessTemplateQuery.type != ''">
+            <if test="listQuery.type != null and listQuery.type != ''">
                 and cr_business_template.business_type = #{type}
             </if>
         </where>

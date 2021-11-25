@@ -115,19 +115,18 @@ public class TeamTrainTemplateController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("列表查询")
+	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 
-		ListRsp<TeamTrainTemplateRsp> teamTrainTemplateRspListRsp = new ListRsp();
 
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
 
 		data.convert(
 				teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData));
 
-		return new BaseRsp<>(teamTrainTemplateRspListRsp);
+		return new BaseRsp(data);
 	}
 
 	public TeamTrainTemplateRsp

@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -33,4 +35,5 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 
 	String addTemplate(BasicTemplate basicTemplate);
 
+	List<String> selectAuthIdsByUserId(String userId);
 }

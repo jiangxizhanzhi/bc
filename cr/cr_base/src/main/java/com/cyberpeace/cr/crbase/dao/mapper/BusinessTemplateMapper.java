@@ -18,7 +18,7 @@ import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 	IPage<BusinessTemplateData> listTeamTemplate(Page page,
-			@Param("businessTemplateQuery") BusinessTemplateQuery businessTemplateQuery);
+			@Param("listQuery") BusinessTemplateQuery listQuery);
 
 	List<String> selectIdsByUserId(@Param("userId") String userId);
 }

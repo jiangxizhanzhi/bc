@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,8 +110,11 @@ public class TeamTrainTemplateController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+		List<TeamTemplate> teamTemplates = teamTemplateService.listByIds(deleteReq.getIds());
+		List<String> businessIds = teamTemplates.stream().map(TeamTemplate::getBusinessTemplateId)
+				.distinct().collect(Collectors.toList());
 
-		teamTemplateService.removeByIds(deleteReq.getIds());
+		teamTemplateService.batchDelete(businessIds, deleteReq.getIds());
 
 		return new BaseRsp<>();
 	}
@@ -119,7 +123,6 @@ public class TeamTrainTemplateController {
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
-
 
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
 

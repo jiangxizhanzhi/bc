@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -164,6 +166,19 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		}
 
 		return template;
+	}
+
+	@Override
+	public void batchDelete(List<String> businessIds, List<String> ids) {
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				businessTemplateService.removeByIds(businessIds);
+				removeByIds(ids);
+
+			}
+		});
 	}
 
 }

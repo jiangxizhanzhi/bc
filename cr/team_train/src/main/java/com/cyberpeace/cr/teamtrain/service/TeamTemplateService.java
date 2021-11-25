@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.teamtrain.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -21,4 +23,6 @@ public interface TeamTemplateService extends IService<TeamTemplate> {
 			BusinessTemplate businessTemplate);
 
 	TeamTemplate getTeamTemplateByBusinessId(String resourceId);
+
+	void batchDelete(List<String> businessIds, List<String> ids);
 }

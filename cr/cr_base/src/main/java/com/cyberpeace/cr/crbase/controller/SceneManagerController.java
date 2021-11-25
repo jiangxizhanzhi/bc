@@ -7,21 +7,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrSceneRetrieveRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.dao.entity.LocalSceneManager;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
+import com.cyberpeace.cr.crbase.service.SceneHandler;
 import com.cyberpeace.cr.crbase.service.SceneManagerService;
+import com.cyberpeace.cr.crbase.service.context.scene.RoomInfo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,8 +43,11 @@ public class SceneManagerController {
 	SceneManagerService sceneManagerService;
 
 	@Autowired
-	@Qualifier("businessTemplateHandler")
-	private BusinessTemplateHandler templateHandler;
+	@Qualifier("sceneHandler")
+	private SceneHandler sceneHandler;
+
+	@Autowired
+	TransactionTemplate transactionTemplate;
 
 	@ApiOperation("读取场景")
 	@GetMapping("/scene")
@@ -53,7 +58,7 @@ public class SceneManagerController {
 		JSONObject topoData = null;
 
 		LocalSceneManager sceneManager = sceneManagerService.getById(sceneManagerId);
-		BusinessTemplateHandler handler = templateHandler.getHandler(sceneManager.getAppId());
+		SceneHandler handler = sceneHandler.getHandler(sceneManager.getAppId());
 		String roomId = handler.getRoomIdBySceneManagerId(sceneManagerId);
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRoleNodesData nodes = handler.getNodes(userId, roomId, roleId);
@@ -106,4 +111,40 @@ public class SceneManagerController {
 		}
 	}
 
+	@ApiOperation("启动场景")
+	@PostMapping("/scene")
+	public BaseRsp startScene(@RequestBody SceneReq sceneReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		LocalSceneManager sceneManager = sceneManagerService.getById(sceneReq.getSceneManagerId());
+		SceneHandler handler = sceneHandler.getHandler(sceneManager.getAppId());
+		RoomInfo roomInfo = handler.getRoomInfoBySceneManagerId(sceneManager.getSceneId());
+
+		handler.checkSceneOperationPermission(roomInfo.getRoomId(), userId);
+		handler.checkBeforeStartingScene(roomInfo.getRoomId());
+
+		if (StringUtils.isNotBlank(sceneManager.getSceneId())) {
+			throw new RuntimeException();
+		}
+
+		String sceneId = sceneManagerService.startScene(sceneManager, roomInfo, userId);
+		if (StringUtils.isBlank(sceneId)) {
+			throw new RuntimeException();
+		}
+		try {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					sceneManagerService.updateScene(sceneManager, sceneId);
+					// handler.afterCreateScene;
+				}
+			});
+		} catch (Exception e) {
+			log.error("db error when creating scene: " + e);
+			sceneManagerService.deleteRemoteScene(sceneManager, userId);
+		}
+
+		return new BaseRsp();
+
+	}
 }

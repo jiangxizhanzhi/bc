@@ -8,6 +8,8 @@ public interface RemoteSceneService {
 
 	String startScene(String topoId, SceneStartContext sceneStartContext);
 
+	String startScene(String topoId, SceneStartContext sceneStartContext, Boolean isTest);
+
 	Boolean stopScene(String sceneId, SceneOpsContext sceneOpsContext);
 
 	JSONObject getById(String sceneId, String userId);

@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
@@ -40,6 +42,15 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Override
+	public CrRole getById(String roleId) {
+		CrRole role = crRoleMapper.selectById(roleId);
+		if(role == null){
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+		return role;
+	}
 
 	@Override
 	public CrRoleContext<MissionContext> getRoles(String roomId) {
@@ -129,7 +140,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		CrRole crRole = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (crRole == null) {
-			throw new ResourceNotFoundException(roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		return crRole;
 	}

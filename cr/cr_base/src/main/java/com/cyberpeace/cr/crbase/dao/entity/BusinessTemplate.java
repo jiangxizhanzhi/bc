@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
-import java.util.Arrays;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -35,30 +33,18 @@ public class BusinessTemplate extends AuthTable {
 
 	public enum BusinessType implements GenericEnum {
 
-		TRAINING_SINGLE(1, "单兵训练", 211), VULN_VALIDATE(2, "漏洞库", 212), TRAINING_TEAM(3, "团队训练",
-				213), RED_VS_BLUE(4, "红蓝对抗",
-						214), WEAPON_ASSESS(6, "装备测试", 215), SYSTEM_ASSESS(7, "系统测试", 216);
+		TRAINING_SINGLE(1, "单兵训练"), VULN_VALIDATE(2, "漏洞库"), TRAINING_TEAM(3,
+				"团队训练"), RED_VS_BLUE(4, "红蓝对抗"), WEAPON_ASSESS(6, "装备测试"), SYSTEM_ASSESS(7, "系统测试");
 
 		@Getter
 		private Integer code;
 
 		@Getter
-		private Integer appId;
-
-		@Getter
 		private String desc;
 
-		private BusinessType(Integer code, String desc, Integer appId) {
+		private BusinessType(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
-			this.appId = appId;
 		}
-
-		public static BusinessType getByAppId(Integer appId) {
-			return Arrays.stream(BusinessType.values()).filter(t -> t.getAppId().equals(appId))
-					.findFirst().orElse(null);
-		}
-
 	}
-
 }

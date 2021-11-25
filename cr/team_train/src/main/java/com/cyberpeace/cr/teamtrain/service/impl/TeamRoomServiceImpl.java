@@ -320,8 +320,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		for (CrRole crRole : crRoles) {
 			// 获取每个学员用户，以及学员id
-			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER
-					.getValue()) {
+			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER.getValue()) {
 
 				List<String> users = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
 				users.forEach(user -> {
@@ -371,6 +370,15 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		timeLineData.setUserTimeLineConfig(timeLineEventList);
 
 		return timeLineData;
+	}
+
+	@Override
+	public TeamRoom getBySceneMangerId(String sceneManagerId) {
+		TeamRoom room = teamRoomMapper.selectbySceneManagerId(sceneManagerId);
+		if (room == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return room;
 	}
 
 	private void setTime(TimeLineData timeLineData, String roomId) {
@@ -462,7 +470,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!crRole.getRoleGroup().equals(teacher)) {
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_NOT_EXIST);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
 

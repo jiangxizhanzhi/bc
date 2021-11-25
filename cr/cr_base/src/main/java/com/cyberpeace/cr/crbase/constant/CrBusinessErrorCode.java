@@ -23,7 +23,7 @@ public interface CrBusinessErrorCode {
 	String ROOM_NOT_EXIST = "101004";
 
 	// 无权限操作
-	String PERMISSION_NOT_EXIST = "101005";
+	String PERMISSION_DENIED = "101005";
 
 	// 训练未开始
 	String TRAIN_NOT_BEGIN = "101006";

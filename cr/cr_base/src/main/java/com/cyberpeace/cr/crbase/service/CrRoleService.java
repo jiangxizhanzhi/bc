@@ -14,6 +14,8 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
  */
 public interface CrRoleService extends IService<CrRole> {
 
+	CrRole getById(String roleId);
+
 	/** 获取团队训练的权限人员
 	 * @param roomId
 	 * @return

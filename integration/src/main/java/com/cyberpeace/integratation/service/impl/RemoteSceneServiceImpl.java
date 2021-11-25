@@ -24,13 +24,19 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_START_URL;
 
+	private String SCENE_START_TEST_URL;
+
 	private String SCENE_DELETE_URL;
 
 	private String SCENE_RETRIEVE;
 
 	@PostConstruct
 	public void init() {
-		SCENE_START_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.start");
+		SCENE_START_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.start.app");
+
+		SCENE_START_TEST_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.start.test");
 
 		SCENE_DELETE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.delete");
 
@@ -40,6 +46,28 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public String startScene(String topoId, SceneStartContext sceneStartContext) {
 		String targetUrl = SCENE_START_URL + "?id=" + topoId;
+
+		JSONObject data = HttpClientUtil.post(targetUrl, sceneStartContext, JSONObject.class);
+
+		if (null == data) {
+			log.error("topoId=[{}] startScene error, response data is null", topoId);
+			throw new RemoteServiceException();
+		}
+
+		String sceneId = data.getString("id");
+
+		return sceneId;
+	}
+
+	@Override
+	public String startScene(String topoId, SceneStartContext sceneStartContext, Boolean isTest) {
+
+		String targetUrl = null;
+		if (isTest) {
+			targetUrl = SCENE_START_TEST_URL + "?id=" + topoId;
+		} else {
+			targetUrl = SCENE_START_URL + "?id=" + topoId;
+		}
 
 		JSONObject data = HttpClientUtil.post(targetUrl, sceneStartContext, JSONObject.class);
 

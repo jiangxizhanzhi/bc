@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.LocalSceneManager;
+import com.cyberpeace.cr.crbase.service.context.scene.RoomInfo;
 
 public interface SceneManagerService extends IService<LocalSceneManager> {
 
@@ -30,4 +31,8 @@ public interface SceneManagerService extends IService<LocalSceneManager> {
 	JSONObject getTopoData(LocalSceneManager sceneManager);
 
 	void updateScene(LocalSceneManager sceneManager, String sceneId);
+
+	String startScene(LocalSceneManager sceneManager, RoomInfo roomInfo, String userId);
+
+	void deleteRemoteScene(LocalSceneManager sceneManager, String userId);
 }

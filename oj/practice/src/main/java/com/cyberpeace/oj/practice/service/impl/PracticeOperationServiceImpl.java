@@ -208,6 +208,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				PracticeCategory.PracticeType.OPERATION.getCode(), resourceId);
 		if (null == practiceSolved) {
 			webOperationBo.setAnswer(null);
+			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
+			detailBo.setIsSolved(CommonConstant.FALSE);
+			webOperationBo.setResolvedDetail(detailBo);
 		} else {
 			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
 			if (practiceSolved.getSolved()) {

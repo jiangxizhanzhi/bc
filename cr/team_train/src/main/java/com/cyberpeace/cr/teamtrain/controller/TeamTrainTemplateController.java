@@ -86,7 +86,7 @@ public class TeamTrainTemplateController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
-		TeamTemplate template = teamTemplateService.getTeamTemplate(resource_id);
+		TeamTemplate template = teamTemplateService.getTeamTemplateByBusinessId(resource_id);
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());

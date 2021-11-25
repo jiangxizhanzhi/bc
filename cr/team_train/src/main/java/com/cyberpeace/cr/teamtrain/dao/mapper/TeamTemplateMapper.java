@@ -18,4 +18,6 @@ import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 
 	IPage<TeamTemplateData> listTeamTemplate(Page page, ListQuery listQuery);
+
+	TeamTemplate getByBusinessId(String resourceId);
 }

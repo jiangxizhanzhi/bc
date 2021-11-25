@@ -157,8 +157,8 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	}
 
 	@Override
-	public TeamTemplate getTeamTemplate(String resourceId) {
-		TeamTemplate template = getById(resourceId);
+	public TeamTemplate getTeamTemplateByBusinessId(String resourceId) {
+		TeamTemplate template = teamTemplateMapper.getByBusinessId(resourceId);
 		if (template == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}

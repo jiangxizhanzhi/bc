@@ -40,5 +40,11 @@
             </if>
         </where>
     </select>
+    <select id="getByBusinessId" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate"
+            parameterType="java.lang.String">
+        select *
+        from cr_team_template
+        where business_template_id = #{resourceId}
+    </select>
 
 </mapper>

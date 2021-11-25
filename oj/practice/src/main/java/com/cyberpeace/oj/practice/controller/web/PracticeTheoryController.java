@@ -89,4 +89,14 @@ public class PracticeTheoryController {
 		return new BaseRsp<>(evaluateResult);
 	}
 
+	@ApiOperation("获取所有理论习题编号列表")
+	@GetMapping("/list/ids")
+	public BaseRsp<List<String>> getPracticeListId() {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		List<String> practiceIds = practiceTheoryService.selectPracticeListIds(authContext);
+		return new BaseRsp<>(practiceIds);
+	}
+
 }

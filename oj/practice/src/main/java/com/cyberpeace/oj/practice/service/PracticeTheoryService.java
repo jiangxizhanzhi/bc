@@ -10,6 +10,8 @@ import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 
+import java.util.List;
+
 public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
@@ -54,4 +56,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	int updateTheory(PracticeTheory practiceTheory, AuthContext authContext);
+
+	/**
+	 * 获取所有理论习题编号列表
+	 * @param authContext
+	 * @return
+	 */
+	List<String> selectPracticeListIds(AuthContext authContext);
 }

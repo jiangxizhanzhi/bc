@@ -82,4 +82,15 @@ public class PracticeOperationController {
 
 		return new BaseRsp<>(evaluateResult);
 	}
+
+	@ApiOperation("获取所有实操习题编号")
+	@GetMapping("/list/ids")
+	public BaseRsp<List<String>> getPracticeListIds() {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		List<String> practiceIds = practiceOperationService.selectPracticeIds(authContext);
+
+		return new BaseRsp<>(practiceIds);
+	}
 }

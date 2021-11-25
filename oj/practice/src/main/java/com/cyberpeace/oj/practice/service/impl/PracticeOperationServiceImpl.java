@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -338,5 +339,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceSolvedMapper.insert(practiceSolved);
 
 		return evaluateResult;
+	}
+
+	@Override
+	public List<String> selectPracticeIds(AuthContext authContext) {
+		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(setIds)) {
+			return Lists.newArrayList();
+		}
+
+		return practiceOperationMapper.selectBySetIds(setIds, authContext.getIsWeb());
 	}
 }

@@ -8,6 +8,8 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.*;
 
+import java.util.List;
+
 public interface PracticeOperationService extends IService<PracticeOperation> {
 
 	/**
@@ -60,4 +62,11 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
 	EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer);
+
+	/**
+	 * 获取所有的实操习题编号
+	 * @param authContext
+	 * @return
+	 */
+    List<String> selectPracticeIds(AuthContext authContext);
 }

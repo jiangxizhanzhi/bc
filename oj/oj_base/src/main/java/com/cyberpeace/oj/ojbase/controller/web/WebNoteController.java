@@ -68,6 +68,9 @@ public class WebNoteController {
 				.businessId(getNoteReq.getResourceId()).userId(userId).build();
 
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
+		if (null == noteBo) {
+			return new BaseRsp<>();
+		}
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
 		return new BaseRsp<>(noteRes);
 	}

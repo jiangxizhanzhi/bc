@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.oj.practice.dao.entity.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,10 +36,6 @@ import com.cyberpeace.oj.ojbase.dao.mapper.AttachmentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
@@ -212,11 +209,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		if (null == practiceSolved) {
 			webOperationBo.setAnswer(null);
 		} else {
+			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
 			if (practiceSolved.getSolved()) {
-				webOperationBo.setIsSolved(practiceSolved.getSolved());
-				webOperationBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
+				detailBo.setCorrectAnswer(operationBo.getAnswer());
+				detailBo.setIsSolved(practiceSolved.getSolved());
+				detailBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
 			} else {
-				webOperationBo.setIsSolved(practiceSolved.getSolved());
+				detailBo.setIsSolved(practiceSolved.getSolved());
 				webOperationBo.setAnswer(null);
 			}
 		}

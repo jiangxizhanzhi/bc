@@ -10,6 +10,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
+import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -27,6 +29,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -42,6 +45,9 @@ public class PracticeOperationController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
@@ -95,9 +101,14 @@ public class PracticeOperationController {
 		return new BaseRsp<>(practiceIds);
 	}
 
-//	@ApiOperation("实操习题附件上传")
-//	@PostMapping("")
-//	public BaseRsp<AttachmentBo> uploadAttachment() {
-//
-//	}
+	@ApiOperation("实操习题附件上传")
+	@PostMapping("/upload_attachment")
+	public BaseRsp<AttachmentBo>
+			uploadAttachment(@RequestParam("file") MultipartFile multipartFile) {
+
+		AttachmentBo attachmentBo = attachmentService.uploadFile(
+				Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE, multipartFile);
+
+		return new BaseRsp<>(attachmentBo);
+	}
 }

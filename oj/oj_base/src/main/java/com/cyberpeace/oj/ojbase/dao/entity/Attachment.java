@@ -41,7 +41,8 @@ public class Attachment extends BaseTable {
 
 		HANDOUT(1, Attachment.parentPath + "/course/handout/"), VIDEO(2,
 				Attachment.parentPath + "/course/video/"), ATTACHMENT(3,
-						Attachment.parentPath + "/course/attachment/");
+						Attachment.parentPath + "/course/attachment/"),
+		OTHER(4, Attachment.parentPath + "/other");
 
 		@Getter
 		private Integer code;

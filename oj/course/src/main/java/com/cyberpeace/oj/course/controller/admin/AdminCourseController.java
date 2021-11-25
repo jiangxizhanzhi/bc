@@ -6,6 +6,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
+import com.cyberpeace.oj.ojbase.service.AttachmentService;
+import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +48,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "oj-后台课程相关api")
 @RestController
@@ -64,6 +68,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	// LGD在使用 知识点和技能点绑定课程
 	@GetMapping("/all/list")
@@ -125,6 +132,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		course.setOperationAuthIds("[]");
 		course.setReadAuthIds("[]");
 		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setCourseType(CommonConstant.ZERO);
 
 		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
 		if (null == courseCategory) {
@@ -168,6 +176,15 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	public BaseRsp<Integer> batchDelete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
 		int row = courseMapper.deleteBatchIds(batchDeleteReq.getResourceIds());
 		return new BaseRsp<>(row);
+	}
+
+	@ApiOperation("课程文件上传")
+	@PostMapping("/image_upload")
+	public BaseRsp<AttachmentBo> uploadLogo(@RequestParam("file") MultipartFile multipartFile) {
+
+		AttachmentBo attachmentBo = attachmentService.uploadFile(
+				Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE, multipartFile);
+		return new BaseRsp<>(attachmentBo);
 	}
 
 }

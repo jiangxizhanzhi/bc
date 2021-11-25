@@ -42,7 +42,6 @@ public class CourseAddReq implements Serializable {
 	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
-	@NotNull(groups = { Create.class })
 	@ApiModelProperty("课程分类 0=基础 2=攻击 3=防御")
 	private Integer courseType;
 

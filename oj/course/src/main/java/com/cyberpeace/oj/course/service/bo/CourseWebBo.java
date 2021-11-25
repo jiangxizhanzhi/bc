@@ -10,8 +10,11 @@ import java.io.Serializable;
 @ApiModel("前端课程基本信息")
 public class CourseWebBo implements Serializable {
 
-    @ApiModelProperty("课程编号")
+    @ApiModelProperty("资源编号")
     private String resourceId;
+
+    @ApiModelProperty("课程编号")
+    private String courseNum;
 
     @ApiModelProperty("课程名称")
     private String name;
@@ -33,6 +36,9 @@ public class CourseWebBo implements Serializable {
 
     @ApiModelProperty("讲师")
     private String lecturer;
+
+    @ApiModelProperty("学分")
+    private Integer score;
 
     @ApiModelProperty("课程类型")
     private Integer courseType;

@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,14 +13,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.controller.rsp.BusinessTemplateRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -97,41 +91,19 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public ListRsp<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
+	public IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		Page page = businessTemplateQuery.toPageParam();
 		businessTemplateQuery.setIds(businessTemplateMapper.selectIdsByUserId(userId));
 
-		IPage<BusinessTemplateData> data = businessTemplateMapper.listTeamTemplate(page,
+		IPage<BusinessTemplateData> result = businessTemplateMapper.listTeamTemplate(page,
 				businessTemplateQuery);
 
-		for (BusinessTemplateData businessTemplate : data.getRecords()) {
+		for (BusinessTemplateData businessTemplate : result.getRecords()) {
 			businessTemplate.setNodesNum(getCount(businessTemplate.getTopoId()));
 		}
-		List<String> userIds = Lists.newArrayList();
-		for (BusinessTemplateData businessTemplateData : data.getRecords()) {
-			userIds.add(businessTemplateData.getCreateUserId());
-		}
-		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
 
-		data.convert(businessTemplateData -> {
-			BusinessTemplateRsp businessTemplateRsp = BeanUtils.copy(businessTemplateData,
-					BusinessTemplateRsp.class);
-			businessTemplateRsp.setDifficult(businessTemplateData.getDifficulty());
-			businessTemplateRsp
-					.setCreateUser(idNameMap.get(businessTemplateData.getCreateUserId()));
-			businessTemplateRsp.setType(businessTemplateData.getBusinessType());
-			businessTemplateRsp.setSceneManagerId(businessTemplateData.getTopoId());
-			businessTemplateRsp.setShare(businessTemplateData.getOperationAuthType());
-			businessTemplateRsp.setShareTeachers(JsonUtil
-					.toJsonObjectArray(businessTemplateData.getOperationAuthIds(), String.class));
-			SceneConfigRsp sceneConfigInfo = new SceneConfigRsp();
-			sceneConfigInfo.setNodeCount(businessTemplateData.getNodesNum());
-			businessTemplateRsp.setSceneConfigInfo(sceneConfigInfo);
-
-			return businessTemplateRsp;
-		});
-		return PageUtil.getListResult(data);
+		return result;
 
 	}
 

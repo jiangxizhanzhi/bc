@@ -60,7 +60,7 @@ public class TeamTrainTemplateController {
 	}
 
 	@ApiOperation("修改")
-	@PutMapping()
+	@PatchMapping()
 	public BaseRsp<TeamTrainTemplateRsp>
 			update(@RequestBody @Validated TeamTrainTemplateModifyReq teamTrainTemplateModifyReq) {
 		String resourceId = teamTrainTemplateModifyReq.getResourceId();

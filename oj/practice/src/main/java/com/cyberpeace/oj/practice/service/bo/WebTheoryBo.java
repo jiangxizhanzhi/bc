@@ -12,4 +12,7 @@ public class WebTheoryBo extends AdminTheoryBo {
 	@ApiModelProperty("解题信息")
 	private PracticeNoSolvedBo resolvedDetail;
 
+	@ApiModelProperty("填空题空格数量")
+	private Integer blankCount;
+
 }

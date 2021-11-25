@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
@@ -28,8 +29,9 @@ public class CourseCategoryController {
 	@GetMapping("")
 	@ApiOperation("课程分类")
 	public BaseRsp<List<CourseCategoryBo>>
-			listDirection(@RequestParam("children") Boolean children) {
-		List<CourseCategoryBo> categories = courseCategoryService.selectAll(children);
+			listDirection(@RequestParam(value = "children", required = false) Boolean children) {
+		List<CourseCategoryBo> categories = courseCategoryService
+				.selectAll(null != children ? children : CommonConstant.FALSE);
 
 		BaseRsp rsp = new BaseRsp(categories);
 		return rsp;

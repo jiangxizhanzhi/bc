@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.req;
 
+import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +14,7 @@ import java.io.Serializable;
 public class SaveCourseCategoryReq implements Serializable {
 
 	@ApiModelProperty("课程分类名称")
-	@NotBlank
+	@NotBlank(groups = { Create.class })
 	private String name;
 
 	@ApiModelProperty("父级分类编号 第一级则不传值")

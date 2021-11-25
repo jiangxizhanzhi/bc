@@ -1,6 +1,9 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
@@ -57,9 +60,10 @@ public class AdminCourseCategoryController {
 			@ApiImplicitParam(name = "children", value = "是否查询子类 true查询 false仅查当前级") })
 	@GetMapping("")
 	public BaseRsp<CourseCategoryBo> get(@RequestParam("resource_id") String resourceId,
-			@RequestParam("children") Boolean children) {
+			@RequestParam(value = "children", required = false) Boolean children) {
 
-		CourseCategoryBo courseCategoryBo = courseCategoryService.selectById(resourceId, children);
+		CourseCategoryBo courseCategoryBo = courseCategoryService.selectById(resourceId,
+				null == children ? CommonConstant.FALSE : children);
 		return new BaseRsp(courseCategoryBo);
 	}
 
@@ -73,7 +77,8 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类新增")
 	@PostMapping("")
-	public BaseRsp<CategoryRes> add(@RequestBody @Valid SaveCourseCategoryReq categoryReq) {
+	public BaseRsp<CategoryRes>
+			add(@RequestBody @Validated(Create.class) SaveCourseCategoryReq categoryReq) {
 
 		// 名称校验
 		CourseCategory existCategory = courseCategoryMapper.selectByName(categoryReq.getName());
@@ -90,7 +95,8 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类修改")
 	@PatchMapping("")
-	public BaseRsp<CategoryRes> patch(@RequestBody @Validated UpdateCategoryReq updateCategoryReq) {
+	public BaseRsp<CategoryRes>
+			patch(@RequestBody @Validated(Update.class) UpdateCategoryReq updateCategoryReq) {
 		CategoryAddBo categoryAddBo = BeanUtils.copy(updateCategoryReq, CategoryAddBo.class);
 		CourseCategory courseCategory = courseCategoryService.saveOrUpdate(categoryAddBo);
 		CategoryRes categoryRes = BeanUtils.copy(courseCategory, CategoryRes.class);

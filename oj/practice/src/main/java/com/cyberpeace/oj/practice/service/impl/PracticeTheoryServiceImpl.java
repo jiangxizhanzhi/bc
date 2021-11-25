@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
@@ -148,6 +149,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		Boolean result = resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.THEORY.getCode(), resourceId);
 		webTheoryBo.setIsCollection(null == result ? CommonConstant.FALSE : result);
+
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+				.getCode().intValue()) {
+			webTheoryBo.setBlankCount(JsonUtil
+					.toJsonObjectArray(practiceTheory.getBlank(), BlankAnswer.class).size());
+		}
 
 		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
 				PracticeCategory.PracticeType.THEORY.getCode(), resourceId);

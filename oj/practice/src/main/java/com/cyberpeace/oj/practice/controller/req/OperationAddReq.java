@@ -28,7 +28,7 @@ public class OperationAddReq implements Serializable {
 	private String categoryId;
 
 	@ApiModelProperty("知识点")
-	private List<String> knowledge;
+	private String knowledge;
 
 	@ApiModelProperty("难度")
 	@NotNull(groups = { Create.class })
@@ -49,7 +49,7 @@ public class OperationAddReq implements Serializable {
 	private String sceneConfigName;
 
 	@ApiModelProperty("场景配置")
-	private JSONObject ojSceneConfig;
+	private String ojSceneConfig;
 
 	@ApiModelProperty("场景共享类型 1=个人 2=共享")
 	private Integer sceneShareMode;
@@ -62,7 +62,7 @@ public class OperationAddReq implements Serializable {
 	private Integer destroyDelay;
 
 	@ApiModelProperty("答案")
-	private List<String> answer;
+	private String answer;
 
 	@ApiModelProperty("分数")
 	@NotNull(groups = { Create.class })

@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
@@ -70,7 +71,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		PracticeOperation addOperation = convertReq(addReq);
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
-				addReq.getOjSceneConfig(), authContext);
+				JsonUtil.toJsonObject(addReq.getOjSceneConfig(), JSONObject.class), authContext);
 
 		return new BaseRsp(result);
 	}
@@ -97,7 +98,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		PracticeOperation updateOperation = convertReq(updateReq);
 		Integer result = practiceOperationService.updateOperation(updateOperation,
-				updateReq.getOjSceneConfig());
+				JsonUtil.toJsonObject(updateReq.getOjSceneConfig(), JSONObject.class));
 		return new BaseRsp(result);
 	}
 

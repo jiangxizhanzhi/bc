@@ -17,6 +17,10 @@ public class BaseInfo {
 
 	@ApiModelProperty(required = true)
 	@NotNull
+	private Integer type;
+
+	@ApiModelProperty(required = true)
+	@NotNull
 	private Integer category;
 
 	@ApiModelProperty(required = true)

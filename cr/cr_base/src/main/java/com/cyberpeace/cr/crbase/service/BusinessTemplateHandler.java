@@ -48,7 +48,7 @@ public class BusinessTemplateHandler {
 	private BusinessTemplate.BusinessType getBusinessType(BasicTemplate basicTemplate) {
 		// 校验外部传入的类型在BusinessTemplate.BusinessType声明的范围内
 		BusinessTemplate.BusinessType enumByCode = EnumUtils.getEnumByCode(
-				basicTemplate.getBaseInfo().getCategory(),
+				basicTemplate.getBaseInfo().getType(),
 				BusinessTemplate.BusinessType.class);
 		if (enumByCode == null) {
 			throw new BusinessException(CrBusinessErrorCode.TEMPLETE_TYPE_NOT_SUPPORTED);

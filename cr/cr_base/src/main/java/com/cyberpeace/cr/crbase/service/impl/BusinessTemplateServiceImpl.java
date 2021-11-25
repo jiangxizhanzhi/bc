@@ -100,12 +100,22 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				businessTemplateQuery);
 
 		for (BusinessTemplateData businessTemplate : result.getRecords()) {
-			businessTemplate.setNodesNum(
-					remoteTopoService.getTopoDigest(businessTemplate.getTopoId()).getNodeCounts());
+			businessTemplate.setNodesNum(getCount(businessTemplate.getTopoId()));
 		}
 
 		return result;
 
+	}
+
+	private Integer getCount(String topoId) {
+		Integer count = 0;
+		try {
+			count = remoteTopoService.getTopoDigest(topoId).getNodeCounts();
+		} catch (Exception e) {
+			;
+		}
+
+		return count;
 	}
 
 	@Override

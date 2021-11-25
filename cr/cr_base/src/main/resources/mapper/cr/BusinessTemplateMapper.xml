@@ -30,10 +30,10 @@
             </if>
 
             <if test="listQuery.search != null and listQuery.search != ''">
-                and cr_business_template.name like #{search}
+                and cr_business_template.name like #{listQuery.search}
             </if>
             <if test="listQuery.type != null and listQuery.type != ''">
-                and cr_business_template.business_type = #{type}
+                and cr_business_template.business_type = #{listQuery.type}
             </if>
         </where>
 

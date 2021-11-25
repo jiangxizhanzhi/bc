@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -224,7 +225,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.THEORY.getCode(), practiceTheory.getResourceId()));
-		practiceSolvedMapper.insert(practiceSolved);
+		try {
+			practiceSolvedMapper.insert(practiceSolved);
+		} catch (DuplicateKeyException e) {
+			practiceSolvedMapper.updateSolved(practiceSolved);
+		}
 
 		return evaluateResult;
 	}

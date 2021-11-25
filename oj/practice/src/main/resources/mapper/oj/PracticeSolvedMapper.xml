@@ -12,7 +12,8 @@
     </select>
 
     <select id="selectUserAndSolved" resultType="java.lang.String">
-        select practice_id from oj_practice_solved
+        select practice_id
+        from oj_practice_solved
         <where>
             <if test="userId != null and userId != ''">
                 submit_user_id = #{userId}
@@ -25,4 +26,30 @@
             </if>
         </where>
     </select>
+
+    <update id="updateSolved">
+        update oj_practice_solved
+        <set>
+            <if test="solved != null">
+                <if test="solved.score != null">
+                    score = #{solved.score}
+                </if>
+                <if test="solved.solved != null">
+                    , solved = #{solved.solved}
+                </if>
+                <if test="solved.submitAnswer != null and solved.submitAnswer != ''">
+                    , submit_answer = #{solved.submitAnswer}
+                </if>
+                <if test="solved.collection != null">
+                    , collection = #{solved.collection}
+                </if>
+                <if test="solved.totalScore != null">
+                    , total_score = #{solved.totalScore}
+                </if>
+            </if>
+        </set>
+        where submit_user_id = #{solved.submitUserId}
+          and practice_type = #{solved.practiceType}
+          and practice_id = #{solved.practiceId}
+    </update>
 </mapper>

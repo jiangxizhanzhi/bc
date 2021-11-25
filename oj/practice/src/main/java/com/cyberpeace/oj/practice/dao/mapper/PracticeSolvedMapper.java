@@ -15,4 +15,6 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 
 	List<String> selectUserAndSolved(@Param("userId") String userId,
 			@Param("practiceType") Integer practiceType, @Param("solved") Boolean solved);
+
+	int updateSolved(@Param("solved") PracticeSolved practiceSolved);
 }

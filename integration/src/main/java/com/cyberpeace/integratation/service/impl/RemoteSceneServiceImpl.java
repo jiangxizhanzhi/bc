@@ -10,7 +10,6 @@ import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +43,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public String startScene(String topoId, SceneStartContext sceneStartContext) {
+	public String startScene(String topoId, SceneOpsContext sceneStartContext) {
 		String targetUrl = SCENE_START_URL + "?id=" + topoId;
 
 		JSONObject data = HttpClientUtil.post(targetUrl, sceneStartContext, JSONObject.class);
@@ -60,7 +59,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public String startScene(String topoId, SceneStartContext sceneStartContext, Boolean isTest) {
+	public String startScene(String topoId, SceneOpsContext sceneStartContext, Boolean isTest) {
 
 		String targetUrl = null;
 		if (isTest) {

@@ -1,9 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +44,7 @@ import com.cyberpeace.cr.teamtrain.service.context.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.UserPageContext;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
@@ -84,7 +82,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	CrTaskLogMapper crTaskLogMapper;
+	private CrTaskLogMapper crTaskLogMapper;
 
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
@@ -381,37 +379,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return room;
 	}
 
-	private void setTime(TimeLineData timeLineData, String roomId) {
-		TeamRoomData teamRoom = getTeamRoomDataByRoomId(roomId);
+	@Override
+	public Boolean startScene(String localSceneId) {
+		preStartScene(localSceneId);
 
-		timeLineData.setCurrentTime(new Date());
-		timeLineData.setStartTime(teamRoom.getSceneStartTime() == null ? teamRoom.getStartTime()
-				: teamRoom.getSceneStartTime());
-
-		Date endTime = teamRoom.getEndTime();
-
-		if (teamRoom.getSceneStartTime() != null) {
-			if (teamRoom.getSceneEndTime() == null) {
-				long startToEnd = teamRoom.getEndTime().getTime()
-						- teamRoom.getStartTime().getTime();
-				long now = new Date().getTime();
-				long sceneStartToNow = new Date().getTime()
-						- teamRoom.getSceneStartTime().getTime();
-				// 训练时长大于实际开始时间到当前时间的时长，时间间隔取训练时长,否则取当前时间
-				if (startToEnd >= sceneStartToNow) {
-					endTime = new Date(startToEnd + teamRoom.getSceneStartTime().getTime());
-				} else {
-					endTime = new Date(now);
-				}
-			}
-			if (teamRoom.getSceneEndTime() != null
-					&& teamRoom.getSceneEndTime().compareTo(teamRoom.getSceneStartTime()) > 0) {
-				endTime = teamRoom.getSceneStartTime();
-
-			}
-		}
-
-		timeLineData.setEndTime(endTime);
+		return localSceneService.startScene(localSceneId, getSceneStartContext());
 	}
 
 	@Override
@@ -497,6 +469,55 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		localScene.setTopoId(teamRoom.getCopyedTopoId());
 
 		return localScene;
+	}
+
+	private void setTime(TimeLineData timeLineData, String roomId) {
+		TeamRoomData teamRoom = getTeamRoomDataByRoomId(roomId);
+
+		timeLineData.setCurrentTime(new Date());
+		timeLineData.setStartTime(teamRoom.getSceneStartTime() == null ? teamRoom.getStartTime()
+				: teamRoom.getSceneStartTime());
+
+		Date endTime = teamRoom.getEndTime();
+
+		if (teamRoom.getSceneStartTime() != null) {
+			if (teamRoom.getSceneEndTime() == null) {
+				long startToEnd = teamRoom.getEndTime().getTime()
+						- teamRoom.getStartTime().getTime();
+				long now = new Date().getTime();
+				long sceneStartToNow = new Date().getTime()
+						- teamRoom.getSceneStartTime().getTime();
+				// 训练时长大于实际开始时间到当前时间的时长，时间间隔取训练时长,否则取当前时间
+				if (startToEnd >= sceneStartToNow) {
+					endTime = new Date(startToEnd + teamRoom.getSceneStartTime().getTime());
+				} else {
+					endTime = new Date(now);
+				}
+			}
+			if (teamRoom.getSceneEndTime() != null
+					&& teamRoom.getSceneEndTime().compareTo(teamRoom.getSceneStartTime()) > 0) {
+				endTime = teamRoom.getSceneStartTime();
+
+			}
+		}
+
+		timeLineData.setEndTime(endTime);
+	}
+
+	private void preStartScene(String localSceneId) {
+		// TODO
+		// 根据角色校验是否启动
+	}
+
+	private SceneStartContext getSceneStartContext() {
+		// TODO
+		// 单兵、团队、红蓝是否可以聚合
+		SceneStartContext sceneStartContext = new SceneStartContext();
+
+		sceneStartContext.setContext(new HashMap<>());
+		sceneStartContext.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
+
+		return sceneStartContext;
 	}
 
 }

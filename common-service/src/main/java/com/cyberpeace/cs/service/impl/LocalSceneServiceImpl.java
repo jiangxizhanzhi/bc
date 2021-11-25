@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
@@ -35,7 +36,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public Boolean startScene(String localSceneId) {
+	public Boolean startScene(String localSceneId, SceneOpsContext sceneOpsContext) {
 		LocalScene localScene = localSceneMapper.selectById(localSceneId);
 
 		if (null == localScene) {
@@ -45,7 +46,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 
 		String sceneId = remoteSceneService.startScene(localScene.getTopoId(),
-				getSceneStartContext());
+				sceneOpsContext());
 		LocalScene toUpdate = new LocalScene();
 
 		toUpdate.setResourceId(localScene.getResourceId());
@@ -83,6 +84,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return null;
 	}
 
+	@Override
+	public Boolean pauseScene(String localSceneId) {
+		return null;
+	}
+
+	@Override
+	public Boolean unPause(String localSceneId) {
+		return null;
+	}
+
 	// TODO
 	// 场景的启动、删除、暂停上下文是否可以统一
 	private SceneStartContext getSceneStartContext() {
@@ -93,4 +104,5 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 		return sceneStartContext;
 	}
+
 }

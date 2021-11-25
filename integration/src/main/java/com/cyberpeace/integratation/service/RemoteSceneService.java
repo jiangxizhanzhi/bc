@@ -6,9 +6,9 @@ import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
 public interface RemoteSceneService {
 
-	String startScene(String topoId, SceneStartContext sceneStartContext);
+	String startScene(String topoId, SceneOpsContext sceneStartContext);
 
-	String startScene(String topoId, SceneStartContext sceneStartContext, Boolean isTest);
+	String startScene(String topoId, SceneOpsContext sceneStartContext, Boolean isTest);
 
 	Boolean stopScene(String sceneId, SceneOpsContext sceneOpsContext);
 

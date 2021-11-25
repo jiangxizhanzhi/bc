@@ -60,11 +60,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		BusinessTemplate businessTemplate = getBusinessTemplate(basicTemplate);
 		// 拓扑场景id保存获取
 
-		String sceneConfigId = "";
+		String topoId = "";
 		// todo 场景
 
 		// 保存基础模板
-		businessTemplate.setTopoId(sceneConfigId);
+		businessTemplate.setTopoId(topoId);
 
 		// 2、执行实际的保存
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

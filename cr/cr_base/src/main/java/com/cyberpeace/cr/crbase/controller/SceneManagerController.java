@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +141,7 @@ public class SceneManagerController {
 				}
 			});
 		} catch (Exception e) {
-			log.error("db error when creating scene: " + e);
+			log.error("db error when creating scene: " , e);
 			sceneManagerService.deleteRemoteScene(sceneManager, userId);
 		}
 

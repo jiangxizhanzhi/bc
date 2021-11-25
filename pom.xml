@@ -47,6 +47,7 @@
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
         <common.version>0.0.2-SNAPSHOT</common.version>
         <evaluation.version>0.0.1-SNAPSHOT</evaluation.version>
+        <situation.version>0.0.1-SNAPSHOT</situation.version>
         <integration.version>0.0.1-SNAPSHOT</integration.version>
         <template.version>0.0.2-SNAPSHOT</template.version>
         <rtks.version>0.0.1-SNAPSHOT</rtks.version>
@@ -72,6 +73,7 @@
         <module>oj</module>
         <module>evaluate</module>
         <module>common-service</module>
+        <module>situation</module>
     </modules>
 
     <dependencyManagement>

@@ -178,13 +178,4 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(row);
 	}
 
-	@ApiOperation("课程文件上传")
-	@PostMapping("/image_upload")
-	public BaseRsp<AttachmentBo> uploadLogo(@RequestParam("file") MultipartFile multipartFile) {
-
-		AttachmentBo attachmentBo = attachmentService.uploadFile(
-				Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE, multipartFile);
-		return new BaseRsp<>(attachmentBo);
-	}
-
 }

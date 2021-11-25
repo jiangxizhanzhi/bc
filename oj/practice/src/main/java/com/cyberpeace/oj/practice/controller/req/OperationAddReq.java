@@ -49,7 +49,7 @@ public class OperationAddReq implements Serializable {
 	private String sceneConfigName;
 
 	@ApiModelProperty("场景配置")
-	private String ojSceneConfig;
+	private JSONObject ojSceneConfig;
 
 	@ApiModelProperty("场景共享类型 1=个人 2=共享")
 	private Integer sceneShareMode;

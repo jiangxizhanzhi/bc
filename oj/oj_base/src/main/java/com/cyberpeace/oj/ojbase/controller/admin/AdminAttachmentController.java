@@ -38,4 +38,6 @@ public class AdminAttachmentController extends PublicController<AttachmentServic
 		return new BaseRsp<>(new LogoUploadRes(attachmentBo.getFilePath()));
 	}
 
+//	public BaseRsp<AttachmentBo>
+
 }

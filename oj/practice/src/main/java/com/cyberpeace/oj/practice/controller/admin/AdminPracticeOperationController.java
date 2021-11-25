@@ -10,6 +10,9 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
+import com.cyberpeace.oj.ojbase.service.AttachmentService;
+import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
@@ -33,6 +36,7 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -52,7 +56,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	private PracticeCategoryService practiceCategoryService;
 
 	@Autowired
-	private PracticeSetMapper practiceSetMapper;
+	private AttachmentService attachmentService;
 
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
@@ -72,7 +76,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		PracticeOperation addOperation = convertReq(addReq);
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
-				JsonUtil.toJsonObject(addReq.getOjSceneConfig(), JSONObject.class), authContext);
+				addReq.getOjSceneConfig(), authContext);
 
 		return new BaseRsp(result);
 	}
@@ -103,7 +107,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		PracticeOperation updateOperation = convertReq(updateReq);
 		Integer result = practiceOperationService.updateOperation(updateOperation,
-				JsonUtil.toJsonObject(updateReq.getOjSceneConfig(), JSONObject.class));
+				updateReq.getOjSceneConfig());
 		return new BaseRsp(result);
 	}
 
@@ -159,6 +163,17 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	public BaseRsp sceneTopo() {
 		// todo 场景信息获取
 		return null;
+	}
+
+	@ApiOperation("实操习题附件上传")
+	@PostMapping("/upload_attachment")
+	public BaseRsp<AttachmentBo>
+			uploadAttachment(@RequestParam("file") MultipartFile multipartFile) {
+
+		AttachmentBo attachmentBo = attachmentService.uploadFile(
+				Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE, multipartFile);
+
+		return new BaseRsp<>(attachmentBo);
 	}
 
 }

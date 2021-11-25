@@ -46,9 +46,6 @@ public class PracticeOperationController {
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
-	private AttachmentService attachmentService;
-
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
 	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {
@@ -99,16 +96,5 @@ public class PracticeOperationController {
 		List<String> practiceIds = practiceOperationService.selectPracticeIds(authContext);
 
 		return new BaseRsp<>(practiceIds);
-	}
-
-	@ApiOperation("实操习题附件上传")
-	@PostMapping("/upload_attachment")
-	public BaseRsp<AttachmentBo>
-			uploadAttachment(@RequestParam("file") MultipartFile multipartFile) {
-
-		AttachmentBo attachmentBo = attachmentService.uploadFile(
-				Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE, multipartFile);
-
-		return new BaseRsp<>(attachmentBo);
 	}
 }

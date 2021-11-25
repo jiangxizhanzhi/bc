@@ -1,7 +1,5 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.oj.ojbase.controller.res.LogoUploadRes;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
+import com.cyberpeace.oj.ojbase.controller.res.LogoUploadRes;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
@@ -37,7 +37,5 @@ public class AdminAttachmentController extends PublicController<AttachmentServic
 				.uploadFile(Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE, file);
 		return new BaseRsp<>(new LogoUploadRes(attachmentBo.getFilePath()));
 	}
-
-//	public BaseRsp<AttachmentBo>
 
 }

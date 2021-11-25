@@ -221,6 +221,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				detailBo.setIsSolved(practiceSolved.getSolved());
 				webOperationBo.setAnswer(null);
 			}
+			webOperationBo.setResolvedDetail(detailBo);
 		}
 
 		// 场景数据

@@ -43,6 +43,9 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static <T> String arrayToString(List<T> objArr) {
+		if (null == objArr) {
+			return "[]";
+		}
 		return JSONArray.toJSONString(objArr);
 	}
 

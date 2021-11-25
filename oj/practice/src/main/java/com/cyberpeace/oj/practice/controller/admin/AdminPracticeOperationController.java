@@ -1,44 +1,40 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
-import com.alibaba.fastjson.JSONObject;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import com.cyberpeace.oj.practice.controller.req.*;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
-import com.cyberpeace.oj.practice.service.PracticeCategoryService;
-import com.cyberpeace.oj.practice.service.bo.OperationBo;
-import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
-import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
-import io.swagger.annotations.ApiParam;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
+import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
+import com.cyberpeace.oj.practice.service.bo.OperationBo;
+import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "oj-后台实践操作练习相关api")
 @RestController
@@ -89,12 +85,10 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	private PracticeOperation convertReq(OperationAddReq addReq) {
 
 		PracticeOperation practiceOperation = BeanUtils.copy(addReq, PracticeOperation.class);
-		if (CollectionUtils.isNotEmpty(addReq.getAnswer())) {
-			practiceOperation.setAnswer(JsonUtil.toJsonString(addReq.getAnswer()));
-		}
-		if (CollectionUtils.isNotEmpty(addReq.getKnowledge())) {
-			practiceOperation.setKnowledge(JsonUtil.toJsonString(addReq.getKnowledge()));
-		}
+
+		practiceOperation.setAnswer(JsonUtil.arrayToString(addReq.getAnswer()));
+		practiceOperation.setKnowledge(JsonUtil.arrayToString(addReq.getKnowledge()));
+
 		practiceOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		return practiceOperation;

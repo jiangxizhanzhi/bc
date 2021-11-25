@@ -13,11 +13,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -93,7 +91,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public ListRsp<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
+	public IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		Page page = businessTemplateQuery.toPageParam();
 		businessTemplateQuery.setIds(businessTemplateMapper.selectIdsByUserId(userId));
@@ -106,7 +104,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 					remoteTopoService.getTopoDigest(businessTemplate.getTopoId()).getNodeCounts());
 		}
 
-		return PageUtil.getListResult(result);
+		return result;
 
 	}
 

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.util.PageUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,13 +64,16 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	}
 
 	@Override
-	public List<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children) {
-		List<CourseCategory> categories = courseCategoryMapper.pageBySearch(page, pattern);
+	public IPage<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children) {
+		IPage<CourseCategory> iPage = courseCategoryMapper.pageBySearch(page, pattern);
+
 		if (children) {
 			Map<String, List<CourseCategory>> parentMap = getParentMap(null);
-			return packageCategoryList(categories, parentMap);
+			return iPage.convert(courseCategory -> packageCategoryBo(courseCategory, parentMap));
 		}
-		return BeanUtils.deepCopyList(categories, CourseCategoryBo.class);
+
+		return iPage
+				.convert(courseCategory -> BeanUtils.copy(courseCategory, CourseCategoryBo.class));
 	}
 
 	@Override

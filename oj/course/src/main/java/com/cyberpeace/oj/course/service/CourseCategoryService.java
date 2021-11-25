@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
@@ -31,7 +32,7 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * @param children true包含子类数据 false不包含
 	 * @return
 	 */
-	List<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children);
+	IPage<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children);
 
 	/**
 	 * 新增或者修改数据

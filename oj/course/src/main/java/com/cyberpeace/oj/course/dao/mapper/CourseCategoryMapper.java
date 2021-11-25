@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,7 +21,7 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
 
     List<CourseCategory> selectAll();
 
-    List<CourseCategory> pageBySearch(Page page, @Param("pattern") String pattern);
+    IPage<CourseCategory> pageBySearch(Page page, @Param("pattern") String pattern);
 
     CourseCategory selectByName(@Param("name") String name);
 }

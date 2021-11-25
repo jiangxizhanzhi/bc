@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -107,8 +108,7 @@ public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 						.score(CommonConstant.ZERO.doubleValue()).build();
 			}
 
-			Map<String, String> submitAnswer = (Map<String, String>) JsonUtil
-					.toJsonObjectArray(userAnswer, Map.class);
+			Map<String, String> submitAnswer = JsonUtil.toJsonObject(userAnswer, HashMap.class);
 
 			List<BlankAnswer> correctAnswer = JsonUtil.toJsonObjectArray(realAnswer,
 					BlankAnswer.class);

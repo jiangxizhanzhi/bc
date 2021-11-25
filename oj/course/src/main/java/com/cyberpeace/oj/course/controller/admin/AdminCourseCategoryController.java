@@ -1,12 +1,15 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.controller.req.BatchDeleteReq;
 import com.cyberpeace.oj.course.controller.req.CourseCategoryListReq;
@@ -47,12 +50,12 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类分页查询")
 	@GetMapping("/list")
-	public BaseRsp<List<CourseCategoryBo>> list(@Validated CourseCategoryListReq listReq) {
+	public BaseRsp<ListRsp<CourseCategoryBo>> list(@Validated CourseCategoryListReq listReq) {
 		Page page = listReq.toPageParam();
-		List<CourseCategoryBo> courseCategories = courseCategoryService.pageBySearch(page,
+		IPage<CourseCategoryBo> courseCategories = courseCategoryService.pageBySearch(page,
 				listReq.getPattern(), listReq.getChildren());
 
-		return new BaseRsp<>(courseCategories);
+		return new BaseRsp(PageUtil.getListResult(courseCategories));
 	}
 
 	@ApiOperation("课程分类详细信息查询")

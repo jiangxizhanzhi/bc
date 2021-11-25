@@ -24,7 +24,7 @@
         select * from oj_course_category
         <where>
             resource_id = code
-            <if test="null != pattern">
+            <if test="pattern != null and pattern != ''">
                 <bind name="pattern" value="'%' + pattern + '%'"/>
                 and `name` like #{pattern}
             </if>

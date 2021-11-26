@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
@@ -164,20 +168,16 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("获取场景拓扑信息")
 	@GetMapping("/scene_topo")
-	public BaseRsp sceneTopo() {
-		// todo 场景信息获取
-		return null;
-	}
+	public BaseRsp sceneTopo(@RequestParam("resource_id") String resourceId) {
 
-	@ApiOperation("实操习题附件上传")
-	@PostMapping("/upload_attachment")
-	public BaseRsp<AttachmentBo>
-			uploadAttachment(@RequestParam("file") MultipartFile multipartFile) {
+		PracticeOperation practiceOperation = practiceOperationMapper.selectById(resourceId);
+		if (null != practiceOperation && practiceOperation.getDynamicEnv()
+				&& StringUtils.isNotBlank(practiceOperation.getTopoId())) {
+			JSONObject sceneConfigData = remoteTopoService.getTopoById(resourceId);
+			return new BaseRsp(sceneConfigData);
+		}
 
-		AttachmentBo attachmentBo = attachmentService.uploadFile(
-				Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE, multipartFile);
-
-		return new BaseRsp<>(attachmentBo);
+		return new BaseRsp();
 	}
 
 }

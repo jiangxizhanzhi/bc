@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.google.common.collect.Lists;
@@ -88,6 +90,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	@Autowired
+	private LocalSceneService localSceneService;
+
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			JSONObject ojSceneConfig, AuthContext authContext) {
@@ -164,11 +169,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig) {
 
-		if (null != ojSceneConfig) {
-			// TODO 场景修改 修改失败 ？继续修改习题信息 ： 修改失败
-			// remoteTopoService.create(
-			// JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig),
-			// SceneConfig.class));
+		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
+			remoteTopoService.save(ojSceneConfig);
 		}
 
 		return practiceOperationMapper.updateById(updateOperation);
@@ -186,7 +188,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
 			JSONObject sceneConfig = remoteTopoService.getTopoById(operation.getTopoId());
-			operationBo.setOjSceneConfig(JsonUtil.toJsonString(sceneConfig));
+			operationBo.setSceneConfigData(sceneConfig);
 		}
 
 		// 获取附件信息
@@ -239,7 +241,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 场景数据
 		if (operationBo.getDynamicEnv() && StringUtils.isNotBlank(operationBo.getTopoId())) {
 			JSONObject sceneConfig = remoteTopoService.getTopoById(operationBo.getTopoId());
-			webOperationBo.setOjSceneConfig(JsonUtil.toJsonString(sceneConfig));
+			webOperationBo.setSceneConfigData(sceneConfig);
 			OjLocalScene localScene = operationBo.getSceneShareMode()
 					.intValue() == SceneShare.PRIVATE.getCode()
 							? ojLocalSceneMapper.selectByUserAndBid(userId, resourceId,
@@ -248,10 +250,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 									CommonConstant.TRUE, CommonConstant.TRUE);
 
 			if (null != localScene) {
-				// todo 场景数据获取
-				webOperationBo.setSceneData(new JSONObject());
+				LocalScene sceneLocal = localSceneMapper
+						.getByBusinessInstanceId(localScene.getResourceId());
+				if (null != sceneLocal && StringUtils.isNotBlank(sceneLocal.getMpSceneId())) {
+					JSONObject jsonObject = remoteSceneService.getById(sceneLocal.getMpSceneId(),
+							userId);
+					webOperationBo.setSceneData(jsonObject);
+				}
 			}
-
 		}
 
 		return webOperationBo;

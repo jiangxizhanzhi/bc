@@ -72,7 +72,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		NoteListQuery listQuery = BeanUtils.copy(noteListQuery, NoteListQuery.class);
 		Map<String, String> userInfoMap = null;
 		if (StringUtils.isNotBlank(noteListQuery.getUserName())) {
-			// TODO 用户列表查询
+			// todo 名称筛选
 			List<UserInfo> userList = remoteUserService.getLazyUserList(null);
 			List<String> userIds = StreamApiUtils.simpleMap(userList, UserInfo::getUserId);
 			listQuery.setUserIds(userIds);

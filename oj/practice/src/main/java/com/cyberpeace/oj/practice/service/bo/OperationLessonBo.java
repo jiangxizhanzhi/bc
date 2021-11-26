@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.bo;
 
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,5 +19,5 @@ public class OperationLessonBo extends TheoryLessonBo {
 	private String topoId;
 
 	@ApiModelProperty("场景配置信息")
-	private String sceneConfigData;
+	private JSONObject sceneConfigData;
 }

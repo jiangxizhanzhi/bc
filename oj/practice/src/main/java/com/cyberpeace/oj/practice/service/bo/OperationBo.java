@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.bo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 
 import io.swagger.annotations.ApiModel;
@@ -17,6 +18,6 @@ public class OperationBo extends PracticeOperation {
 	private String fileUrl;
 
 	@ApiModelProperty("场景配置信息")
-	private String ojSceneConfig;
+	private JSONObject sceneConfigData;
 
 }

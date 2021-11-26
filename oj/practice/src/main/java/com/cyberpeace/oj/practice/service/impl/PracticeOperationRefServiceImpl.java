@@ -2,6 +2,8 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,9 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 	@Autowired
 	private AttachmentMapper attachmentMapper;
 
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+
 	@Override
 	public List<OperationLessonBo> selectByPaperId(String paperId, Boolean viewAnswer) {
 
@@ -52,8 +57,9 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 						operationLessonBo.setFileName(attachment.getFileName());
 					}
 
-					if (StringUtils.isNotBlank(operation.getTopoId())) {
-						// TODO 场景信息查询
+					if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
+						JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
+						operationLessonBo.setSceneConfigData(topoData);
 					}
 
 					// 是否展示答案

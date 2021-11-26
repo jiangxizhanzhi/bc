@@ -53,7 +53,7 @@ public class OperationAddReq implements Serializable {
 	private String sceneConfigName;
 
 	@ApiModelProperty(name = "oj_scene_config", value = "场景配置")
-	private JSONObject ojSceneConfig;
+	private String ojSceneConfig;
 
 	@ApiModelProperty(name = "scene_share_mode", value = "场景共享类型 1=个人 2=共享")
 	private Integer sceneShareMode;
@@ -99,7 +99,7 @@ public class OperationAddReq implements Serializable {
 		this.sceneConfigName = sceneConfigName;
 	}
 
-	public void setOj_scene_config(JSONObject ojSceneConfig) {
+	public void setOj_scene_config(String ojSceneConfig) {
 		this.ojSceneConfig = ojSceneConfig;
 	}
 

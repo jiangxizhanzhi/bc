@@ -39,6 +39,7 @@
     </select>
 
     <select id="pageByTypeAndName" resultMap="set">
+        <bind name="listQuery.pattern" value="'%' + listQuery.pattern + '%'"/>
         select * from oj_practice_set
         <where>
             <if test="listQuery != null">
@@ -52,7 +53,6 @@
                     and practice_type = #{listQuery.practiceType}
                 </if>
                 <if test="listQuery.pattern != null and listQuery.pattern != ''">
-                    <bind name="listQuery.pattern" value="'%' + listQuery.pattern + '%'"/>
                     and `name` like #{listQuery.pattern}
                 </if>
             </if>

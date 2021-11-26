@@ -56,9 +56,9 @@ public class MissionController {
 			addMission(@RequestBody @Validated MissionTemplateReq missionTemplateReq) {
 		MissionTemplate toAddMissionTemplate = requestToMissionTemplate(missionTemplateReq);
 
-		String resourceId = missionService.addMissionTemplate(toAddMissionTemplate);
+		MissionTemplate missionTemplate = missionService.addMissionTemplate(toAddMissionTemplate);
 
-		return new BaseRsp(resourceId);
+		return new BaseRsp(missionTemplate);
 	}
 
 	@ApiOperation("后台更新任务")

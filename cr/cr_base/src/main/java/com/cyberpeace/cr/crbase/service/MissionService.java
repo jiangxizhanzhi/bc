@@ -16,7 +16,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
 public interface MissionService extends IService<Mission> {
 
-	String addMissionTemplate(MissionTemplate missionTemplate);
+	MissionTemplate addMissionTemplate(MissionTemplate missionTemplate);
 
 	void updateMissionTemplate(MissionTemplate missionTemplate);
 

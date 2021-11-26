@@ -83,9 +83,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public String addMissionTemplate(MissionTemplate missionTemplate) {
+	public MissionTemplate addMissionTemplate(MissionTemplate missionTemplate) {
 		missionTemplateMapper.insert(missionTemplate);
-		return missionTemplate.getResourceId();
+		return missionTemplate;
 	}
 
 	@Override

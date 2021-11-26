@@ -37,20 +37,9 @@ public class BaseInfoRsp implements Serializable {
 
 	private Integer peopleNumber;
 
-	public BaseInfoRsp(String name, Integer category, String description, String createUser,
-			Date createTime, Integer difficult, Integer durationTime, List<String> preSkill,
-			List<String> trainSkill, Integer people_number) {
-		this.name = name;
-		this.category = category;
-		this.description = description;
-		this.createUser = createUser;
-		this.createTime = createTime;
-		this.difficult = difficult;
-		this.durationTime = durationTime;
-		this.preSkill = preSkill;
-		this.trainSkill = trainSkill;
-		this.peopleNumber = people_number;
-	}
+	private String sceneManagerId;
+
+	private SceneRsp sceneConfigData;
 
 	public BaseInfoRsp(TeamTemplate template, BusinessTemplate businessTemplate) {
 		this.name = businessTemplate.getName();

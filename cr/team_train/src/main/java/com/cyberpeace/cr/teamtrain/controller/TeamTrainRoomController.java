@@ -158,11 +158,13 @@ public class TeamTrainRoomController {
 
 			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
+
+			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
+			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
 			crRoles.forEach(crRole -> {
 				crRole.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIds()));
 			});
-			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
-			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
+
 			teamRoomRsp.setRolesData(crRoles);
 			teamRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));

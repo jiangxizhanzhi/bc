@@ -1,16 +1,19 @@
 package com.cyberpeace.oj.practice.controller.req;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.baseinterface.Create;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cyberpeace.common.baseinterface.Create;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 @ApiModel
@@ -50,7 +53,7 @@ public class OperationAddReq implements Serializable {
 	private String sceneConfigName;
 
 	@ApiModelProperty(name = "oj_scene_config", value = "场景配置")
-	private String ojSceneConfig;
+	private JSONObject ojSceneConfig;
 
 	@ApiModelProperty(name = "scene_share_mode", value = "场景共享类型 1=个人 2=共享")
 	private Integer sceneShareMode;
@@ -96,7 +99,7 @@ public class OperationAddReq implements Serializable {
 		this.sceneConfigName = sceneConfigName;
 	}
 
-	public void setOj_scene_config(String ojSceneConfig) {
+	public void setOj_scene_config(JSONObject ojSceneConfig) {
 		this.ojSceneConfig = ojSceneConfig;
 	}
 

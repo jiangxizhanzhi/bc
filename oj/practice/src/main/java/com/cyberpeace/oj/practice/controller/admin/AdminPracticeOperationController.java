@@ -79,7 +79,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 			addOperation.setAttachmentId(attachmentBo.getResourceId());
 		}
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
-				JsonUtil.toJsonObject(addReq.getOjSceneConfig(), JSONObject.class), authContext);
+				addReq.getOjSceneConfig(), authContext);
 
 		return new BaseRsp(result);
 	}
@@ -111,7 +111,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 			updateOperation.setAttachmentId(attachmentBo.getResourceId());
 		}
 		Integer result = practiceOperationService.updateOperation(updateOperation,
-				JsonUtil.toJsonObject(updateReq.getOjSceneConfig(), JSONObject.class));
+				updateReq.getOjSceneConfig());
 		return new BaseRsp(result);
 	}
 

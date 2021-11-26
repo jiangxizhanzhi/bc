@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.google.common.collect.Lists;
@@ -84,6 +85,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
+
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			JSONObject ojSceneConfig, AuthContext authContext) {
@@ -94,8 +98,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
 
 		if (practiceOperation.getDynamicEnv() && null != ojSceneConfig) {
-			String topoId = remoteTopoService.create(
-					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
+			String topoId = remoteTopoService.save(ojSceneConfig);
 			practiceOperation.setTopoId(topoId);
 		}
 
@@ -182,7 +185,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		OperationBo operationBo = BeanUtils.copy(operation, OperationBo.class);
 
 		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
-			SceneConfig sceneConfig = remoteTopoService.getById(operation.getTopoId());
+			JSONObject sceneConfig = remoteTopoService.getTopoById(operation.getTopoId());
 			operationBo.setOjSceneConfig(JsonUtil.toJsonString(sceneConfig));
 		}
 
@@ -235,6 +238,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 场景数据
 		if (operationBo.getDynamicEnv() && StringUtils.isNotBlank(operationBo.getTopoId())) {
+			JSONObject sceneConfig = remoteTopoService.getTopoById(operationBo.getTopoId());
+			webOperationBo.setOjSceneConfig(JsonUtil.toJsonString(sceneConfig));
 			OjLocalScene localScene = operationBo.getSceneShareMode()
 					.intValue() == SceneShare.PRIVATE.getCode()
 							? ojLocalSceneMapper.selectByUserAndBid(userId, resourceId,
@@ -243,9 +248,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 									CommonConstant.TRUE, CommonConstant.TRUE);
 
 			if (null != localScene) {
-
 				// todo 场景数据获取
-//				remoteSceneService.getById(localScene.get)
 				webOperationBo.setSceneData(new JSONObject());
 			}
 

@@ -26,5 +26,10 @@
             <version>${oj.base.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.cyberpeace</groupId>
+            <artifactId>common-service</artifactId>
+            <version>${common.service.version}</version>
+        </dependency>
     </dependencies>
 </project>

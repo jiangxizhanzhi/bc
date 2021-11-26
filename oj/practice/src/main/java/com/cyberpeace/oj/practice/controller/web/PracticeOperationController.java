@@ -1,6 +1,15 @@
 package com.cyberpeace.oj.practice.controller.web;
 
-import com.alibaba.fastjson.JSONObject;
+import java.util.List;
+
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.practice.controller.req.SceneShareModeReq;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -11,29 +20,17 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
-import com.cyberpeace.oj.ojbase.service.AttachmentService;
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
-import com.cyberpeace.oj.practice.controller.req.*;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
+import com.cyberpeace.oj.practice.controller.req.WebOperationListReq;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
-import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
-import com.cyberpeace.oj.practice.service.impl.OperationEvaluateHandler;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.Resource;
-import java.util.List;
 
 @Api(tags = "oj-前台实践操作练习相关api")
 @RestController
@@ -97,5 +94,22 @@ public class PracticeOperationController {
 		List<String> practiceIds = practiceOperationService.selectPracticeIds(authContext);
 
 		return new BaseRsp<>(practiceIds);
+	}
+
+	@ApiOperation("隔离模式设置")
+	@PatchMapping("/scene_share_mode")
+	public BaseRsp<Boolean>
+			updateSceneShare(@RequestBody @Validated SceneShareModeReq sceneShareModeReq) {
+
+		List<PracticeOperation> operationList = StreamApiUtils
+				.simpleMap(sceneShareModeReq.getResourceIds(), resourceId -> {
+					PracticeOperation operation = new PracticeOperation();
+					operation.setResourceId(resourceId);
+					operation.setSceneShareMode(sceneShareModeReq.getSceneShareMode());
+					return operation;
+				});
+
+		boolean result = practiceOperationService.updateBatchById(operationList);
+		return new BaseRsp(result);
 	}
 }

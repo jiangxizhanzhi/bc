@@ -72,7 +72,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		PracticeOperation addOperation = convertReq(addReq);
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
-				addReq.getOjSceneConfig(), authContext);
+				addReq.getDynamicEnv() ? addReq.getOjSceneConfig() : null, authContext);
 
 		return new BaseRsp(result);
 	}

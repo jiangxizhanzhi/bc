@@ -11,4 +11,5 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 
 	LocalScene getByBusinessInstanceId(String businessInstanceId);
+
 }

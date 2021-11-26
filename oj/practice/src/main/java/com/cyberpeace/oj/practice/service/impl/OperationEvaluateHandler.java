@@ -33,9 +33,6 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 	}
 
 	@Autowired
-	private PracticeOperationMapper practiceOperationMapper;
-
-	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	@Override
@@ -67,7 +64,7 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 	 */
 	private String correctAnswer(String userId, PracticeOperation practiceOperation) {
 
-		if (StringUtils.isBlank(practiceOperation.getTopoId())) {
+		if (!practiceOperation.getDynamicEnv() && StringUtils.isBlank(practiceOperation.getTopoId())) {
 			return practiceOperation.getAnswer();
 		}
 

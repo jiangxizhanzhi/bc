@@ -80,6 +80,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	@Autowired
+
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			JSONObject ojSceneConfig, AuthContext authContext) {
@@ -89,7 +91,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
 
-		if (null != ojSceneConfig) {
+		if (practiceOperation.getDynamicEnv() && null != ojSceneConfig) {
 			String topoId = remoteTopoService.create(
 					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
 			practiceOperation.setTopoId(topoId);
@@ -224,6 +226,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			webOperationBo.setResolvedDetail(detailBo);
 		}
 
+		// 题解数据获取
+		if (!operationBo.getWriteupPublic()) {
+			operationBo.setWriteup(null);
+		}
+
 		// 场景数据
 		if (operationBo.getDynamicEnv() && StringUtils.isNotBlank(operationBo.getTopoId())) {
 			OjLocalScene localScene = operationBo.getSceneShareMode()
@@ -235,6 +242,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			if (null != localScene) {
 				// todo 场景数据获取
+
 				webOperationBo.setSceneData(new JSONObject());
 			}
 

@@ -3,9 +3,6 @@ package com.cyberpeace.cr.crbase.controller;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +16,7 @@ import com.cyberpeace.common.model.MultiSelectReq;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.controller.req.NameValidReq;
 import com.cyberpeace.cr.crbase.controller.req.ShareReq;
 import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.BusinessTemplateRsp;
@@ -144,14 +142,10 @@ public class BusinessTemplateController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("查询单个任务方案")
+	@ApiOperation("校验模板名字")
 	@PatchMapping("/validate_name_patch/")
-	public BaseRsp<String> validateNamePatch(
-			@ApiParam(name = "name",
-					value = "名称") @RequestParam("name") @Valid @NotBlank String name,
-			@ApiParam(name = "type",
-					value = "类型") @RequestParam("type") @Valid @NotBlank Integer type) {
-		businessTemplateService.validateNamePatch(name, type);
+	public BaseRsp<String> validateNamePatch(@RequestBody @Validated NameValidReq nameValidReq) {
+		businessTemplateService.validateNamePatch(nameValidReq.getName(), nameValidReq.getType());
 		return new BaseRsp();
 	}
 }

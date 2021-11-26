@@ -80,8 +80,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
-	@Autowired
-
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			JSONObject ojSceneConfig, AuthContext authContext) {

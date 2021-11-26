@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @ApiModel
 public class OperationUpdateReq extends OperationAddReq {
 
-	@ApiModelProperty("资源编号")
+	@ApiModelProperty(name = "resource_id", value = "资源编号")
 	@NotBlank(groups = { Update.class })
 	private String resourceId;
 

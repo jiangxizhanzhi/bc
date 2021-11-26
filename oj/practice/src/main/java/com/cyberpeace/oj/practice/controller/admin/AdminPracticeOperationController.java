@@ -183,17 +183,14 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@ApiOperation("隔离模式设置")
 	@PatchMapping("/scene_share_mode")
 	public BaseRsp<Boolean>
-	updateSceneShare(@RequestBody @Validated SceneShareModeReq sceneShareModeReq) {
+			updateSceneShare(@RequestBody @Validated SceneShareModeReq sceneShareModeReq) {
 
-		List<PracticeOperation> operationList = StreamApiUtils
-				.simpleMap(sceneShareModeReq.getResourceIds(), resourceId -> {
-					PracticeOperation operation = new PracticeOperation();
-					operation.setResourceId(resourceId);
-					operation.setSceneShareMode(sceneShareModeReq.getSceneShareMode());
-					return operation;
-				});
+		PracticeOperation operation = new PracticeOperation();
+		operation.setResourceId(sceneShareModeReq.getResourceId());
+		operation.setSceneShareMode(sceneShareModeReq.getSceneShareMode());
 
-		boolean result = practiceOperationService.updateBatchById(operationList);
+		int result = practiceOperationMapper.updateById(operation);
+
 		return new BaseRsp(result);
 	}
 

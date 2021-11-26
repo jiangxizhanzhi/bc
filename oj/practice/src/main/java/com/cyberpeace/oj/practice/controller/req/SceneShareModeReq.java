@@ -1,8 +1,8 @@
 package com.cyberpeace.oj.practice.controller.req;
 
 import java.io.Serializable;
-import java.util.List;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -18,8 +18,8 @@ public class SceneShareModeReq implements Serializable {
 	@NotNull
 	private Integer sceneShareMode;
 
-	@ApiModelProperty("资源编号数组")
-	@NotEmpty
-	private List<String> resourceIds;
+	@ApiModelProperty("资源编号")
+	@NotBlank
+	private String resourceId;
 
 }

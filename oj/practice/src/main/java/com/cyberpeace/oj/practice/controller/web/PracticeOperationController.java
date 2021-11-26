@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.controller.web;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.practice.controller.req.SceneShareModeReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -94,5 +95,14 @@ public class PracticeOperationController {
 		List<String> practiceIds = practiceOperationService.selectPracticeIds(authContext);
 
 		return new BaseRsp<>(practiceIds);
+	}
+
+	@ApiOperation("场景启动")
+	@PostMapping("/scene")
+	public BaseRsp<JSONObject> startScene(@RequestParam("resource_id") String resourceId) {
+
+		JSONObject sceneData = practiceOperationService.startScene(resourceId);
+
+		return new BaseRsp<>(sceneData);
 	}
 }

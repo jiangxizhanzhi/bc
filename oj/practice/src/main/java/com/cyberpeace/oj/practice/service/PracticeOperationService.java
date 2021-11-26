@@ -69,4 +69,11 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
     List<String> selectPracticeIds(AuthContext authContext);
+
+	/**
+	 * 启动场景
+	 * @param resourceId
+	 * @return
+	 */
+	JSONObject startScene(String resourceId);
 }

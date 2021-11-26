@@ -15,6 +15,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.expression.Operation;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -380,4 +381,22 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		return practiceOperationMapper.selectBySetIds(setIds, authContext.getIsWeb());
 	}
+
+	@Override
+	public JSONObject startScene(String resourceId) {
+
+		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
+		if (null == operation) {
+			throw new InvalidParamException("习题信息错误！");
+		}
+
+		return null;
+	}
+
+//	private OjLocalScene getOjLocalScene(PracticeOperation operation) {
+//
+//		OjLocalScene localScene = new OjLocalScene();
+//		localScene.setBusinessId(operation.getResourceId());
+//		localScene.setBusinessType(OjLocalScene.);
+//	}
 }

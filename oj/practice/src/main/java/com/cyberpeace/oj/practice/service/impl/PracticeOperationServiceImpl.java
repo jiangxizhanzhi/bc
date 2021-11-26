@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
@@ -79,6 +80,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -239,8 +243,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 									CommonConstant.TRUE, CommonConstant.TRUE);
 
 			if (null != localScene) {
-				// todo 场景数据获取
 
+				// todo 场景数据获取
+//				remoteSceneService.getById(localScene.get)
 				webOperationBo.setSceneData(new JSONObject());
 			}
 

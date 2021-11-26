@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -41,6 +42,7 @@ import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -158,7 +160,6 @@ public class TeamTrainRoomController {
 
 			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
 			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
 			crRoles.forEach(crRole -> {
@@ -184,20 +185,21 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("修改团队训练状态")
 	@PostMapping("/start_end_team")
-	public BaseRsp<Integer>
-			changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
+	public BaseRsp<Map> changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
 		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
-
-		return new BaseRsp<>(status);
+		Map map = Maps.newHashMap();
+		map.put("training_status", status);
+		return new BaseRsp<>(map);
 	}
 
 	@ApiOperation("查询团队训练状态")
 	@GetMapping("/start_end_team")
-	public BaseRsp<Integer> getTrainingStatus(
+	public BaseRsp<Map> getTrainingStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		Integer status = teamRoomService.getTrainingStatus(resource_id);
-
-		return new BaseRsp<>(status);
+		Map map = Maps.newHashMap();
+		map.put("training_status", status);
+		return new BaseRsp<>(map);
 	}
 
 	/**
@@ -314,8 +316,7 @@ public class TeamTrainRoomController {
 				baseRole.setDescription(crRole.getDescription());
 				baseRole.setRoleGroup(crRole.getRoleGroup());
 			}
-			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER
-					.getValue()) {
+			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER.getValue()) {
 				RoleUsers roleUsers = new RoleUsers();
 				roleUsers.setRoleName(crRole.getName());
 				roleUsers.setRoleGroup(crRole.getRoleGroup());

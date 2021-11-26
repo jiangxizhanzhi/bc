@@ -59,4 +59,10 @@ public class PageReqBase implements Serializable {
 			this.perPage = perPage;
 		}
 	}
+
+	public void setPage(Integer page) {
+		if (page != null) {
+			this.page = page;
+		}
+	}
 }

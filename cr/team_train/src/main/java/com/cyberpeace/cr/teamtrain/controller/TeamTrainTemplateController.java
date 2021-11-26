@@ -23,13 +23,13 @@ import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRoleRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
-import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -95,13 +95,15 @@ public class TeamTrainTemplateController {
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
 
 		String roleString = template.getRoleConfig();
-		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
-				.toJsonObjectArray(roleString, TeamTrainTemplateRole.class);
+		List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonUtil
+				.toJsonObjectArray(roleString, TeamTrainTemplateRoleRsp.class);
 
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
-		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleList);
+		teamTrainTemplateRsp.setPeopleNumber(baseInfoRsp.getPeopleNumber());
+
+		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
 
 		return new BaseRsp<>(teamTrainTemplateRsp);

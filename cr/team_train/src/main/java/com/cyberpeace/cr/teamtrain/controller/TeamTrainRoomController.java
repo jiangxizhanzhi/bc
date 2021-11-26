@@ -76,6 +76,10 @@ public class TeamTrainRoomController {
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
 		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
 				TeamTrainRoomContext.class);
+		teamTrainRoomContext.setPreSkill(
+				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getPreSkill(), String.class));
+		teamTrainRoomContext.setTrainSkill(
+				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getTrainSkill(), String.class));
 		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
 
 		return getTeamRoom(teamRoom.getResourceId());

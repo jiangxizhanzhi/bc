@@ -28,11 +28,11 @@ public class TeamTrainRoomReq {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<String> preSkill;
+	private String preSkill;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<String> trainSkill;
+	private String trainSkill;
 
 	@ApiModelProperty(required = true)
 	@NotNull

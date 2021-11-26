@@ -15,4 +15,7 @@ public class OperationUpdateReq extends OperationAddReq {
 	@NotBlank(groups = { Update.class })
 	private String resourceId;
 
+	public void setResource_id(String resourceId) {
+		this.resourceId = resourceId;
+	}
 }

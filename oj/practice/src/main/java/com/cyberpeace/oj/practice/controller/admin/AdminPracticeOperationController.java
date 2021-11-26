@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,14 +66,20 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("实践操作习题新增")
 	@PostMapping("")
-	public BaseRsp add(@RequestBody @Validated(Create.class) OperationAddReq addReq) {
+	public BaseRsp add(@Validated(Create.class) OperationAddReq addReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 
 		PracticeOperation addOperation = convertReq(addReq);
+		if (null != addReq.getFile()) {
+			AttachmentBo attachmentBo = attachmentService.uploadFile(
+					Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE,
+					addReq.getFile());
+			addOperation.setAttachmentId(attachmentBo.getResourceId());
+		}
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
-				addReq.getDynamicEnv() ? addReq.getOjSceneConfig() : null, authContext);
+				JsonUtil.toJsonObject(addReq.getOjSceneConfig(), JSONObject.class), authContext);
 
 		return new BaseRsp(result);
 	}
@@ -86,9 +93,6 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		PracticeOperation practiceOperation = BeanUtils.copy(addReq, PracticeOperation.class);
 
-		practiceOperation.setAnswer(JsonUtil.arrayToString(addReq.getAnswer()));
-		practiceOperation.setKnowledge(JsonUtil.arrayToString(addReq.getKnowledge()));
-
 		practiceOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		return practiceOperation;
@@ -96,12 +100,18 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("实践操作习题修改")
 	@PatchMapping("")
-	public BaseRsp<Integer>
-			update(@RequestBody @Validated(Update.class) OperationUpdateReq updateReq) {
+	public BaseRsp<Integer> update(@Validated(Update.class) OperationUpdateReq updateReq) {
 
 		PracticeOperation updateOperation = convertReq(updateReq);
+
+		if (null != updateReq.getFile()) {
+			AttachmentBo attachmentBo = attachmentService.uploadFile(
+					Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE,
+					updateReq.getFile());
+			updateOperation.setAttachmentId(attachmentBo.getResourceId());
+		}
 		Integer result = practiceOperationService.updateOperation(updateOperation,
-				updateReq.getOjSceneConfig());
+				JsonUtil.toJsonObject(updateReq.getOjSceneConfig(), JSONObject.class));
 		return new BaseRsp(result);
 	}
 

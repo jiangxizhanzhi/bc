@@ -5,6 +5,7 @@ import com.cyberpeace.common.baseinterface.Create;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -19,16 +20,16 @@ public class OperationAddReq implements Serializable {
 	@NotBlank(groups = { Create.class })
 	private String title;
 
-	@ApiModelProperty("习题集")
+	@ApiModelProperty(name = "practice_set_id", value = "习题集")
 	@NotBlank(groups = { Create.class })
 	private String practiceSetId;
 
-	@ApiModelProperty("方向")
+	@ApiModelProperty(name = "category_id", value = "方向")
 	@NotBlank(groups = { Create.class })
 	private String categoryId;
 
 	@ApiModelProperty("知识点")
-	private List<String> knowledge;
+	private String knowledge;
 
 	@ApiModelProperty("难度")
 	@NotNull(groups = { Create.class })
@@ -38,45 +39,84 @@ public class OperationAddReq implements Serializable {
 	@NotBlank(groups = { Create.class })
 	private String content;
 
-	@ApiModelProperty("附件编号")
-	private String attachmentId;
+	@ApiModelProperty("附件")
+	private MultipartFile file;
 
-	@ApiModelProperty("是否为动态环境")
+	@ApiModelProperty(name = "dynamic_env", value = "是否为动态环境")
 	@NotNull(groups = { Create.class })
 	private Boolean dynamicEnv;
 
-	@ApiModelProperty("场景配置名称")
+	@ApiModelProperty(name = "scene_config_name", value = "场景配置名称")
 	private String sceneConfigName;
 
-	@ApiModelProperty("场景配置")
-	private JSONObject ojSceneConfig;
+	@ApiModelProperty(name = "oj_scene_config", value = "场景配置")
+	private String ojSceneConfig;
 
-	@ApiModelProperty("场景共享类型 1=个人 2=共享")
+	@ApiModelProperty(name = "scene_share_mode", value = "场景共享类型 1=个人 2=共享")
 	private Integer sceneShareMode;
 
-	@ApiModelProperty("是否为动态flag")
+	@ApiModelProperty(name = "dynamic_flag", value = "是否为动态flag")
 	private Boolean dynamicFlag;
 
-	@ApiModelProperty("场景存活时间")
+	@ApiModelProperty(name = "destroy_delay", value = "场景存活时间")
 	@NotNull(groups = { Create.class })
 	private Integer destroyDelay;
 
 	@ApiModelProperty("答案")
-	private List<String> answer;
+	private String answer;
 
 	@ApiModelProperty("分数")
 	@NotNull(groups = { Create.class })
 	private Double score;
 
-	@ApiModelProperty("是否公开")
+	@ApiModelProperty(name = "is_public", value = "是否公开")
 	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
-	@ApiModelProperty("题解是否公开")
+	@ApiModelProperty(name = "writeup_public", value = "题解是否公开")
 	@NotNull(groups = { Create.class })
 	private Boolean writeupPublic;
 
 	@ApiModelProperty("题解")
-	private String writeUp;
+	private String writeup;
 
+	public void setPractice_set_id(String practiceSetId) {
+		this.practiceSetId = practiceSetId;
+	}
+
+	public void setCategory_id(String categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public void setDynamic_env(Boolean dynamicEnv) {
+		this.dynamicEnv = dynamicEnv;
+	}
+
+	public void setScene_config_name(String sceneConfigName) {
+		this.sceneConfigName = sceneConfigName;
+	}
+
+	public void setOj_scene_config(String ojSceneConfig) {
+		this.ojSceneConfig = ojSceneConfig;
+	}
+
+	public void setScene_share_mode(Integer sceneShareMode) {
+		this.sceneShareMode = sceneShareMode;
+	}
+
+	public void setDynamic_flag(Boolean dynamicFlag) {
+		this.dynamicFlag = dynamicFlag;
+	}
+
+	public void setDestroy_delay(Integer destroyDelay) {
+		this.destroyDelay = destroyDelay;
+	}
+
+	public void setIs_public(Boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+
+	public void setWriteup_public(Boolean writeupPublic) {
+		this.writeupPublic = writeupPublic;
+	}
 }

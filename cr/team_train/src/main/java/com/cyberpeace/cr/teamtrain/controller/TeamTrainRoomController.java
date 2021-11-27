@@ -95,7 +95,7 @@ public class TeamTrainRoomController {
 	}
 
 	@ApiOperation("修改")
-	@PutMapping()
+	@PostMapping()
 	public BaseRsp<TeamRoomRsp>
 			update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
 

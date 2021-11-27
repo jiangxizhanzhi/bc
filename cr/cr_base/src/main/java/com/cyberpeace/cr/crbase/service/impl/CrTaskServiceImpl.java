@@ -251,6 +251,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskSubmit.setRoomId(task.getRoomId());
 		crTaskSubmit.setMissionScore(mission.getScore());
 		crTaskSubmit.setAnswer(answer);
+		crTaskSubmit.setEvaluateTime(new Date());
+
 		crTaskSubmit.setAnswerExtension(answerExtension);
 		crTaskSubmit.setResourceId(IDGeneratorUtil.getID());
 

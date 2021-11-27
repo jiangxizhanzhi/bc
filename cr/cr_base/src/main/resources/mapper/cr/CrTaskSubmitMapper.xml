@@ -17,7 +17,7 @@
 
 
     <select id="listCrTaskSubmit" resultType="com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext">
-        select cr_task_submit.*,cr_task_submit.create_time evaluate_time,cr_task.mission_id mission_hash
+        select cr_task_submit.*,cr_task.mission_id mission_hash
         ,cr_task.user_id submit_user
         from cr_task_submit,cr_task
         <where>

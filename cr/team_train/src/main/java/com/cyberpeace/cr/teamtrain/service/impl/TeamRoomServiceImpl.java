@@ -220,17 +220,19 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (!StringUtils.isBlank(teamTrainRoomContext.getName())) {
 			teamRoom.setName(teamTrainRoomContext.getName());
 		}
-		if (teamTrainRoomContext.getCategory() != 0) {
+		if (teamTrainRoomContext.getCategory() != null) {
 			teamRoom.setSubType(teamTrainRoomContext.getCategory());
 		}
 		if (!StringUtils.isBlank(teamTrainRoomContext.getDescription())) {
 			teamRoom.setDescription(teamTrainRoomContext.getDescription());
 		}
 
-		if (teamTrainRoomContext.getPreSkill().size() > 0) {
+		if (teamTrainRoomContext.getPreSkill() != null
+				&& teamTrainRoomContext.getPreSkill().size() > 0) {
 			teamRoom.setPreSkills(JsonUtil.toJsonString(teamTrainRoomContext.getPreSkill()));
 		}
-		if (teamTrainRoomContext.getTrainSkill().size() > 0) {
+		if (teamTrainRoomContext.getTrainSkill() != null
+				&& teamTrainRoomContext.getTrainSkill().size() > 0) {
 			teamRoom.setTrainSkills(JsonUtil.toJsonString(teamTrainRoomContext.getTrainSkill()));
 		}
 		if (teamTrainRoomContext.getStartTime() != null) {

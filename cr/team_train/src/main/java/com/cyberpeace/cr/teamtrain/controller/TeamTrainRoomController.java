@@ -95,7 +95,7 @@ public class TeamTrainRoomController {
 	}
 
 	@ApiOperation("修改")
-	@PostMapping()
+	@PutMapping()
 	public BaseRsp<TeamRoomRsp>
 			update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
 
@@ -131,6 +131,8 @@ public class TeamTrainRoomController {
 		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
 
 		teamRoomRsp.setRolesData(getTeamRoomRoleRes(crRoles));
+		teamRoomRsp.setTemplateName("");
+
 		teamRoomRsp
 				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 		teamRoomRsp.setTrainSkill(

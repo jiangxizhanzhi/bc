@@ -30,6 +30,8 @@ public class TeamRoomRsp implements Serializable {
 
 	private String template;
 
+	private String templateName;
+
 	private Integer difficult;
 
 	@ApiModelProperty(value = "自己岗位，基本信息，查列表会查询其他学员角色的内容列表")

@@ -193,7 +193,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			public Integer doInTransaction(TransactionStatus status) {
 				// 附件删除更新
 				if (StringUtils.isBlank(updateOperation.getAttachmentId())) {
-					attachmentMapper.deleteById(practiceOperation.getAttachmentId());
 					updateOperation.setAttachmentId("");
 				}
 

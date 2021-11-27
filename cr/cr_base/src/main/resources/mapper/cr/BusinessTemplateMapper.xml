@@ -55,7 +55,7 @@
         where `name` = #{name}
         and business_type = #{type}
         <if test="id != null and id != ''">
-            and resource_id ! = #{id}
+            and resource_id != #{id}
         </if>
     </select>
 

@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,10 @@ public class AdminPracticeCategoryController {
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-
 	@ApiOperation("分页查询练习分类")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<CategoryListBo>> list(@Validated PracticeCategoryListReq categoryListReq) {
+	public BaseRsp<ListRsp<CategoryListBo>>
+			list(@Validated PracticeCategoryListReq categoryListReq) {
 
 		Page page = categoryListReq.toPageParam();
 		CategoryListQuery query = BeanUtils.copy(categoryListReq, CategoryListQuery.class);
@@ -58,7 +59,8 @@ public class AdminPracticeCategoryController {
 	public BaseRsp<CategoryListBo> get(@RequestParam("resource_id") String resourceId,
 			@RequestParam(value = "children", required = false) Boolean children) {
 
-		CategoryListBo categoryListBo = practiceCategoryService.selectById(resourceId, children);
+		CategoryListBo categoryListBo = practiceCategoryService.selectById(resourceId,
+				null != children ? children : CommonConstant.FALSE);
 		return new BaseRsp<>(categoryListBo);
 	}
 

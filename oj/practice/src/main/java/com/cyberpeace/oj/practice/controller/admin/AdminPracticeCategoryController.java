@@ -40,12 +40,10 @@ public class AdminPracticeCategoryController {
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
-	private PracticeCategoryMapper practiceCategoryMapper;
 
 	@ApiOperation("分页查询练习分类")
 	@GetMapping("/list")
-	public ListRsp<CategoryListBo> list(@Validated PracticeCategoryListReq categoryListReq) {
+	public BaseRsp<ListRsp<CategoryListBo>> list(@Validated PracticeCategoryListReq categoryListReq) {
 
 		Page page = categoryListReq.toPageParam();
 		CategoryListQuery query = BeanUtils.copy(categoryListReq, CategoryListQuery.class);
@@ -53,7 +51,7 @@ public class AdminPracticeCategoryController {
 		IPage<CategoryListBo> iPage = practiceCategoryService.pageByListQuery(page, query,
 				categoryListReq.getChildren());
 
-		return PageUtil.getListResult(iPage);
+		return new BaseRsp(PageUtil.getListResult(iPage));
 	}
 
 	@ApiOperation("查询分类详情")

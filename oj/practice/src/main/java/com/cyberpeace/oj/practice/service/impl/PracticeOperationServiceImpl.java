@@ -416,8 +416,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
-			throw new InvalidParamException("习题信息错误！");
+			log.error("StartScene operation practice not found! operation_practice_id=[{}]");
+			throw new InvalidParamException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
+
+		// 判断是否存在已启动场景
+
 
 		OjLocalScene ojLocalScene = getOjLocalScene(operation, authContext);
 		LocalScene localScene = getLocalScene(operation, ojLocalScene, authContext);
@@ -433,6 +437,18 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		return null;
 	}
+
+	/**
+	 * 获取已存在场景
+	 * @param practiceId
+	 * @param authContext
+	 * @return
+	 */
+//	private OjLocalScene getExistOjLocalScene(String practiceId, AuthContext authContext) {
+//
+//
+//
+//	}
 
 	/**
 	 * 组装localScene数据

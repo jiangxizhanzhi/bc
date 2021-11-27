@@ -293,17 +293,19 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		LocalScene localScene = localSceneService
 				.getByBusinessInstanceId(teamRoomdata.getResourceId());
 		if (teamRoomdata.isUnopened()) {
+			teamRoomdata.setTrainingStatus(TeamRoom.TrainingStatusCode.OPENING.getCode());
+			teamRoomdata.setSceneStartTime(new Date());
 			localScene.setStartTime(new Date());
 		}
 		// 已开始，修改local_scene数据
-		if (teamRoomdata.isOpening()) {
+		else if (teamRoomdata.isOpening()) {
+			teamRoomdata.setSceneEndTime(new Date());
+			teamRoomdata.setTrainingStatus(TeamRoom.TrainingStatusCode.ENDED.getCode());
 			localScene.setEndTime(new Date());
-		}
-		localSceneService.updateById(localScene);
-
-		if (teamRoomdata.isEnded()) {
+		} else if (teamRoomdata.isEnded()) {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
+		localSceneService.updateById(localScene);
 
 		if (teamRoomdata.isOpening()) {
 			// todo 审计日志

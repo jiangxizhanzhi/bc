@@ -70,7 +70,7 @@ public class MybatisConfig {
 		GlobalConfig globalConfig = new GlobalConfig();
 		globalConfig.setMetaObjectHandler(metaObjectHandler());
 		GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
-		dbConfig.setLogicDeleteField("status");
+		// dbConfig.setLogicDeleteField("status");
 		dbConfig.setLogicDeleteValue("UNIX_TIMESTAMP()");
 		dbConfig.setLogicNotDeleteValue(NOT_DELETE);
 		globalConfig.setDbConfig(dbConfig);

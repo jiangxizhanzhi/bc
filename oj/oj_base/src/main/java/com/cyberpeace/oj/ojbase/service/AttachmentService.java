@@ -40,4 +40,10 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @return
 	 */
 	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file);
+
+	/**
+	 *
+	 * @param attachmentId
+	 */
+	void deleteAttachment(String attachmentId);
 }

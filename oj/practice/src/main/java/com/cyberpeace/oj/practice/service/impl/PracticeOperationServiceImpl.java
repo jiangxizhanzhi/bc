@@ -1,21 +1,23 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneMpContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.google.common.collect.Lists;
+import nonapi.io.github.classgraph.utils.FileUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.jni.Local;
@@ -33,8 +35,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -70,6 +70,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private AttachmentMapper attachmentMapper;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
@@ -193,6 +196,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			public Integer doInTransaction(TransactionStatus status) {
 				// 附件删除更新
 				if (StringUtils.isBlank(updateOperation.getAttachmentId())) {
+					attachmentService.deleteAttachment(practiceOperation.getAttachmentId());
 					updateOperation.setAttachmentId("");
 				}
 

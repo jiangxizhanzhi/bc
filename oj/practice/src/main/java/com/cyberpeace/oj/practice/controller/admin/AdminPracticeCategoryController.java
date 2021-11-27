@@ -1,8 +1,5 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
-import javax.validation.Valid;
-
-import com.cyberpeace.common.util.IDGeneratorUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +12,13 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.practice.controller.req.CategoryUpdateReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeCategoryReq;
 import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
 import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
@@ -59,7 +56,7 @@ public class AdminPracticeCategoryController {
 			@ApiImplicitParam(name = "children", value = "是否查询子类") })
 	@GetMapping("")
 	public BaseRsp<CategoryListBo> get(@RequestParam("resource_id") String resourceId,
-			@RequestParam("children") Boolean children) {
+			@RequestParam(value = "children", required = false) Boolean children) {
 
 		CategoryListBo categoryListBo = practiceCategoryService.selectById(resourceId, children);
 		return new BaseRsp<>(categoryListBo);

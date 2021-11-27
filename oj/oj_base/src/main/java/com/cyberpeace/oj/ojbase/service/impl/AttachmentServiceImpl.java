@@ -96,6 +96,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 
 		File uploadFile = new File(filePath + file.getOriginalFilename());
 		if (uploadFile.exists()) {
+			uploadFile = new File(filePath + reFileName(file.getOriginalFilename()));
 			log.error("Upload file exist! upload_file_path=[{}]", uploadFile.getAbsolutePath());
 			Attachment attachment = attachmentMapper.selectByPath(uploadFile.getAbsolutePath());
 			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
@@ -115,11 +116,34 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		if (null != insert && insert) {
-			AttachmentBo attachmentBo = create(file.getOriginalFilename(),
-					uploadFile.getAbsolutePath());
+			AttachmentBo attachmentBo = create(uploadFile.getName(), uploadFile.getAbsolutePath());
 			return attachmentBo;
 		}
 
 		return null;
+	}
+
+	/**
+	 * 修改文件名称
+	 * @param fileName
+	 * @return
+	 */
+	public String reFileName(String fileName) {
+		String name = fileName.substring(0, fileName.lastIndexOf("."));
+		String afterFix = fileName.substring(fileName.lastIndexOf(".") + 1);
+		return name + IDGeneratorUtil.getID() + CommonConstant.PERIOD + afterFix;
+	}
+
+	@Override
+	public void deleteAttachment(String attachmentId) {
+		Attachment attachment = attachmentMapper.selectById(attachmentId);
+		if (null != attachment) {
+			attachmentMapper.deleteById(attachmentId);
+			File file = new File(attachment.getFilePath());
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+
 	}
 }

@@ -7,6 +7,8 @@ public interface CommonConstant {
     /** 分类的code分割符*/
     String CODE_COMMA = ",";
 
+    String PERIOD = ".";
+
     /** 竖线分割符*/
     String VERTICAL_LINE = "|";
 

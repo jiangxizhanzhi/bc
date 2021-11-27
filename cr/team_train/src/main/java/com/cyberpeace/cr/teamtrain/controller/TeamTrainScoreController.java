@@ -243,7 +243,7 @@ public class TeamTrainScoreController {
 					.setSubmitUserName(userInfoMap.get(missionEvaluationContext.getSubmitUser()));
 			missionEvaluationRsp.setSubmitLogHash(missionEvaluationContext.getMissionHash());
 			missionEvaluationRsp.setTotalScore(missionEvaluationContext.getMission().getScore());
-
+			missionEvaluationRsp.setEvaluateTime(missionEvaluationContext.getEvaluateTime());
 			MissionEvaluationRsp.SubmitInfo submitInfo = missionEvaluationRsp.new SubmitInfo();
 
 			submitInfo.setCreateTime(missionEvaluationContext.getCreateTime());

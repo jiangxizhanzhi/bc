@@ -77,7 +77,7 @@ public class TeamTrainStudentsController {
 
 		TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
 		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
-		teamRoomRsp.setRolesData(crRoles);
+		// teamRoomRsp.setRolesData(crRoles);
 		teamRoomRsp
 				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 		teamRoomRsp.setTrainSkill(
@@ -107,7 +107,7 @@ public class TeamTrainStudentsController {
 
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
 			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
-			teamRoomRsp.setRolesData(crRoles);
+			// teamRoomRsp.setRolesData(crRoles);
 
 			teamRoomRspList.add(teamRoomRsp);
 		}
@@ -235,8 +235,7 @@ public class TeamTrainStudentsController {
 				baseRole.setDescription(crRole.getDescription());
 				baseRole.setRoleGroup(crRole.getRoleGroup());
 			}
-			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER
-					.getValue()) {
+			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER.getValue()) {
 				RoleUsers roleUsers = new RoleUsers();
 				roleUsers.setRoleName(crRole.getName());
 				roleUsers.setRoleGroup(crRole.getRoleGroup());

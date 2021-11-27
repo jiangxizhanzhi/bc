@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -37,7 +36,7 @@ public class TeamRoomRsp implements Serializable {
 	private BaseRole trainingRoleData;
 
 	@ApiModelProperty(value = "所有岗位(包含教员)，单独查时使用")
-	private List<CrRole> rolesData;
+	private List<TeamRoomRoleRes> rolesData;
 
 	private Integer durationTime;
 

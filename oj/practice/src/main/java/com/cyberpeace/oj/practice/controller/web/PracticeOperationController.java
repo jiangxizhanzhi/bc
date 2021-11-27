@@ -101,7 +101,10 @@ public class PracticeOperationController {
 	@PostMapping("/scene")
 	public BaseRsp<JSONObject> startScene(@RequestParam("resource_id") String resourceId) {
 
-		JSONObject sceneData = practiceOperationService.startScene(resourceId);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+
+		JSONObject sceneData = practiceOperationService.startScene(resourceId, authContext);
 
 		return new BaseRsp<>(sceneData);
 	}

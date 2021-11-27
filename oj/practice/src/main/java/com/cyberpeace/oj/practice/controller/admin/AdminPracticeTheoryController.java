@@ -81,10 +81,6 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 				.getCode().intValue()) {
 			practiceTheory.setAnswer(practiceTheory.getBlank());
 		}
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
-				.getCode().intValue()) {
-			practiceTheory.setAnswer(practiceTheory.getKeyword());
-		}
 	}
 
 	@ApiOperation("理论基础习题修改")

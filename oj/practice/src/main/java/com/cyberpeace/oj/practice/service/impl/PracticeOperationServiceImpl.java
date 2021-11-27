@@ -5,14 +5,20 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.SceneMpContext;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.expression.Operation;
@@ -90,9 +96,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
-
-	@Autowired
-	private LocalSceneService localSceneService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -310,6 +313,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		IPage<AdminOperationListBo> listBoIPage = iPage.convert(practiceOperation -> {
 			AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 					AdminOperationListBo.class);
+
+			operationListBo.setHasSceneData(practiceOperation.getDynamicEnv()
+					&& StringUtils.isNotBlank(practiceOperation.getTopoId()));
+
 			if (authContext.getIsWeb()) {
 				if (null != listQuery.getSolved()) {
 					operationListBo.setSolved(listQuery.getSolved());
@@ -327,8 +334,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					.selectById(practiceOperation.getPracticeSetId());
 			operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 			UserInfo userInfo = remoteUserService.getById(practiceOperation.getCreateUserId());
-
-			operationListBo.setCreateUserName(userInfo.getUserName());
+			operationListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 			return operationListBo;
 		});
 
@@ -383,20 +389,67 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public JSONObject startScene(String resourceId) {
+	public JSONObject startScene(String resourceId, AuthContext authContext) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
 			throw new InvalidParamException("习题信息错误！");
 		}
 
+		OjLocalScene ojLocalScene = getOjLocalScene(operation, authContext);
+		LocalScene localScene = getLocalScene(operation, ojLocalScene, authContext);
+		ojLocalScene.setLocalSceneId(localScene.getResourceId());
+		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
+
+		SceneStartContext sceneStartContext = new SceneStartContext();
+		sceneStartContext.setId(operation.getTopoId());
+		SceneMpContext sceneMpContext = new SceneMpContext();
+		sceneMpContext.setAccessUserId(UserInfoContext.getUserContext().getUserId());
+		sceneStartContext.setContext(sceneMpContext);
+		remoteSceneService.startScene(sceneStartContext, CommonConstant.FALSE);
+
 		return null;
 	}
 
-//	private OjLocalScene getOjLocalScene(PracticeOperation operation) {
-//
-//		OjLocalScene localScene = new OjLocalScene();
-//		localScene.setBusinessId(operation.getResourceId());
-//		localScene.setBusinessType(OjLocalScene.);
-//	}
+	/**
+	 * 组装localScene数据
+	 * @param operation
+	 * @param ojLocalScene
+	 * @param authContext
+	 * @return
+	 */
+	private LocalScene getLocalScene(PracticeOperation operation, OjLocalScene ojLocalScene,
+			AuthContext authContext) {
+
+		LocalScene localScene = new LocalScene();
+		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setBusinessCode(LocalScene.BusinessCode.PRACTICE.getCode());
+		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
+		localScene.setDestoryMode(LocalScene.DestroyMode.AUTO.getCode());
+		localScene.setResourceId(IDGeneratorUtil.getID());
+		localScene.setTopoId(operation.getTopoId());
+		localScene.setUserId(authContext.getUserId());
+		return localScene;
+	}
+
+	/**
+	 * 组装local_scene数据 未绑定localScene编号
+	 * @param operation
+	 * @param authContext
+	 * @return
+	 */
+	private OjLocalScene getOjLocalScene(PracticeOperation operation, AuthContext authContext) {
+
+		OjLocalScene localScene = new OjLocalScene();
+		localScene.setBusinessId(operation.getResourceId());
+		localScene.setBusinessType(OjLocalScene.BusinessType.OPERATION.getCode());
+		localScene.setFlags(operation.getAnswer());
+		localScene.setFromWeb(authContext.getIsWeb());
+		localScene.setShared(
+				operation.getSceneShareMode().intValue() == SceneShare.SHARED.getCode().intValue());
+		localScene.setUserId(authContext.getUserId());
+		localScene.setResourceId(IDGeneratorUtil.getID());
+
+		return localScene;
+	}
 }

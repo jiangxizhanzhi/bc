@@ -75,5 +75,5 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param resourceId
 	 * @return
 	 */
-	JSONObject startScene(String resourceId);
+	JSONObject startScene(String resourceId, AuthContext authContext);
 }

@@ -32,7 +32,7 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
-import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
+import com.cyberpeace.cr.teamtrain.service.context.StudentsTimeLineData;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -191,12 +191,12 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
-	public BaseRsp<TimeLineData> getTimeLine(
+	public BaseRsp<StudentsTimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
-		TimeLineData data = teamRoomService.getStudentsTimeLine(resource_id);
+		StudentsTimeLineData data = teamRoomService.getStudentsTimeLine(resource_id);
 
-		return new BaseRsp<>(data);
+		return new BaseRsp(data);
 	}
 
 	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息

@@ -353,8 +353,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public TimeLineData getStudentsTimeLine(String roomId) {
+	public StudentsTimeLineData getStudentsTimeLine(String roomId) {
 		TimeLineData timeLineData = new TimeLineData();
+		setTime(timeLineData, roomId);
+		StudentsTimeLineData studentsTimeLineData = BeanUtils.copy(timeLineData,
+				StudentsTimeLineData.class);
+
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
 		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
 				UserInfoContext.getUserContext().getUserId());
@@ -368,10 +372,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 			timeLineEventList.add(timeLineEvent);
 		}
-		setTime(timeLineData, roomId);
-		timeLineData.setUserTimeLineConfig(timeLineEventList);
 
-		return timeLineData;
+		studentsTimeLineData.setData(timeLineEventList);
+
+		return studentsTimeLineData;
 	}
 
 	@Override

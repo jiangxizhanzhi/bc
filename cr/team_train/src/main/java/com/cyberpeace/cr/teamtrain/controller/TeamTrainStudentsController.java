@@ -78,7 +78,10 @@ public class TeamTrainStudentsController {
 		TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
 		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
 		teamRoomRsp.setRolesData(crRoles);
-
+		teamRoomRsp
+				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
+		teamRoomRsp.setTrainSkill(
+				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
 	}
 

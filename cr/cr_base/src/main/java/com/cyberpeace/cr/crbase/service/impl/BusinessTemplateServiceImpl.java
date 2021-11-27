@@ -138,7 +138,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		share.setShareMode(businessTemplate.getOperationAuthType());
 		List<ShareTeacher> shareTeacherList = Lists.newArrayList();
 
-		if (AuthTable.AuthType.CUSTOM_SHARE_MODE.equals(businessTemplate.getOperationAuthType())) {
+		if (AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode()
+				.equals(businessTemplate.getOperationAuthType())) {
 			String teachers = businessTemplate.getOperationAuthIds();
 
 			UserPageContext userPageContext = new UserPageContext();

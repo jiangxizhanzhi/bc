@@ -104,7 +104,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("实践操作习题修改")
 	@PatchMapping("")
-	public BaseRsp<Integer> update(@Validated(Update.class) OperationUpdateReq updateReq) {
+	public BaseRsp<Integer> update(@Validated({ Update.class }) OperationUpdateReq updateReq) {
 
 		PracticeOperation updateOperation = convertReq(updateReq);
 

@@ -56,6 +56,10 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -96,6 +100,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -173,11 +180,27 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig) {
 
+		PracticeOperation practiceOperation = practiceOperationMapper
+				.selectById(updateOperation.getResourceId());
+
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
 			remoteTopoService.save(ojSceneConfig);
 		}
 
-		return practiceOperationMapper.updateById(updateOperation);
+		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+				// 附件删除更新
+				if (StringUtils.isBlank(updateOperation.getAttachmentId())) {
+					attachmentMapper.deleteById(practiceOperation.getAttachmentId());
+					updateOperation.setAttachmentId("");
+				}
+
+				return practiceOperationMapper.updateById(updateOperation);
+			}
+		});
+
 	}
 
 	@Override

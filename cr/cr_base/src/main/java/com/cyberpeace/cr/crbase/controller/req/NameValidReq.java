@@ -8,4 +8,7 @@ public class NameValidReq {
 	String name;
 
 	Integer type;
+
+	String id;
+
 }

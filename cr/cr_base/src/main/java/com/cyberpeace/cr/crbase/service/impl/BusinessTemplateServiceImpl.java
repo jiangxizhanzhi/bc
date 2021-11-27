@@ -93,8 +93,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public void validateNamePatch(String name, Integer type) {
-		BusinessTemplate businessTemplate = businessTemplateMapper.selectByNameAndType(name, type);
+	public void validateNamePatch(String name, Integer type, String id) {
+		BusinessTemplate businessTemplate = businessTemplateMapper.selectByNameAndType(name, type,
+				id);
 		if (businessTemplate != null) {
 			throw new BusinessException(CrBusinessErrorCode.NAME_EXIST_ERROR);
 		}

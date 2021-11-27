@@ -145,7 +145,8 @@ public class BusinessTemplateController {
 	@ApiOperation("校验模板名字")
 	@PatchMapping("/validate_name_patch/")
 	public BaseRsp<String> validateNamePatch(@RequestBody @Validated NameValidReq nameValidReq) {
-		businessTemplateService.validateNamePatch(nameValidReq.getName(), nameValidReq.getType());
+		businessTemplateService.validateNamePatch(nameValidReq.getName(), nameValidReq.getType(),
+				nameValidReq.getId());
 		return new BaseRsp();
 	}
 }

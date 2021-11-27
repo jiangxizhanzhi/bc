@@ -49,6 +49,7 @@
         `operation_auth_ids` like
         #{userId}) or `create_user_id` =#{userId})
     </select>
+
     <select id="selectByNameAndType" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
         select *
         from cr_business_template

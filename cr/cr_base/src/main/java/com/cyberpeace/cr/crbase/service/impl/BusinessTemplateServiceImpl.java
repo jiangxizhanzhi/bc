@@ -32,7 +32,6 @@ import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -150,9 +149,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				.equals(businessTemplate.getOperationAuthType())) {
 			String teachers = businessTemplate.getOperationAuthIds();
 
-			UserPageContext userPageContext = new UserPageContext();
-			userPageContext.setIds(String.join(",", teachers));
-			List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+			List<UserInfo> userInfoList = remoteUserService
+					.getByIdList(JsonUtil.toJsonObjectArray(teachers, String.class));
 			userInfoList.forEach(userInfo -> {
 				ShareTeacher shareTeacher = new ShareTeacher();
 				shareTeacher.setId(userInfo.getUserId());

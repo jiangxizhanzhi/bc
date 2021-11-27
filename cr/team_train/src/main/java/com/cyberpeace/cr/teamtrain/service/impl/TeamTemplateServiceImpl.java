@@ -18,13 +18,13 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
+import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
-import com.cyberpeace.integratation.model.SceneConfig;
 
 /**
  *
@@ -61,8 +61,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		BusinessTemplate businessTemplate = getBusinessTemplateFromBaseInfoInput(crEventAddInput);
 
-		// 拓扑场景id保存获取
-		SceneConfig sceneConfig = teamTrainTemplateContext.getSceneConfigData();
 		String sceneConfigId = "";
 		// "todo场景";
 
@@ -117,7 +115,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		BaseInfo baseInfo = input.getBaseInfo();
 
-		SceneConfig sceneConfig = input.getSceneConfigData();
+		SceneConfigData sceneConfig = input.getBaseInfo().getSceneConfigData();
 
 		businessTemplate.setTopoId("");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());

@@ -22,4 +22,11 @@ public class PracticeCategoryReq {
     @ApiModelProperty("所属父级节点")
     private String parentId;
 
+    public void setPractice_type(Integer practiceType) {
+        this.practiceType = practiceType;
+    }
+
+    public void setParent_id(String parentId) {
+        this.parentId = parentId;
+    }
 }

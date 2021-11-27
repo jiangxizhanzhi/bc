@@ -22,4 +22,11 @@ public class CategoryUpdateReq implements Serializable {
     @ApiModelProperty("父级编号")
     private String parentId;
 
+    public void setResource_id(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public void setParent_id(String parentId) {
+        this.parentId = parentId;
+    }
 }

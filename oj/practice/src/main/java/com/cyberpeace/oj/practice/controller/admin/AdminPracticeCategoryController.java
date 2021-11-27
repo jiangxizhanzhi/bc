@@ -64,7 +64,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("修改分类信息")
 	@PatchMapping("")
-	public BaseRsp<Integer> update(@RequestBody @Validated CategoryUpdateReq updateReq) {
+	public BaseRsp<Integer> update(@Validated CategoryUpdateReq updateReq) {
 
 		PracticeCategory category = BeanUtils.copy(updateReq, PracticeCategory.class);
 		if (StringUtils.isNotBlank(updateReq.getParentId())) {
@@ -78,7 +78,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("新增分类信息")
 	@PostMapping("")
-	public BaseRsp<Integer> add(@RequestBody @Validated PracticeCategoryReq categoryReq) {
+	public BaseRsp<Integer> add(@Validated PracticeCategoryReq categoryReq) {
 
 		PracticeCategory practiceCategory = BeanUtils.copy(categoryReq, PracticeCategory.class);
 		if (StringUtils.isNotBlank(categoryReq.getParentId())) {

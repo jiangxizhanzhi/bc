@@ -47,13 +47,17 @@ import com.cyberpeace.cr.teamtrain.service.context.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.UserPageContext;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  */
 @Service
+@Slf4j
 public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> implements TeamRoomService {
 
 	@Autowired
@@ -86,6 +90,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
 
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
 
@@ -110,8 +117,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
 
-		TeamRoom teamRoom = new TeamRoom(teamTrainRoomContext, template, businessTemplate);
+		TeamRoom teamRoom = new TeamRoom(teamTrainRoomContext, template);
 		teamRoom.setCreateUserId(userId);
+		teamRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -147,6 +155,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				LocalScene localScene = getLocalScene(teamRoom.getResourceId());
 
 				localSceneService.save(localScene);
+				teamRoom.setLocalSceneId(localScene.getResourceId());
+				teamRoomMapper.updateById(teamRoom);
 
 			}
 
@@ -379,20 +389,24 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public TeamRoom getBySceneMangerId(String sceneManagerId) {
-		TeamRoom room = teamRoomMapper.selectbySceneManagerId(sceneManagerId);
+	public TeamRoom getByLocalSceneId(String localSceneId) {
+		TeamRoom room = teamRoomMapper.selectbySceneManagerId(localSceneId);
 		if (room == null) {
+			log.error("failed to get TeamRoom with localSceneId [{}]", localSceneId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		return room;
 	}
 
-	// @Override
-	// public Boolean startScene(String localSceneId) {
-	// preStartScene(localSceneId);
-	//
-	// return localSceneService.startScene(localSceneId, getSceneStartContext());
-	// }
+	@Override
+	public TeamRoom getById(String roomId) {
+		TeamRoom room = teamRoomMapper.selectById(roomId);
+		if (room == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return room;
+	}
 
 	@Override
 	public TimeLineData getTimeLine(String roomId) {

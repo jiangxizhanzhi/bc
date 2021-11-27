@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 
 import lombok.Data;
@@ -99,8 +98,7 @@ public class TeamRoom extends BaseTable {
 
 	public TeamRoom() {}
 
-	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template,
-			BusinessTemplate businessTemplate) {
+	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template) {
 		this.teamTemplateId = template.getResourceId();
 		this.name = input.getName();
 		this.description = input.getDescription();
@@ -114,7 +112,6 @@ public class TeamRoom extends BaseTable {
 		// this.createUserId = createUserId;
 		// this.modifyUserId = modifyUserId;
 		// this.localSceneId = localSceneId;
-		this.copyedTopoId = businessTemplate.getTopoId();
 	}
 
 	public enum TrainingStatusCode {

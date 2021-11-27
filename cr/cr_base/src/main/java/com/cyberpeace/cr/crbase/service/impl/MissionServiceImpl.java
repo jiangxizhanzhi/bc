@@ -100,6 +100,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<Mission> batchGet(List<String> resourceIds) {
+		if (resourceIds.size() == 0) {
+			return Lists.newArrayList();
+		}
 		return missionMapper.batchSelect(resourceIds);
 	}
 

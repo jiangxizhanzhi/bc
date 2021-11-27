@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.google.common.collect.Maps;
 
 @Service(value = "BasicSceneHandler")
@@ -34,7 +33,7 @@ public class SceneHandler {
 		return null;
 	}
 
-	public String getRoomInfoBySceneManagerId(String sceneManagerId) {
+	public String getRoomInfoByLocalSceneId(String localSceneId) {
 		return null;
 	}
 
@@ -44,16 +43,6 @@ public class SceneHandler {
 
 	public void filterVisibleTopo(JSONObject topoData, LocalScene localScene, String userId,
 			String roleId) {}
-
-	public SceneStartContext makeSceneStartContext(LocalScene localScene) {
-		SceneStartContext startContext = new SceneStartContext();
-		startContext.getContext().getPassThrough().put("scene_manager_id",
-				localScene.getResourceId());
-		startContext.setReferenceMetaData(getReferenceMetaData(localScene));
-		startContext.setId(localScene.getTopoId());
-
-		return startContext;
-	}
 
 	public String getReferenceMetaData(LocalScene localScene) {
 		return null;
@@ -74,14 +63,13 @@ public class SceneHandler {
 		return startContext;
 	}
 
-	public SceneOpsContext makeSceneStopContext(LocalScene localScene, String mpSceneId) {
-		SceneOpsContext startContext = new SceneOpsContext();
-		startContext.getContext().getPassThrough().put("scene_manager_id",
-				localScene.getResourceId());
-		startContext.setId(mpSceneId);
+	public void doAfterStopScene(LocalScene localScene) {}
 
-		return startContext;
-	}
+	public void checkPauseScenePermission(LocalScene localScene) {}
 
-	public void doAfterStopScene() {}
+	public void afterPauseScene(LocalScene localScene) {}
+
+	public void checkUnpauseScenePermission(LocalScene localScene) {}
+
+	public void afterUnpauseScene(LocalScene localScene) {}
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -29,6 +30,8 @@ import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.crbase.service.context.ShareTeacher;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
+import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -50,6 +53,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private RemoteUserService remoteUserService;
 
 	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
@@ -61,8 +67,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		// 1、从输入业务中解析公共模板
 		BusinessTemplate businessTemplate = getBusinessTemplate(basicTemplate);
 		// 拓扑场景id保存获取
-
-		String topoId = "";
+		SceneConfigData topoData = basicTemplate.getBaseInfo().getSceneConfigData();
+		JSONObject topoJson = new JSONObject();
+		topoJson.put("scene_config", topoData.getSceneConfig());
+		String topoId = localSceneService.saveTopo(topoJson, basicTemplate.getBaseInfo().getType());
 		// todo 场景
 
 		// 保存基础模板

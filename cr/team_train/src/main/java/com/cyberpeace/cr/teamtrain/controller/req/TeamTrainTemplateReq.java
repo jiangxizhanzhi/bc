@@ -14,10 +14,6 @@ public class TeamTrainTemplateReq extends BasicTemplate {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private Object sceneConfigData;
-
-	@ApiModelProperty(required = true)
-	@NotNull
 	private List<RoleListReq> roleList;
 
 	@ApiModelProperty(required = true)

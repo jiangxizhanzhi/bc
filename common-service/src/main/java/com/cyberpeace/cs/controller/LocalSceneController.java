@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Api(tags = "场景管理器相关接口")
 @RestController
-@RequestMapping("/cr/scene_manager")
+@RequestMapping("/localScene")
 @RequiresAuthentication
 @Slf4j
 public class LocalSceneController {
@@ -41,7 +41,7 @@ public class LocalSceneController {
 	TransactionTemplate transactionTemplate;
 
 	@ApiOperation("读取场景")
-	@GetMapping("/scene")
+	@GetMapping("")
 	public BaseRsp<CrSceneRetrieveRsp> retrieve(@RequestParam("id") String sceneManagerId,
 			@RequestParam(value = "role_id", required = false) String roleId) {
 		JSONObject sceneData = null;
@@ -83,7 +83,7 @@ public class LocalSceneController {
 	}
 
 	@ApiOperation("启动场景")
-	@PostMapping("/scene")
+	@PostMapping("")
 	public BaseRsp startScene(@RequestBody SceneReq sceneReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		localSceneService.startScene(sceneReq.getLocalSceneId(), userId);
@@ -91,10 +91,24 @@ public class LocalSceneController {
 	}
 
 	@ApiOperation("关闭场景")
-	@DeleteMapping("/scene")
+	@DeleteMapping("")
 	public BaseRsp stopScene(@RequestBody SceneReq sceneReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		localSceneService.stopScene(sceneReq.getLocalSceneId(), userId);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("暂停场景")
+	@PostMapping("/pause")
+	public BaseRsp pauseScene(@RequestBody SceneReq sceneReq) {
+		localSceneService.pauseScene(sceneReq.getLocalSceneId());
+		return new BaseRsp();
+	}
+
+	@ApiOperation("（从暂停）恢复场景")
+	@PostMapping("/unpause")
+	public BaseRsp unpauseScene(@RequestBody SceneReq sceneReq) {
+		localSceneService.unPauseScene(sceneReq.getLocalSceneId());
 		return new BaseRsp();
 	}
 }

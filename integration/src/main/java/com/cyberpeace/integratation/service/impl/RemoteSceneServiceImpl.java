@@ -31,6 +31,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_RETRIEVE;
 
+	private String SCENE_PAUSE_URL;
+
+	private String SCENE_UNPAUSE_URL;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost()
@@ -44,6 +48,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_CLEAR_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.clear");
 
 		SCENE_RETRIEVE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.retrieve");
+
+		SCENE_PAUSE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.pause");
+
+		SCENE_UNPAUSE_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.unpause");
 	}
 
 	@Override
@@ -59,7 +68,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		JSONObject data = HttpClientUtil.post(targetUrl, sceneStartContext, JSONObject.class);
 
 		if (null == data) {
-			log.error("topoId=[{}] startScene error, response data is null", sceneStartContext.getId());
+			log.error("topoId=[{}] startScene error, response data is null",
+					sceneStartContext.getId());
 			throw new RemoteServiceException();
 		}
 
@@ -78,9 +88,20 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
+	public Boolean pauseScene(String sceneId, SceneOpsContext sceneOpsContext) {
+		return HttpClientUtil.post(SCENE_PAUSE_URL, sceneOpsContext, Boolean.class);
+	}
+
+	@Override
 	public JSONObject getById(String sceneId, String userId) {
 		String targetUrl = SCENE_RETRIEVE + "?id=" + sceneId + "&accessUserId=" + userId;
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+
+	}
+
+	@Override
+	public Boolean unpauseScene(String mpSceneId, SceneOpsContext sceneOpContext) {
+		return HttpClientUtil.post(SCENE_UNPAUSE_URL, sceneOpContext, Boolean.class);
 
 	}
 }

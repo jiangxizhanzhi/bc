@@ -88,7 +88,7 @@ public class LocalScene extends BaseTable {
 
 	public enum SceneStatusEnum implements GenericEnum {
 
-		INIT(0, "未启动"), START(1, "启动"), DESTROY(2, "删除");
+		INIT(0, "未启动"), START(1, "启动"), DESTROY(2, "删除"), PAUSE(3, "暂停");
 
 		@Getter
 		private Integer code;

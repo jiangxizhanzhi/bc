@@ -6,19 +6,19 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
+	LocalScene getById(String localSceneId);
+
 	LocalScene getByBusinessInstanceId(String businessInstanceId);
 
 	Boolean startScene(String localSceneId, String userId);
 
 	Boolean stopScene(String localSceneId, String userId);
 
-	Boolean closeScene(String localSceneId);
-
 	Boolean pauseScene(String localSceneId);
 
-	Boolean unPause(String localSceneId);
+	Boolean unPauseScene(String localSceneId);
 
-	LocalScene copyLocalScene(Integer appId, String sceneManagerId, Boolean clone);
+	LocalScene copyLocalScene(Integer businessType, String localSceneId, Boolean clone);
 
 	LocalScene createLocalScene(Integer appId, String topoId);
 

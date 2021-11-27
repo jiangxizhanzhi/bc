@@ -50,4 +50,8 @@ public class BaseInfo {
 	@ApiModelProperty(required = true)
 	@NotNull
 	private Integer peopleNumber;
+
+	@ApiModelProperty(required = true)
+	@NotNull
+	private SceneConfigData sceneConfigData;
 }

@@ -53,13 +53,13 @@ public class TeamSceneHandler extends SceneHandler {
 
 	@Override
 	public String getRoomIdBySceneManagerId(String sceneManagerId) {
-		TeamRoom room = teamRoomService.getBySceneMangerId(sceneManagerId);
+		TeamRoom room = teamRoomService.getByLocalSceneId(sceneManagerId);
 		return room.getResourceId();
 	}
 
 	@Override
-	public String getRoomInfoBySceneManagerId(String sceneManagerId) {
-		TeamRoom room = teamRoomService.getBySceneMangerId(sceneManagerId);
+	public String getRoomInfoByLocalSceneId(String localSceneId) {
+		TeamRoom room = teamRoomService.getByLocalSceneId(localSceneId);
 		return JsonUtil.toJsonString(new RoomInfo(room.getResourceId(), room.getName()));
 	}
 
@@ -113,5 +113,11 @@ public class TeamSceneHandler extends SceneHandler {
 				i++;
 			}
 		}
+	}
+
+	@Override
+	public String getReferenceMetaData(LocalScene localScene) {
+		TeamRoom room = teamRoomService.getById(localScene.getBusinessInstanceId());
+		return JsonUtil.toJsonString(new RoomInfo(room.getResourceId(), room.getName()));
 	}
 }

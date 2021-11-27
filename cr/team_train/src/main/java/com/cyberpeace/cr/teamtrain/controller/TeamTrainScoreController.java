@@ -101,12 +101,14 @@ public class TeamTrainScoreController {
 
 		for (TaskContext task : taskList) {
 			Mission mission = task.getMission();
-			// mission.is_objective_mission
-			getScoreObjective += task.getScore();
-			sumScoreObjective += mission.getScore();
-
-			sumScoreSubjective += task.getScore();
-			sumScoreSubjective += mission.getScore();
+			int score = task.getScore() == null ? 0 : task.getScore();
+			if (mission.isObjective()) {
+				getScoreObjective += score;
+				sumScoreObjective += mission.getScore();
+			} else {
+				sumScoreSubjective += score;
+				sumScoreSubjective += mission.getScore();
+			}
 
 		}
 

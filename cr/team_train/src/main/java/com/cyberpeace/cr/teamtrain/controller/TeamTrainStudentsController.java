@@ -117,7 +117,7 @@ public class TeamTrainStudentsController {
 		teamRoomRspListRsp.setLastPage(data.getPages());
 		teamRoomRspListRsp.setCurrentPage(data.getCurrent());
 
-		return new BaseRsp<ListRsp<TeamRoomRsp>>(teamRoomRspListRsp);
+		return new BaseRsp(teamRoomRspListRsp);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class TeamTrainStudentsController {
 			missionRsp.setWriteUp("");
 		}
 
-		return new BaseRsp<>(missionRsp);
+		return new BaseRsp(missionRsp);
 	}
 
 	/**

@@ -321,7 +321,9 @@ public class TeamTrainRoomController {
 				RoleUsers roleUsers = new RoleUsers();
 				roleUsers.setRoleName(crRole.getName());
 				roleUsers.setRoleGroup(crRole.getRoleGroup());
-				roleUsers.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+				String userNamesByRoleUsers = crRoleService
+						.getUserNamesByRoleUsers(crRole.getUserIds());
+				roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
 				roleUsersList.add(roleUsers);
 			}
 		});

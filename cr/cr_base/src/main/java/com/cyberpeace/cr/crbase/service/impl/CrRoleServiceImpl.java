@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,9 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
-import com.cyberpeace.cr.crbase.service.context.MissionContext;
-import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -43,10 +42,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private CrTaskService crTaskService;
+
 	@Override
 	public CrRole getById(String roleId) {
 		CrRole role = crRoleMapper.selectById(roleId);
-		if(role == null){
+		if (role == null) {
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		return role;
@@ -154,17 +156,23 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole(
 				crRole);
 
+		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(roomId, userId);
+		Map<String, Integer> taskStatusMap = tasks.stream().collect(Collectors
+				.toMap(TaskContext::getMissionId, taskContext -> taskContext.getStatus()));
+
 		missionSchemeObjectList.forEach(missionSchemeObject -> {
 
 			List<MissionContext> missionContextList = Lists.newArrayList();
 			missionSchemeObject.getMissions().forEach(mission -> {
-				MissionContext newMission = new MissionContext();
-				newMission.setResourceId(mission.getResourceId());
-				newMission.setTitle(mission.getTitle());
-				newMission.setCategoryId(mission.getCategoryId());
-				newMission.setDescription(mission.getDescription());
-				newMission.setState(0);
-				missionContextList.add(newMission);
+				if (taskStatusMap.containsKey(mission.getResourceId())) {
+					MissionContext newMission = new MissionContext();
+					newMission.setResourceId(mission.getResourceId());
+					newMission.setTitle(mission.getTitle());
+					newMission.setCategoryId(mission.getCategoryId());
+					newMission.setDescription(mission.getDescription());
+					newMission.setState(taskStatusMap.get(mission.getResourceId()));
+					missionContextList.add(newMission);
+				}
 
 			});
 			missionSchemeObject.setMissions(missionContextList);

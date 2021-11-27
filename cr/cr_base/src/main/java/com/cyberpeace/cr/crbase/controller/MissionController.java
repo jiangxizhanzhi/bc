@@ -118,7 +118,7 @@ public class MissionController {
 			mission.setScore(missionModifyReq.getScore());
 		}
 		if (missionModifyReq.getSkillPoints() != null) {
-			mission.setSkillPoints(JSON.toJSONString(missionModifyReq.getSkillPoints()));
+			mission.setSkillPoints(missionModifyReq.getSkillPoints());
 		}
 
 		return mission;

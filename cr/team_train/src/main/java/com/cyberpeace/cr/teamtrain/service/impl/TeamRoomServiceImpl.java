@@ -93,7 +93,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (teamRoomData == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
-		teamRoomData.setTrainingStatus(setTrainingStatus(teamRoomData));
+		teamRoomData.setTrainingStatus(getTrainingStatus(teamRoomData));
 
 		return teamRoomData;
 	}
@@ -268,7 +268,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery);
 		for (TeamRoomData teamRoomData : data.getRecords()) {
-			teamRoomData.setTrainingStatus(setTrainingStatus(teamRoomData));
+			teamRoomData.setTrainingStatus(getTrainingStatus(teamRoomData));
 		}
 
 		return data;
@@ -300,7 +300,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		else if (teamRoomdata.isEnded()) {
 			// todo 审计日志
 		}
-		return teamRoomdata.getTrainingStatus();
+		return getTrainingStatus(teamRoomdata);
 
 	}
 
@@ -454,7 +454,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 	}
 
-	private int setTrainingStatus(TeamRoomData teamRoomdata) {
+	private int getTrainingStatus(TeamRoomData teamRoomdata) {
 		if (null == teamRoomdata.getSceneStartTime()) {
 			return TeamRoom.TrainingStatusCode.UNOPENED.getCode();
 		} else if (null == teamRoomdata.getSceneEndTime()) {

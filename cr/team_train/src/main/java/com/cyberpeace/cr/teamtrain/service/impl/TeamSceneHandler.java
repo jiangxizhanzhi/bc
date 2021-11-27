@@ -1,22 +1,29 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrRoleNode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
-import com.cyberpeace.cr.crbase.dao.entity.LocalSceneManager;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.SceneHandler;
 import com.cyberpeace.cr.crbase.service.context.scene.RoomInfo;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.impl.SceneHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,11 +41,14 @@ public class TeamSceneHandler extends SceneHandler {
 	CrRoleService crRoleService;
 
 	@Autowired
+	LocalSceneService localSceneService;
+
+	@Autowired
 	TeamRoomService teamRoomService;
 
 	@Override
-	public Integer getAppId() {
-		return LocalSceneManager.AppId.TRAINING_TEAM.getCode();
+	public Integer getBusinessType() {
+		return LocalScene.BusinessCode.TEAM_TRAINING.getCode();
 	}
 
 	@Override
@@ -48,12 +58,11 @@ public class TeamSceneHandler extends SceneHandler {
 	}
 
 	@Override
-	public RoomInfo getRoomInfoBySceneManagerId(String sceneManagerId) {
+	public String getRoomInfoBySceneManagerId(String sceneManagerId) {
 		TeamRoom room = teamRoomService.getBySceneMangerId(sceneManagerId);
-		return new RoomInfo(room.getResourceId(), room.getName());
+		return JsonUtil.toJsonString(new RoomInfo(room.getResourceId(), room.getName()));
 	}
 
-	@Override
 	public CrRoleNodesData getNodes(String userId, String roomId, String roleId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getValue())) {
@@ -82,5 +91,27 @@ public class TeamSceneHandler extends SceneHandler {
 	@Override
 	public void checkBeforeStartingScene(String roomId) {
 		teamRoomService.checkRoomOpening(roomId);
+	}
+
+	@Override
+	public void filterVisibleTopo(JSONObject topoData, LocalScene localScene, String userId,
+			String roleId) {
+		CrRoleNodesData nodes = getNodes(userId, localScene.getBusinessInstanceId(), roleId);
+
+		if (nodes == null) {
+			return;
+		}
+
+		List<String> visibleNodeIds = nodes.getVisibleNodes().stream().map(CrRoleNode::getId)
+				.collect(Collectors.toList());
+		JSONArray elements = topoData.getJSONObject("topology").getJSONArray("elements");
+		int i = 0;
+		while (i < elements.size()) {
+			if (!visibleNodeIds.contains(elements.getJSONObject(i).getString("id"))) {
+				elements.remove(i);
+			} else {
+				i++;
+			}
+		}
 	}
 }

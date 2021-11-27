@@ -1,10 +1,6 @@
 package com.cyberpeace.integratation.model.scene;
 
 import java.io.Serializable;
-import java.util.Map;
-
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.google.common.collect.Maps;
 
 import lombok.Data;
 
@@ -15,7 +11,8 @@ import lombok.Data;
 @Data
 public class SceneOpsContext implements Serializable {
 
-	private String accessUserId = UserInfoContext.getUserContext().getUserId();
+	private SceneMpContext context;
 
-	private Map<String, String> context = Maps.newHashMap();
+	private String id;
+
 }

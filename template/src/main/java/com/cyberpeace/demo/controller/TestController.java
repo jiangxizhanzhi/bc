@@ -41,12 +41,12 @@ public class TestController {
 
 		return new BaseRsp(digest);
 	}
-
-	@GetMapping("/startScene")
-	public BaseRsp<String> startScene() {
-		String sceneId = remoteSceneService.startScene(testTopoId, null);
-		return new BaseRsp<>(sceneId);
-	}
+//
+//	@GetMapping("/startScene")
+//	public BaseRsp<String> startScene() {
+//		String sceneId = remoteSceneService.startScene(, null);
+//		return new BaseRsp<>(sceneId);
+//	}
 
 	@GetMapping("/stopScene")
 	public BaseRsp<Boolean> stopScene() {

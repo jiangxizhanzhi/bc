@@ -80,6 +80,12 @@ public class LocalScene extends BaseTable {
 	 */
 	private Integer sceneTtl;
 
+	/**
+	 * 场景节点数量
+	 * 记录该值，避免重复请求mp
+	 */
+	private Integer nodeCount;
+
 	public enum SceneStatusEnum implements GenericEnum {
 
 		INIT(0, "未启动"), START(1, "启动"), DESTROY(2, "删除");
@@ -102,9 +108,9 @@ public class LocalScene extends BaseTable {
 		DEFAULT(0, "默认"), PRACTICE(110, "练习"), LESSON(120, "课程"), EXAM(130, "考试"), LESSON_PRACTICE(
 				140, "课程练习"), INDIVIDUAL_TRAINING(211, "个人训练"), LIVE_VULN(212, "漏洞"), TEAM_TRAINING(
 						213, "团队训练"), READ_VS_BLUE(214, "红蓝对抗"), WEAPON_TEST(216,
-								"武器"), SYSTEM_TEST(217, "系统"), SOFT_TEST(221,
-										"软件"), COURSE_TRAINING(150, "课程训练"), SKILLS_ASSESSMENT(231,
-												"技能评估"), TACTICAL_ASSESSMENT(232,
+								"武器"), SYSTEM_TEST(217, "系统"), SOFT_TEST(221, "软件"), TEST_SCENE(222,
+										"后台测试"), COURSE_TRAINING(150, "课程训练"), SKILLS_ASSESSMENT(
+												231, "技能评估"), TACTICAL_ASSESSMENT(232,
 														" 战术评估"), COMPREHENSIVE_ASSESSMENT(233,
 																"综合评估"), TACTICAL_TRAINING(234,
 																		"战术训练"), COMPREHENSIVE_TRAINING(
@@ -123,7 +129,7 @@ public class LocalScene extends BaseTable {
 
 	}
 
-	public enum DestoryMode implements GenericEnum {
+	public enum DestroyMode implements GenericEnum {
 
 		MANUAL(1, "手动销毁"), AUTO(2, "自动销毁");
 
@@ -133,7 +139,7 @@ public class LocalScene extends BaseTable {
 		@Getter
 		private String desc;
 
-		private DestoryMode(Integer code, String desc) {
+		private DestroyMode(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

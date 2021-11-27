@@ -84,5 +84,5 @@ public interface TeamRoomService extends IService<TeamRoom> {
 
 	TeamRoom getBySceneMangerId(String sceneManagerId);
 
-	Boolean startScene(String localSceneId);
+	// Boolean startScene(String localSceneId);
 }

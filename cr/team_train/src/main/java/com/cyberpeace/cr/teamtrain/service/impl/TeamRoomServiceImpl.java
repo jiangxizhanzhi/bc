@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +47,6 @@ import com.cyberpeace.cr.teamtrain.service.context.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.UserPageContext;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
@@ -381,12 +383,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return room;
 	}
 
-	@Override
-	public Boolean startScene(String localSceneId) {
-		preStartScene(localSceneId);
-
-		return localSceneService.startScene(localSceneId, getSceneStartContext());
-	}
+	// @Override
+	// public Boolean startScene(String localSceneId) {
+	// preStartScene(localSceneId);
+	//
+	// return localSceneService.startScene(localSceneId, getSceneStartContext());
+	// }
 
 	@Override
 	public TimeLineData getTimeLine(String roomId) {
@@ -466,7 +468,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
 		localScene.setBusinessCode(LocalScene.BusinessCode.TEAM_TRAINING.getCode());
 
-		localScene.setDestoryMode(LocalScene.DestoryMode.MANUAL.getCode());
+		localScene.setDestoryMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setBusinessInstanceId(teamRoomId);
 		localScene.setTopoId(teamRoom.getCopyedTopoId());
 
@@ -510,16 +512,16 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		// TODO
 		// 根据角色校验是否启动
 	}
-
-	private SceneStartContext getSceneStartContext() {
-		// TODO
-		// 单兵、团队、红蓝是否可以聚合
-		SceneStartContext sceneStartContext = new SceneStartContext();
-
-		sceneStartContext.setContext(new HashMap<>());
-		sceneStartContext.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
-
-		return sceneStartContext;
-	}
+	//
+	// private SceneStartContext getSceneStartContext() {
+	// // TODO
+	// // 单兵、团队、红蓝是否可以聚合
+	// SceneStartContext sceneStartContext = new SceneStartContext();
+	//
+	// sceneStartContext.setContext(new HashMap<>());
+	// sceneStartContext.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
+	//
+	// return sceneStartContext;
+	// }
 
 }

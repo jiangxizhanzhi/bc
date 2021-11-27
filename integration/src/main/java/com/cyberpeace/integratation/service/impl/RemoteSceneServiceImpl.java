@@ -27,6 +27,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_DELETE_URL;
 
+	private String SCENE_CLEAR_URL;
+
 	private String SCENE_RETRIEVE;
 
 	@PostConstruct
@@ -39,39 +41,25 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		SCENE_DELETE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.delete");
 
+		SCENE_CLEAR_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.clear");
+
 		SCENE_RETRIEVE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.retrieve");
 	}
 
 	@Override
-	public String startScene(String topoId, SceneOpsContext sceneStartContext) {
-		String targetUrl = SCENE_START_URL + "?id=" + topoId;
-
-		JSONObject data = HttpClientUtil.post(targetUrl, sceneStartContext, JSONObject.class);
-
-		if (null == data) {
-			log.error("topoId=[{}] startScene error, response data is null", topoId);
-			throw new RemoteServiceException();
-		}
-
-		String sceneId = data.getString("id");
-
-		return sceneId;
-	}
-
-	@Override
-	public String startScene(String topoId, SceneOpsContext sceneStartContext, Boolean isTest) {
+	public String startScene(SceneOpsContext sceneStartContext, Boolean isTest) {
 
 		String targetUrl = null;
 		if (isTest) {
-			targetUrl = SCENE_START_TEST_URL + "?id=" + topoId;
+			targetUrl = SCENE_START_TEST_URL;
 		} else {
-			targetUrl = SCENE_START_URL + "?id=" + topoId;
+			targetUrl = SCENE_START_URL;
 		}
 
 		JSONObject data = HttpClientUtil.post(targetUrl, sceneStartContext, JSONObject.class);
 
 		if (null == data) {
-			log.error("topoId=[{}] startScene error, response data is null", topoId);
+			log.error("topoId=[{}] startScene error, response data is null", sceneStartContext.getId());
 			throw new RemoteServiceException();
 		}
 
@@ -82,7 +70,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public Boolean stopScene(String sceneId, SceneOpsContext sceneOpsContext) {
-		String targetUrl = SCENE_DELETE_URL + "?id=" + sceneId;
+		String targetUrl = SCENE_CLEAR_URL;
 
 		Boolean result = HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
 

@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.controller.rsp;
+package com.cyberpeace.cs.controller.rsp;
 
 import java.io.Serializable;
 

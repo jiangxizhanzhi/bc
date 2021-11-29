@@ -233,7 +233,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时新增附件上传")
 	@PostMapping("upload_attachment")
-	public BaseRsp<String> uploadAttachment(@RequestParam("file") MultipartFile multipartFile) {
+	public BaseRsp<String> uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
 
 		AttachmentBo attachmentBo = attachmentService.uploadFile(
 				Attachment.AttachmentType.ATTACHMENT.getCode(), CommonConstant.TRUE, multipartFile);

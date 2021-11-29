@@ -32,6 +32,11 @@ public class TeamRoom extends BaseTable {
 	private String teamTemplateId;
 
 	/**
+	 *
+	 */
+	private String teamTemplateName;
+
+	/**
 	 * 
 	 */
 	private String name;

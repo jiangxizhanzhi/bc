@@ -7,6 +7,7 @@
     <resultMap id="TeamRoomData" type="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData">
         <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
         <result property="template" column="team_template_id" jdbcType="VARCHAR"/>
+        <result property="templateName" column="team_template_name" jdbcType="VARCHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="description" column="description" jdbcType="VARCHAR"/>
         <result property="category" column="sub_type" jdbcType="VARCHAR"/>
@@ -23,6 +24,7 @@
     <select id="getTeamRoomRspByRoomId" resultMap="TeamRoomData">
         select cr_team_room.resource_id,
                cr_team_room.team_template_id,
+               cr_team_room.team_template_name,
                cr_team_room.NAME,
                cr_team_room.description,
                cr_team_room.sub_type,

@@ -287,8 +287,19 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<DynamicData> getTaskLogByRoomIdAndUserId(String roomId, String studentId) {
-		List<DynamicData> dynamicDataList = crTaskLogMapper.getTaskLogByRoomIdAndUserId(roomId,
-				studentId);
+		List<String> taskLogIds = crTaskLogMapper.getReleaseIdsByRoomIdAndUserId(roomId, studentId);
+
+		List<DynamicData> dynamicDataList = Lists.newArrayList();
+		if (taskLogIds.size() > 0) {
+			List<Integer> actionCodes = Lists.newArrayList();
+			actionCodes.add(CrTaskLog.ActionCode.MAN_SUCCESS.getCode());
+			actionCodes.add(CrTaskLog.ActionCode.MAN_FAILURE.getCode());
+			actionCodes.add(CrTaskLog.ActionCode.MAN_REJECT.getCode());
+			actionCodes.add(CrTaskLog.ActionCode.SUBMIT.getCode());
+
+			dynamicDataList = crTaskLogMapper.getDynamicLogByRoomIdAndUserId(roomId, studentId,
+					taskLogIds, actionCodes);
+		}
 
 		return dynamicDataList;
 	}

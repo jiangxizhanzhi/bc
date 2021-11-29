@@ -29,6 +29,8 @@ public class TeamRoomData implements Serializable {
 
 	private String template;
 
+	private String templateName;
+
 	private Integer difficult;
 
 	private String trainingRoleData;

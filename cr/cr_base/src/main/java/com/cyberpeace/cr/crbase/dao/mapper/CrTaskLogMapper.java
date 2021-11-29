@@ -15,5 +15,8 @@ public interface CrTaskLogMapper extends BaseMapper<CrTaskLog> {
 
 	List<CrTaskLog> selectReleaseByRoomIdAndActionCodes(String roomId, List<Integer> actionCodes);
 
-	List<DynamicData> getTaskLogByRoomIdAndUserId(String roomId, String studentId);
+	List<DynamicData> getDynamicLogByRoomIdAndUserId(String roomId, String studentId,
+			List<String> ids, List<Integer> actionCodes);
+
+	List<String> getReleaseIdsByRoomIdAndUserId(String roomId, String studentId);
 }

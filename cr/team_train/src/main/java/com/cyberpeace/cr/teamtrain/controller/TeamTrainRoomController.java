@@ -131,7 +131,6 @@ public class TeamTrainRoomController {
 		teamRoomRsp.setTrainingRoleData(getSelfRole(crRoles, userId));
 
 		teamRoomRsp.setRolesData(getTeamRoomRoleRes(crRoles));
-		teamRoomRsp.setTemplateName("");
 
 		teamRoomRsp
 				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));

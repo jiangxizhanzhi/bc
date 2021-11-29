@@ -339,7 +339,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		CrTaskLog evaluationLog = CrTaskLog.builder().roomId(taskSubmit.getRoomId())
 				.missionId(task.getMissionId())
-				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
+				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(taskSubmitId)
 				.build();
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

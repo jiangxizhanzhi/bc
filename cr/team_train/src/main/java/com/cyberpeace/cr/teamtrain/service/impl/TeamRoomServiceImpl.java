@@ -120,6 +120,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		TeamRoom teamRoom = new TeamRoom(teamTrainRoomContext, template);
 		teamRoom.setCreateUserId(userId);
 		teamRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
+		teamRoom.setTeamTemplateName(businessTemplate.getName());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

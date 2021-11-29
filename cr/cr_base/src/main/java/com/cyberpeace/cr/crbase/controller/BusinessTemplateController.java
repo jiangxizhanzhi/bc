@@ -53,6 +53,8 @@ public class BusinessTemplateController {
 	public BaseRsp<ListRsp<BusinessTemplateData>> getTemplate(TemplateReq listReq) {
 		BusinessTemplateQuery businessTemplateQuery = BeanUtils.copy(listReq,
 				BusinessTemplateQuery.class);
+		businessTemplateQuery.setSort("-cr_business_template.create_time");
+
 		IPage<BusinessTemplateData> data = businessTemplateService.page(businessTemplateQuery);
 
 		List<String> userIds = Lists.newArrayList();

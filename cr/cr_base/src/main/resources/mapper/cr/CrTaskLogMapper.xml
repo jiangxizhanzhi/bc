@@ -11,13 +11,35 @@
             #{actionCode}
         </foreach>
     </select>
-    <select id="getTaskLogByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.service.context.DynamicData">
+
+    <select id="getDynamicLogByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.service.context.DynamicData">
         select cr_task_log.action_code actionType, cr_task_log.create_time actionTime, cr_mission.title missionName
-        from cr_task_log,
-             cr_mission
+        from cr_task_log, cr_mission
         where cr_task_log.mission_id = cr_mission.resource_id
-          and cr_task_log.room_id = #{roomId}
-          and cr_task_log.user_id = #{studentId}
+        and cr_task_log.action_code in
+        <foreach collection="actionCodes" item="actionCode" separator="," open="(" close=")">
+            #{actionCode}
+        </foreach>
+        and
+        ((cr_task_log.room_id = #{roomId}
+        and cr_task_log.user_id = #{studentId})
+        or (cr_task_log.resource_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        ))
         order by cr_task_log.create_time desc
     </select>
+
+    <select id="getReleaseIdsByRoomIdAndUserId" resultType="java.lang.String">
+        <bind name="RELEASE" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@RELEASE.code"/>
+        select cr_task_log.resource_id
+        from cr_task_log,
+        cr_task
+        where cr_task.mission_id = cr_task_log.mission_id
+        and cr_task.user_id = #{studentId}
+        and cr_task.room_id = #{roomId}
+        and cr_task_log.action_code = ${RELEASE}
+    </select>
+
 </mapper>

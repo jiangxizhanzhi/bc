@@ -23,7 +23,7 @@ public class AdminLessonBo implements Serializable {
 	@ApiModelProperty("类型")
 	private Integer type;
 
-	@ApiModelProperty("讲义类型")
+	@ApiModelProperty("讲义类型 0=什么都不是 1=markdown 2=ppt 4=pdf")
 	private Integer handoutType;
 
 	@ApiModelProperty("讲义地址")

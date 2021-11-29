@@ -146,10 +146,10 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		if (result) {
 			File file = new File(destMarkDownPath);
 			if (file.exists() && file.isDirectory()) {
-				String mdFilePath = Arrays.stream(file.list())
-						.filter(filePath -> filePath.substring(filePath.lastIndexOf(".") + 1)
+				String mdFilePath = Arrays.stream(file.listFiles())
+						.filter(childrenFile -> childrenFile.getAbsolutePath().substring(childrenFile.getAbsolutePath().lastIndexOf(".") + 1)
 								.equals(Attachment.FileType.MD.getDesc()))
-						.findFirst().get();
+						.map(File::getAbsolutePath).findFirst().get();
 				return mdFilePath;
 			}
 		}

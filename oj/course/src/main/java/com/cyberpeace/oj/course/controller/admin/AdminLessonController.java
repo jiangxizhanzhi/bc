@@ -250,7 +250,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			String suffix = attachmentBo.getFilePath()
 					.substring(attachmentBo.getFilePath().lastIndexOf(".") + 1);
 
-			if (suffix.equals(Attachment.FileType.ZIP)) {
+			if (suffix.equals(Attachment.FileType.ZIP.getDesc())) {
 				courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
 				// 解析markdown文件
 				String filePath = attachmentService.parseMarkdown(attachmentBo.getFilePath(),

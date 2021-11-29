@@ -241,7 +241,7 @@ public class TeamTrainRoomController {
 	}
 
 	@ApiOperation("列表查询")
-	@PostMapping("/list")
+	@GetMapping("/list")
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());

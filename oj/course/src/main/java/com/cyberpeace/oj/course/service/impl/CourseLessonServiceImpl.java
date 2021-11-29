@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -412,15 +413,30 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
+		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
 		for (CourseLesson courseLesson : courseLessons) {
 			courseLesson.setId(null);
 			courseLesson.setCourseId(course.getResourceId());
 			courseLesson.setResourceId(IDGeneratorUtil.getID());
+
+			AddLessonConfigContext configContext = AddLessonConfigContext.builder()
+					.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
+					.chapterName(courseLesson.getName())
+					.nodeType(LessonConfigType.NODE_LESSON.getCode()).build();
+			LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
+			lessonConfigs.add(lessonConfig);
 		}
 
-		boolean result = saveBatch(courseLessons);
-		return result;
+		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				lessonConfigService.saveBatch(lessonConfigs);
+				return saveBatch(courseLessons);
+			}
+		});
+
 	}
 
 	@Override

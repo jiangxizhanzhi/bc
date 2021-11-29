@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.bo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -53,7 +54,7 @@ public class AdminLessonBo implements Serializable {
 	private Integer sceneShareMode;
 
 	@ApiModelProperty("场景配置数据")
-	private String sceneConfig;
+	private JSONObject sceneConfig;
 
 	@ApiModelProperty("课后练习习题数量")
 	private Integer practiceCount;
@@ -62,7 +63,7 @@ public class AdminLessonBo implements Serializable {
 	private String paperId;
 
 	@ApiModelProperty("知识点")
-	private String knowledge;
+	private List<String> knowledge;
 
 	@ApiModelProperty("课时附件数据")
 	private List<AttachmentBo> LessonFile;

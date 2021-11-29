@@ -172,7 +172,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			if (null != ojLocalScene) {
 				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
 				if (null != localScene) {
-					JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(), userId);
+					JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
+							userId);
 					infoBo.setSceneData(sceneData);
 				}
 			}
@@ -217,8 +218,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
 		lessonInfoBo.setPracticeCount(paper.getPracticeCount());
 
-		// TODO 查询场景名称以及场景访问权限
+		// 知识点数据转换
+		lessonInfoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));
 
+		// topo数据组装
+		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
+				&& StringUtils.isNotBlank(lesson.getTopoId())) {
+			JSONObject topo = remoteTopoService.getTopoById(lesson.getTopoId());
+			lessonInfoBo.setSceneConfig(topo);
+		}
 		return lessonInfoBo;
 	}
 

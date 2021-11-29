@@ -13,6 +13,6 @@ public class LessonUpdateReq extends LessonAddReq {
 
 	@ApiModelProperty("资源编号")
 	@NotBlank(groups = { Update.class })
-	private String resourceId;
+	private String resource_id;
 
 }

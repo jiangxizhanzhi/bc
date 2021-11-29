@@ -69,4 +69,31 @@ public class LessonAddReq implements Serializable {
 	@ApiModelProperty("习题列表")
 	private String practiceList;
 
+	public void setAttachment_ids(String attachmentIds) {
+		this.attachmentIds = attachmentIds;
+	}
+
+	public void setIs_public(Boolean aPublic) {
+		isPublic = aPublic;
+	}
+
+	public void setCourse_id(String courseId) {
+		this.courseId = courseId;
+	}
+
+	public void setOj_scene_config(JSONObject ojSceneConfig) {
+		this.ojSceneConfig = ojSceneConfig;
+	}
+
+	public void setDestroy_delay(Integer destroyDelay) {
+		this.destroyDelay = destroyDelay;
+	}
+
+	public void setScene_share_mode(Integer sceneShareMode) {
+		this.sceneShareMode = sceneShareMode;
+	}
+
+	public void setPractice_list(String practiceList) {
+		this.practiceList = practiceList;
+	}
 }

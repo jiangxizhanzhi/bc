@@ -3,10 +3,12 @@ package com.cyberpeace.cr.teamtrain.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -21,6 +23,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -44,6 +47,10 @@ import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
+import com.cyberpeace.cr.teamtrain.service.impl.TeamSceneHandler;
+import com.cyberpeace.cs.controller.rsp.CrSceneRetrieveRsp;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -51,33 +58,91 @@ import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "团队训练实例")
 @RestController
+@Slf4j
 @RequestMapping("/cr/team_train/room")
 public class TeamTrainRoomController {
 
 	@Autowired
-	TeamRoomService teamRoomService;
+	private TeamRoomService teamRoomService;
 
 	@Autowired
-	CrRoleService crRoleService;
+	private CrRoleService crRoleService;
 
 	@Autowired
-	TeamTemplateService teamTemplateService;
+	private TeamTemplateService teamTemplateService;
 
 	@Autowired
-	BusinessTemplateService businessTemplateService;
+	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	MissionService missionService;
+	private LocalSceneService localSceneService;
 
+	@Autowired
+	private TeamSceneHandler teamSceneHandler;
+
+	@ApiOperation("启动场景")
+	@PostMapping("/scene")
 	public BaseRsp startScene() {
-		// TODO
+
 		return new BaseRsp();
+	}
+
+	@ApiOperation("启动后台测试场景")
+	@PostMapping("/testScene")
+	public BaseRsp testScene() {
+
+		return new BaseRsp();
+	}
+
+	@ApiOperation("查看场景")
+	@GetMapping("/scene")
+	public BaseRsp getScene(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
+			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
+		TeamRoom room = teamRoomService.getById(resource_id);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 获取可见节点&鉴权， null代表所有节点可见
+		CrRoleNodesData nodes = teamSceneHandler.getNodes(userId, resource_id, role_id);
+
+		JSONObject sceneData = null;
+		JSONObject topoData = null;
+
+		if (StringUtils.isNotBlank(room.getLocalSceneId())) {
+			LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
+			String sceneId = localScene.getMpSceneId();
+			if (StringUtils.isNotBlank(sceneId)) {
+				sceneData = localSceneService.getSceneData(sceneId, userId);
+				if (sceneData != null) {
+					teamSceneHandler.filterVisibleTopo(sceneData, nodes);
+				} else {
+					log.error("fail to get sceneData with scene_id [{}]", sceneId);
+					// todo delete localScene
+					localSceneService.updateMpSceneId(localScene, "");
+				}
+			}
+		}
+		if (sceneData == null) {
+			topoData = localSceneService.getTopoData(room.getCopyedTopoId());
+			teamSceneHandler.filterVisibleTopo(topoData, nodes);
+		}
+
+		CrSceneRetrieveRsp rsp = new CrSceneRetrieveRsp();
+		rsp.setSceneManagerId(room.getLocalSceneId());
+		rsp.setRoomId(resource_id);
+		rsp.setSceneData(sceneData);
+		rsp.setTopoData(topoData);
+
+		return new BaseRsp<>(rsp);
 	}
 
 	@ApiOperation("新增")

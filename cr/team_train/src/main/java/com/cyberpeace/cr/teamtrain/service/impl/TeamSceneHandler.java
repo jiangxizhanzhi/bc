@@ -51,18 +51,6 @@ public class TeamSceneHandler extends SceneHandler {
 		return LocalScene.BusinessCode.TEAM_TRAINING.getCode();
 	}
 
-	@Override
-	public String getRoomIdBySceneManagerId(String sceneManagerId) {
-		TeamRoom room = teamRoomService.getByLocalSceneId(sceneManagerId);
-		return room.getResourceId();
-	}
-
-	@Override
-	public String getRoomInfoByLocalSceneId(String localSceneId) {
-		TeamRoom room = teamRoomService.getByLocalSceneId(localSceneId);
-		return JsonUtil.toJsonString(new RoomInfo(room.getResourceId(), room.getName()));
-	}
-
 	public CrRoleNodesData getNodes(String userId, String roomId, String roleId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getValue())) {
@@ -80,7 +68,6 @@ public class TeamSceneHandler extends SceneHandler {
 		return JsonUtil.toJsonObject(role.getNodes(), CrRoleNodesData.class);
 	}
 
-	@Override
 	public void checkSceneOperationPermission(String roomId, String userId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getValue())) {
@@ -88,16 +75,11 @@ public class TeamSceneHandler extends SceneHandler {
 		}
 	}
 
-	@Override
 	public void checkBeforeStartingScene(String roomId) {
 		teamRoomService.checkRoomOpening(roomId);
 	}
 
-	@Override
-	public void filterVisibleTopo(JSONObject topoData, LocalScene localScene, String userId,
-			String roleId) {
-		CrRoleNodesData nodes = getNodes(userId, localScene.getBusinessInstanceId(), roleId);
-
+	public void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes) {
 		if (nodes == null) {
 			return;
 		}

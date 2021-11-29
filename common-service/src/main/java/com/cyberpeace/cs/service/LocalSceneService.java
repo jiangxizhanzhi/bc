@@ -10,7 +10,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	LocalScene getByBusinessInstanceId(String businessInstanceId);
 
-	Boolean startScene(String localSceneId, String userId);
+	String startScene(String businessInstanceId, Integer businessType);
 
 	Boolean stopScene(String localSceneId, String userId);
 
@@ -39,7 +39,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	JSONObject getSceneData(LocalScene scene, String userId);
 
-	JSONObject getTopoData(LocalScene scene);
+	JSONObject getSceneData(String sceneId, String userId);
+
+	JSONObject getTopoData(String topoId);
 
 	void updateMpSceneId(LocalScene scene, String sceneId);
 

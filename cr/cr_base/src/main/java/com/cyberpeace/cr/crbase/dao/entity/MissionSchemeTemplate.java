@@ -21,8 +21,8 @@ public class MissionSchemeTemplate extends BaseTable {
 	private String description;
 
 	/**
-	** 说明：http://10.10.10.11/pages/viewpage.action?pageId=34113495
-	 * */
+	* 说明：http://10.10.10.11/pages/viewpage.action?pageId=34113495
+	 */
 	private String templateData;
 
 	/**

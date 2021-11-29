@@ -7,8 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
@@ -54,6 +52,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public String startScene(String businessInstanceId, Integer businessType) {
+		SceneHandler handler = sceneHandler.getHandler(businessType);
+		return null;
+	}
+
+	@Override
 	public LocalScene getById(String localSceneId) {
 		LocalScene localScene = localSceneMapper.selectById(localSceneId);
 		if (null == localScene) {
@@ -63,35 +67,36 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return localScene;
 	}
 
-	@Override
-	public Boolean startScene(String localSceneId, String userId) {
-		LocalScene localScene = getById(localSceneId);
-		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-		SceneStartContext sceneStartContext = getSceneStartContext(localScene);
-		Boolean isTest = handler.isTest();
-		String sceneId = remoteSceneService.startScene(sceneStartContext, isTest);
-
-		if (StringUtils.isBlank(sceneId)) {
-			log.error("failed to create scene with topo[{}]", localScene.getTopoId());
-			throw new RuntimeException();
-		}
-		try {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					updateAfterStartScene(localScene, sceneId);
-					handler.afterCreateScene();
-				}
-			});
-		} catch (Exception e) {
-			log.error("db error when creating scene: ", e);
-			deleteRemoteScene(localScene, userId);
-			throw new RuntimeException();
-		}
-
-		return true;
-	}
+	// @Override
+	// public Boolean startScene(String localSceneId, String userId) {
+	// LocalScene localScene = getById(localSceneId);
+	// SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
+	// SceneStartContext sceneStartContext = getSceneStartContext(localScene);
+	// Boolean isTest = handler.isTest();
+	// String sceneId = remoteSceneService.startScene(sceneStartContext, isTest);
+	//
+	// if (StringUtils.isBlank(sceneId)) {
+	// log.error("failed to create scene with topo[{}]", localScene.getTopoId());
+	// throw new RuntimeException();
+	// }
+	// try {
+	// transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+	//
+	// @Override
+	// protected void doInTransactionWithoutResult(TransactionStatus
+	// transactionStatus) {
+	// updateAfterStartScene(localScene, sceneId);
+	// handler.afterCreateScene();
+	// }
+	// });
+	// } catch (Exception e) {
+	// log.error("db error when creating scene: ", e);
+	// deleteRemoteScene(localScene, userId);
+	// throw new RuntimeException();
+	// }
+	//
+	// return true;
+	// }
 
 	@Override
 	public Boolean stopScene(String localSceneId, String userId) {
@@ -253,17 +258,28 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public JSONObject getSceneData(LocalScene localScene, String userId) {
 		if (StringUtils.isNotBlank(localScene.getMpSceneId())) {
-			JSONObject scene = remoteSceneService.getById(localScene.getMpSceneId(), userId);
-			if (scene != null) {
-				return scene.getJSONObject("scene");
-			}
+			return getSceneData(localScene.getMpSceneId(), userId);
 		}
 		return null;
 	}
 
 	@Override
-	public JSONObject getTopoData(LocalScene localScene) {
-		return remoteTopoService.getTopoById(localScene.getTopoId()).getJSONObject("scene_config");
+	public JSONObject getSceneData(String mpSceneId, String userId) {
+		JSONObject scene = remoteSceneService.getById(mpSceneId, userId);
+		if (scene != null) {
+			return scene.getJSONObject("scene");
+		}
+		return null;
+	}
+
+	@Override
+	public JSONObject getTopoData(String topoId) {
+		JSONObject topo = remoteTopoService.getTopoById(topoId);
+		if (null == topo) {
+			log.info("failed to get topoData with topoId [{}]", topoId);
+			return null;
+		}
+		return topo.getJSONObject("scene_config");
 	}
 
 	@Override

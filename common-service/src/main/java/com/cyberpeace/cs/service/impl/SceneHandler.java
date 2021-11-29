@@ -6,7 +6,6 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.google.common.collect.Maps;
@@ -29,30 +28,9 @@ public class SceneHandler {
 		return register.get(businessType);
 	}
 
-	public String getRoomIdBySceneManagerId(String sceneManagerId) {
-		return null;
-	}
-
-	public String getRoomInfoByLocalSceneId(String localSceneId) {
-		return null;
-	}
-
-	public void checkSceneOperationPermission(String roomId, String userId) {}
-
-	public void checkBeforeStartingScene(String roomId) {}
-
-	public void filterVisibleTopo(JSONObject topoData, LocalScene localScene, String userId,
-			String roleId) {}
-
 	public String getReferenceMetaData(LocalScene localScene) {
 		return null;
 	}
-
-	public Boolean isTest() {
-		return getBusinessType().equals(LocalScene.BusinessCode.TEST_SCENE.getCode());
-	}
-
-	public void afterCreateScene() {}
 
 	public SceneOpsContext makeSceneOpsContext(LocalScene localScene) {
 		SceneOpsContext startContext = new SceneOpsContext();
@@ -63,11 +41,15 @@ public class SceneHandler {
 		return startContext;
 	}
 
-	public void doAfterStopScene(LocalScene localScene) {}
+	public void doAfterStopScene(LocalScene localScene) {
+		// 公共的删除 localScene todo
+	}
 
 	public void checkPauseScenePermission(LocalScene localScene) {}
 
-	public void afterPauseScene(LocalScene localScene) {}
+	public void afterPauseScene(LocalScene localScene) {
+		// 公共的修改localScene状态
+	}
 
 	public void checkUnpauseScenePermission(LocalScene localScene) {}
 

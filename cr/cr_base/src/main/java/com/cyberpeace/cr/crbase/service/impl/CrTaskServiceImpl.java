@@ -293,6 +293,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskMapper.updateById(task);
 				crTaskSubmitMapper.insert(crTaskSubmit);
+				submitLog.setTaskId(task.getResourceId());
 				crTaskLogMapper.insert(submitLog);
 				if (mission.isObjective()) {
 					crTaskLogMapper.insert(evaluateLog);
@@ -339,7 +340,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		CrTaskLog evaluationLog = CrTaskLog.builder().roomId(taskSubmit.getRoomId())
 				.missionId(task.getMissionId())
-				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(taskSubmitId)
+				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
 				.build();
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -348,6 +349,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskMapper.updateById(task);
 				crTaskSubmitMapper.updateById(taskSubmit);
+				evaluationLog.setTaskId(task.getResourceId());
 				crTaskLogMapper.insert(evaluationLog);
 			}
 		});

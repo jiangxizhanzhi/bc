@@ -21,6 +21,8 @@ public class CrTaskLog extends BaseTable {
 
 	private String missionId;
 
+	private String taskId;
+
 	private Integer actionCode;
 
 	private String userId;

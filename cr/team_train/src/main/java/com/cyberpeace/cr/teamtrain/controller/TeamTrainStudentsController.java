@@ -89,6 +89,7 @@ public class TeamTrainStudentsController {
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
+		listQuery.setPer_page(listReq.getPerPage());
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		listQuery.setSort("-cr_team_room.create_time");

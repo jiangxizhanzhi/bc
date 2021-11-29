@@ -128,6 +128,7 @@ public class TeamTrainTemplateController {
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
+		listQuery.setPer_page(listReq.getPerPage());
 
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
 

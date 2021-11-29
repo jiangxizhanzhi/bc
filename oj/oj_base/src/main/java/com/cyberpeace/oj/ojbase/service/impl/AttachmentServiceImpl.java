@@ -9,10 +9,7 @@ import java.util.List;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -97,10 +94,6 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		File uploadFile = new File(filePath + file.getOriginalFilename());
 		if (uploadFile.exists()) {
 			uploadFile = new File(filePath + reFileName(file.getOriginalFilename()));
-			log.error("Upload file exist! upload_file_path=[{}]", uploadFile.getAbsolutePath());
-			Attachment attachment = attachmentMapper.selectByPath(uploadFile.getAbsolutePath());
-			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
-			return attachmentBo;
 		}
 
 		if (!uploadFile.getParentFile().exists()) {
@@ -144,6 +137,22 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 				file.delete();
 			}
 		}
+	}
 
+	@Override
+	public String parseMarkdown(String markdownZip, String destMarkDownPath) {
+		Boolean result = ZipUtil.unzipToDest(markdownZip, destMarkDownPath);
+
+		if (result) {
+			File file = new File(destMarkDownPath);
+			if (file.exists() && file.isDirectory()) {
+				String mdFilePath = Arrays.stream(file.list())
+						.filter(filePath -> filePath.substring(filePath.lastIndexOf(".") + 1)
+								.equals(Attachment.FileType.MD.getDesc()))
+						.findFirst().get();
+				return mdFilePath;
+			}
+		}
+		return "";
 	}
 }

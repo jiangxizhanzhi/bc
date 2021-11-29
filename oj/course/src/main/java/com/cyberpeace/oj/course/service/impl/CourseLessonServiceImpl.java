@@ -247,6 +247,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
 		}
 
+		if (StringUtils.isBlank(courseLesson.getVideoUrl())) {
+			courseLesson.setVideoUrl("");
+		}
+		if (StringUtils.isBlank(courseLesson.getHandoutUrl())) {
+			courseLesson.setHandoutUrl("");
+		}
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

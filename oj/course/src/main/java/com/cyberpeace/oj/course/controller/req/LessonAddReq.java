@@ -29,7 +29,7 @@ public class LessonAddReq implements Serializable {
 	private List<String> knowledge;
 
 	@ApiModelProperty("附件编号")
-	private String attachments;
+	private String attachmentIds;
 
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	@NotNull(groups = { Create.class })
@@ -51,11 +51,11 @@ public class LessonAddReq implements Serializable {
 	@NotBlank(groups = { Create.class })
 	private String courseId;
 
-	@ApiModelProperty("讲义")
-	private String handoutUrl;
+	@ApiModelProperty("讲义文件")
+	private MultipartFile handout;
 
-	@ApiModelProperty("视频")
-	private String videoUrl;
+	@ApiModelProperty("视频文件")
+	private MultipartFile video;
 
 	@ApiModelProperty("场景配置信息")
 	private JSONObject ojSceneConfig;

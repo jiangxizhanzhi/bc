@@ -13,7 +13,7 @@
 
     <select id="selectByBidAndShared" resultMap="ojScene">
         select * from oj_local_scene
-        where user_id = #{userId}
+        where business_id = #{practiceId}
         and shared = #{shared}
         and from_web = #{isWeb}
     </select>

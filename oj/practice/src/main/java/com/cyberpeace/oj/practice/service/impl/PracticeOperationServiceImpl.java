@@ -1,30 +1,20 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.scene.SceneMpContext;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.oj.ojbase.service.AttachmentService;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.google.common.collect.Lists;
-import nonapi.io.github.classgraph.utils.FileUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.expression.Operation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -35,7 +25,14 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.integratation.model.SceneConfig;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.integratation.model.scene.SceneMpContext;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -45,8 +42,13 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.AttachmentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
@@ -54,12 +56,9 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -420,38 +419,87 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
 			log.error("StartScene operation practice not found! operation_practice_id=[{}]");
-			throw new InvalidParamException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		if (!operation.getDynamicEnv() || StringUtils.isBlank(operation.getTopoId())) {
+			log.error("StartScene operation is not dynamic env! dynamic_env=[{}], topo_id=[{}]",
+					operation.getDynamicEnv(), operation.getTopoId());
+			throw new InvalidParamException("非动态环境，无法进行场景启动！");
 		}
 
 		// 判断是否存在已启动场景
+		OjLocalScene existOjLocalScene = getExistOjLocalScene(operation, authContext);
+		if (null != existOjLocalScene) {
+			LocalScene localScene = localSceneMapper
+					.selectById(existOjLocalScene.getLocalSceneId());
+			if (null != localScene) {
+				return remoteSceneService.getById(localScene.getMpSceneId(),
+						authContext.getUserId());
+			} else {
+				log.error(
+						"StartScene not found localScene data! oj_local_scene=[{}], local_scene_id=[{}]",
+						JsonUtil.toJsonString(existOjLocalScene),
+						existOjLocalScene.getLocalSceneId());
+				localSceneMapper.deleteById(existOjLocalScene.getResourceId());
+			}
+		}
 
-
-		OjLocalScene ojLocalScene = getOjLocalScene(operation, authContext);
-		LocalScene localScene = getLocalScene(operation, ojLocalScene, authContext);
+		// 初始化场景数据
+		OjLocalScene ojLocalScene = initOjLocalScene(operation, authContext);
+		LocalScene localScene = initLocalScene(operation, ojLocalScene, authContext);
 		ojLocalScene.setLocalSceneId(localScene.getResourceId());
 		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
 
+		// 场景数据启动
 		SceneStartContext sceneStartContext = new SceneStartContext();
-		sceneStartContext.setId(operation.getTopoId());
-		SceneMpContext sceneMpContext = new SceneMpContext();
-		sceneMpContext.setAccessUserId(UserInfoContext.getUserContext().getUserId());
-		sceneStartContext.setContext(sceneMpContext);
+		sceneStartContext.setReferenceMetaData(initReferenceMetaData(operation, authContext));
+
 		remoteSceneService.startScene(sceneStartContext, CommonConstant.FALSE);
 
 		return null;
 	}
 
 	/**
-	 * 获取已存在场景
-	 * @param practiceId
+	 * 初始化场景元信息
+	 * @param operation
 	 * @param authContext
 	 * @return
 	 */
-//	private OjLocalScene getExistOjLocalScene(String practiceId, AuthContext authContext) {
-//
-//
-//
-//	}
+	private String initReferenceMetaData(PracticeOperation operation, AuthContext authContext) {
+
+		OperationReferenceData referenceData = OperationReferenceData.builder()
+				.sceneType(LocalScene.BusinessCode.PRACTICE.getCode())
+				.sceneName(operation.getTitle()).appResourceId(operation.getResourceId())
+				.content(operation.getContent()).createUser(authContext.getUserId())
+				.isWeb(authContext.getIsWeb()).build();
+
+		return JsonUtil.toJsonString(referenceData);
+	}
+
+	/**
+	 * 获取已存在场景
+	 * @param operation
+	 * @param authContext
+	 * @return
+	 */
+	private OjLocalScene getExistOjLocalScene(PracticeOperation operation,
+			AuthContext authContext) {
+
+		if (operation.getSceneShareMode().intValue() == SceneShare.PRIVATE.getCode()) {
+			return ojLocalSceneMapper.selectByUserAndBid(authContext.getUserId(),
+					operation.getResourceId(), authContext.getIsWeb());
+		} else {
+			OjLocalScene ojLocalScene = ojLocalSceneMapper.selectByUserAndBid(
+					authContext.getUserId(), operation.getResourceId(), authContext.getIsWeb());
+			if (null != ojLocalScene) {
+				return ojLocalScene;
+			} else {
+				return ojLocalSceneMapper.selectByBidAndShared(operation.getResourceId(),
+						CommonConstant.TRUE, authContext.getIsWeb());
+			}
+		}
+	}
 
 	/**
 	 * 组装localScene数据
@@ -460,7 +508,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 * @param authContext
 	 * @return
 	 */
-	private LocalScene getLocalScene(PracticeOperation operation, OjLocalScene ojLocalScene,
+	private LocalScene initLocalScene(PracticeOperation operation, OjLocalScene ojLocalScene,
 			AuthContext authContext) {
 
 		LocalScene localScene = new LocalScene();
@@ -480,7 +528,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 * @param authContext
 	 * @return
 	 */
-	private OjLocalScene getOjLocalScene(PracticeOperation operation, AuthContext authContext) {
+	private OjLocalScene initOjLocalScene(PracticeOperation operation, AuthContext authContext) {
 
 		OjLocalScene localScene = new OjLocalScene();
 		localScene.setBusinessId(operation.getResourceId());
@@ -491,7 +539,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				operation.getSceneShareMode().intValue() == SceneShare.SHARED.getCode().intValue());
 		localScene.setUserId(authContext.getUserId());
 		localScene.setResourceId(IDGeneratorUtil.getID());
+		if (operation.getDynamicFlag()) {
+			localScene.setFlags(getDynamicFlags());
+		} else {
+			localScene.setFlags(operation.getAnswer());
+		}
 
 		return localScene;
+	}
+
+	private String getDynamicFlags() {
+		return "flag{" + IDGeneratorUtil.getID() + "}";
 	}
 }

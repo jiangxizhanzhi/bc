@@ -12,28 +12,28 @@ import javax.validation.constraints.NotBlank;
 @ApiModel("课时列表查询")
 public class ListLessonReq extends PageReqBase {
 
-    @ApiModelProperty("课时类型 0=理论课 1=实验课 用于课程下课时列表筛选")
-    private Integer type;
+	@ApiModelProperty("课时类型 0=理论课 1=实验课 用于课程下课时列表筛选")
+	private Integer type;
 
-    @ApiModelProperty("课程编号")
-    @NotBlank
-    private String courseId;
+	@ApiModelProperty(name = "course_id", value = "课程编号")
+	@NotBlank
+	private String courseId;
 
-    @ApiModelProperty("要排除的课程编号 用于课时导入筛选")
-    private String exceptCourse;
+	@ApiModelProperty(name = "except_course", value = "要排除的课程编号 用于课时导入筛选")
+	private String exceptCourse;
 
-    @ApiModelProperty("课程方向筛选条件 用于课时导入筛选")
-    private String categoryId;
+	@ApiModelProperty(name = "category_id", value = "课程方向筛选条件 用于课时导入筛选")
+	private String categoryId;
 
-    public void setCourse_id(String courseId) {
-        this.courseId = courseId;
-    }
+	public void setCourse_id(String courseId) {
+		this.courseId = courseId;
+	}
 
-    public void setExcept_course(String exceptCourse) {
-        this.exceptCourse = exceptCourse;
-    }
+	public void setExcept_course(String exceptCourse) {
+		this.exceptCourse = exceptCourse;
+	}
 
-    public void setCategory_id(String categoryId) {
-        this.categoryId = categoryId;
-    }
+	public void setCategory_id(String categoryId) {
+		this.categoryId = categoryId;
+	}
 }

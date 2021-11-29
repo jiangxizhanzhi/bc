@@ -8,14 +8,14 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
+import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import io.swagger.annotations.*;
@@ -31,13 +31,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -93,7 +92,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
-	public BaseRsp add(@RequestBody @Validated({ Create.class }) LessonAddReq lessonAddReq) {
+	public BaseRsp add(@RequestBody @Validated(Create.class) LessonAddReq lessonAddReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonAddReq);
 		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
@@ -104,8 +103,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
-	public BaseRsp
-			patch(@RequestBody @Validated({ Update.class }) LessonUpdateReq lessonUpdateReq) {
+	public BaseRsp patch(@RequestBody @Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonUpdateReq);
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,
@@ -191,11 +189,52 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
 		courseLesson.setKnowledge(JsonUtil.arrayToString(lessonAddReq.getKnowledge()));
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		if (lessonAddReq.getVideo() != null) {
+			AttachmentBo attachmentBo = attachmentService.uploadFile(
+					Attachment.AttachmentType.VIDEO.getCode(), CommonConstant.TRUE,
+					lessonAddReq.getVideo());
+			courseLesson.setVideoUrl(attachmentBo.getFilePath());
+		}
+
+		if (lessonAddReq.getHandout() != null) {
+			AttachmentBo attachmentBo = attachmentService.uploadFile(
+					Attachment.AttachmentType.HANDOUT.getCode(), CommonConstant.TRUE,
+					lessonAddReq.getHandout());
+
+			String suffix = attachmentBo.getFilePath()
+					.substring(attachmentBo.getFilePath().lastIndexOf(".") + 1);
+
+			if (suffix.equals(Attachment.FileType.ZIP)) {
+				courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
+				// 解析markdown文件
+				String filePath = attachmentService.parseMarkdown(attachmentBo.getFilePath(),
+						EnumUtils.getEnumDescByCode(Attachment.AttachmentType.HANDOUT.getCode(),
+								Attachment.AttachmentType.class));
+
+				courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
+				courseLesson.setHandoutUrl(filePath);
+			}
+			if (suffix.equals(Attachment.FileType.PDF.getDesc())) {
+				courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
+				courseLesson.setHandoutUrl(attachmentBo.getFilePath());
+			}
+			if (suffix.equals(Attachment.FileType.HTML.getDesc())) {
+				courseLesson.setHandoutType(CourseLesson.HandoutType.PPT.getCode());
+				courseLesson.setHandoutUrl(attachmentBo.getFilePath());
+			}
+		}
 
 		return courseLesson;
 	}
 
+	@ApiOperation("课时新增附件上传")
+	@PostMapping("upload_attachment")
+	public BaseRsp<String> uploadAttachment(@RequestParam("file") MultipartFile multipartFile) {
 
+		AttachmentBo attachmentBo = attachmentService.uploadFile(
+				Attachment.AttachmentType.ATTACHMENT.getCode(), CommonConstant.TRUE, multipartFile);
+		return new BaseRsp<>(null != attachmentBo ? attachmentBo.getResourceId() : "");
 
+	}
 
 }

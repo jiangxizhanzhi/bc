@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 @TableName("oj_course_lesson")
@@ -61,5 +63,22 @@ public class CourseLesson extends BaseTable {
 	private String paperId;
 
 	private Integer heat;
+
+	public enum HandoutType implements GenericEnum {
+
+		NEITHER(0, "都不是"), MD(1, "markdown"), PPT(2, "ppt文件"), PDF(4, "pdf文件");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		HandoutType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
 
 }

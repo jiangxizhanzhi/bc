@@ -41,8 +41,8 @@ public class Attachment extends BaseTable {
 
 		HANDOUT(1, Attachment.parentPath + "/course/handout/"), VIDEO(2,
 				Attachment.parentPath + "/course/video/"), ATTACHMENT(3,
-						Attachment.parentPath + "/course/attachment/"),
-		OTHER(4, Attachment.parentPath + "/other/");
+						Attachment.parentPath + "/course/attachment/"), OTHER(4,
+								Attachment.parentPath + "/other/");
 
 		@Getter
 		private Integer code;
@@ -51,6 +51,22 @@ public class Attachment extends BaseTable {
 		private String desc;
 
 		AttachmentType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
+
+	public enum FileType implements GenericEnum {
+
+		MD(0, "md"), PDF(1, "pdf"), HTML(2, "html"), ZIP(3, "zip");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		FileType(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

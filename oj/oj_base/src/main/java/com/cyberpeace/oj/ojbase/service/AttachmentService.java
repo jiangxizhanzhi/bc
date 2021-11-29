@@ -46,4 +46,12 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @param attachmentId
 	 */
 	void deleteAttachment(String attachmentId);
+
+	/**
+	 * 解析
+	 * @param markdownZip
+	 * @param destMarkDownPath
+	 * @return
+	 */
+	String parseMarkdown(String markdownZip, String destMarkDownPath);
 }

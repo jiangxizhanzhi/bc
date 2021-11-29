@@ -13,7 +13,7 @@ public enum LessonHandoutType implements GenericEnum {
 	@Getter
 	private String desc;
 
-	private LessonHandoutType(Integer code, String desc) {
+	LessonHandoutType(Integer code, String desc) {
 		this.code = code;
 		this.desc = desc;
 	}

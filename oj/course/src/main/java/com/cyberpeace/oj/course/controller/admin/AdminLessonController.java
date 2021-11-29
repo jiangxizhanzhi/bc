@@ -1,18 +1,39 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.controller.req.*;
+import com.cyberpeace.oj.course.controller.res.TopoSceneDataRes;
+import com.cyberpeace.oj.course.dao.context.LessonContext;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
+import com.cyberpeace.oj.course.service.bo.LessonPracticeBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
@@ -20,27 +41,9 @@ import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.context.LessonContext;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Api(tags = "oj-后台课时相关api")
 @RestController
@@ -61,6 +64,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@Autowired
 	private CourseService courseService;
 
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListLessonReq lessonReq) {
@@ -72,6 +78,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		courseIds.remove(lessonReq.getExceptCourse());
 		courseIds.add(lessonReq.getCourseId());
 		LessonContext context = BeanUtils.copy(lessonReq, LessonContext.class);
+		context.setCourseIds(courseIds);
 
 		// 数据查询
 		IPage<AdminLessonListBo> iPage = courseLessonService.pageByContext(page, context, false);
@@ -157,9 +164,24 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时场景拓扑信息查询")
 	@GetMapping("/scene_topo")
-	public BaseRsp getTopoScene() {
-		// TODO
-		return null;
+	public BaseRsp<TopoSceneDataRes> getTopoScene(@ApiParam(name = "resource_id",
+			value = "资源数据编号") @RequestParam("resource_id") String resourceId) {
+
+		CourseLesson courseLesson = courseLessonMapper.selectById(resourceId);
+		if (null == courseLesson) {
+			log.error("getTopoScene: lesson not found! lesson_id=[{}]", resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		TopoSceneDataRes topoSceneDataRes = new TopoSceneDataRes();
+		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+				&& StringUtils.isNotBlank(courseLesson.getTopoId())) {
+			JSONObject topo = remoteTopoService.getTopoById(courseLesson.getTopoId());
+			topoSceneDataRes.setSceneConfigData(topo);
+		}
+
+		// TODO 场景信息查询
+		return new BaseRsp(topoSceneDataRes);
 	}
 
 	@ApiOperation("课时监控")

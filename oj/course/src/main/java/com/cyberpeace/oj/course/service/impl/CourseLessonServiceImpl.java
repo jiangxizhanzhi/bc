@@ -1,35 +1,18 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.model.SceneConfig;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.oj.course.constant.LessonConfigType;
-import com.cyberpeace.oj.course.dao.entity.*;
-import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
-import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
-import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
-import com.cyberpeace.oj.ojbase.service.NoteService;
-import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
-import com.cyberpeace.oj.practice.service.*;
-import com.cyberpeace.oj.practice.service.bo.*;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Resource;
+
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,26 +20,50 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.model.SceneConfig;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
+import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
+import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
+import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
+import com.cyberpeace.oj.practice.service.bo.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -111,10 +118,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private RemoteTopoService remoteTopoService;
 
 	@Autowired
-	private NoteService noteService;
+	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	@Autowired
-	private NoteMapper noteMapper;
+	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String userId, String courseId, String lessonId) {
@@ -149,7 +159,24 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				ResourceCollection.BusinessType.LESSON.getCode(), lessonId);
 		infoBo.setIsCollection(collection);
 
-		// todo 场景信息处理
+		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+				&& StringUtils.isNotBlank(lesson.getTopoId())) {
+			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
+			OjLocalScene ojLocalScene = lesson.getSceneShareMode().intValue() == SceneShare.PRIVATE
+					.getCode().intValue()
+							? ojLocalSceneMapper.selectByUserAndBid(userId, lessonId,
+									CommonConstant.TRUE)
+							: ojLocalSceneMapper.selectByBidAndShared(lessonId, CommonConstant.TRUE,
+									CommonConstant.TRUE);
+
+			if (null != ojLocalScene) {
+				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+				if (null != localScene) {
+					JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(), userId);
+					infoBo.setSceneData(sceneData);
+				}
+			}
+		}
 
 		// 添加学习记录
 		LessonRecord record = lessonRecordMapper.selectByLessonAndUser(lessonId, userId);

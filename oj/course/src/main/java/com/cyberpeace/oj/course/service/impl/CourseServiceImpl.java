@@ -25,7 +25,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.course.constant.LessonType;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
@@ -118,7 +117,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 计算实验课和理论课数量
 		List<CourseLesson> theoryCount = courseLessons
 				.stream().filter(courseLesson -> courseLesson.getType()
-						.intValue() == LessonType.THEORY.getCode().intValue())
+						.intValue() == CourseLesson.LessonType.THEORY.getCode().intValue())
 				.collect(Collectors.toList());
 
 		courseInfoBo.setTheoryCount(theoryCount.size());

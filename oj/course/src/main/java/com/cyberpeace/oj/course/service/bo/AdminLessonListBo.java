@@ -1,7 +1,9 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
+import java.util.List;
 
+import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -67,4 +69,6 @@ public class AdminLessonListBo implements Serializable {
 	@ApiModelProperty("是否有实验报告")
 	private Boolean hasReport;
 
+	@ApiModelProperty("课时附件数据")
+	private List<AttachmentBo> lessonFile;
 }

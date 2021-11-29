@@ -108,7 +108,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
-	public BaseRsp patch(@RequestBody @Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
+	public BaseRsp patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonUpdateReq);
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,

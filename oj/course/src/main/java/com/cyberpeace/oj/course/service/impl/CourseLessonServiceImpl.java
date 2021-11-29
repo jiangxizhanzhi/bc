@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -183,7 +184,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		AdminLessonBo lessonInfoBo = BeanUtils.copy(lesson, AdminLessonBo.class);
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(lesson.getAttachmentIds(),
 				false);
-		lessonInfoBo.setAttachments(attachmentBos);
+		lessonInfoBo.setLessonFile(attachmentBos);
 
 		// 习题数据查询
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
@@ -209,7 +210,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		LessonConfig lessonConfig = packageLessonConfig(courseLesson);
 
 		// 场景数据新增
-		if (null != ojSceneConfig) {
+		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+				&& null != ojSceneConfig) {
 			String topoId = remoteTopoService.create(
 					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
 			courseLesson.setTopoId(topoId);
@@ -242,7 +244,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		AddOrUpdatePaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 
-		if (null != ojSceneConfig) {
+		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+				&& null != ojSceneConfig) {
 			remoteTopoService.create(
 					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
 		}
@@ -321,6 +324,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		IPage<AdminLessonListBo> boIPage = iPage.convert(courseLesson -> {
 			AdminLessonListBo adminLessonListBo = BeanUtils.copy(courseLesson,
 					AdminLessonListBo.class);
+
+			// 附件数据相关
+			if (StringUtils.isNotBlank(courseLesson.getAttachmentIds())) {
+				List<AttachmentBo> attachmentBoList = attachmentService
+						.selectByIds(courseLesson.getAttachmentIds(), isWeb);
+				adminLessonListBo.setLessonFile(attachmentBoList);
+			}
+
 			// 试卷相关
 			Paper paper = paperMapper.selectById(courseLesson.getPaperId());
 			adminLessonListBo.setPracticeCount(paper.getPracticeCount());

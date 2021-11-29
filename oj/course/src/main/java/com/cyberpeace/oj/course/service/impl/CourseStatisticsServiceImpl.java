@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.oj.course.constant.LessonType;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +102,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			Map<Integer, List<CourseLesson>> lessonMap = lessonList.stream()
 					.collect(Collectors.groupingBy(CourseLesson::getType));
 			lessonMap.forEach((key, value) -> {
-				if (key.intValue() == LessonType.THEORY.getCode().intValue()) {
+				if (key.intValue() == CourseLesson.LessonType.THEORY.getCode().intValue()) {
 					studyProcessBo.setTheoryCount(value.size());
 				} else {
 					studyProcessBo.setExerciseCount(value.size());
@@ -114,7 +113,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			Map<Integer, List<CourseLesson>> studyLessonMap = study.stream()
 					.collect(Collectors.groupingBy(CourseLesson::getType));
 			studyLessonMap.forEach((key, value) -> {
-				if (key.intValue() == LessonType.THEORY.getCode().intValue()) {
+				if (key.intValue() == CourseLesson.LessonType.THEORY.getCode().intValue()) {
 					studyProcessBo.setCompleteTheory(value.size());
 				} else {
 					studyProcessBo.setCompleteExercise(value.size());

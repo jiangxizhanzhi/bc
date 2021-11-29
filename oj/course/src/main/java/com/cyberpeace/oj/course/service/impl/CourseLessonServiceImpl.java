@@ -414,6 +414,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
 		for (CourseLesson courseLesson : courseLessons) {
+			courseLesson.setId(null);
 			courseLesson.setCourseId(course.getResourceId());
 			courseLesson.setResourceId(IDGeneratorUtil.getID());
 		}

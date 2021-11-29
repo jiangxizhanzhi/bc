@@ -2,9 +2,6 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
-import com.cyberpeace.oj.course.service.CourseCategoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -83,6 +80,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			if (!courseIds.contains(lessonReq.getCourseId())) {
 				return new BaseRsp<>(PageUtil.getNullResult());
 			}
+			courseIds.addAll(courseIds);
 			courseIds.add(lessonReq.getCourseId());
 		}
 

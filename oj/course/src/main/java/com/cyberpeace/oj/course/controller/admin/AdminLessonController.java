@@ -80,7 +80,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			if (!courseIds.contains(lessonReq.getCourseId())) {
 				return new BaseRsp<>(PageUtil.getNullResult());
 			}
-			courseIds.addAll(courseIds);
+			courseIds.removeAll(courseIds);
 			courseIds.add(lessonReq.getCourseId());
 		}
 

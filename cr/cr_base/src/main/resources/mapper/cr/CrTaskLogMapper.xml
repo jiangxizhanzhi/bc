@@ -20,8 +20,8 @@
         <foreach collection="actionCodes" item="actionCode" separator="," open="(" close=")">
             #{actionCode}
         </foreach>
-        and cr_task_log.task_id in
-        ((select resource_id from cr_task where cr_task.room_id = #{roomId}
+        and (cr_task_log.task_id in
+        (select resource_id from cr_task where cr_task.room_id = #{roomId}
         and cr_task.user_id = #{studentId}) or (cr_task_log.resource_id in
         <foreach collection="ids" item="id" separator="," open="(" close=")">
             #{id}

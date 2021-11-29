@@ -292,6 +292,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<DynamicData> dynamicDataList = Lists.newArrayList();
 		if (taskLogIds.size() > 0) {
 			List<Integer> actionCodes = Lists.newArrayList();
+			actionCodes.add(CrTaskLog.ActionCode.RELEASE.getCode());
 			actionCodes.add(CrTaskLog.ActionCode.MAN_SUCCESS.getCode());
 			actionCodes.add(CrTaskLog.ActionCode.MAN_FAILURE.getCode());
 			actionCodes.add(CrTaskLog.ActionCode.MAN_REJECT.getCode());

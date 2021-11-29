@@ -18,6 +18,7 @@ import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -92,11 +93,13 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
-	public BaseRsp add(@RequestBody @Validated(Create.class) LessonAddReq lessonAddReq) {
+	public BaseRsp add(@Validated(Create.class) LessonAddReq lessonAddReq) {
 
 		CourseLesson courseLesson = reqToEntity(lessonAddReq);
+
 		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
-				lessonAddReq.getOjSceneConfig(), lessonAddReq.getPracticeList());
+				lessonAddReq.getOjSceneConfig(), JsonUtil.toJsonObjectArray(
+						lessonAddReq.getPracticeList(), PaperPracticeContext.class));
 
 		return new BaseRsp(lesson);
 	}
@@ -107,7 +110,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		CourseLesson courseLesson = reqToEntity(lessonUpdateReq);
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,
-				lessonUpdateReq.getOjSceneConfig(), lessonUpdateReq.getPracticeList());
+				lessonUpdateReq.getOjSceneConfig(), JsonUtil.toJsonObjectArray(
+						lessonUpdateReq.getPracticeList(), PaperPracticeContext.class));
 		return new BaseRsp(lesson);
 
 	}
@@ -187,7 +191,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		// 知识点转换
 		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
-		courseLesson.setKnowledge(JsonUtil.arrayToString(lessonAddReq.getKnowledge()));
+		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		if (lessonAddReq.getVideo() != null) {
 			AttachmentBo attachmentBo = attachmentService.uploadFile(

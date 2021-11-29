@@ -26,7 +26,7 @@ public class LessonAddReq implements Serializable {
 	private Integer type;
 
 	@ApiModelProperty("知识点")
-	private List<String> knowledge;
+	private String knowledge;
 
 	@ApiModelProperty("附件编号")
 	private String attachmentIds;
@@ -67,6 +67,6 @@ public class LessonAddReq implements Serializable {
 	private Integer sceneShareMode;
 
 	@ApiModelProperty("习题列表")
-	private List<PaperPracticeContext> practiceList;
+	private String practiceList;
 
 }

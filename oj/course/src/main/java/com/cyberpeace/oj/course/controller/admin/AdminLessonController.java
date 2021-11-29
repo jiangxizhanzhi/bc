@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import javax.validation.Valid;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -98,8 +99,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson courseLesson = reqToEntity(lessonAddReq);
 
 		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
-				lessonAddReq.getOjSceneConfig(), JsonUtil.toJsonObjectArray(
-						lessonAddReq.getPracticeList(), PaperPracticeContext.class));
+				JsonUtil.toJsonObject(lessonAddReq.getOjSceneConfig(), JSONObject.class),
+				JsonUtil.toJsonObjectArray(lessonAddReq.getPracticeList(),
+						PaperPracticeContext.class));
 
 		return new BaseRsp(lesson);
 	}
@@ -110,8 +112,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		CourseLesson courseLesson = reqToEntity(lessonUpdateReq);
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,
-				lessonUpdateReq.getOjSceneConfig(), JsonUtil.toJsonObjectArray(
-						lessonUpdateReq.getPracticeList(), PaperPracticeContext.class));
+				JsonUtil.toJsonObject(lessonUpdateReq.getOjSceneConfig(), JSONObject.class),
+				JsonUtil.toJsonObjectArray(lessonUpdateReq.getPracticeList(),
+						PaperPracticeContext.class));
 		return new BaseRsp(lesson);
 
 	}
@@ -233,7 +236,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时新增附件上传")
 	@PostMapping("upload_attachment")
-	public BaseRsp<String> uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
+	public BaseRsp<String>
+			uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
 
 		AttachmentBo attachmentBo = attachmentService.uploadFile(
 				Attachment.AttachmentType.ATTACHMENT.getCode(), CommonConstant.TRUE, multipartFile);

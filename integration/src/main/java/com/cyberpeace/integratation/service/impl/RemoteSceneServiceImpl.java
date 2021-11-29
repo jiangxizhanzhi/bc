@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.integratation.model.scene.NodeOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
@@ -35,6 +36,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_UNPAUSE_URL;
 
+	private String NODE_RESTART_URL;
+
+	private String NODE_RECREATE_URL;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost()
@@ -53,6 +58,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		SCENE_UNPAUSE_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.unpause");
+
+		NODE_RESTART_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.restart");
+
+		NODE_RECREATE_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.recreate");
 	}
 
 	@Override
@@ -79,7 +90,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public Boolean stopScene(String sceneId, SceneOpsContext sceneOpsContext) {
+	public Boolean stopScene(SceneOpsContext sceneOpsContext) {
 		String targetUrl = SCENE_CLEAR_URL;
 
 		Boolean result = HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
@@ -88,7 +99,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public Boolean pauseScene(String sceneId, SceneOpsContext sceneOpsContext) {
+	public Boolean pauseScene(SceneOpsContext sceneOpsContext) {
 		return HttpClientUtil.post(SCENE_PAUSE_URL, sceneOpsContext, Boolean.class);
 	}
 
@@ -100,8 +111,18 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public Boolean unpauseScene(String mpSceneId, SceneOpsContext sceneOpContext) {
+	public Boolean unpauseScene(SceneOpsContext sceneOpContext) {
 		return HttpClientUtil.post(SCENE_UNPAUSE_URL, sceneOpContext, Boolean.class);
 
+	}
+
+	@Override
+	public Boolean restartNode(NodeOpsContext nodeOpsContext) {
+		return HttpClientUtil.post(NODE_RESTART_URL, nodeOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
+		return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
 	}
 }

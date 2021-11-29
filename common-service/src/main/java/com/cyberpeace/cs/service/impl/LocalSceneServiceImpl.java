@@ -17,6 +17,7 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.NodeOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -98,7 +99,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
 		SceneOpsContext sceneOpsContext = getSceneOpContext(localScene);
 
-		Boolean result = remoteSceneService.stopScene(localScene.getMpSceneId(), sceneOpsContext);
+		Boolean result = remoteSceneService.stopScene(sceneOpsContext);
 		if (!result) {
 			log.error("failed to stop scene [{}]", localScene.getMpSceneId());
 			throw new RuntimeException();
@@ -115,6 +116,32 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public Boolean restartNode(String localSceneId, String nodeId) {
+		LocalScene localScene = getById(localSceneId);
+		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
+		Boolean result = remoteSceneService.restartNode(nodeOpsContext);
+		if (!result) {
+			log.error("failed to restart node [{}] in scene [{}]", nodeId,
+					localScene.getMpSceneId());
+			throw new RuntimeException();
+		}
+		return true;
+	}
+
+	@Override
+	public Boolean recreateNode(String localSceneId, String nodeId) {
+		LocalScene localScene = getById(localSceneId);
+		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
+		Boolean result = remoteSceneService.recreateNode(nodeOpsContext);
+		if (!result) {
+			log.error("failed to recreate node [{}] in scene [{}]", nodeId,
+					localScene.getMpSceneId());
+			throw new RuntimeException();
+		}
+		return true;
+	}
+
+	@Override
 	public Boolean pauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		ensureSceneStarted(localScene);
@@ -122,8 +149,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
 		handler.checkPauseScenePermission(localScene);
 
-		Boolean result = remoteSceneService.pauseScene(localScene.getMpSceneId(),
-				getSceneOpContext(localScene));
+		Boolean result = remoteSceneService.pauseScene(getSceneOpContext(localScene));
 		if (!result) {
 			log.error("failed to pause scene [{}]", localScene.getMpSceneId());
 			throw new RuntimeException();
@@ -149,8 +175,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
 		handler.checkUnpauseScenePermission(localScene);
 
-		Boolean result = remoteSceneService.unpauseScene(localScene.getMpSceneId(),
-				getSceneOpContext(localScene));
+		Boolean result = remoteSceneService.unpauseScene(getSceneOpContext(localScene));
 
 		if (!result) {
 			log.error("failed to unpause scene [{}]", localScene.getMpSceneId());
@@ -259,7 +284,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		// sceneOpsContext.setContext(getContext(localScene.getResourceId()));
 		// sceneOpsContext.setAccessUserId(userId);
 
-		remoteSceneService.stopScene(localScene.getMpSceneId(), sceneOpsContext);
+		remoteSceneService.stopScene(sceneOpsContext);
 	}
 
 	private void updateAfterStartScene(LocalScene localScene, String sceneId) {
@@ -302,6 +327,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		sceneOpsContext.setId(localScene.getMpSceneId());
 
 		return sceneOpsContext;
+	}
+
+	private NodeOpsContext getNodeOpsContext(LocalScene localScene, String nodeId) {
+		NodeOpsContext nodeOpsContext = new NodeOpsContext();
+		nodeOpsContext.getContext().getPassThrough().put("scene_manager_id",
+				localScene.getResourceId());
+		nodeOpsContext.setId(localScene.getMpSceneId());
+		nodeOpsContext.setNodeId(nodeId);
+
+		return nodeOpsContext;
 	}
 
 }

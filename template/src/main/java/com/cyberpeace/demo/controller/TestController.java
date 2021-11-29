@@ -48,10 +48,10 @@ public class TestController {
 //		return new BaseRsp<>(sceneId);
 //	}
 
-	@GetMapping("/stopScene")
-	public BaseRsp<Boolean> stopScene() {
-		Boolean result = remoteSceneService.stopScene("b3304280b0a14d5aa7cd4dcf03ddd8f", null);
-
-		return new BaseRsp<>(result);
-	}
+//	@GetMapping("/stopScene")
+//	public BaseRsp<Boolean> stopScene() {
+//		Boolean result = remoteSceneService.stopScene("b3304280b0a14d5aa7cd4dcf03ddd8f", null);
+//
+//		return new BaseRsp<>(result);
+//	}
 }

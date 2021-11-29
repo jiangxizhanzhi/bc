@@ -8,6 +8,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,6 +26,7 @@ import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
+import com.cyberpeace.cs.service.LocalSceneService;
 
 /**
  *
@@ -40,6 +42,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@Override
 	public IPage<TeamTemplateData> page(ListQuery listQuery) {
@@ -61,11 +66,15 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		BusinessTemplate businessTemplate = getBusinessTemplateFromBaseInfoInput(crEventAddInput);
 
-		String sceneConfigId = "";
+		SceneConfigData topoData = teamTrainTemplateContext.getBaseInfo().getSceneConfigData();
+		JSONObject topoJson = new JSONObject();
+		topoJson.put("scene_config", topoData.getSceneConfig());
+		String topoId = localSceneService.saveTopo(topoJson,
+				teamTrainTemplateContext.getBaseInfo().getType());
 		// "todo场景";
 
 		// 保存基础模板
-		businessTemplate.setTopoId(sceneConfigId);
+		businessTemplate.setTopoId(topoId);
 		businessTemplate.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		businessTemplate.setOperationAuthIds("[]");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
@@ -125,8 +134,11 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
 
 		if (sceneConfig != null) {
-			String sceneConfigId = "更新场景todo";
-			businessTemplate.setTopoId(sceneConfigId);
+			SceneConfigData topoData = input.getBaseInfo().getSceneConfigData();
+			JSONObject topoJson = new JSONObject();
+			topoJson.put("scene_config", topoData.getSceneConfig());
+			String topoId = localSceneService.saveTopo(topoJson, input.getBaseInfo().getType());
+			businessTemplate.setTopoId(topoId);
 		}
 
 		// 更新团队训练模板

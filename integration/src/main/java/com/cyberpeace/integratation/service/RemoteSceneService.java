@@ -1,18 +1,22 @@
 package com.cyberpeace.integratation.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.model.scene.NodeOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public interface RemoteSceneService {
 
 	String startScene(SceneOpsContext sceneStartContext, Boolean isTest);
 
-	Boolean stopScene(String sceneId, SceneOpsContext sceneOpsContext);
+	Boolean stopScene(SceneOpsContext sceneOpsContext);
 
-	Boolean pauseScene(String sceneId, SceneOpsContext sceneOpsContext);
+	Boolean pauseScene(SceneOpsContext sceneOpsContext);
 
 	JSONObject getById(String sceneId, String userId);
 
-	Boolean unpauseScene(String mpSceneId, SceneOpsContext sceneOpContext);
+	Boolean unpauseScene(SceneOpsContext sceneOpContext);
+
+	Boolean restartNode(NodeOpsContext nodeOpsContext);
+
+	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 }

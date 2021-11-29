@@ -47,4 +47,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	void stopLocalScene(LocalScene scene, String userId);
 
+	Boolean restartNode(String localSceneId, String nodeId);
+
+	Boolean recreateNode(String localSceneId, String nodeId);
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cs.controller.req.scene.SceneNodeReq;
 import com.cyberpeace.cs.controller.req.scene.SceneReq;
 import com.cyberpeace.cs.controller.rsp.CrSceneRetrieveRsp;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -111,4 +112,19 @@ public class LocalSceneController {
 		localSceneService.unPauseScene(sceneReq.getLocalSceneId());
 		return new BaseRsp();
 	}
+
+	@ApiOperation("重启节点")
+	@PostMapping("/restartNode")
+	public BaseRsp restartNode(@RequestBody SceneNodeReq sceneNodeReq) {
+		localSceneService.restartNode(sceneNodeReq.getLocalSceneId(), sceneNodeReq.getNodeId());
+		return new BaseRsp();
+	}
+
+	@ApiOperation("重建节点")
+	@PostMapping("/recreateNode")
+	public BaseRsp recreateNode(@RequestBody SceneNodeReq sceneNodeReq) {
+		localSceneService.recreateNode(sceneNodeReq.getLocalSceneId(), sceneNodeReq.getNodeId());
+		return new BaseRsp();
+	}
+
 }

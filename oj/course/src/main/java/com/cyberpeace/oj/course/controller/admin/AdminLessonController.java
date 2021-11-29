@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.cyberpeace.oj.course.service.CourseCategoryService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,23 +76,32 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		// 请求数据转换
 		List<String> courseIds = courseService.selectIdsByCategory(lessonReq.getCategoryId(),
 				AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false));
-		if (StringUtils.isNotBlank(lessonReq.getExceptCourse())) {
-			courseIds.remove(lessonReq.getExceptCourse());
+		if (CollectionUtils.isEmpty(courseIds)) {
+			return new BaseRsp<>(PageUtil.getNullResult());
 		}
 		if (StringUtils.isNotBlank(lessonReq.getCourseId())) {
+			if (!courseIds.contains(lessonReq.getCourseId())) {
+				return new BaseRsp<>(PageUtil.getNullResult());
+			}
 			courseIds.add(lessonReq.getCourseId());
+		}
+
+		if (StringUtils.isNotBlank(lessonReq.getExceptCourse())) {
+			courseIds.remove(lessonReq.getExceptCourse());
 		}
 
 		Page page = lessonReq.toPageParam();
 
 		LessonContext context = BeanUtils.copy(lessonReq, LessonContext.class);
+		if (CollectionUtils.isEmpty(courseIds)) {
+			return new BaseRsp<>(PageUtil.getNullResult());
+		}
 		context.setCourseIds(courseIds);
 
 		// 数据查询
 		IPage<AdminLessonListBo> iPage = courseLessonService.pageByContext(page, context, false);
 
-		ListRsp<AdminLessonListBo> rsp = PageUtil.getListResult(iPage);
-		return new BaseRsp(rsp);
+		return new BaseRsp(PageUtil.getListResult(iPage));
 	}
 
 	@ApiOperation("后台课时详情查询接口")

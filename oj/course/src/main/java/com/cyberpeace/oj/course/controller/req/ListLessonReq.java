@@ -16,7 +16,6 @@ public class ListLessonReq extends PageReqBase {
 	private Integer type;
 
 	@ApiModelProperty(name = "course_id", value = "课程编号")
-	@NotBlank
 	private String courseId;
 
 	@ApiModelProperty(name = "except_course", value = "要排除的课程编号 用于课时导入筛选")

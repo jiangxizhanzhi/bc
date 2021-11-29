@@ -74,9 +74,15 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		// 请求数据转换
 		List<String> courseIds = courseService.selectIdsByCategory(lessonReq.getCategoryId(),
 				AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false));
+		if (StringUtils.isNotBlank(lessonReq.getExceptCourse())) {
+			courseIds.remove(lessonReq.getExceptCourse());
+		}
+		if (StringUtils.isNotBlank(lessonReq.getCourseId())) {
+			courseIds.add(lessonReq.getCourseId());
+		}
+
 		Page page = lessonReq.toPageParam();
-		courseIds.remove(lessonReq.getExceptCourse());
-		courseIds.add(lessonReq.getCourseId());
+
 		LessonContext context = BeanUtils.copy(lessonReq, LessonContext.class);
 		context.setCourseIds(courseIds);
 

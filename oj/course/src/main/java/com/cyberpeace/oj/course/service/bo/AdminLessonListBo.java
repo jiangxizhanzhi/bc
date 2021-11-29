@@ -42,9 +42,6 @@ public class AdminLessonListBo implements Serializable {
 	@ApiModelProperty("课时公开和隐藏 true 公开")
 	private Boolean isPublic;
 
-	@ApiModelProperty("附件编号")
-	private String attachmentIds;
-
 	@ApiModelProperty("是否必须 0=未配置 1=选修 2=必修")
 	private Integer compulsory;
 

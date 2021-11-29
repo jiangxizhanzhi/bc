@@ -442,8 +442,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public void checkTeacherPermission(String roomId, String userId) {
+	public void checkStudentPermission(String roomId, String userId) {
+		permissionCheck(roomId, userId, CrRole.TeamRoleGroupCode.STUDENT.getValue());
+	}
 
+	@Override
+	public void checkTeacherPermission(String roomId, String userId) {
 		permissionCheck(roomId, userId, CrRole.TeamRoleGroupCode.TEACHER.getValue());
 	}
 

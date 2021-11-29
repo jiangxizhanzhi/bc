@@ -39,7 +39,7 @@ public class TeamTrainRoleController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id);
 
-		CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.deepCopy(crRoleContext,
+		CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
 				CrRoleContext.class);
 
 		for (int i = 0; i < crRoleContextRsp.getRoles().size(); i++) {

@@ -86,4 +86,10 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	TeamRoom getByLocalSceneId(String sceneManagerId);
 
 	TeamRoom getById(String roomId);
+
+	/** 检查是否有学员权限
+	 * @param roomId
+	 * @param userId
+	 */
+	void checkStudentPermission(String roomId, String userId);
 }

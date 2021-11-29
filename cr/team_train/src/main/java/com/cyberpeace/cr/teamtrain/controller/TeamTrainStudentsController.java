@@ -153,6 +153,10 @@ public class TeamTrainStudentsController {
 	@PostMapping("/submit_missions")
 	public BaseRsp<String>
 			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+		teamRoomService.checkRoomOpening(submitMissionsReq.getResourceId());
+		teamRoomService.checkStudentPermission(submitMissionsReq.getResourceId(),
+				UserInfoContext.getUserContext().getUserId());
+
 		crTaskService.submitMissions(submitMissionsReq.getResourceId(),
 				submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
 

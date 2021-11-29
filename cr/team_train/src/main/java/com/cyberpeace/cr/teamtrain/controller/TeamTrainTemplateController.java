@@ -54,6 +54,8 @@ public class TeamTrainTemplateController {
 				TeamTrainTemplateContext.class);
 		teamTrainTemplateContext
 				.setRoleList(JsonUtil.toJsonString(teamTrainTemplateAddReq.getRoleList()));
+		teamTrainTemplateContext.getBaseInfo()
+				.setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 
 		businessTemplateService.addTemplate(teamTrainTemplateContext);
 

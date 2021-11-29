@@ -207,7 +207,7 @@ public class TeamTrainScoreController {
 			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
 		MissionEvaluationQuery missionEvaluationQuery = BeanUtils.copy(missionEvaluationListReq,
 				MissionEvaluationQuery.class);
-		if (missionEvaluationListReq.getIsShowEvaluated()) {
+		if (!missionEvaluationListReq.getIsShowEvaluated()) {
 			missionEvaluationQuery.setEvaluateStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
 		}
 		if (CrTaskSubmit.EvaluateType.MACHINE_EVALUATION.getCode()

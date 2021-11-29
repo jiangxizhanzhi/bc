@@ -379,15 +379,21 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public Integer batchPublicPractice(List<String> resourceIds, Boolean isPublic) {
+	public Boolean batchPublicPractice(List<String> resourceIds, Boolean isPublic) {
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(resourceIds);
 
 		List<String> paperIds = courseLessons.stream()
 				.filter(courseLesson -> StringUtils.isNotBlank(courseLesson.getResourceId()))
 				.map(CourseLesson::getPaperId).collect(Collectors.toList());
 
-		// todo 调用paper模块修改公开和隐藏方法
-		return null;
+		List<Paper> papers = StreamApiUtils.simpleMap(paperIds, paperId -> {
+			Paper paper = new Paper();
+			paper.setIsPublic(isPublic);
+			paper.setResourceId(paperId);
+			return paper;
+		});
+
+		return paperService.updateBatchById(papers);
 	}
 
 	@Override

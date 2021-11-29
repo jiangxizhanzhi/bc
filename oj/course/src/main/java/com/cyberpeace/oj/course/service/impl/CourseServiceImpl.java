@@ -283,6 +283,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<String> courseIds = courseMapper.selectIdsByCategory(authIds, childrenIds,
 				authContext.getIsWeb());
 
-		return null != childrenIds ? courseIds : Lists.newArrayList();
+		return courseIds;
 	}
 }

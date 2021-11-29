@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.oj.course.service.CourseCategoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +135,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息删除")
 	@DeleteMapping("/batch")
-	public BaseRsp<Integer> delete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
+	public BaseRsp<Integer> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 		int row = courseLessonMapper.deleteBatchIds(batchDeleteReq.getResourceIds());
 		return new BaseRsp(row);
 	}
@@ -198,11 +199,11 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时练习公开与隐藏")
 	@PatchMapping("/practice/batch_public")
-	public BaseRsp<Integer>
+	public BaseRsp<Boolean>
 			publicPractice(@RequestBody @Validated ResourcePublicReq resourcePublicReq) {
-		Integer row = courseLessonService.batchPublicPractice(resourcePublicReq.getResourceIds(),
+		Boolean result = courseLessonService.batchPublicPractice(resourcePublicReq.getResourceIds(),
 				resourcePublicReq.getIsPublic());
-		return new BaseRsp<>(row);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("课时导入")

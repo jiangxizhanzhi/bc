@@ -68,7 +68,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param isPublic
 	 * @return
 	 */
-	Integer batchPublicPractice(List<String> resourceIds, Boolean isPublic);
+	Boolean batchPublicPractice(List<String> resourceIds, Boolean isPublic);
 
 	/**
 	 * 课时导入

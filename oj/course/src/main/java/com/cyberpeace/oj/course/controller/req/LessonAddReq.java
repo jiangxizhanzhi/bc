@@ -1,17 +1,17 @@
 package com.cyberpeace.oj.course.controller.req;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cyberpeace.common.baseinterface.Create;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 @ApiModel
@@ -58,7 +58,7 @@ public class LessonAddReq implements Serializable {
 	private MultipartFile video;
 
 	@ApiModelProperty("场景配置信息")
-	private JSONObject ojSceneConfig;
+	private String ojSceneConfig;
 
 	@ApiModelProperty("场景存活时间 单位小时")
 	private Integer destroyDelay;
@@ -81,7 +81,7 @@ public class LessonAddReq implements Serializable {
 		this.courseId = courseId;
 	}
 
-	public void setOj_scene_config(JSONObject ojSceneConfig) {
+	public void setOj_scene_config(String ojSceneConfig) {
 		this.ojSceneConfig = ojSceneConfig;
 	}
 

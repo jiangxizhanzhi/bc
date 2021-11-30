@@ -43,22 +43,22 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	IPage<TeamRoomData> list(ListQuery listQuery);
 
 	/** 修改团队训练状态
-	 * @param resourceId
+	 * @param roomId
 	 * @return
 	 */
-	Integer changeTrainingStatus(String resourceId);
+	Integer changeTrainingStatus(String roomId);
 
 	/** 获取团队训练状态
-	 * @param resourceId
+	 * @param roomId
 	 * @return
 	 */
-	Integer getTrainingStatus(String resourceId);
+	Integer getTrainingStatus(String roomId);
 
 	/** 通过businessInstanceId获取学员id
-	 * @param resourceId
+	 * @param roomId
 	 * @return
 	 */
-	List<UserRole> getUserList(String resourceId);
+	List<UserRole> getUserList(String roomId);
 
 	/**教员获取时间线
 	 * @param roomId

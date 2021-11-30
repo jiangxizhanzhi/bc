@@ -148,12 +148,14 @@ public class TeamTrainRoomController {
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
+		log.error("111111111111111111111111");
 		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
 				TeamTrainRoomContext.class);
 		teamTrainRoomContext.setPreSkill(
 				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getPreSkill(), String.class));
 		teamTrainRoomContext.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getTrainSkill(), String.class));
+		log.error("22222222222222222222222222");
 		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
 
 		return getTeamRoom(teamRoom.getResourceId());
@@ -379,6 +381,7 @@ public class TeamTrainRoomController {
 		teamRoomService.checkRoomOpening(crRole.getRoomId());
 
 		if (crRole == null) {
+			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 

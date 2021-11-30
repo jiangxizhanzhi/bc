@@ -108,11 +108,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public TeamRoom create(TeamTrainRoomContext teamTrainRoomContext) {
 		String userId = UserInfoContext.getUserContext().getUserId();
+		log.error("1111111111111111111111112");
 
 		TeamTemplate template = teamTemplateService.getById(teamTrainRoomContext.getTemplate());
 		if (template == null) {
 			throw new ResourceNotFoundException(teamTrainRoomContext.getTemplate());
 		}
+		log.error("1111111111111111111111113");
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
@@ -121,6 +123,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamRoom.setCreateUserId(userId);
 		teamRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
 		teamRoom.setTeamTemplateName(businessTemplate.getName());
+		log.error("1111111111111111111111114");
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -137,6 +141,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				teacherRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getValue());
 
 				teamTrainTemplateRoleList.add(0, teacherRole);
+				log.error("1111111111111111111111115");
 
 				for (TeamTrainTemplateRole teamTrainTemplateRole : teamTrainTemplateRoleList) {
 
@@ -150,13 +155,20 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 					crRole.setMissionScheme(getNewRoomScheme(
 							teamTrainTemplateRole.getMissionsScheme(), teamRoom.getResourceId()));
 					crRoleService.save(crRole);
+					log.error("88888888888888888888");
 
 				}
+				log.error("1111111111111111111111115");
 
 				LocalScene localScene = getLocalScene(teamRoom.getResourceId());
+				log.error("999999999999999999999999");
 
 				localSceneService.save(localScene);
+				log.error("999999999999999999999990000");
+
 				teamRoom.setLocalSceneId(localScene.getResourceId());
+				log.error("999999999999999999999991111");
+
 				teamRoomMapper.updateById(teamRoom);
 
 			}
@@ -288,8 +300,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public Integer changeTrainingStatus(String resourceId) {
-		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(resourceId);
+	public Integer changeTrainingStatus(String roomId) {
+		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(roomId);
 
 		LocalScene localScene = localSceneService
 				.getByBusinessInstanceId(teamRoomdata.getResourceId());
@@ -304,6 +316,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			teamRoomdata.setTrainingStatus(TeamRoom.TrainingStatusCode.ENDED.getCode());
 			localScene.setEndTime(new Date());
 		} else if (teamRoomdata.isEnded()) {
+			log.error("teamTrain is over! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
 		localSceneService.updateById(localScene);
@@ -320,18 +333,18 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public Integer getTrainingStatus(String resourceId) {
-		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(resourceId);
+	public Integer getTrainingStatus(String roomId) {
+		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(roomId);
 
 		return teamRoomdata.getTrainingStatus();
 	}
 
 	@Override
-	public List<UserRole> getUserList(String resourceId) {
+	public List<UserRole> getUserList(String roomId) {
 		List<UserRole> userRoleList = Lists.newArrayList();
 
 		RoleQuery roleQuery = new RoleQuery();
-		roleQuery.setRoomId(resourceId);
+		roleQuery.setRoomId(roomId);
 		List<String> userList = Lists.newArrayList();
 
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
@@ -416,10 +429,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public TimeLineData getTimeLine(String roomId) {
 		TimeLineData timeLineData = new TimeLineData();
-		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
+		setTime(timeLineData, roomId);
 
-		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
-				UserInfoContext.getUserContext().getUserId());
+		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
 
 		List<Integer> actionCodes = Lists.newArrayList();
 		actionCodes.add(CrTaskLog.ActionCode.RELEASE.getCode());
@@ -457,10 +469,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(roomId);
 		// 未开始，新增local_scene数据
 		if (teamRoomdata.isUnopened()) {
+			log.error("teamTrain not begin! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
 
 		}
 		if (teamRoomdata.isEnded()) {
+			log.error("teamTrain is over! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 
 		}
@@ -469,10 +483,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private void permissionCheck(String roomId, String userId, Integer teacher) {
 		TeamRoom teamRoom = getById(roomId);
 		if (teamRoom == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!crRole.getRoleGroup().equals(teacher)) {
+			log.error("User does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
+					roomId, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}

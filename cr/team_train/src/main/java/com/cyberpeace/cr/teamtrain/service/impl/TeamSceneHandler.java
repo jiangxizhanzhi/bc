@@ -71,6 +71,8 @@ public class TeamSceneHandler extends SceneHandler {
 	public void checkSceneOperationPermission(String roomId, String userId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getValue())) {
+			log.error("User does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
+					roomId, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}

@@ -128,7 +128,8 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
 		if (CollectionUtils.isEmpty(permissionIds)
-				|| !permissionIds.contains(queryBo.getPracticeSetId())) {
+				|| (StringUtils.isNotBlank(queryBo.getPracticeSetId())
+						&& !permissionIds.contains(queryBo.getPracticeSetId()))) {
 			return null;
 		}
 

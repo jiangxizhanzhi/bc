@@ -90,7 +90,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			}
 		}
 
-		List<LessonConfigBo> sortListByTree = configBo.sortListByTree(configBo, true);
+		List<LessonConfigBo> sortListByTree = configBo.sortListByChildren(true, true);
 		List<LessonConfig> configs = sortListByTree.stream()
 				.map(bo -> BeanUtils.copy(bo, LessonConfig.class)).collect(Collectors.toList());
 

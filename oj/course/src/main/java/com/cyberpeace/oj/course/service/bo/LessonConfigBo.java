@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,37 +60,44 @@ public class LessonConfigBo implements Serializable {
 	private Integer typeIndex;
 
 	/**
-	 * 获取排序好的课时信息
-	 * @param configBo
+	 * 获取排序好子类课时信息
 	 * @param includeChapter true 包含章节 false
+	 * @param self true 是否包含自身 true包含   
 	 * @return
 	 */
-	public List<LessonConfigBo> sortListByTree(LessonConfigBo configBo, Boolean includeChapter) {
+	public List<LessonConfigBo> sortListByChildren(boolean includeChapter, boolean self) {
 
-		List<LessonConfigBo> configs = configBo.getChildren();
-
-		if (CollectionUtils.isNotEmpty(configs)) {
-			List<LessonConfigBo> bos = configs.stream()
-					.map(bo -> sortListByTree(bo, includeChapter)).flatMap(Collection::stream)
-					.collect(Collectors.toList());
-			// 将跟节点和子节点加入集合
-			configs.addAll(bos);
-			configs.set(0, configBo);
-
-			List<LessonConfigBo> configBos = bos.stream()
-					.filter(bo -> includeChapter ? includeChapter
-							: bo.getNodeType().intValue() == LessonConfigType.NODE_LESSON.getCode()
-									.intValue())
-					.map(bo -> {
-						BeanUtils.copy(bo, LessonConfig.class);
-						bo.setChildren(null);
-						return bo;
-					}).collect(Collectors.toList());
-
-			return configBos;
-		} else {
-			return Lists.newArrayList(configBo);
+		List<LessonConfigBo> bos = sortListByChildren(this, includeChapter);
+		if (self) {
+			bos.add(0, this);
 		}
+		return bos;
+
+	}
+
+	/**
+	 * 获取排序数据
+	 * @param lessonConfigBo
+	 * @param includeChapter
+	 * @return
+	 */
+	private List<LessonConfigBo> sortListByChildren(LessonConfigBo lessonConfigBo,
+			boolean includeChapter) {
+
+		if (CollectionUtils.isEmpty(lessonConfigBo.getChildren())) {
+			return Arrays.asList(lessonConfigBo);
+		}
+
+		List<LessonConfigBo> bos = lessonConfigBo.children.stream()
+				.map(bo -> sortListByChildren(bo, includeChapter)).flatMap(Collection::stream)
+				.collect(Collectors.toList());
+
+		List<LessonConfigBo> configBos = bos.stream().filter(bo -> includeChapter ? includeChapter
+				: bo.getNodeType()
+						.intValue() == LessonConfigType.NODE_LESSON.getCode().intValue()).collect(Collectors.toList());
+
+		return configBos;
+
 	}
 
 }

@@ -70,12 +70,14 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListLessonReq lessonReq) {
 
-		// 请求数据转换
+		// 分类课程筛选 权限数据过滤
 		List<String> courseIds = courseService.selectIdsByCategory(lessonReq.getCategoryId(),
 				AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false));
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return new BaseRsp<>(PageUtil.getNullResult());
 		}
+
+		// 课程数据过滤
 		if (StringUtils.isNotBlank(lessonReq.getCourseId())) {
 			if (!courseIds.contains(lessonReq.getCourseId())) {
 				return new BaseRsp<>(PageUtil.getNullResult());
@@ -84,6 +86,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseIds.add(lessonReq.getCourseId());
 		}
 
+		// 排除课程过滤
 		if (StringUtils.isNotBlank(lessonReq.getExceptCourse())) {
 			courseIds.remove(lessonReq.getExceptCourse());
 		}

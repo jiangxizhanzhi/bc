@@ -174,7 +174,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			Map<String, List<LessonConfigBo>> boMap) {
 
 		// 获取子节点
-		List<LessonConfigBo> bos = boMap.get(firstNode.getParentId());
+		List<LessonConfigBo> bos = boMap.get(firstNode.getResourceId());
 
 		if (CollectionUtils.isNotEmpty(bos)) {
 			bos.forEach(bo -> assembleLessonLib(bo, boMap));

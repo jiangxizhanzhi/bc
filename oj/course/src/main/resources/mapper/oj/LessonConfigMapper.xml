@@ -12,7 +12,7 @@
 
     <select id="listByParent" resultMap="base">
         select * from oj_lesson_config
-        where parent = #{parentId}
+        where parent_id = #{parentId}
         <if test="isPublic">
             and `public` = #{isPublic}
         </if>
@@ -21,7 +21,7 @@
 
     <select id="selectByCourse" resultMap="base">
         select * from oj_lesson_config
-        where course = #{courseId}
+        where course_id = #{courseId}
         <if test="isPublic">
             and `public` = #{isPublic}
         </if>

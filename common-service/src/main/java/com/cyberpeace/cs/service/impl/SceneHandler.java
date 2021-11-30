@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -21,7 +22,9 @@ public class SceneHandler {
 
 	@PostConstruct
 	public void init() {
-		register.put(this.getBusinessType(), this);
+		if (null != getBusinessType()) {
+			register.put(this.getBusinessType(), this);
+		}
 	}
 
 	public SceneHandler getHandler(Integer businessType) {

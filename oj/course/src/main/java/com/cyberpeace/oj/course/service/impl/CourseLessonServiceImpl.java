@@ -248,8 +248,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 场景数据新增
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
-			String topoId = remoteTopoService.create(
-					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
+			String topoId = remoteTopoService.save(ojSceneConfig);
 			courseLesson.setTopoId(topoId);
 		}
 
@@ -282,8 +281,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
-			remoteTopoService.create(
-					JsonUtil.toJsonObject(JsonUtil.toJsonString(ojSceneConfig), SceneConfig.class));
+			remoteTopoService.save(ojSceneConfig);
 		}
 
 		if (StringUtils.isBlank(courseLesson.getVideoUrl())) {

@@ -20,4 +20,12 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.cyberpeace</groupId>
+            <artifactId>common-service</artifactId>
+            <version>${common.service.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>

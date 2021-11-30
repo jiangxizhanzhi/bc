@@ -31,6 +31,8 @@ public class BusinessTemplate extends AuthTable {
 
 	private String createUserId;
 
+	private String localSceneId;
+
 	public enum BusinessType implements GenericEnum {
 
 		TRAINING_SINGLE(1, "单兵训练"), VULN_VALIDATE(2, "漏洞库"), TRAINING_TEAM(3,

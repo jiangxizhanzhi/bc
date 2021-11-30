@@ -3,7 +3,6 @@ package com.cyberpeace.cs.service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -11,7 +10,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	LocalScene getByBusinessInstanceId(String businessInstanceId);
 
-	String startScene(SceneStartContext sceneStartContext);
+	String startScene(LocalScene localScene);
 
 	Boolean stopScene(String localSceneId, String userId);
 

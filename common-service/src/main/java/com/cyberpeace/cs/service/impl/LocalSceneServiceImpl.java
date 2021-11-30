@@ -52,8 +52,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public String startScene(SceneStartContext sceneStartContext) {
-		return remoteSceneService.startScene(sceneStartContext);
+	public String startScene(LocalScene localScene) {
+		SceneStartContext context = getSceneStartContext(localScene);
+		return remoteSceneService.startScene(context);
 	}
 
 	@Override
@@ -312,6 +313,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		nodeOpsContext.setNodeId(nodeId);
 
 		return nodeOpsContext;
+	}
+
+	public SceneStartContext getSceneStartContext(LocalScene localScene) {
+		SceneStartContext context = new SceneStartContext();
+		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
+		context.setReferenceMetaData(handler.getReferenceMetaData(localScene));
+		handler.setPassThrough(context, localScene);
+		context.setId(localScene.getTopoId());
+		context.setSceneAttr(SceneStartContext.SceneAttrEnum.NULL.getCode());
+		return context;
 	}
 
 }

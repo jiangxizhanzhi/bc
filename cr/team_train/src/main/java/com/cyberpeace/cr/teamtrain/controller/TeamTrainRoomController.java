@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,18 +21,20 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneStartFromTemplateReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneStartReq;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.SceneService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
@@ -47,6 +48,7 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.UserData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
@@ -104,25 +106,23 @@ public class TeamTrainRoomController {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	@Autowired
+	private SceneService sceneService;
+
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	public BaseRsp startScene(@RequestBody SceneStartReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		teamSceneHandler.checkBeforeStartingScene(roomId, userId);
+
 		TeamRoom room = teamRoomService.getById(roomId);
-		LocalScene localScene = new LocalScene();
-		localScene.setBusinessCode(LocalScene.BusinessCode.TEAM_TRAINING.getCode());
-		localScene.setBusinessInstanceId(roomId);
-		localScene.setTopoId(room.getCopyedTopoId());
-		localScene.setResourceId(IDGeneratorUtil.getID());
+		LocalScene localScene = sceneService.createLocalScene(
+				LocalScene.BusinessCode.TEAM_TRAINING.getCode(), roomId, room.getCopyedTopoId());
 
 		SceneStartContext context = teamSceneHandler.getSceneStartContext(localScene);
 		String sceneId = remoteSceneService.startScene(context);
 		localScene.setMpSceneId(sceneId);
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-		localScene.setDestoryMode(LocalScene.DestroyMode.MANUAL.getCode());
-		localScene.setStartTime(new Date());
 
 		room.setLocalSceneId(localScene.getResourceId());
 
@@ -132,7 +132,7 @@ public class TeamTrainRoomController {
 				@Override
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 					localSceneService.save(localScene);
-					teamRoomService.save(room);
+					teamRoomService.updateById(room);
 					// todo log
 				}
 			});
@@ -146,8 +146,38 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("启动后台测试场景")
 	@PostMapping("/testScene")
-	public BaseRsp testScene() {
+	public BaseRsp testScene(@RequestBody SceneStartFromTemplateReq sceneStartReq) {
+		String templateId = sceneStartReq.getTemplateId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		teamSceneHandler.checkBeforeTestingScene(templateId);
 
+		TeamTemplate teamTemplate = teamTemplateService.getById(templateId);
+		BusinessTemplate businessTemplate = businessTemplateService
+				.getById(teamTemplate.getBusinessTemplateId());
+		LocalScene localScene = sceneService.createLocalScene(
+				LocalScene.BusinessCode.TEAM_TRAINING.getCode(), "", businessTemplate.getTopoId());
+
+		SceneStartContext context = teamSceneHandler.getSceneStartContext(localScene);
+		String sceneId = remoteSceneService.startScene(context);
+		localScene.setMpSceneId(sceneId);
+
+		businessTemplate.setLocalSceneId(localScene.getResourceId());
+
+		try {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					localSceneService.save(localScene);
+					businessTemplateService.updateById(businessTemplate);
+					// todo log
+				}
+			});
+		} catch (Exception e) {
+			log.error("db error when creating scene: ", e);
+			localSceneService.deleteRemoteScene(localScene);
+			throw new RuntimeException();
+		}
 		return new BaseRsp();
 	}
 
@@ -170,7 +200,7 @@ public class TeamTrainRoomController {
 			if (StringUtils.isNotBlank(sceneId)) {
 				sceneData = localSceneService.getSceneData(sceneId, userId);
 				if (sceneData != null) {
-					teamSceneHandler.filterVisibleTopo(sceneData, nodes);
+					sceneService.filterVisibleTopo(sceneData, nodes);
 				} else {
 					log.error("fail to get sceneData with scene_id [{}]", sceneId);
 					// todo delete localScene
@@ -181,7 +211,7 @@ public class TeamTrainRoomController {
 		if (sceneData == null) {
 			topoData = localSceneService.getTopoData(room.getCopyedTopoId())
 					.getJSONObject("scene_config");
-			teamSceneHandler.filterVisibleTopo(topoData, nodes);
+			sceneService.filterVisibleTopo(topoData, nodes);
 		}
 
 		CrSceneRetrieveRsp rsp = new CrSceneRetrieveRsp();

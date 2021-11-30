@@ -4,6 +4,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,12 @@ public class OjSceneHandler extends SceneHandler {
 	public String startScene(Integer businessCode, OjLocalScene ojLocalScene, String topoId) {
 
 		LocalScene localScene = initLocalScene(businessCode, ojLocalScene, topoId);
-
-		String referenceMetaData = getReferenceMetaData(localScene);
-		SceneOpsContext sceneOpsContext = makeSceneOpsContext(localScene);
+		SceneStartContext sceneStartContext = getSceneStartContext(localScene);
 
 		return localScene.getMpSceneId();
 	}
+
+
 
 	/**
 	 * 获取初始化场景数据
@@ -41,8 +42,4 @@ public class OjSceneHandler extends SceneHandler {
 		localScene.setUserId(ojLocalScene.getUserId());
 		return localScene;
 	}
-
-
-
-
 }

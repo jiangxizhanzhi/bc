@@ -53,7 +53,7 @@ public class LessonConfigBo implements Serializable {
 	private String chapterName;
 
 	@ApiModelProperty("子节点")
-	private List<LessonConfigBo> lessonConfigs;
+	private List<LessonConfigBo> children;
 
 	/**
 	 * 获取排序好的课时信息
@@ -63,7 +63,7 @@ public class LessonConfigBo implements Serializable {
 	 */
 	public List<LessonConfigBo> sortListByTree(LessonConfigBo configBo, Boolean includeChapter) {
 
-		List<LessonConfigBo> configs = configBo.getLessonConfigs();
+		List<LessonConfigBo> configs = configBo.getChildren();
 
 		if (CollectionUtils.isNotEmpty(configs)) {
 			List<LessonConfigBo> bos = configs.stream()
@@ -79,7 +79,7 @@ public class LessonConfigBo implements Serializable {
 									.intValue())
 					.map(bo -> {
 						BeanUtils.copy(bo, LessonConfig.class);
-						bo.setLessonConfigs(null);
+						bo.setChildren(null);
 						return bo;
 					}).collect(Collectors.toList());
 

@@ -66,7 +66,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	@Override
 	public LessonConfigBo updateLessonConfig(LessonConfigBo configBo) {
 
-		List<LessonConfigBo> lessonConfigs = configBo.getLessonConfigs();
+		List<LessonConfigBo> lessonConfigs = configBo.getChildren();
 		int chapterIndex = 0;
 		int lessonIndex = 0;
 
@@ -178,7 +178,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		if (CollectionUtils.isNotEmpty(bos)) {
 			bos.forEach(bo -> assembleLessonLib(bo, boMap));
-			firstNode.setLessonConfigs(bos);
+			firstNode.setChildren(bos);
 		}
 
 	}

@@ -104,7 +104,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		BusinessTemplate businessTemplate = businessTemplateMapper.selectByNameAndType(name, type,
 				id);
 		if (businessTemplate != null) {
-			throw new BusinessException(CrBusinessErrorCode.NAME_EXIST_ERROR);
+			throw new BusinessException(CrBusinessErrorCode.TEMPLETE_NAME_EXIST_ERROR);
 		}
 
 	}

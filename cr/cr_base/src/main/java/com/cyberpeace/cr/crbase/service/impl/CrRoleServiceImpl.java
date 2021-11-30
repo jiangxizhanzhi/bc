@@ -27,9 +27,12 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  *
  */
+@Slf4j
 @Service
 public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> implements CrRoleService {
 
@@ -49,6 +52,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	public CrRole getById(String roleId) {
 		CrRole role = crRoleMapper.selectById(roleId);
 		if (role == null) {
+			log.error("role does not exist！roleId=[{}]", roleId);
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		return role;
@@ -142,6 +146,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		CrRole crRole = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (crRole == null) {
+			log.error("User does not have Role in TeamRoom！roomId=[{}] userId=[{}]", roomId,
+					userId);
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		return crRole;

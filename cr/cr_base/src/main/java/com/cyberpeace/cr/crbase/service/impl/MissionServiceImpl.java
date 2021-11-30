@@ -39,10 +39,13 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author yinqingrong
  */
 @Service
+@Slf4j
 public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> implements MissionService {
 
 	@Autowired
@@ -127,6 +130,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 		CrRole role = crRoleMapper.selectById(roleId);
 		if (role == null) {
+			log.error("role does not exist！roleId=[{}]", roleId);
+
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		List<CrTask> crTasks = crTaskMapper.selectByMissionId(missionId);

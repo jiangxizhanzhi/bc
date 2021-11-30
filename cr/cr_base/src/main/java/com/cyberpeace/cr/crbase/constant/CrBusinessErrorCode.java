@@ -64,6 +64,10 @@ public interface CrBusinessErrorCode {
 	// 模板类型不支持
 	String TEMPLETE_TYPE_NOT_SUPPORTED = "101018";
 
-	String NAME_EXIST_ERROR = "101019";
+	// 模板名称已经存在
+	String TEMPLETE_NAME_EXIST_ERROR = "101019";
+
+	// 角色名称重复
+	String ROLE_NAME_DUPLICATE = "101020";
 
 }

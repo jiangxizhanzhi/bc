@@ -11,8 +11,13 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.NoteService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,6 +131,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private NoteMapper noteMapper;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String userId, String courseId, String lessonId) {
@@ -281,7 +289,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
-			remoteTopoService.save(ojSceneConfig);
+			String topoId = remoteTopoService.save(ojSceneConfig);
+			courseLesson.setTopoId(topoId);
 		}
 
 		if (StringUtils.isBlank(courseLesson.getVideoUrl())) {
@@ -380,6 +389,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			adminLessonListBo.setCreateUserName(userInfo.getUserName());
 
 			// 是否具有实验报告
+			NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
+					.noteType(Note.NoteType.NOTE.getCode())
+					.businessType(Note.NoteResourceType.LESSON.getCode())
+					.businessId(courseLesson.getResourceId()).build();
+			List<String> noteIds = noteMapper.selectByContext(uniqueContext);
+			adminLessonListBo.setHasReport(CollectionUtils.isNotEmpty(noteIds));
 			return adminLessonListBo;
 		});
 		return boIPage;

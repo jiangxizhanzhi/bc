@@ -5,8 +5,7 @@
     <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Note"/>
 
     <select id="selectByCondition" resultMap="base">
-        select *
-        from oj_note
+        select * from oj_note
         where business_id = #{context.businessId}
           and `user_id` = #{context.userId}
           and business_type = #{context.businessType}
@@ -14,8 +13,7 @@
     </select>
 
     <select id="pageByUserIdsAndContent" resultMap="base">
-        select *
-        from oj_note
+        select * from oj_note
         <where>
             note_type = #{noteListQuery.noteType}
                     and business_type = #{noteListQuery.businessType}
@@ -77,4 +75,23 @@
           and business_type = #{businessType}
           and note_type = #{noteType}
     </update>
+
+    <select id="selectByContext" resultType="java.lang.String">
+        select resource_id from oj_note
+        <where>
+            <if test="context.userId != null and context.userId != ''">
+                `user_id` = #{context.userId}
+            </if>
+            <if test="context.noteType != null">
+                and note_type = #{context.noteType}
+            </if>
+            <if test="context.businessType != null">
+                and business_type = #{context.businessType}
+            </if>
+            <if test="context.businessId != null and context.businessId != ''">
+                and business_id = #{context.businessId}
+            </if>
+        </where>
+
+    </select>
 </mapper>

@@ -10,6 +10,8 @@ import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 
+import java.util.List;
+
 @Mapper
 public interface NoteMapper extends BaseMapper<Note> {
 
@@ -23,4 +25,6 @@ public interface NoteMapper extends BaseMapper<Note> {
 	int updateById(Note note);
 
 	int updateNote(Note note);
+
+	List<String> selectByContext(@Param("context") NoteUniqueContext context);
 }

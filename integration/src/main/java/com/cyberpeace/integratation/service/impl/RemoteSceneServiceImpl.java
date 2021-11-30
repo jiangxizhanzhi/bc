@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service.impl;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.model.scene.NodeOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -67,31 +69,18 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public String startScene(SceneOpsContext sceneStartContext, Boolean isTest) {
+	public String startScene(SceneStartContext sceneStartContext) {
+		return startScene(sceneStartContext, SCENE_START_URL);
+	}
 
-		String targetUrl = null;
-		if (isTest) {
-			targetUrl = SCENE_START_TEST_URL;
-		} else {
-			targetUrl = SCENE_START_URL;
-		}
-
-		JSONObject data = HttpClientUtil.post(targetUrl, sceneStartContext, JSONObject.class);
-
-		if (null == data) {
-			log.error("topoId=[{}] startScene error, response data is null",
-					sceneStartContext.getId());
-			throw new RemoteServiceException();
-		}
-
-		String sceneId = data.getString("id");
-
-		return sceneId;
+	@Override
+	public String testScene(SceneStartContext sceneStartContext) {
+		return startScene(sceneStartContext, SCENE_START_TEST_URL);
 	}
 
 	@Override
 	public Boolean stopScene(SceneOpsContext sceneOpsContext) {
-		String targetUrl = SCENE_CLEAR_URL;
+		String targetUrl = SCENE_DELETE_URL;
 
 		Boolean result = HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
 
@@ -124,5 +113,22 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
+	}
+
+	private String startScene(SceneStartContext context, String url) {
+		JSONObject data = HttpClientUtil.post(url, context, JSONObject.class);
+
+		if (null == data) {
+			log.error("topoId=[{}] startScene error, response data is null", context.getId());
+			throw new RemoteServiceException();
+		}
+
+		String sceneId = data.getString("id");
+		if (StringUtils.isBlank(sceneId)) {
+			log.error("topoId=[{}] startScene error, sceneId is blank", context.getId());
+			throw new RemoteServiceException();
+		}
+
+		return sceneId;
 	}
 }

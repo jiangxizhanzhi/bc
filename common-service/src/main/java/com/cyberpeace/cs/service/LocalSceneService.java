@@ -3,6 +3,7 @@ package com.cyberpeace.cs.service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -10,7 +11,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	LocalScene getByBusinessInstanceId(String businessInstanceId);
 
-	String startScene(String businessInstanceId, Integer businessType);
+	String startScene(SceneStartContext sceneStartContext);
 
 	Boolean stopScene(String localSceneId, String userId);
 
@@ -45,11 +46,13 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	void updateMpSceneId(LocalScene scene, String sceneId);
 
-	void deleteRemoteScene(LocalScene scene, String userId);
+	void deleteRemoteScene(LocalScene scene);
 
 	void stopLocalScene(LocalScene scene, String userId);
 
 	Boolean restartNode(String localSceneId, String nodeId);
 
 	Boolean recreateNode(String localSceneId, String nodeId);
+
+	Boolean startFlow(String localSceneId, String nodeId, String flowId);
 }

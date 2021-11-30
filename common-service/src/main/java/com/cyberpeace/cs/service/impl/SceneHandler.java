@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -44,10 +43,6 @@ public class SceneHandler {
 		return startContext;
 	}
 
-	public void doAfterStopScene(LocalScene localScene) {
-		// 公共的删除 localScene todo
-	}
-
 	public void checkPauseScenePermission(LocalScene localScene) {}
 
 	public void afterPauseScene(LocalScene localScene) {
@@ -57,4 +52,6 @@ public class SceneHandler {
 	public void checkUnpauseScenePermission(LocalScene localScene) {}
 
 	public void afterUnpauseScene(LocalScene localScene) {}
+
+	public void setPassThrough(SceneOpsContext context, LocalScene localScene) {}
 }

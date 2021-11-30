@@ -52,9 +52,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public String startScene(String businessInstanceId, Integer businessType) {
-		SceneHandler handler = sceneHandler.getHandler(businessType);
-		return null;
+	public String startScene(SceneStartContext sceneStartContext) {
+		return remoteSceneService.startScene(sceneStartContext);
 	}
 
 	@Override
@@ -66,37 +65,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 		return localScene;
 	}
-
-	// @Override
-	// public Boolean startScene(String localSceneId, String userId) {
-	// LocalScene localScene = getById(localSceneId);
-	// SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-	// SceneStartContext sceneStartContext = getSceneStartContext(localScene);
-	// Boolean isTest = handler.isTest();
-	// String sceneId = remoteSceneService.startScene(sceneStartContext, isTest);
-	//
-	// if (StringUtils.isBlank(sceneId)) {
-	// log.error("failed to create scene with topo[{}]", localScene.getTopoId());
-	// throw new RuntimeException();
-	// }
-	// try {
-	// transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-	//
-	// @Override
-	// protected void doInTransactionWithoutResult(TransactionStatus
-	// transactionStatus) {
-	// updateAfterStartScene(localScene, sceneId);
-	// handler.afterCreateScene();
-	// }
-	// });
-	// } catch (Exception e) {
-	// log.error("db error when creating scene: ", e);
-	// deleteRemoteScene(localScene, userId);
-	// throw new RuntimeException();
-	// }
-	//
-	// return true;
-	// }
 
 	@Override
 	public Boolean stopScene(String localSceneId, String userId) {
@@ -110,8 +78,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			throw new RuntimeException();
 		}
 		updateAfterStopScene(localScene);
-		handler.doAfterStopScene(localScene);
-
 		return true;
 	}
 
@@ -144,6 +110,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			throw new RuntimeException();
 		}
 		return true;
+	}
+
+	@Override
+	public Boolean startFlow(String localSceneId, String nodeId, String flowId) {
+		return null;
 	}
 
 	@Override
@@ -295,12 +266,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public void deleteRemoteScene(LocalScene localScene, String userId) {
-		SceneOpsContext sceneOpsContext = new SceneOpsContext();
-		// sceneOpsContext.setContext(getContext(localScene.getResourceId()));
-		// sceneOpsContext.setAccessUserId(userId);
-
+	public void deleteRemoteScene(LocalScene localScene) {
+		SceneOpsContext sceneOpsContext = getSceneOpContext(localScene);
 		remoteSceneService.stopScene(sceneOpsContext);
+
+		removeById(localScene.getResourceId());
 	}
 
 	private void updateAfterStartScene(LocalScene localScene, String sceneId) {
@@ -324,22 +294,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	// TODO
 	// 场景的启动、删除、暂停上下文是否可以统一
-	private SceneStartContext getSceneStartContext(LocalScene localScene) {
-		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-		SceneStartContext sceneStartContext = new SceneStartContext();
-		sceneStartContext.getContext().getPassThrough().put("scene_manager_id",
-				localScene.getResourceId());
-		sceneStartContext.setReferenceMetaData(handler.getReferenceMetaData(localScene));
-		sceneStartContext.setId(localScene.getTopoId());
-		sceneStartContext.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
-
-		return sceneStartContext;
-	}
 
 	private SceneOpsContext getSceneOpContext(LocalScene localScene) {
+		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
 		SceneOpsContext sceneOpsContext = new SceneOpsContext();
-		sceneOpsContext.getContext().getPassThrough().put("scene_manager_id",
-				localScene.getResourceId());
+		handler.setPassThrough(sceneOpsContext, localScene);
 		sceneOpsContext.setId(localScene.getMpSceneId());
 
 		return sceneOpsContext;

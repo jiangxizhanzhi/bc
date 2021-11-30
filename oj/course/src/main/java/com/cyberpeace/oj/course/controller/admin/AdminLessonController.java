@@ -2,10 +2,14 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
+import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,6 +69,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private LessonConfigMapper lessonConfigMapper;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
@@ -180,9 +190,19 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息删除")
 	@DeleteMapping("/batch")
-	public BaseRsp<Integer> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
-		int row = courseLessonMapper.deleteBatchIds(batchDeleteReq.getResourceIds());
-		return new BaseRsp(row);
+	public BaseRsp<Boolean> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+
+		Boolean result = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				int result = courseLessonMapper.deleteBatchIds(batchDeleteReq.getResourceIds());
+				int row = lessonConfigMapper.deleteByLessonIds(batchDeleteReq.getResourceIds());
+				return result != 0 && row != 0;
+			}
+		});
+
+		return new BaseRsp(result);
 	}
 
 	@ApiOperation("课时附件查询")

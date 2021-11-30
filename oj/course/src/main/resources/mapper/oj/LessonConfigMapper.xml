@@ -34,4 +34,16 @@
         order by `index` desc
         limit 0, 1
     </select>
+
+    <delete id="deleteByLessonIds">
+        <if test="lessonIds != null and lessonIds.size() != 0">
+            delete from oj_lesson_config
+            <where>
+                lesson_id in
+                <foreach collection="lessonIds" item="lessonId" close=")" open="(" separator=",">
+                    #{lessonId}
+                </foreach>
+            </where>
+        </if>
+    </delete>
 </mapper>

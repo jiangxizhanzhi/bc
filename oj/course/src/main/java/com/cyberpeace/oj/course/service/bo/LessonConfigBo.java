@@ -55,6 +55,9 @@ public class LessonConfigBo implements Serializable {
 	@ApiModelProperty("子节点")
 	private List<LessonConfigBo> children;
 
+	@ApiModelProperty("目录信息索引 课时1 章节1")
+	private Integer typeIndex;
+
 	/**
 	 * 获取排序好的课时信息
 	 * @param configBo

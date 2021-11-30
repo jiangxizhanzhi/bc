@@ -19,4 +19,6 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
                                       @Param("isPublic") Boolean isPublic);
 
     LessonConfig selectLastByParent(@Param("courseId") String courseId);
+
+    int deleteByLessonIds(@Param("lessonIds") List<String> lessonIds);
 }

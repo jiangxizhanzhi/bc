@@ -52,12 +52,17 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			log.error("Course not found! course_id=[{}]", courseId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
+
 		LessonConfig firstNode = lessonConfigMapper.getFirstNode(courseId);
+
 		List<LessonConfigBo> configBos = lessonConfigToBo(userId, courseId, isPublic);
 
 		Map<String, List<LessonConfigBo>> boMap = configBos.stream()
 				.collect(Collectors.groupingBy(LessonConfigBo::getParentId));
+
 		LessonConfigBo configBo = BeanUtils.copy(firstNode, LessonConfigBo.class);
+		Course existCourse = courseMapper.selectById(firstNode.getCourseId());
+		configBo.setName(existCourse.getName());
 
 		assembleLessonLib(configBo, boMap);
 		return configBo;
@@ -175,9 +180,17 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		// 获取子节点
 		List<LessonConfigBo> bos = boMap.get(firstNode.getResourceId());
+		CourseLesson courseLesson = courseLessonMapper.selectById(firstNode.getLessonId());
+		if (null != courseLesson) {
+			firstNode.setName(courseLesson.getName());
+		}
 
 		if (CollectionUtils.isNotEmpty(bos)) {
-			bos.forEach(bo -> assembleLessonLib(bo, boMap));
+			for (int i = 0; i < bos.size(); i++) {
+				LessonConfigBo lessonConfigBo = bos.get(i);
+				lessonConfigBo.setTypeIndex(i + CommonConstant.ONE);
+				assembleLessonLib(lessonConfigBo, boMap);
+			}
 			firstNode.setChildren(bos);
 		}
 

@@ -121,7 +121,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PostMapping("")
 	public BaseRsp add(@Validated(Create.class) LessonAddReq lessonAddReq) {
 
-		CourseLesson courseLesson = AddReqToEntity(lessonAddReq);
+		CourseLesson courseLesson = addReqToEntity(lessonAddReq);
 
 		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
 				JsonUtil.toJsonObject(lessonAddReq.getOjSceneConfig(), JSONObject.class),
@@ -134,7 +134,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
 	public BaseRsp patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
-
 
 		CourseLesson courseLesson = updateReqToEntity(lessonUpdateReq);
 
@@ -155,23 +154,24 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson courseLesson = BeanUtils.copy(lessonUpdateReq, CourseLesson.class);
 		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())
 				&& null != lessonUpdateReq.getVideo()) {
+
 			AttachmentBo uploadFile = attachmentService.uploadFile(
 					Attachment.AttachmentType.VIDEO.getCode(), CommonConstant.TRUE,
 					lessonUpdateReq.getVideo());
 			courseLesson.setVideoUrl(uploadFile.getFilePath());
 		} else if (null == lessonUpdateReq.getVideo()
 				&& StringUtils.isBlank(lessonUpdateReq.getVideoUrl())) {
+
 			courseLesson.setVideoUrl("");
 		}
 
 		if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
 				&& null != lessonUpdateReq.getHandout()) {
-			AttachmentBo uploadFile = attachmentService.uploadFile(
-					Attachment.AttachmentType.VIDEO.getCode(), CommonConstant.TRUE,
-					lessonUpdateReq.getHandout());
-			courseLesson.setHandoutUrl(uploadFile.getFilePath());
+			uploadHandout(courseLesson, lessonUpdateReq.getHandout());
+
 		} else if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
 				&& null == lessonUpdateReq.getHandout()) {
+
 			courseLesson.setHandoutUrl("");
 		}
 
@@ -264,7 +264,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 * @param lessonAddReq
 	 * @return
 	 */
-	private CourseLesson AddReqToEntity(LessonAddReq lessonAddReq) {
+	private CourseLesson addReqToEntity(LessonAddReq lessonAddReq) {
 
 		// 知识点转换
 		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
@@ -278,34 +278,42 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		}
 
 		if (lessonAddReq.getHandout() != null) {
-			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					Attachment.AttachmentType.HANDOUT.getCode(), CommonConstant.TRUE,
-					lessonAddReq.getHandout());
-
-			String suffix = attachmentBo.getFilePath()
-					.substring(attachmentBo.getFilePath().lastIndexOf(".") + 1);
-
-			if (suffix.equals(Attachment.FileType.ZIP.getDesc())) {
-				courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
-				// 解析markdown文件
-				String filePath = attachmentService.parseMarkdown(attachmentBo.getFilePath(),
-						EnumUtils.getEnumDescByCode(Attachment.AttachmentType.HANDOUT.getCode(),
-								Attachment.AttachmentType.class));
-
-				courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
-				courseLesson.setHandoutUrl(filePath);
-			}
-			if (suffix.equals(Attachment.FileType.PDF.getDesc())) {
-				courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
-				courseLesson.setHandoutUrl(attachmentBo.getFilePath());
-			}
-			if (suffix.equals(Attachment.FileType.HTML.getDesc())) {
-				courseLesson.setHandoutType(CourseLesson.HandoutType.PPT.getCode());
-				courseLesson.setHandoutUrl(attachmentBo.getFilePath());
-			}
+			uploadHandout(courseLesson, lessonAddReq.getHandout());
 		}
 
 		return courseLesson;
+	}
+
+	/**
+	 * 附件上传
+	 * @param courseLesson
+	 * @param handout
+	 */
+	private void uploadHandout(CourseLesson courseLesson, MultipartFile handout) {
+		AttachmentBo attachmentBo = attachmentService.uploadFile(
+				Attachment.AttachmentType.HANDOUT.getCode(), CommonConstant.TRUE, handout);
+
+		String suffix = attachmentBo.getFilePath()
+				.substring(attachmentBo.getFilePath().lastIndexOf(".") + 1);
+
+		if (suffix.equals(Attachment.FileType.ZIP.getDesc())) {
+			courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
+			// 解析markdown文件
+			String filePath = attachmentService.parseMarkdown(attachmentBo.getFilePath(),
+					EnumUtils.getEnumDescByCode(Attachment.AttachmentType.HANDOUT.getCode(),
+							Attachment.AttachmentType.class));
+
+			courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
+			courseLesson.setHandoutUrl(filePath);
+		}
+		if (suffix.equals(Attachment.FileType.PDF.getDesc())) {
+			courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
+			courseLesson.setHandoutUrl(attachmentBo.getFilePath());
+		}
+		if (suffix.equals(Attachment.FileType.HTML.getDesc())) {
+			courseLesson.setHandoutType(CourseLesson.HandoutType.PPT.getCode());
+			courseLesson.setHandoutUrl(attachmentBo.getFilePath());
+		}
 	}
 
 	@ApiOperation("课时新增附件上传")

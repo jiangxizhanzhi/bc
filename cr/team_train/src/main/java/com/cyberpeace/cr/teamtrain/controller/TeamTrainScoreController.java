@@ -296,9 +296,11 @@ public class TeamTrainScoreController {
 		statisticalInfo.setValue(taskCounter.getNotReleased());
 		statisticalInfoList.add(statisticalInfo);
 
-		List<DynamicData> s = missionService.getTaskLogByRoomIdAndUserId(resource_id, student_id);
+		List<DynamicData> dynamicDataList = missionService.getTaskLogByRoomIdAndUserId(resource_id,
+				student_id);
 
-		missionDynamicRsp.setDynamicData(s);
+		missionDynamicRsp.setDynamicData(dynamicDataList);
+		missionDynamicRsp.setStatisticalInfo(statisticalInfoList);
 
 		return new BaseRsp<>(missionDynamicRsp);
 	}

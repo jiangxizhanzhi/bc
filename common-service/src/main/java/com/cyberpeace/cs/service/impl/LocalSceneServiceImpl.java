@@ -250,7 +250,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			log.info("failed to get topoData with topoId [{}]", topoId);
 			return null;
 		}
-		return topo.getJSONObject("scene_config");
+		return topo;
 	}
 
 	@Override

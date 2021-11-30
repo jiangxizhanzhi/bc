@@ -179,7 +179,8 @@ public class TeamTrainRoomController {
 			}
 		}
 		if (sceneData == null) {
-			topoData = localSceneService.getTopoData(room.getCopyedTopoId());
+			topoData = localSceneService.getTopoData(room.getCopyedTopoId())
+					.getJSONObject("scene_config");
 			teamSceneHandler.filterVisibleTopo(topoData, nodes);
 		}
 

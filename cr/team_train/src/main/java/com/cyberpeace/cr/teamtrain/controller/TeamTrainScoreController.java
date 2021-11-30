@@ -288,13 +288,15 @@ public class TeamTrainScoreController {
 		statisticalInfo.setValue(taskCounter.getFinished());
 		statisticalInfoList.add(statisticalInfo);
 
-		statisticalInfo.setStatistical_state(TaskCounter.TaskType.RELEASED.getCode());
-		statisticalInfo.setValue(taskCounter.getReleased());
-		statisticalInfoList.add(statisticalInfo);
+		StatisticalInfo statisticalInfo1 = new StatisticalInfo();
+		statisticalInfo1.setStatistical_state(TaskCounter.TaskType.RELEASED.getCode());
+		statisticalInfo1.setValue(taskCounter.getReleased());
+		statisticalInfoList.add(statisticalInfo1);
 
-		statisticalInfo.setStatistical_state(TaskCounter.TaskType.NOTRELEASED.getCode());
-		statisticalInfo.setValue(taskCounter.getNotReleased());
-		statisticalInfoList.add(statisticalInfo);
+		StatisticalInfo statisticalInfo2 = new StatisticalInfo();
+		statisticalInfo2.setStatistical_state(TaskCounter.TaskType.NOTRELEASED.getCode());
+		statisticalInfo2.setValue(taskCounter.getNotReleased());
+		statisticalInfoList.add(statisticalInfo2);
 
 		List<DynamicData> dynamicDataList = missionService.getTaskLogByRoomIdAndUserId(resource_id,
 				student_id);

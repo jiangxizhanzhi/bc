@@ -2,14 +2,17 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
+import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.EventDataBo;
+import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 import com.cyberpeace.cs.service.LocalSceneService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -40,9 +45,9 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
      * 单兵训练模板获取
      */
     @Override
-    public SingleTemplateBo get(String trainBusinessId) {
-        SingleTemplate trainObject = singleTemplateMapper.getByBusinessId(trainBusinessId);
-        BusinessTemplate businessTemplate = businessTemplateService.getById(trainBusinessId);
+    public SingleTemplateBo get(String businessTemplateId) {
+        SingleTemplate trainObject = singleTemplateMapper.getByBusinessId(businessTemplateId);
+        BusinessTemplate businessTemplate = businessTemplateService.getById(businessTemplateId);
 
         EventDataBo eventData = new EventDataBo();
         BeanUtils.copyProperties(trainObject, eventData);
@@ -66,19 +71,19 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 
     /**
      * 单兵训练模板更新
-     * @param trainBusinessId cr_business_template.resource_id
+     * @param businessTemplateId cr_business_template.resource_id
      * @param baseInfo 训练基础数据
      * @param missionScheme 训练任务方案
      * @return 更新后的单兵训练数据对象
      */
     @Override
-    public SingleTemplateBo update(String trainBusinessId, BaseInfo baseInfo, JSONObject missionScheme) {
+    public SingleTemplateBo update(String businessTemplateId, BaseInfo baseInfo, JSONObject missionScheme) {
         // business template
-        BusinessTemplate businessTemplate = businessTemplateService.getById(trainBusinessId);
+        BusinessTemplate businessTemplate = businessTemplateService.getById(businessTemplateId);
         BeanUtils.copyProperties(baseInfo, businessTemplate);
 
         // single
-        SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(trainBusinessId);
+        SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
         BeanUtils.copyProperties(baseInfo, singleTemplate);
         singleTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
         singleTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
@@ -98,6 +103,6 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
         });
 
 
-        return get(trainBusinessId);
+        return get(businessTemplateId);
     }
 }

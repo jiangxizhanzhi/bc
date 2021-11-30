@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper">
+
+    <select id="setEndTime">
+        update cr_train_record set end_time = #{end_time}
+        where business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type} and end_time = null
+    </select>
+
+</mapper>

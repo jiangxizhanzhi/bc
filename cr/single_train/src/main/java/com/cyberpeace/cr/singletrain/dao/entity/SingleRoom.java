@@ -1,0 +1,53 @@
+package com.cyberpeace.cr.singletrain.dao.entity;
+
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+
+import lombok.Data;
+
+@Data
+@TableName("cr_single_room")
+public class SingleRoom extends BaseTable {
+
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
+
+	/**
+	 * 引用单兵训练模板id
+	 */
+	private String singleTemplateId;
+
+	/**
+	 * 训练开始时间
+	 */
+	private Date startTime;
+
+	/**
+	 * 训练结束时间
+	 */
+	private Date endTime;
+
+	/**
+	 * 训练记录(任务完成记录)
+	 */
+	private String trainingRecord;
+
+	/**
+	 * 引用场景id
+	 */
+	private String localSceneId;
+
+	/**
+	 * 训练用户
+	 */
+	private String userId;
+
+	/**
+	 * 使用的topologyId
+	 */
+	private String copyedTopoId;
+}

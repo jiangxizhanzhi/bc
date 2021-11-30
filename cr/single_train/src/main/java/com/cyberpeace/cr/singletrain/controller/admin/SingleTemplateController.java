@@ -8,13 +8,15 @@ import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "单兵训练模板")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/cr/admin/single_train/template")
-public class SingTemplateController {
+public class SingleTemplateController {
     @Autowired
     private SingleTemplateService singleTemplateService;
 
@@ -23,8 +25,8 @@ public class SingTemplateController {
 
     @GetMapping
     @ApiOperation("单兵训练模板获取")
-    public BaseRsp<SingleTemplateBo> get(@RequestParam("resource_id") String trainBusinessId) {
-        return new BaseRsp<>(singleTemplateService.get(trainBusinessId));
+    public BaseRsp<SingleTemplateBo> get(@RequestParam("resource_id") String businessTemplateId) {
+        return new BaseRsp<>(singleTemplateService.get(businessTemplateId));
     }
 
     @PostMapping

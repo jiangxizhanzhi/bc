@@ -47,7 +47,7 @@ public class TeamSceneHandler extends CrSceneHandler {
 
 	public CrRoleNodesData getNodes(String userId, String roomId, String roleId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getValue())) {
+		if (role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getCode())) {
 			if (StringUtils.isNotBlank(roleId)) {
 				// 教员查看学员角色的战争迷雾
 				CrRole fakeRole = crRoleService.getById(roleId);
@@ -64,7 +64,7 @@ public class TeamSceneHandler extends CrSceneHandler {
 
 	public void checkSceneOperationPermission(String roomId, String userId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getValue())) {
+		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getCode())) {
 			log.error("User does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
 					roomId, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
@@ -73,7 +73,7 @@ public class TeamSceneHandler extends CrSceneHandler {
 
 	public void checkBeforeStartingScene(String roomId, String userId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getValue())) {
+		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getCode())) {
 			log.error("user [{}] has no permissison to start scene in room [{}]", userId, roomId);
 			throw new RuntimeException();
 		}

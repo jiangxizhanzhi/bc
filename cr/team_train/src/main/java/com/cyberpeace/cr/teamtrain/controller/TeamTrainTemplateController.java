@@ -30,6 +30,8 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +47,9 @@ public class TeamTrainTemplateController {
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	LocalSceneService localSceneService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -100,6 +105,15 @@ public class TeamTrainTemplateController {
 		List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonUtil
 				.toJsonObjectArray(roleString, TeamTrainTemplateRoleRsp.class);
 
+		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
+		String sceneManagerId = "";
+		LocalScene localScene = localSceneService
+				.getByBusinessInstanceId(businessTemplate.getResourceId());
+		if (localScene != null) {
+			sceneManagerId = localScene.getResourceId();
+		}
+		baseInfoRsp.setSceneManagerId(sceneManagerId);
+
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
@@ -152,7 +166,7 @@ public class TeamTrainTemplateController {
 				BaseRole.class);
 		BaseRole baseRole = new BaseRole();
 		baseRole.setName("教员");
-		baseRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getValue());
+		baseRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getCode());
 
 		teamTrainTemplateRoleList.add(0, baseRole);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);

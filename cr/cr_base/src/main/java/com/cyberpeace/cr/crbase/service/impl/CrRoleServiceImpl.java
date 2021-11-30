@@ -61,7 +61,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Override
 	public CrRoleContext<MissionContext> getRoles(String roomId) {
 		CrRoleContext<MissionContext> crRoleContext = new CrRoleContext();
-		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.TeamRoleGroupCode.STUDENT.getValue());
+		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.TeamRoleGroupCode.STUDENT.getCode());
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 		if (crRoles == null) {
@@ -91,17 +91,15 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		ShowWriteup showWriteup = new ShowWriteup();
 		showWriteup.setShowWriteup(true);
-		List<Map<String, ShowWriteup>> showWriteupMapping = Lists.newArrayList();
+		Map<String, ShowWriteup> showWriteupMap = Maps.newHashMap();
 
 		missionList.forEach(mission -> {
 			if (mission.getShowWriteup()) {
-				Map<String, ShowWriteup> map = Maps.newHashMap();
-				map.put(mission.getResourceId(), showWriteup);
-				showWriteupMapping.add(map);
+				showWriteupMap.put(mission.getResourceId(), showWriteup);
 			}
 		});
 
-		crRoleContext.setShowWriteupMapping(showWriteupMapping);
+		crRoleContext.setShowWriteupMapping(showWriteupMap);
 		crRoleContext.setMissionMapping(missionCompletionMapping);
 
 		return crRoleContext;

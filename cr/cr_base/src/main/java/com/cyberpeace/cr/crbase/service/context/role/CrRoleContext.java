@@ -14,6 +14,6 @@ public class CrRoleContext<T> {
 
 	private Map<String, MissionCompletion> missionMapping;
 
-	private List<Map<String, ShowWriteup>> showWriteupMapping;
+	private Map<String, ShowWriteup> showWriteupMapping;
 
 }

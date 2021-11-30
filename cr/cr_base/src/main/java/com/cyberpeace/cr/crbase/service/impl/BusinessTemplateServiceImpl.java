@@ -70,7 +70,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", topoData.getSceneConfig());
 		String topoId = localSceneService.saveTopo(topoJson, basicTemplate.getBaseInfo().getType());
-		// todo 场景
 
 		// 保存基础模板
 		businessTemplate.setTopoId(topoId);
@@ -195,7 +194,4 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplate;
 	}
 
-	private BusinessTemplate.BusinessType getBusinessType(Object obj) {
-		return null;
-	}
 }

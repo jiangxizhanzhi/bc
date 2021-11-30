@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -39,7 +40,7 @@ public class BaseInfoRsp implements Serializable {
 
 	private String sceneManagerId;
 
-	private SceneRsp sceneConfigData;
+	private JSONObject sceneConfigData;
 
 	public BaseInfoRsp(TeamTemplate template, BusinessTemplate businessTemplate) {
 		this.name = businessTemplate.getName();

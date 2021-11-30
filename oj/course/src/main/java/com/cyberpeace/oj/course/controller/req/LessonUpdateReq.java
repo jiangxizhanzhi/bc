@@ -11,8 +11,25 @@ import javax.validation.constraints.NotBlank;
 @ApiModel
 public class LessonUpdateReq extends LessonAddReq {
 
-	@ApiModelProperty("资源编号")
+	@ApiModelProperty(name = "resource_id", value = "资源编号")
 	@NotBlank(groups = { Update.class })
-	private String resource_id;
+	private String resourceId;
 
+	@ApiModelProperty(name = "handout_url", value = "讲义类型")
+	private String handoutUrl;
+
+	@ApiModelProperty(name = "video_url", value = "视频地址")
+	private String videoUrl;
+
+	public void setResource_id(String resource_id) {
+		this.resourceId = resource_id;
+	}
+
+	public void setHandout_url(String handoutUrl) {
+		this.handoutUrl = handoutUrl;
+	}
+
+	public void setVideo_url(String videoUrl) {
+		this.videoUrl = videoUrl;
+	}
 }

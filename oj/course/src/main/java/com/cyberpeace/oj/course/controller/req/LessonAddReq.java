@@ -28,7 +28,7 @@ public class LessonAddReq implements Serializable {
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
-	@ApiModelProperty("附件编号")
+	@ApiModelProperty(name = "attachment_ids", value = "附件编号")
 	private String attachmentIds;
 
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
@@ -43,11 +43,11 @@ public class LessonAddReq implements Serializable {
 	@NotNull(groups = { Create.class })
 	private Integer compulsory;
 
-	@ApiModelProperty("是否公开 0=隐藏 1=公开")
+	@ApiModelProperty(name = "is_public", value = "是否公开 0=隐藏 1=公开")
 	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
-	@ApiModelProperty("课程编号")
+	@ApiModelProperty(name = "course_id", value = "课程编号")
 	@NotBlank(groups = { Create.class })
 	private String courseId;
 
@@ -57,16 +57,16 @@ public class LessonAddReq implements Serializable {
 	@ApiModelProperty("视频文件")
 	private MultipartFile video;
 
-	@ApiModelProperty("场景配置信息")
+	@ApiModelProperty(name = "oj_scene_config", value = "场景配置信息")
 	private String ojSceneConfig;
 
-	@ApiModelProperty("场景存活时间 单位小时")
+	@ApiModelProperty(name = "destroy_delay", value = "场景存活时间 单位小时")
 	private Integer destroyDelay;
 
-	@ApiModelProperty("场景隔离类型 1=共享 2=个人")
+	@ApiModelProperty(name = "scene_share_mode", value = "场景隔离类型 1=共享 2=个人")
 	private Integer sceneShareMode;
 
-	@ApiModelProperty("习题列表")
+	@ApiModelProperty(name = "practice_list", value = "习题列表")
 	private String practiceList;
 
 	public void setAttachment_ids(String attachmentIds) {

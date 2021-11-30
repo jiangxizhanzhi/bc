@@ -121,7 +121,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PostMapping("")
 	public BaseRsp add(@Validated(Create.class) LessonAddReq lessonAddReq) {
 
-		CourseLesson courseLesson = reqToEntity(lessonAddReq);
+		CourseLesson courseLesson = AddReqToEntity(lessonAddReq);
 
 		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
 				JsonUtil.toJsonObject(lessonAddReq.getOjSceneConfig(), JSONObject.class),
@@ -135,13 +135,47 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PatchMapping("")
 	public BaseRsp patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
 
-		CourseLesson courseLesson = reqToEntity(lessonUpdateReq);
+
+		CourseLesson courseLesson = updateReqToEntity(lessonUpdateReq);
+
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,
 				JsonUtil.toJsonObject(lessonUpdateReq.getOjSceneConfig(), JSONObject.class),
 				JsonUtil.toJsonObjectArray(lessonUpdateReq.getPracticeList(),
 						PaperPracticeContext.class));
 		return new BaseRsp(lesson);
 
+	}
+
+	/**
+	 * 更新请求转换为实体类
+	 * @param lessonUpdateReq
+	 * @return
+	 */
+	private CourseLesson updateReqToEntity(LessonUpdateReq lessonUpdateReq) {
+		CourseLesson courseLesson = BeanUtils.copy(lessonUpdateReq, CourseLesson.class);
+		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())
+				&& null != lessonUpdateReq.getVideo()) {
+			AttachmentBo uploadFile = attachmentService.uploadFile(
+					Attachment.AttachmentType.VIDEO.getCode(), CommonConstant.TRUE,
+					lessonUpdateReq.getVideo());
+			courseLesson.setVideoUrl(uploadFile.getFilePath());
+		} else if (null == lessonUpdateReq.getVideo()
+				&& StringUtils.isBlank(lessonUpdateReq.getVideoUrl())) {
+			courseLesson.setVideoUrl("");
+		}
+
+		if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
+				&& null != lessonUpdateReq.getHandout()) {
+			AttachmentBo uploadFile = attachmentService.uploadFile(
+					Attachment.AttachmentType.VIDEO.getCode(), CommonConstant.TRUE,
+					lessonUpdateReq.getHandout());
+			courseLesson.setHandoutUrl(uploadFile.getFilePath());
+		} else if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
+				&& null == lessonUpdateReq.getHandout()) {
+			courseLesson.setHandoutUrl("");
+		}
+
+		return courseLesson;
 	}
 
 	@ApiOperation("课时信息删除")
@@ -230,7 +264,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	 * @param lessonAddReq
 	 * @return
 	 */
-	private CourseLesson reqToEntity(LessonAddReq lessonAddReq) {
+	private CourseLesson AddReqToEntity(LessonAddReq lessonAddReq) {
 
 		// 知识点转换
 		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);

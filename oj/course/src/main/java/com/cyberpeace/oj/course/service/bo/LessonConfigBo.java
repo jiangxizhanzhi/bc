@@ -88,13 +88,14 @@ public class LessonConfigBo implements Serializable {
 			return Arrays.asList(lessonConfigBo);
 		}
 
-		List<LessonConfigBo> bos = lessonConfigBo.children.stream()
-				.map(bo -> sortListByChildren(bo, includeChapter)).flatMap(Collection::stream)
-				.collect(Collectors.toList());
+		List<LessonConfigBo> bos = lessonConfigBo.children.stream().map(bo -> {
+			bo.setParentId(lessonConfigBo.getResourceId());
+			return sortListByChildren(bo, includeChapter);
+		}).flatMap(Collection::stream).collect(Collectors.toList());
 
 		List<LessonConfigBo> configBos = bos.stream().filter(bo -> includeChapter ? includeChapter
-				: bo.getNodeType()
-						.intValue() == LessonConfigType.NODE_LESSON.getCode().intValue()).collect(Collectors.toList());
+				: bo.getNodeType().intValue() == LessonConfigType.NODE_LESSON.getCode().intValue())
+				.collect(Collectors.toList());
 
 		return configBos;
 

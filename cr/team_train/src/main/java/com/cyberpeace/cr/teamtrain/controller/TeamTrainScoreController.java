@@ -445,8 +445,8 @@ public class TeamTrainScoreController {
 		}
 
 		trainingReport.setSceneStartTime(teamRoomdata.getSceneStartTime());
-		Date endTime = teamRoomdata.getEndTime() == null ? new Date()
-				: teamRoomdata.getSceneStartTime();
+		Date endTime = teamRoomdata.getSceneEndTime() == null ? new Date()
+				: teamRoomdata.getSceneEndTime();
 		Integer timeSeconds = Math.toIntExact(
 				(endTime.getTime() - teamRoomdata.getSceneStartTime().getTime()) / 1000);
 		trainingReport.setTeacherName(UserInfoContext.getUserContext().getUserName());

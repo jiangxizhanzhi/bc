@@ -16,7 +16,7 @@ public class CrSceneRetrieveRsp implements Serializable {
 	@ApiModelProperty("场景管理器id")
 	private String sceneManagerId;
 
-	@ApiModelProperty("拓扑模板睡数据")
+	@ApiModelProperty("拓扑模板数据")
 	private JSONObject topoData;
 
 	@ApiModelProperty("场景数据")

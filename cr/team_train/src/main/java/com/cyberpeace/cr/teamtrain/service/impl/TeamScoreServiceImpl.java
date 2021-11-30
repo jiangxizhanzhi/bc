@@ -72,7 +72,11 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 		}
 		taskCounter.setFinished(finished);
 		taskCounter.setReleased(released);
-		taskCounter.setNotReleased(missionStageSchemes.size() - finished - released);
+		int countMissions = 0;
+		for (MissionStageScheme missionStageScheme : missionStageSchemes) {
+			countMissions += missionStageScheme.getMissions().size();
+		}
+		taskCounter.setNotReleased(countMissions - finished - released);
 
 		return taskCounter;
 	}

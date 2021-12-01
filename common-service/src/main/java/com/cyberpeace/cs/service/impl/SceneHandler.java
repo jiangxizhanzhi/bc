@@ -4,26 +4,18 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cyberpeace.integratation.model.scene.NodeOpsContext;
+import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
 
 @Service(value = "BasicSceneHandler")
 public class SceneHandler {
 
-	@Autowired
-	private RemoteSceneService remoteSceneService;
-
 	private static Map<Integer, SceneHandler> register = Maps.newHashMap();
-
-	public Integer getBusinessType() {
-		return null;
-	}
 
 	@PostConstruct
 	public void init() {
@@ -32,33 +24,59 @@ public class SceneHandler {
 		}
 	}
 
-	public SceneHandler getHandler(Integer businessType) {
+	/**
+	 * 获取SceneContextHandler
+	 * @param businessType
+	 * @return
+	 */
+	public SceneHandler getSceneHandler(Integer businessType) {
 		return register.get(businessType);
 	}
 
-	public String startScene(LocalScene localScene) {
-		SceneStartContext sceneStartContext = getSceneStartContext(localScene);
-		return remoteSceneService.startScene(sceneStartContext);
-	}
+	/**
+	 * 场景启动校验 子类可根据业务重写
+	 * @param localScene
+	 */
+	public void checkStartScene(LocalScene localScene) {}
 
-	public SceneStartContext getSceneStartContext(LocalScene localScene) {
-		SceneStartContext context = new SceneStartContext();
-		setPassThrough(context, localScene);
-		context.setId(localScene.getTopoId());
-		return context;
-	}
+	/**
+	 * 场景暂停校验 子类可根据业务重写
+	 * @param localScene
+	 */
+	public void checkPauseScene(LocalScene localScene) {}
 
-	public void setPassThrough(SceneOpsContext context, LocalScene localScene) {}
-
-	public String getReferenceMetaData(LocalScene localScene) {
+	/**
+	 * 获取场景类型 子类可重写该方法
+	 * @return
+	 */
+	public Integer getBusinessType() {
 		return null;
 	}
 
-	public void checkUnpauseScenePermission(LocalScene localScene) {}
+	/**
+	 * 获取场景启动上下文
+	 * @param localScene
+	 * @return
+	 */
+	public SceneStartContext getSceneStartContext(LocalScene localScene) {
+		return new SceneStartContext();
+	}
 
-	public void afterUnpauseScene(LocalScene localScene) {}
+	/**
+	 * 获取场景操作基本上下文
+	 * @param localScene
+	 * @return
+	 */
+	public SceneOpsContext getSceneOpContext(LocalScene localScene) {
+		return new SceneOpsContext();
+	}
 
-	public void afterPauseScene(LocalScene localScene) {}
-
-	public void checkPauseScenePermission(LocalScene localScene) {}
+	/**
+	 * 获取节点操作上下文
+	 * @param localScene
+	 * @return
+	 */
+	public NodeOpsContext getNodeOpsContext(LocalScene localScene) {
+		return new NodeOpsContext();
+	}
 }

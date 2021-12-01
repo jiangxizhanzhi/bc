@@ -96,4 +96,13 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @return
 	 */
 	LessonPracticeBo practiceByLesson(String courseId, String lessonId, AuthContext authContext);
+
+	/**
+	 * 后台课后练习查询
+	 * @param courseId
+	 * @param lessonId
+	 * @param authContext
+	 * @return
+	 */
+	List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId, AuthContext authContext);
 }

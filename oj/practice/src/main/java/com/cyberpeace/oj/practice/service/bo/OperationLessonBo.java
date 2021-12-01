@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 课后实操练习数据
+ */
 @Data
 @ApiModel
 public class OperationLessonBo extends TheoryLessonBo {

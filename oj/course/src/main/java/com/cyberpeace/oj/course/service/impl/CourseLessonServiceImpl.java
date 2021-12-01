@@ -561,8 +561,36 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return lessonPracticeBo;
 	}
 
+	@Override
+	public List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId,
+														   AuthContext authContext) {
+		// 数据校验
+		validateCourse(courseId, authContext);
+		CourseLesson courseLesson = validateLesson(lessonId, authContext.getIsWeb());
+
+		Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+		List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService
+				.selectByPaper(paper.getResourceId(), true);
+		List<OperationLessonBo> operationLessonBos = practiceOperationRefService
+				.selectByPaperId(paper.getResourceId(), true, true);
+
+		List<AdminLessonPracticeBo> practiceBos = StreamApiUtils.simpleMap(theoryLessonBos,
+				theoryLessonBo -> {
+					AdminLessonPracticeBo practiceBo = BeanUtils.copy(theoryLessonBo,
+							AdminLessonPracticeBo.class);
+					practiceBo.setTitle(practiceBo.getContent());
+					return practiceBo;
+				});
+		List<AdminLessonPracticeBo> practiceBoList = StreamApiUtils.simpleMap(operationLessonBos,
+				operationLessonBo -> BeanUtils.copy(operationLessonBo,
+						AdminLessonPracticeBo.class));
+		practiceBos.addAll(practiceBoList);
+
+		return practiceBoList;
+	}
+
 	/**
-	 * 习题数据处理
+	 * 前台习题数据处理
 	 * @param paperEvaluate
 	 * @param paper
 	 * @return
@@ -581,7 +609,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 查询习题内容 转换数据类型
 		List<OperationLessonBo> operationLessonBos = practiceOperationRefService
-				.selectByPaperId(paper.getResourceId(), viewAnswer);
+				.selectByPaperId(paper.getResourceId(), viewAnswer, false);
 
 		// 实操习题转换
 		List<LessonOperationBo> lessonOperationBos = StreamApiUtils.simpleMap(operationLessonBos,

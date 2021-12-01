@@ -91,7 +91,6 @@ public class TeamSceneHandler extends SceneHandler {
 		}
 	}
 
-	@Override
 	public String getReferenceMetaData(LocalScene localScene) {
 		TeamRoom room = teamRoomService.getById(localScene.getBusinessInstanceId());
 		return JsonUtil.toJsonString(new RoomInfo(room.getResourceId(), room.getName()));

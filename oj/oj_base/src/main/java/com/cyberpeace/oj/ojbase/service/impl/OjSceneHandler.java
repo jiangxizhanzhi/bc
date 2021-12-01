@@ -1,45 +1,76 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.integratation.model.scene.SceneOpsContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cs.service.bo.SceneMetaData;
+import com.cyberpeace.integratation.model.scene.SceneMpContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.SceneHandler;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 
 @Service("OjSceneHandler")
 public class OjSceneHandler extends SceneHandler {
 
-	public String startScene(Integer businessCode, OjLocalScene ojLocalScene, String topoId) {
+	@Autowired
+	private OjLocalSceneMapper ojLocalSceneMapper;
 
-		LocalScene localScene = initLocalScene(businessCode, ojLocalScene, topoId);
-		SceneStartContext sceneStartContext = getSceneStartContext(localScene);
-
-		return localScene.getMpSceneId();
+	@Override
+	public Integer getBusinessType() {
+		return super.getBusinessType();
 	}
 
-
-
 	/**
-	 * 获取初始化场景数据
-	 * @param businessCode
-	 * @param ojLocalScene
-	 * @param topoId
+	 * 获取场景启动数据 用于启动场景
+	 * @param localScene
 	 * @return
 	 */
-	private LocalScene initLocalScene(Integer businessCode, OjLocalScene ojLocalScene,
-			String topoId) {
-		LocalScene localScene = new LocalScene();
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
-		localScene.setBusinessCode(businessCode);
-		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
-		localScene.setDestoryMode(LocalScene.DestroyMode.AUTO.getCode());
-		localScene.setResourceId(IDGeneratorUtil.getID());
-		localScene.setTopoId(topoId);
-		localScene.setUserId(ojLocalScene.getUserId());
-		return localScene;
+	@Override
+	public SceneStartContext getSceneStartContext(LocalScene localScene) {
+
+		// 装配基本数据
+		SceneStartContext sceneStartContext = super.getSceneStartContext(localScene);
+		sceneStartContext.setId(localScene.getTopoId());
+		sceneStartContext.setSceneTtl(localScene.getSceneTtl());
+
+		// 查询实训场景信息 设置场景模式
+		OjLocalScene ojLocalScene = ojLocalSceneMapper
+				.selectById(localScene.getBusinessInstanceId());
+
+		sceneStartContext.setSceneAttr(
+				ojLocalScene.getShared() ? SceneStartContext.SceneAttrEnum.NULL.getCode()
+						: SceneStartContext.SceneAttrEnum.SINGLE.getCode());
+
+		// 获取元数据
+		sceneStartContext
+				.setReferenceMetaData(JsonUtil.toJsonString(getReferenceMetaData(ojLocalScene)));
+
+		// 获取场景启动上下文
+		sceneStartContext.setContext(getSceneMpContext(ojLocalScene));
+
+		return sceneStartContext;
+	}
+
+	/**
+	 * 获取场景启动元数据 用于前端场景列表
+	 * @param ojLocalScene
+	 * @return
+	 */
+	public SceneMetaData getReferenceMetaData(OjLocalScene ojLocalScene) {
+		// 公有数据组装
+		SceneMetaData sceneMetaData = new SceneMetaData();
+		sceneMetaData.setBusinessInstanceId(ojLocalScene.getResourceId());
+		return sceneMetaData;
+	}
+
+	/**
+	 * 获取场景启动上下文 用户接收消息
+	 * @return
+	 */
+	public SceneMpContext getSceneMpContext(OjLocalScene ojLocalScene) {
+		return new SceneMpContext();
 	}
 }

@@ -1,17 +1,50 @@
 package com.cyberpeace.oj.practice.service.impl;
 
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.impl.SceneHandler;
+import com.cyberpeace.cs.service.bo.SceneMetaData;
+import com.cyberpeace.integratation.model.scene.SceneMpContext;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.impl.OjSceneHandler;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class OperationSceneHandler extends SceneHandler {
+public class OperationSceneHandler extends OjSceneHandler {
 
-    @Override
-    public Integer getBusinessType() {
-        return LocalScene.BusinessCode.PRACTICE.getCode();
-    }
+	@Autowired
+	private PracticeOperationMapper practiceOperationMapper;
 
-    @Override
-    public String getReferenceMetaData(LocalScene localScene) {
-        return super.getReferenceMetaData(localScene);
-    }
+	@Override
+	public Integer getBusinessType() {
+		return LocalScene.BusinessCode.PRACTICE.getCode();
+	}
+
+	@Override
+	public SceneMetaData getReferenceMetaData(OjLocalScene ojLocalScene) {
+		// 调用父类方法设置一部分参数
+		SceneMetaData referenceMetaData = super.getReferenceMetaData(ojLocalScene);
+
+		// 设置场景名称
+		PracticeOperation practiceOperation = practiceOperationMapper
+				.selectById(ojLocalScene.getResourceId());
+		referenceMetaData.setSceneName(practiceOperation.getTitle());
+
+		return referenceMetaData;
+	}
+
+	@Override
+	public SceneMpContext getSceneMpContext(OjLocalScene ojLocalScene) {
+
+		// 调用父类方法设置一部分参数
+		SceneMpContext sceneMpContext = super.getSceneMpContext(ojLocalScene);
+
+		// 透穿数据设置
+		sceneMpContext.getPassThrough().put("local_scene_id", ojLocalScene.getLocalSceneId());
+
+		// 设置场景可存活最大时间
+		PracticeOperation practiceOperation = practiceOperationMapper.selectById(ojLocalScene.getBusinessId());
+		sceneMpContext.getPassThrough().put("destroy_delay", practiceOperation.getDestroyDelay().toString());
+
+		return sceneMpContext;
+	}
 }

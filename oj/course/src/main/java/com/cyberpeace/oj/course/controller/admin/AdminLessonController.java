@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.admin;
 import java.util.List;
 
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
+import com.cyberpeace.oj.course.service.bo.AdminLessonPracticeBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -222,14 +223,15 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课后练习查询")
 	@GetMapping("/practice")
-	public BaseRsp<LessonPracticeBo> getPracticeList(@RequestParam("course_id") String courseId,
+	public BaseRsp<AdminLessonPracticeBo> getPracticeList(
+			@RequestParam("course_id") String courseId,
 			@RequestParam("lesson_id") String lessonId) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 
-		LessonPracticeBo practiceByLesson = courseLessonService.practiceByLesson(courseId, lessonId,
-				authContext);
+		List<AdminLessonPracticeBo> practiceByLesson = courseLessonService
+				.adminLessonPractice(courseId, lessonId, authContext);
 
 		return new BaseRsp(practiceByLesson);
 	}

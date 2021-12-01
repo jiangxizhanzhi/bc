@@ -37,7 +37,7 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 	private RemoteTopoService remoteTopoService;
 
 	@Override
-	public List<OperationLessonBo> selectByPaperId(String paperId, Boolean viewAnswer) {
+	public List<OperationLessonBo> selectByPaperId(String paperId, Boolean viewAnswer, Boolean simpleData) {
 
 		List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
 				.selectByPracticeIds(paperId, null);
@@ -50,14 +50,14 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 							OperationLessonBo.class);
 
 					// 附件内容查询
-					if (StringUtils.isNotBlank(operation.getAttachmentId())) {
+					if (!simpleData && StringUtils.isNotBlank(operation.getAttachmentId())) {
 						Attachment attachment = attachmentMapper
 								.selectById(operation.getAttachmentId());
 						operationLessonBo.setFilePath(attachment.getFilePath());
 						operationLessonBo.setFileName(attachment.getFileName());
 					}
 
-					if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
+					if (!simpleData && operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
 						JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 						operationLessonBo.setSceneConfigData(topoData);
 					}

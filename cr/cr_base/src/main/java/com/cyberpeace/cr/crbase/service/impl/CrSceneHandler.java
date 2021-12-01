@@ -13,11 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CrSceneHandler extends SceneHandler {
 
-	@Override
-	public void setPassThrough(SceneOpsContext context, LocalScene localScene) {
-		context.getContext().getPassThrough().put("scene_manager_id", localScene.getResourceId());
-	}
-
 	public NodeOpsContext getNodeOpsContext(LocalScene localScene, String nodeId) {
 		NodeOpsContext nodeOpsContext = new NodeOpsContext();
 		nodeOpsContext.getContext().getPassThrough().put("scene_manager_id",

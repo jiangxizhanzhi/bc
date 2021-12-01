@@ -53,8 +53,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public String startScene(LocalScene localScene) {
-		SceneStartContext context = getSceneStartContext(localScene);
-		return remoteSceneService.startScene(context);
+
+		SceneHandler contextHandler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		contextHandler.checkStartScene(localScene);
+		SceneStartContext startContext = contextHandler.getSceneStartContext(localScene);
+		return remoteSceneService.startScene(startContext);
 	}
 
 	@Override
@@ -70,8 +73,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public Boolean stopScene(String localSceneId, String userId) {
 		LocalScene localScene = getById(localSceneId);
-		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-		SceneOpsContext sceneOpsContext = getSceneOpContext(localScene);
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		SceneOpsContext sceneOpsContext = handler.getSceneOpContext(localScene);
 
 		Boolean result = remoteSceneService.stopScene(sceneOpsContext);
 		if (!result) {
@@ -123,17 +126,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		LocalScene localScene = getById(localSceneId);
 		ensureSceneStarted(localScene);
 
-		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-		handler.checkPauseScenePermission(localScene);
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		handler.checkPauseScene(localScene);
+		Boolean result = remoteSceneService.pauseScene(handler.getSceneOpContext(localScene));
 
-		Boolean result = remoteSceneService.pauseScene(getSceneOpContext(localScene));
 		if (!result) {
 			log.error("failed to pause scene [{}]", localScene.getMpSceneId());
 			throw new RuntimeException();
 		}
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.PAUSE.getCode());
 		updateById(localScene);
-		handler.afterPauseScene(localScene);
 		return true;
 	}
 
@@ -149,10 +151,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean unPauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		ensureScenePaused(localScene);
-		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-		handler.checkUnpauseScenePermission(localScene);
 
-		Boolean result = remoteSceneService.unpauseScene(getSceneOpContext(localScene));
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		Boolean result = remoteSceneService.unpauseScene(handler.getSceneOpContext(localScene));
 
 		if (!result) {
 			log.error("failed to unpause scene [{}]", localScene.getMpSceneId());
@@ -161,7 +162,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 		updateById(localScene);
-		handler.afterUnpauseScene(localScene);
 		return true;
 	}
 
@@ -268,7 +268,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public void deleteRemoteScene(LocalScene localScene) {
-		SceneOpsContext sceneOpsContext = getSceneOpContext(localScene);
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		SceneOpsContext sceneOpsContext = handler.getSceneOpContext(localScene);
 		remoteSceneService.stopScene(sceneOpsContext);
 
 		removeById(localScene.getResourceId());
@@ -293,18 +294,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		updateById(localScene);
 	}
 
-	// TODO
-	// 场景的启动、删除、暂停上下文是否可以统一
-
-	private SceneOpsContext getSceneOpContext(LocalScene localScene) {
-		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-		SceneOpsContext sceneOpsContext = new SceneOpsContext();
-		handler.setPassThrough(sceneOpsContext, localScene);
-		sceneOpsContext.setId(localScene.getMpSceneId());
-
-		return sceneOpsContext;
-	}
-
 	private NodeOpsContext getNodeOpsContext(LocalScene localScene, String nodeId) {
 		NodeOpsContext nodeOpsContext = new NodeOpsContext();
 		nodeOpsContext.getContext().getPassThrough().put("scene_manager_id",
@@ -313,16 +302,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		nodeOpsContext.setNodeId(nodeId);
 
 		return nodeOpsContext;
-	}
-
-	public SceneStartContext getSceneStartContext(LocalScene localScene) {
-		SceneStartContext context = new SceneStartContext();
-		SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-		context.setReferenceMetaData(handler.getReferenceMetaData(localScene));
-		handler.setPassThrough(context, localScene);
-		context.setId(localScene.getTopoId());
-		context.setSceneAttr(SceneStartContext.SceneAttrEnum.NULL.getCode());
-		return context;
 	}
 
 }

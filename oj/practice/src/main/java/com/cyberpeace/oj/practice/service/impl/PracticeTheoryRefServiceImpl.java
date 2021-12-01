@@ -47,6 +47,8 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 						theoryLesonBo.setDirectionName(category.getName());
 					}
 
+					theoryLesonBo.setQuestionType(practiceTheory.getTheoryType());
+					theoryLesonBo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
 					if (practiceTheory.getTheoryType()
 							.intValue() == PracticeTheory.TheoryType.FILL_BLANK.getCode()
 									.intValue()) {

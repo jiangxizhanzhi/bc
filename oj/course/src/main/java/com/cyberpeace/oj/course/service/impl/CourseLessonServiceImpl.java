@@ -171,8 +171,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
 			OjLocalScene ojLocalScene = lesson.getSceneShareMode().intValue() == SceneShare.PRIVATE
 					.getCode().intValue()
-							? ojLocalSceneMapper.selectByUserAndBid(authContext.getUserId(), lessonId,
-									CommonConstant.TRUE)
+							? ojLocalSceneMapper.selectByUserAndBid(authContext.getUserId(),
+									lessonId, CommonConstant.TRUE)
 							: ojLocalSceneMapper.selectByBidAndShared(lessonId, CommonConstant.TRUE,
 									CommonConstant.TRUE);
 
@@ -187,7 +187,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// 添加学习记录
-		LessonRecord record = lessonRecordMapper.selectByLessonAndUser(lessonId, authContext.getUserId());
+		LessonRecord record = lessonRecordMapper.selectByLessonAndUser(lessonId,
+				authContext.getUserId());
 		if (null == record) {
 			LessonRecord lessonRecord = new LessonRecord();
 			lessonRecord.setLesson(lessonId);

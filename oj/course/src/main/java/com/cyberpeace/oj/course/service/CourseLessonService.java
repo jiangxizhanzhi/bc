@@ -105,4 +105,12 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @return
 	 */
 	List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId, AuthContext authContext);
+
+	/**
+	 * 新增和修改练习数据
+	 * @param resourceId
+	 * @param practiceList
+	 * @return
+	 */
+	Boolean addLessonPractice(String resourceId, List<PaperPracticeContext> practiceList);
 }

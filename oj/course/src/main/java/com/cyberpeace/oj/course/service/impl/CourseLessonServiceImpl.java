@@ -435,8 +435,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			AddLessonConfigContext configContext = AddLessonConfigContext.builder()
 					.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
-					.name(courseLesson.getName())
-					.nodeType(LessonConfigType.NODE_LESSON.getCode()).build();
+					.name(courseLesson.getName()).nodeType(LessonConfigType.NODE_LESSON.getCode())
+					.build();
 			LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
 			lessonConfigs.add(lessonConfig);
 		}
@@ -587,6 +587,19 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		practiceBos.addAll(practiceBoList);
 
 		return practiceBoList;
+	}
+
+	@Override
+	public Boolean addLessonPractice(String resourceId, List<PaperPracticeContext> practiceList) {
+		CourseLesson courseLesson = courseLessonMapper.selectById(resourceId);
+		if (null == courseLesson) {
+			log.error("addLessonPractice: lesson not found! lesson_id=[{}]", resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		AddOrUpdatePaperContext paperContext = packagePaperContext(courseLesson, practiceList);
+		Paper paper = paperService.update(paperContext);
+		return null != paper;
 	}
 
 	/**

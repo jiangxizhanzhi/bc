@@ -236,6 +236,16 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(practiceByLesson);
 	}
 
+	@ApiOperation("课后练习修改")
+	@PatchMapping("/practice")
+	public BaseRsp<Boolean>
+			updateLessonPractice(@RequestBody @Validated AddLessonPracticeReq practiceReq) {
+
+		Boolean result = courseLessonService.addLessonPractice(practiceReq.getResourceId(),
+				practiceReq.getPracticeList());
+		return new BaseRsp(result);
+	}
+
 	@ApiOperation("课时场景拓扑信息查询")
 	@GetMapping("/scene_topo")
 	public BaseRsp<TopoSceneDataRes> getTopoScene(@ApiParam(name = "resource_id",

@@ -36,10 +36,13 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  *
  */
 @Service
+@Slf4j
 public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMapper, BusinessTemplate> implements BusinessTemplateService {
 
 	@Autowired
@@ -103,6 +106,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		BusinessTemplate businessTemplate = businessTemplateMapper.selectByNameAndType(name, type,
 				id);
 		if (businessTemplate != null) {
+			log.error("templete name already exist！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TEMPLETE_NAME_EXIST_ERROR);
 		}
 

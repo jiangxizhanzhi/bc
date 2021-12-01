@@ -72,7 +72,7 @@ public class TeamTrainTemplateController {
 	public BaseRsp<TeamTrainTemplateRsp>
 			update(@RequestBody @Validated TeamTrainTemplateModifyReq teamTrainTemplateModifyReq) {
 		String resourceId = teamTrainTemplateModifyReq.getResourceId();
-		TeamTemplate template = teamTemplateService.getById(resourceId);
+		TeamTemplate template = teamTemplateService.getTeamTemplateByBusinessId(resourceId);
 
 		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils
 				.copy(teamTrainTemplateModifyReq, TeamTrainTemplateContext.class);

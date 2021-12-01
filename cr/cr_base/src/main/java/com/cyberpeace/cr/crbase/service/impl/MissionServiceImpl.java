@@ -131,7 +131,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		CrRole role = crRoleMapper.selectById(roleId);
 		if (role == null) {
 			log.error("role does not exist！roleId=[{}]", roleId);
-
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		List<CrTask> crTasks = crTaskMapper.selectByMissionId(missionId);

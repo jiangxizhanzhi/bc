@@ -33,10 +33,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author SN
  */
 @Service
+@Slf4j
 public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> implements CrTaskService {
 
 	@Autowired
@@ -63,6 +66,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	public TaskContext getByMissionAndUser(String missionId, String userId) {
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 		if (null == task) {
+			log.error("user‘s mission does not release！userId=[{}] missionId=[{}]", userId,
+					missionId);
 			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
 		}
 		TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
@@ -316,6 +321,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		CrTask task = crTaskMapper.selectById(taskSubmit.getTaskId());
 		if (task == null) {
+			log.error("task does not exist！roleId=[{}]", taskSubmit.getTaskId());
 			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
 		}
 

@@ -77,7 +77,7 @@ public class RabbitMQConf {
 
 		queues.add(sceneMessageQueue);
 
-		return QueueBuilder.durable(sceneMessageQueue).build();
+		return QueueBuilder.nonDurable(sceneMessageQueue).build();
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class RabbitMQConf {
 
 		queues.add(sceneElementQueue);
 
-		return QueueBuilder.durable(sceneElementQueue).build();
+		return QueueBuilder.nonDurable(sceneElementQueue).build();
 	}
 
 	@Bean

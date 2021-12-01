@@ -37,13 +37,14 @@
         <where>
             T1.business_type = 1
             <if test="category != null and category">
-                T1.category = #{category}
+                and T1.category = #{category}
             </if>
             <if test="difficult != null and difficult">
-                T1.difficult = #{difficult}
+                and T1.difficult = #{difficult}
             </if>
             <if test="pattern != null and pattern">
-                T1.name = #{pattern}
+                <bind name="pattern" value="'%' + pattern + '%'"/>
+                and T1.name like #{pattern}
             </if>
         </where>
 

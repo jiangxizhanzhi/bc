@@ -20,6 +20,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.impl.SceneHandler;
 import com.cyberpeace.integratation.model.scene.SceneMetaData;
+import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -111,6 +112,12 @@ public class TeamSceneHandler extends SceneHandler {
 		TeamRoom room = teamRoomService.getById(localScene.getBusinessInstanceId());
 		room.setLocalSceneId("");
 		teamRoomService.updateById(room);
+	}
+
+	@Override
+	public void setPassThrough(SceneOpsContext sceneOpsContext, LocalScene localScene) {
+		sceneOpsContext.getContext().getPassThrough().put("local_scene_id",
+				localScene.getResourceId());
 	}
 
 }

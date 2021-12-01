@@ -87,7 +87,16 @@ public class SceneHandler {
 
 	/**
 	 * 删除场景或删除localScene时清理各实例和模板的 localSceneId字段
+	 * 单兵训练需要删除房间
 	 * @param localScene 
 	 */
 	public void clearLocalScene(LocalScene localScene) {}
+
+	/**
+	 * 填充透明上下文
+	 * @param sceneOpsContext
+	 * @param localScene
+	 */
+	public void setPassThrough(SceneOpsContext sceneOpsContext, LocalScene localScene) {
+	}
 }

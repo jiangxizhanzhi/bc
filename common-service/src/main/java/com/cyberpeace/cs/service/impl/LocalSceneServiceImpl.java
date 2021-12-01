@@ -75,15 +75,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public Boolean stopScene(String localSceneId, String userId) {
 		LocalScene localScene = getById(localSceneId);
-		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		SceneOpsContext sceneOpsContext = handler.getSceneOpContext(localScene);
+		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 
 		Boolean result = remoteSceneService.stopScene(sceneOpsContext);
 		if (!result) {
 			log.error("failed to stop scene [{}]", localScene.getMpSceneId());
 			throw new RuntimeException();
 		}
-		updateAfterStopScene(localScene);
+		clearLocalScene(localScene);
 		return true;
 	}
 
@@ -289,10 +288,19 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		updateById(localScene);
 	}
 
+	private SceneOpsContext getSceneOpsContext(LocalScene localScene) {
+		SceneOpsContext sceneOpsContext = new SceneOpsContext();
+		sceneOpsContext.setId(localScene.getMpSceneId());
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		handler.setPassThrough(sceneOpsContext, localScene);
+
+		return sceneOpsContext;
+	}
+
 	private NodeOpsContext getNodeOpsContext(LocalScene localScene, String nodeId) {
 		NodeOpsContext nodeOpsContext = new NodeOpsContext();
-		nodeOpsContext.getContext().getPassThrough().put("scene_manager_id",
-				localScene.getResourceId());
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		handler.setPassThrough(nodeOpsContext, localScene);
 		nodeOpsContext.setId(localScene.getMpSceneId());
 		nodeOpsContext.setNodeId(nodeId);
 

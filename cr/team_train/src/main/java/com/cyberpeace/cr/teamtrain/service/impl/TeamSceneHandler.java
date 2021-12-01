@@ -91,13 +91,6 @@ public class TeamSceneHandler extends SceneHandler {
 		}
 	}
 
-	public void checkBeforeTestingScene(String templateId) {
-		if (!UserInfoContext.getUserContext().isAdmin()) {
-			log.error("current user is not permitted to test template [{}]", templateId);
-			throw new RuntimeException();
-		}
-	}
-
 	@Override
 	public SceneMetaData getReferenceMetaData(LocalScene localScene) {
 		TeamRoom room = teamRoomService.getById(localScene.getBusinessInstanceId());

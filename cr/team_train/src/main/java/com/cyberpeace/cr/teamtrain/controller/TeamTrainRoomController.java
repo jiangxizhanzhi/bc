@@ -138,41 +138,6 @@ public class TeamTrainRoomController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("启动后台测试场景")
-	@PostMapping("/testScene")
-	public BaseRsp testScene(@RequestBody SceneStartFromTemplateReq sceneStartReq) {
-		String templateId = sceneStartReq.getTemplateId();
-		teamSceneHandler.checkBeforeTestingScene(templateId);
-
-		TeamTemplate teamTemplate = teamTemplateService.getById(templateId);
-		BusinessTemplate businessTemplate = businessTemplateService
-				.getById(teamTemplate.getBusinessTemplateId());
-		LocalScene localScene = sceneService.createLocalScene(
-				LocalScene.BusinessCode.TEST_SCENE.getCode(), "", businessTemplate.getTopoId());
-
-		String sceneId = localSceneService.startScene(localScene);
-		localScene.setMpSceneId(sceneId);
-
-		businessTemplate.setLocalSceneId(localScene.getResourceId());
-
-		try {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					localSceneService.save(localScene);
-					businessTemplateService.updateById(businessTemplate);
-					// todo log
-				}
-			});
-		} catch (Exception e) {
-			log.error("db error when testing scene: ", e);
-			localSceneService.deleteRemoteScene(localScene);
-			throw new RuntimeException();
-		}
-		return new BaseRsp();
-	}
-
 	@ApiOperation("查看场景")
 	@GetMapping("/scene")
 	public BaseRsp getScene(

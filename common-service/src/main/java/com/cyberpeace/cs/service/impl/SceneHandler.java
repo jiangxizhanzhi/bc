@@ -27,7 +27,6 @@ public class SceneHandler {
 
 	/**
 	 * 获取场景类型 子类可重写该方法
-	 * @return
 	 */
 	public Integer getBusinessType() {
 		return null;
@@ -35,8 +34,6 @@ public class SceneHandler {
 
 	/**
 	 * 获取SceneContextHandler
-	 * @param businessType
-	 * @return
 	 */
 	public SceneHandler getSceneHandler(Integer businessType) {
 		return register.get(businessType);
@@ -44,20 +41,16 @@ public class SceneHandler {
 
 	/**
 	 * 场景启动校验 子类可根据业务重写
-	 * @param localScene
 	 */
 	public void checkStartScene(LocalScene localScene) {}
 
 	/**
 	 * 场景暂停校验 子类可根据业务重写
-	 * @param localScene
 	 */
 	public void checkPauseScene(LocalScene localScene) {}
 
 	/**
 	 * 获取场景启动上下文
-	 * @param localScene
-	 * @return
 	 */
 	public SceneStartContext getSceneStartContext(LocalScene localScene) {
 		return new SceneStartContext();
@@ -65,8 +58,6 @@ public class SceneHandler {
 
 	/**
 	 * 获取场景操作基本上下文
-	 * @param localScene
-	 * @return
 	 */
 	public SceneOpsContext getSceneOpContext(LocalScene localScene) {
 		return new SceneOpsContext();
@@ -74,8 +65,6 @@ public class SceneHandler {
 
 	/**
 	 * 获取节点操作上下文
-	 * @param localScene
-	 * @return
 	 */
 	public NodeOpsContext getNodeOpsContext(LocalScene localScene) {
 		return new NodeOpsContext();
@@ -88,15 +77,11 @@ public class SceneHandler {
 	/**
 	 * 删除场景或删除localScene时清理各实例和模板的 localSceneId字段
 	 * 单兵训练需要删除房间
-	 * @param localScene 
 	 */
 	public void clearLocalScene(LocalScene localScene) {}
 
 	/**
 	 * 填充透明上下文
-	 * @param sceneOpsContext
-	 * @param localScene
 	 */
-	public void setPassThrough(SceneOpsContext sceneOpsContext, LocalScene localScene) {
-	}
+	public void setPassThrough(SceneOpsContext sceneOpsContext, LocalScene localScene) {}
 }

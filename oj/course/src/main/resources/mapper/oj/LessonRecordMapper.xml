@@ -48,8 +48,8 @@
     <select id="selectByLessonAndUser" resultMap="baseResultMap">
         select * from oj_lesson_record
         <where>
-            and `user` = #{userId}
-            and lesson = #{lessonId}
+            and `user_id` = #{userId}
+            and lesson_id = #{lessonId}
         </where>
     </select>
 

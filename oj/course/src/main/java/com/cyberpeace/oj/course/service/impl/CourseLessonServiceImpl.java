@@ -576,7 +576,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 						AdminLessonPracticeBo.class));
 		practiceBos.addAll(practiceBoList);
 
-		return practiceBoList;
+		return practiceBos;
 	}
 
 	@Override

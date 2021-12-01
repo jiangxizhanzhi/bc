@@ -57,6 +57,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
+	private PracticeCategoryMapper practiceCategoryMapper;
+
+	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	@Override
@@ -153,6 +156,14 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			IPage<LibPracticeListBo> convert = iPage.convert(practiceOperation -> {
 				LibPracticeListBo listBo = BeanUtils.copy(practiceOperation,
 						LibPracticeListBo.class);
+
+				// 分类数据设置
+				PracticeCategory practiceCategory = practiceCategoryMapper
+						.selectById(practiceOperation.getCategoryId());
+				if (null != practiceCategory) {
+					listBo.setCategoryName(practiceCategory.getName());
+				}
+
 				listBo.setPracticeType(PracticeCategory.PracticeType.OPERATION.getCode());
 				return listBo;
 			});
@@ -172,6 +183,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			LibPracticeListBo bo = BeanUtils.copy(practiceTheory, LibPracticeListBo.class);
 			bo.setTitle(practiceTheory.getContent());
 			bo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+
+			PracticeCategory practiceCategory = practiceCategoryMapper
+					.selectById(practiceTheory.getCategoryId());
+			if (null != practiceCategory) {
+				bo.setCategoryName(practiceCategory.getName());
+			}
 			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
 					.getCode().intValue()) {
 				List<JSONObject> objects = JsonUtil.toJsonObjectArray(practiceTheory.getBlank(),

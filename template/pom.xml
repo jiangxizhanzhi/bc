@@ -89,6 +89,11 @@
             <version>${oj.base.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.cyberpeace.oj</groupId>
+            <artifactId>person</artifactId>
+            <version>${oj.person.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
             <version>${cr.version}</version>

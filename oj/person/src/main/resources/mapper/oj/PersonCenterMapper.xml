@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.oj.person.dao.mapper.PersonCenterMapper">
+
+    <resultMap id="base" type="com.cyberpeace.oj.person.dao.entity.PersonCollection">
+        <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="studyRecord" type="com.cyberpeace.oj.person.dao.entity.StudyRecord">
+        <result property="courseCount" column="course_count" jdbcType="VARCHAR"/>
+        <result property="expCount" column="exp_count" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="score" column="p_score" jdbcType="VARCHAR"/>
+        <result property="duration" column="duration" jdbcType="VARCHAR"/>
+        <result property="reportCount" column="report_count" jdbcType="VARCHAR"/>
+        <result property="practiceRanking" column="practice_ranking" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="personNote" type="com.cyberpeace.oj.person.dao.entity.PersonNote">
+        <result property="businessId" column="business_id" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="personComment" type="com.cyberpeace.oj.person.dao.entity.PersonComment">
+
+    </resultMap>
+
+    <sql id="orderByTimeDesc">
+        order by oj_comment.create_time desc
+    </sql>
+
+
+    <select id="selectCommentByUser" resultMap="personComment">
+        select oj_comment.user_id,
+        oj_comment.content,
+        oj_comment.theme_name,
+        oj_comment.business_type,
+        IF(oj_comment.business_type = 2, concat(oj_course_lesson.course_id, '/',
+        oj_course_lesson.resource_id), oj_comment.business_id) as root_business_id
+        from oj_comment
+        left join oj_course_lesson on oj_comment.business_id = oj_course_lesson.resource_id
+        where oj_comment.user_id = #{userId}
+        <if test="parent != ''">
+            and oj_comment.root_id is not null
+        </if>
+        <if test="parent == ''">
+            and oj_comment.root_id is null
+        </if>
+
+        <include refid="orderByTimeDesc"/>
+    </select>
+
+    <select id="selectNoteByUser" resultMap="personNote">
+        select oj_note.user_id,
+               oj_note.content,
+               oj_note.business_type,
+               oj_note.note_type,
+               (IF(oj_note.business_type = 2, concat(oj_course_lesson.course_id, '/',
+                                                     oj_course_lesson.resource_id), oj_note.business_id)) as resource_id
+        from oj_note
+                 left join oj_course_lesson on oj_note.business_id = oj_course_lesson.resource_id
+        where oj_note.`user_id` = #{userId}
+          and oj_note.note_type = #{noteType}
+    </select>
+
+
+    <select id="selectByUser" resultMap="base">
+        select  (case when oj_course_lesson.resource_id is not null then concat(oj_course_lesson.course_id,'/',oj_course_lesson.resource_id)
+                    when oj_course.resource_id is not null  then oj_course.resource_id
+                    when  oj_practice_theory.resource_id is not null then oj_practice_theory.resource_id  END) as resource_id,
+               (case when oj_course.name is not  null then oj_course.name
+                   when oj_course_lesson.name is not null then oj_course_lesson.name
+                   when oj_practice_theory.title is not null then oj_practice_theory.title
+                   when oj_practice_theory.content is not null then oj_practice_theory.content END) as name
+        from oj_resource_collection
+                 left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and oj_resource_collection.business_type = 3
+                 left join oj_course_lesson on oj_resource_collection.business_id = oj_course_lesson.resource_id and oj_resource_collection.business_type = 4
+                 left join oj_practice_theory on oj_resource_collection.business_id = oj_practice_theory.resource_id and oj_resource_collection.business_type = 0
+        where user_id = #{userId}
+        <if test="null != businessType ">
+            and business_type = #{businessType}
+        </if>
+    </select>
+
+
+    <select id="selectRecordByUser" resultMap="studyRecord">
+        select count(distinct oj_course.resource_id) as course_count,
+               SUM(oj_course_lesson.duration) as duration,
+               SUM(case when oj_course_lesson.type = 0 then 1 END)as theory_count ,
+               SUM(case when oj_course_lesson.type = 1 then 1 END ) as exp_count
+            from oj_lesson_record
+        left join oj_course on oj_course.resource_id = oj_lesson_record.course_id
+        left join oj_course_lesson on oj_course_lesson.resource_id = oj_lesson_record.lesson_id
+        where oj_lesson_record.user_id = #{userId} and oj_course.public = true
+    </select>
+
+    <select id="selectReportCount" resultType="java.lang.Integer">
+        select count(resource_id) from oj_note
+            where note_type =  2 and user_id = #{userId}
+    </select>
+
+    <select id="selectPracticeByUser" resultMap="studyRecord">
+        select sum(score)                              as score,
+               sum(resource_id)                        as report_count,
+               row_number() over (order by score desc) as practice_ranking
+        from oj_lesson_paper_evaluate
+        where submit_user_id = #{userId}
+    </select>
+
+    <select id="selectCourseByTime" resultType="java.util.Date">
+        select create_time
+        from oj_lesson_record
+        where user_id = #{userId}
+          and create_time &gt; #{startTime}
+          and create_time &lt; #{endTime}
+    </select>
+
+    <select id="selectPracticeByTime" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSolved">
+        select *
+        from oj_lesson_paper_evaluate
+        where submit_user_id = #{userId}
+          and create_time &gt; #{startTime}
+          and create_time &lt; #{endTime}
+    </select>
+
+</mapper>

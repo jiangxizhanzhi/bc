@@ -7,7 +7,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cs.controller.req.scene.SceneNodeReq;
 import com.cyberpeace.cs.controller.req.scene.SceneReq;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -37,63 +36,10 @@ public class LocalSceneController {
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
-	// @ApiOperation("读取场景")
-	// @GetMapping("")
-	// public BaseRsp<CrSceneRetrieveRsp> retrieve(@RequestParam("id") String
-	// sceneManagerId,
-	// @RequestParam(value = "role_id", required = false) String roleId) {
-	// JSONObject sceneData = null;
-	// String topoId = null;
-	// JSONObject topoData = null;
-	//
-	// LocalScene localScene = localSceneService.getById(sceneManagerId);
-	// SceneHandler handler = sceneHandler.getHandler(localScene.getBusinessCode());
-	// String roomId = handler.getRoomIdBySceneManagerId(sceneManagerId);
-	// String userId = UserInfoContext.getUserContext().getUserId();
-	//
-	// String sceneId = localScene.getMpSceneId();
-	// if (StringUtils.isNotBlank(sceneId)) {
-	// sceneData = localSceneService.getSceneData(localScene, userId);
-	// if (sceneData != null) {
-	// handler.filterVisibleTopo(sceneData, localScene, userId, roleId);
-	// } else {
-	// log.warn("fail to get scene_data with scene_id [{}], this column will be set
-	// empty",
-	// sceneId);
-	// localSceneService.updateMpSceneId(localScene, "");
-	// }
-	// }
-	// if (sceneData == null) {
-	// topoId = localScene.getTopoId();
-	// }
-	//
-	// if (StringUtils.isNotBlank(topoId)) {
-	// topoData = localSceneService.getTopoData(localScene);
-	// handler.filterVisibleTopo(topoData, localScene, userId, roleId);
-	// }
-	//
-	// CrSceneRetrieveRsp rsp = new CrSceneRetrieveRsp();
-	// rsp.setSceneManagerId(sceneManagerId);
-	// rsp.setRoomId(roomId);
-	// rsp.setSceneData(sceneData);
-	// rsp.setTopoData(topoData);
-	//
-	// return new BaseRsp<>(rsp);
-	// }
-
-	// @ApiOperation("启动场景")
-	// @PostMapping("")
-	// public BaseRsp startScene(@RequestBody SceneReq sceneReq) {
-	// String userId = UserInfoContext.getUserContext().getUserId();
-	// localSceneService.startScene(sceneReq.getLocalSceneId(), userId);
-	// return new BaseRsp();
-	// }
-
 	@ApiOperation("关闭场景")
 	@DeleteMapping("")
 	public BaseRsp stopScene(@RequestBody SceneReq sceneReq) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		localSceneService.stopScene(sceneReq.getLocalSceneId(), userId);
+		localSceneService.stopScene(sceneReq.getLocalSceneId());
 		return new BaseRsp();
 	}
 

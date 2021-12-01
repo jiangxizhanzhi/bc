@@ -12,7 +12,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	String startScene(LocalScene localScene);
 
-	Boolean stopScene(String localSceneId, String userId);
+	Boolean stopScene(String localSceneId);
 
 	Boolean pauseScene(String localSceneId);
 

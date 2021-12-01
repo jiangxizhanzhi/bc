@@ -74,15 +74,6 @@ public class TeamSceneHandler extends SceneHandler {
 		return JsonUtil.toJsonObject(role.getNodes(), CrRoleNodesData.class);
 	}
 
-	public void checkSceneOperationPermission(String roomId, String userId) {
-		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getCode())) {
-			log.error("user does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
-					roomId, userId);
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		}
-	}
-
 	public void checkBeforeStartingScene(String roomId, String userId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getCode())) {
@@ -111,6 +102,18 @@ public class TeamSceneHandler extends SceneHandler {
 	public void setPassThrough(SceneOpsContext sceneOpsContext, LocalScene localScene) {
 		sceneOpsContext.getContext().getPassThrough().put("local_scene_id",
 				localScene.getResourceId());
+	}
+
+	@Override
+	public void checkSceneOpsPermission(LocalScene localScene) {
+		String roomId = localScene.getBusinessInstanceId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		if (!role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.TEACHER.getCode())) {
+			log.error("user does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
+					roomId, userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
 	}
 
 }

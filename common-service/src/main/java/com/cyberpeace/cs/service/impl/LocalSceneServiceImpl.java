@@ -73,9 +73,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public Boolean stopScene(String localSceneId, String userId) {
+	public Boolean stopScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		handler.checkSceneOpsPermission(localScene);
 
 		Boolean result = remoteSceneService.stopScene(sceneOpsContext);
 		if (!result) {

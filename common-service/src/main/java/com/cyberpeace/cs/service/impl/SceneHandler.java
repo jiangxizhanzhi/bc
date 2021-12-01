@@ -84,4 +84,9 @@ public class SceneHandler {
 	 * 填充透明上下文
 	 */
 	public void setPassThrough(SceneOpsContext sceneOpsContext, LocalScene localScene) {}
+
+	/**
+	 * 校验当前用户是否有权限操作场景（关闭、暂停、挂起、解除暂停、恢复等）
+	 */
+	public void checkSceneOpsPermission(LocalScene localScene) {}
 }

@@ -105,7 +105,6 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		LessonConfig firstNode = lessonConfigMapper.getFirstNode(configContext.getCourseId());
 		if (null == firstNode) {
 			LessonConfig newConfig = BeanUtils.copy(configContext, LessonConfig.class);
-			newConfig.setChapterName(configContext.getName());
 			newConfig.setIndex(CommonConstant.ZERO);
 			return newConfig;
 		}
@@ -114,7 +113,6 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 				.selectLastByParent(firstNode.getResourceId());
 
 		LessonConfig lessonConfig = BeanUtils.copy(configContext, LessonConfig.class);
-		lessonConfig.setChapterName(configContext.getName());
 		lessonConfig.setIndex(
 				lastLessonConfig != null ? lastLessonConfig.getIndex() + CommonConstant.ONE
 						: CommonConstant.ZERO);

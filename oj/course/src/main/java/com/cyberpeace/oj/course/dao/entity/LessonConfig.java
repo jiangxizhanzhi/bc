@@ -25,7 +25,7 @@ public class LessonConfig extends BaseTable {
 
 	private String parentId;
 
-	private String chapterName;
+	private String name;
 
 	private Integer nodeType;
 

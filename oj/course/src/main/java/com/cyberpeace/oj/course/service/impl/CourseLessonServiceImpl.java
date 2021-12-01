@@ -354,8 +354,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 课程目录数据组装
 		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
 				.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
-				.nodeType(LessonConfigType.NODE_LESSON.getCode())
-				.chapterName(courseLesson.getName()).build();
+				.nodeType(LessonConfigType.NODE_LESSON.getCode()).name(courseLesson.getName())
+				.build();
 
 		return lessonConfigService.packageLessonConfig(configContext);
 	}
@@ -435,7 +435,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			AddLessonConfigContext configContext = AddLessonConfigContext.builder()
 					.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
-					.chapterName(courseLesson.getName())
+					.name(courseLesson.getName())
 					.nodeType(LessonConfigType.NODE_LESSON.getCode()).build();
 			LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
 			lessonConfigs.add(lessonConfig);
@@ -563,7 +563,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Override
 	public List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId,
-														   AuthContext authContext) {
+			AuthContext authContext) {
 		// 数据校验
 		validateCourse(courseId, authContext);
 		CourseLesson courseLesson = validateLesson(lessonId, authContext.getIsWeb());

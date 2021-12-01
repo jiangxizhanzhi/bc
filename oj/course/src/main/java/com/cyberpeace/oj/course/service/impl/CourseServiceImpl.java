@@ -241,7 +241,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 组装课程目录
 		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
 				.courseId(course.getResourceId()).nodeType(LessonConfigType.NODE_COURSE.getCode())
-				.chapterName(course.getName()).build();
+				.name(course.getName()).build();
 		LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
 
 		// 执行事务存储

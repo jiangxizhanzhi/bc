@@ -19,6 +19,6 @@ public class AddLessonConfigContext implements Serializable {
 
     private String lessonId;
 
-    private String chapterName;
+    private String name;
 
 }

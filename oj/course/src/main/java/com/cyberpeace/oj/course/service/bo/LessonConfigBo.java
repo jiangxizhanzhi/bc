@@ -6,11 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.oj.course.constant.LessonConfigType;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -94,7 +90,7 @@ public class LessonConfigBo implements Serializable {
 		}).flatMap(Collection::stream).collect(Collectors.toList());
 
 		List<LessonConfigBo> configBos = bos.stream().filter(bo -> includeChapter ? includeChapter
-				: bo.getNodeType().intValue() == LessonConfigType.NODE_LESSON.getCode().intValue())
+				: bo.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON.getCode().intValue())
 				.collect(Collectors.toList());
 
 		return configBos;

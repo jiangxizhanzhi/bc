@@ -10,14 +10,39 @@ import java.util.List;
 @Mapper
 public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
-	LessonConfig getFirstNode(@Param("courseId") String courseId);
+	/**
+	 * 获取课程节点
+	 * @param courseId
+	 * @return
+	 */
+	LessonConfig getCourseNode(@Param("courseId") String courseId);
 
+	/**
+	 * 根据父节点获取目录配置信息
+	 * @param parentId
+	 * @return
+	 */
 	List<LessonConfig> listByParent(@Param("parentId") String parentId);
 
+	/**
+	 * 根据课程查询所有课程目录配置
+	 * @param courseId
+	 * @return
+	 */
 	List<LessonConfig> selectByCourse(@Param("courseId") String courseId);
 
-	LessonConfig selectLastByParent(@Param("courseId") String courseId);
+	/**
+	 * 课程下的最后一个课时 第一级目录
+	 * @param rootId
+	 * @return
+	 */
+	LessonConfig selectLast(@Param("rootId") String rootId);
 
+	/**
+	 * 根据课时编号删除课时目录配置
+	 * @param lessonIds
+	 * @return
+	 */
 	int deleteByLessonIds(@Param("lessonIds") List<String> lessonIds);
 
 	/**
@@ -27,4 +52,10 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 */
 	List<LessonConfig> selectByLessonIds(@Param("courseId") String courseId,
 			@Param("lessonIds") List<String> lessonIds);
+
+	/**
+	 * 删除课程目录
+	 * @param courseId
+	 */
+	int deleteByCourse(String courseId);
 }

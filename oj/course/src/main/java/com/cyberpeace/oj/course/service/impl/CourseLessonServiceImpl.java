@@ -39,7 +39,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -345,7 +344,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 课程目录数据组装
 		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
 				.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
-				.nodeType(LessonConfigType.NODE_LESSON.getCode()).name(courseLesson.getName())
+				.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(courseLesson.getName())
 				.build();
 
 		return lessonConfigService.packageLessonConfig(configContext);
@@ -426,8 +425,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			AddLessonConfigContext configContext = AddLessonConfigContext.builder()
 					.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
-					.name(courseLesson.getName()).nodeType(LessonConfigType.NODE_LESSON.getCode())
-					.build();
+					.name(courseLesson.getName())
+					.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).build();
 			LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
 			lessonConfigs.add(lessonConfig);
 		}

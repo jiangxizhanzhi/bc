@@ -14,12 +14,6 @@ import lombok.Getter;
 @TableName("oj_course_lesson")
 public class CourseLesson extends BaseTable {
 
-	/** 必修*/
-	public static final int IS_REQUIRED = 2;
-
-	/** 选修*/
-	public static final int IS_ELECTIVE = 1;
-
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
@@ -91,11 +85,27 @@ public class CourseLesson extends BaseTable {
 		@Getter
 		private String desc;
 
-		private LessonType(Integer code, String desc) {
+		LessonType(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}
 
+	}
+
+	public enum CompulsoryType implements GenericEnum {
+
+		NOT_CONFIGURED(0, "未配置"), ELECTIVE(1, "选修"), REQUIRED(2, "必修");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		CompulsoryType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
 	}
 
 }

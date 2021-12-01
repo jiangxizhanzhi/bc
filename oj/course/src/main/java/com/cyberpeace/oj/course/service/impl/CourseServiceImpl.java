@@ -7,7 +7,6 @@ import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
@@ -115,8 +114,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		courseInfoBo.setCourseDuration(sum);
 
 		// 计算实验课和理论课数量
-		List<CourseLesson> theoryCount = courseLessons
-				.stream().filter(courseLesson -> courseLesson.getType()
+		List<CourseLesson> theoryCount = courseLessons.stream()
+				.filter(courseLesson -> courseLesson.getType()
 						.intValue() == CourseLesson.LessonType.THEORY.getCode().intValue())
 				.collect(Collectors.toList());
 
@@ -240,8 +239,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 组装课程目录
 		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
-				.courseId(course.getResourceId()).nodeType(LessonConfigType.NODE_COURSE.getCode())
-				.name(course.getName()).build();
+				.courseId(course.getResourceId())
+				.nodeType(LessonConfig.NodeType.NODE_COURSE.getCode()).name(course.getName())
+				.build();
 		LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
 
 		// 执行事务存储

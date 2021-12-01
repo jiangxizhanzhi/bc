@@ -5,7 +5,7 @@
 
     <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.LessonConfig"/>
 
-    <select id="getFirstNode" resultMap="base">
+    <select id="getCourseNode" resultMap="base">
         select * from oj_lesson_config
         where course_id = #{courseId} and parent_id is null
     </select>
@@ -22,9 +22,10 @@
         order by `index` asc
     </select>
 
-    <select id="selectLastByParent" resultMap="base">
+    <select id="selectLast" resultMap="base">
         select * from oj_lesson_config
-        where course_id = #{courseId}
+        where parent_id = #{rootId}
+        and lesson_id != null
         order by `index` desc
         limit 0, 1
     </select>
@@ -53,4 +54,9 @@
             </if>
         </where>
     </select>
+
+    <delete id="deleteByCourse">
+        delete from oj_lesson_config
+        where course_id = #{courseId}
+    </delete>
 </mapper>

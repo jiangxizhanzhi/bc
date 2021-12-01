@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +28,9 @@ import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -46,6 +48,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
 	@Override
 	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
 
@@ -55,64 +60,88 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
-		LessonConfig firstNode = lessonConfigMapper.getFirstNode(courseId);
-
+		LessonConfig firstNode = lessonConfigMapper.getCourseNode(courseId);
 		List<LessonConfigBo> configBos = getConfigBo(courseId, authContext);
 
-		Map<String, List<LessonConfigBo>> boMap = configBos.stream()
-				.collect(Collectors.groupingBy(LessonConfigBo::getParentId));
-
+		Map<String, List<LessonConfigBo>> boMap = StreamApiUtils.groupByColumn(configBos,
+				LessonConfigBo::getParentId);
 		LessonConfigBo configBo = BeanUtils.copy(firstNode, LessonConfigBo.class);
-		Course existCourse = courseMapper.selectById(firstNode.getCourseId());
-		configBo.setName(existCourse.getName());
 
-		assembleLessonLib(configBo, boMap);
+		// 设置课时和章节索引
+		setConfigTypeIndex(configBo, boMap);
 		return configBo;
 	}
 
 	@Override
 	public LessonConfigBo updateLessonConfig(LessonConfigBo configBo) {
 
-		List<LessonConfigBo> lessonConfigs = configBo.getChildren();
-		int chapterIndex = 0;
-		int lessonIndex = 0;
+		// 重新编排数据
+		resetLessonConfigBo(configBo);
 
-		if (CollectionUtils.isNotEmpty(lessonConfigs)) {
-			for (LessonConfigBo lessonConfig : lessonConfigs) {
-				if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_CHAPTER
+		// 拆解树
+		List<LessonConfigBo> sortListByTree = configBo.sortListByChildren(true, true);
+		List<LessonConfig> configs = StreamApiUtils.simpleMap(sortListByTree,
+				bo -> BeanUtils.copy(bo, LessonConfig.class));
+
+		// 原始目录删除 新增全新目录
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				lessonConfigMapper.deleteByCourse(configBo.getCourseId());
+				saveOrUpdateBatch(configs);
+			}
+		});
+
+		return configBo;
+	}
+
+	/**
+	 * 重新编排目录数据 重置index
+	 * @param configBo
+	 */
+	private void resetLessonConfigBo(LessonConfigBo configBo) {
+
+		if (CollectionUtils.isNotEmpty(configBo.getChildren())) {
+			// 设置初始数据
+			int chapterIndex = 0;
+			int lessonIndex = 0;
+
+			for (LessonConfigBo lessonConfig : configBo.getChildren()) {
+				// 重置章节数据
+				if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
 						.getCode()) {
 					lessonConfig.setIndex(chapterIndex);
 					chapterIndex += CommonConstant.ONE;
 				}
-				if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_LESSON
+
+				// 重置课时数据
+				if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON
 						.getCode()) {
 					lessonConfig.setIndex(lessonIndex);
 					lessonIndex += CommonConstant.ONE;
 				}
+
+				// 递归编排数据
+				resetLessonConfigBo(lessonConfig);
 			}
 		}
-
-		List<LessonConfigBo> sortListByTree = configBo.sortListByChildren(true, true);
-		List<LessonConfig> configs = sortListByTree.stream()
-				.map(bo -> BeanUtils.copy(bo, LessonConfig.class)).collect(Collectors.toList());
-
-		this.saveOrUpdateBatch(configs);
-		return configBo;
 	}
 
 	@Override
 	public LessonConfig packageLessonConfig(AddLessonConfigContext configContext) {
 
-		LessonConfig firstNode = lessonConfigMapper.getFirstNode(configContext.getCourseId());
+		LessonConfig firstNode = lessonConfigMapper.getCourseNode(configContext.getCourseId());
 		if (null == firstNode) {
 			LessonConfig newConfig = BeanUtils.copy(configContext, LessonConfig.class);
 			newConfig.setIndex(CommonConstant.ZERO);
 			return newConfig;
 		}
 
-		LessonConfig lastLessonConfig = lessonConfigMapper
-				.selectLastByParent(firstNode.getResourceId());
+		// 获取课程下的最后一个课时
+		LessonConfig lastLessonConfig = lessonConfigMapper.selectLast(firstNode.getResourceId());
 
+		// 组装课时信息
 		LessonConfig lessonConfig = BeanUtils.copy(configContext, LessonConfig.class);
 		lessonConfig.setIndex(
 				lastLessonConfig != null ? lastLessonConfig.getIndex() + CommonConstant.ONE
@@ -173,12 +202,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			Map<String, CourseLesson> lessonMap) {
 
 		LessonConfigBo configBo = BeanUtils.copy(lessonConfig, LessonConfigBo.class);
-		if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_LESSON.getCode()) {
+		if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON.getCode()) {
 			CourseLesson lesson = lessonMap.get(lessonConfig.getLessonId());
 			if (null != lesson) {
-				configBo.setName(lesson.getName());
 				configBo.setType(lesson.getType());
-				configBo.setRequired(lesson.getCompulsory().intValue() == CourseLesson.IS_REQUIRED);
+				configBo.setRequired(lesson.getCompulsory()
+						.intValue() == CourseLesson.CompulsoryType.REQUIRED.getCode());
 			}
 		}
 
@@ -188,28 +217,39 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	/**
 	 * 根据最上级节点组装课程目录
 	 *
-	 * @param firstNode 最上级节点 课程节点
+	 * @param node 最上级节点 课程节点
 	 * @param boMap
 	 */
-	private void assembleLessonLib(LessonConfigBo firstNode,
-			Map<String, List<LessonConfigBo>> boMap) {
+	private void setConfigTypeIndex(LessonConfigBo node, Map<String, List<LessonConfigBo>> boMap) {
 
-		// 获取子节点
-		List<LessonConfigBo> bos = boMap.get(firstNode.getResourceId());
-		CourseLesson courseLesson = courseLessonMapper.selectById(firstNode.getLessonId());
-		if (null != courseLesson) {
-			firstNode.setName(courseLesson.getName());
+		// 子节点为空不进行任何操作
+		if (CollectionUtils.isEmpty(node.getChildren())) {
+			return;
 		}
 
-		if (CollectionUtils.isNotEmpty(bos)) {
-			for (int i = 0; i < bos.size(); i++) {
-				LessonConfigBo lessonConfigBo = bos.get(i);
-				lessonConfigBo.setTypeIndex(i + CommonConstant.ONE);
-				assembleLessonLib(lessonConfigBo, boMap);
+		// 设置type_index 章节
+		if (CollectionUtils.isNotEmpty(node.getChildren())) {
+			int chapterTypeIndex = 1;
+			int lessonTypeIndex = 1;
+
+			for (LessonConfigBo nodeChild : node.getChildren()) {
+				if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
+						.getCode().intValue()) {
+					nodeChild.setTypeIndex(chapterTypeIndex);
+					chapterTypeIndex++;
+				}
+
+				if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON
+						.getCode().intValue()) {
+					nodeChild.setTypeIndex(lessonTypeIndex);
+					lessonTypeIndex++;
+				}
+
+				setConfigTypeIndex(nodeChild, boMap);
 			}
-			firstNode.setChildren(bos);
-		}
 
+			node.setChildren(node.getChildren());
+		}
 	}
 
 }

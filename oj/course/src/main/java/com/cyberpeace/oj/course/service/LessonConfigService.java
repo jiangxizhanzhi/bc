@@ -18,7 +18,7 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	LessonConfigBo getLessonConfig(String courseId, AuthContext authContext);
 
 	/**
-	 *  更新系统配置
+	 * 更新课时配置
 	 * @param configBo
 	 * @return
 	 */

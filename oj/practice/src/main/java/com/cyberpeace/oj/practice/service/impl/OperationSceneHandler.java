@@ -1,13 +1,14 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.bo.SceneMetaData;
+import com.cyberpeace.integratation.model.scene.SceneMetaData;
 import com.cyberpeace.integratation.model.scene.SceneMpContext;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.impl.OjSceneHandler;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class OperationSceneHandler extends OjSceneHandler {
 
@@ -42,8 +43,10 @@ public class OperationSceneHandler extends OjSceneHandler {
 		sceneMpContext.getPassThrough().put("local_scene_id", ojLocalScene.getLocalSceneId());
 
 		// 设置场景可存活最大时间
-		PracticeOperation practiceOperation = practiceOperationMapper.selectById(ojLocalScene.getBusinessId());
-		sceneMpContext.getPassThrough().put("destroy_delay", practiceOperation.getDestroyDelay().toString());
+		PracticeOperation practiceOperation = practiceOperationMapper
+				.selectById(ojLocalScene.getBusinessId());
+		sceneMpContext.getPassThrough().put("destroy_delay",
+				practiceOperation.getDestroyDelay().toString());
 
 		return sceneMpContext;
 	}

@@ -60,4 +60,10 @@
         </if>
     </select>
 
+    <select id="selectByLocalSceneId" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
+        select *
+        from cr_business_template
+        where local_scene_id = #{localSceneId}
+    </select>
+
 </mapper>

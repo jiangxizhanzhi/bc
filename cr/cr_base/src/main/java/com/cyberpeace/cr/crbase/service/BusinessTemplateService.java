@@ -38,4 +38,11 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	List<String> selectAuthIdsByUserId(String userId);
 
 	void validateNamePatch(String name, Integer type, String id);
+
+	/**
+	 * 根据 localSceneId查询
+	 * @param resourceId
+	 * @return
+	 */
+    BusinessTemplate getByLocalSceneId(String resourceId);
 }

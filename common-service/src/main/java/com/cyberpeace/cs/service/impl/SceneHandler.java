@@ -4,11 +4,12 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.model.scene.NodeOpsContext;
-import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.integratation.model.scene.NodeOpsContext;
+import com.cyberpeace.integratation.model.scene.SceneMetaData;
+import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.google.common.collect.Maps;
 
@@ -22,6 +23,14 @@ public class SceneHandler {
 		if (null != getBusinessType()) {
 			register.put(this.getBusinessType(), this);
 		}
+	}
+
+	/**
+	 * 获取场景类型 子类可重写该方法
+	 * @return
+	 */
+	public Integer getBusinessType() {
+		return null;
 	}
 
 	/**
@@ -44,14 +53,6 @@ public class SceneHandler {
 	 * @param localScene
 	 */
 	public void checkPauseScene(LocalScene localScene) {}
-
-	/**
-	 * 获取场景类型 子类可重写该方法
-	 * @return
-	 */
-	public Integer getBusinessType() {
-		return null;
-	}
 
 	/**
 	 * 获取场景启动上下文
@@ -79,4 +80,14 @@ public class SceneHandler {
 	public NodeOpsContext getNodeOpsContext(LocalScene localScene) {
 		return new NodeOpsContext();
 	}
+
+	public SceneMetaData getReferenceMetaData(LocalScene localScene) {
+		return null;
+	}
+
+	/**
+	 * 删除场景或删除localScene时清理各实例和模板的 localSceneId字段
+	 * @param localScene 
+	 */
+	public void clearLocalScene(LocalScene localScene) {}
 }

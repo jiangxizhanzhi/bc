@@ -59,8 +59,6 @@ import com.cyberpeace.cr.teamtrain.service.impl.TeamSceneHandler;
 import com.cyberpeace.cs.controller.rsp.CrSceneRetrieveRsp;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -101,9 +99,6 @@ public class TeamTrainRoomController {
 	private TeamSceneHandler teamSceneHandler;
 
 	@Autowired
-	private RemoteSceneService remoteSceneService;
-
-	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
@@ -120,8 +115,7 @@ public class TeamTrainRoomController {
 		LocalScene localScene = sceneService.createLocalScene(
 				LocalScene.BusinessCode.TEAM_TRAINING.getCode(), roomId, room.getCopyedTopoId());
 
-		SceneStartContext context = teamSceneHandler.getSceneStartContext(localScene);
-		String sceneId = remoteSceneService.startScene(context);
+		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);
 
 		room.setLocalSceneId(localScene.getResourceId());
@@ -148,17 +142,15 @@ public class TeamTrainRoomController {
 	@PostMapping("/testScene")
 	public BaseRsp testScene(@RequestBody SceneStartFromTemplateReq sceneStartReq) {
 		String templateId = sceneStartReq.getTemplateId();
-		String userId = UserInfoContext.getUserContext().getUserId();
 		teamSceneHandler.checkBeforeTestingScene(templateId);
 
 		TeamTemplate teamTemplate = teamTemplateService.getById(templateId);
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(teamTemplate.getBusinessTemplateId());
 		LocalScene localScene = sceneService.createLocalScene(
-				LocalScene.BusinessCode.TEAM_TRAINING.getCode(), "", businessTemplate.getTopoId());
+				LocalScene.BusinessCode.TEST_SCENE.getCode(), "", businessTemplate.getTopoId());
 
-		SceneStartContext context = teamSceneHandler.getSceneStartContext(localScene);
-		String sceneId = remoteSceneService.startScene(context);
+		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);
 
 		businessTemplate.setLocalSceneId(localScene.getResourceId());
@@ -174,7 +166,7 @@ public class TeamTrainRoomController {
 				}
 			});
 		} catch (Exception e) {
-			log.error("db error when creating scene: ", e);
+			log.error("db error when testing scene: ", e);
 			localSceneService.deleteRemoteScene(localScene);
 			throw new RuntimeException();
 		}
@@ -203,8 +195,7 @@ public class TeamTrainRoomController {
 					sceneService.filterVisibleTopo(sceneData, nodes);
 				} else {
 					log.error("fail to get sceneData with scene_id [{}]", sceneId);
-					// todo delete localScene
-					localSceneService.updateMpSceneId(localScene, "");
+					localSceneService.clearLocalScene(localScene);
 				}
 			}
 		}

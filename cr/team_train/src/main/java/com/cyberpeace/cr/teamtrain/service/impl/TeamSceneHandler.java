@@ -13,13 +13,14 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneService;
-import com.cyberpeace.cr.crbase.service.context.scene.RoomInfo;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.impl.SceneHandler;
+import com.cyberpeace.integratation.model.scene.SceneMetaData;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +49,11 @@ public class TeamSceneHandler extends SceneHandler {
 	@Override
 	public Integer getBusinessType() {
 		return LocalScene.BusinessCode.TEAM_TRAINING.getCode();
+	}
+
+	@Override
+	public SceneStartContext getSceneStartContext(LocalScene localScene) {
+		return sceneService.makeSceneStartContext(localScene);
 	}
 
 	public CrRoleNodesData getNodes(String userId, String roomId, String roleId) {
@@ -91,9 +97,20 @@ public class TeamSceneHandler extends SceneHandler {
 		}
 	}
 
-	public String getReferenceMetaData(LocalScene localScene) {
+	@Override
+	public SceneMetaData getReferenceMetaData(LocalScene localScene) {
 		TeamRoom room = teamRoomService.getById(localScene.getBusinessInstanceId());
-		return JsonUtil.toJsonString(new RoomInfo(room.getResourceId(), room.getName()));
+		SceneMetaData sceneMetaData = new SceneMetaData();
+		sceneMetaData.setSceneName(room.getName());
+		sceneMetaData.setBusinessInstanceId(room.getResourceId());
+		return sceneMetaData;
+	}
+
+	@Override
+	public void clearLocalScene(LocalScene localScene) {
+		TeamRoom room = teamRoomService.getById(localScene.getBusinessInstanceId());
+		room.setLocalSceneId("");
+		teamRoomService.updateById(room);
 	}
 
 }

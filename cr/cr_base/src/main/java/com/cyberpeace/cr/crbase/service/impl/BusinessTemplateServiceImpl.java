@@ -113,6 +113,16 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
+	public BusinessTemplate getByLocalSceneId(String localSceneId) {
+		BusinessTemplate res = businessTemplateMapper.selectByLocalSceneId(localSceneId);
+		if (null == res) {
+			log.error("failed to find businessTemplate with localSceneId [{}]", localSceneId);
+			throw new RuntimeException();
+		}
+		return res;
+	}
+
+	@Override
 	public IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		Page page = businessTemplateQuery.toPageParam();

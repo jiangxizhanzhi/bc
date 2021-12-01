@@ -18,8 +18,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	Boolean unPauseScene(String localSceneId);
 
-	LocalScene copyLocalScene(Integer businessType, String localSceneId, Boolean clone);
-
 	LocalScene createLocalScene(Integer appId, String topoId);
 
 	/**
@@ -45,8 +43,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	void updateMpSceneId(LocalScene scene, String sceneId);
 
-	void deleteRemoteScene(LocalScene scene);
-
 	void stopLocalScene(LocalScene scene, String userId);
 
 	Boolean restartNode(String localSceneId, String nodeId);
@@ -54,4 +50,16 @@ public interface LocalSceneService extends IService<LocalScene> {
 	Boolean recreateNode(String localSceneId, String nodeId);
 
 	Boolean startFlow(String localSceneId, String nodeId, String flowId);
+
+	/**
+	 * 关闭mp场景
+	 * @param scene
+	 */
+	void deleteRemoteScene(LocalScene scene);
+
+	/**
+	 * 删除场景时清理 localScene
+	 * @param localScene 
+	 */
+	void clearLocalScene(LocalScene localScene);
 }

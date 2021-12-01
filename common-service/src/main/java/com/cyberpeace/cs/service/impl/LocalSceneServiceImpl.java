@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
@@ -122,6 +124,19 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public void clearLocalScene(LocalScene localScene) {
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				handler.clearLocalScene(localScene);
+				removeById(localScene.getResourceId());
+			}
+		});
+	}
+
+	@Override
 	public Boolean pauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		ensureSceneStarted(localScene);
@@ -172,21 +187,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public LocalScene copyLocalScene(Integer businessType, String localSceneId, Boolean clone) {
-		LocalScene localScene = localSceneMapper.selectById(localSceneId);
-		String topoId = localScene.getTopoId();
-
-		if (StringUtils.isBlank(topoId)) {
-			throw new RuntimeException();
-		}
-
-		if (clone) {
-			topoId = remoteTopoService.copyTopo(topoId);
-		}
-		return createLocalScene(businessType, topoId);
-	}
-
-	@Override
 	public LocalScene createLocalScene(Integer businessCode, String topoId) {
 		LocalScene localScene = new LocalScene();
 		localScene.setBusinessCode(businessCode);
@@ -220,10 +220,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Integer getNodeCount(String localSceneId) {
-		LocalScene localScene = localSceneMapper.selectById(localSceneId);
-		if (localScene == null) {
-			throw new RuntimeException();
-		}
+		LocalScene localScene = getById(localSceneId);
 		return getNodeCount(localScene);
 	}
 
@@ -271,8 +268,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
 		SceneOpsContext sceneOpsContext = handler.getSceneOpContext(localScene);
 		remoteSceneService.stopScene(sceneOpsContext);
-
-		removeById(localScene.getResourceId());
 	}
 
 	private void updateAfterStartScene(LocalScene localScene, String sceneId) {

@@ -4,21 +4,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.SceneService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.impl.SceneHandler;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class SceneServiceImpl implements SceneService {
+
+	@Autowired
+	@Qualifier("BasicSceneHandler")
+	SceneHandler sceneHandler;
 
 	@Override
 	public void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes) {
@@ -52,5 +61,17 @@ public class SceneServiceImpl implements SceneService {
 		localScene.setStartTime(new Date());
 
 		return localScene;
+	}
+
+	@Override
+	public SceneStartContext makeSceneStartContext(LocalScene localScene) {
+		SceneStartContext context = new SceneStartContext();
+		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		context.setId(localScene.getTopoId());
+		context.getContext().getPassThrough().put("local_scene_id", localScene.getResourceId());
+		context.setReferenceMetaData(
+				JsonUtil.toJsonString(handler.getReferenceMetaData(localScene)));
+
+		return context;
 	}
 }

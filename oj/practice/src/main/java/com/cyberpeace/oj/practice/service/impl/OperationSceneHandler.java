@@ -39,7 +39,7 @@ public class OperationSceneHandler extends OjSceneHandler {
 		// 调用父类方法设置一部分参数
 		SceneMpContext sceneMpContext = super.getSceneMpContext(ojLocalScene);
 
-		// 透穿数据设置
+		// 透传数据设置
 		sceneMpContext.getPassThrough().put("local_scene_id", ojLocalScene.getLocalSceneId());
 
 		// 设置场景可存活最大时间

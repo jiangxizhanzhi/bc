@@ -14,6 +14,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
@@ -452,15 +453,30 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		ojLocalScene.setLocalSceneId(localScene.getResourceId());
 		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
 
+		// 场景数据初始化插入
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				ojLocalSceneMapper.insert(ojLocalScene);
+				localSceneMapper.insert(localScene);
+			}
+		});
+
 		try {
 			// 场景数据启动
 			String sceneId = localSceneService.startScene(localScene);
 			localScene.setMpSceneId(sceneId);
-		} catch (Exception e) {
 
+			localSceneMapper.updateById(localScene);
+		} catch (Exception e) {
+			// 场景数据删除
+			ojLocalSceneMapper.deleteById(ojLocalScene);
+			localSceneMapper.deleteById(localScene);
 		}
 
-		return null;
+		// 场景数据查询
+		return remoteSceneService.getById(localScene.getMpSceneId(), localScene.getUserId());
 	}
 
 	/**

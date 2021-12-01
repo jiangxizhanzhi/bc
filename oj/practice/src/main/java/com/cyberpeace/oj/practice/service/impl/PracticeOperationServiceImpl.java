@@ -473,6 +473,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			// 场景数据删除
 			ojLocalSceneMapper.deleteById(ojLocalScene);
 			localSceneMapper.deleteById(localScene);
+			log.error("Operation startScene: Scene start failed! error:", e);
+			return null;
 		}
 
 		// 场景数据查询

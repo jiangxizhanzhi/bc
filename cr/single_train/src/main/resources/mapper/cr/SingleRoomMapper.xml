@@ -15,4 +15,42 @@
             </if>
         </where>
     </select>
+    
+    <resultMap id="listResultMap" type="com.cyberpeace.cr.singletrain.dao.entity.SingleRoomList">
+        <id column="resource_id" property="businessTemplate.resourceId"/>
+        <result column="name" property="businessTemplate.name"/>
+        <result column="description" property="businessTemplate.description"/>
+        <result column="difficulty" property="businessTemplate.difficulty"/>
+        <result column="pre_skills" property="singleTemplate.preSkills" jdbcType="ARRAY"/>
+        <result column="train_skills" property="singleTemplate.trainSkills" jdbcType="ARRAY"/>
+        <result column="duration_time" property="singleTemplate.durationTime"/>
+        <result column="start_time" property="singleRoom.startTime"/>
+        <result column="training_record" property="singleRoom.trainingRecord"/>
+        <result column="mission_scheme" property="missionScheme"/>
+    </resultMap>
+
+    <select id="singleTrainSearch" resultMap="listResultMap">
+        select *
+        from cr_business_template T1
+        left join cr_single_template T2 on T1.resource_id = T2.business_template_id
+        left join cr_single_room R1 on T1.resource_id = R1.single_template_id and R1.user_id = #{user_id}
+        <where>
+            T1.business_type = 1
+            <if test="category != null and category">
+                T1.category = #{category}
+            </if>
+            <if test="difficult != null and difficult">
+                T1.difficult = #{difficult}
+            </if>
+            <if test="pattern != null and pattern">
+                T1.name = #{pattern}
+            </if>
+        </where>
+
+    </select>
+    
+    <select id="singleTrainStats" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleTrainStats">
+        select business_template_id, date_format(start_time, '%m-%d') as date, count(date_format(start_time, '%m-%d')) as `count` from cr_train_record
+        where business_type = 1 group by date_format(start_time, '%m-%d');
+    </select>
 </mapper>

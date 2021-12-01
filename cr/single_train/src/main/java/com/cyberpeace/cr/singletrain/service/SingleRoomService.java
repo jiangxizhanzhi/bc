@@ -3,6 +3,7 @@ package com.cyberpeace.cr.singletrain.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
@@ -16,6 +17,6 @@ public interface SingleRoomService extends IService<SingleRoom> {
 
     Boolean deleteRoom(String businessTemplateId);
 
-    IPage<SingleRoomListBo> getSingleTrainPageList(SingleTrainListReq queryParams);
+    ListRsp<SingleRoomListBo> getSingleTrainPageList(SingleTrainListReq queryParams);
 
 }

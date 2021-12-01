@@ -14,7 +14,6 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
     void setEndTime(
             @Param("business_template_id") String businessTemplateId,
             @Param("user_id") String userId,
-            @Param("business_type") Integer businessType,
-            @Param("end_time") Date endTime
+            @Param("business_type") Integer businessType
     );
 }

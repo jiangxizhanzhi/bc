@@ -10,6 +10,7 @@ import java.io.Serializable;
 @ApiModel("单兵训练详情")
 public class SingleRoomBo extends SingleTemplateBo implements Serializable {
 
+    @ApiModelProperty("训练模板id")
     private String resourceId;
 
     @ApiModelProperty("用户使用训练")

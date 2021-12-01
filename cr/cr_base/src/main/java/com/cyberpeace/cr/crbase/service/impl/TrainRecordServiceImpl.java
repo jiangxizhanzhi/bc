@@ -29,7 +29,7 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 
     @Override
     public void updateEndDate(String businessTemplateId, String userId, Integer businessType) {
-        trainRecordMapper.setEndTime(businessTemplateId, userId, businessType, new Date());
+        trainRecordMapper.setEndTime(businessTemplateId, userId, businessType);
     }
 
 }

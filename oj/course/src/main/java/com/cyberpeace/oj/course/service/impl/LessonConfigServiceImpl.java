@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
@@ -134,11 +135,17 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId, false);
 		Map<String, CourseLesson> lessonMap = lessons.stream().collect(
 				Collectors.toMap(CourseLesson::getResourceId, courseLesson -> courseLesson));
+		List<String> lessonIds = StreamApiUtils.simpleMap(lessons, CourseLesson::getResourceId);
 
 		// 查询课程目录数据
-		List<LessonConfig> configs = lessonConfigMapper.selectByCourse(courseId, isPublic);
+		List<LessonConfig> configs = lessonConfigMapper.selectByCourse(courseId);
+
 		List<LessonConfigBo> configBos = configs.stream()
-				.filter(lessonConfig -> StringUtils.isNotBlank(lessonConfig.getParentId()))
+				.filter(lessonConfig -> (StringUtils.isNotBlank(lessonConfig.getParentId())
+						&& StringUtils.isBlank(lessonConfig.getLessonId()))
+						|| (CollectionUtils.isNotEmpty(lessonIds)
+								&& StringUtils.isNotBlank(lessonConfig.getLessonId())
+								&& lessonIds.contains(lessonConfig.getLessonId())))
 				.map(lessonConfig -> {
 					LessonConfigBo configBo = BeanUtils.copy(lessonConfig, LessonConfigBo.class);
 					if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_LESSON
@@ -156,8 +163,6 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		// 学习记录查询
 		if (isPublic) {
-			List<String> lessonIds = lessons.stream().map(CourseLesson::getResourceId)
-					.collect(Collectors.toList());
 			List<LessonRecord> recordList = lessonRecordMapper.listByLessonAndUser(userId,
 					lessonIds);
 			Map<String, LessonRecord> recordMap = recordList.stream().collect(

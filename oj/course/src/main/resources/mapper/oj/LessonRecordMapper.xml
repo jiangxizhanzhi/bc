@@ -6,23 +6,22 @@
     <resultMap id="baseResultMap" type="com.cyberpeace.oj.course.dao.entity.LessonRecord"/>
 
     <select id="selectByUser" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
-        select * from course_lessonrecord
+        select * from oj_lesson_record
         <where>
             <if test="null != userId and userId != ''">
-                user = #{userId}
+                user_id = #{userId}
             </if>
-
         </where>
     </select>
 
     <select id="listByLessonAndUser" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
-        select * from course_lessonrecord
+        select * from oj_lesson_record
         <where>
             <if test="null != userId and userId != ''">
-                and user = #{userId}
+                and user_id = #{userId}
             </if>
             <if test="null != lessonIds and lessonIds.size > 0">
-                and lesson in
+                and lesson_id in
                 <foreach collection="lessonIds" open="(" close=")" item="lessonId" separator=",">
                     #{lessonId}
                 </foreach>
@@ -31,23 +30,23 @@
     </select>
 
     <select id="selectByTime" resultMap="baseResultMap">
-        select * from course_lessonrecord
+        select * from oj_lesson_record
         <where>
             <if test="null != userId and userId != ''">
-                and user = #{userId}
+                and user_id = #{userId}
             </if>
             <if test="null != start">
-                and start_time &gt; #{start}
+                and crete_time &gt; #{start}
             </if>
             <if test="null != end">
-                and start_time &lt; #{end}
+                and crete_time &lt; #{end}
             </if>
         </where>
-        order by start_time asc
+        order by crete_time asc
     </select>
 
     <select id="selectByLessonAndUser" resultMap="baseResultMap">
-        select * from course_lessonrecord
+        select * from oj_lesson_record
         <where>
             and `user` = #{userId}
             and lesson = #{lessonId}

@@ -31,7 +31,7 @@ public class CourseInfoBo implements Serializable {
 	private String logo;
 
 	@ApiModelProperty("课程大纲")
-	private String courseWriteup;
+	private String outline;
 
 	@ApiModelProperty("课程难度")
 	private Integer difficulty;

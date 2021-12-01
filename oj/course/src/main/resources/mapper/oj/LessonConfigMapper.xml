@@ -13,18 +13,12 @@
     <select id="listByParent" resultMap="base">
         select * from oj_lesson_config
         where parent_id = #{parentId}
-        <if test="isPublic">
-            and `public` = #{isPublic}
-        </if>
         order by `index` asc
     </select>
 
     <select id="selectByCourse" resultMap="base">
         select * from oj_lesson_config
         where course_id = #{courseId}
-        <if test="isPublic">
-            and `public` = #{isPublic}
-        </if>
         order by `index` asc
     </select>
 
@@ -46,4 +40,17 @@
             </where>
         </if>
     </delete>
+
+    <select id="selectByLessonIds" resultMap="base">
+        select * from oj_lesson_config
+        <where>
+            course_id = #{courseId}
+            <if test="lessonIds != null and lessonIds.size() != 0">
+                and lesson_id in
+                <foreach collection="lessonIds" separator="," open="(" close=")" item="lessonId">
+                    #{lessonId}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

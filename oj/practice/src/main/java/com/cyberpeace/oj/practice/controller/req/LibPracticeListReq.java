@@ -17,7 +17,7 @@ public class LibPracticeListReq extends PageReqBase {
 	private String categoryId;
 
 	@ApiModelProperty(name = "question_type", value = "题型")
-	private String questionType;
+	private Integer questionType;
 
 	public void setPractice_set_id(String practiceSetId) {
 		this.practiceSetId = practiceSetId;
@@ -27,7 +27,7 @@ public class LibPracticeListReq extends PageReqBase {
 		this.categoryId = categoryId;
 	}
 
-	public void setQuestion_type(String questionType) {
+	public void setQuestion_type(Integer questionType) {
 		this.questionType = questionType;
 	}
 }

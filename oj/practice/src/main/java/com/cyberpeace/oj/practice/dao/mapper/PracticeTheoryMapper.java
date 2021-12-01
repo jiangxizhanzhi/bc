@@ -31,18 +31,11 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
 	/**
 	 * 随机查询理论习题 #外部接口使用
-	 * @param pattern
-	 * @param practiceSet
-	 * @param category
-	 * @param questionType
-	 * @param difficulty
+	 * @param theoryListQuery
 	 * @param count
 	 * @return
 	 */
-	List<PracticeTheory> randomChoice(@Param("pattern") String pattern,
-			@Param("practice_set") String practiceSet, @Param("category") String category,
-			@Param("question_type") Integer questionType, @Param("difficulty") Integer difficulty,
-			@Param("limit") Integer count);
+	List<PracticeTheory> randomChoice(@Param("query") TheoryListQuery theoryListQuery, @Param("limit") Integer count);
 
 	/**
 	 * 根据编号查询理论习题 #外部接口使用

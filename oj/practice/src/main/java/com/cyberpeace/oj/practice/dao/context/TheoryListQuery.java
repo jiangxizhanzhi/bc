@@ -6,16 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class TheoryListQuery implements Serializable {
-
-	private List<String> resourceIds;
-
-	private String practiceSetId;
-
-	private List<String> categoryIds;
+public class TheoryListQuery extends OperationListQuery{
 
 	private Integer questionType;
-
-	private String pattern;
 
 }

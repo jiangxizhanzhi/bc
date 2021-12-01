@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.practice.controller.req.RandomPracticeReq;
 import com.cyberpeace.oj.practice.controller.res.LibSelectRes;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
@@ -19,6 +20,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -109,6 +111,30 @@ public class AdminPaperController {
 		}
 
 		return new BaseRsp<>(libInfoBo);
+	}
+
+	@ApiOperation("获取随机熟练的题目")
+	@GetMapping("/random/practice")
+	public BaseRsp<List<LibPracticeListBo>>
+			getRandomPractice(@Validated RandomPracticeReq randomPracticeReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+
+		RandomPracticeQuery practiceQuery = BeanUtils.copy(randomPracticeReq,
+				RandomPracticeQuery.class);
+
+		// 分类数据组装
+		if (StringUtils.isNotBlank(randomPracticeReq.getCategoryId())) {
+			List<String> categoryIds = practiceCategoryService
+					.selectChildrenIds(randomPracticeReq.getCategoryId(), true);
+			practiceQuery.setCategoryId(categoryIds);
+		}
+
+		List<LibPracticeListBo> randomPracticeList = paperService
+				.selectRandomPractice(practiceQuery, randomPracticeReq.getScore(), authContext);
+
+		return new BaseRsp<>(randomPracticeList);
 	}
 
 	/**

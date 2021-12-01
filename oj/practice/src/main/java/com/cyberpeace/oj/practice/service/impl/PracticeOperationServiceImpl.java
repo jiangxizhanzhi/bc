@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cs.service.LocalSceneService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +103,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -438,7 +442,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 						"StartScene not found localScene data! oj_local_scene=[{}], local_scene_id=[{}]",
 						JsonUtil.toJsonString(existOjLocalScene),
 						existOjLocalScene.getLocalSceneId());
-				localSceneMapper.deleteById(existOjLocalScene.getResourceId());
+				throw new IllegalArgumentException("未检索到场景数据！");
 			}
 		}
 
@@ -448,11 +452,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		ojLocalScene.setLocalSceneId(localScene.getResourceId());
 		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
 
-		// 场景数据启动
-		SceneStartContext sceneStartContext = new SceneStartContext();
-		sceneStartContext.setReferenceMetaData(initReferenceMetaData(operation, authContext));
+		try {
+			// 场景数据启动
+			String sceneId = localSceneService.startScene(localScene);
+			localScene.setMpSceneId(sceneId);
+		} catch (Exception e) {
 
-		remoteSceneService.startScene(sceneStartContext);
+		}
 
 		return null;
 	}

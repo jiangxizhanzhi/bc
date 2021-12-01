@@ -128,28 +128,4 @@ public class PracticeOperationController {
 		return new BaseRsp<>(sceneData);
 	}
 
-	@GetMapping("/ws/operation_scene")
-	@ApiOperation("实操练习websocket链接")
-	public BaseRsp operationWsSocket(@RequestParam("resource_id") String resourceId) {
-
-		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
-		if (null == operation) {
-			log.error("operationWsSocket: operation practice not found! operation_practice_id=[{}]",
-					resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
-		}
-
-		if (!operation.getDynamicEnv() || StringUtils.isBlank(operation.getTopoId())) {
-			throw new InvalidParamException("未检索到场景信息！");
-		}
-
-		String share = operation.getSceneShareMode().intValue() == SceneShare.SHARED.getCode()
-				.intValue() ? CommonConstant.TRUE.toString()
-						: CommonConstant.FALSE + UserInfoContext.getUserContext().getUserId();
-
-		OperationWsMessageIdentifier messageIdentifier = OperationWsMessageIdentifier.builder()
-				.practiceId(resourceId).topoId(operation.getTopoId()).sceneShare(share).build();
-
-		return null;
-	}
 }

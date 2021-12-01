@@ -24,4 +24,13 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 
 	List<String> selectByCategoryIds(@Param("categoryIds") List<String> categoryIds,
 			@Param("isPublic") Boolean isPublic);
+
+	/**
+	 * 随机获取实操题
+	 * @param listQuery
+	 * @param count
+	 * @return
+	 */
+	List<PracticeOperation> randomChoice(@Param("query") OperationListQuery listQuery,
+			@Param("limit") Integer count);
 }

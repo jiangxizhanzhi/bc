@@ -8,6 +8,9 @@ import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.bo.AddOrUpdatePaperContext;
 import com.cyberpeace.oj.practice.service.bo.LibPracticeListBo;
 import com.cyberpeace.oj.practice.service.bo.LibPracticeQueryBo;
+import com.cyberpeace.oj.practice.service.bo.RandomPracticeQuery;
+
+import java.util.List;
 
 public interface PaperService extends IService<Paper> {
 
@@ -32,5 +35,16 @@ public interface PaperService extends IService<Paper> {
 	 * @param authContext
 	 * @return
 	 */
-    IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo, AuthContext authContext);
+	IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo,
+			AuthContext authContext);
+
+	/**
+	 * 获取随机数量习题
+	 * @param practiceQuery
+	 * @param score
+	 * @param authContext 权限数据
+	 * @return
+	 */
+	List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery, Double score,
+			AuthContext authContext);
 }

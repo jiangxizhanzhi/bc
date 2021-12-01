@@ -13,6 +13,7 @@ import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.service.bo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.security.Escape;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -153,22 +154,40 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
 					authContext.getIsWeb());
 
-			IPage<LibPracticeListBo> convert = iPage.convert(practiceOperation -> {
-				LibPracticeListBo listBo = BeanUtils.copy(practiceOperation,
-						LibPracticeListBo.class);
-
-				// 分类数据设置
-				PracticeCategory practiceCategory = practiceCategoryMapper
-						.selectById(practiceOperation.getCategoryId());
-				if (null != practiceCategory) {
-					listBo.setCategoryName(practiceCategory.getName());
-				}
-
-				listBo.setPracticeType(PracticeCategory.PracticeType.OPERATION.getCode());
-				return listBo;
-			});
+			IPage<LibPracticeListBo> convert = iPage
+					.convert(practiceOperation -> operationToListBo(practiceOperation));
 
 			return convert;
+		}
+	}
+
+	@Override
+	public List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery,
+			Double score, AuthContext authContext) {
+
+		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(permissionIds)
+				|| (StringUtils.isNotBlank(practiceQuery.getPracticeSetId())
+						&& !permissionIds.contains(practiceQuery.getPracticeSetId()))) {
+			return null;
+		}
+
+		PracticeSet practiceSet = practiceSetMapper.selectById(practiceQuery.getPracticeSetId());
+		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
+				.getCode()) {
+			TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
+
+			List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
+					practiceQuery.getCount());
+			theories.forEach(practiceTheory -> practiceTheory.setScore(score));
+			return StreamApiUtils.simpleMap(theories,
+					practiceTheory -> theoryToListBo(practiceTheory));
+		} else {
+			OperationListQuery listQuery = BeanUtils.copy(practiceQuery, OperationListQuery.class);
+			List<PracticeOperation> operations = practiceOperationMapper.randomChoice(listQuery,
+					practiceQuery.getCount());
+			operations.forEach(operation -> operation.setScore(score));
+			return StreamApiUtils.simpleMap(operations, operation -> operationToListBo(operation));
 		}
 	}
 
@@ -179,26 +198,62 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
 				authContext.getIsWeb());
 
-		IPage<LibPracticeListBo> convert = iPage.convert(practiceTheory -> {
-			LibPracticeListBo bo = BeanUtils.copy(practiceTheory, LibPracticeListBo.class);
-			bo.setTitle(practiceTheory.getContent());
-			bo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
-
-			PracticeCategory practiceCategory = practiceCategoryMapper
-					.selectById(practiceTheory.getCategoryId());
-			if (null != practiceCategory) {
-				bo.setCategoryName(practiceCategory.getName());
-			}
-			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
-					.getCode().intValue()) {
-				List<JSONObject> objects = JsonUtil.toJsonObjectArray(practiceTheory.getBlank(),
-						JSONObject.class);
-				bo.setBlankCount(objects.size());
-			}
-			return bo;
-		});
+		IPage<LibPracticeListBo> convert = iPage
+				.convert(practiceTheory -> theoryToListBo(practiceTheory));
 
 		return convert;
+	}
+
+	/**
+	 * 实操习题数据转换为列表数据
+	 * @param operation
+	 * @return
+	 */
+	private LibPracticeListBo operationToListBo(PracticeOperation operation) {
+
+		LibPracticeListBo listBo = BeanUtils.copy(operation, LibPracticeListBo.class);
+
+		// 分类数据设置
+		PracticeCategory practiceCategory = practiceCategoryMapper
+				.selectById(operation.getCategoryId());
+		if (null != practiceCategory) {
+			listBo.setCategoryName(practiceCategory.getName());
+		}
+
+		// 设置习题类型
+		listBo.setPracticeType(PracticeCategory.PracticeType.OPERATION.getCode());
+		listBo.setQuestionType(PracticeTheory.TheoryType.OPERATION.getCode());
+		return listBo;
+	}
+
+	/**
+	 * 基础习题数据转换为列表数据
+	 * @param practiceTheory
+	 * @return
+	 */
+	private LibPracticeListBo theoryToListBo(PracticeTheory practiceTheory) {
+
+		LibPracticeListBo bo = BeanUtils.copy(practiceTheory, LibPracticeListBo.class);
+		bo.setTitle(practiceTheory.getContent());
+		bo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+		bo.setQuestionType(practiceTheory.getTheoryType());
+
+		// 分类数据
+		PracticeCategory practiceCategory = practiceCategoryMapper
+				.selectById(practiceTheory.getCategoryId());
+		if (null != practiceCategory) {
+			bo.setCategoryName(practiceCategory.getName());
+		}
+
+		// 填空相关数据
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+				.getCode().intValue()) {
+			List<JSONObject> objects = JsonUtil.toJsonObjectArray(practiceTheory.getBlank(),
+					JSONObject.class);
+			bo.setBlankCount(objects.size());
+		}
+
+		return bo;
 	}
 
 	/**

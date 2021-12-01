@@ -19,7 +19,10 @@ import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 	@Autowired
@@ -44,6 +47,8 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		List<String> roleList = teamTrainTemplateRoleList.stream()
 				.map(TeamTrainTemplateRole::getName).distinct().collect(Collectors.toList());
 		if (roleList.size() < teamTrainTemplateRoleList.size()) {
+			log.error("role name duplicated！");
+
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NAME_DUPLICATE);
 		}
 		// 保存团队训练模板

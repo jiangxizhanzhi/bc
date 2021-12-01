@@ -100,6 +100,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 			for (CrTask task : taskList) {
 				TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
+
 				taskContext.setMission(missionMap.get(task.getMissionId()));
 				taskContextList.add(taskContext);
 			}

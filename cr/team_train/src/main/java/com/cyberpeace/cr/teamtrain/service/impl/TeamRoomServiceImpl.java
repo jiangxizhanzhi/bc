@@ -385,7 +385,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		for (TaskContext task : taskList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 
-			timeLineEvent.setTime(task.getReportTime());
+			timeLineEvent.setTime(task.getLastSubmitTime());
 			timeLineEvent.setTitle(missionService.getById(task.getMissionId()).getTitle());
 			timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
 
@@ -479,7 +479,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!crRole.getRoleGroup().equals(teacher)) {
-			log.error("User does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
+			log.error("user does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
 					roomId, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}

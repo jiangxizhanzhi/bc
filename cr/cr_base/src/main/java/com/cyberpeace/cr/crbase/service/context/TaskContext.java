@@ -28,7 +28,7 @@ public class TaskContext extends BaseTable {
 
 	private Date releaseTime;
 
-	private Date reportTime;
+	private Date lastSubmitTime;
 
 	private Date taskStartTime;
 

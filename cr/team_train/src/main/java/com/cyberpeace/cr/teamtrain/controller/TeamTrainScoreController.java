@@ -50,10 +50,12 @@ import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "团队训练评分")
 @RestController
 @RequestMapping("/cr/training_team/training_team")
+@Slf4j
 public class TeamTrainScoreController {
 
 	@Autowired
@@ -141,16 +143,21 @@ public class TeamTrainScoreController {
 				.parseInt(studentScoreReq.getTrainingPercentage().replace("%", ""));
 		if (trainingPercentage < TeamScore.ScoreValue.MIN_PERCENTAGE.getCode()
 				|| trainingPercentage > TeamScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
+			log.error("trainingPercentage out of range！value=[{}]", trainingPercentage);
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 		Integer abilityPercentage = Integer
 				.parseInt(studentScoreReq.getAbilityPercentage().replace("%", ""));
 		if (abilityPercentage < TeamScore.ScoreValue.MIN_PERCENTAGE.getCode()
 				|| abilityPercentage > TeamScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
+			log.error("abilityPercentage out of range！value=[{}]", abilityPercentage);
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 		if (abilityPercentage + trainingPercentage != TeamScore.ScoreValue.SUM_OF_PERCENTAGE_INT
 				.getCode()) {
+			log.error("sumPercentage is wrong！value=[{}],sum=[{}]",
+					abilityPercentage + trainingPercentage,
+					TeamScore.ScoreValue.SUM_OF_PERCENTAGE_INT.getCode());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 
 		}
@@ -159,17 +166,23 @@ public class TeamTrainScoreController {
 				.toJsonObjectArray(studentScoreReq.getAbilityScore(), Integer.class);
 
 		if (abilityScoreList.size() != TeamScore.ScoreValue.ABILITY_SCORE_NUM.getCode()) {
+			log.error("abilityScoreListSize is wrong！value=[{}],size=[{}]", abilityScoreList.size(),
+					TeamScore.ScoreValue.ABILITY_SCORE_NUM.getCode());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 		IntSummaryStatistics stats = abilityScoreList.stream().mapToInt((x) -> x)
 				.summaryStatistics();
 		if (stats.getMax() > TeamScore.ScoreValue.MAX_ABILITY_SCORE_VALUE.getCode()
 				|| stats.getMin() < TeamScore.ScoreValue.MIN_ABILITY_SCORE_VALUE.getCode()) {
+			log.error("abilityScore out of range！maxValue=[{}],minValue=[{}]", stats.getMax(),
+					stats.getMin());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
 		if (studentScoreReq.getComment().length() > TeamScore.ScoreValue.MAX_COMMENT_LEN
 				.getCode()) {
+			log.error("comment length out of range！comment length=[{}]",
+					studentScoreReq.getComment().length());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 

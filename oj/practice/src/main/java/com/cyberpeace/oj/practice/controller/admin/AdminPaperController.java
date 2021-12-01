@@ -2,21 +2,6 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import java.util.List;
 
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.oj.practice.controller.req.RandomPracticeReq;
-import com.cyberpeace.oj.practice.controller.res.LibSelectRes;
-import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
-import com.cyberpeace.oj.practice.service.PracticeSetService;
-import com.cyberpeace.oj.practice.service.bo.*;
-import com.google.common.collect.Lists;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +16,25 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.practice.controller.req.LibPracticeListReq;
+import com.cyberpeace.oj.practice.controller.req.RandomPracticeReq;
+import com.cyberpeace.oj.practice.controller.res.LibSelectRes;
+import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.bo.*;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "oj-后台课后练习和试卷相关api")
@@ -50,9 +48,6 @@ public class AdminPaperController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
-
-	@Autowired
-	private PracticeCategoryMapper practiceCategoryMapper;
 
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;

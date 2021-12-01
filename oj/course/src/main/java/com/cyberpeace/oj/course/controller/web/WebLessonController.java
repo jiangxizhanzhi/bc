@@ -44,8 +44,9 @@ public class WebLessonController {
 	public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId,
 			@RequestParam("lesson_id") String lessonId) {
 
-		String userId = UserInfoContext.getUserContext().getUserId();
-		LessonInfoBo infoBo = courseLessonService.getLessonDetail(userId, courseId, lessonId);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, authContext);
 		return new BaseRsp<>(infoBo);
 	}
 

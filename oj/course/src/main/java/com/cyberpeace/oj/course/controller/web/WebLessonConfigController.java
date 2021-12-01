@@ -1,5 +1,8 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,17 +25,18 @@ import io.swagger.annotations.ApiParam;
 @RequiresAuthentication
 public class WebLessonConfigController {
 
-    @Autowired
-    private LessonConfigService lessonConfigService;
+	@Autowired
+	private LessonConfigService lessonConfigService;
 
-    @GetMapping("")
-    @ApiOperation("课程目录查询")
-    public BaseRsp<LessonConfigBo> getLessonConfig(@ApiParam(name = "course_id",
-            value = "课程编号") @RequestParam("course_id") String courseId) {
+	@GetMapping("")
+	@ApiOperation("课程目录查询")
+	public BaseRsp<LessonConfigBo> getLessonConfig(@ApiParam(name = "course_id",
+			value = "课程编号") @RequestParam("course_id") String courseId) {
 
-        String userId = UserInfoContext.getUserContext().getUserId();
-        LessonConfigBo config = lessonConfigService.getLessonConfig(courseId, userId, true);
-        return new BaseRsp<>(config);
-    }
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		LessonConfigBo config = lessonConfigService.getLessonConfig(courseId, authContext);
+		return new BaseRsp<>(config);
+	}
 
 }

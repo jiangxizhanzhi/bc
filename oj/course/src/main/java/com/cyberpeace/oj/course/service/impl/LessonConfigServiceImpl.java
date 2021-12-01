@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -46,7 +47,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	private LessonRecordMapper lessonRecordMapper;
 
 	@Override
-	public LessonConfigBo getLessonConfig(String courseId, String userId, Boolean isPublic) {
+	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
 
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
@@ -56,7 +57,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		LessonConfig firstNode = lessonConfigMapper.getFirstNode(courseId);
 
-		List<LessonConfigBo> configBos = lessonConfigToBo(userId, courseId, isPublic);
+		List<LessonConfigBo> configBos = getConfigBo(courseId, authContext);
 
 		Map<String, List<LessonConfigBo>> boMap = configBos.stream()
 				.collect(Collectors.groupingBy(LessonConfigBo::getParentId));
@@ -123,16 +124,14 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 数据格式转换
-	 *
-	 * @param userId
 	 * @param courseId
-	 * @param isPublic
+	 * @param authContext
 	 * @return
 	 */
-	private List<LessonConfigBo> lessonConfigToBo(String userId, String courseId,
-			Boolean isPublic) {
+	private List<LessonConfigBo> getConfigBo(String courseId, AuthContext authContext) {
 		// 查询课程下所有课时
-		List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId, false);
+		List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId,
+				authContext.getIsWeb());
 		Map<String, CourseLesson> lessonMap = lessons.stream().collect(
 				Collectors.toMap(CourseLesson::getResourceId, courseLesson -> courseLesson));
 		List<String> lessonIds = StreamApiUtils.simpleMap(lessons, CourseLesson::getResourceId);
@@ -140,31 +139,22 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		// 查询课程目录数据
 		List<LessonConfig> configs = lessonConfigMapper.selectByCourse(courseId);
 
-		List<LessonConfigBo> configBos = configs.stream()
-				.filter(lessonConfig -> (StringUtils.isNotBlank(lessonConfig.getParentId())
+		// 过滤掉课程节点
+		List<LessonConfig> lessonConfigs = StreamApiUtils.simpleFilter(configs,
+				lessonConfig -> (StringUtils.isNotBlank(lessonConfig.getParentId())
 						&& StringUtils.isBlank(lessonConfig.getLessonId()))
 						|| (CollectionUtils.isNotEmpty(lessonIds)
 								&& StringUtils.isNotBlank(lessonConfig.getLessonId())
-								&& lessonIds.contains(lessonConfig.getLessonId())))
-				.map(lessonConfig -> {
-					LessonConfigBo configBo = BeanUtils.copy(lessonConfig, LessonConfigBo.class);
-					if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_LESSON
-							.getCode()) {
-						CourseLesson lesson = lessonMap.get(lessonConfig.getLessonId());
-						if (null != lesson) {
-							configBo.setName(lesson.getName());
-							configBo.setType(lesson.getType());
-							configBo.setRequired(
-									lesson.getCompulsory().intValue() == CourseLesson.IS_REQUIRED);
-						}
-					}
-					return configBo;
-				}).collect(Collectors.toList());
+								&& lessonIds.contains(lessonConfig.getLessonId())));
 
-		// 学习记录查询
-		if (isPublic) {
-			List<LessonRecord> recordList = lessonRecordMapper.listByLessonAndUser(userId,
-					lessonIds);
+		// 数据类型转换
+		List<LessonConfigBo> configBos = StreamApiUtils.simpleMap(lessonConfigs,
+				lessonConfig -> configToBo(lessonConfig, lessonMap));
+
+		// 前台掉用 查询学习记录
+		if (authContext.getIsWeb()) {
+			List<LessonRecord> recordList = lessonRecordMapper
+					.listByLessonAndUser(authContext.getUserId(), lessonIds);
 			Map<String, LessonRecord> recordMap = recordList.stream().collect(
 					Collectors.toMap(LessonRecord::getLesson, lessonRecord -> lessonRecord));
 			configBos.forEach(lessonConfig -> lessonConfig
@@ -172,6 +162,27 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		}
 
 		return configBos;
+	}
+
+	/**
+	 * 实体类数据转换
+	 * @param lessonConfig
+	 * @return
+	 */
+	private LessonConfigBo configToBo(LessonConfig lessonConfig,
+			Map<String, CourseLesson> lessonMap) {
+
+		LessonConfigBo configBo = BeanUtils.copy(lessonConfig, LessonConfigBo.class);
+		if (lessonConfig.getNodeType().intValue() == LessonConfigType.NODE_LESSON.getCode()) {
+			CourseLesson lesson = lessonMap.get(lessonConfig.getLessonId());
+			if (null != lesson) {
+				configBo.setName(lesson.getName());
+				configBo.setType(lesson.getType());
+				configBo.setRequired(lesson.getCompulsory().intValue() == CourseLesson.IS_REQUIRED);
+			}
+		}
+
+		return configBo;
 	}
 
 	/**

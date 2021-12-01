@@ -2,8 +2,6 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
-import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
-import com.cyberpeace.oj.course.service.bo.AdminLessonPracticeBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -33,11 +31,12 @@ import com.cyberpeace.oj.course.controller.res.TopoSceneDataRes;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
 import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
-import com.cyberpeace.oj.course.service.bo.LessonPracticeBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonPracticeBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;

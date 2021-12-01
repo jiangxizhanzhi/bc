@@ -16,7 +16,6 @@ import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.oj.ojbase.service.NoteService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.constant.LessonConfigType;
@@ -136,7 +134,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private NoteMapper noteMapper;
 
 	@Override
-	public LessonInfoBo getLessonDetail(String userId, String courseId, String lessonId) {
+	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
 
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 		if (null == lesson) {
@@ -157,14 +155,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		infoBo.setLessonFile(attachmentBos);
 
 		// 上节和下节课程查询
-		LessonConfigBo lessonConfig = lessonConfigService.getLessonConfig(courseId, userId, true);
+		LessonConfigBo lessonConfig = lessonConfigService.getLessonConfig(courseId, authContext);
 		List<LessonConfigBo> boList = lessonConfig.sortListByChildren(false, true);
 		List<String> sortLessonIds = boList.stream().map(LessonConfigBo::getLessonId)
 				.collect(Collectors.toList());
 		infoBo.setPreAndNext(infoBo, sortLessonIds);
 
 		// 是否收藏
-		Boolean collection = resourceCollectionService.selectByUnique(userId,
+		Boolean collection = resourceCollectionService.selectByUnique(authContext.getUserId(),
 				ResourceCollection.BusinessType.LESSON.getCode(), lessonId);
 		infoBo.setIsCollection(collection);
 
@@ -173,7 +171,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
 			OjLocalScene ojLocalScene = lesson.getSceneShareMode().intValue() == SceneShare.PRIVATE
 					.getCode().intValue()
-							? ojLocalSceneMapper.selectByUserAndBid(userId, lessonId,
+							? ojLocalSceneMapper.selectByUserAndBid(authContext.getUserId(), lessonId,
 									CommonConstant.TRUE)
 							: ojLocalSceneMapper.selectByBidAndShared(lessonId, CommonConstant.TRUE,
 									CommonConstant.TRUE);
@@ -182,19 +180,19 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
 				if (null != localScene) {
 					JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
-							userId);
+							authContext.getUserId());
 					infoBo.setSceneData(sceneData);
 				}
 			}
 		}
 
 		// 添加学习记录
-		LessonRecord record = lessonRecordMapper.selectByLessonAndUser(lessonId, userId);
+		LessonRecord record = lessonRecordMapper.selectByLessonAndUser(lessonId, authContext.getUserId());
 		if (null == record) {
 			LessonRecord lessonRecord = new LessonRecord();
 			lessonRecord.setLesson(lessonId);
 			lessonRecord.setProgress(LessonRecord.FINISH);
-			lessonRecord.setUser(userId);
+			lessonRecord.setUser(authContext.getUserId());
 			lessonRecord.setStartTime(new Date());
 			lessonRecord.setEndTime(new Date());
 			lessonRecord.setCourse(courseId);
@@ -247,7 +245,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		courseLesson.setBuiltin(CommonConstant.FALSE);
 
 		// 处理课后练习数据
-		AddOrUpdatePaperContext paperContext = packagePaperContext(courseLesson, practiceList);
+		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 
 		// 处理课程目录数据
 		courseLesson.setResourceId(IDGeneratorUtil.getID());
@@ -285,7 +283,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public CourseLesson updateLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
 
-		AddOrUpdatePaperContext paperContext = packagePaperContext(courseLesson, practiceList);
+		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
@@ -318,30 +316,22 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	 * @param practiceList
 	 * @return
 	 */
-	private AddOrUpdatePaperContext packagePaperContext(CourseLesson courseLesson,
+	private PaperContext packagePaperContext(CourseLesson courseLesson,
 			List<PaperPracticeContext> practiceList) {
 
-		AddOrUpdatePaperContext paperContext = new AddOrUpdatePaperContext();
-
 		if (StringUtils.isNotBlank(courseLesson.getResourceId())) {
-			CourseLesson lesson = courseLessonMapper.selectById(courseLesson.getResourceId());
-			if (null == lesson) {
-				log.error("Lesson not found! lesson_id=[{}]", courseLesson.getResourceId());
-				throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
-			}
-			paperContext.setPracticeList(practiceList);
-			paperContext.setResourceId(courseLesson.getPaperId());
+
+			// 试卷数据修改
+			return PaperContext.builder().resourceId(courseLesson.getPaperId())
+					.practiceList(practiceList).build();
 		} else {
 
-			// 试卷数据组装
-			paperContext.setName(courseLesson.getName());
-			paperContext.setDescription(courseLesson.getName());
-			paperContext.setIsPublic(CommonConstant.TRUE);
-			paperContext.setPracticeList(practiceList);
-			paperContext.setType(Paper.PaperType.LESSON.getCode());
-		}
+			// 试卷初始数据组装
+			return PaperContext.builder().description(courseLesson.getName())
+					.name(courseLesson.getName()).isPublic(CommonConstant.TRUE)
+					.practiceList(practiceList).type(Paper.PaperType.LESSON.getCode()).build();
 
-		return paperContext;
+		}
 	}
 
 	/**
@@ -597,7 +587,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
-		AddOrUpdatePaperContext paperContext = packagePaperContext(courseLesson, practiceList);
+		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 		Paper paper = paperService.update(paperContext);
 		return null != paper;
 	}

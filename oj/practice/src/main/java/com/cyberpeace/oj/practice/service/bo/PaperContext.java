@@ -5,11 +5,17 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @ApiModel
-public class AddOrUpdatePaperContext implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class PaperContext implements Serializable {
 
     @ApiModelProperty("资源编号 空为新增 非空则修改")
     private String resourceId;

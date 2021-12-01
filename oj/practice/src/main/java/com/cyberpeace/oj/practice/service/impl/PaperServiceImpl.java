@@ -13,7 +13,6 @@ import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.service.bo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.security.Escape;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -64,7 +63,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	private PracticeSetMapper practiceSetMapper;
 
 	@Override
-	public Paper create(AddOrUpdatePaperContext paperContext) {
+	public Paper create(PaperContext paperContext) {
 
 		// 解析试卷信息
 		Paper paper = BeanUtils.copy(paperContext, Paper.class);
@@ -96,7 +95,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	}
 
 	@Override
-	public Paper update(AddOrUpdatePaperContext paperContext) {
+	public Paper update(PaperContext paperContext) {
 
 		// 数据拷贝
 		Paper paper = BeanUtils.copy(paperContext, Paper.class);
@@ -333,6 +332,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			theoryRef.setOriginId(practiceBase.getResourceId());
 			theoryRef.setOptionRandom(
 					practiceMap.get(practiceBase.getResourceId()).getOptionRandom());
+			theoryRef.setResourceId(IDGeneratorUtil.getID());
 
 			T instance = BeanUtils.copy(theoryRef, cls);
 			return instance;

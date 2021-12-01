@@ -3,12 +3,18 @@ package com.cyberpeace.oj.practice.dao.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 派生于PracticeOperation, 在试卷中被引用
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @TableName("oj_practice_theory_ref")
 public class PracticeTheoryRef extends PracticeOperationRef {
 

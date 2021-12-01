@@ -3,6 +3,8 @@ package com.cyberpeace.common.util;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EnumUtils {
 
@@ -21,6 +23,17 @@ public class EnumUtils {
 			Class<T> enumClass) {
 		return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getCode().equals(code))
 				.map(T::getDesc).findFirst().orElse(null);
+	}
+
+	/**
+	 * 获取枚举值列表
+	 * @param enumClass
+	 * @param <T>
+	 * @return
+	 */
+	public static <T extends GenericEnum> List<Integer> getListCode(Class<T> enumClass) {
+		return Arrays.stream(enumClass.getEnumConstants()).map(t -> t.getCode())
+				.collect(Collectors.toList());
 	}
 
 }

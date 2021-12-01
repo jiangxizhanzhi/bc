@@ -13,11 +13,17 @@ public class LibPracticeListBo implements Serializable {
 	@ApiModelProperty("习题资源编号")
 	private String resourceId;
 
+	@ApiModelProperty("填空题空格数量")
+	private Integer blankCount;
+
 	@ApiModelProperty("习题名称")
 	private String title;
 
 	@ApiModelProperty("习题分类")
 	private String categoryId;
+
+	@ApiModelProperty("分类名称")
+	private String categoryName;
 
 	@ApiModelProperty("类型类型 0=基础理论 1=实操")
 	private Integer practiceType;
@@ -25,4 +31,6 @@ public class LibPracticeListBo implements Serializable {
 	@ApiModelProperty("问题类型 0=单选 1=多选 2=判断 3=填空 4=简答 5=实操")
 	private Integer questionType;
 
+	@ApiModelProperty("基础理论练习题选项")
+	private String option;
 }

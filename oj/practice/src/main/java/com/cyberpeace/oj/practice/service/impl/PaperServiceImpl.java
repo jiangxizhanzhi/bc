@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
@@ -171,6 +172,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			LibPracticeListBo bo = BeanUtils.copy(practiceTheory, LibPracticeListBo.class);
 			bo.setTitle(practiceTheory.getContent());
 			bo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+					.getCode().intValue()) {
+				List<JSONObject> objects = JsonUtil.toJsonObjectArray(practiceTheory.getBlank(),
+						JSONObject.class);
+				bo.setBlankCount(objects.size());
+			}
 			return bo;
 		});
 

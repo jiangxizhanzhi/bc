@@ -16,8 +16,11 @@ public class LibPracticeListBo implements Serializable {
 	@ApiModelProperty("填空题空格数量")
 	private Integer blankCount;
 
-	@ApiModelProperty("习题名称")
+	@ApiModelProperty("习题标题")
 	private String title;
+
+	@ApiModelProperty("习题内容")
+	private String content;
 
 	@ApiModelProperty("习题分类")
 	private String categoryId;

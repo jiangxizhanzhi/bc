@@ -144,7 +144,7 @@ public class AdminPaperController {
 	 */
 	private List<Integer> selectQuestionType(int practiceType) {
 
-		if (practiceType == PracticeCategory.PracticeType.OPERATION.getCode().intValue()) {
+		if (practiceType == PracticeCategory.PracticeType.THEORY.getCode().intValue()) {
 			List<Integer> listCode = EnumUtils.getListCode(PracticeTheory.TheoryType.class);
 			listCode.remove(PracticeTheory.TheoryType.OPERATION.getCode());
 			return listCode;

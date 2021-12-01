@@ -2,7 +2,9 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import java.util.List;
 
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.practice.controller.res.LibSelectRes;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -12,11 +14,14 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -52,7 +57,8 @@ public class AdminPaperController {
 
 	@ApiOperation("获取习题库习题列表")
 	@GetMapping("/practice/list")
-	public BaseRsp<PracticeLibInfoBo> selectPracticeInfo(LibPracticeListReq practiceListReq) {
+	public BaseRsp<ListRsp<LibPracticeListBo>>
+			selectPracticeInfo(LibPracticeListReq practiceListReq) {
 
 		// 查询数据组装
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -67,17 +73,34 @@ public class AdminPaperController {
 			queryBo.setCategoryIds(categoryIds);
 		}
 
+		// 习题数据查询
+		IPage<LibPracticeListBo> iPage = paperService.selectLibPractice(page, queryBo, authContext);
+
+		return new BaseRsp(PageUtil.getListResult(iPage));
+	}
+
+	@ApiOperation("题库筛选条件查询")
+	@GetMapping("/select_info")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_set_id", value = "习题集编号"),
+			@ApiImplicitParam(name = "children", value = "分类是否查询子类") })
+	public BaseRsp<LibSelectRes> get(
+			@RequestParam(value = "practice_set_id", required = false) String practiceSetId,
+			@RequestParam(value = "children", required = false) Boolean children) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+
+		LibSelectRes libInfoBo = new LibSelectRes();
 		// 习题集数据查询
 		List<PracticeSetRes> practiceSetRes = selectPracticeSet(authContext);
-		PracticeLibInfoBo libInfoBo = new PracticeLibInfoBo();
 		libInfoBo.setPracticeSet(practiceSetRes);
 
-		if (StringUtils.isNotBlank(practiceListReq.getPracticeSetId())) {
+		if (StringUtils.isNotBlank(practiceSetId)) {
 			// 联动分类数据查询
-			PracticeSet practiceSet = practiceSetMapper
-					.selectById(practiceListReq.getPracticeSetId());
+			PracticeSet practiceSet = practiceSetMapper.selectById(practiceSetId);
 			List<CategoryListBo> categoryListBos = selectPracticeCategory(
-					practiceSet.getPracticeType(), practiceListReq.getCategoryChildren());
+					practiceSet.getPracticeType(),
+					null == children ? CommonConstant.FALSE : children);
 			libInfoBo.setCategory(categoryListBos);
 
 			// 习题类型数据查询
@@ -85,10 +108,7 @@ public class AdminPaperController {
 			libInfoBo.setQuestionType(questionType);
 		}
 
-		// 习题数据查询
-		IPage<LibPracticeListBo> iPage = paperService.selectLibPractice(page, queryBo, authContext);
-		libInfoBo.setPracticeList(PageUtil.getListResult(iPage));
-		return new BaseRsp(libInfoBo);
+		return new BaseRsp<>(libInfoBo);
 	}
 
 	/**

@@ -3,9 +3,22 @@ package com.cyberpeace.oj.practice.controller.web;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
 import com.cyberpeace.oj.practice.controller.req.SceneShareModeReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.service.bo.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,16 +38,13 @@ import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebOperationListReq;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
-import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
-import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
-import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
-import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "oj-前台实践操作练习相关api")
+@Slf4j
 @RestController
+@Api(tags = "oj-前台实践操作练习相关api")
 @RequestMapping("/oj/practice/operation")
 @RequiresAuthentication
 public class PracticeOperationController {
@@ -44,6 +54,15 @@ public class PracticeOperationController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private PracticeOperationMapper practiceOperationMapper;
+
+	@Autowired
+	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
@@ -107,5 +126,30 @@ public class PracticeOperationController {
 		JSONObject sceneData = practiceOperationService.startScene(resourceId, authContext);
 
 		return new BaseRsp<>(sceneData);
+	}
+
+	@GetMapping("/ws/operation_scene")
+	@ApiOperation("实操练习websocket链接")
+	public BaseRsp operationWsSocket(@RequestParam("resource_id") String resourceId) {
+
+		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
+		if (null == operation) {
+			log.error("operationWsSocket: operation practice not found! operation_practice_id=[{}]",
+					resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		if (!operation.getDynamicEnv() || StringUtils.isBlank(operation.getTopoId())) {
+			throw new InvalidParamException("未检索到场景信息！");
+		}
+
+		String share = operation.getSceneShareMode().intValue() == SceneShare.SHARED.getCode()
+				.intValue() ? CommonConstant.TRUE.toString()
+						: CommonConstant.FALSE + UserInfoContext.getUserContext().getUserId();
+
+		OperationWsMessageIdentifier messageIdentifier = OperationWsMessageIdentifier.builder()
+				.practiceId(resourceId).topoId(operation.getTopoId()).sceneShare(share).build();
+
+		return null;
 	}
 }

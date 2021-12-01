@@ -113,7 +113,7 @@ public class AdminPaperController {
 		return new BaseRsp<>(libInfoBo);
 	}
 
-	@ApiOperation("获取随机熟练的题目")
+	@ApiOperation("获取随机数量题目")
 	@GetMapping("/random/practice")
 	public BaseRsp<List<LibPracticeListBo>>
 			getRandomPractice(@Validated RandomPracticeReq randomPracticeReq) {

@@ -33,7 +33,7 @@ public class RandomPracticeReq implements Serializable {
 	@NotNull
 	private Double score;
 
-	public void setPractice_setId(String practiceSetId) {
+	public void setPractice_set_id(String practiceSetId) {
 		this.practiceSetId = practiceSetId;
 	}
 

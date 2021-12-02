@@ -84,13 +84,20 @@ public class LessonConfigBo implements Serializable {
 			return Arrays.asList(lessonConfigBo);
 		}
 
-		List<LessonConfigBo> bos = lessonConfigBo.children.stream().map(bo -> {
+		// 递归获取数据
+		List<LessonConfigBo> bos = lessonConfigBo.getChildren().stream().map(bo -> {
 			bo.setParentId(lessonConfigBo.getResourceId());
 			return sortListByChildren(bo, includeChapter);
 		}).flatMap(Collection::stream).collect(Collectors.toList());
 
-		List<LessonConfigBo> configBos = bos.stream().filter(bo -> includeChapter ? includeChapter
-				: bo.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON.getCode().intValue())
+		// 将自身数据加入
+		bos.add(0, lessonConfigBo);
+
+		// 转换数据
+		List<LessonConfigBo> configBos = bos.stream()
+				.filter(bo -> includeChapter ? includeChapter
+						: bo.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON.getCode()
+								.intValue())
 				.collect(Collectors.toList());
 
 		return configBos;

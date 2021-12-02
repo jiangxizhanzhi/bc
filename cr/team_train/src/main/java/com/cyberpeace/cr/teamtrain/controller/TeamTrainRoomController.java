@@ -5,9 +5,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +22,10 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
-import com.cyberpeace.cr.crbase.controller.req.scene.SceneStartFromTemplateReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneStartReq;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.SceneService;
@@ -48,9 +42,8 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.UserData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
-import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
+import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
@@ -81,12 +74,6 @@ public class TeamTrainRoomController {
 	private CrRoleService crRoleService;
 
 	@Autowired
-	private TeamTemplateService teamTemplateService;
-
-	@Autowired
-	private BusinessTemplateService businessTemplateService;
-
-	@Autowired
 	private MissionService missionService;
 
 	@Autowired
@@ -99,42 +86,18 @@ public class TeamTrainRoomController {
 	private TeamSceneHandler teamSceneHandler;
 
 	@Autowired
-	private TransactionTemplate transactionTemplate;
+	private SceneService sceneService;
 
 	@Autowired
-	private SceneService sceneService;
+	private TeamSceneService teamSceneService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	public BaseRsp startScene(@RequestBody SceneStartReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
-		teamSceneHandler.checkBeforeStartingScene(roomId, userId);
 
-		TeamRoom room = teamRoomService.getById(roomId);
-		LocalScene localScene = sceneService.createLocalScene(
-				LocalScene.BusinessCode.TEAM_TRAINING.getCode(), roomId, room.getCopyedTopoId());
-
-		String sceneId = localSceneService.startScene(localScene);
-		localScene.setMpSceneId(sceneId);
-
-		room.setLocalSceneId(localScene.getResourceId());
-
-		try {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					localSceneService.save(localScene);
-					teamRoomService.updateById(room);
-					// todo log
-				}
-			});
-		} catch (Exception e) {
-			log.error("db error when creating scene: ", e);
-			localSceneService.deleteRemoteScene(localScene);
-			throw new RuntimeException();
-		}
+		teamSceneService.startScene(roomId, userId);
 		return new BaseRsp();
 	}
 

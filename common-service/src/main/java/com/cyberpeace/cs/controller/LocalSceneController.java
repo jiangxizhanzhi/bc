@@ -36,12 +36,12 @@ public class LocalSceneController {
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
-	@ApiOperation("关闭场景")
-	@DeleteMapping("")
-	public BaseRsp stopScene(@RequestBody SceneReq sceneReq) {
-		localSceneService.stopScene(sceneReq.getLocalSceneId());
-		return new BaseRsp();
-	}
+//	@ApiOperation("关闭场景")
+//	@DeleteMapping("")
+//	public BaseRsp stopScene(@RequestBody SceneReq sceneReq) {
+//		localSceneService.stopScene(sceneReq.getLocalSceneId());
+//		return new BaseRsp();
+//	}
 
 	@ApiOperation("暂停场景")
 	@PostMapping("/pause")

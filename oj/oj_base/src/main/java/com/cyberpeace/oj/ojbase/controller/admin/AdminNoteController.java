@@ -1,10 +1,13 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.oj.ojbase.controller.req.DeleteResourceReq;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -30,16 +33,28 @@ public class AdminNoteController {
 	@Autowired
 	private NoteService noteService;
 
+	@Autowired
+	private NoteMapper noteMapper;
+
 	@ApiOperation("分页查询实验报告")
 	@GetMapping("/list")
-	public ListRsp<NoteListBo> list(AdminListNoteReq noteReq) {
+	public BaseRsp<ListRsp<NoteListBo>> list(AdminListNoteReq noteReq) {
 
 		Page page = noteReq.toPageParam();
 		AdminNoteListQuery noteListQuery = BeanUtils.copy(noteReq, AdminNoteListQuery.class);
 		noteListQuery.setUserId(UserInfoContext.getUserContext().getUserId());
 
-		IPage<NoteListBo> noteListBos = noteService.pageByUserNameAndContent(page, noteListQuery, CommonConstant.FALSE);
-		return PageUtil.getListResult(noteListBos);
+		IPage<NoteListBo> noteListBos = noteService.pageByUserNameAndContent(page, noteListQuery,
+				CommonConstant.FALSE);
+		return new BaseRsp<>(PageUtil.getListResult(noteListBos));
+	}
+
+	@ApiOperation("笔记/实验报告删除")
+	@DeleteMapping("")
+	public BaseRsp<Boolean> deleteIds(@RequestBody @Validated DeleteResourceReq deleteReq) {
+
+		int row = noteMapper.deleteBatchIds(deleteReq.getResourceIds());
+		return new BaseRsp<>(row > 0);
 	}
 
 }

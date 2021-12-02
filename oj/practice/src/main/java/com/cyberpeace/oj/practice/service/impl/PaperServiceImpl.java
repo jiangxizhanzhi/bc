@@ -226,7 +226,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 	@Override
 	public Integer practiceCountByPaper(String paperId) {
-		List<String> operationRefIds = practiceOperationMapper.selectByPaper(paperId);
+		List<String> operationRefIds = practiceOperationRefMapper.selectByPaper(paperId);
 		List<String> theoryRefIds = practiceTheoryRefMapper.selectByPaper(paperId);
 		return operationRefIds.size() + theoryRefIds.size();
 	}

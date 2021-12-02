@@ -102,8 +102,4 @@
         order by `id` limit #{limit}
     </select>
 
-    <select id="selectByPaper" resultType="java.lang.String">
-        select resource_id from oj_practice_operation
-        where paper_id = #{paperId}
-    </select>
 </mapper>

@@ -9,6 +9,7 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
 import com.cyberpeace.cr.singletrain.service.bo.SingleRoomListBo;
 import com.cyberpeace.cr.singletrain.service.bo.TrainRecordBo;
+import com.cyberpeace.cr.singletrain.service.bo.TrainTimeLineBo;
 
 import java.util.List;
 
@@ -25,5 +26,9 @@ public interface SingleRoomService extends IService<SingleRoom> {
     Boolean submitMission(String businessTemplateId, SubmitMissionReq requestData);
 
     List<TrainRecordBo> getTrainRecord(String businessTemplateId);
+
+    String getTrainManual(String businessTemplateId);
+
+    TrainTimeLineBo getTimeLineData(String businessTemplateId);
 
 }

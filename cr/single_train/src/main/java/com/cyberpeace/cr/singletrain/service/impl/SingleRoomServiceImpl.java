@@ -8,6 +8,8 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
@@ -76,7 +78,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
      */
     @Override
     public SingleRoomBo createRoom(String businessTemplateId) {
-        // todo 重复创建
+        // 已存在运行中训练, 返回
+        SingleRoomBo singleRoomBo = getRoomInfo(businessTemplateId);
+        if (singleRoomBo != null) {
+            return singleRoomBo;
+        }
+
         BusinessTemplate businessTemplateObject = businessTemplateService.getById(businessTemplateId);
 
         // new topology
@@ -94,7 +101,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         room.setCopyedTopoId(newTopology);
         room.setTrainingRecord("{}");
 
-        // todo 是否需要拷贝任务
+        // todo 任务拷贝
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
@@ -114,15 +121,18 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
      */
     @Override
     public SingleRoomBo getRoomInfo(String businessTemplateId) {
+        // 无运行中训练, 返回null
+        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
+        if (singleRoom == null) {
+            return null;
+        }
+
+        // 获取当前训练模板数据
         SingleTemplateBo singleTemplateBo = singleTemplateService.get(businessTemplateId);
         SingleRoomBo singleRoomBo = new SingleRoomBo();
         BeanUtils.copyProperties(singleTemplateBo, singleRoomBo);
 
-        // 当前用户使用运行中单兵训练, 无运行直接返回
-        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
-        if (singleRoom == null) {
-            return singleRoomBo;
-        }
+        // 生成数据
         SingleRoomInfoBo singleRoomInfoBo = new SingleRoomInfoBo();
         singleRoomInfoBo.setStartTime(singleRoom.getStartTime());
         singleRoomInfoBo.setTraining_record_data(JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class));
@@ -246,6 +256,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         return result;
     }
 
+    /**
+     * 训练任务提交
+     *
+     * @param businessTemplateId 训练业务模板id
+     * @param requestData        提交任务内容
+     * @return bool
+     */
     @Override
     public Boolean submitMission(String businessTemplateId, SubmitMissionReq requestData) {
         SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
@@ -253,7 +270,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
             return false;
         }
 
-        // 写入任务记录 todo time
+        // 写入任务记录
         JSONObject missionsRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(), JSONObject.class);
 
         JSONObject record = new JSONObject();
@@ -267,6 +284,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         return true;
     }
 
+    /**
+     * 当前用户此次单兵训练任务记录
+     *
+     * @param businessTemplateId 训练业务模板id
+     * @return 任务方案与任务训练记录
+     */
     @Override
     public List<TrainRecordBo> getTrainRecord(String businessTemplateId) {
         // 运行中单兵训练
@@ -314,5 +337,98 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         }
 
         return trainRecordBos;
+    }
+
+    /**
+     * 根据任务方案、训练记录生成富文本
+     *
+     * @param businessTemplateId 训练业务模板id
+     * @return String
+     */
+    @Override
+    public String getTrainManual(String businessTemplateId) {
+        // 获取训练方案
+        SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
+        JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionScheme(), JSONObject.class);
+        JSONArray schemeData = missionScheme.getJSONArray("scheme_data");
+
+        // 生成富文本训练手册
+        StringBuilder writeup = new StringBuilder();
+        // todo ? -> loop index
+        schemeData.toJavaList(JSONObject.class).forEach(item -> {
+            writeup.append("## ").append("阶段?: ").append(item.getString("stage")).append("\n\n");
+            item.getJSONArray("missions").toJavaList(JSONObject.class).forEach(_mission -> {
+                writeup.append("#### ").append("任务?: ").append(_mission.getString("title")).append("\n\n");
+                writeup.append("题解: \n").append(_mission.getString("write_up")).append("\n\n");
+            });
+        });
+
+        return writeup.toString();
+    }
+
+    /**
+     * 获取训练时间线数据
+     *
+     * @param businessTemplateId 训练业务模板id
+     * @return TrainTimeLineBo
+     */
+    @Override
+    public TrainTimeLineBo getTimeLineData(String businessTemplateId) {
+        String userId = UserInfoContext.getUserContext().getUserId();
+        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
+        if (singleRoom == null) {
+            return null;
+        }
+
+        SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
+        TrainTimeLineBo trainTimeLineBo = new TrainTimeLineBo();
+
+        trainTimeLineBo.setCurrentTime(new Date());
+        trainTimeLineBo.setStartTime(singleRoom.getStartTime());
+
+        // 预计结束时间
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(singleRoom.getStartTime());
+        calendar.add(Calendar.HOUR, singleTemplate.getDurationTime());
+        trainTimeLineBo.setEndTime(calendar.getTime());
+
+        // 任务完成时间点
+        List<JSONObject> missionRecord = Lists.newArrayList();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Map<String, Mission> missionMap = getMissionMapByScheme(singleTemplate.getMissionScheme());
+
+        JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
+        for (Map.Entry<String, Object> stringObjectEntry : trainRecord.entrySet()) {
+
+            JSONObject missionEvent = new JSONObject();
+            JSONObject val = (JSONObject) stringObjectEntry.getValue();
+            missionEvent.put("time", simpleDateFormat.format(new Date(val.getLong("time"))));
+            missionEvent.put("title", missionMap.get(stringObjectEntry.getKey()).getTitle());
+
+            missionRecord.add(missionEvent);
+        }
+        trainTimeLineBo.setData(missionRecord);
+
+        return trainTimeLineBo;
+    }
+
+
+    // todo 待迁移
+    private List<String> getMissionIdsByScheme(String missionScheme) {
+        JSONArray schemeData = JsonUtil.toJsonObject(missionScheme, JSONObject.class).getJSONArray("scheme_data");
+        List<String> missionIds = Lists.newArrayList();
+        schemeData.toJavaList(JSONObject.class).forEach(
+                stage -> missionIds.addAll(
+                        stage.getJSONArray("missions").toJavaList(JSONObject.class).stream().map(
+                                mission -> mission.getString("resource_id")
+                        ).collect(Collectors.toList())
+                )
+        );
+        return missionIds;
+    }
+
+    private Map<String, Mission> getMissionMapByScheme(String missionScheme) {
+        List<Mission> missions = missionService.batchGet(getMissionIdsByScheme(missionScheme));
+        return missions.stream().collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
     }
 }

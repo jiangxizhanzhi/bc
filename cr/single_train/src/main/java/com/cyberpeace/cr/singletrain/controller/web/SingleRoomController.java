@@ -8,6 +8,7 @@ import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
 import com.cyberpeace.cr.singletrain.service.bo.SingleRoomListBo;
 import com.cyberpeace.cr.singletrain.service.bo.TrainRecordBo;
+import com.cyberpeace.cr.singletrain.service.bo.TrainTimeLineBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -60,13 +61,18 @@ public class SingleRoomController {
     @GetMapping("/train_manual")
     @ApiOperation("训练手册")
     public BaseRsp<String> trainManual(@RequestParam("resource_id") String businessTemplateId) {
-        // todo 需要可获取任务数据 (writeup)
-        return new BaseRsp<>();
+        return new BaseRsp<>(singleRoomService.getTrainManual(businessTemplateId));
     }
 
     @GetMapping("/train_record")
     @ApiOperation("训练记录")
     public BaseRsp<List<TrainRecordBo>> trainRecord(@RequestParam("resource_id") String businessTemplateId) {
         return new BaseRsp<>(singleRoomService.getTrainRecord(businessTemplateId));
+    }
+
+    @GetMapping("/time_line")
+    @ApiOperation("训练时间线")
+    public BaseRsp<TrainTimeLineBo> trainTimeLine(@RequestParam("resource_id") String businessTemplateId) {
+        return new BaseRsp<>(singleRoomService.getTimeLineData(businessTemplateId));
     }
 }

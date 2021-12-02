@@ -20,10 +20,16 @@
             <if test="!authContext.isSuperAdmin">
                 <choose>
                     <when test="authContext.isWeb">
-                        <bind name="likeOrganization" value="'%' + authContext.organization + '%'"/>
-                        (create_user_id = #{authContext.userId} or
-                         (read_auth_ids like #{likeOrganization}
-                                 and read_auth_type = 2) or read_auth_type = 1)
+                        <choose>
+                            <when test="authContext.organization != null and authContext.organization != ''">
+                                <bind name="likeOrganization" value="'%' + authContext.organization + '%'"/>
+                                (create_user_id = #{authContext.userId} or (read_auth_ids like #{likeOrganization}
+                                and read_auth_type = 2) or read_auth_type = 1)
+                            </when>
+                            <otherwise>
+                                1 != 1
+                            </otherwise>
+                        </choose>
                     </when>
                     <otherwise>
                         <bind name="likeUser" value="'%' + authContext.userId + '%'"/>

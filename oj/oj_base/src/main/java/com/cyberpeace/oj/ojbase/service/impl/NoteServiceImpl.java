@@ -74,10 +74,10 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		if (StringUtils.isNotBlank(noteListQuery.getUserName())) {
 			// todo 名称筛选
 			List<UserInfo> userList = remoteUserService.getLazyUserList(null);
-			List<String> userIds = StreamApiUtils.simpleMap(userList, UserInfo::getUserId);
+			List<String> userIds = StreamApiUtils.map(userList, UserInfo::getUserId);
 			listQuery.setUserIds(userIds);
 
-			userInfoMap = StreamApiUtils.columnMap(userList, UserInfo::getUserId,
+			userInfoMap = StreamApiUtils.toMap(userList, UserInfo::getUserId,
 					UserInfo::getUserName);
 		}
 

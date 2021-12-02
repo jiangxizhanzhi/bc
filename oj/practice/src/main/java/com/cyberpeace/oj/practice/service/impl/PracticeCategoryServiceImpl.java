@@ -122,7 +122,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<PracticeCategory> categoryList = practiceCategoryMapper
 				.listByTypeAndName(listQuery.getPracticeType(), listQuery.getPattern());
 
-		List<CategoryListBo> listBos = StreamApiUtils.simpleMap(categoryList,
+		List<CategoryListBo> listBos = StreamApiUtils.map(categoryList,
 				practiceCategory -> entityToListBo(practiceCategory, children));
 
 		return listBos;
@@ -141,7 +141,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		}
 
 		List<PracticeCategory> categories = practiceCategoryMapper.selectByCode(category.getCode());
-		List<String> categoryIds = StreamApiUtils.columnList(categories,
+		List<String> categoryIds = StreamApiUtils.getColumn(categories,
 				PracticeCategory::getResourceId);
 
 		if (self) {
@@ -204,13 +204,13 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<PracticeCategory> categoryList = practiceCategoryMapper
 				.selectByCode(practiceCategory.getCode());
 
-		Map<String, List<PracticeCategory>> parentMap = StreamApiUtils.groupByColumn(
-				StreamApiUtils.simpleFilter(categoryList,
+		Map<String, List<PracticeCategory>> parentMap = StreamApiUtils.groupBy(
+				StreamApiUtils.filter(categoryList,
 						category -> StringUtils.isNotBlank(category.getParentId())),
 				PracticeCategory::getParentId);
 
 		List<PracticeCategory> childrenList = parentMap.get(practiceCategory.getResourceId());
-		List<CategoryListBo> listBos = StreamApiUtils.simpleMap(childrenList,
+		List<CategoryListBo> listBos = StreamApiUtils.map(childrenList,
 				category -> entityToListBo(category, CommonConstant.TRUE));
 		listBo.setCategoryListBos(listBos);
 

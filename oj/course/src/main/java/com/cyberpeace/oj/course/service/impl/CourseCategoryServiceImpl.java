@@ -41,8 +41,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		List<CourseCategory> directions = courseCategoryMapper
 				.selectChildrenByCode(courseCategory.getCode());
 
-		List<String> directionIds = StreamApiUtils.simpleMap(directions,
-				CourseCategory::getResourceId);
+		List<String> directionIds = StreamApiUtils.map(directions, CourseCategory::getResourceId);
 		if (self) {
 			directionIds.add(directionId);
 		}
@@ -109,11 +108,11 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	@Override
 	public Integer batchDeleteByIds(List<String> resourceIds) {
 		List<CourseCategory> categories = courseCategoryMapper.selectBatchIds(resourceIds);
-		List<String> codeList = StreamApiUtils.columnList(categories, CourseCategory::getCode);
+		List<String> codeList = StreamApiUtils.getColumn(categories, CourseCategory::getCode);
 
 		for (String code : codeList) {
 			List<CourseCategory> categoryList = courseCategoryMapper.selectChildrenByCode(code);
-			List<String> childrenIds = StreamApiUtils.simpleMap(categoryList,
+			List<String> childrenIds = StreamApiUtils.map(categoryList,
 					CourseCategory::getResourceId);
 			resourceIds.addAll(childrenIds);
 		}
@@ -169,7 +168,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 			return Lists.newArrayList();
 		}
 
-		List<CourseCategoryBo> courseCategoryBos = StreamApiUtils.simpleMap(categories,
+		List<CourseCategoryBo> courseCategoryBos = StreamApiUtils.map(categories,
 				courseCategory -> packageCategoryBo(courseCategory, categoryMap));
 
 		return courseCategoryBos;

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
@@ -65,23 +66,24 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	@Autowired
+	private PracticeSetService practiceSetService;
+
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
 			AuthContext authContext) {
 
-		// 过滤习题集
-		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authSetIds)
-				|| (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-						&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
-			log.error("The current resource has no permission！practice_set_id=[{}]",
-					listQuery.getPracticeSetId());
+		Boolean hasAuth = practiceSetService.enableAccess(listQuery.getPracticeSetId(),
+				authContext);
+		if (!hasAuth) {
 			return null;
 		}
 
 		// 习题集过滤习题
 		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
 		if (StringUtils.isBlank(listQuery.getPracticeSetId())) {
+			// 过滤习题集
+			List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
 			List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
 					authContext.getIsWeb());
 			if (CollectionUtils.isEmpty(practiceIds)) {
@@ -315,6 +317,5 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				}
 			}
 		}
-
 	}
 }

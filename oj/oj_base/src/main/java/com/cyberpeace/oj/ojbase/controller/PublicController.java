@@ -58,7 +58,7 @@ public abstract class PublicController<T extends IService<E>, E> {
 	 * @return
 	 */
 	protected <U, V> Boolean updateData(Collection<U> collection, Function<U, V> mapperValue) {
-		List<V> publicDatas = StreamApiUtils.simpleMap(collection, mapperValue);
+		List<V> publicDatas = StreamApiUtils.map(collection, mapperValue);
 		List<E> entityList = BeanUtils.deepCopyList(publicDatas, entityClass);
 		boolean result = true;
 		for (E entity : entityList) {

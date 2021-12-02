@@ -15,35 +15,31 @@
     </select>
 
     <select id="selectByAuthContext" resultType="java.lang.String">
-        select resource_id
-        from oj_practice_set
+        select resource_id from oj_practice_set
         <where>
-            <if test="authContext != null">
-                <if test="!authContext.isSuperAdmin">
-                    <choose>
-                        <when test="authContext.isWeb">
-                            (create_user_id = #{authContext.userId} or
-                             (read_auth_ids like #{authContext.likeOrganization}
-                                     and read_auth_type = 2) or read_auth_type = 1)
-                        </when>
-                        <otherwise>
-                            (create_user_id = #{authContext.userId}
-                                    or (operation_auth_ids like #{authContext.likeUser}
-                                   and operation_auth_type = 2)
-                                    or operation_auth_type = 1)
-                        </otherwise>
-                    </choose>
-                </if>
+            <if test="!authContext.isSuperAdmin">
+                <choose>
+                    <when test="authContext.isWeb">
+                        <bind name="likeOrganization" value="'%' + authContext.organization + '%'"/>
+                        (create_user_id = #{authContext.userId} or
+                         (read_auth_ids like #{likeOrganization}
+                                 and read_auth_type = 2) or read_auth_type = 1)
+                    </when>
+                    <otherwise>
+                        <bind name="likeUser" value="'%' + authContext.userId + '%'"/>
+                        (create_user_id = #{authContext.userId}
+                                or (operation_auth_ids like #{likeUser}
+                               and operation_auth_type = 2)
+                                or operation_auth_type = 1)
+                    </otherwise>
+                </choose>
             </if>
         </where>
     </select>
 
     <select id="pageByTypeAndName" resultMap="set">
-        <if test="listQuery.pattern != null and listQuery.pattern != ''">
-            <bind name="listQuery.pattern" value="'%' + listQuery.pattern + '%'"/>
-        </if>
-
-        select * from oj_practice_set
+        select *
+        from oj_practice_set
         <where>
             <if test="listQuery != null">
                 <if test="listQuery.setIds != null and listQuery.setIds.size() > 0">
@@ -56,7 +52,8 @@
                     and practice_type = #{listQuery.practiceType}
                 </if>
                 <if test="listQuery.pattern != null and listQuery.pattern != ''">
-                    and `name` like #{listQuery.pattern}
+                    <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>
+                    and `name` like #{pattern}
                 </if>
             </if>
             <if test="isPublic != null and isPublic">
@@ -66,8 +63,7 @@
     </select>
 
     <select id="selectByType" resultMap="set">
-        select *
-        from oj_practice_set
+        select * from oj_practice_set
         <where>
             <if test="practiceType != null">
                 practice_type = #{practiceType}

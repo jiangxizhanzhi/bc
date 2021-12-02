@@ -169,7 +169,7 @@ public class AdminPaperController {
 
 		List<String> practiceSetIds = practiceSetMapper.selectByAuthContext(authContext);
 		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
-		return StreamApiUtils.simpleMap(practiceSets,
+		return StreamApiUtils.map(practiceSets,
 				practiceSet -> BeanUtils.copy(practiceSet, PracticeSetRes.class));
 	}
 

@@ -22,4 +22,11 @@ public interface PracticeTheoryRefMapper extends BaseMapper<PracticeTheoryRef> {
 
 	PracticeTheoryRef selectByPracticeId(@Param("paperId") String paperId,
 			@Param("practiceId") String practiceIds);
+
+	/**
+	 * 查询课后练习数据编号
+	 * @param paperId
+	 * @return
+	 */
+    List<String> selectByPaper(@Param("paperId") String paperId);
 }

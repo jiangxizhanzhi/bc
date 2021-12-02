@@ -153,7 +153,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@PatchMapping("/writeup_public")
 	public BaseRsp<Boolean> writeupPublic(@RequestBody @Validated ResourcePublicReq publicReq) {
 
-		List<PracticeOperation> operations = StreamApiUtils.simpleMap(publicReq.getResourceIds(),
+		List<PracticeOperation> operations = StreamApiUtils.map(publicReq.getResourceIds(),
 				resourceId -> {
 					PracticeOperation operation = new PracticeOperation();
 					operation.setResourceId(resourceId);

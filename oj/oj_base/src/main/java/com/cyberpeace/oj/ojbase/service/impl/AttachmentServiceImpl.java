@@ -40,7 +40,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 
 			List<Attachment> attachments = attachmentMapper
 					.selectBatchIds(Lists.newArrayList(attachmentArr), isWeb);
-			List<AttachmentBo> attachmentBos = StreamApiUtils.simpleMap(attachments,
+			List<AttachmentBo> attachmentBos = StreamApiUtils.map(attachments,
 					attachment -> BeanUtils.copy(attachment, AttachmentBo.class));
 			return attachmentBos;
 		}

@@ -21,4 +21,22 @@ public class AdminListNoteReq extends PageReqBase {
     @ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习")
     private Integer businessType;
 
+    @ApiModelProperty("资源编号 课时")
+    private String businessId;
+
+    public void setUser_name(String userName) {
+        this.userName = userName;
+    }
+
+    public void setNote_type(Integer noteType) {
+        this.noteType = noteType;
+    }
+
+    public void setBusiness_type(Integer businessType) {
+        this.businessType = businessType;
+    }
+
+    public void setBusiness_id(String businessId) {
+        this.businessId = businessId;
+    }
 }

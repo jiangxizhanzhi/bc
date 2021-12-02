@@ -74,8 +74,8 @@ public class LessonInfoBo implements Serializable {
 	@ApiModelProperty("试卷编号")
 	private String paperId;
 
-	@ApiModelProperty("试卷是否公开")
-	private Integer paperPublic;
+	@ApiModelProperty("试卷是否公开 true=公开")
+	private Boolean paperPublic;
 
 	@ApiModelProperty("热度")
 	private Integer heat;

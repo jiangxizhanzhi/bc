@@ -179,14 +179,13 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
 					practiceQuery.getCount());
 			theories.forEach(practiceTheory -> practiceTheory.setScore(score));
-			return StreamApiUtils.simpleMap(theories,
-					practiceTheory -> theoryToListBo(practiceTheory));
+			return StreamApiUtils.map(theories, practiceTheory -> theoryToListBo(practiceTheory));
 		} else {
 			OperationListQuery listQuery = BeanUtils.copy(practiceQuery, OperationListQuery.class);
 			List<PracticeOperation> operations = practiceOperationMapper.randomChoice(listQuery,
 					practiceQuery.getCount());
 			operations.forEach(operation -> operation.setScore(score));
-			return StreamApiUtils.simpleMap(operations, operation -> operationToListBo(operation));
+			return StreamApiUtils.map(operations, operation -> operationToListBo(operation));
 		}
 	}
 
@@ -223,6 +222,13 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		listBo.setPracticeType(PracticeCategory.PracticeType.OPERATION.getCode());
 		listBo.setQuestionType(PracticeTheory.TheoryType.OPERATION.getCode());
 		return listBo;
+	}
+
+	@Override
+	public Integer practiceCountByPaper(String paperId) {
+		List<String> operationRefIds = practiceOperationMapper.selectByPaper(paperId);
+		List<String> theoryRefIds = practiceTheoryRefMapper.selectByPaper(paperId);
+		return operationRefIds.size() + theoryRefIds.size();
 	}
 
 	/**
@@ -278,7 +284,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 		// 解析practiceList, 设置试卷基础信息
 		Map<Integer, List<PaperPracticeContext>> columnMap = StreamApiUtils
-				.groupByColumn(practiceContextList, PaperPracticeContext::getPracticeType);
+				.groupBy(practiceContextList, PaperPracticeContext::getPracticeType);
 
 		// 生成理论习题练习
 		List<PaperPracticeContext> theoryContextList = columnMap.getOrDefault(
@@ -311,7 +317,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			return Lists.newArrayList();
 		}
 
-		List<String> practiceIds = StreamApiUtils.simpleMap(paperPracticeContexts,
+		List<String> practiceIds = StreamApiUtils.map(paperPracticeContexts,
 				PaperPracticeContext::getResourceId);
 
 		List<PracticeBase> practiceList = baseMapper.selectBatchIds(practiceIds);
@@ -320,10 +326,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			throw new BusinessException(OjBusinessErrorCode.PARAM_DATABASE_ERROR);
 		}
 
-		Map<String, PaperPracticeContext> practiceMap = StreamApiUtils
-				.columnMap(paperPracticeContexts, PaperPracticeContext::getResourceId, pc -> pc);
+		Map<String, PaperPracticeContext> practiceMap = StreamApiUtils.toMap(paperPracticeContexts,
+				PaperPracticeContext::getResourceId, pc -> pc);
 
-		List<T> refList = StreamApiUtils.simpleMap(practiceList, practiceBase -> {
+		List<T> refList = StreamApiUtils.map(practiceList, practiceBase -> {
 
 			PracticeTheoryRef theoryRef = new PracticeTheoryRef();
 			practiceBase.setScore(practiceMap.get(practiceBase.getResourceId()).getScore());

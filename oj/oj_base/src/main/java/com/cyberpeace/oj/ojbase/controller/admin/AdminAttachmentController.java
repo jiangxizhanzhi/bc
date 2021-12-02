@@ -45,7 +45,7 @@ public class AdminAttachmentController {
 	@PatchMapping("/batch-public")
 	public BaseRsp<Boolean> batchPublic(@RequestBody @Validated ResourcePublicReq publicReq) {
 
-		List<Attachment> attachments = StreamApiUtils.simpleMap(publicReq.getResourceIds(),
+		List<Attachment> attachments = StreamApiUtils.map(publicReq.getResourceIds(),
 				resourceId -> {
 					Attachment build = Attachment.builder().isPublic(publicReq.getIsPublic())
 							.resourceId(resourceId).build();

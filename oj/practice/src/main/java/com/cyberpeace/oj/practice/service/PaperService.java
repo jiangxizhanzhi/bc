@@ -47,4 +47,11 @@ public interface PaperService extends IService<Paper> {
 	 */
 	List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery, Double score,
 			AuthContext authContext);
+
+	/**
+	 * 查询试卷下习题数量
+	 * @param paperId
+	 * @return
+	 */
+	Integer practiceCountByPaper(String paperId);
 }

@@ -23,6 +23,7 @@ import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +64,24 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return entityToSetBo(practiceSet, authContext);
 	}
 
+	@Override
+	public Boolean enableAccess(String resourceId, AuthContext authContext) {
+
+		// 数据为空 无法判断 返回true
+		if (StringUtils.isBlank(resourceId)) {
+			return CommonConstant.TRUE;
+		}
+
+		// 数据权限校验
+		List<String> accessSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(accessSetIds) || !accessSetIds.contains(resourceId)) {
+			log.error("This set not permission! practice_set_id=[{}]", resourceId);
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * 实体类数据转换
 	 * @param practiceSet
@@ -85,15 +104,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			setBo.setPracticeCount(theoryIds.size());
 		}
 
-
-		List<String> operationIds = JsonUtil
-				.toJsonObjectArray(practiceSet.getOperationAuthIds(), String.class);
+		List<String> operationIds = JsonUtil.toJsonObjectArray(practiceSet.getOperationAuthIds(),
+				String.class);
 		setBo.setOperationCount(operationIds.size());
 
 		List<String> readIds = JsonUtil.toJsonObjectArray(practiceSet.getReadAuthIds(),
 				String.class);
 		setBo.setReadCount(readIds.size());
-
 
 		return setBo;
 	}

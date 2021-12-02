@@ -16,7 +16,10 @@
         select * from oj_note
         <where>
             note_type = #{noteListQuery.noteType}
-                    and business_type = #{noteListQuery.businessType}
+            and business_type = #{noteListQuery.businessType}
+            <if test="noteListQuery.businessId != null and noteListQuery.businessId != ''">
+                and business_id = #{noteListQuery.businessId}
+            </if>
             <if test="noteListQuery.userIds != null and noteListQuery.userIds.size() != 0">
                 and user_id in
                 <foreach collection="noteListQuery.userIds" open="(" close=")" item="userId" separator=",">

@@ -37,8 +37,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课程表分页查询")
 	@GetMapping("/list")
-	public BaseRsp<List<AdminClassroomRes>>
-			list(@Validated ClassroomListReq classroomListReq) {
+	public BaseRsp<List<AdminClassroomRes>> list(@Validated ClassroomListReq classroomListReq) {
 
 		boolean isAdmin = UserInfoContext.getUserContext().isAdmin();
 		String user_id = UserInfoContext.getUserContext().getUserId();
@@ -50,8 +49,7 @@ public class AdminClassroomController {
 				classroomListReq.getStartDate(), classroomListReq.getEndDate(),
 				classroomListReq.getOrganization(), classroomListReq.getCreateUser());
 
-		List<AdminClassroomRes> adminClassroomRes = StreamApiUtils.simpleMap(
-				classroomBos,
+		List<AdminClassroomRes> adminClassroomRes = StreamApiUtils.map(classroomBos,
 				courseSchedule -> BeanUtils.copy(courseSchedule, AdminClassroomRes.class));
 
 		return new BaseRsp<>(adminClassroomRes);

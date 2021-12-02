@@ -379,7 +379,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		if (missionIds.size() > 0) {
 			missions = missionMapper.batchSelect(missionIds);
 		}
-		Map<String, Mission> missionMap = StreamApiUtils.columnMap(missions, Mission::getResourceId,
+		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,
 				pc -> pc);
 
 		data.convert(missionEvaluationContext -> {

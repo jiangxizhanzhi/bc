@@ -229,19 +229,25 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		// 设置type_index 章节
 		if (CollectionUtils.isNotEmpty(boMap.get(node.getResourceId()))) {
-			int chapterTypeIndex = 1;
-			int lessonTypeIndex = 1;
+
+			// 初始化章节和课时索引
+			Integer chapterTypeIndex = 1;
+			Integer lessonTypeIndex = 1;
 
 			for (LessonConfigBo nodeChild : boMap.get(node.getResourceId())) {
 				if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
 						.getCode().intValue()) {
-					nodeChild.setTypeIndex(chapterTypeIndex);
+					nodeChild.setTypeIndex(null != node.getTypeIndex()
+							? node.getTypeIndex() + CommonConstant.PERIOD + chapterTypeIndex
+							: chapterTypeIndex.toString());
 					chapterTypeIndex++;
 				}
 
 				if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON
 						.getCode().intValue()) {
-					nodeChild.setTypeIndex(lessonTypeIndex);
+					nodeChild.setTypeIndex(null != node.getTypeIndex()
+							? node.getTypeIndex() + CommonConstant.PERIOD + lessonTypeIndex
+							: lessonTypeIndex.toString());
 					lessonTypeIndex++;
 				}
 

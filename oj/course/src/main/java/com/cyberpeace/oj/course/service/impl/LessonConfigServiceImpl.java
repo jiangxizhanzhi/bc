@@ -112,14 +112,14 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 				if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
 						.getCode()) {
 					lessonConfig.setIndex(chapterIndex);
-					chapterIndex += CommonConstant.ONE;
+					chapterIndex++;
 				}
 
 				// 重置课时数据
 				if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON
 						.getCode()) {
 					lessonConfig.setIndex(lessonIndex);
-					lessonIndex += CommonConstant.ONE;
+					lessonIndex++;
 				}
 
 				// 递归编排数据
@@ -223,16 +223,16 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	private void setConfigTypeIndex(LessonConfigBo node, Map<String, List<LessonConfigBo>> boMap) {
 
 		// 子节点为空不进行任何操作
-		if (CollectionUtils.isEmpty(node.getChildren())) {
+		if (CollectionUtils.isEmpty(boMap.get(node.getResourceId()))) {
 			return;
 		}
 
 		// 设置type_index 章节
-		if (CollectionUtils.isNotEmpty(node.getChildren())) {
+		if (CollectionUtils.isNotEmpty(boMap.get(node.getResourceId()))) {
 			int chapterTypeIndex = 1;
 			int lessonTypeIndex = 1;
 
-			for (LessonConfigBo nodeChild : node.getChildren()) {
+			for (LessonConfigBo nodeChild : boMap.get(node.getResourceId())) {
 				if (nodeChild.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
 						.getCode().intValue()) {
 					nodeChild.setTypeIndex(chapterTypeIndex);
@@ -248,7 +248,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 				setConfigTypeIndex(nodeChild, boMap);
 			}
 
-			node.setChildren(node.getChildren());
+			node.setChildren(boMap.get(node.getResourceId()));
 		}
 	}
 

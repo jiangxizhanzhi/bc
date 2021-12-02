@@ -2,16 +2,20 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
+import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
 import com.cyberpeace.cr.singletrain.service.bo.SingleRoomListBo;
+import com.cyberpeace.cr.singletrain.service.bo.TrainRecordBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "单兵训练")
 @RestController
@@ -45,5 +49,24 @@ public class SingleRoomController {
     public BaseRsp<ListRsp<SingleRoomListBo>> list(SingleTrainListReq queryParams) {
         // todo 节点数量, 日期, 日训练量
         return new BaseRsp<>(singleRoomService.getSingleTrainPageList(queryParams));
+    }
+
+    @PostMapping("/submit_mission")
+    @ApiOperation("任务提交")
+    public BaseRsp<Boolean> submitMission(@RequestParam("resource_id") String businessTemplateId, @RequestBody @Validated SubmitMissionReq requestData) {
+        return new BaseRsp<>(singleRoomService.submitMission(businessTemplateId, requestData));
+    }
+
+    @GetMapping("/train_manual")
+    @ApiOperation("训练手册")
+    public BaseRsp<String> trainManual(@RequestParam("resource_id") String businessTemplateId) {
+        // todo 需要可获取任务数据 (writeup)
+        return new BaseRsp<>();
+    }
+
+    @GetMapping("/train_record")
+    @ApiOperation("训练记录")
+    public BaseRsp<List<TrainRecordBo>> trainRecord(@RequestParam("resource_id") String businessTemplateId) {
+        return new BaseRsp<>(singleRoomService.getTrainRecord(businessTemplateId));
     }
 }

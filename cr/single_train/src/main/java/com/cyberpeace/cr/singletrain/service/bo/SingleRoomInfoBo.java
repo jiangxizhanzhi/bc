@@ -5,11 +5,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @ApiModel("单兵训练房间信息")
-public class SingleRoomInfoBo {
+public class SingleRoomInfoBo implements Serializable {
     @ApiModelProperty("训练开始时间")
     private Date startTime;
 

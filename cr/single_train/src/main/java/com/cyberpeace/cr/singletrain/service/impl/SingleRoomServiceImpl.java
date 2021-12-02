@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,12 +9,16 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
+import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoomList;
+import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTrainStats;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleRoomMapper;
+import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
@@ -36,6 +41,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleRoom> implements SingleRoomService {
+    @Autowired
+    private SingleTemplateMapper singleTemplateMapper;
 
     @Autowired
     private SingleRoomMapper singleRoomMapper;
@@ -57,6 +64,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
     @Autowired
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private MissionService missionService;
 
     /**
      * 创建单兵训练
@@ -82,7 +92,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         room.setStartTime(new Date());
         room.setUserId(user_id);
         room.setCopyedTopoId(newTopology);
+        room.setTrainingRecord("{}");
 
+        // todo 是否需要拷贝任务
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
@@ -167,7 +179,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         // 分页查询结果
         IPage<SingleRoomList> selectResult = singleRoomMapper.singleTrainSearch(
                 queryParams.toPageParam(),
-                userId, queryParams.getPattern(),
+                userId,
+                queryParams.getPattern(),
                 queryParams.getCategory(),
                 queryParams.getDifficult()
         );
@@ -231,5 +244,75 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         result.setCurrentPage(selectResult.getCurrent());
 
         return result;
+    }
+
+    @Override
+    public Boolean submitMission(String businessTemplateId, SubmitMissionReq requestData) {
+        SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
+        if (roomObject == null) {
+            return false;
+        }
+
+        // 写入任务记录 todo time
+        JSONObject missionsRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(), JSONObject.class);
+
+        JSONObject record = new JSONObject();
+        record.put("time", new Date());
+        record.put("record", requestData.getTrainingRecord());
+        missionsRecord.put(requestData.getMissionResourceId(), record);
+
+        roomObject.setTrainingRecord(JsonUtil.toJsonString(missionsRecord));
+        updateById(roomObject);
+
+        return true;
+    }
+
+    @Override
+    public List<TrainRecordBo> getTrainRecord(String businessTemplateId) {
+        // 运行中单兵训练
+        SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
+        if (roomObject == null) {
+            return null;
+        }
+
+        SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
+
+        // 获取任务方案
+        JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionScheme(), JSONObject.class);
+        JSONArray schemeData = missionScheme.getJSONArray("scheme_data");
+        if (schemeData == null) {
+            return null;
+        }
+
+        // 构建数据
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<TrainRecordBo> trainRecordBos = Lists.newArrayList();
+        JSONObject trainRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(), JSONObject.class);
+
+        for (JSONObject stage : schemeData.toJavaList(JSONObject.class)) {
+            TrainRecordBo trainRecordBo = new TrainRecordBo();
+            trainRecordBo.setMissions(Lists.newArrayList());
+            trainRecordBo.setStage(stage.getString("stage"));
+
+            for (JSONObject _m : stage.getJSONArray("missions").toJavaList(JSONObject.class)) {
+                MissionRecordBo missionRecordBo = new MissionRecordBo();
+                missionRecordBo.setResourceId(_m.getString("resource_id"));
+                missionRecordBo.setTitle(_m.getString("title"));
+                missionRecordBo.setDescription(_m.getString("description"));
+                JSONObject missionRecord = trainRecord.getJSONObject(_m.getString("resource_id"));
+
+                // 时间戳 -> 日期字符串
+                if (!missionRecord.isEmpty()) {
+                    missionRecord.put("time", simpleDateFormat.format(new Date(missionRecord.getLong("time"))));
+                }
+                missionRecordBo.setTrainingRecord(missionRecord);
+
+                trainRecordBo.getMissions().add(missionRecordBo);
+            }
+
+            trainRecordBos.add(trainRecordBo);
+        }
+
+        return trainRecordBos;
     }
 }

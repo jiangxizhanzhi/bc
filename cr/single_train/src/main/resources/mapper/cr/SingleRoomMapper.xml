@@ -21,8 +21,8 @@
         <result column="name" property="businessTemplate.name"/>
         <result column="description" property="businessTemplate.description"/>
         <result column="difficulty" property="businessTemplate.difficulty"/>
-        <result column="pre_skills" property="singleTemplate.preSkills" jdbcType="ARRAY"/>
-        <result column="train_skills" property="singleTemplate.trainSkills" jdbcType="ARRAY"/>
+        <result column="pre_skills" property="singleTemplate.preSkills"/>
+        <result column="train_skills" property="singleTemplate.trainSkills"/>
         <result column="duration_time" property="singleTemplate.durationTime"/>
         <result column="start_time" property="singleRoom.startTime"/>
         <result column="training_record" property="singleRoom.trainingRecord"/>

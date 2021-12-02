@@ -1,0 +1,21 @@
+package com.cyberpeace.cr.singletrain.controller.req;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+@Data
+@ApiModel("任务提交")
+public class SubmitMissionReq implements Serializable {
+
+    @NotNull
+    @ApiModelProperty("任务id")
+    private String missionResourceId;
+
+    @NotNull
+    @ApiModelProperty("记录内容")
+    private String trainingRecord;
+}

@@ -322,7 +322,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (StringUtils.isNotBlank(courseLesson.getResourceId())) {
 
 			// 试卷数据修改
-			return PaperContext.builder().resourceId(courseLesson.getPaperId())
+			CourseLesson existLesson = courseLessonMapper.selectById(courseLesson.getResourceId());
+			return PaperContext.builder().resourceId(existLesson.getPaperId())
 					.practiceList(practiceList).build();
 		} else {
 
@@ -330,7 +331,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			return PaperContext.builder().description(courseLesson.getName())
 					.name(courseLesson.getName()).isPublic(CommonConstant.TRUE)
 					.practiceList(practiceList).type(Paper.PaperType.LESSON.getCode()).build();
-
 		}
 	}
 

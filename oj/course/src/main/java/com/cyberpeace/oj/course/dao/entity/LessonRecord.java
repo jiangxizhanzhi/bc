@@ -1,41 +1,23 @@
 package com.cyberpeace.oj.course.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import lombok.Data;
+import com.cyberpeace.common.model.BaseTable;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@TableName("course_lessonrecord")
-public class LessonRecord implements Serializable {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@TableName("oj_lesson_record")
+public class LessonRecord extends BaseTable {
 
-    /** 学习中 暂未使用*/
-    public static final int LEARNING = 1;
+	private String lessonId;
 
-    /** 已学习*/
-    public static final int FINISH = 2;
+	private String userId;
 
-    private Integer id;
-
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
-
-    @TableField(exist = false)
-    private String course;
-
-    private String lesson;
-
-    private String user;
-
-    private Integer progress;
-
-    private Date startTime;
-
-    private Date endTime;
+	private String courseId;
 }

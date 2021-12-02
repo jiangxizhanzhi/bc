@@ -363,7 +363,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
 				TimeUtil.getStartOfDay(endTime));
 		Map<String, List<LessonRecord>> recordMap = records.stream().collect(Collectors
-				.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getStartTime())));
+				.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getCreateTime())));
 
 		List<Knowledge> knowledgeIds = getKnowledges(roleId);
 		if (CollectionUtils.isEmpty(knowledgeIds)) {
@@ -392,7 +392,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			if (CollectionUtils.isNotEmpty(lessonRecordList)) {
 
 				List<String> recordLessonIds = lessonRecordList.stream()
-						.map(LessonRecord::getLesson).distinct().collect(Collectors.toList());
+						.map(LessonRecord::getLessonId).distinct().collect(Collectors.toList());
 				List<String> recordCourseIds = lessonRecordService
 						.recordBelongCourse(recordLessonIds, lessons);
 				yCourses.add(String.valueOf(recordCourseIds.size()));

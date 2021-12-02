@@ -145,8 +145,16 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PatchMapping("")
 	public BaseRsp patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
 
+		// 修改数据转换 进行视频和讲义地址是否修改判断
 		CourseLesson courseLesson = updateReqToEntity(lessonUpdateReq);
 
+		// 练习题数据空字符串则不修改 将paper_id设置进课时数据体中
+		if (StringUtils.isBlank(lessonUpdateReq.getPracticeList())) {
+			CourseLesson lesson = courseLessonMapper.selectById(lessonUpdateReq.getResourceId());
+			courseLesson.setPaperId(lesson.getPaperId());
+		}
+
+		// 执行数据更新
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,
 				JsonUtil.toJsonObject(lessonUpdateReq.getOjSceneConfig(), JSONObject.class),
 				JsonUtil.toJsonObjectArray(lessonUpdateReq.getPracticeList(),

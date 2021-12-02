@@ -19,6 +19,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -148,6 +149,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 基本信息拷贝
 		LessonInfoBo infoBo = BeanUtils.copy(lesson, LessonInfoBo.class);
 
+		// 知识点数据转换
+		infoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));
+
 		// 课时文件组装
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(lesson.getAttachmentIds(),
 				true);
@@ -165,6 +169,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				ResourceCollection.BusinessType.LESSON.getCode(), lessonId);
 		infoBo.setIsCollection(collection);
 
+		// 场景相关数据查询
 		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& StringUtils.isNotBlank(lesson.getTopoId())) {
 			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
@@ -186,16 +191,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// 添加学习记录
-		LessonRecord record = lessonRecordMapper.selectByLessonAndUser(lessonId,
-				authContext.getUserId());
-		if (null == record) {
-			LessonRecord lessonRecord = new LessonRecord();
-			lessonRecord.setLesson(lessonId);
-			lessonRecord.setProgress(LessonRecord.FINISH);
-			lessonRecord.setUser(authContext.getUserId());
-			lessonRecord.setStartTime(new Date());
-			lessonRecord.setEndTime(new Date());
-			lessonRecord.setCourse(courseId);
+		try {
+			LessonRecord lessonRecord = LessonRecord.builder().lessonId(lessonId).courseId(courseId)
+					.userId(authContext.getUserId()).build();
+			lessonRecordMapper.insert(lessonRecord);
+		} catch (DuplicateKeyException e) {
+			// 代表数据库已存在学习记录 不做任何处理
 		}
 
 		return infoBo;
@@ -291,18 +292,17 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			courseLesson.setTopoId(topoId);
 		}
 
-		if (StringUtils.isBlank(courseLesson.getVideoUrl())) {
-			courseLesson.setVideoUrl("");
-		}
-		if (StringUtils.isBlank(courseLesson.getHandoutUrl())) {
-			courseLesson.setHandoutUrl("");
-		}
-
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				paperService.update(paperContext);
+
+				// 试卷编号不为空 则进行实体更新操作
+				if (StringUtils.isNotBlank(courseLesson.getPaperId())) {
+					paperService.update(paperContext);
+				}
+
+				// 课时数据更新
 				courseLessonMapper.updateById(courseLesson);
 			}
 		});

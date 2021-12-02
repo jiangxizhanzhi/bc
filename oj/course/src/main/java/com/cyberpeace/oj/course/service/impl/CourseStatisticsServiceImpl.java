@@ -65,7 +65,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		List<LessonRecord> lessonRecords = lessonRecordMapper.listByLessonAndUser(userId,
 				lessonIds);
 		Map<String, LessonRecord> recordMap = lessonRecords.stream()
-				.collect(Collectors.toMap(LessonRecord::getLesson, lessonRecord -> lessonRecord));
+				.collect(Collectors.toMap(LessonRecord::getLessonId, lessonRecord -> lessonRecord));
 
 		List<CourseStudyProcessBo> studyProcessBos = courses.stream().map(course -> {
 
@@ -123,8 +123,8 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			// 计算最后学习时间
 			if (CollectionUtils.isNotEmpty(studyRecord)) {
 				LessonRecord lessonRecord = studyRecord.stream()
-						.max(Comparator.comparing(LessonRecord::getEndTime)).get();
-				studyProcessBo.setLastStudyTime(lessonRecord.getEndTime());
+						.max(Comparator.comparing(LessonRecord::getUpdateTime)).get();
+				studyProcessBo.setLastStudyTime(lessonRecord.getUpdateTime());
 			}
 
 			// 计算课程学习时长

@@ -155,7 +155,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 上节和下节课程查询
 		LessonConfigBo lessonConfig = lessonConfigService.getLessonConfig(courseId, authContext);
-		List<LessonConfigBo> boList = lessonConfig.sortListByChildren(false, true);
+		List<LessonConfigBo> boList = lessonConfig.sortListByChildren(false, false);
 		List<String> sortLessonIds = boList.stream().map(LessonConfigBo::getLessonId)
 				.collect(Collectors.toList());
 		infoBo.setPreAndNext(infoBo, sortLessonIds);

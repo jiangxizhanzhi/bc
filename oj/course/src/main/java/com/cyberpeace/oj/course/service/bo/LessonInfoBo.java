@@ -14,81 +14,81 @@ import lombok.Data;
 @Data
 public class LessonInfoBo implements Serializable {
 
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    private String courseId;
+	private String courseId;
 
-    private String name;
+	private String name;
 
-    private Boolean builtin;
+	private Boolean builtin;
 
-    private Integer type;
+	private Integer type;
 
-    private Integer handoutType;
+	private Integer handoutType;
 
-    private String handoutUrl;
+	private String handoutUrl;
 
-    private String videoUrl;
+	private String videoUrl;
 
-    private Integer difficulty;
+	private Integer difficulty;
 
-    private Integer isPublic;
+	private Integer isPublic;
 
-    private Integer lessonType;
+	private Integer lessonType;
 
-    private Integer duration;
+	private Integer duration;
 
-    private Integer destroyDelay;
+	private Integer destroyDelay;
 
-    private String topoId;
+	private String topoId;
 
-    private Integer sceneShareMode;
+	private Integer sceneShareMode;
 
-    private String knowledge;
+	private String knowledge;
 
-    private String createUser;
+	private String createUser;
 
-    private String paperId;
+	private String paperId;
 
-    private Integer paperPublic;
+	private Integer paperPublic;
 
-    private Integer heat;
+	private Integer heat;
 
-    private Boolean isCollection;
+	private Boolean isCollection;
 
-    private List<AttachmentBo> lessonFile;
+	private List<AttachmentBo> lessonFile;
 
-    private String next;
+	private String next;
 
-    private String pre;
+	private String pre;
 
-    private Integer practiceCount;
+	private Integer practiceCount;
 
-    private JSONObject sceneConfigData;
+	private JSONObject sceneConfigData;
 
-    private JSONObject sceneData;
+	private JSONObject sceneData;
 
-    private String sceneConfigName;
+	private String sceneConfigName;
 
-    /**
-     * 设置上节和下节课程编号
-     * @param infoBo
-     * @param sortList
-     */
-    public void setPreAndNext(LessonInfoBo infoBo, List<String> sortList) {
+	/**
+	 * 设置上节和下节课程编号
+	 * @param infoBo
+	 * @param sortList
+	 */
+	public void setPreAndNext(LessonInfoBo infoBo, List<String> sortList) {
 
-        int index = sortList.indexOf(infoBo.getResourceId());
-        if (index > 0 && index < sortList.size()) {
-            infoBo.setPre(sortList.get(index - 1));
-            infoBo.setNext(sortList.get(index + 1));
-        } else {
-            if (index == 0) {
-                infoBo.setNext(sortList.get(index + 1));
-            } else if (index >= sortList.size() - 1) {
-                infoBo.setPre(sortList.get(index - 1));
-            }
-        }
-    }
+		int index = sortList.indexOf(infoBo.getResourceId());
+		if (index > 0 && index < sortList.size() - 1) {
+			infoBo.setPre(sortList.get(index - 1));
+			infoBo.setNext(sortList.get(index + 1));
+		} else {
+			if (index == 0) {
+				infoBo.setNext(sortList.get(index + 1));
+			} else if (index >= sortList.size() - 1) {
+				infoBo.setPre(sortList.get(index - 1));
+			}
+		}
+	}
 
 }

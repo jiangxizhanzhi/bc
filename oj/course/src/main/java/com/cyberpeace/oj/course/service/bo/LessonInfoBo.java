@@ -32,76 +32,76 @@ public class LessonInfoBo implements Serializable {
 	@ApiModelProperty("是否为内置课程 true=内置")
 	private Boolean builtin;
 
-	@ApiModelProperty("类型 ")
+	@ApiModelProperty("类型 0=理论课 1=实验课")
 	private Integer type;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("讲义类型 0=都不是 1=md 2=ppt 3=pdf")
 	private Integer handoutType;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("讲义文件地址")
 	private String handoutUrl;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("视频文件地址")
 	private String videoUrl;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	private Integer difficulty;
 
-	@ApiModelProperty("")
-	private Integer isPublic;
+	@ApiModelProperty("是否公开 true=公开")
+	private Boolean isPublic;
 
 	@ApiModelProperty("0=未配置 1=选修 2=必修")
 	private Integer compulsory;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("课时时长")
 	private Integer duration;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("销毁延时")
 	private Integer destroyDelay;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("拓扑编号")
 	private String topoId;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("场景共享类型")
 	private Integer sceneShareMode;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("知识点")
 	private List<String> knowledge;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("传贱人编号")
 	private String createUser;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("试卷编号")
 	private String paperId;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("试卷是否公开")
 	private Integer paperPublic;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("热度")
 	private Integer heat;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("是否收藏")
 	private Boolean isCollection;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("附件")
 	private List<AttachmentBo> lessonFile;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("下一节")
 	private String next;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("上一节")
 	private String pre;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("习题数量")
 	private Integer practiceCount;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("拓扑数据")
 	private JSONObject sceneConfigData;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("场景数据")
 	private JSONObject sceneData;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("场景配置名称")
 	private String sceneConfigName;
 
 	/**

@@ -193,7 +193,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		try {
 			LessonRecord lessonRecord = LessonRecord.builder().lessonId(lessonId).courseId(courseId)
 					.userId(authContext.getUserId()).build();
-			lessonRecordMapper.save(lessonRecord);
+			lessonRecordMapper.insert(lessonRecord);
 		} catch (DuplicateKeyException e) {
 			// 代表数据库已存在学习记录 不做任何处理
 		}

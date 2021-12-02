@@ -55,10 +55,10 @@ public class Course extends AuthTable {
 	public String getLogo() {
 		if (StringUtils.isNotBlank(this.logo)) {
 			String fastdfsPrefix = ConfigUtil.getContextProperty("common.fastdfs.url.prefix");
-			if (StringUtils.isNotBlank(fastdfsPrefix) && !this.logo.contains(fastdfsPrefix)) {
+			String startStr = ConfigUtil.getContextProperty("common.fastdfs.url.start.str");
+			if (StringUtils.isNotBlank(fastdfsPrefix) && this.logo.startsWith(startStr)) {
 				return fastdfsPrefix + this.logo;
 			}
-			return this.logo;
 		}
 		return this.logo;
 	}

@@ -6,6 +6,7 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReqRel;
+import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateUpdateReqRel;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 import io.swagger.annotations.Api;
@@ -51,7 +52,7 @@ public class SingleTemplateController {
 
     @PatchMapping
     @ApiOperation("单兵训练模板更新")
-    public BaseRsp<SingleTemplateBo> update(@RequestParam("resource_id") String resourceId, @RequestBody SingleTrainTemplateReqRel requestDataRel) {
+    public BaseRsp<SingleTemplateBo> update(@RequestBody SingleTrainTemplateUpdateReqRel requestDataRel) {
         SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
 
         BaseInfo baseInfo = new BaseInfo();
@@ -59,6 +60,6 @@ public class SingleTemplateController {
         requestData.setBaseInfo(baseInfo);
         requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
 
-        return new BaseRsp<>(singleTemplateService.update(resourceId, requestData.getBaseInfo(), requestData.getMissionsScheme()));
+        return new BaseRsp<>(singleTemplateService.update(requestDataRel.getResourceId(), requestData.getBaseInfo(), requestData.getMissionsScheme()));
     }
 }

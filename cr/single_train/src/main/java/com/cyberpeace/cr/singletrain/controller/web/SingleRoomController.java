@@ -5,10 +5,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
-import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
-import com.cyberpeace.cr.singletrain.service.bo.SingleRoomListBo;
-import com.cyberpeace.cr.singletrain.service.bo.TrainRecordBo;
-import com.cyberpeace.cr.singletrain.service.bo.TrainTimeLineBo;
+import com.cyberpeace.cr.singletrain.service.bo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -52,10 +49,16 @@ public class SingleRoomController {
         return new BaseRsp<>(singleRoomService.getSingleTrainPageList(queryParams));
     }
 
-    @PostMapping("/submit_mission")
+    @PostMapping("/mission_submit")
     @ApiOperation("任务提交")
     public BaseRsp<Boolean> submitMission(@RequestParam("resource_id") String businessTemplateId, @RequestBody @Validated SubmitMissionReq requestData) {
         return new BaseRsp<>(singleRoomService.submitMission(businessTemplateId, requestData));
+    }
+
+    @GetMapping("/mission")
+    @ApiOperation("任务获取")
+    public BaseRsp<SingleMissionBo> mission(@RequestParam String businessTemplateId, @RequestParam String missionId) {
+        return new BaseRsp<>();
     }
 
     @GetMapping("/train_manual")
@@ -68,6 +71,12 @@ public class SingleRoomController {
     @ApiOperation("训练记录")
     public BaseRsp<List<TrainRecordBo>> trainRecord(@RequestParam("resource_id") String businessTemplateId) {
         return new BaseRsp<>(singleRoomService.getTrainRecord(businessTemplateId));
+    }
+
+    @GetMapping("/train_record_markdown")
+    @ApiOperation("训练记录-markdown")
+    public BaseRsp<String> trainRecordMd(@RequestParam("resource_id") String businessTemplateId) {
+        return new BaseRsp<>();
     }
 
     @GetMapping("/time_line")

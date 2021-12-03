@@ -11,6 +11,9 @@ import java.io.Serializable;
 @ApiModel("单兵训练模板")
 public class SingleTemplateBo implements Serializable {
 
+    @ApiModelProperty("业务模板id")
+    private String resourceId;
+
     @ApiModelProperty("基础信息")
     private EventDataBo eventData;
 

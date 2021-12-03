@@ -503,7 +503,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
 		localScene.setBusinessCode(LocalScene.BusinessCode.TEAM_TRAINING.getCode());
 
-		localScene.setDestoryMode(LocalScene.DestroyMode.MANUAL.getCode());
+		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setBusinessInstanceId(teamRoomId);
 		localScene.setTopoId(teamRoom.getCopyedTopoId());
 

@@ -536,7 +536,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
 		localScene.setBusinessCode(LocalScene.BusinessCode.PRACTICE.getCode());
 		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
-		localScene.setDestoryMode(LocalScene.DestroyMode.AUTO.getCode());
+		localScene.setDestroyMode(LocalScene.DestroyMode.AUTO.getCode());
 		localScene.setResourceId(IDGeneratorUtil.getID());
 		localScene.setTopoId(operation.getTopoId());
 		localScene.setUserId(authContext.getUserId());

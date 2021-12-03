@@ -13,4 +13,9 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
 	OjLocalScene selectByBidAndShared(@Param("practiceId") String businessId,
 			@Param("shared") Boolean shared, @Param("isWeb") Boolean isWeb);
+
+
+	OjLocalScene selectPrivateScene(String businessId, String userId, Boolean isWeb);
+
+	OjLocalScene selectPublicScene(String businessId, Boolean isWeb);
 }

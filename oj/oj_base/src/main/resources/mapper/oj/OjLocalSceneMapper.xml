@@ -17,4 +17,10 @@
         and shared = #{shared}
         and from_web = #{isWeb}
     </select>
+
+    <select id="selectPublicScene" resultMap="ojScene">
+    </select>
+
+    <select id="selectPrivateScene" resultMap="ojScene">
+    </select>
 </mapper>

@@ -44,12 +44,12 @@ public class LocalScene extends BaseTable {
 	/**
 	 * 只有限定时间等场景才会有销毁时间，到点自动调用场景销毁。
 	 */
-	private Date destoryTime;
+	private Date destroyTime;
 
 	/**
 	 * 0=手动；1=自动
 	 */
-	private Integer destoryMode;
+	private Integer destroyMode;
 
 	/**
 	 * 业务id
@@ -85,6 +85,27 @@ public class LocalScene extends BaseTable {
 	 * 记录该值，避免重复请求mp
 	 */
 	private Integer nodeCount;
+
+	/**
+	 * 场景名
+	 */
+	private String sceneName;
+
+	private Integer sceneAttr;
+
+	/**
+	 * json格式。
+	 * 目前保存appResourceId
+	 * {
+	 *     "app_resource_id":"abcd"
+	 * }
+	 *
+	 * app_resource_id用于前端页面场景小球的路由。对于靶场而言=业务实例id；
+	 * 实训习题=习题编号
+	 * 实训课时=course_id/lesson_id
+	 * 实训课后联系=course_id/lesson_id/paper_id 
+	 */
+	private String meta;
 
 	public enum SceneStatusEnum implements GenericEnum {
 

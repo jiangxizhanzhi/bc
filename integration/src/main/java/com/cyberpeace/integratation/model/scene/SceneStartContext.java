@@ -1,24 +1,55 @@
 package com.cyberpeace.integratation.model.scene;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.util.JsonUtil;
 
-import lombok.Data;
 import lombok.Getter;
 
-@Data
 public class SceneStartContext extends SceneOpsContext {
 
-	private String referenceMetaData;
+	private String reference_meta_data;
 
 	/**
 	 * 场景属性
 	 */
-	private Integer sceneAttr;
+	private Integer scene_attr;
 
 	/**
 	 * 场景存活时间
 	 */
-	private Integer sceneTtl;
+	private Integer scene_ttl;
+
+	public void setReferenceMetaData(String reference_meta_data) {
+		this.reference_meta_data = reference_meta_data;
+	}
+
+	public void setSceneAttr(Integer scene_attr) {
+		this.scene_attr = scene_attr;
+	}
+
+	public void setSceneTtl(Integer scene_ttl) {
+		this.scene_ttl = scene_ttl;
+	}
+
+	public void setCscene(Object cscene) {
+		this.cscene = cscene;
+	}
+
+	public String getReference_meta_data() {
+		return reference_meta_data;
+	}
+
+	public Integer getScene_attr() {
+		return scene_attr;
+	}
+
+	public Integer getScene_ttl() {
+		return scene_ttl;
+	}
+
+	public Object getCscene() {
+		return cscene;
+	}
 
 	/**
 	 * 场景大json。
@@ -26,6 +57,10 @@ public class SceneStartContext extends SceneOpsContext {
 	 * 该字段传入的情况下，url中拓扑id不起作用。
 	 */
 	private Object cscene;
+
+	public void setReferenceMetaData(ReferenceMetaData referenceMetaData) {
+		this.reference_meta_data = JsonUtil.toJsonString(referenceMetaData);
+	}
 
 	public enum SceneAttrEnum implements GenericEnum {
 

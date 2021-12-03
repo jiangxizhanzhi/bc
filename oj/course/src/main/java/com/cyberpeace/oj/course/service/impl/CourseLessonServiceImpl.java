@@ -457,7 +457,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			List<PracticeAnswerContext> answers, AuthContext authContext) {
 
 		// 数据校验
-		Course course = validateCourse(answerContext.getCourseId(), authContext);
+		validateCourse(answerContext.getCourseId(), authContext);
 		CourseLesson lesson = validateLesson(answerContext.getLessonId(), CommonConstant.TRUE);
 		Paper paper = validatePaper(lesson, CommonConstant.TRUE);
 
@@ -510,7 +510,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		LessonPaperEvaluate evaluate = BeanUtils.copy(evaluateResult, LessonPaperEvaluate.class);
 		evaluate.setLessonId(answerContext.getLessonId());
 		evaluate.setRecord(JsonUtil.toJsonString(practiceSolvedBos));
-		evaluate.setSubmitUserId(answerContext.getUserId());
+		evaluate.setSubmitUserId(authContext.getUserId());
 
 		lessonPaperEvaluateMapper.insert(evaluate);
 

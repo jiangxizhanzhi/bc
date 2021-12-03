@@ -6,16 +6,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.oj.ojbase.controller.res.ResourceAttachmentReq;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +27,6 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.controller.res.AdminCourseRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
@@ -40,7 +35,6 @@ import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
@@ -180,10 +174,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程大纲文件上传")
 	@PostMapping("/outline/upload_attachment")
-	public BaseRsp<AttachmentBo> upload_attachment(ResourceAttachmentReq attachmentReq) {
+	public BaseRsp<AttachmentBo>
+			upload_attachment(@RequestParam("file") MultipartFile outlineFile) {
 		AttachmentBo attachmentBo = attachmentService
-				.uploadFile(
-						Attachment.AttachmentType.OTHER.getCode(), false, attachmentReq.getFile());
+				.uploadFile(Attachment.AttachmentType.OTHER.getCode(), false, outlineFile);
 		return new BaseRsp<>(attachmentBo);
 	}
 

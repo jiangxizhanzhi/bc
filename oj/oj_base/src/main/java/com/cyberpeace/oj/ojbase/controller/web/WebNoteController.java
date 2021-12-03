@@ -1,7 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.oj.ojbase.controller.res.ResourceAttachmentReq;
+import com.cyberpeace.oj.ojbase.controller.req.NoteAttachmentReq;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
@@ -9,9 +9,6 @@ import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -114,7 +111,7 @@ public class WebNoteController {
 
 	@ApiOperation("实验报告/笔记文件上传")
 	@PostMapping("/upload_attachment")
-	public BaseRsp<AttachmentBo> uploadAttachment(ResourceAttachmentReq attachmentReq) {
+	public BaseRsp<AttachmentBo> uploadAttachment(NoteAttachmentReq attachmentReq) {
 
 		AttachmentBo uploadFile = attachmentService.uploadFile(
 				Attachment.AttachmentType.OTHER.getCode(), false, attachmentReq.getFile());

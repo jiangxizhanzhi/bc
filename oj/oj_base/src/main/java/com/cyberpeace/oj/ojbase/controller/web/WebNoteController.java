@@ -102,9 +102,11 @@ public class WebNoteController {
 		// 实验报告数据评估结果组装
 		if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
 			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(noteRes.getResourceId());
-			noteRes.setScore(noteEvaluate.getScore());
-			noteRes.setPassed(noteEvaluate.getPassed());
-			noteRes.setEvaluateComment(noteEvaluate.getEvaluateComment());
+			if (null != noteEvaluate) {
+				noteRes.setScore(noteEvaluate.getScore());
+				noteRes.setPassed(noteEvaluate.getPassed());
+				noteRes.setEvaluateComment(noteEvaluate.getEvaluateComment());
+			}
 		}
 
 		return new BaseRsp<>(noteRes);

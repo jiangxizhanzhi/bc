@@ -15,5 +15,5 @@ public class SingleTemplateBo implements Serializable {
     private EventDataBo eventData;
 
     @ApiModelProperty("任务方案")
-    private JSONObject missionScheme;
+    private JSONObject missionsScheme;
 }

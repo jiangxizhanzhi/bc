@@ -32,7 +32,7 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
         singleTemplate.setDurationTime(baseInfo.getDurationTime());
 
         SingleTrainTemplateReq requestData = (SingleTrainTemplateReq) basicTemplate;
-        singleTemplate.setMissionScheme(JsonUtil.toJsonString(requestData.getMissionScheme()));
+        singleTemplate.setMissionsScheme(JsonUtil.toJsonString(requestData.getMissionsScheme()));
         // todo save missions -> return mission_id ? -> singleTemplate.setMissionSchemeId(mission_id)
 
         singleTemplateService.save(singleTemplate);

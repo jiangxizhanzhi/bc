@@ -11,7 +11,7 @@ import lombok.Data;
 public class SingleTrainTemplateReq extends BasicTemplate {
 
     @ApiModelProperty("任务方案")
-    private JSONObject missionScheme;
+    private JSONObject missionsScheme;
 
 
 }

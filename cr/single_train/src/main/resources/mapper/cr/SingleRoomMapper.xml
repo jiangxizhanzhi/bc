@@ -26,7 +26,7 @@
         <result column="duration_time" property="singleTemplate.durationTime"/>
         <result column="start_time" property="singleRoom.startTime"/>
         <result column="training_record" property="singleRoom.trainingRecord"/>
-        <result column="mission_scheme" property="missionScheme"/>
+        <result column="missions_scheme" property="missionsScheme"/>
     </resultMap>
 
     <select id="singleTrainSearch" resultMap="listResultMap">

@@ -41,7 +41,7 @@ public class SingleTemplateController {
         BaseInfo baseInfo = new BaseInfo();
         BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
         requestData.setBaseInfo(baseInfo);
-        requestData.setMissionScheme(requestDataRel.getMissionScheme());
+        requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
 
         requestData.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
         // TODO 待addTemplate返回值 -> singleTemplateService.get(trainBusinessId)
@@ -57,8 +57,8 @@ public class SingleTemplateController {
         BaseInfo baseInfo = new BaseInfo();
         BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
         requestData.setBaseInfo(baseInfo);
-        requestData.setMissionScheme(requestDataRel.getMissionScheme());
+        requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
 
-        return new BaseRsp<>(singleTemplateService.update(resourceId, requestData.getBaseInfo(), requestData.getMissionScheme()));
+        return new BaseRsp<>(singleTemplateService.update(resourceId, requestData.getBaseInfo(), requestData.getMissionsScheme()));
     }
 }

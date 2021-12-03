@@ -23,6 +23,6 @@ public class SingleTemplate extends BaseTable {
 
     private Integer durationTime;
 
-    private String missionScheme;
+    private String missionsScheme;
 
 }

@@ -15,5 +15,5 @@ public class SingleTrainTemplateReqRel {
     private EventDataReq eventData;
 
     @ApiModelProperty("任务方案")
-    private JSONObject missionScheme;
+    private JSONObject missionsScheme;
 }

@@ -12,6 +12,6 @@ public class SingleRoomList {
 
     private SingleRoom singleRoom;
 
-    private String missionScheme;
+    private String missionsScheme;
 
 }

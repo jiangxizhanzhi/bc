@@ -126,7 +126,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         SingleRoomBo singleRoomBo = new SingleRoomBo();
         BeanUtils.copyProperties(singleTemplateBo, singleRoomBo);
 
-        // 当前用户使用运行中单兵训练, 无运行直接返回
+        // 当前用户已创建房间, 为null直接返回
         SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
         if (singleRoom == null) {
             return singleRoomBo;
@@ -238,7 +238,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
             singleRoomListBo.setResourceId(item.getBusinessTemplate().getResourceId());
             singleRoomListBo.getEventData().setPreSkill(JsonUtil.toJsonObjectArray(item.getSingleTemplate().getPreSkills(), String.class));
             singleRoomListBo.getEventData().setTrainSkill(JsonUtil.toJsonObjectArray(item.getSingleTemplate().getTrainSkills(), String.class));
-            singleRoomListBo.setMissionScheme(JsonUtil.toJsonObject(item.getMissionScheme(), JSONObject.class));
+            singleRoomListBo.setMissionsScheme(JsonUtil.toJsonObject(item.getMissionsScheme(), JSONObject.class));
 
             singleRoomListBo.setLastSevenDays(dateRange);
             singleRoomListBo.setTemplateUseCount(trainStats.getOrDefault(singleRoomListBo.getResourceId(), Lists.newArrayList(0, 0, 0, 0, 0, 0, 0)));
@@ -301,8 +301,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
 
         // 获取任务方案
-        JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionScheme(), JSONObject.class);
-        JSONArray schemeData = missionScheme.getJSONArray("scheme_data");
+        JSONArray schemeData = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(), JSONObject.class).getJSONArray("scheme_data");
         if (schemeData == null) {
             return null;
         }
@@ -349,7 +348,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
     public String getTrainManual(String businessTemplateId) {
         // 获取训练方案
         SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
-        JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionScheme(), JSONObject.class);
+        JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(), JSONObject.class);
         JSONArray schemeData = missionScheme.getJSONArray("scheme_data");
 
         // 生成富文本训练手册
@@ -395,7 +394,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         // 任务完成时间点
         List<JSONObject> missionRecord = Lists.newArrayList();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Map<String, Mission> missionMap = getMissionMapByScheme(singleTemplate.getMissionScheme());
+        Map<String, Mission> missionMap = getMissionMapByScheme(singleTemplate.getMissionsScheme());
 
         JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
         for (Map.Entry<String, Object> stringObjectEntry : trainRecord.entrySet()) {

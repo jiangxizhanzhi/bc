@@ -10,6 +10,8 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
@@ -69,6 +71,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
     @Autowired
     private MissionService missionService;
+
+    // todo 待调整
+    @Autowired
+    private MissionTemplateMapper missionTemplateMapper;
 
     /**
      * 创建单兵训练
@@ -257,6 +263,38 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
     }
 
     /**
+     * 获取训练任务详情, 存在答题记录情况同任务信息一起返回
+     * @param businessTemplateId 训练业务模板id
+     * @param missionId 任务id
+     * @return SingleMissionBo
+     */
+    @Override
+    public SingleMissionBo getMission(String businessTemplateId, String missionId) {
+        MissionTemplate missionObject = missionTemplateMapper.selectById(missionId);
+        if (missionObject == null) {
+            return null;
+        }
+
+        SingleMissionBo singleMissionBo = new SingleMissionBo();
+        BeanUtils.copyProperties(missionObject, singleMissionBo);
+
+        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
+        if (singleRoom == null) {
+            return singleMissionBo;
+        }
+
+        JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
+        singleMissionBo.setCategory(missionService.getCategoryById(missionObject.getCategoryId()).getName());
+        JSONObject missionRecord = trainRecord.getJSONObject(missionId);
+        if (missionRecord != null) {
+            missionRecord.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(missionRecord.getLong("time"))));
+        }
+        singleMissionBo.setTrainingRecord(missionRecord);
+
+        return singleMissionBo;
+    }
+
+    /**
      * 训练任务提交
      *
      * @param businessTemplateId 训练业务模板id
@@ -292,12 +330,6 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
      */
     @Override
     public List<TrainRecordBo> getTrainRecord(String businessTemplateId) {
-        // 运行中单兵训练
-        SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
-        if (roomObject == null) {
-            return null;
-        }
-
         SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
 
         // 获取任务方案
@@ -309,6 +341,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         // 构建数据
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<TrainRecordBo> trainRecordBos = Lists.newArrayList();
+        SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
         JSONObject trainRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(), JSONObject.class);
 
         for (JSONObject stage : schemeData.toJavaList(JSONObject.class)) {
@@ -324,7 +357,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
                 JSONObject missionRecord = trainRecord.getJSONObject(_m.getString("resource_id"));
 
                 // 时间戳 -> 日期字符串
-                if (!missionRecord.isEmpty()) {
+                if (missionRecord != null) {
                     missionRecord.put("time", simpleDateFormat.format(new Date(missionRecord.getLong("time"))));
                 }
                 missionRecordBo.setTrainingRecord(missionRecord);

@@ -6,10 +6,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
-import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
-import com.cyberpeace.cr.singletrain.service.bo.SingleRoomListBo;
-import com.cyberpeace.cr.singletrain.service.bo.TrainRecordBo;
-import com.cyberpeace.cr.singletrain.service.bo.TrainTimeLineBo;
+import com.cyberpeace.cr.singletrain.service.bo.*;
 
 import java.util.List;
 
@@ -22,6 +19,8 @@ public interface SingleRoomService extends IService<SingleRoom> {
     Boolean deleteRoom(String businessTemplateId);
 
     ListRsp<SingleRoomListBo> getSingleTrainPageList(SingleTrainListReq queryParams);
+
+    SingleMissionBo getMission(String businessTemplateId, String missionId);
 
     Boolean submitMission(String businessTemplateId, SubmitMissionReq requestData);
 

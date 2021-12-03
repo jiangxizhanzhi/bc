@@ -57,8 +57,8 @@ public class SingleRoomController {
 
     @GetMapping("/mission")
     @ApiOperation("任务获取")
-    public BaseRsp<SingleMissionBo> mission(@RequestParam String businessTemplateId, @RequestParam String missionId) {
-        return new BaseRsp<>();
+    public BaseRsp<SingleMissionBo> mission(@RequestParam("resource_id") String businessTemplateId, @RequestParam("mission_id") String missionId) {
+        return new BaseRsp<>(singleRoomService.getMission(businessTemplateId, missionId));
     }
 
     @GetMapping("/train_manual")

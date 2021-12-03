@@ -40,7 +40,7 @@
                 and T1.category = #{category}
             </if>
             <if test="difficult != null and difficult">
-                and T1.difficult = #{difficult}
+                and T1.difficulty = #{difficult}
             </if>
             <if test="pattern != null and pattern">
                 <bind name="pattern" value="'%' + pattern + '%'"/>

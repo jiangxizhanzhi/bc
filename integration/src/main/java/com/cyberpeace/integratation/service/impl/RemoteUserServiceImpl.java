@@ -168,6 +168,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setUserName(mpAuthenticatedUser.getName());
 		userInfo.setUserId(mpAuthenticatedUser.getId());
 
+		UserInfo byId = getById(mpAuthenticatedUser.getId());
+		userInfo.setOrganizationId(byId.getOrganizationId());
+
 		return userInfo;
 	}
 

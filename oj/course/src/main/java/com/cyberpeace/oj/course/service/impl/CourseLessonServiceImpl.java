@@ -306,7 +306,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 
 				// 试卷编号不为空 则进行实体更新操作
-				if (StringUtils.isNotBlank(courseLesson.getPaperId())) {
+				if (StringUtils.isBlank(courseLesson.getPaperId())) {
 					paperService.update(paperContext);
 				}
 
@@ -644,7 +644,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Map<Integer, List<? extends TheoryLessonBo>> allMap = Maps.newHashMap();
 		allMap.putAll(practiceMap);
 		if (CollectionUtils.isNotEmpty(lessonOperationBos)) {
-			allMap.put(PracticeCategory.PracticeType.OPERATION.getCode(), lessonOperationBos);
+			allMap.put(PracticeTheory.TheoryType.OPERATION.getCode(), lessonOperationBos);
 		}
 
 		// 组装习题数据

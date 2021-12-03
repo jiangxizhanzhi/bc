@@ -1,11 +1,17 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.oj.ojbase.controller.res.ResourceAttachmentReq;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
+import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -42,6 +48,9 @@ public class WebNoteController {
 	@Autowired
 	private AttachmentService attachmentService;
 
+	@Autowired
+	private NoteEvaluateMapper noteEvaluateMapper;
+
 	@ApiOperation("笔记、实验报告新增")
 	@PostMapping("")
 	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
@@ -70,12 +79,15 @@ public class WebNoteController {
 	@ApiOperation("单条笔记查询")
 	@GetMapping("")
 	public BaseRsp<WebNoteRes> getNote(@Validated GetNoteReq getNoteReq) {
-		String userId = UserInfoContext.getUserContext().getUserId();
+
 		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
 				.noteType(getNoteReq.getNoteType()).businessType(getNoteReq.getResourceType())
-				.businessId(getNoteReq.getResourceId()).userId(userId).build();
+				.businessId(getNoteReq.getResourceId())
+				.userId(UserInfoContext.getUserContext().getUserId()).build();
 
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
+
+		// 无笔记存在 实验报告返回默认值
 		if (null == noteBo) {
 			BaseRsp<WebNoteRes> rsp = new BaseRsp<>();
 			if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
@@ -83,20 +95,27 @@ public class WebNoteController {
 						.content(ConfigUtil.getContextProperty("oj.report.template.data")).build();
 				rsp.setData(webNoteRes);
 			}
-
 			return rsp;
 		}
+
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
+		// 实验报告数据评估结果组装
+		if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
+			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(noteRes.getResourceId());
+			noteRes.setScore(noteEvaluate.getScore());
+			noteRes.setPassed(noteEvaluate.getPassed());
+			noteRes.setEvaluateComment(noteEvaluate.getEvaluateComment());
+		}
+
 		return new BaseRsp<>(noteRes);
 	}
 
 	@ApiOperation("实验报告/笔记文件上传")
 	@PostMapping("/upload_attachment")
-	public BaseRsp<AttachmentBo> uploadAttachment(@RequestParam("resource_id") String resourceId,
-			@RequestParam("file") MultipartFile noteFile) {
+	public BaseRsp<AttachmentBo> uploadAttachment(ResourceAttachmentReq attachmentReq) {
 
-		AttachmentBo uploadFile = attachmentService
-				.uploadFile(Attachment.AttachmentType.OTHER.getCode(), false, noteFile);
+		AttachmentBo uploadFile = attachmentService.uploadFile(
+				Attachment.AttachmentType.OTHER.getCode(), false, attachmentReq.getFile());
 		return new BaseRsp(uploadFile);
 	}
 

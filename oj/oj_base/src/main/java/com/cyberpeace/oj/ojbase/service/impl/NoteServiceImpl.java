@@ -24,7 +24,6 @@ import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
-import com.cyberpeace.oj.ojbase.service.bo.ReportBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 
@@ -44,9 +43,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			return null;
 		}
 
-		return uniqueContext.getNoteType().intValue() == Note.NoteType.NOTE.getCode()
-				? BeanUtils.copy(note, NoteBo.class)
-				: BeanUtils.copy(note, ReportBo.class);
+		return BeanUtils.copy(note, NoteBo.class);
 	}
 
 	@Override

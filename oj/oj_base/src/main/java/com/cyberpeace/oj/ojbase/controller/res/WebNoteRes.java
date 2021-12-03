@@ -15,19 +15,25 @@ import java.util.Date;
 @NoArgsConstructor
 public class WebNoteRes implements Serializable {
 
-    @ApiModelProperty("笔记编号")
-    private String resourceId;
+	@ApiModelProperty("笔记编号")
+	private String resourceId;
 
-    @ApiModelProperty("访问类型")
-    private Integer readAuthType;
+	@ApiModelProperty("笔记内容")
+	private String content;
 
-    @ApiModelProperty("访问编号")
-    private String readAuthIds;
+	@ApiModelProperty("笔记创建时间")
+	private Date createTime;
 
-    @ApiModelProperty("笔记内容")
-    private String content;
+	@ApiModelProperty("更新时间")
+	private Date updateTime;
 
-    @ApiModelProperty("更新时间")
-    private Date updateTime;
+	@ApiModelProperty("分值")
+	private Double score;
+
+	@ApiModelProperty("是否通过")
+	private Boolean passed;
+
+	@ApiModelProperty("评估内容")
+	private String evaluateComment;
 
 }

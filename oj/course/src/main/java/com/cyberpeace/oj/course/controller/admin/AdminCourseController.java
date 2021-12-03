@@ -6,10 +6,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.oj.ojbase.controller.res.ResourceAttachmentReq;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import com.google.common.collect.Lists;
+import io.swagger.annotations.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -45,9 +47,6 @@ import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -181,10 +180,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程大纲文件上传")
 	@PostMapping("/outline/upload_attachment")
-	public BaseRsp<AttachmentBo> upload_attachment(@RequestParam("resource_id") String resourceId,
-			@RequestParam("file") MultipartFile outlineFile) {
+	public BaseRsp<AttachmentBo> upload_attachment(ResourceAttachmentReq attachmentReq) {
 		AttachmentBo attachmentBo = attachmentService
-				.uploadFile(Attachment.AttachmentType.OTHER.getCode(), false, outlineFile);
+				.uploadFile(
+						Attachment.AttachmentType.OTHER.getCode(), false, attachmentReq.getFile());
 		return new BaseRsp<>(attachmentBo);
 	}
 

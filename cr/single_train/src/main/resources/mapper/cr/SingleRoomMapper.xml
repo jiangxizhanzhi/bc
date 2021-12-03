@@ -52,6 +52,6 @@
     
     <select id="singleTrainStats" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleTrainStats">
         select business_template_id, date_format(start_time, '%m-%d') as date, count(date_format(start_time, '%m-%d')) as `count` from cr_train_record
-        where business_type = 1 group by date_format(start_time, '%m-%d');
+        where business_type = 1 group by business_template_id, date_format(start_time, '%m-%d');
     </select>
 </mapper>

@@ -80,7 +80,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
     public SingleRoomBo createRoom(String businessTemplateId) {
         // 已存在运行中训练, 返回
         SingleRoomBo singleRoomBo = getRoomInfo(businessTemplateId);
-        if (singleRoomBo != null) {
+        if (singleRoomBo.getRoomInfo() != null) {
             return singleRoomBo;
         }
 
@@ -101,7 +101,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         room.setCopyedTopoId(newTopology);
         room.setTrainingRecord("{}");
 
-        // todo 任务拷贝
+        // todo 任务拷贝?
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
@@ -121,16 +121,16 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
      */
     @Override
     public SingleRoomBo getRoomInfo(String businessTemplateId) {
-        // 无运行中训练, 返回null
-        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
-        if (singleRoom == null) {
-            return null;
-        }
-
         // 获取当前训练模板数据
         SingleTemplateBo singleTemplateBo = singleTemplateService.get(businessTemplateId);
         SingleRoomBo singleRoomBo = new SingleRoomBo();
         BeanUtils.copyProperties(singleTemplateBo, singleRoomBo);
+
+        // 当前用户使用运行中单兵训练, 无运行直接返回
+        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
+        if (singleRoom == null) {
+            return singleRoomBo;
+        }
 
         // 生成数据
         SingleRoomInfoBo singleRoomInfoBo = new SingleRoomInfoBo();

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.singletrain.controller.admin;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReqRel;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
@@ -10,6 +11,7 @@ import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +37,10 @@ public class SingleTemplateController {
     public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
         // 入参`event_data` -> `base_info`
         SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
-        requestData.setBaseInfo(requestDataRel.getEventData());
+
+        BaseInfo baseInfo = new BaseInfo();
+        BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
+        requestData.setBaseInfo(baseInfo);
         requestData.setMissionScheme(requestDataRel.getMissionScheme());
 
         requestData.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
@@ -48,7 +53,10 @@ public class SingleTemplateController {
     @ApiOperation("单兵训练模板更新")
     public BaseRsp<SingleTemplateBo> update(@RequestParam("resource_id") String resourceId, @RequestBody SingleTrainTemplateReqRel requestDataRel) {
         SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
-        requestData.setBaseInfo(requestDataRel.getEventData());
+
+        BaseInfo baseInfo = new BaseInfo();
+        BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
+        requestData.setBaseInfo(baseInfo);
         requestData.setMissionScheme(requestDataRel.getMissionScheme());
 
         return new BaseRsp<>(singleTemplateService.update(resourceId, requestData.getBaseInfo(), requestData.getMissionScheme()));

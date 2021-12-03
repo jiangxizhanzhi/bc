@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
+import com.cyberpeace.integratation.model.scene.ReferenceMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,7 @@ public class OjSceneHandler extends SceneHandler {
 
 		// 获取元数据
 		sceneStartContext
-				.setReferenceMetaData(JsonUtil.toJsonString(getReferenceMetaData(ojLocalScene)));
+				.setReferenceMetaData(getReferenceMetaData(ojLocalScene));
 
 		// 获取场景启动上下文
 		sceneStartContext.setContext(getSceneMpContext(ojLocalScene));
@@ -59,11 +60,12 @@ public class OjSceneHandler extends SceneHandler {
 	 * @param ojLocalScene
 	 * @return
 	 */
-	public SceneMetaData getReferenceMetaData(OjLocalScene ojLocalScene) {
+	public ReferenceMetaData getReferenceMetaData(OjLocalScene ojLocalScene) {
 		// 公有数据组装
-		SceneMetaData sceneMetaData = new SceneMetaData();
-		sceneMetaData.setBusinessInstanceId(ojLocalScene.getResourceId());
-		return sceneMetaData;
+		ReferenceMetaData referenceMetaData = new ReferenceMetaData();
+		referenceMetaData.setBusinessId(ojLocalScene.getBusinessId());
+
+		return referenceMetaData;
 	}
 
 	/**

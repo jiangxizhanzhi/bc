@@ -7,17 +7,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.NodeOpsContext;
+import com.cyberpeace.integratation.model.scene.ReferenceMetaData;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -44,7 +45,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	private SceneHandler sceneHandler;
 
 	@Autowired
-	TransactionTemplate transactionTemplate;
+	private TransactionTemplate transactionTemplate;
+
+	private String businessId = "business_id";
 
 	@Override
 	public LocalScene getByBusinessInstanceId(String businessInstanceId) {
@@ -55,11 +58,42 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public String startScene(LocalScene localScene) {
+		SceneStartContext startContext = getSceneStartContext(localScene);
 
-		SceneHandler contextHandler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		contextHandler.checkStartScene(localScene);
-		SceneStartContext startContext = contextHandler.getSceneStartContext(localScene);
 		return remoteSceneService.startScene(startContext);
+	}
+
+	/**
+	 * 生成场景启动的上下文
+	 * @param localScene
+	 * @return
+	 */
+	private SceneStartContext getSceneStartContext(LocalScene localScene) {
+		SceneStartContext context = new SceneStartContext();
+
+		context.setId(localScene.getTopoId());
+		context.setSceneAttr(localScene.getSceneAttr());
+		context.setSceneTtl(localScene.getSceneTtl());
+		// 前端场景统计小球用到此数据
+		context.setReferenceMetaData(getReferenceMetaData(localScene));
+		// 收到mp回传到消息后，会使用此值寻找对应到业务
+		context.getContext().getPass_through().put(businessId, localScene.getBusinessInstanceId());
+		context.getContext().setAccessUserId(localScene.getUserId());
+
+		return context;
+	}
+
+	private ReferenceMetaData getReferenceMetaData(LocalScene localScene) {
+		ReferenceMetaData referenceMetaData = new ReferenceMetaData();
+
+		referenceMetaData.setBusinessCode(localScene.getBusinessCode());
+		referenceMetaData.setCreateUserId(localScene.getUserId());
+		referenceMetaData.setBusinessName(localScene.getSceneName());
+		// 解析meta
+		LocalSceneMeta meta = JSON.parseObject(localScene.getMeta(), LocalSceneMeta.class);
+		referenceMetaData.setBusinessId(meta.getAppResourceId());
+
+		return referenceMetaData;
 	}
 
 	@Override
@@ -73,19 +107,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public Boolean stopScene(String localSceneId) {
-		LocalScene localScene = getById(localSceneId);
+	public Boolean stopScene(LocalScene localScene) {
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
-		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		handler.checkSceneOpsPermission(localScene);
 
 		Boolean result = remoteSceneService.stopScene(sceneOpsContext);
-		if (!result) {
-			log.error("failed to stop scene [{}]", localScene.getMpSceneId());
-			throw new RuntimeException();
-		}
-		clearLocalScene(localScene);
-		return true;
+
+		return result;
 	}
 
 	@Override
@@ -125,16 +152,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public void clearLocalScene(LocalScene localScene) {
-		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+	public Boolean clearLocalScene(LocalScene localScene) {
+		// 1、不管中台对应的场景有没有关闭，先调用
+		boolean result = stopScene(localScene);
 
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				handler.clearLocalScene(localScene);
-				removeById(localScene.getResourceId());
-			}
-		});
+		return result;
 	}
 
 	@Override
@@ -235,6 +257,10 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public JSONObject getSceneData(String mpSceneId, String userId) {
+		if (StringUtils.isBlank(mpSceneId)) {
+			return null;
+		}
+
 		JSONObject scene = remoteSceneService.getById(mpSceneId, userId);
 		if (scene != null) {
 			return scene.getJSONObject("scene");
@@ -275,8 +301,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		localScene.setMpSceneId(sceneId);
 		localScene.setStartTime(new Date());
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-		if (localScene.getSceneTtl() != null && localScene.getDestoryMode() == 1) {
-			localScene.setDestoryTime(
+		if (localScene.getSceneTtl() != null && localScene.getDestroyMode() == 1) {
+			localScene.setDestroyTime(
 					TimeUtil.addMins(localScene.getStartTime(), localScene.getSceneTtl()));
 		}
 
@@ -286,7 +312,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	private void updateAfterStopScene(LocalScene localScene) {
 		localScene.setMpSceneId("");
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.DESTROY.getCode());
-		localScene.setDestoryTime(new Date());
+		localScene.setDestroyTime(new Date());
 		updateById(localScene);
 	}
 

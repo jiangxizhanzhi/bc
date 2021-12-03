@@ -82,7 +82,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 					.getBeanByClass(RemoteUserService.class);
 
 			List<UserInfo> userInfos = userService.getByIdList(userIds);
-			List<OperationUserInfo> operationUserInfos = StreamApiUtils.simpleMap(userInfos,
+			List<OperationUserInfo> operationUserInfos = StreamApiUtils.map(userInfos,
 					userInfo -> {
 						OperationUserInfo readUserInfo = BeanUtils.copy(userInfo,
 								OperationUserInfo.class);

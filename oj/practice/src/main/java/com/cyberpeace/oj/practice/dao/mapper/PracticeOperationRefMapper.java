@@ -23,4 +23,6 @@ public interface PracticeOperationRefMapper extends BaseMapper<PracticeOperation
 
 	PracticeOperationRef selectByPracticeId(@Param("paperId") String paperId,
 			@Param("practiceId") String practiceId);
+
+	List<String> selectByPaper(@Param("paperId") String paper);
 }

@@ -41,7 +41,7 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
 				.selectByPracticeIds(paperId, null);
 
-		List<OperationLessonBo> operationLessonBos = StreamApiUtils.simpleMap(operationRefs,
+		List<OperationLessonBo> operationLessonBos = StreamApiUtils.map(operationRefs,
 				practiceOperationRef -> {
 					PracticeOperation operation = JsonUtil.toJsonObject(
 							practiceOperationRef.getSnapshot(), PracticeOperation.class);

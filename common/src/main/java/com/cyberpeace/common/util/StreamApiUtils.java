@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StreamApiUtils {
 
@@ -23,7 +24,7 @@ public class StreamApiUtils {
 	 * @param <V>
 	 * @return
 	 */
-	public static <E, V> List<V> columnList(Collection<E> collection, Function<E, V> mapperValue) {
+	public static <E, V> List<V> getColumn(Collection<E> collection, Function<E, V> mapperValue) {
 		if (null == collection) {
 			return Lists.newArrayList();
 		}
@@ -41,7 +42,7 @@ public class StreamApiUtils {
 	 * @param <E>
 	 * @return
 	 */
-	public static <K, V, E> Map<K, V> columnMap(Collection<E> collection, Function<E, K> keyMapper,
+	public static <K, V, E> Map<K, V> toMap(Collection<E> collection, Function<E, K> keyMapper,
 			Function<E, V> valueMapper) {
 		if (CollectionUtils.isEmpty(collection)) {
 			return Maps.newHashMap();
@@ -57,7 +58,7 @@ public class StreamApiUtils {
 	 * @param <E>
 	 * @return
 	 */
-	public static <K, E> Map<K, List<E>> groupByColumn(Collection<E> collection,
+	public static <K, E> Map<K, List<E>> groupBy(Collection<E> collection,
 			Function<E, K> mapperValue) {
 		if (CollectionUtils.isEmpty(collection)) {
 			return Maps.newHashMap();
@@ -72,7 +73,7 @@ public class StreamApiUtils {
 	 * @param <E>
 	 * @return
 	 */
-	public static <E> List<E> simpleFilter(Collection<E> collection,
+	public static <E> List<E> filter(Collection<E> collection,
 			Predicate<? super E> predicate) {
 		return collection.stream().filter(predicate).collect(Collectors.toList());
 	}
@@ -85,7 +86,7 @@ public class StreamApiUtils {
 	 * @param <T>
 	 * @return
 	 */
-	public static <E, T> List<T> simpleMap(Collection<E> collection, Function<E, T> mapperValue) {
+	public static <E, T> List<T> map(Collection<E> collection, Function<E, T> mapperValue) {
 		if (CollectionUtils.isEmpty(collection)) {
 			return Lists.newArrayList();
 		}
@@ -104,7 +105,16 @@ public class StreamApiUtils {
 
 		double sum = collection.stream().mapToDouble(mapper).sum();
 		return sum;
+	}
 
+	/**
+	 * 去重
+	 * @param collection
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> List<E> distinct(Collection<E> collection) {
+		return collection.stream().distinct().collect(Collectors.toList());
 	}
 
 }

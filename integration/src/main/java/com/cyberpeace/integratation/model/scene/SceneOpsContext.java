@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class SceneOpsContext implements Serializable {
 
-	private SceneMpContext context;
+	private SceneMpContext context = new SceneMpContext();
 
 	private String id;
 

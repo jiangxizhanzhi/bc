@@ -49,7 +49,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<String> organizationList = null;
 		List<Classroom> classrooms = classroomMapper.listByTimeAndOrg(startOfDay,
 				endOfDay, organizationList, createUser);
-		return StreamApiUtils.simpleMap(classrooms, classroom -> {
+		return StreamApiUtils.map(classrooms, classroom -> {
 			ClassroomBo copy = BeanUtils.copy(classroom, ClassroomBo.class);
 
 			String courseId = classroom.getCourseId();

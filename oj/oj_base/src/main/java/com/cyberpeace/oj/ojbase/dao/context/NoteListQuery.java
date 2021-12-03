@@ -16,4 +16,6 @@ public class NoteListQuery implements Serializable {
 
     private String pattern;
 
+    private String businessId;
+
 }

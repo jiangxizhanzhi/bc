@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +150,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 基本信息拷贝
 		LessonInfoBo infoBo = BeanUtils.copy(lesson, LessonInfoBo.class);
 
+		// 课程名称数据
+		Course course = courseMapper.selectById(courseId);
+		infoBo.setCourseName(null != course ? course.getName() : "");
+
 		// 知识点数据转换
 		infoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));
 
@@ -155,6 +161,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(lesson.getAttachmentIds(),
 				true);
 		infoBo.setLessonFile(attachmentBos);
+
+		// 练习数据查询
+		Paper paper = paperMapper.selectById(lesson.getPaperId());
+		infoBo.setPaperPublic(paper.getIsPublic());
+		Integer countByPaper = paperService.practiceCountByPaper(lesson.getPaperId());
+		infoBo.setPracticeCount(countByPaper);
 
 		// 上节和下节课程查询
 		LessonConfigBo lessonConfig = lessonConfigService.getLessonConfig(courseId, authContext);
@@ -397,7 +409,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.filter(courseLesson -> StringUtils.isNotBlank(courseLesson.getResourceId()))
 				.map(CourseLesson::getPaperId).collect(Collectors.toList());
 
-		List<Paper> papers = StreamApiUtils.simpleMap(paperIds, paperId -> {
+		List<Paper> papers = StreamApiUtils.map(paperIds, paperId -> {
 			Paper paper = new Paper();
 			paper.setIsPublic(isPublic);
 			paper.setResourceId(paperId);
@@ -462,40 +474,33 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		List<PracticeSolvedBo> practiceSolvedBos = Lists.newArrayList();
 
-		List<EvaluateResult> evaluateResultList = StreamApiUtils.simpleMap(answers,
-				submitContext -> {
+		List<EvaluateResult> evaluateResultList = StreamApiUtils.map(answers, submitContext -> {
 
-					if (submitContext.getPracticeType()
-							.intValue() == PracticeCategory.PracticeType.THEORY.getCode()
-									.intValue()) {
+			if (submitContext.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
+					.getCode().intValue()) {
 
-						PracticeTheory practiceTheory = practiceTheoryRefService.selectByPracticeId(
-								paper.getResourceId(), submitContext.getPracticeId());
-						EvaluateResult evaluateResult = theoryEvaluateHandler.evaluateByBusiness(
-								authContext.getUserId(), practiceTheory,
-								submitContext.getSubmitAnswer());
+				PracticeTheory practiceTheory = practiceTheoryRefService
+						.selectByPracticeId(paper.getResourceId(), submitContext.getPracticeId());
+				EvaluateResult evaluateResult = theoryEvaluateHandler.evaluateByBusiness(
+						authContext.getUserId(), practiceTheory, submitContext.getSubmitAnswer());
 
-						PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult,
-								PracticeSolvedBo.class);
-						solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
-						practiceSolvedBos.add(solvedBo);
-						return evaluateResult;
+				PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult, PracticeSolvedBo.class);
+				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
+				practiceSolvedBos.add(solvedBo);
+				return evaluateResult;
 
-					} else {
-						PracticeOperation operation = practiceOperationRefService
-								.selectByPracticeId(paper.getResourceId(),
-										submitContext.getPracticeId());
-						EvaluateResult evaluateResult = operationEvaluateHandler.evaluateByBusiness(
-								answerContext.getUserId(), operation,
-								submitContext.getSubmitAnswer());
+			} else {
+				PracticeOperation operation = practiceOperationRefService
+						.selectByPracticeId(paper.getResourceId(), submitContext.getPracticeId());
+				EvaluateResult evaluateResult = operationEvaluateHandler.evaluateByBusiness(
+						answerContext.getUserId(), operation, submitContext.getSubmitAnswer());
 
-						PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult,
-								PracticeSolvedBo.class);
-						solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
-						practiceSolvedBos.add(solvedBo);
-						return evaluateResult;
-					}
-				});
+				PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult, PracticeSolvedBo.class);
+				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
+				practiceSolvedBos.add(solvedBo);
+				return evaluateResult;
+			}
+		});
 
 		Double totalScore = StreamApiUtils.mapToDouble(evaluateResultList,
 				EvaluateResult::getTotalScore);
@@ -563,14 +568,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<OperationLessonBo> operationLessonBos = practiceOperationRefService
 				.selectByPaperId(paper.getResourceId(), true, true);
 
-		List<AdminLessonPracticeBo> practiceBos = StreamApiUtils.simpleMap(theoryLessonBos,
+		List<AdminLessonPracticeBo> practiceBos = StreamApiUtils.map(theoryLessonBos,
 				theoryLessonBo -> {
 					AdminLessonPracticeBo practiceBo = BeanUtils.copy(theoryLessonBo,
 							AdminLessonPracticeBo.class);
 					practiceBo.setTitle(practiceBo.getContent());
 					return practiceBo;
 				});
-		List<AdminLessonPracticeBo> practiceBoList = StreamApiUtils.simpleMap(operationLessonBos,
+		List<AdminLessonPracticeBo> practiceBoList = StreamApiUtils.map(operationLessonBos,
 				operationLessonBo -> BeanUtils.copy(operationLessonBo,
 						AdminLessonPracticeBo.class));
 		practiceBos.addAll(practiceBoList);
@@ -605,7 +610,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 获取解题记录
 			List<PracticeSolvedBo> solvedBos = JsonUtil.toJsonObjectArray(paperEvaluate.getRecord(),
 					PracticeSolvedBo.class);
-			solvedBoMap.putAll(StreamApiUtils.columnMap(solvedBos, PracticeSolvedBo::getResourceId,
+			solvedBoMap.putAll(StreamApiUtils.toMap(solvedBos, PracticeSolvedBo::getResourceId,
 					practiceSolvedBo -> practiceSolvedBo));
 		}
 
@@ -614,7 +619,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.selectByPaperId(paper.getResourceId(), viewAnswer, false);
 
 		// 实操习题转换
-		List<LessonOperationBo> lessonOperationBos = StreamApiUtils.simpleMap(operationLessonBos,
+		List<LessonOperationBo> lessonOperationBos = StreamApiUtils.map(operationLessonBos,
 				operationBo -> {
 					LessonOperationBo lessonOperationBo = BeanUtils.copy(operationBo,
 							LessonOperationBo.class);
@@ -626,16 +631,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 理论习题转换
 		List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService
 				.selectByPaper(paper.getResourceId(), viewAnswer);
-		List<LessonTheoryBo> theoryBoList = StreamApiUtils.simpleMap(theoryLessonBos,
-				theoryLessonBo -> {
-					LessonTheoryBo theoryBo = BeanUtils.copy(theoryLessonBo, LessonTheoryBo.class);
-					theoryBo.setResolvedDetail(solvedBoMap.get(theoryBo.getResolvedDetail()));
-					return theoryBo;
-				});
+		List<LessonTheoryBo> theoryBoList = StreamApiUtils.map(theoryLessonBos, theoryLessonBo -> {
+			LessonTheoryBo theoryBo = BeanUtils.copy(theoryLessonBo, LessonTheoryBo.class);
+			theoryBo.setResolvedDetail(solvedBoMap.get(theoryBo.getResolvedDetail()));
+			return theoryBo;
+		});
 
 		// 组装习题数据
 		Map<Integer, LessonPracticeListBo> listBoMap = Maps.newHashMap();
-		Map<Integer, List<LessonTheoryBo>> practiceMap = StreamApiUtils.groupByColumn(theoryBoList,
+		Map<Integer, List<LessonTheoryBo>> practiceMap = StreamApiUtils.groupBy(theoryBoList,
 				TheoryLessonBo::getQuestionType);
 
 		// 新建map存储数据

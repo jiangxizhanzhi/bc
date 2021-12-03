@@ -36,9 +36,13 @@
     </select>
 
     <select id="selectByPracticeId" resultMap="base">
-        select *
-        from oj_practice_theory_ref
+        select * from oj_practice_theory_ref
         where paper_id = #{paperId}
         and origin_id = #{practiceId}
+    </select>
+
+    <select id="selectByPaper" resultType="java.lang.String">
+        select resource_id from oj_practice_theory_ref
+        where paper_id = #{paperId}
     </select>
 </mapper>

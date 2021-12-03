@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -69,7 +70,9 @@ public class WebNoteController {
 
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
 		if (null == noteBo) {
-			return new BaseRsp<>();
+			WebNoteRes webNoteRes = WebNoteRes.builder()
+					.content(ConfigUtil.getContextProperty("oj.report.template.data")).build();
+			return new BaseRsp<>(webNoteRes);
 		}
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
 		return new BaseRsp<>(noteRes);

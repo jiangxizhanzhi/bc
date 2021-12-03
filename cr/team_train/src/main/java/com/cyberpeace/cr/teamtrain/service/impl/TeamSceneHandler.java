@@ -100,7 +100,7 @@ public class TeamSceneHandler extends SceneHandler {
 
 	@Override
 	public void setPassThrough(SceneOpsContext sceneOpsContext, LocalScene localScene) {
-		sceneOpsContext.getContext().getPassThrough().put("local_scene_id",
+		sceneOpsContext.getContext().getPass_through().put("local_scene_id",
 				localScene.getResourceId());
 	}
 

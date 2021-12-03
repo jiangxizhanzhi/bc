@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.cyberpeace.integratation.model.scene.ReferenceMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -21,14 +22,14 @@ public class OperationSceneHandler extends OjSceneHandler {
 	}
 
 	@Override
-	public SceneMetaData getReferenceMetaData(OjLocalScene ojLocalScene) {
+	public ReferenceMetaData getReferenceMetaData(OjLocalScene ojLocalScene) {
 		// 调用父类方法设置一部分参数
-		SceneMetaData referenceMetaData = super.getReferenceMetaData(ojLocalScene);
+		ReferenceMetaData referenceMetaData = super.getReferenceMetaData(ojLocalScene);
 
 		// 设置场景名称
 		PracticeOperation practiceOperation = practiceOperationMapper
 				.selectById(ojLocalScene.getResourceId());
-		referenceMetaData.setSceneName(practiceOperation.getTitle());
+		referenceMetaData.setBusinessName(practiceOperation.getTitle());
 
 		return referenceMetaData;
 	}
@@ -40,12 +41,12 @@ public class OperationSceneHandler extends OjSceneHandler {
 		SceneMpContext sceneMpContext = super.getSceneMpContext(ojLocalScene);
 
 		// 透传数据设置
-		sceneMpContext.getPassThrough().put("local_scene_id", ojLocalScene.getLocalSceneId());
+		sceneMpContext.getPass_through().put("local_scene_id", ojLocalScene.getLocalSceneId());
 
 		// 设置场景可存活最大时间
 		PracticeOperation practiceOperation = practiceOperationMapper
 				.selectById(ojLocalScene.getBusinessId());
-		sceneMpContext.getPassThrough().put("destroy_delay",
+		sceneMpContext.getPass_through().put("destroy_delay",
 				practiceOperation.getDestroyDelay().toString());
 
 		return sceneMpContext;

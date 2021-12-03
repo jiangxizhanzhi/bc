@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.SceneService;
@@ -57,7 +56,7 @@ public class SceneServiceImpl implements SceneService {
 		localScene.setTopoId(topoId);
 		localScene.setResourceId(IDGeneratorUtil.getID());
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-		localScene.setDestoryMode(LocalScene.DestroyMode.MANUAL.getCode());
+		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setStartTime(new Date());
 
 		return localScene;
@@ -68,9 +67,7 @@ public class SceneServiceImpl implements SceneService {
 		SceneStartContext context = new SceneStartContext();
 		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
 		context.setId(localScene.getTopoId());
-		context.getContext().getPassThrough().put("local_scene_id", localScene.getResourceId());
-		context.setReferenceMetaData(
-				JsonUtil.toJsonString(handler.getReferenceMetaData(localScene)));
+		context.getContext().getPass_through().put("local_scene_id", localScene.getResourceId());
 
 		return context;
 	}

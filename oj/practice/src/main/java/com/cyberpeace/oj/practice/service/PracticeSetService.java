@@ -18,6 +18,14 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	AdminPracticeSetBo selectById(String resourceId, AuthContext authContext);
 
 	/**
+	 * 习题集是否可访问
+	 * @param resourceId
+	 * @param authContext
+	 * @return
+	 */
+	Boolean enableAccess(String resourceId, AuthContext authContext);
+
+	/**
 	 * 分页查询习题集列表
 	 * @param page
 	 * @param practiceType

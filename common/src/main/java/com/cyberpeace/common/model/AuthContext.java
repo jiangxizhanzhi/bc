@@ -2,16 +2,14 @@ package com.cyberpeace.common.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class AuthContext {
+public class AuthContext implements Serializable {
 
 	private String organization;
 
-	private String likeOrganization;
-
 	private String userId;
-
-	private String likeUser;
 
 	private Boolean isWeb;
 

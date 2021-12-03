@@ -18,9 +18,6 @@ public class AuthContextUtils {
 		AuthContext authContext = new AuthContext();
 		authContext.setUserId(userInfo.getUserId());
 		authContext.setOrganization(userInfo.getOrganizationId());
-		authContext
-				.setLikeOrganization(LocalStringUtil.constructLike(userInfo.getOrganizationId()));
-		authContext.setLikeUser(LocalStringUtil.constructLike(userInfo.getUserId()));
 		authContext.setIsWeb(isWeb);
 		authContext.setIsSuperAdmin(userInfo.isSuperuser());
 

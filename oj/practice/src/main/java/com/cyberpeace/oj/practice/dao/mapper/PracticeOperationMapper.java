@@ -33,4 +33,5 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 */
 	List<PracticeOperation> randomChoice(@Param("query") OperationListQuery listQuery,
 			@Param("limit") Integer count);
+
 }

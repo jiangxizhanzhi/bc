@@ -34,7 +34,7 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 		List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper.selectByPracticeIds(paperId,
 				null);
 
-		List<TheoryLessonBo> theoryList = StreamApiUtils.simpleMap(theoryRefList,
+		List<TheoryLessonBo> theoryList = StreamApiUtils.map(theoryRefList,
 				practiceTheoryRef -> {
 					PracticeTheory practiceTheory = JsonUtil
 							.toJsonObject(practiceTheoryRef.getSnapshot(), PracticeTheory.class);

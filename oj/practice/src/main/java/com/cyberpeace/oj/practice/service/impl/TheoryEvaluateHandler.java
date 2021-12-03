@@ -120,7 +120,7 @@ public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 			}
 
 			List<String> submits = Lists.newArrayList(submitAnswer.values());
-			List<String> corrects = StreamApiUtils.columnList(correctAnswer, BlankAnswer::getValue);
+			List<String> corrects = StreamApiUtils.getColumn(correctAnswer, BlankAnswer::getValue);
 
 			boolean solved = CollectionUtils.isEqualCollection(submits, corrects);
 			Double score = CommonConstant.ZERO.doubleValue();

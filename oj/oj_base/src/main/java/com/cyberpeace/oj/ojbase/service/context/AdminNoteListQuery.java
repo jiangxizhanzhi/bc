@@ -17,4 +17,6 @@ public class AdminNoteListQuery implements Serializable {
 
     private Integer businessType;
 
+    private String businessId;
+
 }

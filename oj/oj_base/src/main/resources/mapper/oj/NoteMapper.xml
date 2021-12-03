@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper">
-    <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Note"/>
+    <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Note">
+        <result property="isPublic" column="public"/>
+    </resultMap>
 
     <select id="selectByCondition" resultMap="base">
         select * from oj_note
@@ -16,7 +18,10 @@
         select * from oj_note
         <where>
             note_type = #{noteListQuery.noteType}
-                    and business_type = #{noteListQuery.businessType}
+            and business_type = #{noteListQuery.businessType}
+            <if test="noteListQuery.businessId != null and noteListQuery.businessId != ''">
+                and business_id = #{noteListQuery.businessId}
+            </if>
             <if test="noteListQuery.userIds != null and noteListQuery.userIds.size() != 0">
                 and user_id in
                 <foreach collection="noteListQuery.userIds" open="(" close=")" item="userId" separator=",">

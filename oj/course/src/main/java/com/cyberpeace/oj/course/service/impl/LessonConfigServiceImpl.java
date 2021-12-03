@@ -63,7 +63,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		LessonConfig firstNode = lessonConfigMapper.getCourseNode(courseId);
 		List<LessonConfigBo> configBos = getConfigBo(courseId, authContext);
 
-		Map<String, List<LessonConfigBo>> boMap = StreamApiUtils.groupByColumn(configBos,
+		Map<String, List<LessonConfigBo>> boMap = StreamApiUtils.groupBy(configBos,
 				LessonConfigBo::getParentId);
 		LessonConfigBo configBo = BeanUtils.copy(firstNode, LessonConfigBo.class);
 
@@ -80,7 +80,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		// 拆解树
 		List<LessonConfigBo> sortListByTree = configBo.sortListByChildren(true, true);
-		List<LessonConfig> configs = StreamApiUtils.simpleMap(sortListByTree,
+		List<LessonConfig> configs = StreamApiUtils.map(sortListByTree,
 				bo -> BeanUtils.copy(bo, LessonConfig.class));
 
 		// 原始目录删除 新增全新目录
@@ -163,13 +163,13 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 				authContext.getIsWeb());
 		Map<String, CourseLesson> lessonMap = lessons.stream().collect(
 				Collectors.toMap(CourseLesson::getResourceId, courseLesson -> courseLesson));
-		List<String> lessonIds = StreamApiUtils.simpleMap(lessons, CourseLesson::getResourceId);
+		List<String> lessonIds = StreamApiUtils.map(lessons, CourseLesson::getResourceId);
 
 		// 查询课程目录数据
 		List<LessonConfig> configs = lessonConfigMapper.selectByCourse(courseId);
 
 		// 过滤掉课程节点
-		List<LessonConfig> lessonConfigs = StreamApiUtils.simpleFilter(configs,
+		List<LessonConfig> lessonConfigs = StreamApiUtils.filter(configs,
 				lessonConfig -> (StringUtils.isNotBlank(lessonConfig.getParentId())
 						&& StringUtils.isBlank(lessonConfig.getLessonId()))
 						|| (CollectionUtils.isNotEmpty(lessonIds)
@@ -177,7 +177,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 								&& lessonIds.contains(lessonConfig.getLessonId())));
 
 		// 数据类型转换
-		List<LessonConfigBo> configBos = StreamApiUtils.simpleMap(lessonConfigs,
+		List<LessonConfigBo> configBos = StreamApiUtils.map(lessonConfigs,
 				lessonConfig -> configToBo(lessonConfig, lessonMap));
 
 		// 前台掉用 查询学习记录

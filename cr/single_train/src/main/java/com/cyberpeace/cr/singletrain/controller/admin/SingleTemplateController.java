@@ -4,6 +4,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReq;
+import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReqRel;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 import io.swagger.annotations.Api;
@@ -31,7 +32,12 @@ public class SingleTemplateController {
 
     @PostMapping
     @ApiOperation("单兵训练模板创建")
-    public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReq requestData) {
+    public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
+        // 入参`event_data` -> `base_info`
+        SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
+        requestData.setBaseInfo(requestDataRel.getEventData());
+        requestData.setMissionScheme(requestDataRel.getMissionScheme());
+
         requestData.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
         // TODO 待addTemplate返回值 -> singleTemplateService.get(trainBusinessId)
         String trainBusinessId = businessTemplateService.addTemplate(requestData);
@@ -40,7 +46,11 @@ public class SingleTemplateController {
 
     @PatchMapping
     @ApiOperation("单兵训练模板更新")
-    public BaseRsp<SingleTemplateBo> update(@RequestParam("resource_id") String resourceId, @RequestBody SingleTrainTemplateReq requestData) {
+    public BaseRsp<SingleTemplateBo> update(@RequestParam("resource_id") String resourceId, @RequestBody SingleTrainTemplateReqRel requestDataRel) {
+        SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
+        requestData.setBaseInfo(requestDataRel.getEventData());
+        requestData.setMissionScheme(requestDataRel.getMissionScheme());
+
         return new BaseRsp<>(singleTemplateService.update(resourceId, requestData.getBaseInfo(), requestData.getMissionScheme()));
     }
 }

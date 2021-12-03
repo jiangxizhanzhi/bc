@@ -28,5 +28,6 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
             @Param("difficult") Integer difficult
     );
 
+    // todo 入参待使用
     List<SingleTrainStats> singleTrainStats(@Param("business_template_ids") List<String> businessTemplateIds, @Param("date_range") List<String> dateRange);
 }

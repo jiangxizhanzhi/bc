@@ -10,6 +10,9 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,6 +65,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	@Autowired
+	private PracticeTheoryRefService practiceTheoryRefService;
+
+	@Autowired
+	private PracticeOperationRefService practiceOperationRefService;
+
 	@Override
 	public Paper create(PaperContext paperContext) {
 
@@ -83,10 +92,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 				paperMapper.insert(paper);
 
 				if (CollectionUtils.isNotEmpty(theoryRefList)) {
-					practiceTheoryRefMapper.saveBatch(theoryRefList);
+					practiceTheoryRefService.saveBatch(theoryRefList);
 				}
 				if (CollectionUtils.isNotEmpty(operationRefs)) {
-					practiceOperationRefMapper.saveBatch(operationRefs);
+					practiceOperationRefService.saveBatch(operationRefs);
 				}
 			}
 		});
@@ -115,10 +124,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 				practiceOperationRefMapper.deleteByPaper(paper.getResourceId());
 
 				if (CollectionUtils.isNotEmpty(theoryRefList)) {
-					practiceTheoryRefMapper.saveBatch(theoryRefList);
+					practiceTheoryRefService.saveBatch(theoryRefList);
 				}
 				if (CollectionUtils.isNotEmpty(operationRefs)) {
-					practiceOperationRefMapper.saveBatch(operationRefs);
+					practiceOperationRefService.saveBatch(operationRefs);
 				}
 			}
 		});

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -26,10 +27,6 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -323,6 +320,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 组装试卷数据
+	 *
 	 * @param courseLesson
 	 * @param practiceList
 	 * @return
@@ -347,6 +345,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 组装课程目录数据
+	 *
 	 * @param courseLesson
 	 * @return
 	 */
@@ -391,7 +390,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 是否具有实验报告
 			NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
-					.noteType(Note.NoteType.NOTE.getCode())
+					.noteType(Note.NoteType.REPORT.getCode())
 					.businessType(Note.NoteResourceType.LESSON.getCode())
 					.businessId(courseLesson.getResourceId()).build();
 			List<String> noteIds = noteMapper.selectByContext(uniqueContext);
@@ -532,15 +531,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 计算评估结果
 		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
 				.selectByUserAndLesson(authContext.getUserId(), lessonId);
-		if (paperEvaluate != null && authContext.getIsWeb()) {
-			EvaluateResult evaluateResult = BeanUtils.copy(paperEvaluate, EvaluateResult.class);
-			evaluateResult.setSolved(CommonConstant.TRUE);
-			evaluateResult.setResourceId(lessonId);
-			lessonPracticeBo.setEvaluateResult(evaluateResult);
-		}
+		EvaluateResult evaluateResult = EvaluateResult.builder().solved(null != paperEvaluate)
+				.resourceId(lessonId).totalScore(paper.getTotalScore())
+				.score(null != paperEvaluate ? paperEvaluate.getScore() : CommonConstant.ZERO)
+				.build();
+		lessonPracticeBo.setEvaluateResult(evaluateResult);
 
 		// 处理习题数据
-		Map<Integer, LessonPracticeListBo> handlerPractice = handlerPractice(paperEvaluate, paper,
+		Map<String, LessonPracticeListBo> handlerPractice = handlerPractice(paperEvaluate, paper,
 				null != paperEvaluate);
 		lessonPracticeBo.setPracticeList(handlerPractice);
 
@@ -598,11 +596,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 前台习题数据处理
+	 *
 	 * @param paperEvaluate
 	 * @param paper
 	 * @return
 	 */
-	private Map<Integer, LessonPracticeListBo> handlerPractice(LessonPaperEvaluate paperEvaluate,
+	private Map<String, LessonPracticeListBo> handlerPractice(LessonPaperEvaluate paperEvaluate,
 			Paper paper, Boolean viewAnswer) {
 
 		Map<String, PracticeSolvedBo> solvedBoMap = Maps.newHashMap();
@@ -637,24 +636,26 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			return theoryBo;
 		});
 
-		// 组装习题数据
-		Map<Integer, LessonPracticeListBo> listBoMap = Maps.newHashMap();
+		// 理论习题数据分组
 		Map<Integer, List<LessonTheoryBo>> practiceMap = StreamApiUtils.groupBy(theoryBoList,
 				TheoryLessonBo::getQuestionType);
 
 		// 新建map存储数据
 		Map<Integer, List<? extends TheoryLessonBo>> allMap = Maps.newHashMap();
 		allMap.putAll(practiceMap);
-		allMap.put(PracticeCategory.PracticeType.OPERATION.getCode(), lessonOperationBos);
+		if (CollectionUtils.isNotEmpty(lessonOperationBos)) {
+			allMap.put(PracticeCategory.PracticeType.OPERATION.getCode(), lessonOperationBos);
+		}
 
 		// 组装习题数据
+		Map<String, LessonPracticeListBo> listBoMap = Maps.newHashMap();
 		allMap.forEach((key, value) -> {
 			Double totalScore = StreamApiUtils.mapToDouble(value, TheoryLessonBo::getScore);
 			LessonPracticeListBo practiceListBo = new LessonPracticeListBo();
 			practiceListBo.setPracticeBos(value);
 			practiceListBo.setCount(value.size());
 			practiceListBo.setTotalScore(totalScore);
-			listBoMap.put(key, practiceListBo);
+			listBoMap.put(EnumUtils.getEnumDescByCode(key, PracticeTheory.TheoryType.class), practiceListBo);
 		});
 
 		return listBoMap;
@@ -662,6 +663,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 课程校验
+	 *
 	 * @param courseId
 	 * @param authContext
 	 */
@@ -678,6 +680,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 校验课时
+	 *
 	 * @param lessonId
 	 * @param isWeb
 	 */
@@ -693,6 +696,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 试卷数据校验
+	 *
 	 * @return
 	 */
 	private Paper validatePaper(CourseLesson lesson, Boolean isWeb) {

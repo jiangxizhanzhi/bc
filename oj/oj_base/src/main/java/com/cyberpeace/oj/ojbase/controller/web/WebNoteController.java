@@ -2,7 +2,10 @@ package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
+import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
+import com.cyberpeace.oj.ojbase.service.AttachmentService;
+import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +25,7 @@ import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "oj-前台笔记相关api")
 @RestController
@@ -34,6 +38,9 @@ public class WebNoteController {
 
 	@Autowired
 	private NoteMapper noteMapper;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	@ApiOperation("笔记、实验报告新增")
 	@PostMapping("")
@@ -70,12 +77,27 @@ public class WebNoteController {
 
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
 		if (null == noteBo) {
-			WebNoteRes webNoteRes = WebNoteRes.builder()
-					.content(ConfigUtil.getContextProperty("oj.report.template.data")).build();
-			return new BaseRsp<>(webNoteRes);
+			BaseRsp<WebNoteRes> rsp = new BaseRsp<>();
+			if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
+				WebNoteRes webNoteRes = WebNoteRes.builder()
+						.content(ConfigUtil.getContextProperty("oj.report.template.data")).build();
+				rsp.setData(webNoteRes);
+			}
+
+			return rsp;
 		}
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
 		return new BaseRsp<>(noteRes);
+	}
+
+	@ApiOperation("实验报告/笔记文件上传")
+	@PostMapping("/upload_attachment")
+	public BaseRsp<AttachmentBo> uploadAttachment(@RequestParam("resource_id") String resourceId,
+			@RequestParam("file") MultipartFile noteFile) {
+
+		AttachmentBo uploadFile = attachmentService
+				.uploadFile(Attachment.AttachmentType.OTHER.getCode(), false, noteFile);
+		return new BaseRsp(uploadFile);
 	}
 
 }

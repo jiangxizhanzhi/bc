@@ -14,8 +14,6 @@ import java.util.List;
 @Repository
 public interface PracticeOperationRefMapper extends BaseMapper<PracticeOperationRef> {
 
-	Integer saveBatch(@Param("practice_list") List<PracticeOperationRef> practiceList);
-
 	void deleteByPaper(@Param("paperId") String paperId);
 
 	List<PracticeOperationRef> selectByPracticeIds(@Param("paperId") String paperId,

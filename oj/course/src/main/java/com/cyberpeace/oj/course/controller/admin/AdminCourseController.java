@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -176,6 +177,15 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	public BaseRsp<Integer> batchDelete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
 		int row = courseMapper.deleteBatchIds(batchDeleteReq.getResourceIds());
 		return new BaseRsp<>(row);
+	}
+
+	@ApiOperation("课程大纲文件上传")
+	@PostMapping("/outline/upload_attachment")
+	public BaseRsp<AttachmentBo> upload_attachment(@RequestParam("resource_id") String resourceId,
+			@RequestParam("file") MultipartFile outlineFile) {
+		AttachmentBo attachmentBo = attachmentService
+				.uploadFile(Attachment.AttachmentType.OTHER.getCode(), false, outlineFile);
+		return new BaseRsp<>(attachmentBo);
 	}
 
 }

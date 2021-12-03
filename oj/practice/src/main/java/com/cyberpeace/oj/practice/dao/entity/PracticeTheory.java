@@ -25,10 +25,10 @@ public class PracticeTheory extends PracticeBase {
 
 	public enum TheoryType implements GenericEnum {
 
-		SINGLE(0, "单选"), MULTIPLE(1, "多选"), JUDGMENT(2, "判断"), FILL_BLANK(3, "填空"), SHORT_ANSWER(4,
-				"简答"),
+		SINGLE(0, "single"), MULTIPLE(1, "multiple"), JUDGMENT(2, "judgment"), FILL_BLANK(3, "fill_blank"), SHORT_ANSWER(4,
+				"short_answer"),
 		/** 不属于基础练习本身*/
-		OPERATION(5, "实践操作");
+		OPERATION(5, "operation");
 
 		@Getter
 		private Integer code;

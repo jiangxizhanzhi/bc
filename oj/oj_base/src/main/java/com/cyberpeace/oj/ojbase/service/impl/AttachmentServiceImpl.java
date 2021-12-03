@@ -113,7 +113,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			return attachmentBo;
 		}
 
-		return null;
+		return AttachmentBo.builder().filePath(uploadFile.getAbsolutePath())
+				.fileName(uploadFile.getName()).build();
 	}
 
 	/**
@@ -147,7 +148,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			File file = new File(destMarkDownPath);
 			if (file.exists() && file.isDirectory()) {
 				String mdFilePath = Arrays.stream(file.listFiles())
-						.filter(childrenFile -> childrenFile.getAbsolutePath().substring(childrenFile.getAbsolutePath().lastIndexOf(".") + 1)
+						.filter(childrenFile -> childrenFile.getAbsolutePath()
+								.substring(childrenFile.getAbsolutePath().lastIndexOf(".") + 1)
 								.equals(Attachment.FileType.MD.getDesc()))
 						.map(File::getAbsolutePath).findFirst().get();
 				return mdFilePath;

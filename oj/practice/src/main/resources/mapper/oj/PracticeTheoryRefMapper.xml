@@ -4,17 +4,6 @@
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper">
     <resultMap id="base" type="com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef"/>
 
-    <insert id="saveBatch">
-        INSERT INTO oj_practice_theory_ref
-                (`resource_id`, `snapshot`, `origin_id`, `option_random`, `paper_id`,
-                 `create_time`, `update_time`)
-                VALUES
-        <foreach collection="practiceList" item="practice" separator=",">
-            (#{practice.resourceId}, #{practice.snapshot}, #{practice.originId}, #{practice.optionRandom},
-             #{practice.paperId}, now(), now())
-        </foreach>
-    </insert>
-
     <delete id="deleteByPaper">
         delete from oj_practice_theory_ref
         where paper_id = #{paperId}

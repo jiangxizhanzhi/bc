@@ -17,7 +17,7 @@ public class LessonPracticeBo implements Serializable {
 	private LessonBriefBo lessonInfo;
 
 	@ApiModelProperty("课后练习题信息")
-	private Map<Integer, LessonPracticeListBo> practiceList;
+	private Map<String, LessonPracticeListBo> practiceList;
 
 	@ApiModelProperty("评估结果")
 	private EvaluateResult evaluateResult;

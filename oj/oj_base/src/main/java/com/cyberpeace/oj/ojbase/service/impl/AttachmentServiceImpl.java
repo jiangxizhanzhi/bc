@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -82,16 +84,43 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	@Override
 	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file) {
 
-		if (file.isEmpty()) {
-			throw new InvalidParamException("请选择文件上传！");
-		}
-
-		String filePath = EnumUtils.getEnumDescByCode(type, Attachment.AttachmentType.class);
+		String filePath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
 		if (StringUtils.isBlank(filePath)) {
 			throw new InvalidParamException("不支持此类型文件上传！");
 		}
 
+		return uploadFile(filePath, file, insert);
+	}
+
+	@Override
+	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
+			String resourceId) {
+
+		String filePath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
+
+		if (StringUtils.isBlank(filePath)) {
+			throw new InvalidParamException("不支持此类型文件上传！");
+		}
+
+		String finalPath = String.format(filePath, resourceId);
+		return uploadFile(finalPath, file, insert);
+	}
+
+	/**
+	 * 文件上传操作
+	 * @param filePath 要上传的文件目录
+	 * @param file 上传的文件
+	 * @param insert 
+	 * @return
+	 */
+	private AttachmentBo uploadFile(String filePath, MultipartFile file, Boolean insert) {
+
+		if (file.isEmpty()) {
+			throw new InvalidParamException("请选择文件上传！");
+		}
+
 		File uploadFile = new File(filePath + file.getOriginalFilename());
+
 		if (uploadFile.exists()) {
 			uploadFile = new File(filePath + reFileName(file.getOriginalFilename()));
 		}
@@ -141,20 +170,18 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	}
 
 	@Override
-	public String parseMarkdown(String markdownZip, String destMarkDownPath) {
-		Boolean result = ZipUtil.unzipToDest(markdownZip, destMarkDownPath);
+	public String parseMarkdown(String markdownPath) {
 
-		if (result) {
-			File file = new File(destMarkDownPath);
-			if (file.exists() && file.isDirectory()) {
-				String mdFilePath = Arrays.stream(file.listFiles())
-						.filter(childrenFile -> childrenFile.getAbsolutePath()
-								.substring(childrenFile.getAbsolutePath().lastIndexOf(".") + 1)
-								.equals(Attachment.FileType.MD.getDesc()))
-						.map(File::getAbsolutePath).findFirst().get();
-				return mdFilePath;
-			}
-		}
 		return "";
+	}
+
+	@Override
+	public List<String> unzipFile(String filePath, String distPath, String fileType) {
+
+		ZipUtil.unzipToDest(filePath, distPath);
+
+		return Arrays.stream(new File(distPath).listFiles()).filter(
+				file -> StringUtils.isBlank(fileType) ? true : file.getName().endsWith(fileType))
+				.map(File::getAbsolutePath).collect(Collectors.toList());
 	}
 }

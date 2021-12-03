@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +79,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		PracticeOperation addOperation = convertReq(addReq);
 		if (null != addReq.getFile()) {
 			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE,
-					addReq.getFile());
+					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), false, addReq.getFile());
 			addOperation.setAttachmentId(attachmentBo.getResourceId());
 		}
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
@@ -110,8 +110,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		if (null != updateReq.getFile()) {
 			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE,
-					updateReq.getFile());
+					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), false, updateReq.getFile());
 			updateOperation.setAttachmentId(attachmentBo.getResourceId());
 		}
 		Integer result = practiceOperationService.updateOperation(updateOperation,

@@ -5,16 +5,12 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
-import com.cyberpeace.oj.ojbase.service.AttachmentService;
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
-import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
@@ -22,6 +18,7 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -38,11 +35,16 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
+import com.cyberpeace.oj.ojbase.service.AttachmentService;
+import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "oj-后台课程相关api")
 @RestController
@@ -176,8 +178,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@PostMapping("/outline/upload_attachment")
 	public BaseRsp<AttachmentBo>
 			upload_attachment(@RequestParam("file") MultipartFile outlineFile) {
-		AttachmentBo attachmentBo = attachmentService
-				.uploadFile(Attachment.AttachmentType.OTHER.getCode(), false, outlineFile);
+		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OUTLINE.getCode(),
+				false, outlineFile);
 		return new BaseRsp<>(attachmentBo);
 	}
 

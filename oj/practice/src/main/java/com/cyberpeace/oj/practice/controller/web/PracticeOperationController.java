@@ -55,15 +55,6 @@ public class PracticeOperationController {
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
-	private PracticeOperationMapper practiceOperationMapper;
-
-	@Autowired
-	private OjLocalSceneMapper ojLocalSceneMapper;
-
-	@Autowired
-	private MyWebSocketHandler myWebSocketHandler;
-
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
 	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {

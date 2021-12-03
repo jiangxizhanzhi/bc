@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.NoteAttachmentReq;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
@@ -113,8 +114,21 @@ public class WebNoteController {
 	@PostMapping("/upload_attachment")
 	public BaseRsp<AttachmentBo> uploadAttachment(NoteAttachmentReq attachmentReq) {
 
-		AttachmentBo uploadFile = attachmentService.uploadFile(
-				Attachment.AttachmentType.OTHER.getCode(), false, attachmentReq.getFile());
+		Integer type;
+
+		if (attachmentReq.getNoteType().intValue() == Note.NoteType.NOTE.getCode().intValue()) {
+			if (attachmentReq.getResourceType().intValue() == Note.NoteResourceType.LESSON_PAPER
+					.getCode()) {
+				type = AttachmentPath.PRACTICE_KEY.getCode();
+			} else {
+				type = AttachmentPath.NOTE.getCode();
+			}
+		} else {
+			type = AttachmentPath.REPORT.getCode();
+		}
+
+		AttachmentBo uploadFile = attachmentService.uploadFile(type, false,
+				attachmentReq.getFile());
 		return new BaseRsp(uploadFile);
 	}
 

@@ -42,16 +42,34 @@ public interface AttachmentService extends IService<Attachment> {
 	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file);
 
 	/**
+	 * 
+	 * @param type 类型 用于获取存放地址
+	 * @param insert 文件信息是否入库
+	 * @param file 文件
+	 * @param resourceId 资源编号 用于文件资源隔离 不需要隔离请使用重载方法
+	 * @return
+	 */
+	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file, String resourceId);
+
+	/**
 	 *
 	 * @param attachmentId
 	 */
 	void deleteAttachment(String attachmentId);
 
 	/**
-	 * 解析
-	 * @param markdownZip
-	 * @param destMarkDownPath
+	 * 解析markdown文件 返回文件内容
+	 * @param markdownPath
 	 * @return
 	 */
-	String parseMarkdown(String markdownZip, String destMarkDownPath);
+	String parseMarkdown(String markdownPath);
+
+	/**
+	 * 文件解压缩
+	 * @param filePath zip文件路径
+	 * @param distPath 解压文件夹
+	 * @param fileType 文件后缀名 不含. 不传则读取解压后文件列表 包含文件夹
+	 * @return
+	 */
+	List<String> unzipFile(String filePath, String distPath, String fileType);
 }

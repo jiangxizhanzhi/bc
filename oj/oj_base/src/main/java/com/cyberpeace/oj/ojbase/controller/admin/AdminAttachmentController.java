@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
 import io.swagger.annotations.ApiModel;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -36,8 +37,8 @@ public class AdminAttachmentController {
 	@ApiOperation("logo文件上传")
 	@PostMapping("/image_upload")
 	public BaseRsp<LogoUploadRes> uploadAttachment(@RequestParam("file") MultipartFile file) {
-		AttachmentBo attachmentBo = attachmentService
-				.uploadFile(Attachment.AttachmentType.OTHER.getCode(), CommonConstant.TRUE, file);
+		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.LOGO.getCode(),
+				CommonConstant.FALSE, file);
 		return new BaseRsp<>(new LogoUploadRes(attachmentBo.getFilePath()));
 	}
 

@@ -280,16 +280,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			List<PracticeOperationRef> operationRefs,
 			List<PaperPracticeContext> practiceContextList) {
 
-		if (CollectionUtils.isNotEmpty(practiceContextList)) {
-			Double totalScore = StreamApiUtils.mapToDouble(practiceContextList,
-					PaperPracticeContext::getScore);
-			paper.setTotalScore(totalScore);
-			paper.setPracticeCount(practiceContextList.size());
-
-		} else {
-			paper.setTotalScore(new Double(CommonConstant.ZERO));
-			paper.setPracticeCount(CommonConstant.ZERO);
-		}
+		// 计算试卷基本信息
+		Double totalScore = StreamApiUtils.mapToDouble(practiceContextList,
+				PaperPracticeContext::getScore);
+		paper.setTotalScore(totalScore);
+		paper.setPracticeCount(CollectionUtils.isEmpty(practiceContextList) ? CommonConstant.ZERO
+				: practiceContextList.size());
 
 		// 解析practiceList, 设置试卷基础信息
 		Map<Integer, List<PaperPracticeContext>> columnMap = StreamApiUtils
@@ -343,11 +339,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			PracticeTheoryRef theoryRef = new PracticeTheoryRef();
 			practiceBase.setScore(practiceMap.get(practiceBase.getResourceId()).getScore());
 			theoryRef.setPaperId(paper.getResourceId());
-			theoryRef.setSnapshot(JsonUtil.toJsonString(practiceBase));
 			theoryRef.setOriginId(practiceBase.getResourceId());
 			theoryRef.setOptionRandom(
 					practiceMap.get(practiceBase.getResourceId()).getOptionRandom());
 			theoryRef.setResourceId(IDGeneratorUtil.getID());
+			practiceBase.setResourceId(IDGeneratorUtil.getID());
+			theoryRef.setSnapshot(JsonUtil.toJsonString(practiceBase));
 
 			T instance = BeanUtils.copy(theoryRef, cls);
 			return instance;

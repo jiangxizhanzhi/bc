@@ -148,4 +148,8 @@
         </where>
     </select>
 
+    <select id="selectByName" resultType="java.lang.String">
+        select resource_id from oj_course
+        where `name` = #{name}
+    </select>
 </mapper>

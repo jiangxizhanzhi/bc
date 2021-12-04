@@ -22,6 +22,9 @@ public class AdminCourseRes implements Serializable {
 	@ApiModelProperty("课程封面")
 	private String logo;
 
+	@ApiModelProperty("学分")
+	private Integer score;
+
 	@ApiModelProperty("课程分类")
 	private String categoryId;
 

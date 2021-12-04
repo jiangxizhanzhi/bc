@@ -1,5 +1,6 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
@@ -73,8 +74,7 @@ public class StreamApiUtils {
 	 * @param <E>
 	 * @return
 	 */
-	public static <E> List<E> filter(Collection<E> collection,
-			Predicate<? super E> predicate) {
+	public static <E> List<E> filter(Collection<E> collection, Predicate<? super E> predicate) {
 		return collection.stream().filter(predicate).collect(Collectors.toList());
 	}
 
@@ -103,8 +103,11 @@ public class StreamApiUtils {
 	public static <E> Double mapToDouble(Collection<E> collection,
 			ToDoubleFunction<? super E> mapper) {
 
-		double sum = collection.stream().mapToDouble(mapper).sum();
-		return sum;
+		if (CollectionUtils.isEmpty(collection)) {
+			return CommonConstant.ZERO.doubleValue();
+		}
+
+		return collection.stream().mapToDouble(mapper).sum();
 	}
 
 	/**

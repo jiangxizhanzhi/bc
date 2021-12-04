@@ -29,4 +29,11 @@ public interface CourseMapper extends BaseMapper<Course> {
 
 	List<String> selectIdsByCategory(@Param("courseIds") List<String> courseIds,
 			@Param("categoryIds") List<String> categoryIds, @Param("isPublic") Boolean isPublic);
+
+	/**
+	 * 根据名称查询课程
+	 * @param name
+	 * @return
+	 */
+    String selectByName(@Param("name") String name);
 }

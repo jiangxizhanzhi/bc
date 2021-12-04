@@ -461,6 +461,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		CourseLesson lesson = validateLesson(answerContext.getLessonId(), CommonConstant.TRUE);
 		Paper paper = validatePaper(lesson, CommonConstant.TRUE);
 
+		// 课后练习评估数据查询
 		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
 				.selectByUserAndLesson(answerContext.getUserId(), answerContext.getLessonId());
 		if (null != paperEvaluate) {
@@ -473,8 +474,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		List<PracticeSolvedBo> practiceSolvedBos = Lists.newArrayList();
 
+		// 习题数据提交评估
 		List<EvaluateResult> evaluateResultList = StreamApiUtils.map(answers, submitContext -> {
 
+			// 查询理论习题数据并评估
 			if (submitContext.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
 					.getCode().intValue()) {
 
@@ -489,6 +492,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				return evaluateResult;
 
 			} else {
+
+				// 实操数据并评估
 				PracticeOperation operation = practiceOperationRefService
 						.selectByPracticeId(paper.getResourceId(), submitContext.getPracticeId());
 				EvaluateResult evaluateResult = operationEvaluateHandler.evaluateByBusiness(
@@ -632,7 +637,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.selectByPaper(paper.getResourceId(), viewAnswer);
 		List<LessonTheoryBo> theoryBoList = StreamApiUtils.map(theoryLessonBos, theoryLessonBo -> {
 			LessonTheoryBo theoryBo = BeanUtils.copy(theoryLessonBo, LessonTheoryBo.class);
-			theoryBo.setResolvedDetail(solvedBoMap.get(theoryBo.getResolvedDetail()));
+			theoryBo.setResolvedDetail(solvedBoMap.get(theoryBo.getResourceId()));
 			return theoryBo;
 		});
 

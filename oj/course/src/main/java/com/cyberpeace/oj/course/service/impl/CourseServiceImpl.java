@@ -230,6 +230,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Override
 	public Course addCourse(String userId, Course course) {
+
+		// 名称重复性查询
+		String resourceId = courseMapper.selectByName(course.getName());
+		if (StringUtils.isNotBlank(resourceId)) {
+			throw new UnsupportedOperationException("课程名称重复！");
+		}
+
 		// 基本信息组装
 		course.setHeat(CommonConstant.ZERO);
 		course.setBuiltin(CommonConstant.FALSE);

@@ -395,7 +395,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         StringBuilder trainRecordMd =  new StringBuilder();
         trainRecordMd.append("# <center> ").append(businessTemplate.getName()).append(" </center> \n\n");
         trainRecordMd.append("###### 人员: ").append(UserInfoContext.getUserContext().getUserName()).append("\n\n");
-        trainRecordMd.append("###### 时间: ").append(singleRoom.getStartTime().toString()).append("\n\n\n");
+        trainRecordMd.append("###### 时间: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(singleRoom.getStartTime())).append("\n\n\n");
         trainRecordMd.append("## 场景描述\n\n").append(businessTemplate.getDescription()).append("\n\n");
 
         schemeData.toJavaList(JSONObject.class).forEach(stage -> {
@@ -405,9 +405,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
                 trainRecordMd.append("> 任务说明\n\n").append(mission.getString("description")).append("\n\n").append("> 我的记录\n\n");
                 JSONObject singleMissionRecord = trainRecord.getJSONObject(mission.getString("resource_id"));
                 if (singleMissionRecord != null) {
-                    trainRecordMd.append(singleMissionRecord.getString("record"));
+                    trainRecordMd.append(singleMissionRecord.getString("record")).append("\n");
                 }
             });
+            trainRecordMd.append("\n");
         });
 
         return trainRecordMd.toString();

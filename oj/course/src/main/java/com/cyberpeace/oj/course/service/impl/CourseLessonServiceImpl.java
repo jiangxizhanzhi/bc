@@ -170,7 +170,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<LessonConfigBo> boList = lessonConfig.sortListByChildren(false, false);
 		List<String> sortLessonIds = boList.stream().map(LessonConfigBo::getLessonId)
 				.collect(Collectors.toList());
-		infoBo.setPreAndNext(infoBo, sortLessonIds);
+		infoBo.setPreAndNext(sortLessonIds);
 
 		// 是否收藏
 		Boolean collection = resourceCollectionService.selectByUnique(authContext.getUserId(),

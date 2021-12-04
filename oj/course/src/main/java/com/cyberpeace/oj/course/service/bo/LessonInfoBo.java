@@ -106,20 +106,17 @@ public class LessonInfoBo implements Serializable {
 
 	/**
 	 * 设置上节和下节课程编号
-	 * @param infoBo
 	 * @param sortList
 	 */
-	public void setPreAndNext(LessonInfoBo infoBo, List<String> sortList) {
+	public void setPreAndNext(List<String> sortList) {
 
-		int index = sortList.indexOf(infoBo.getResourceId());
-		if (index > 0 && index < sortList.size() - 1) {
-			infoBo.setPre(sortList.get(index - 1));
-			infoBo.setNext(sortList.get(index + 1));
-		} else {
-			if (index == 0) {
-				infoBo.setNext(sortList.get(index + 1));
-			} else if (index >= sortList.size() - 1) {
-				infoBo.setPre(sortList.get(index - 1));
+		int index = sortList.indexOf(this.getResourceId());
+		if (sortList.size() > 1) {
+			if (index < sortList.size() - 1) {
+				this.setNext(sortList.get(index + 1));
+			}
+			if (index > 0) {
+				this.setPre(sortList.get(index - 1));
 			}
 		}
 	}

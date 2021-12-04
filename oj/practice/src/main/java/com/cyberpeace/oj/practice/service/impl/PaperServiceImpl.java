@@ -338,8 +338,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			theoryRef.setOriginId(practiceBase.getResourceId());
 			theoryRef.setOptionRandom(
 					practiceMap.get(practiceBase.getResourceId()).getOptionRandom());
-			theoryRef.setResourceId(practiceBase.getResourceId());
-			practiceBase.setResourceId(IDGeneratorUtil.getID());
+			theoryRef.setResourceId(IDGeneratorUtil.getID());
 			theoryRef.setSnapshot(JsonUtil.toJsonString(practiceBase));
 
 			T instance = BeanUtils.copy(theoryRef, cls);

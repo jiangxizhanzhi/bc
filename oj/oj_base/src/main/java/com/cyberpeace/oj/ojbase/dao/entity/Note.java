@@ -52,7 +52,10 @@ public class Note extends AuthTable {
 
 	public enum NoteResourceType implements GenericEnum {
 
-		COURSE(1, "课程"), LESSON(2, "课时"), PRACTICE(3, "练习"), LESSON_PAPER(4, "课后练习");
+		COURSE(1, "课程"),
+		LESSON(2, "课时"),
+		PRACTICE(3, "练习"),
+		LESSON_PAPER(4, "课后练习");
 
 		@Getter
 		private Integer code;
@@ -61,7 +64,8 @@ public class Note extends AuthTable {
 		private String desc;
 
 		NoteResourceType(Integer code, String desc) {
-
+			this.code = code;
+			this.desc = desc;
 		}
 
 	}

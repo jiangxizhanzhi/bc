@@ -118,7 +118,7 @@ public class WebNoteController {
 
 		if (attachmentReq.getNoteType().intValue() == Note.NoteType.NOTE.getCode().intValue()) {
 			if (attachmentReq.getResourceType().intValue() == Note.NoteResourceType.LESSON_PAPER
-					.getCode()) {
+					.getCode().intValue()) {
 				type = AttachmentPath.PRACTICE_KEY.getCode();
 			} else {
 				type = AttachmentPath.NOTE.getCode();

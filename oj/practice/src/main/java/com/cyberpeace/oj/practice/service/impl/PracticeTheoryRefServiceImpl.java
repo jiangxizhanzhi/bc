@@ -34,35 +34,37 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 		List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper.selectByPracticeIds(paperId,
 				null);
 
-		List<TheoryLessonBo> theoryList = StreamApiUtils.map(theoryRefList,
-				practiceTheoryRef -> {
-					PracticeTheory practiceTheory = JsonUtil
-							.toJsonObject(practiceTheoryRef.getSnapshot(), PracticeTheory.class);
-					TheoryLessonBo theoryLesonBo = BeanUtils.copy(practiceTheory,
-							TheoryLessonBo.class);
+		List<TheoryLessonBo> theoryList = StreamApiUtils.map(theoryRefList, practiceTheoryRef -> {
+			PracticeTheory practiceTheory = JsonUtil.toJsonObject(practiceTheoryRef.getSnapshot(),
+					PracticeTheory.class);
+			TheoryLessonBo theoryLesonBo = BeanUtils.copy(practiceTheory, TheoryLessonBo.class);
 
-					PracticeCategory category = practiceCategoryMapper
-							.selectById(practiceTheory.getCategoryId());
-					if (null != category) {
-						theoryLesonBo.setDirectionName(category.getName());
-					}
+			// 原习题编号替换 快照编号
+			theoryLesonBo.setResourceId(practiceTheoryRef.getOriginId());
 
-					theoryLesonBo.setQuestionType(practiceTheory.getTheoryType());
-					theoryLesonBo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
-					if (practiceTheory.getTheoryType()
-							.intValue() == PracticeTheory.TheoryType.FILL_BLANK.getCode()
-									.intValue()) {
-						List<BlankAnswer> answers = JsonUtil
-								.toJsonObjectArray(practiceTheory.getAnswer(), BlankAnswer.class);
-						theoryLesonBo.setBlankCount(answers.size());
-					}
+			PracticeCategory category = practiceCategoryMapper
+					.selectById(practiceTheory.getCategoryId());
+			if (null != category) {
+				theoryLesonBo.setDirectionName(category.getName());
+			}
 
-					if (!viewAnswer) {
-						theoryLesonBo.setAnswer(null);
-					}
+			// 设置习题类型和题型
+			theoryLesonBo.setQuestionType(practiceTheory.getTheoryType());
+			theoryLesonBo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+					.getCode().intValue()) {
+				List<BlankAnswer> answers = JsonUtil.toJsonObjectArray(practiceTheory.getAnswer(),
+						BlankAnswer.class);
+				theoryLesonBo.setBlankCount(answers.size());
+			}
 
-					return theoryLesonBo;
-				});
+			// 设置答案是否展示
+			if (!viewAnswer) {
+				theoryLesonBo.setAnswer(null);
+			}
+
+			return theoryLesonBo;
+		});
 
 		return theoryList;
 	}

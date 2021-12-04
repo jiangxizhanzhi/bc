@@ -326,10 +326,6 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 				PaperPracticeContext::getResourceId);
 
 		List<PracticeBase> practiceList = baseMapper.selectBatchIds(practiceIds);
-		if (practiceList.size() != practiceIds.size()) {
-			log.error("practice data was inconsistent with database data when creating paper!!!");
-			throw new BusinessException(OjBusinessErrorCode.PARAM_DATABASE_ERROR);
-		}
 
 		Map<String, PaperPracticeContext> practiceMap = StreamApiUtils.toMap(paperPracticeContexts,
 				PaperPracticeContext::getResourceId, pc -> pc);
@@ -342,7 +338,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			theoryRef.setOriginId(practiceBase.getResourceId());
 			theoryRef.setOptionRandom(
 					practiceMap.get(practiceBase.getResourceId()).getOptionRandom());
-			theoryRef.setResourceId(IDGeneratorUtil.getID());
+			theoryRef.setResourceId(practiceBase.getResourceId());
 			practiceBase.setResourceId(IDGeneratorUtil.getID());
 			theoryRef.setSnapshot(JsonUtil.toJsonString(practiceBase));
 

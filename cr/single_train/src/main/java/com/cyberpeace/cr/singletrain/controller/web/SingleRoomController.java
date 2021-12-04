@@ -76,7 +76,7 @@ public class SingleRoomController {
     @GetMapping("/train_record_markdown")
     @ApiOperation("训练记录-markdown")
     public BaseRsp<String> trainRecordMd(@RequestParam("resource_id") String businessTemplateId) {
-        return new BaseRsp<>();
+        return new BaseRsp<>(singleRoomService.getTrainRecordMarkdown(businessTemplateId));
     }
 
     @GetMapping("/time_line")

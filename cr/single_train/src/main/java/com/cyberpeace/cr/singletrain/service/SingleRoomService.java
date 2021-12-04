@@ -26,6 +26,8 @@ public interface SingleRoomService extends IService<SingleRoom> {
 
     List<TrainRecordBo> getTrainRecord(String businessTemplateId);
 
+    String getTrainRecordMarkdown(String businessTemplateId);
+
     String getTrainManual(String businessTemplateId);
 
     TrainTimeLineBo getTimeLineData(String businessTemplateId);

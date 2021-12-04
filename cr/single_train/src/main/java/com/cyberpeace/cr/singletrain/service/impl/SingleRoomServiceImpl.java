@@ -8,7 +8,6 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
@@ -29,12 +28,14 @@ import com.cyberpeace.cr.singletrain.service.bo.*;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
+import jdk.nashorn.internal.scripts.JO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import springfox.documentation.spring.web.json.Json;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -107,7 +108,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         room.setCopyedTopoId(newTopology);
         room.setTrainingRecord("{}");
 
-        // todo 任务拷贝?
+        // 单兵训练不进行任务复制, 引用原模板任务方案数据
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
@@ -264,8 +265,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
     /**
      * 获取训练任务详情, 存在答题记录情况同任务信息一起返回
+     *
      * @param businessTemplateId 训练业务模板id
-     * @param missionId 任务id
+     * @param missionId          任务id
      * @return SingleMissionBo
      */
     @Override
@@ -277,6 +279,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
         SingleMissionBo singleMissionBo = new SingleMissionBo();
         BeanUtils.copyProperties(missionObject, singleMissionBo);
+        singleMissionBo.setOption(JsonUtil.toJsonObject(missionObject.getOption(), JSONObject.class));
 
         SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
         if (singleRoom == null) {
@@ -372,6 +375,45 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
     }
 
     /**
+     * 获取训练记录(markdown)
+     * @param businessTemplateId 训练业务模板id
+     * @return String
+     */
+    @Override
+    public String getTrainRecordMarkdown(String businessTemplateId) {
+        // 无运行中房间, 返回null
+        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
+        if (singleRoom == null) {
+            return null;
+        }
+        SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
+        BusinessTemplate businessTemplate = businessTemplateService.getById(businessTemplateId);
+
+        // 获取任务方案
+        JSONArray schemeData = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(), JSONObject.class).getJSONArray("scheme_data");
+        JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
+        StringBuilder trainRecordMd =  new StringBuilder();
+        trainRecordMd.append("# <center> ").append(businessTemplate.getName()).append(" </center> \n\n");
+        trainRecordMd.append("###### 人员: ").append(UserInfoContext.getUserContext().getUserName()).append("\n\n");
+        trainRecordMd.append("###### 时间: ").append(singleRoom.getStartTime().toString()).append("\n\n\n");
+        trainRecordMd.append("## 场景描述\n\n").append(businessTemplate.getDescription()).append("\n\n");
+
+        schemeData.toJavaList(JSONObject.class).forEach(stage -> {
+            trainRecordMd.append("## 阶段?: ").append(stage.getString("stage")).append("\n\n");
+            stage.getJSONArray("missions").toJavaList(JSONObject.class).forEach(mission -> {
+                trainRecordMd.append("#### 任务?: ").append(mission.getString("title")).append("\n\n");
+                trainRecordMd.append("> 任务说明\n\n").append(mission.getString("description")).append("\n\n").append("> 我的记录\n\n");
+                JSONObject singleMissionRecord = trainRecord.getJSONObject(mission.getString("resource_id"));
+                if (singleMissionRecord != null) {
+                    trainRecordMd.append(singleMissionRecord.getString("record"));
+                }
+            });
+        });
+
+        return trainRecordMd.toString();
+    }
+
+    /**
      * 根据任务方案、训练记录生成富文本
      *
      * @param businessTemplateId 训练业务模板id
@@ -406,8 +448,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
      */
     @Override
     public TrainTimeLineBo getTimeLineData(String businessTemplateId) {
-        String userId = UserInfoContext.getUserContext().getUserId();
-        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
+        SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
         if (singleRoom == null) {
             return null;
         }
@@ -427,7 +468,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         // 任务完成时间点
         List<JSONObject> missionRecord = Lists.newArrayList();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Map<String, Mission> missionMap = getMissionMapByScheme(singleTemplate.getMissionsScheme());
+        Map<String, MissionTemplate> missionMap = getMissionMapByScheme(singleTemplate.getMissionsScheme());
 
         JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
         for (Map.Entry<String, Object> stringObjectEntry : trainRecord.entrySet()) {
@@ -459,8 +500,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         return missionIds;
     }
 
-    private Map<String, Mission> getMissionMapByScheme(String missionScheme) {
-        List<Mission> missions = missionService.batchGet(getMissionIdsByScheme(missionScheme));
-        return missions.stream().collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
+    private Map<String, MissionTemplate> getMissionMapByScheme(String missionScheme) {
+        return missionTemplateMapper.selectBatchIds(
+                getMissionIdsByScheme(missionScheme)
+        ).stream().collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
     }
 }

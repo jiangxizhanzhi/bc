@@ -23,7 +23,7 @@ public class SingleMissionBo implements Serializable {
     private Integer type;
 
     @ApiModelProperty("选项")
-    private String option;
+    private JSONObject option;
 
     @ApiModelProperty("任务记录")
     private JSONObject trainingRecord;

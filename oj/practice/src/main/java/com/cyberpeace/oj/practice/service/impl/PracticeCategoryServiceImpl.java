@@ -71,6 +71,17 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	@Override
 	public Integer updateCategory(PracticeCategory category) {
 
+		// 分类名称校验
+		if (StringUtils.isNotBlank(category.getName())) {
+			PracticeCategory data = practiceCategoryMapper.selectById(category);
+			String categoryId = practiceCategoryMapper.selectByName(data.getPracticeType(),
+					category.getName());
+			if (StringUtils.isNotBlank(categoryId)) {
+				throw new UnsupportedOperationException("分类名称已存在！");
+			}
+		}
+
+		// 数据调整
 		List<PracticeCategory> categoryList = Lists.newArrayList();
 		if (StringUtils.isNotBlank(category.getParentId())) {
 			PracticeCategory existCategory = practiceCategoryMapper
@@ -98,6 +109,13 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 	@Override
 	public Integer addCategory(PracticeCategory practiceCategory, String userId) {
+		// 分类名称校验
+		String categoryId = practiceCategoryMapper.selectByName(practiceCategory.getPracticeType(),
+				practiceCategory.getName());
+		if (StringUtils.isNotBlank(categoryId)) {
+			throw new UnsupportedOperationException("分类名称已存在！");
+		}
+
 		practiceCategory.setCreateUserId(userId);
 		return practiceCategoryMapper.insert(practiceCategory);
 	}

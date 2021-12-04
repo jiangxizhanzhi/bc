@@ -374,7 +374,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		AttachmentBo attachmentBo = attachmentService.uploadFile(
 				AttachmentPath.ATTACHMENT.getCode(), CommonConstant.TRUE, multipartFile);
-		return new BaseRsp<>(attachmentBo.getFilePath());
+		return new BaseRsp<>(attachmentBo.getResourceId());
 
 	}
 

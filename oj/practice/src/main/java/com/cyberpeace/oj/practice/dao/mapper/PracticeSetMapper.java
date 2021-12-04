@@ -47,4 +47,11 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 */
 	List<PracticeSet> selectByType(@Param("practiceType") Integer practiceType,
 			@Param("isPublic") Boolean isPublic);
+
+	/**
+	 * 根据习题集名称查询
+	 * @param name
+	 * @return
+	 */
+	String selectByName(@Param("name") String name);
 }

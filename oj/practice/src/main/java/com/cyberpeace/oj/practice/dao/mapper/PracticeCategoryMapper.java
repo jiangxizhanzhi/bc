@@ -48,4 +48,12 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 	 */
 	List<PracticeCategory> listByTypeAndName(@Param("practiceType") Integer practiceType,
 			@Param("pattern") String pattern);
+
+	/**
+	 * 根据分类名称查询分类编号
+	 * @param name
+	 * @param practiceType
+	 * @return
+	 */
+	String selectByName(@Param("practiceType") Integer practiceType, @Param("name") String name);
 }

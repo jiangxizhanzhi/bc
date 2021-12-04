@@ -68,6 +68,7 @@ public class AdminPracticeCategoryController {
 	@PatchMapping("")
 	public BaseRsp<Integer> update(@Validated CategoryUpdateReq updateReq) {
 
+		// 分类数据处理
 		PracticeCategory category = BeanUtils.copy(updateReq, PracticeCategory.class);
 		if (StringUtils.isNotBlank(updateReq.getParentId())) {
 			String code = practiceCategoryService.getCodeByParent(updateReq.getParentId());
@@ -82,6 +83,7 @@ public class AdminPracticeCategoryController {
 	@PostMapping("")
 	public BaseRsp<Integer> add(@Validated PracticeCategoryReq categoryReq) {
 
+		// 分类数据处理
 		PracticeCategory practiceCategory = BeanUtils.copy(categoryReq, PracticeCategory.class);
 		if (StringUtils.isNotBlank(categoryReq.getParentId())) {
 			String code = practiceCategoryService.getCodeByParent(categoryReq.getParentId());
@@ -91,6 +93,7 @@ public class AdminPracticeCategoryController {
 			practiceCategory.setCode(practiceCategory.getResourceId());
 		}
 
+		// 数据新增
 		Integer result = practiceCategoryService.addCategory(practiceCategory,
 				UserInfoContext.getUserContext().getUserId());
 		return new BaseRsp<>(result);

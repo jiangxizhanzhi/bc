@@ -138,6 +138,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	public Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext) {
 
 		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
+		// 权限校验
 		if (CollectionUtils.isEmpty(permissionIds)
 				|| !permissionIds.contains(practiceSet.getResourceId())) {
 			log.error("This practice not permission! practice_set_id=[{}]",
@@ -145,8 +146,17 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
+		PracticeSet existSet = practiceSetMapper.selectById(practiceSet.getResourceId());
+		// 名称校验
+		if (StringUtils.isNotBlank(existSet.getName())) {
+			String categoryId = practiceSetMapper.selectByName(existSet.getName());
+			if (StringUtils.isNotBlank(categoryId)) {
+				throw new UnsupportedOperationException("习题集名称已存在！");
+			}
+		}
+
+		// 类型校验 防止习题集类型改变
 		if (null != practiceSet.getPracticeType()) {
-			PracticeSet existSet = practiceSetMapper.selectById(practiceSet.getResourceId());
 			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()) {
 				throw new InvalidParamException("非法操作,习题集下存在不兼容类型习题！");
 			}

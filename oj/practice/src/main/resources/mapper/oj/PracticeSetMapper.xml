@@ -79,4 +79,9 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByName" resultType="java.lang.String">
+        select resource_id from oj_practice_set
+        WHERE `name` = #{name}
+    </select>
 </mapper>

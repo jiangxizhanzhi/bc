@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -57,6 +58,11 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@ApiOperation("习题集新增")
 	@PostMapping("")
 	public BaseRsp<Integer> add(@RequestBody @Validated(Create.class) PracticeSetAddReq setAddReq) {
+
+		String setId = practiceSetMapper.selectByName(setAddReq.getName());
+		if (StringUtils.isNotBlank(setId)) {
+			throw new UnsupportedOperationException("习题集名称已存在！");
+		}
 
 		PracticeSet practiceSet = BeanUtils.copy(setAddReq, PracticeSet.class);
 		practiceSet.setCreateUserId(UserInfoContext.getUserContext().getUserId());

@@ -46,4 +46,9 @@
         from practice_category where status = 1 and practice_type = 0 and code not like '%|%' order by id desc
     </select>
 
+    <select id="selectByName" resultType="java.lang.String">
+        select resource_id from oj_practice_category
+        where practice_type = #{practiceType}
+        and `name` = #{name}
+    </select>
 </mapper>

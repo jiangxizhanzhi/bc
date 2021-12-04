@@ -1,10 +1,15 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class LocalStringUtil {
@@ -74,33 +79,36 @@ public class LocalStringUtil {
 	}
 
 	/**
-	 * 构造like条件
-	 * @param key 条件
-	 * @param leftOrRight 0左 1右 null左右
+	 * 根据正则表达是获取内容中的匹配数据
+	 * @param content
+	 * @param regex 正则表达式
 	 * @return
 	 */
-	public static String constructLike(String key, Integer leftOrRight) {
-		if (null == leftOrRight) {
-			return constructLike(key);
-		} else {
-			if (leftOrRight.intValue() == 0) {
-				return "%" + key;
-			} else {
-				return key + "%";
-			}
+	public static List<String> getMatchStr(String content, String regex) {
+
+		List<String> strList = Lists.newArrayList();
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			strList.add(matcher.group());
 		}
+		return strList;
 	}
 
 	/**
-	 * 构造like条件 左右均带%
+	 * 根据正则表达是获取内容中的匹配数据 仅匹配一个
+	 * @param content
+	 * @param regex
 	 * @return
 	 */
-	public static String constructLike(String key) {
-		if (StringUtils.isBlank(key)) {
-			return null;
-		} else {
-			return "%" + key + "%";
-		}
+	public static String getFirstMatchStr(String content, String regex) {
 
+		List<String> matchStr = getMatchStr(content, regex);
+
+		if (CollectionUtils.isEmpty(matchStr)) {
+			return "";
+		}
+		return matchStr.get(CommonConstant.ZERO);
 	}
 }

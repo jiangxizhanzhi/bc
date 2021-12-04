@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -172,7 +174,22 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	@Override
 	public String parseMarkdown(String markdownPath) {
 
-		return "";
+		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
+
+		String content = FileUtil.getContent(markdownPath);
+		String pattern = "!\\[.*?\\]\\(.+?\\)";
+		List<String> matchStrList = LocalStringUtil.getMatchStr(content, pattern);
+
+		for (String matchStr : matchStrList) {
+			String valuePattern = "(?<=\\()[^\\)]+";
+			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr, valuePattern);
+			File replaceFile = new File(currentDir, imagePath);
+			if (replaceFile.exists()) {
+				content = content.replace(imagePath, replaceFile.getAbsolutePath());
+			}
+		}
+
+		return content;
 	}
 
 	@Override

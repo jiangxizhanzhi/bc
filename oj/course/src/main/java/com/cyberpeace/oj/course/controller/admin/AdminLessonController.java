@@ -353,8 +353,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
 			courseLesson.setHandoutUrl(pathList.get(CommonConstant.ZERO));
 
-			// TODO 讲义解析
 			String content = attachmentService.parseMarkdown(pathList.get(CommonConstant.ZERO));
+			// TODO 讲义存储 待确定
 		}
 
 		// pdf讲义文件上传

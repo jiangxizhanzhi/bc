@@ -1,11 +1,14 @@
 package com.cyberpeace.common.util;
 
 import java.io.*;
+import java.util.List;
 import java.util.UUID;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 public class FileUtil {
 
 	public static File saveFile(MultipartFile file, String basePath) throws IOException {
@@ -88,5 +91,35 @@ public class FileUtil {
 		return !suffix
 				? file.getName().substring(CommonConstant.ZERO, file.getName().lastIndexOf("."))
 				: file.getName();
+	}
+
+	/**
+	 * 读取文件内容
+	 * @param filePath
+	 * @return
+	 */
+	public static String getContent(String filePath) {
+
+		BufferedReader br = null;
+		StringBuilder builder = new StringBuilder();
+		try {
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "utf-8"));
+
+			String content = "";
+			while ((content = br.readLine()) != null) {
+				builder.append(content);
+			}
+
+			return builder.toString();
+		} catch (Exception e) {
+			log.error("文件读取失败！ filePath={} error:", filePath, e);
+			return "";
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				// 不做任何处理
+			}
+		}
 	}
 }

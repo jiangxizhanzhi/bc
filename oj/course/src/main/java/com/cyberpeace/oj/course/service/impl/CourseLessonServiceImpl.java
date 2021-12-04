@@ -660,7 +660,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			practiceListBo.setPracticeBos(value);
 			practiceListBo.setCount(value.size());
 			practiceListBo.setTotalScore(totalScore);
-			listBoMap.put(EnumUtils.getEnumDescByCode(key, PracticeTheory.TheoryType.class), practiceListBo);
+			listBoMap.put(EnumUtils.getEnumDescByCode(key, PracticeTheory.TheoryType.class),
+					practiceListBo);
 		});
 
 		return listBoMap;

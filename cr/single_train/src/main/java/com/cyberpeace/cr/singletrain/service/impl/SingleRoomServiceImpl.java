@@ -28,14 +28,12 @@ import com.cyberpeace.cr.singletrain.service.bo.*;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-import jdk.nashorn.internal.scripts.JO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import springfox.documentation.spring.web.json.Json;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -345,7 +343,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<TrainRecordBo> trainRecordBos = Lists.newArrayList();
         SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
-        JSONObject trainRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(), JSONObject.class);
+        JSONObject trainRecord = roomObject != null ? JsonUtil.toJsonObject(roomObject.getTrainingRecord(), JSONObject.class) : null;
 
         for (JSONObject stage : schemeData.toJavaList(JSONObject.class)) {
             TrainRecordBo trainRecordBo = new TrainRecordBo();
@@ -357,13 +355,15 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
                 missionRecordBo.setResourceId(_m.getString("resource_id"));
                 missionRecordBo.setTitle(_m.getString("title"));
                 missionRecordBo.setDescription(_m.getString("description"));
-                JSONObject missionRecord = trainRecord.getJSONObject(_m.getString("resource_id"));
 
-                // 时间戳 -> 日期字符串
-                if (missionRecord != null) {
-                    missionRecord.put("time", simpleDateFormat.format(new Date(missionRecord.getLong("time"))));
+                if (trainRecord != null) {
+                    JSONObject missionRecord = trainRecord.getJSONObject(_m.getString("resource_id"));
+                    // 时间戳 -> 日期字符串
+                    if (missionRecord != null) {
+                        missionRecord.put("time", simpleDateFormat.format(new Date(missionRecord.getLong("time"))));
+                    }
+                    missionRecordBo.setTrainingRecord(missionRecord);
                 }
-                missionRecordBo.setTrainingRecord(missionRecord);
 
                 trainRecordBo.getMissions().add(missionRecordBo);
             }
@@ -376,6 +376,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
     /**
      * 获取训练记录(markdown)
+     *
      * @param businessTemplateId 训练业务模板id
      * @return String
      */
@@ -392,7 +393,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         // 获取任务方案
         JSONArray schemeData = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(), JSONObject.class).getJSONArray("scheme_data");
         JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
-        StringBuilder trainRecordMd =  new StringBuilder();
+        StringBuilder trainRecordMd = new StringBuilder();
         trainRecordMd.append("# <center> ").append(businessTemplate.getName()).append(" </center> \n\n");
         trainRecordMd.append("###### 人员: ").append(UserInfoContext.getUserContext().getUserName()).append("\n\n");
         trainRecordMd.append("###### 时间: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(singleRoom.getStartTime())).append("\n\n\n");

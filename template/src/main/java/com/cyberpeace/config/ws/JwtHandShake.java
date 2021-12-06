@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import com.cyberpeace.common.component.SelfDefinedWsChecker;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
 import com.cyberpeace.common.util.SpringContextUtil;
@@ -38,6 +39,12 @@ public class JwtHandShake implements HandshakeInterceptor {
 
 		String path = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest()
 				.getServletPath();
+
+		if (!WsPath.validPath(path)) {
+			log.error(
+					"websocket handshake fail, path invalid, should be declare in WsPath.java first");
+			return false;
+		}
 
 		// 1、解析连接参数
 		Map<String, String> parametersMap = parseParameterMap(queryString);

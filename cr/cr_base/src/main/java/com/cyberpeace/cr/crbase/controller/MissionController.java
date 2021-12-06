@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.cr.crbase.controller.rsp.MissionTemplateRsp;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +47,27 @@ import io.swagger.annotations.ApiParam;
 public class MissionController {
 
 	@Autowired
+	private MissionTemplateMapper missionTemplateMapper;
+
+	@Autowired
 	private MissionService missionService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@ApiOperation("获取任务")
+	@GetMapping("/missions")
+	public BaseRsp<MissionTemplateRsp> getMission(@RequestParam("resource_id") @Validated String resourceId) {
+		MissionTemplate missionTemplate = missionTemplateMapper.selectById(resourceId);
+		if (missionTemplate == null) {
+			return new BaseRsp<>(null);
+		}
+
+		MissionTemplateRsp missionTemplateRsp = BeanUtils.copy(missionTemplate, MissionTemplateRsp.class);
+		missionTemplateRsp.setSkillPoints(JsonUtil.toJsonObjectArray(missionTemplate.getSkillPoints(), Integer.class));
+
+		return new BaseRsp<>(missionTemplateRsp);
+	}
 
 	@ApiOperation("新增任务")
 	@PostMapping("/missions")

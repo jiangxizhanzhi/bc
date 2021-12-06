@@ -284,7 +284,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
         SingleMissionBo singleMissionBo = new SingleMissionBo();
         BeanUtils.copyProperties(missionObject, singleMissionBo);
-        singleMissionBo.setOption(JsonUtil.toJsonObject(missionObject.getOption(), JSONObject.class));
+        if (missionObject.getOption() != null) {
+            singleMissionBo.setOption(JsonUtil.toJsonObjectArray(missionObject.getOption(), JSONObject.class));
+        }
 
         SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
         if (singleRoom == null) {

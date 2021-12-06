@@ -1,11 +1,13 @@
 package com.cyberpeace.cr.singletrain.service.bo;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ApiModel("单兵训练任务信息")
@@ -23,7 +25,7 @@ public class SingleMissionBo implements Serializable {
     private Integer type;
 
     @ApiModelProperty("选项")
-    private JSONObject option;
+    private List<JSONObject> option;
 
     @ApiModelProperty("任务记录")
     private JSONObject trainingRecord;

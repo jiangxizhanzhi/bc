@@ -411,18 +411,23 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         trainRecordMd.append("###### 时间: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(singleRoom.getStartTime())).append("\n\n\n");
         trainRecordMd.append("## 场景描述\n\n").append(businessTemplate.getDescription()).append("\n\n");
 
-        schemeData.toJavaList(JSONObject.class).forEach(stage -> {
-            trainRecordMd.append("## 阶段?: ").append(stage.getString("stage")).append("\n\n");
-            stage.getJSONArray("missions").toJavaList(JSONObject.class).forEach(mission -> {
-                trainRecordMd.append("#### 任务?: ").append(mission.getString("title")).append("\n\n");
+        // 生成训练记录富文本
+        List<JSONObject> stages = schemeData.toJavaList(JSONObject.class);
+        for (int i = 0; i < stages.size(); i++) {
+            JSONObject stage = stages.get(i);
+            trainRecordMd.append("## 阶段").append(i + 1).append(": ").append(stage.getString("stage")).append("\n\n");
+            List<JSONObject> missions = stage.getJSONArray("missions").toJavaList(JSONObject.class);
+            for (int j = 0; j < missions.size(); j++) {
+                JSONObject mission = missions.get(j);
+                trainRecordMd.append("#### 任务").append(j + 1).append(": ").append(mission.getString("title")).append("\n\n");
                 trainRecordMd.append("> 任务说明\n\n").append(mission.getString("description")).append("\n\n").append("> 我的记录\n\n");
                 JSONObject singleMissionRecord = trainRecord.getJSONObject(mission.getString("resource_id"));
                 if (singleMissionRecord != null) {
                     trainRecordMd.append(singleMissionRecord.getString("record")).append("\n");
                 }
-            });
+            }
             trainRecordMd.append("\n");
-        });
+        }
 
         return trainRecordMd.toString();
     }
@@ -442,14 +447,17 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
         // 生成富文本训练手册
         StringBuilder writeup = new StringBuilder();
-        // todo ? -> loop index
-        schemeData.toJavaList(JSONObject.class).forEach(item -> {
-            writeup.append("## ").append("阶段?: ").append(item.getString("stage")).append("\n\n");
-            item.getJSONArray("missions").toJavaList(JSONObject.class).forEach(_mission -> {
-                writeup.append("#### ").append("任务?: ").append(_mission.getString("title")).append("\n\n");
+        List<JSONObject> stages = schemeData.toJavaList(JSONObject.class);
+        for (int i = 0; i < stages.size(); i++) {
+            JSONObject item = stages.get(i);
+            writeup.append("## ").append("阶段").append(i + 1).append(": ").append(item.getString("stage")).append("\n\n");
+            List<JSONObject> missions = item.getJSONArray("missions").toJavaList(JSONObject.class);
+            for (int j = 0; j < missions.size(); j++) {
+                JSONObject _mission = missions.get(j);
+                writeup.append("#### ").append("任务").append(j + 1).append(": ").append(_mission.getString("title")).append("\n\n");
                 writeup.append("题解: \n").append(_mission.getString("write_up")).append("\n\n");
-            });
-        });
+            }
+        }
 
         return writeup.toString();
     }

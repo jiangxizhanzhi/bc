@@ -108,6 +108,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 				@Override
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 					room.setLocalSceneId(null);
+
 					localSceneService.removeById(localScene.getResourceId());
 					teamRoomService.updateById(room);
 				}

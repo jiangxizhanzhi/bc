@@ -37,7 +37,7 @@
         <where>
             T1.business_type = 1
             <if test="category != null and category">
-                and T1.category = #{category}
+                and T2.sub_type = #{category}
             </if>
             <if test="difficult != null and difficult">
                 and T1.difficulty = #{difficult}

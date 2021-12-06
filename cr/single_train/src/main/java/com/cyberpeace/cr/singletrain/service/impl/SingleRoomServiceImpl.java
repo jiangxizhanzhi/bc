@@ -199,6 +199,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
                 queryParams.getCategory(),
                 queryParams.getDifficult()
         );
+        if (selectResult.getRecords().isEmpty()) {
+            return new ListRsp<>();
+        }
 
         // 查询训练使用统计
         List<String> template_ids = selectResult.getRecords().stream().map(

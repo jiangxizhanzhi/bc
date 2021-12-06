@@ -277,6 +277,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
      */
     @Override
     public SingleMissionBo getMission(String businessTemplateId, String missionId) {
+        // 获取任务基础信息
         MissionTemplate missionObject = missionTemplateMapper.selectById(missionId);
         if (missionObject == null) {
             return null;
@@ -284,17 +285,19 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
         SingleMissionBo singleMissionBo = new SingleMissionBo();
         BeanUtils.copyProperties(missionObject, singleMissionBo);
+        singleMissionBo.setCategory(missionService.getCategoryById(missionObject.getCategoryId()).getName());
         if (missionObject.getOption() != null) {
             singleMissionBo.setOption(JsonUtil.toJsonObjectArray(missionObject.getOption(), JSONObject.class));
         }
 
+        // 训练是否运行中
         SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, UserInfoContext.getUserContext().getUserId());
         if (singleRoom == null) {
             return singleMissionBo;
         }
 
+        // 训练运行中, 尝试获取此任务训练记录
         JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
-        singleMissionBo.setCategory(missionService.getCategoryById(missionObject.getCategoryId()).getName());
         JSONObject missionRecord = trainRecord.getJSONObject(missionId);
         if (missionRecord != null) {
             missionRecord.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(missionRecord.getLong("time"))));

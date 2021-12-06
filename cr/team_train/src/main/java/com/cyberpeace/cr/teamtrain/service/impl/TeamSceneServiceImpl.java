@@ -18,6 +18,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
@@ -81,7 +82,10 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	}
 
 	@Override
-	public JSONObject viewScene(String roomId, String roleId) {
+	public SceneViewContext viewScene(String roomId, String roleId) {
+		SceneViewContext ret = new SceneViewContext();
+		ret.setRoomId(roomId);
+
 		TeamRoom room = teamRoomService.getById(roomId);
 
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -90,7 +94,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		// 2、如果没有启动的场景，直接返回拓扑数据
 		if (StringUtils.isBlank(room.getLocalSceneId())) {
-			return getTopoData(room.getCopyedTopoId(), nodes);
+			JSONObject topoData = getTopoData(room.getCopyedTopoId(), nodes);
+			ret.setTopoData(topoData);
+			return ret;
 		}
 
 		// 3、有启动的场景，尝试返回启动的场景数据
@@ -99,25 +105,57 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		JSONObject sceneData = localSceneService.getSceneData(sceneId, userId);
 		if (sceneData != null) {
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
-			return sceneData;
+			ret.setSceneData(sceneData);
+			ret.setLocalSceneId(room.getLocalSceneId());
+			return ret;
 		} else {
 			log.info("roomId=[{}] local has sceneId=[{}], remote is null", room, sceneId);
 			// 清除本地脏数据
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					room.setLocalSceneId(null);
-
-					localSceneService.removeById(localScene.getResourceId());
-					teamRoomService.updateById(room);
-				}
-			});
+			clearLocal(room);
 
 			// 这时实际场景是没启动的，返回拓扑数据
-			return getTopoData(localScene.getTopoId(), nodes);
+			JSONObject topoData = getTopoData(room.getCopyedTopoId(), nodes);
+			ret.setTopoData(topoData);
+			return ret;
 		}
 
+	}
+
+	@Override
+	public Boolean stopScene(String roomId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、只有教员可以操作场景
+		teamRoomService.checkTeacherPermission(roomId, userId);
+
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
+
+		// 2、如果场景已经停止，返回成功
+		if (StringUtils.isBlank(teamRoom.getLocalSceneId())) {
+			return true;
+		}
+
+		Boolean stopResult = localSceneService.stopScene(teamRoom.getLocalSceneId());
+		if (stopResult) {
+			clearLocal(teamRoom);
+		}
+
+		return stopResult;
+	}
+
+	@Override
+	public void clearLocal(TeamRoom room) {
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				String localSceneId = room.getLocalSceneId();
+				room.setLocalSceneId(null);
+
+				// 清除业务数据、localscene表中数据
+				localSceneService.removeById(localSceneId);
+				teamRoomService.updateById(room);
+			}
+		});
 	}
 
 	private JSONObject getTopoData(String topoId, CrRoleNodesData nodes) {
@@ -127,11 +165,6 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		sceneFilterService.filterVisibleTopo(topoData, nodes);
 
 		return topoData;
-	}
-
-	@Override
-	public void stopScene() {
-
 	}
 
 	private CrRoleNodesData getNodes(String userId, String roomId, String roleId) {

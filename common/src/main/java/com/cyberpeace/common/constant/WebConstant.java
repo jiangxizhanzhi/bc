@@ -27,4 +27,6 @@ public interface WebConstant {
 	String CLIENT_SECRET = "clientSecret";
 
 	String ENCODING = "UTF-8";
+
+	String PASS_THROUGH_BUSINESS_ID = "business_id";
 }

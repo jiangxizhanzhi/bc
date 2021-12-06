@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.service;
 
-import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 
 public interface TeamSceneService {
 
@@ -10,7 +11,9 @@ public interface TeamSceneService {
 	 * 查看场景
 	 * @return
 	 */
-	JSONObject viewScene(String roomId, String roleId);
+	SceneViewContext viewScene(String roomId, String roleId);
 
-	void stopScene();
+	Boolean stopScene(String roomId);
+
+	void clearLocal(TeamRoom room);
 }

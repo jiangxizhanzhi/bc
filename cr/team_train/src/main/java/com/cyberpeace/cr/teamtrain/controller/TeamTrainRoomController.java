@@ -3,12 +3,10 @@ package com.cyberpeace.cr.teamtrain.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -24,11 +22,10 @@ import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneStartReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.SceneService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
@@ -48,10 +45,6 @@ import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
-import com.cyberpeace.cr.teamtrain.service.impl.TeamSceneHandler;
-import com.cyberpeace.cs.controller.rsp.CrSceneRetrieveRsp;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -80,15 +73,6 @@ public class TeamTrainRoomController {
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	private LocalSceneService localSceneService;
-
-	@Autowired
-	private TeamSceneHandler teamSceneHandler;
-
-	@Autowired
-	private SceneService sceneService;
-
-	@Autowired
 	private TeamSceneService teamSceneService;
 
 	@ApiOperation("启动场景")
@@ -103,43 +87,12 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查看场景")
 	@GetMapping("/scene")
-	public BaseRsp getScene(
+	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
-		TeamRoom room = teamRoomService.getById(resource_id);
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 获取可见节点&鉴权， null代表所有节点可见
-		CrRoleNodesData nodes = teamSceneHandler.getNodes(userId, resource_id, role_id);
+		SceneViewContext context = teamSceneService.viewScene(resource_id, role_id);
 
-		JSONObject sceneData = null;
-		JSONObject topoData = null;
-
-		if (StringUtils.isNotBlank(room.getLocalSceneId())) {
-			LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
-			String sceneId = localScene.getMpSceneId();
-			if (StringUtils.isNotBlank(sceneId)) {
-				sceneData = localSceneService.getSceneData(sceneId, userId);
-				if (sceneData != null) {
-					sceneService.filterVisibleTopo(sceneData, nodes);
-				} else {
-					log.error("fail to get sceneData with scene_id [{}]", sceneId);
-					localSceneService.clearLocalScene(localScene);
-				}
-			}
-		}
-		if (sceneData == null) {
-			topoData = localSceneService.getTopoData(room.getCopyedTopoId())
-					.getJSONObject("scene_config");
-			sceneService.filterVisibleTopo(topoData, nodes);
-		}
-
-		CrSceneRetrieveRsp rsp = new CrSceneRetrieveRsp();
-		rsp.setSceneManagerId(room.getLocalSceneId());
-		rsp.setRoomId(resource_id);
-		rsp.setSceneData(sceneData);
-		rsp.setTopoData(topoData);
-
-		return new BaseRsp<>(rsp);
+		return new BaseRsp<>(context);
 	}
 
 	@ApiOperation("新增")

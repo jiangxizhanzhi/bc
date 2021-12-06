@@ -35,7 +35,7 @@ public class RabbitMQConf {
 	 */
 	private final String SCENE_EVENT_ROUTING_KEY = "cn.cyberpeace.mp.cscene_scene_report.*";
 
-	private String defaultProjectName = "defaultBC";
+	private String defaultProjectName = "defaultTest";
 
 	private String queuePrefix = "cr.";
 

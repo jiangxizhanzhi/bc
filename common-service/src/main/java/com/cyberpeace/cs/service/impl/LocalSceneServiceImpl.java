@@ -7,11 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -44,11 +44,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Qualifier("BasicSceneHandler")
 	private SceneHandler sceneHandler;
 
-	@Autowired
-	private TransactionTemplate transactionTemplate;
-
-	private String businessId = "business_id";
-
 	@Override
 	public LocalScene getByBusinessInstanceId(String businessInstanceId) {
 		LocalScene localScene = getBaseMapper().getByBusinessInstanceId(businessInstanceId);
@@ -77,7 +72,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		// 前端场景统计小球用到此数据
 		context.setReferenceMetaData(getReferenceMetaData(localScene));
 		// 收到mp回传到消息后，会使用此值寻找对应到业务
-		context.getContext().getPass_through().put(businessId, localScene.getBusinessInstanceId());
+		context.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
+				localScene.getBusinessInstanceId());
 		context.getContext().setAccessUserId(localScene.getUserId());
 
 		return context;
@@ -107,8 +103,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public Boolean stopScene(LocalScene localScene) {
-		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
+	public Boolean stopScene(String localSceneId) {
+		SceneOpsContext sceneOpsContext = getSceneOpsContext(
+				localSceneMapper.selectById(localSceneId));
 
 		Boolean result = remoteSceneService.stopScene(sceneOpsContext);
 
@@ -149,14 +146,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public Boolean startFlow(String localSceneId, String nodeId, String flowId) {
 		return null;
-	}
-
-	@Override
-	public Boolean clearLocalScene(LocalScene localScene) {
-		// 1、不管中台对应的场景有没有关闭，先调用
-		boolean result = stopScene(localScene);
-
-		return result;
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class MissionTemplateRsp {
     @ApiModelProperty(value = "任务类型（单选、填空等）")
     private Integer type;
 
-    @ApiModelProperty(value = "任务类别（密码破解、网络侦查等）")
+    @ApiModelProperty(value = "任务类别（resource_id）")
     private String category;
 
     @ApiModelProperty(value = "题解")

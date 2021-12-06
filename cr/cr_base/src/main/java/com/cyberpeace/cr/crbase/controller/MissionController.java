@@ -65,6 +65,7 @@ public class MissionController {
 
 		MissionTemplateRsp missionTemplateRsp = BeanUtils.copy(missionTemplate, MissionTemplateRsp.class);
 		missionTemplateRsp.setSkillPoints(JsonUtil.toJsonObjectArray(missionTemplate.getSkillPoints(), Integer.class));
+		missionTemplateRsp.setCategory(missionTemplate.getCategoryId());
 
 		return new BaseRsp<>(missionTemplateRsp);
 	}

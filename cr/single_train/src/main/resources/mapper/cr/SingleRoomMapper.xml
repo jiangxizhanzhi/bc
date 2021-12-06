@@ -21,6 +21,7 @@
         <result column="name" property="businessTemplate.name"/>
         <result column="description" property="businessTemplate.description"/>
         <result column="difficulty" property="businessTemplate.difficulty"/>
+        <result column="sub_type" property="singleTemplate.subType"/>
         <result column="pre_skills" property="singleTemplate.preSkills"/>
         <result column="train_skills" property="singleTemplate.trainSkills"/>
         <result column="duration_time" property="singleTemplate.durationTime"/>

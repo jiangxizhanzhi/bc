@@ -243,6 +243,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
                 BeanUtils.copyProperties(item.getSingleRoom(), singleRoomListBo.getRoomInfo());
             }
 
+            // todo db字段与数据库不同, 是否需要同步?
+            singleRoomListBo.getEventData().setDifficult(item.getBusinessTemplate().getDifficulty());
+            singleRoomListBo.getEventData().setCategory(item.getSingleTemplate().getSubType());
+
             singleRoomListBo.setResourceId(item.getBusinessTemplate().getResourceId());
             singleRoomListBo.getEventData().setPreSkill(JsonUtil.toJsonObjectArray(item.getSingleTemplate().getPreSkills(), String.class));
             singleRoomListBo.getEventData().setTrainSkill(JsonUtil.toJsonObjectArray(item.getSingleTemplate().getTrainSkills(), String.class));

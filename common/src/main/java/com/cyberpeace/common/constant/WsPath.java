@@ -11,6 +11,9 @@ import com.google.common.collect.Sets;
  */
 public class WsPath {
 
+	/**
+	 * 单兵、团队、红蓝的场景启动、节点状态变更，使用此path
+	 */
 	private static final String CR_SCENE = "/cr/ce_base/scene";
 
 	private static Set<String> cache = Sets.newHashSet();

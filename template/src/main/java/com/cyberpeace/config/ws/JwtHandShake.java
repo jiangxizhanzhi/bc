@@ -40,6 +40,7 @@ public class JwtHandShake implements HandshakeInterceptor {
 		String path = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest()
 				.getServletPath();
 
+		// ws路径统一定义，方便后期维护
 		if (!WsPath.validPath(path)) {
 			log.error(
 					"websocket handshake fail, path invalid, should be declare in WsPath.java first");

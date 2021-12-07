@@ -92,6 +92,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
+	public MissionTemplate getByMissionTemplateId(String missionTemplateId) {
+		return missionTemplateMapper.selectById(missionTemplateId);
+	}
+
+	@Override
 	public void updateMissionTemplate(MissionTemplate missionTemplate) {
 		missionTemplateMapper.updateById(missionTemplate);
 	}

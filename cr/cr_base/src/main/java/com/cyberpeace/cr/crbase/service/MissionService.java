@@ -16,8 +16,13 @@ import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
 public interface MissionService extends IService<Mission> {
 
+	/** 新增模板任务 */
 	MissionTemplate addMissionTemplate(MissionTemplate missionTemplate);
 
+	/** 查询模板任务 */
+	MissionTemplate getByMissionTemplateId(String missionTemplateId);
+
+	/** 修改模板任务 */
 	void updateMissionTemplate(MissionTemplate missionTemplate);
 
 	Mission getById(String missionId);

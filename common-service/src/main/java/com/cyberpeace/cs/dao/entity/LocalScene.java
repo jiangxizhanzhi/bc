@@ -143,7 +143,7 @@ public class LocalScene extends BaseTable {
 		@Getter
 		private String desc;
 
-		private BusinessCode(Integer code, String desc) {
+		BusinessCode(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}
@@ -160,7 +160,7 @@ public class LocalScene extends BaseTable {
 		@Getter
 		private String desc;
 
-		private DestroyMode(Integer code, String desc) {
+		DestroyMode(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

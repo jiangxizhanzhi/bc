@@ -6,11 +6,11 @@ import lombok.Data;
 @Data
 public class CourseQueryBo extends CourseContext {
 
-	private Boolean myCourse = true;
+	private Boolean myCourse;
 
-	private Boolean systemCourse = true;
+	private Boolean systemCourse;
 
-	private Boolean shareCourse = true;
+	private Boolean shareCourse;
 
 	private String userId;
 

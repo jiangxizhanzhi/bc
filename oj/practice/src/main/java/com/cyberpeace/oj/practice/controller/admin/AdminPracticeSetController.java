@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +62,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		String setId = practiceSetMapper.selectByName(setAddReq.getName());
 		if (StringUtils.isNotBlank(setId)) {
-			throw new UnsupportedOperationException("习题集名称已存在！");
+			throw new InvalidParamException("习题集名称已存在！");
 		}
 
 		PracticeSet practiceSet = BeanUtils.copy(setAddReq, PracticeSet.class);

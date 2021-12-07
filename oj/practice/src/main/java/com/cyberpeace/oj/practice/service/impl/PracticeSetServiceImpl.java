@@ -151,7 +151,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		if (StringUtils.isNotBlank(existSet.getName())) {
 			String categoryId = practiceSetMapper.selectByName(existSet.getName());
 			if (StringUtils.isNotBlank(categoryId)) {
-				throw new UnsupportedOperationException("习题集名称已存在！");
+				throw new InvalidParamException("习题集名称已存在！");
 			}
 		}
 

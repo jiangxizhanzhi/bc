@@ -3,13 +3,14 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.service.LessonConfigService;
-import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
+import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,9 +35,6 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.CourseAdminBo;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
-import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.google.common.collect.Lists;
@@ -150,7 +148,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public ListRsp<CourseInfoBo> selectPage(Page page, CourseContext courseContext,
+	public ListRsp<CourseInfoBo> selectPage(Page page, CourseQueryBo courseContext,
 			AuthContext authContext) {
 		// 权限过滤
 		List<String> courseIds = null;
@@ -234,7 +232,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 名称重复性查询
 		String resourceId = courseMapper.selectByName(course.getName());
 		if (StringUtils.isNotBlank(resourceId)) {
-			throw new UnsupportedOperationException("课程名称重复！");
+			throw new InvalidParamException("课程名称重复！");
 		}
 
 		// 基本信息组装

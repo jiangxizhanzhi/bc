@@ -39,9 +39,6 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 					PracticeTheory.class);
 			TheoryLessonBo theoryLesonBo = BeanUtils.copy(practiceTheory, TheoryLessonBo.class);
 
-			// 原习题编号替换 快照编号
-			theoryLesonBo.setResourceId(practiceTheoryRef.getOriginId());
-
 			PracticeCategory category = practiceCategoryMapper
 					.selectById(practiceTheory.getCategoryId());
 			if (null != category) {

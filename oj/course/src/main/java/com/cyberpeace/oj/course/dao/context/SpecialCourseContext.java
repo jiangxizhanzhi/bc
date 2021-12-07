@@ -7,14 +7,23 @@ import java.io.Serializable;
 @Data
 public class SpecialCourseContext implements Serializable {
 
-    private Boolean myCourse;
+	private Boolean myCourse;
 
-    private Boolean systemCourse;
+	private Boolean systemCourse;
 
-    private Boolean shareCourse;
+	private Boolean shareCourse;
 
-    private String userId;
+	private String userId;
 
-    private String likeUser;
+	public Boolean getMyCourse() {
+		return null == myCourse ? true : myCourse;
+	}
 
+	public Boolean getSystemCourse() {
+		return null == systemCourse ? true : myCourse;
+	}
+
+	public Boolean getShareCourse() {
+		return null == shareCourse ? true : shareCourse;
+	}
 }

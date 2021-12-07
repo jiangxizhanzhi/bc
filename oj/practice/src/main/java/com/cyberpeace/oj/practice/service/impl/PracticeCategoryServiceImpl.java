@@ -77,7 +77,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 			String categoryId = practiceCategoryMapper.selectByName(data.getPracticeType(),
 					category.getName());
 			if (StringUtils.isNotBlank(categoryId)) {
-				throw new UnsupportedOperationException("分类名称已存在！");
+				throw new InvalidParamException("分类名称已存在！");
 			}
 		}
 
@@ -113,7 +113,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		String categoryId = practiceCategoryMapper.selectByName(practiceCategory.getPracticeType(),
 				practiceCategory.getName());
 		if (StringUtils.isNotBlank(categoryId)) {
-			throw new UnsupportedOperationException("分类名称已存在！");
+			throw new InvalidParamException("分类名称已存在！");
 		}
 
 		practiceCategory.setCreateUserId(userId);
@@ -186,14 +186,14 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<String> theoryIds = practiceTheoryMapper.selectByCategoryIds(allDeleteIds,
 				CommonConstant.FALSE);
 		if (CollectionUtils.isNotEmpty(theoryIds)) {
-			throw new UnsupportedOperationException("习题集下存在习题！");
+			throw new InvalidParamException("习题集下存在习题！");
 		}
 
 		// 查询是否存在实操题
 		List<String> operationIds = practiceOperationMapper.selectByCategoryIds(allDeleteIds,
 				CommonConstant.FALSE);
 		if (CollectionUtils.isNotEmpty(operationIds)) {
-			throw new UnsupportedOperationException("习题集下存在习题！");
+			throw new InvalidParamException("习题集下存在习题！");
 		}
 
 		// 数据删除

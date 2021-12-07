@@ -35,7 +35,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	private RemoteSceneService remoteSceneService;
 
 	@Autowired
-	RemoteTopoService remoteTopoService;
+	private RemoteTopoService remoteTopoService;
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;

@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
+import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 
 public interface CourseService extends IService<Course> {
 
@@ -34,7 +35,7 @@ public interface CourseService extends IService<Course> {
      * @param courseContext
      * @return
      */
-    ListRsp<CourseInfoBo> selectPage(Page page, CourseContext courseContext, AuthContext authContext);
+    ListRsp<CourseInfoBo> selectPage(Page page, CourseQueryBo courseContext, AuthContext authContext);
 
     /**
      * 筛选未被删除的课程编号

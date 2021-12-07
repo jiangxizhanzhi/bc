@@ -46,11 +46,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Api(tags = "oj-后台课程相关api")
 @RestController
 @RequestMapping("/oj/admin/course")
 @RequiresAuthentication
-@Slf4j
 public class AdminCourseController extends AuthAndPublicController<CourseService, Course> {
 
 	@Autowired
@@ -76,14 +76,16 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		// 组装筛选条件
 		CourseQueryBo context = BeanUtils.copy(courseListReq, CourseQueryBo.class);
-		context.setUserId(UserInfoContext.getUserContext().getUserId());
 
+		Page page = courseListReq.toPageParam();
+
+		// 分类数据组装
 		if (StringUtils.isNotBlank(courseListReq.getDirection())) {
 			List<String> childrenIds = courseCategoryService
 					.getChildrenIds(courseListReq.getDirection(), CommonConstant.TRUE);
 			context.setDirections(childrenIds);
 		}
-		Page page = courseListReq.toPageParam();
+		context.setUserId(UserInfoContext.getUserContext().getUserId());
 
 		// 数据查询
 		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(page, context, null);
@@ -98,13 +100,16 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		// 查询数据组装
 		CourseQueryBo adminQueryBo = BeanUtils.copy(listReq, CourseQueryBo.class);
-		adminQueryBo.setUserId(UserInfoContext.getUserContext().getUserId());
+
+		// 分类数据组装
 		if (StringUtils.isNotBlank(listReq.getDirection())) {
 			List<String> childrenIds = courseCategoryService.getChildrenIds(listReq.getDirection(),
 					CommonConstant.TRUE);
 			adminQueryBo.setDirections(childrenIds);
 		}
+		adminQueryBo.setUserId(UserInfoContext.getUserContext().getUserId());
 
+		// 分页数据获取
 		Page page = listReq.toPageParam();
 
 		// 获取权限

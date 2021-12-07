@@ -109,16 +109,15 @@
                         and `builtin` = #{specialContext.systemCourse}
                     </if>
                     <if test="null != specialContext.shareCourse">
+                        <bind name="likeUser" value="'%' + specialContext.userId + '%'"/>
                         <choose>
                             <when test="specialContext.shareCourse">
-                                <bind name="specialContext.likeUser" value="'%' + specialContext.userId + '%'"/>
                                 and (`operation_auth_type` = 1 or (`operation_auth_type` = 2 and `operation_auth_ids` like
-                                #{specialContext.likeUser}))
+                                #{likeUser}))
                             </when>
                             <otherwise>
-                                <bind name="specialContext.likeUser" value="'%' + specialContext.userId + '%'"/>
                                 and (`operation_auth_type` = 2 and `operation_auth_ids` not like
-                                #{specialContext.likeUser})
+                                #{likeUser})
                             </otherwise>
                         </choose>
                     </if>

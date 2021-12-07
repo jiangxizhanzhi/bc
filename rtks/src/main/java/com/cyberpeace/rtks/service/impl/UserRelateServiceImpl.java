@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.service.impl;
 
+import com.cyberpeace.common.exception.InvalidParamException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class UserRelateServiceImpl implements UserRelateService {
     public UserRole roleRelateUser(String roleId, String userId, String userName) {
         Role role = roleMapper.selectById(roleId);
         if (null == role) {
-            throw new UnsupportedOperationException("岗位非法！");
+            throw new InvalidParamException("岗位非法！");
         }
         UserRole userRole = new UserRole();
         userRole.setRoleId(roleId);

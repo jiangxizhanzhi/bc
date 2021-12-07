@@ -63,7 +63,7 @@ public class ToolController {
 	}
 
 	@ApiOperation("工具更新")
-	@PutMapping()
+	@PatchMapping()
 	public BaseRsp<String> update(@RequestBody ToolReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
 		if (!StringUtils.isBlank(toolReq.getPublishTime())) {

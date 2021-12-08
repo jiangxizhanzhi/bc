@@ -91,7 +91,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
 		UserInfo userInfo = remoteUserService.getById(practiceSet.getCreateUserId());
-		setBo.setCreateUserName(userInfo.getUserName());
+		setBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 
 		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION.getCode()
 				.intValue()) {

@@ -1,16 +1,16 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ObjUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -73,6 +73,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		String targetUrl = USERINFO_BY_ID_URL + userId;
 		JSONObject jsonObject = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 
+		if (null == jsonObject || jsonObject.isEmpty()) {
+			return null;
+		}
 		return userInfoFromJsonObject(jsonObject);
 	}
 
@@ -90,18 +93,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@Override
 	public List<UserInfo> getLazyUserList(UserPageContext userPageContext) {
-		List<BasicNameValuePair> nvps = Lists.newArrayList();
-		if (!StringUtils.isBlank(userPageContext.getIds())) {
-			nvps.add(new BasicNameValuePair("ids", userPageContext.getIds()));
 
-		}
-		nvps.add(new BasicNameValuePair("perPage", userPageContext.getPerPage()));
-		nvps.add(new BasicNameValuePair("page", userPageContext.getPage()));
-
-		String url = USERINFO_LIST_URL;
-
-		List jsonArray = (List) HttpClientUtil.rawGetByParam(nvps, url, JSONObject.class)
-				.get("list");
+		List jsonArray = (List) HttpClientUtil
+				.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class).get("list");
 
 		List<UserInfo> userInfoList = new ArrayList<>();
 		for (Object object : jsonArray) {
@@ -131,6 +125,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	private UserInfo userInfoFromJsonObject(JSONObject jsonObject) {
+
+		if (null == jsonObject) {
+			return null;
+		}
+
 		UserInfo userInfo = new UserInfo();
 		userInfo.setUserId(jsonObject.getObject("id", String.class));
 		userInfo.setUserName(jsonObject.getObject("username", String.class));

@@ -130,7 +130,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 					.selectById(practiceTheory.getPracticeSetId());
 			theoryListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 			UserInfo userInfo = remoteUserService.getById(practiceTheory.getCreateUserId());
-			theoryListBo.setCreateUserName(userInfo.getUserName());
+			theoryListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 			return theoryListBo;
 		});
 

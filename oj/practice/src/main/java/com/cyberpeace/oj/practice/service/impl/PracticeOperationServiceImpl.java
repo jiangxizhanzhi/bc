@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +108,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private OjLocalSceneService ojLocalSceneService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -275,10 +279,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			webOperationBo.setSceneConfigData(sceneConfig);
 			OjLocalScene localScene = operationBo.getSceneShareMode()
 					.intValue() == SceneShare.PRIVATE.getCode()
-							? ojLocalSceneMapper.selectByUserAndBid(userId, resourceId,
+							? ojLocalSceneMapper.selectPrivateScene(userId, resourceId,
 									CommonConstant.TRUE)
-							: ojLocalSceneMapper.selectByBidAndShared(resourceId,
-									CommonConstant.TRUE, CommonConstant.TRUE);
+							: ojLocalSceneMapper.selectPublicScene(resourceId, CommonConstant.TRUE,
+									CommonConstant.TRUE);
 
 			if (null != localScene) {
 				LocalScene sceneLocal = localSceneMapper
@@ -431,7 +435,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		// 判断是否存在已启动场景
-		OjLocalScene existOjLocalScene = getExistOjLocalScene(operation, authContext);
+		OjLocalScene existOjLocalScene = ojLocalSceneService.selectOjLocalScene(
+				operation.getResourceId(), operation.getSceneShareMode(), authContext);
+
 		if (null != existOjLocalScene) {
 			LocalScene localScene = localSceneMapper
 					.selectById(existOjLocalScene.getLocalSceneId());
@@ -453,7 +459,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		ojLocalScene.setLocalSceneId(localScene.getResourceId());
 		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
 
-		// 场景数据初始化插入
+		// 场景数据启动
+		String sceneId = localSceneService.startScene(localScene);
+		if (StringUtils.isBlank(sceneId)) {
+			log.error("Operation startScene: Scene start failed! scene_id is null");
+			throw new InvalidParamException("场景启动失败！");
+		}
+
+		// 数据存储
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -463,63 +476,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			}
 		});
 
-		try {
-			// 场景数据启动
-			String sceneId = localSceneService.startScene(localScene);
-			localScene.setMpSceneId(sceneId);
-
-			localSceneMapper.updateById(localScene);
-		} catch (Exception e) {
-			// 场景数据删除
-			ojLocalSceneMapper.deleteById(ojLocalScene);
-			localSceneMapper.deleteById(localScene);
-			log.error("Operation startScene: Scene start failed! error:", e);
-			return null;
-		}
-
 		// 场景数据查询
 		return remoteSceneService.getById(localScene.getMpSceneId(), localScene.getUserId());
-	}
-
-	/**
-	 * 初始化场景元信息
-	 * @param operation
-	 * @param authContext
-	 * @return
-	 */
-	private String initReferenceMetaData(PracticeOperation operation, AuthContext authContext) {
-
-		OperationReferenceData referenceData = OperationReferenceData.builder()
-				.sceneType(LocalScene.BusinessCode.PRACTICE.getCode())
-				.sceneName(operation.getTitle()).appResourceId(operation.getResourceId())
-				.content(operation.getContent()).createUser(authContext.getUserId())
-				.isWeb(authContext.getIsWeb()).build();
-
-		return JsonUtil.toJsonString(referenceData);
-	}
-
-	/**
-	 * 获取已存在场景
-	 * @param operation
-	 * @param authContext
-	 * @return
-	 */
-	private OjLocalScene getExistOjLocalScene(PracticeOperation operation,
-			AuthContext authContext) {
-
-		if (operation.getSceneShareMode().intValue() == SceneShare.PRIVATE.getCode()) {
-			return ojLocalSceneMapper.selectByUserAndBid(authContext.getUserId(),
-					operation.getResourceId(), authContext.getIsWeb());
-		} else {
-			OjLocalScene ojLocalScene = ojLocalSceneMapper.selectByUserAndBid(
-					authContext.getUserId(), operation.getResourceId(), authContext.getIsWeb());
-			if (null != ojLocalScene) {
-				return ojLocalScene;
-			} else {
-				return ojLocalSceneMapper.selectByBidAndShared(operation.getResourceId(),
-						CommonConstant.TRUE, authContext.getIsWeb());
-			}
-		}
 	}
 
 	/**

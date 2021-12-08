@@ -21,6 +21,10 @@ public class JsonUtil {
 			return "{}";
 		}
 
+		if (obj instanceof String) {
+			return (String) obj;
+		}
+
 		return JSON.toJSONString(obj);
 	}
 

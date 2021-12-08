@@ -8,14 +8,10 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
-	OjLocalScene selectByUserAndBid(@Param("userId") String userId,
+	OjLocalScene selectPrivateScene(@Param("userId") String userId,
 			@Param("businessId") String businessId, @Param("isWeb") Boolean isWeb);
 
-	OjLocalScene selectByBidAndShared(@Param("practiceId") String businessId,
+	OjLocalScene selectPublicScene(@Param("practiceId") String businessId,
 			@Param("shared") Boolean shared, @Param("isWeb") Boolean isWeb);
 
-
-	OjLocalScene selectPrivateScene(String businessId, String userId, Boolean isWeb);
-
-	OjLocalScene selectPublicScene(String businessId, Boolean isWeb);
 }

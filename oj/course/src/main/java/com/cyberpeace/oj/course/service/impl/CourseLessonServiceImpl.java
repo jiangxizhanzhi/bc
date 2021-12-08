@@ -183,9 +183,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
 			OjLocalScene ojLocalScene = lesson.getSceneShareMode().intValue() == SceneShare.PRIVATE
 					.getCode().intValue()
-							? ojLocalSceneMapper.selectByUserAndBid(authContext.getUserId(),
+							? ojLocalSceneMapper.selectPrivateScene(authContext.getUserId(),
 									lessonId, CommonConstant.TRUE)
-							: ojLocalSceneMapper.selectByBidAndShared(lessonId, CommonConstant.TRUE,
+							: ojLocalSceneMapper.selectPublicScene(lessonId, CommonConstant.TRUE,
 									CommonConstant.TRUE);
 
 			if (null != ojLocalScene) {
@@ -386,7 +386,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 用户相关
 			UserInfo userInfo = remoteUserService.getById(courseLesson.getCreateUserId());
-			adminLessonListBo.setCreateUserName(userInfo.getUserName());
+			adminLessonListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 
 			// 是否具有实验报告
 			NoteUniqueContext uniqueContext = NoteUniqueContext.builder()

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.integratation.model.UserPageContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -69,8 +70,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		NoteListQuery listQuery = BeanUtils.copy(noteListQuery, NoteListQuery.class);
 		Map<String, String> userInfoMap = null;
 		if (StringUtils.isNotBlank(noteListQuery.getUserName())) {
-			// todo 名称筛选
-			List<UserInfo> userList = remoteUserService.getLazyUserList(null);
+			UserPageContext pageContext = UserPageContext.builder()
+					.username(noteListQuery.getUserName()).build();
+			List<UserInfo> userList = remoteUserService.getLazyUserList(pageContext);
 			List<String> userIds = StreamApiUtils.map(userList, UserInfo::getUserId);
 			listQuery.setUserIds(userIds);
 
@@ -93,7 +95,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			return iPage.convert(note -> {
 				UserInfo userInfo = remoteUserService.getById(note.getUserId());
 				NoteListBo noteBo = BeanUtils.copy(note, NoteListBo.class);
-				noteBo.setUserName(userInfo.getUserName());
+				noteBo.setUserName(null != userInfo ? userInfo.getUserName() : "");
 				return noteBo;
 			});
 		}

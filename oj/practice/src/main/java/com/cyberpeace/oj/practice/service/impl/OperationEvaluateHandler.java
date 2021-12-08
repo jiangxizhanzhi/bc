@@ -70,12 +70,12 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 
 		if (practiceOperation.getSceneShareMode().intValue() == SceneShare.SHARED.getCode()
 				.intValue()) {
-			OjLocalScene ojLocalScene = ojLocalSceneMapper.selectByBidAndShared(
+			OjLocalScene ojLocalScene = ojLocalSceneMapper.selectPublicScene(
 					practiceOperation.getResourceId(), CommonConstant.TRUE, CommonConstant.TRUE);
 			return null != ojLocalScene ? ojLocalScene.getFlags() : "";
 
 		} else {
-			OjLocalScene ojLocalScene = ojLocalSceneMapper.selectByUserAndBid(userId,
+			OjLocalScene ojLocalScene = ojLocalSceneMapper.selectPrivateScene(userId,
 					practiceOperation.getResourceId(), CommonConstant.TRUE);
 			return null != ojLocalScene ? ojLocalScene.getFlags() : "";
 		}

@@ -2,7 +2,9 @@ package com.cyberpeace.common.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -153,13 +155,11 @@ public class HttpClientUtil {
 				throw new RemoteServiceException();
 			}
 
-			String realData = baseRsp.getData().toString();
-
 			if (resultType.equals(String.class)) {
-				return (T) realData;
+				return (T) baseRsp.getData();
 			}
 
-			result = JSON.parseObject(realData, resultType);
+			result = JSON.parseObject(JsonUtil.toJsonString(baseRsp.getData()), resultType);
 
 			return result;
 		} catch (Exception e) {
@@ -225,19 +225,29 @@ public class HttpClientUtil {
 		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
 	}
 
-	public static <T> T rawGetByParam(List<BasicNameValuePair> nvps, String url,
-			Class<T> resultType) {
+	/**
+	 * 附带参数get查询
+	 * @param obj 对象参数 根据对象字段和值去查询 过滤掉空值字段
+	 * @param url 接口地址
+	 * @param resultType
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {
 
-		String paramsStr = "";
-		if (nvps.size() > 0) {
-			paramsStr = "";
-			try {
-				HttpEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
-				paramsStr = EntityUtils.toString(urlEncodedFormEntity);
-				url = url + "?" + paramsStr;
-			} catch (Exception e) {
-				LOG.error("error ", e);
-			}
+		TreeMap<String, Object> treeMap = ObjUtil.obj2TreemapExcludeEmpty(obj);
+		List<BasicNameValuePair> nvps = Lists.newArrayList();
+		treeMap.forEach((key, value) -> nvps
+				.add(new BasicNameValuePair(key, JsonUtil.toJsonString(value))));
+
+		try {
+			HttpEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
+			String paramsStr = EntityUtils.toString(urlEncodedFormEntity);
+			url = url + "?" + paramsStr;
+		} catch (Exception e) {
+			LOG.error("rawGetByParam: Request param format failed! params={}, url=[{}]",
+					JsonUtil.toJsonString(treeMap), url, e);
+			throw new RemoteServiceException();
 		}
 		return rawGet(url, resultType);
 

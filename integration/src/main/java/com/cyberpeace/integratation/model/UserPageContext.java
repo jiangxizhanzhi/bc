@@ -1,13 +1,33 @@
 package com.cyberpeace.integratation.model;
 
+import java.io.Serializable;
+
+import com.cyberpeace.common.constant.CommonConstant;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class UserPageContext {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserPageContext implements Serializable {
 
-	String ids;
+	private String username;
 
-	String perPage = "9999";
+	private String ids;
 
-	String page = "1";
+	private Integer perPage;
+
+	private Integer page;
+
+	public Integer getPerPage() {
+		return null == perPage ? CommonConstant.NINE_NINE_NINE : perPage;
+	}
+
+	public Integer getPage() {
+		return null == page ? CommonConstant.ONE : page;
+	}
 }

@@ -77,8 +77,10 @@ public class CommentServiceImpl implements CommentService {
 
 		// 获取用户信息
 		UserInfo userInfo = remoteUserService.getById(comment.getUserId());
-		commentBo.setAvatar(userInfo.getAvatarUrl());
-		commentBo.setUserName(userInfo.getUserName());
+		if (null != userInfo) {
+			commentBo.setAvatar(userInfo.getAvatarUrl());
+			commentBo.setUserName(userInfo.getUserName());
+		}
 
 		// 获取点赞数量
 		List<CommentLike> commentLikes = commentLikeMapper.listByComment(comment.getResourceId());

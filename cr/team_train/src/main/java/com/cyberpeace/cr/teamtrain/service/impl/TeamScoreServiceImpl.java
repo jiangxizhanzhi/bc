@@ -3,7 +3,9 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -115,19 +117,15 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 
 		List<Mission> missionList = missionService.batchGetByRoom(roomId);
 
+		List<MissionCategory> missionCategories = missionService.listCategories();
+
+ 		Map<String, String> missionCategoryMap = missionCategories.stream()
+				.collect(Collectors.toMap(MissionCategory::getResourceId, bo -> bo.getName()));
+
 		for (Mission mission : missionList) {
 			Integer count = missionsCategory.getOrDefault(mission.getCategoryId(), 0) + 1;
-			missionsCategory.put(mission.getCategoryId(), count);
+			missionsCategory.put(missionCategoryMap.get(mission.getCategoryId()), count);
 		}
-
-		List<String> missionsCategoryIds = new ArrayList(missionsCategory.keySet());
-		List<MissionCategory> missionCategories = missionCategoryMapper
-				.selectByIds(missionsCategoryIds);
-
-		missionCategories.forEach(missionCategory -> {
-			missionsCategory.put(missionCategory.getName(),
-					missionsCategory.remove(missionCategory.getResourceId()));
-		});
 
 		return missionsCategory;
 	}

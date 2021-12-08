@@ -20,7 +20,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionSchemeService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -60,7 +60,7 @@ public class TeamTrainStudentsController {
 	BusinessTemplateService businessTemplateService;
 
 	@Autowired
-	MissionSchemeService missionSchemeService;
+	MissionService missionService;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -178,7 +178,8 @@ public class TeamTrainStudentsController {
 		missionRsp.setTitle(taskContext.getMission().getTitle());
 		missionRsp.setOption(taskContext.getMission().getOption());
 		missionRsp.setType(taskContext.getMission().getType());
-		missionRsp.setCategory(taskContext.getMission().getCategoryId());
+		missionRsp.setCategory(
+				missionService.getCategoryById(taskContext.getMission().getCategoryId()).getName());
 		missionRsp.setShowWriteup(taskContext.getMission().getShowWriteup());
 		missionRsp.setWriteUp(taskContext.getMission().getWriteUp());
 

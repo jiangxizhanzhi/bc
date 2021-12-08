@@ -65,21 +65,15 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
-	public Boolean enableAccess(String resourceId, AuthContext authContext) {
-
-		// 数据为空 无法判断 返回true
-		if (StringUtils.isBlank(resourceId)) {
-			return CommonConstant.TRUE;
-		}
+	public void enableAccess(String resourceId, AuthContext authContext) {
 
 		// 数据权限校验
 		List<String> accessSetIds = practiceSetMapper.selectByAuthContext(authContext);
+
 		if (CollectionUtils.isEmpty(accessSetIds) || !accessSetIds.contains(resourceId)) {
 			log.error("This set not permission! practice_set_id=[{}]", resourceId);
-			return false;
+			throw new InvalidParamException("非法操作！");
 		}
-
-		return true;
 	}
 
 	/**
@@ -163,5 +157,40 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 
 		return practiceSetMapper.updateById(practiceSet) > CommonConstant.ZERO;
+	}
+
+	@Override
+	public void enableDelete(List<String> resourceIds, AuthContext authContext) {
+
+		for (String setId : resourceIds) {
+			// 权限校验
+			enableAccess(setId, authContext);
+
+			// 数据校验
+			PracticeSet practiceSet = practiceSetMapper.selectById(setId);
+			List<String> practiceIds = hasPractice(practiceSet, authContext);
+			if (CollectionUtils.isNotEmpty(practiceIds)) {
+				throw new InvalidParamException("习题集[" + practiceSet.getName() + "]下存在习题！");
+			}
+		}
+	}
+
+	/**
+	 * 查询习题集下是否存在数据
+	 * @param practiceSet
+	 * @param authContext
+	 * @return
+	 */
+	private List<String> hasPractice(PracticeSet practiceSet, AuthContext authContext) {
+
+		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.THEORY.getCode()
+				.intValue()) {
+			return practiceTheoryMapper.selectBySetIds(Arrays.asList(practiceSet.getResourceId()),
+					authContext.getIsWeb());
+		} else {
+			return practiceOperationMapper.selectBySetIds(
+					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
+		}
+
 	}
 }

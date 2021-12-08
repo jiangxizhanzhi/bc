@@ -66,29 +66,25 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
-	@Autowired
-	private PracticeSetService practiceSetService;
-
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
 			AuthContext authContext) {
-
-		Boolean hasAuth = practiceSetService.enableAccess(listQuery.getPracticeSetId(),
-				authContext);
-		if (!hasAuth) {
-			return null;
-		}
 
 		// 习题集过滤习题
 		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
 		if (StringUtils.isBlank(listQuery.getPracticeSetId())) {
 			// 过滤习题集
 			List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+			if (CollectionUtils.isEmpty(authSetIds)) {
+				return null;
+			}
+
 			List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
 					authContext.getIsWeb());
 			if (CollectionUtils.isEmpty(practiceIds)) {
 				return null;
 			}
+
 			theoryListQuery.setResourceIds(practiceIds);
 		}
 

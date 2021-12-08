@@ -105,13 +105,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
-		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(permissionIds)
-				|| !permissionIds.containsAll(delReq.getResourceIds())) {
-			log.error("Batch delete practice set failed! Because not permission! practice_set_ids=",
-					delReq.getResourceIds().toString());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
-		}
+
+		// 删除之前校验
+		practiceSetService.enableDelete(delReq.getResourceIds(), authContext);
 
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());
 		return new BaseRsp(result);

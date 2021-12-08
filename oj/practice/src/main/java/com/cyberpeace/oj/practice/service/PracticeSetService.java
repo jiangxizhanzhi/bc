@@ -7,6 +7,8 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
 
+import java.util.List;
+
 public interface PracticeSetService extends IService<PracticeSet> {
 
 	/**
@@ -23,7 +25,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 * @param authContext
 	 * @return
 	 */
-	Boolean enableAccess(String resourceId, AuthContext authContext);
+	void enableAccess(String resourceId, AuthContext authContext);
 
 	/**
 	 * 分页查询习题集列表
@@ -41,5 +43,12 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 * @param authContext
 	 * @return
 	 */
-    Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext);
+	Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext);
+
+	/**
+	 * 删除前判断是否可删除
+	 * @param resourceIds
+	 * @param authContext
+	 */
+	void enableDelete(List<String> resourceIds, AuthContext authContext);
 }

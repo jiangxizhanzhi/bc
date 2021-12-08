@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import org.apache.commons.collections.CollectionUtils;
@@ -311,39 +312,43 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 过滤非公开习题集
 		List<PracticeSet> practiceSets = practiceSetMapper
 				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
-		authIds.retainAll(practiceSets);
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authIds.retainAll(setIds);
 		if (CollectionUtils.isEmpty(authIds)) {
 			return null;
 		}
 
-		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
-		if (StringUtils.isBlank(listQuery.getPracticeSetId())) {
-			// 根据习题集过滤习题编号
-			List<String> operationIds = practiceOperationMapper.selectBySetIds(authIds,
-					authContext.getIsWeb());
-			if (CollectionUtils.isEmpty(operationIds)) {
-				return null;
-			}
-			operationListQuery.setResourceIds(operationIds);
-		} else {
-			if (!authIds.contains(listQuery.getPracticeSetId())) {
-				return null;
-			}
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())
+				&& !authIds.contains(listQuery.getPracticeSetId())) {
+			return null;
 		}
+
+		// 根据习题集过滤习题编号
+		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
+		List<String> operationIds = practiceOperationMapper.selectBySetIds(authIds,
+				authContext.getIsWeb());
+		if (CollectionUtils.isEmpty(operationIds)) {
+			return null;
+		}
+		operationListQuery.setResourceIds(operationIds);
 
 		// 根据解题状态过滤
 		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
-			List<String> operationIds = practiceSolvedMapper.selectUserAndSolved(
+
+			// 查询已解决习题编号
+			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
-					listQuery.getSolved());
-			if (CollectionUtils.isEmpty(operationIds)) {
-				return null;
+					CommonConstant.TRUE);
+
+			// 正确取交集
+			if (listQuery.getSolved()) {
+				operationListQuery.getResourceIds().retainAll(solvedIds);
+			} else {
+				operationListQuery.getResourceIds().removeAll(solvedIds);
 			}
 
-			if (CollectionUtils.isNotEmpty(operationListQuery.getResourceIds())) {
-				operationListQuery.getResourceIds().retainAll(operationIds);
-			} else {
-				operationListQuery.setResourceIds(operationIds);
+			if (CollectionUtils.isEmpty(operationListQuery.getResourceIds())) {
+				return null;
 			}
 		}
 

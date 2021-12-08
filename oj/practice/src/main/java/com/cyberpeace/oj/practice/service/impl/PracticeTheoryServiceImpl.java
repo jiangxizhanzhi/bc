@@ -2,10 +2,12 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
@@ -79,43 +81,37 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 过滤非公开习题集
 		List<PracticeSet> practiceSets = practiceSetMapper
 				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-		authSetIds.retainAll(practiceSets);
-		if (CollectionUtils.isEmpty(authSetIds)) {
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authSetIds.retainAll(setIds);
+		if (CollectionUtils.isEmpty(authSetIds)
+				|| (StringUtils.isNotBlank(listQuery.getPracticeSetId())
+						&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
 			return null;
 		}
 
-		// 习题集过滤习题
 		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
-			if (!authSetIds.contains(listQuery.getPracticeSetId())) {
-				return null;
-			}
-		} else {
-			// 根据习题集过滤习题编号
-			List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-					authContext.getIsWeb());
-			if (CollectionUtils.isEmpty(practiceIds)) {
-				return null;
-			}
-
-			if (CollectionUtils.isNotEmpty(theoryListQuery.getResourceIds())) {
-				theoryListQuery.getResourceIds().retainAll(practiceIds);
-			} else {
-				theoryListQuery.setResourceIds(practiceIds);
-			}
+		// 根据习题集过滤习题编号
+		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
+				authContext.getIsWeb());
+		if (CollectionUtils.isEmpty(practiceIds)) {
+			return null;
 		}
+		theoryListQuery.setResourceIds(practiceIds);
 
 		// 答题记录过滤习题
 		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
-			List<String> practiceIds = practiceSolvedMapper.selectUserAndSolved(
+			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-					listQuery.getSolved());
-			if (CollectionUtils.isEmpty(practiceIds)) {
-				return null;
-			}
+					CommonConstant.TRUE);
 
 			// 求交集 空则返回为空
-			theoryListQuery.getResourceIds().retainAll(practiceIds);
+			if (listQuery.getSolved()) {
+				theoryListQuery.getResourceIds().retainAll(solvedIds);
+			} else {
+				theoryListQuery.getResourceIds().removeAll(solvedIds);
+			}
+
+			// 资源数据判空
 			if (CollectionUtils.isEmpty(theoryListQuery.getResourceIds())) {
 				return null;
 			}
@@ -140,11 +136,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 							: CommonConstant.FALSE);
 				}
 			}
+
+			UserInfo userInfo = remoteUserService.getById(practiceTheory.getCreateUserId());
+			theoryListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 			PracticeSet practiceSet = practiceSetMapper
 					.selectById(practiceTheory.getPracticeSetId());
 			theoryListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
-			UserInfo userInfo = remoteUserService.getById(practiceTheory.getCreateUserId());
-			theoryListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 			return theoryListBo;
 		});
 

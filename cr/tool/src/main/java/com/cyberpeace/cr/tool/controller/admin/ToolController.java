@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
-@Api(tags = "资源中心-工具库")
+@Api(tags = "后台-资源中心-工具库")
 @RestController
 @RequestMapping("/cr/admin/tools")
 @RequiresAuthentication

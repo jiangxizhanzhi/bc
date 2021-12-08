@@ -42,7 +42,6 @@
     <select id="getByCnName" resultType="com.cyberpeace.cr.tool.dao.entity.ToolCategory">
         select * from cr_tool_toolcategory
         <where>
-            and status = 1
             <if test="name != null and name != ''">
                 and cn_name = #{name}
             </if>

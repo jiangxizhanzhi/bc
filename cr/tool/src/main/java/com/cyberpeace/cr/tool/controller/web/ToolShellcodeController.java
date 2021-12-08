@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotBlank;
 
-@Api(tags = "资源中心-ShellCode库")
+@Api(tags = "前台-资源中心-ShellCode库")
 @RestController
 @RequestMapping("/cr/tool/shellcode")
 @RequiresAuthentication
@@ -29,7 +29,7 @@ public class ToolShellcodeController {
 	private ToolShellCodeService toolShellCodeService;
 
 	@GetMapping("/list")
-	@ApiOperation("shellcode分页查询")
+	@ApiOperation("shellcode列表")
 	public BaseRsp<ListRsp<ToolShellCode>> getList(
 			@Validated ToolShellCodeListReq toolShellCodeListReq) {
 		ShellCodeContext shellCodeContext = BeanUtils
@@ -40,7 +40,7 @@ public class ToolShellcodeController {
 	}
 
 	@GetMapping()
-	@ApiOperation("shellcode详情查询")
+	@ApiOperation("shellcode详情")
 	public BaseRsp<ToolShellCode> getDetail(
 			@ApiParam(name = "resource_id", value = "查询id", required = true)
 			@RequestParam("resource_id") @NotBlank String resourceId) {

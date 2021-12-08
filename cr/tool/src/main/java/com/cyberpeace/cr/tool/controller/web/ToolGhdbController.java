@@ -17,25 +17,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(tags = "资源中心-ghdb")
+@Api(tags = "前台-资源中心-ghdb")
 @RestController
-@RequestMapping("/cr/tool/")
+@RequestMapping("/cr/tool/ghdb")
 @RequiresAuthentication
 public class ToolGhdbController {
 
 	@Autowired
 	private ToolGhdbService toolGhdbService;
 
-	@ApiOperation("分页查询")
-	@GetMapping("/ghdbs")
+	@ApiOperation("ghdb列表")
+	@GetMapping("/list")
 	public BaseRsp<ListRsp<ToolGhdb>> list(@Validated ToolGhdbListReq toolGhdbListReq) {
 		GhdbQueryContext ghdbQueryContext = BeanUtils.copy(toolGhdbListReq, GhdbQueryContext.class);
 		ListRsp<ToolGhdb> data = toolGhdbService.listGhdb(toolGhdbListReq, ghdbQueryContext);
 		return new BaseRsp<>(data);
 	}
 
-	@ApiOperation("详情")
-	@GetMapping("/ghdb")
+	@ApiOperation("ghdb详情")
+	@GetMapping()
 	public BaseRsp<ToolGhdb> detail(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		ToolGhdb toolGhdb = toolGhdbService.getById(resource_id);

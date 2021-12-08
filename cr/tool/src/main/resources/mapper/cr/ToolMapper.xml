@@ -9,7 +9,6 @@
         </if>
         select * from cr_tool_tool
         <where>
-            and status = 1
             <if test="null != pattern and pattern != ''">
                 and `name` like #{pattern}
             </if>
@@ -19,7 +18,6 @@
     <select id="selectByName" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
         select * from cr_tool_tool
         <where>
-            and status = 1
             <if test="name != null and name != ''">
                 and name = #{name}
             </if>

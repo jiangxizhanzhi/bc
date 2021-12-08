@@ -58,10 +58,10 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	}
 
 	private void setAboutCategory(ToolBo toolBo, Tool tool) {
-		List<Integer> categoryList = LocalStringUtil.strToList(tool.getCategory());
+		List<String> categoryList = LocalStringUtil.strToListStr(tool.getCategory());
 		toolBo.setCategory(categoryList);
 
-		List<ToolCategory> toolCategories = toolCategoryMapper.selectByIds(categoryList);
+		List<ToolCategory> toolCategories = toolCategoryMapper.selectByResourceIds(categoryList);
 		List<String> i18nName = Lists.newArrayList();
 
 		for (ToolCategory toolCategory : toolCategories) {

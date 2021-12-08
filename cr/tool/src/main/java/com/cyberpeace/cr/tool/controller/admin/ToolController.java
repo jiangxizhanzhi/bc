@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.tool.controller;
+package com.cyberpeace.cr.tool.controller.admin;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -6,7 +6,8 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
-import com.cyberpeace.cr.tool.controller.req.ToolReq;
+import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
+import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cr.tool.service.bo.ToolBo;
@@ -24,7 +25,7 @@ import java.util.Date;
 
 @Api(tags = "资源中心-工具库")
 @RestController
-@RequestMapping("/cr/tools")
+@RequestMapping("/cr/admin/tools")
 @RequiresAuthentication
 public class ToolController {
 
@@ -50,7 +51,7 @@ public class ToolController {
 
 	@ApiOperation("工具创建")
 	@PostMapping()
-	public BaseRsp<String> create(@RequestBody ToolReq toolReq) {
+	public BaseRsp<String> create(@RequestBody ToolAddReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
 		if (!StringUtils.isBlank(toolReq.getPublishTime())) {
 			Date date = DateUtil.StringToDate(toolReq.getPublishTime(), DateUtil.SHOT_PATTERN);
@@ -64,10 +65,10 @@ public class ToolController {
 
 	@ApiOperation("工具更新")
 	@PatchMapping()
-	public BaseRsp<String> update(@RequestBody ToolReq toolReq) {
-		Tool tool = BeanUtils.copy(toolReq, Tool.class);
-		if (!StringUtils.isBlank(toolReq.getPublishTime())) {
-			Date date = DateUtil.StringToDate(toolReq.getPublishTime(), DateUtil.SHOT_PATTERN);
+	public BaseRsp<String> update(@RequestBody ToolUpdateReq toolupdateReq) {
+		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
+		if (!StringUtils.isBlank(toolupdateReq.getPublishTime())) {
+			Date date = DateUtil.StringToDate(toolupdateReq.getPublishTime(), DateUtil.SHOT_PATTERN);
 			tool.setPublishTime(date);
 		}
 		toolService.updateById(tool);

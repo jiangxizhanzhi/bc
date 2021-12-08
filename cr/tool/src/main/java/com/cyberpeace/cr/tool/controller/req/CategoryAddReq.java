@@ -11,8 +11,6 @@ import java.io.Serializable;
 @ApiModel
 public class CategoryAddReq implements Serializable {
 
-	private String resourceId;
-
 	@ApiModelProperty("中文名称")
 	@NotBlank
 	private String cnName;

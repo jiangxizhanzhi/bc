@@ -13,8 +13,6 @@ import java.util.Date;
 @TableName("cr_tool_tool")
 public class Tool extends BaseTable {
 
-	private Integer status = ModelConstant.NOT_DELETE;
-
 	// 在线
 	public static final Integer ONLINE = 1;
 	// 离线

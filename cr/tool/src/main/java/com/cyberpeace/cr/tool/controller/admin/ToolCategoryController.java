@@ -1,10 +1,11 @@
-package com.cyberpeace.cr.tool.controller;
+package com.cyberpeace.cr.tool.controller.admin;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.tool.controller.req.CategoryAddReq;
+import com.cyberpeace.cr.tool.controller.req.CategoryUpdateReq;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
@@ -21,7 +22,7 @@ import javax.validation.constraints.NotBlank;
 
 @Api(tags = "资源中心-工具库-分类管理")
 @RestController
-@RequestMapping("cr/tool/category")
+@RequestMapping("cr/admin/tool/category")
 @RequiresAuthentication
 public class ToolCategoryController {
 
@@ -54,10 +55,10 @@ public class ToolCategoryController {
 		return new BaseRsp<>();
 	}
 
-	@PutMapping()
+	@PatchMapping()
 	@ApiOperation("工具分类更新")
-	public BaseRsp<String> update(@RequestBody @Validated CategoryAddReq categoryAddReq) {
-		ToolCategory toolCategory = BeanUtils.copy(categoryAddReq, ToolCategory.class);
+	public BaseRsp<String> update(@RequestBody @Validated CategoryUpdateReq categoryUpdateReq) {
+		ToolCategory toolCategory = BeanUtils.copy(categoryUpdateReq, ToolCategory.class);
 		toolCategoryService.updateById(toolCategory);
 		return new BaseRsp<>();
 	}

@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.tool.controller;
+package com.cyberpeace.cr.tool.controller.admin;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.tool.service.ToolResourceImportService;
 import io.swagger.annotations.Api;

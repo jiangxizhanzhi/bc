@@ -78,6 +78,11 @@ public class LocalStringUtil {
 				.collect(Collectors.toList());
 	}
 
+	public static List<String> strToListStr(String data) {
+		return Arrays.stream(StringUtils.split(data, ',')).collect(Collectors.toList());
+	}
+
+
 	/**
 	 * 根据正则表达是获取内容中的匹配数据
 	 * @param content

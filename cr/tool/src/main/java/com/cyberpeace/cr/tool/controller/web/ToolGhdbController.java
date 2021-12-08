@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.tool.controller;
+package com.cyberpeace.cr.tool.controller.web;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;

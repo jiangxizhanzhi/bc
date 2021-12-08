@@ -7,10 +7,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel
-public class ToolReq implements Serializable {
-
-	@ApiModelProperty
-	private String resourceId;
+public class ToolAddReq implements Serializable {
 
 	@ApiModelProperty("名称")
 	private String name;

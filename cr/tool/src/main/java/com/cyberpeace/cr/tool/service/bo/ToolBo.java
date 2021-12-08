@@ -40,7 +40,7 @@ public class ToolBo implements Serializable {
 	private Integer toolType;
 
 	@ApiModelProperty("工具分类")
-	private List<Integer> category;
+	private List<String> category;
 
 	@ApiModelProperty("封面")
 	private String cover;

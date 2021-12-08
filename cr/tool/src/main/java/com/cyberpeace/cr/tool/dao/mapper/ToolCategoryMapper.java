@@ -17,6 +17,8 @@ public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 
 	IPage<ToolCategory> list(Page page, @Param("pattern") String pattern);
 
+	List<ToolCategory> selectByResourceIds(@NotEmpty @Param("ids") List<String> ids);
+
 	List<ToolCategory> selectByIds(@NotEmpty @Param("ids") List<Integer> ids);
 
 	ToolCategory getByCnName(@NotEmpty @Param("name") String name);

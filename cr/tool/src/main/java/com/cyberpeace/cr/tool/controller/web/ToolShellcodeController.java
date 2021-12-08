@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.tool.controller;
+package com.cyberpeace.cr.tool.controller.web;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
@@ -7,6 +7,7 @@ import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
 import com.cyberpeace.cr.tool.service.ToolShellCodeService;
 import com.cyberpeace.cr.tool.service.bo.ShellCodeContext;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class ToolShellcodeController {
 	private ToolShellCodeService toolShellCodeService;
 
 	@GetMapping("/list")
+	@ApiOperation("shellcode分页查询")
 	public BaseRsp<ListRsp<ToolShellCode>> getList(
 			@Validated ToolShellCodeListReq toolShellCodeListReq) {
 		ShellCodeContext shellCodeContext = BeanUtils
@@ -38,6 +40,7 @@ public class ToolShellcodeController {
 	}
 
 	@GetMapping()
+	@ApiOperation("shellcode详情查询")
 	public BaseRsp<ToolShellCode> getDetail(
 			@ApiParam(name = "resource_id", value = "查询id", required = true)
 			@RequestParam("resource_id") @NotBlank String resourceId) {

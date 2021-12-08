@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 
+import java.util.List;
+import java.util.Map;
+
 public interface RemoteTopoService {
 
 	String create(SceneConfig sceneConfig);
@@ -19,6 +22,8 @@ public interface RemoteTopoService {
 	String copyTopo(String originTopoId);
 
 	TopoDigest getTopoDigest(String topoId);
+
+	Map<String, TopoDigest> batchGetTopoDigest(List<String> topoIds);
 
 	String save(JSONObject json);
 

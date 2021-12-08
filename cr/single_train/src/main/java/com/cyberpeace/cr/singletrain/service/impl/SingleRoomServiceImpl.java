@@ -26,6 +26,7 @@ import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
@@ -230,6 +231,15 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
                 )
         );
 
+        // 训练场景拓扑节点数量获取
+        Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
+                selectResult.getRecords().stream().map(
+                        singleRoomList -> singleRoomList.getSingleRoom() == null
+                                ? singleRoomList.getBusinessTemplate().getTopoId()
+                                : singleRoomList.getSingleRoom().getCopyedTopoId()
+                ).collect(Collectors.toList())
+        );
+
         // 拓展额外数据
         List<SingleRoomListBo> singleRoomListBoList = Lists.newArrayList();
         for (SingleRoomList item : selectResult.getRecords()) {
@@ -241,6 +251,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
             BeanUtils.copyProperties(item.getBusinessTemplate(), singleRoomListBo.getEventData());
             if (item.getSingleRoom() != null) {
                 BeanUtils.copyProperties(item.getSingleRoom(), singleRoomListBo.getRoomInfo());
+                singleRoomListBo.setNodesCountData(topologyNodesStats.get(item.getSingleRoom().getCopyedTopoId()).getNodeCounts());
+            } else {
+                singleRoomListBo.setNodesCountData(topologyNodesStats.get(item.getBusinessTemplate().getTopoId()).getNodeCounts());
             }
 
             // todo db字段与数据库不同, 是否需要同步?

@@ -1,6 +1,8 @@
 package com.cyberpeace.integratation.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -89,6 +91,26 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		topoDigest.setNodeCounts(mpTopoStatistic.getTerminalCount());
 
 		return topoDigest;
+	}
+
+	@Override
+	public Map<String, TopoDigest> batchGetTopoDigest(List<String> topoIds) {
+		String targetUrl = TOPO_DIGEST_URL + "?ids=" + String.join("&ids=", topoIds);
+		String data = HttpClientUtil.rawGet(targetUrl, String.class);
+		List<MpTopoStatistic> mpTopoStatistics = JsonUtil.toJsonObjectArray(data, MpTopoStatistic.class);
+
+		if (topoIds.size() != mpTopoStatistics.size()) {
+			log.error("batchGetTopoDigest expect {}, got {}. [{}]", topoIds.size(), mpTopoStatistics.size(), String.join(", ", topoIds));
+			throw new RemoteServiceException();
+		}
+
+		return mpTopoStatistics.stream().collect(Collectors.toMap(MpTopoStatistic::getCsceneId, mpTopoStatistic -> {
+			TopoDigest topoDigest = new TopoDigest();
+			topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
+			// todo nodeCount ? terminalCount
+			topoDigest.setNodeCounts(mpTopoStatistic.getTerminalCount());
+			return topoDigest;
+		}));
 	}
 
 	@Override

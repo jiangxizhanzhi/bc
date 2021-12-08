@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 @TableName("cr_rb_time_management")
@@ -29,4 +30,20 @@ public class RbTimeManagement extends BaseTable {
 	private String createUserId;
 
 	private String updateUserId;
+
+	public enum TimeManagementStatus {
+
+		STOP(0, "停止"), PAUSE(1, "暂停"), START(2, "开始"), RECOVERY(3, "恢复");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		TimeManagementStatus(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 }

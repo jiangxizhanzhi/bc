@@ -24,8 +24,6 @@ public class RbRoom extends BaseTable {
 
 	private String createUserId;
 
-	private String sceneId;
-
 	private Integer subType;
 
 	private String description;
@@ -40,5 +38,5 @@ public class RbRoom extends BaseTable {
 
 	private Date endTime;
 
-	private String sceneManagerId;
+	private String localSceneId;
 }

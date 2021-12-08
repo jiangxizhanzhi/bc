@@ -2,23 +2,20 @@ package com.cyberpeace.cs.controller;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cs.controller.req.scene.SceneNodeReq;
 import com.cyberpeace.cs.controller.req.scene.SceneReq;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.impl.SceneHandler;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author SN
- */
 @Api(tags = "场景管理器相关接口")
 @RestController
 @RequestMapping("/localScene")
@@ -28,20 +25,6 @@ public class LocalSceneController {
 
 	@Autowired
 	LocalSceneService localSceneService;
-
-	@Autowired
-	@Qualifier("BasicSceneHandler")
-	private SceneHandler sceneHandler;
-
-	@Autowired
-	TransactionTemplate transactionTemplate;
-
-//	@ApiOperation("关闭场景")
-//	@DeleteMapping("")
-//	public BaseRsp stopScene(@RequestBody SceneReq sceneReq) {
-//		localSceneService.stopScene(sceneReq.getLocalSceneId());
-//		return new BaseRsp();
-//	}
 
 	@ApiOperation("暂停场景")
 	@PostMapping("/pause")

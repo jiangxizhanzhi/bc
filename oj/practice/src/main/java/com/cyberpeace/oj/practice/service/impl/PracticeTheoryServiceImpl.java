@@ -101,10 +101,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				return null;
 			}
 
-			theoryListQuery.getResourceIds().addAll(practiceIds);
-			List<String> distinctIds = theoryListQuery.getResourceIds().stream().distinct()
-					.collect(Collectors.toList());
-			theoryListQuery.setResourceIds(distinctIds);
+			// 求交集 空则返回为空
+			theoryListQuery.getResourceIds().retainAll(practiceIds);
+			if (CollectionUtils.isEmpty(theoryListQuery.getResourceIds())) {
+				return null;
+			}
 		}
 
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,

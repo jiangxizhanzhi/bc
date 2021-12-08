@@ -1,7 +1,6 @@
 package com.cyberpeace.common.model.scene;
 
 import java.io.Serializable;
-import java.util.Map;
 
 public class MqContext implements Serializable {
 
@@ -11,13 +10,13 @@ public class MqContext implements Serializable {
 
 	private Locale LOCALE;
 
-	private Map<String, Object> PASS_THROUGH;
+	private String PASS_THROUGH;
 
-	public Map<String, Object> getPassThrough() {
+	public String getPassThrough() {
 		return PASS_THROUGH;
 	}
 
-	public void setPASS_THROUGH(Map<String, Object> PASS_THROUGH) {
+	public void setPASS_THROUGH(String PASS_THROUGH) {
 		this.PASS_THROUGH = PASS_THROUGH;
 	}
 

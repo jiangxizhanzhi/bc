@@ -1,10 +1,10 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -64,8 +64,9 @@ public class TeamSceneEventListner extends MessageListener {
 	 */
 	private void pushDataToWeb(String data, String businessId) {
 		// 构建需要向页面推送的消息上下文
-		TeamSceneWsMessageIdentifier identifier = TeamSceneWsMessageIdentifier.builder()
-				.businessId(businessId).build();
+		TeamSceneWsMessageIdentifier identifier = new TeamSceneWsMessageIdentifier();
+		identifier.setPath(WsPath.CR_SCENE);
+		identifier.setBusiness_id(businessId);
 
 		WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
 				.messageIdentifier(identifier).build();

@@ -70,4 +70,7 @@ public interface CrBusinessErrorCode {
 	// 角色名称重复
 	String ROLE_NAME_DUPLICATE = "101020";
 
+	// 场景重复启动
+	String SCENE_START_REPEAT = "101021";
+
 }

@@ -7,14 +7,11 @@ import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.common.util.ObjUtil;
 import com.google.common.collect.Maps;
 
-import lombok.Data;
-
 /**
  * websocket标记的基类。
  *
  * @author yinqingrong
  */
-@Data
 public class WsMessageIdentifier implements Serializable {
 
 	/**
@@ -47,5 +44,21 @@ public class WsMessageIdentifier implements Serializable {
 		}
 
 		return stringBuilder.toString();
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 }

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
@@ -97,20 +96,16 @@ public class MessageListener implements ChannelAwareMessageListener {
 			return true;
 		}
 
-		if (!register.containsKey(type)) {
-			log.error("message=[{}] cannot find type handler", message);
-			return true;
-		}
-
 		MqContext context = JSON.parseObject(object.getString("context"), MqContext.class);
 
-		Map<String, Object> passThrough = context.getPassThrough();
-		if (null == passThrough) {
+		String passThroughString = context.getPassThrough();
+		JSONObject passThroughJSON = JSON.parseObject(passThroughString, JSONObject.class);
+		if (StringUtils.isBlank(passThroughString) || null == passThroughJSON) {
 			log.error("message=[{}] handler error, passThrough is null", message);
 			return false;
 		}
 
-		String businessId = (String) passThrough.get(WebConstant.PASS_THROUGH_BUSINESS_ID);
+		String businessId = passThroughJSON.getString(WebConstant.PASS_THROUGH_BUSINESS_ID);
 		if (StringUtils.isBlank(businessId)) {
 			log.error("message=[{}] handler error, businessId in passThrough is null", message);
 			return false;
@@ -122,17 +117,24 @@ public class MessageListener implements ChannelAwareMessageListener {
 					businessId);
 		}
 
+		if (!register.containsKey(localScene.getBusinessCode())) {
+			log.error("message=[{}] cannot find type handler", message);
+			return true;
+		}
+
+		MessageListener realListener = register.get(localScene.getBusinessCode());
+
 		boolean result = true;
 		try {
 			switch (type) {
 				case SCENE_DELETE:
-					onSceneDelete(object.getString("data"), businessId, context);
+					realListener.onSceneDelete(object.getString("data"), businessId, context);
 					break;
 				case SCENE:
-					onSceneStartProcess(object.getString("data"), businessId, context);
+					realListener.onSceneStartProcess(object.getString("data"), businessId, context);
 					break;
 				case SCENE_ELEMENT:
-					onSceneElement(object.getString("data"), businessId, context);
+					realListener.onSceneElement(object.getString("data"), businessId, context);
 					break;
 				default:
 					break;

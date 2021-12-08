@@ -11,9 +11,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -55,14 +57,20 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		TeamRoom room = teamRoomService.getById(roomId);
 
-		// 2、构建本地scene对象
+		// 2、如果已经有启动的场景，不能重复启动
+		LocalScene localSceneExisted = localSceneService.getByBusinessInstanceId(roomId);
+		if (null != localSceneExisted) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
+		}
+
+		// 3、构建本地scene对象
 		LocalScene localScene = createLocalScene(LocalScene.BusinessCode.TEAM_TRAINING.getCode(),
 				room, room.getCopyedTopoId());
 
-		// 3、启动mp场景
+		// 4、启动mp场景
 		String sceneId = localSceneService.startScene(localScene);
 
-		// 4、更新本地数据库数据
+		// 5、更新本地数据库数据
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

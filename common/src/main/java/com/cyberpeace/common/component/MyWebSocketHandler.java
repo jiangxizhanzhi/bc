@@ -80,7 +80,12 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
 				.get(businessId);
 
-		if (StringUtils.isBlank(userId) || MapUtils.isEmpty(userSocketSessionMap)) {
+		if (!toAllUser && StringUtils.isBlank(userId)) {
+			log.warn("not toAllUser but userId is null!");
+			return;
+		}
+
+		if (MapUtils.isEmpty(userSocketSessionMap)) {
 			log.warn("businessId=[{}], userId=[{}] send ws message fail! userSessionMap maybe null",
 					businessId, userId);
 			return;

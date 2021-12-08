@@ -120,7 +120,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	@Override
 	public TeamTemplate updateTeamTemplate(TeamTrainTemplateContext input,
 			BusinessTemplate businessTemplate) {
-		TeamTemplate teamTemplate = new TeamTemplate();
+		TeamTemplate teamTemplate = teamTemplateMapper.getByBusinessId(input.getResourceId());
 
 		BaseInfo baseInfo = input.getBaseInfo();
 
@@ -142,15 +142,14 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		}
 
 		// 更新团队训练模板
-		teamTemplate.setResourceId(input.getResourceId());
-		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+ 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
 		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
 		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
 		teamTemplate.setSubType(baseInfo.getCategory());
 		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
 		teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
-
+		teamTemplate.setRoleConfig(JsonUtil.toJsonString(input.getRoleList()));
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

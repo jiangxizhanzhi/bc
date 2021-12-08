@@ -76,7 +76,8 @@ public class TeamTrainTemplateController {
 
 		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils
 				.copy(teamTrainTemplateModifyReq, TeamTrainTemplateContext.class);
-
+		teamTrainTemplateContext
+				.setRoleList(JsonUtil.toJsonString(teamTrainTemplateModifyReq.getRoleList()));
 		if (template == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}

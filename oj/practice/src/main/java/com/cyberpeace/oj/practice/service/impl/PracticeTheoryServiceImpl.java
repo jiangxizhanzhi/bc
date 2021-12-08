@@ -70,22 +70,39 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
 			AuthContext authContext) {
 
+		// 过滤无权限习题集
+		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(authSetIds)) {
+			return null;
+		}
+
+		// 过滤非公开习题集
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+		authSetIds.retainAll(practiceSets);
+		if (CollectionUtils.isEmpty(authSetIds)) {
+			return null;
+		}
+
 		// 习题集过滤习题
 		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
-		if (StringUtils.isBlank(listQuery.getPracticeSetId())) {
-			// 过滤习题集
-			List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-			if (CollectionUtils.isEmpty(authSetIds)) {
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+			if (!authSetIds.contains(listQuery.getPracticeSetId())) {
 				return null;
 			}
-
+		} else {
+			// 根据习题集过滤习题编号
 			List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
 					authContext.getIsWeb());
 			if (CollectionUtils.isEmpty(practiceIds)) {
 				return null;
 			}
 
-			theoryListQuery.setResourceIds(practiceIds);
+			if (CollectionUtils.isNotEmpty(theoryListQuery.getResourceIds())) {
+				theoryListQuery.getResourceIds().retainAll(practiceIds);
+			} else {
+				theoryListQuery.setResourceIds(practiceIds);
+			}
 		}
 
 		// 答题记录过滤习题

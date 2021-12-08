@@ -143,7 +143,6 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static <T> T parseHttpResponse(String httpResponse, Class<T> resultType) {
-		T result = null;
 
 		try {
 			BaseRsp baseRsp = JSON.parseObject(httpResponse, BaseRsp.class);
@@ -155,13 +154,9 @@ public class HttpClientUtil {
 				throw new RemoteServiceException();
 			}
 
-			if (resultType.equals(String.class)) {
-				return (T) baseRsp.getData();
-			}
-
-			result = JSON.parseObject(JsonUtil.toJsonString(baseRsp.getData()), resultType);
-
-			return result;
+			return null != baseRsp.getData()
+					? JsonUtil.toJsonObject(baseRsp.getData().toString(), resultType)
+					: null;
 		} catch (Exception e) {
 			// 遇到不能解析的返回结果，直接报错
 			LOG.error("parse httpResponse error, url=[{}], result=[{}], resultType=[{}]",

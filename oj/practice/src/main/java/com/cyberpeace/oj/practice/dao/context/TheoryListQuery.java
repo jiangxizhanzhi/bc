@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class TheoryListQuery extends OperationListQuery{
+public class TheoryListQuery extends OperationListQuery {
 
 	private Integer questionType;
 

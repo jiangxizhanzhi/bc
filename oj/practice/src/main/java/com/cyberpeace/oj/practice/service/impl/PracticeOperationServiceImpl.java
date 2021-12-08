@@ -302,40 +302,49 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery,
 			AuthContext authContext) {
 
-		// 过滤习题集
+		// 过滤无权限习题集
 		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
-
-		if (CollectionUtils.isEmpty(authIds)
-				|| (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-						&& !authIds.contains(listQuery.getPracticeSetId()))) {
-			log.error("The current practice set no permission！practice_set_id=[{}]",
-					listQuery.getPracticeSetId());
+		if (CollectionUtils.isEmpty(authIds)) {
 			return null;
 		}
 
-		// 习题集过滤
-		if (StringUtils.isBlank(listQuery.getPracticeSetId())
-				&& CollectionUtils.isNotEmpty(authIds)) {
+		// 过滤非公开习题集
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
+		authIds.retainAll(practiceSets);
+		if (CollectionUtils.isEmpty(authIds)) {
+			return null;
+		}
+
+		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
+		if (StringUtils.isBlank(listQuery.getPracticeSetId())) {
+			// 根据习题集过滤习题编号
 			List<String> operationIds = practiceOperationMapper.selectBySetIds(authIds,
 					authContext.getIsWeb());
 			if (CollectionUtils.isEmpty(operationIds)) {
 				return null;
 			}
 			operationListQuery.setResourceIds(operationIds);
+		} else {
+			if (!authIds.contains(listQuery.getPracticeSetId())) {
+				return null;
+			}
 		}
 
 		// 根据解题状态过滤
-		if (null != listQuery.getSolved() && listQuery.getSolved()) {
+		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
 			List<String> operationIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
 					listQuery.getSolved());
 			if (CollectionUtils.isEmpty(operationIds)) {
 				return null;
 			}
-			operationListQuery.getResourceIds().addAll(operationIds);
-			operationListQuery
-					.setResourceIds(operationIds.stream().distinct().collect(Collectors.toList()));
+
+			if (CollectionUtils.isNotEmpty(operationListQuery.getResourceIds())) {
+				operationListQuery.getResourceIds().retainAll(operationIds);
+			} else {
+				operationListQuery.setResourceIds(operationIds);
+			}
 		}
 
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,

@@ -58,9 +58,9 @@ public class PracticeOperationController {
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
 	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {
-
-		WebOperationBo operationBo = practiceOperationService.selectById(resourceId,
-				UserInfoContext.getUserContext().getUserId());
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+		WebOperationBo operationBo = practiceOperationService.selectById(resourceId, authContext);
 
 		return new BaseRsp<>(operationBo);
 	}

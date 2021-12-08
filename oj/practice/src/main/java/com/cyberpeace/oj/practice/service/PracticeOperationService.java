@@ -39,10 +39,10 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	/**
 	 * 前台查询习题详细信息
 	 * @param resourceId
-	 * @param userId 后台数据查询不需要
+	 * @param authContext 后台数据查询不需要
 	 * @return
 	 */
-	WebOperationBo selectById(String resourceId, String userId);
+	WebOperationBo selectById(String resourceId, AuthContext authContext);
 
 	/**
 	 * 分页查询实操习题

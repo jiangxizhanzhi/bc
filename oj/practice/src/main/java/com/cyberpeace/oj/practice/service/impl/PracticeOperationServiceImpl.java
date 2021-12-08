@@ -237,20 +237,21 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public WebOperationBo selectById(String resourceId, String userId) {
+	public WebOperationBo selectById(String resourceId, AuthContext authContext) {
 
 		OperationBo operationBo = selectById(resourceId);
 		WebOperationBo webOperationBo = BeanUtils.copy(operationBo, WebOperationBo.class);
 
 		// 收藏信息 解题状态查询
-		Boolean result = resourceCollectionService.selectByUnique(userId,
+		Boolean result = resourceCollectionService.selectByUnique(authContext.getUserId(),
 				ResourceCollection.BusinessType.OPERATION.getCode(), resourceId);
 
 		webOperationBo.setIsCollection(result);
 
 		// 解题状态
-		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
-				PracticeCategory.PracticeType.OPERATION.getCode(), resourceId);
+		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
+				authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
+				resourceId);
 		if (null == practiceSolved) {
 			webOperationBo.setAnswer(null);
 			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
@@ -269,33 +270,29 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			webOperationBo.setResolvedDetail(detailBo);
 		}
 
-		// 题解数据获取
-		if (!operationBo.getWriteupPublic()) {
-			operationBo.setWriteup(null);
-		}
-
 		// 场景数据
 		if (operationBo.getDynamicEnv() && StringUtils.isNotBlank(operationBo.getTopoId())) {
 			JSONObject sceneConfig = remoteTopoService.getTopoById(operationBo.getTopoId());
 			webOperationBo.setSceneConfigData(sceneConfig);
-			OjLocalScene localScene = operationBo.getSceneShareMode()
-					.intValue() == SceneShare.PRIVATE.getCode()
-							? ojLocalSceneMapper.selectPrivateScene(userId, resourceId,
-									CommonConstant.TRUE)
-							: ojLocalSceneMapper.selectPublicScene(resourceId, CommonConstant.TRUE,
-									CommonConstant.TRUE);
 
-			if (null != localScene) {
+			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
+					operationBo.getResourceId(), operationBo.getSceneShareMode(), authContext);
+
+			if (null != ojLocalScene) {
 				LocalScene sceneLocal = localSceneMapper
-						.getByBusinessInstanceId(localScene.getResourceId());
+						.getByBusinessInstanceId(ojLocalScene.getResourceId());
 				if (null != sceneLocal && StringUtils.isNotBlank(sceneLocal.getMpSceneId())) {
 					JSONObject jsonObject = remoteSceneService.getById(sceneLocal.getMpSceneId(),
-							userId);
+							authContext.getUserId());
 					webOperationBo.setSceneData(jsonObject);
 				}
 			}
 		}
 
+		// 题解数据获取
+		if (!webOperationBo.getWriteupPublic()) {
+			webOperationBo.setWriteup(null);
+		}
 		return webOperationBo;
 	}
 

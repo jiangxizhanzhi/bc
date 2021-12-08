@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequestMapping("/cr/team_train/room")
+@RequiresAuthentication
 public class TeamTrainRoomController {
 
 	@Autowired
@@ -82,6 +84,15 @@ public class TeamTrainRoomController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		teamSceneService.startScene(roomId, userId);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("停止场景")
+	@DeleteMapping("/scene")
+	public BaseRsp stopScene(@RequestBody SceneStartReq sceneStartReq) {
+		String roomId = sceneStartReq.getRoomId();
+
+		teamSceneService.stopScene(roomId);
 		return new BaseRsp();
 	}
 

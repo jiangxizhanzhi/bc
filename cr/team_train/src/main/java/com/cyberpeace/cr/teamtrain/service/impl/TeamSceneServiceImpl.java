@@ -101,21 +101,23 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		CrRoleNodesData nodes = getNodes(userId, roomId, roleId);
 
 		// 2、如果没有启动的场景，直接返回拓扑数据
-		if (StringUtils.isBlank(room.getLocalSceneId())) {
+		LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
+
+		// 后两个判断，主要是为了防止脏数据
+		if (StringUtils.isBlank(room.getLocalSceneId()) || null == localScene
+				|| StringUtils.isBlank(localScene.getMpSceneId())) {
 			JSONObject topoData = getTopoData(room.getCopyedTopoId(), nodes);
 			ret.setTopoData(topoData);
 			return ret;
 		}
 
 		// 3、有启动的场景，尝试返回启动的场景数据
-		LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
 		String sceneId = localScene.getMpSceneId();
 		JSONObject sceneData = localSceneService.getSceneData(sceneId, userId);
 		if (sceneData != null) {
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());
-			return ret;
 		} else {
 			log.info("roomId=[{}] local has sceneId=[{}], remote is null", room, sceneId);
 			// 清除本地脏数据
@@ -124,9 +126,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			// 这时实际场景是没启动的，返回拓扑数据
 			JSONObject topoData = getTopoData(room.getCopyedTopoId(), nodes);
 			ret.setTopoData(topoData);
-			return ret;
 		}
 
+		return ret;
 	}
 
 	@Override
@@ -157,7 +159,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				String localSceneId = room.getLocalSceneId();
-				room.setLocalSceneId(null);
+				room.setLocalSceneId("");
 
 				// 清除业务数据、localscene表中数据
 				localSceneService.removeById(localSceneId);

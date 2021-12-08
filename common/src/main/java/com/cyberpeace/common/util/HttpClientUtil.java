@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -31,6 +30,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.HttpDeleteWithBody;
 import com.cyberpeace.common.model.HttpclientContext;
 import com.cyberpeace.common.model.HttpclientModel;
+import com.google.common.collect.Lists;
 
 public class HttpClientUtil {
 
@@ -75,6 +75,7 @@ public class HttpClientUtil {
 
 		HttpDeleteWithBody delete = new HttpDeleteWithBody(url);
 		delete.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		delete.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
 		delete.setEntity(entity);
 
 		// 3、执行实际调用、返回序列化后的结果
@@ -112,26 +113,32 @@ public class HttpClientUtil {
 
 	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
 		HttpResponse response = null;
+		String httpResponse = null;
 		try {
 			// 1、调用远程服务
 			response = getClient().execute(httpRequest);
 
 			// 2、解析远程服务的返回值
-			String httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
+			httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
 
 			// 3、记录调用日志
 			HttpclientContext.getContext().addLog(httpResponse);
-
-			// 4、解析结果并返回
-			return parseHttpResponse(httpResponse, resultType);
 		} catch (Exception e) {
-			HttpclientContext.getContext().doRemoteException(e);
-		} finally {
-			HttpclientContext.removeContext();
+			try {
+				HttpclientContext.getContext().doRemoteException(e);
+			} catch (Exception e1) {} finally {
+				HttpclientContext.removeContext();
+			}
 		}
 
-		// 发生错误在catch就中断了，不会执行到这里
-		return null;
+		if (StringUtils.isBlank(httpResponse)) {
+			HttpclientContext.getContext().addLog("httpResponse is null");
+			HttpclientContext.removeContext();
+			throw new RemoteServiceException();
+		}
+
+		// 4、解析结果并返回
+		return parseHttpResponse(httpResponse, resultType);
 	}
 
 	/**

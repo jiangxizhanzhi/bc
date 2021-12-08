@@ -399,7 +399,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public TeamRoom getByLocalSceneId(String localSceneId) {
-		TeamRoom room = teamRoomMapper.selectbySceneManagerId(localSceneId);
+		TeamRoom room = teamRoomMapper.selectByLocalSceneId(localSceneId);
 		if (room == null) {
 			log.error("failed to get TeamRoom with localSceneId [{}]", localSceneId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);

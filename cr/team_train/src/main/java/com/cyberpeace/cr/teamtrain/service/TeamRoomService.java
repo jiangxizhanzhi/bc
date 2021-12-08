@@ -83,7 +83,7 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 */
 	StudentsTimeLineData getStudentsTimeLine(String roomId);
 
-	TeamRoom getByLocalSceneId(String sceneManagerId);
+	TeamRoom getByLocalSceneId(String localSceneId);
 
 	TeamRoom getById(String roomId);
 

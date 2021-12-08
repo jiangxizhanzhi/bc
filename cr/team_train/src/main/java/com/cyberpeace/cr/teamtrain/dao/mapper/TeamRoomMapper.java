@@ -21,5 +21,5 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 
 	IPage<TeamRoomData> listTeamRoom(Page page, ListQuery listQuery);
 
-    TeamRoom selectbySceneManagerId(String sceneManagerId);
+    TeamRoom selectByLocalSceneId(String localSceneId);
 }

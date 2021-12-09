@@ -36,7 +36,7 @@ public class LocalSceneController {
 	@ApiOperation("（从暂停）恢复场景")
 	@PostMapping("/unpause")
 	public BaseRsp unpauseScene(@RequestBody SceneReq sceneReq) {
-		localSceneService.unPauseScene(sceneReq.getLocalSceneId());
+		localSceneService.unpauseScene(sceneReq.getLocalSceneId());
 		return new BaseRsp();
 	}
 

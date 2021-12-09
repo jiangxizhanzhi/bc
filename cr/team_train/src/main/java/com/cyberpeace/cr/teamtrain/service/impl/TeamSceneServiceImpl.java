@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.Date;
-import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,6 +166,39 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 				teamRoomService.updateById(room);
 			}
 		});
+	}
+
+	@Override
+	public Boolean pauseScene(String roomId) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、只有教员可以操作场景
+		teamRoomService.checkTeacherPermission(roomId, userId);
+
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
+
+		// 2、如果场景不存在
+		if (StringUtils.isBlank(teamRoom.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+		}
+		// 3、 发送mp暂停请求
+		return localSceneService.pauseScene(teamRoom.getLocalSceneId());
+	}
+
+	@Override
+	public Boolean unpauseScene(String roomId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、只有教员可以操作场景
+		teamRoomService.checkTeacherPermission(roomId, userId);
+
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
+
+		// 2、如果场景不存在
+		if (StringUtils.isBlank(teamRoom.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+		}
+		// 3、 发送mp恢复暂停请求
+		return localSceneService.unpauseScene(teamRoom.getLocalSceneId());
 	}
 
 	private JSONObject getTopoData(String topoId, CrRoleNodesData nodes) {

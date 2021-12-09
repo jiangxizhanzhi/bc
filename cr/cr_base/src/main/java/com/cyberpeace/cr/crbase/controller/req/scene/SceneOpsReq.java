@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class SceneStartReq implements Serializable {
+public class SceneOpsReq implements Serializable {
 
-	@ApiModelProperty(value = "场景实例id", required = true)
+	@ApiModelProperty(value = "业务实例id", required = true)
 	private String roomId;
 }

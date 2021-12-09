@@ -5,6 +5,9 @@ import com.cyberpeace.integratation.model.scene.NodeOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
+/**
+ * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2
+ */
 public interface RemoteSceneService {
 
 	/**

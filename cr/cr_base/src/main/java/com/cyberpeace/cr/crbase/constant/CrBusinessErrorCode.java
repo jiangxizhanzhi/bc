@@ -73,4 +73,7 @@ public interface CrBusinessErrorCode {
 	// 场景重复启动
 	String SCENE_START_REPEAT = "101021";
 
+	// 场景不存在
+	String LOCAL_SCENE_NOT_EXIST = "101022";
+
 }

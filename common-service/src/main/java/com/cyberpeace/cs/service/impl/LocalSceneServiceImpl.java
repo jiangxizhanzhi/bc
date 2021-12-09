@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -148,50 +149,50 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public Boolean pauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
-		ensureSceneStarted(localScene);
-
+		// 1. 场景已暂停，返回true
+		if (localScene.getSceneStatus().equals(LocalScene.SceneStatusEnum.PAUSE.getCode())) {
+			return true;
+		}
+		// 2. 发送mp请求
 		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
 		handler.checkPauseScene(localScene);
-		Boolean result = remoteSceneService.pauseScene(handler.getSceneOpContext(localScene));
+		Boolean result = remoteSceneService.pauseScene(getSceneOpsContext(localScene));
 
 		if (!result) {
 			log.error("failed to pause scene [{}]", localScene.getMpSceneId());
-			throw new RuntimeException();
+			throw new BusinessException("failed to pause scene [{}]");
 		}
+		// 3. 修改本地数据
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.PAUSE.getCode());
+		localScene.setPauseTime(new Date());
 		updateById(localScene);
+
 		return true;
 	}
 
-	private void ensureSceneStarted(LocalScene localScene) {
-		if (StringUtils.isBlank(localScene.getMpSceneId()) || localScene.getSceneStatus()
-				.equals(LocalScene.SceneStatusEnum.DESTROY.getCode())) {
-			log.error("LocalScene [{}] is not started", localScene.getResourceId());
-			throw new RuntimeException();
-		}
-	}
-
 	@Override
-	public Boolean unPauseScene(String localSceneId) {
+	public Boolean unpauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
+		// 1、 确认场景处于暂停状态，可以恢复
 		ensureScenePaused(localScene);
-
-		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		Boolean result = remoteSceneService.unpauseScene(handler.getSceneOpContext(localScene));
+		// 2、 发送mp请求
+		Boolean result = remoteSceneService.unpauseScene(getSceneOpsContext(localScene));
 
 		if (!result) {
 			log.error("failed to unpause scene [{}]", localScene.getMpSceneId());
-			throw new RuntimeException();
+			throw new BusinessException("failed to unpause scene [{}]");
 		}
-
+		// 3、修改本地数据
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 		updateById(localScene);
+
 		return true;
 	}
 
 	private void ensureScenePaused(LocalScene localScene) {
 		if (!localScene.getSceneStatus().equals(LocalScene.SceneStatusEnum.PAUSE.getCode())) {
 			log.error("scene [{}] is not paused", localScene.getMpSceneId());
+			throw new BusinessException("scene [{}] is not paused");
 		}
 	}
 

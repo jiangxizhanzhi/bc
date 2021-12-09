@@ -16,4 +16,8 @@ public interface TeamSceneService {
 	Boolean stopScene(String roomId);
 
 	void clearLocal(TeamRoom room);
+
+	Boolean pauseScene(String roomId);
+
+	Boolean unpauseScene(String roomId);
 }

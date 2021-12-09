@@ -16,7 +16,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	Boolean pauseScene(String localSceneId);
 
-	Boolean unPauseScene(String localSceneId);
+	Boolean unpauseScene(String localSceneId);
 
 	LocalScene createLocalScene(Integer appId, String topoId);
 

@@ -65,7 +65,7 @@ public class LocalScene extends BaseTable {
 	 * 计时场景使用，统计用户场景暂停了多久。
 	 * 场景恢复后，destroyTime相应顺延。
 	 */
-	private String pauseTime;
+	private Date pauseTime;
 
 	/**
 	 * 场景使用的topoId

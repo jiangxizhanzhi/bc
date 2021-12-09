@@ -21,7 +21,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
-import com.cyberpeace.cr.crbase.controller.req.scene.SceneStartReq;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -79,7 +79,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
-	public BaseRsp startScene(@RequestBody SceneStartReq sceneStartReq) {
+	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
@@ -89,8 +89,8 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("停止场景")
 	@DeleteMapping("/scene")
-	public BaseRsp stopScene(@RequestBody SceneStartReq sceneStartReq) {
-		String roomId = sceneStartReq.getRoomId();
+	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
+		String roomId = sceneStopReq.getRoomId();
 
 		teamSceneService.stopScene(roomId);
 		return new BaseRsp();
@@ -104,6 +104,24 @@ public class TeamTrainRoomController {
 		SceneViewContext context = teamSceneService.viewScene(resource_id, role_id);
 
 		return new BaseRsp<>(context);
+	}
+
+	@ApiOperation("暂停场景")
+	@PostMapping("/scene/pause")
+	public BaseRsp pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+		String roomId = sceneOpsReq.getRoomId();
+
+		teamSceneService.pauseScene(roomId);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("从暂停中恢复场景")
+	@PostMapping("/scene/unpause")
+	public BaseRsp unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+		String roomId = sceneOpsReq.getRoomId();
+
+		teamSceneService.unpauseScene(roomId);
+		return new BaseRsp();
 	}
 
 	@ApiOperation("新增")

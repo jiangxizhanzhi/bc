@@ -7,13 +7,13 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.scene.MqContext;
+import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.google.common.collect.Maps;
@@ -33,9 +33,6 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	private final String SCENE_DELETE = "delete_cscene_instance";
 
-	@Autowired
-	private LocalSceneMapper localSceneMapper;
-
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
@@ -47,10 +44,10 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
-		if (message.getMessageProperties().getRedelivered()) {
-			log.error("消息已重复处理,拒绝再次接收");
-			channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
-		}
+		// if (message.getMessageProperties().getRedelivered()) {
+		// log.error("消息已重复处理,拒绝再次接收");
+		// channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
+		// }
 
 		String realMessage = new String(message.getBody(), WebConstant.ENCODING);
 
@@ -111,10 +108,13 @@ public class MessageListener implements ChannelAwareMessageListener {
 			return false;
 		}
 
+		LocalSceneMapper localSceneMapper = SpringContextUtil
+				.getBeanByClass(LocalSceneMapper.class);
 		LocalScene localScene = localSceneMapper.getByBusinessInstanceId(businessId);
 		if (null == localScene) {
 			log.error("message=[{}] businessId=[{}] handler error, localScene is null", message,
 					businessId);
+			return true;
 		}
 
 		if (!register.containsKey(localScene.getBusinessCode())) {

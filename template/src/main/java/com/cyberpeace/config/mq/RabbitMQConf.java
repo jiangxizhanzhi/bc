@@ -35,7 +35,7 @@ public class RabbitMQConf {
 	 */
 	private final String SCENE_EVENT_ROUTING_KEY = "cn.cyberpeace.mp.cscene_scene_report.*";
 
-	private String defaultProjectName = "defaultTest";
+	private String defaultProjectName = "defaultTest1";
 
 	private String queuePrefix = "cr.";
 
@@ -118,8 +118,8 @@ public class RabbitMQConf {
 			simpleMessageListenerContainer(ConnectionFactory connectionFactory) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(
 				connectionFactory);
-		container.setConcurrentConsumers(2);
-		container.setMaxConcurrentConsumers(2);
+		container.setConcurrentConsumers(1);
+		container.setMaxConcurrentConsumers(1);
 		container.setQueueNames(getQueues());
 		container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
 		container.setExposeListenerChannel(true);

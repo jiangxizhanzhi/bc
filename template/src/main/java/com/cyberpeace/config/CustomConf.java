@@ -1,6 +1,5 @@
 package com.cyberpeace.config;
 
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,12 +17,12 @@ import com.cyberpeace.common.util.SpringContextUtil;
 public class CustomConf {
 
 	@Bean
-	public SpringContextUtil getSpringContextUtil() {
+	public static SpringContextUtil getSpringContextUtil() {
 		return new SpringContextUtil();
 	}
 
 	@Bean
-	public PropertyPlaceholderConfigurer getConfigUtil() {
+	public static PropertyPlaceholderConfigurer getConfigUtil() {
 		PropertyPlaceholderConfigurer configurer = new ConfigUtil();
 
 		Resource[] resources = new ClassPathResource[] {

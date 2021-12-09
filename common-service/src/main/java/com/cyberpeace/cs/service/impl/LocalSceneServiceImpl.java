@@ -1,7 +1,6 @@
 package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -271,12 +269,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		localSceneMapper.updateById(localScene);
 	}
 
-	private Map<String, String> getContext(String managerId) {
-		Map<String, String> context = Maps.newHashMap();
-		context.put("scene_manager_id", managerId);
-		return context;
-	}
-
 	@Override
 	public void deleteRemoteScene(LocalScene localScene) {
 		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
@@ -306,18 +298,18 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	private SceneOpsContext getSceneOpsContext(LocalScene localScene) {
 		SceneOpsContext sceneOpsContext = new SceneOpsContext();
 		sceneOpsContext.setId(localScene.getMpSceneId());
-		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		handler.setPassThrough(sceneOpsContext, localScene);
+		sceneOpsContext.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
+				localScene.getBusinessInstanceId());
 
 		return sceneOpsContext;
 	}
 
 	private NodeOpsContext getNodeOpsContext(LocalScene localScene, String nodeId) {
 		NodeOpsContext nodeOpsContext = new NodeOpsContext();
-		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		handler.setPassThrough(nodeOpsContext, localScene);
 		nodeOpsContext.setId(localScene.getMpSceneId());
 		nodeOpsContext.setNodeId(nodeId);
+		nodeOpsContext.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
+				localScene.getBusinessInstanceId());
 
 		return nodeOpsContext;
 	}

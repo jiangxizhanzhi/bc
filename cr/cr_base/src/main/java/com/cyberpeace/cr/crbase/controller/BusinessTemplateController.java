@@ -28,7 +28,6 @@ import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.SceneService;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
@@ -60,9 +59,6 @@ public class BusinessTemplateController {
 
 	@Autowired
 	private LocalSceneService localSceneService;
-
-	@Autowired
-	private SceneService sceneService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -183,10 +179,14 @@ public class BusinessTemplateController {
 		testSceneHandler.checkBeforeTestingScene(templateId);
 
 		BusinessTemplate businessTemplate = businessTemplateService.getById(templateId);
-		LocalScene localScene = sceneService.createLocalScene(
-				LocalScene.BusinessCode.TEST_SCENE.getCode(), "", businessTemplate.getTopoId());
 
-		String sceneId = localSceneService.startScene(localScene);
+		LocalScene localScene = new LocalScene();
+		localScene.setBusinessCode(LocalScene.BusinessCode.TEST_SCENE.getCode());
+		localScene.setTopoId(businessTemplate.getTopoId());
+		// todo 后台测试场景的 businessId
+		localScene.setBusinessInstanceId("");
+
+		String sceneId = localSceneService.testScene(localScene);
 		localScene.setMpSceneId(sceneId);
 
 		businessTemplate.setLocalSceneId(localScene.getResourceId());

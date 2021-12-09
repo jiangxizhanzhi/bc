@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
@@ -55,6 +54,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		SceneStartContext startContext = getSceneStartContext(localScene);
 
 		return remoteSceneService.startScene(startContext);
+	}
+
+	@Override
+	public String testScene(LocalScene localScene) {
+		SceneStartContext startContext = getSceneStartContext(localScene);
+
+		return remoteSceneService.testScene(startContext);
 	}
 
 	/**
@@ -271,28 +277,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public void deleteRemoteScene(LocalScene localScene) {
-		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		SceneOpsContext sceneOpsContext = handler.getSceneOpContext(localScene);
+		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 		remoteSceneService.stopScene(sceneOpsContext);
-	}
-
-	private void updateAfterStartScene(LocalScene localScene, String sceneId) {
-		localScene.setMpSceneId(sceneId);
-		localScene.setStartTime(new Date());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-		if (localScene.getSceneTtl() != null && localScene.getDestroyMode() == 1) {
-			localScene.setDestroyTime(
-					TimeUtil.addMins(localScene.getStartTime(), localScene.getSceneTtl()));
-		}
-
-		localSceneMapper.updateById(localScene);
-	}
-
-	private void updateAfterStopScene(LocalScene localScene) {
-		localScene.setMpSceneId("");
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.DESTROY.getCode());
-		localScene.setDestroyTime(new Date());
-		updateById(localScene);
 	}
 
 	private SceneOpsContext getSceneOpsContext(LocalScene localScene) {

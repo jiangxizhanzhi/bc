@@ -12,6 +12,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	String startScene(LocalScene localScene);
 
+	String testScene(LocalScene localScene);
+
 	Boolean stopScene(String localSceneId);
 
 	Boolean pauseScene(String localSceneId);
@@ -56,4 +58,5 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param scene
 	 */
 	void deleteRemoteScene(LocalScene scene);
+
 }

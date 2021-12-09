@@ -1,10 +1,10 @@
-package com.cyberpeace.cr.tool.service.bo;
+package com.cyberpeace.cr.tool.controller.res;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class ToolCategoryBo implements Serializable {
+public class ToolCategoryRsp implements Serializable {
 
 	private String cnName;
 

@@ -12,7 +12,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
 import com.cyberpeace.cr.tool.dao.mapper.ToolGhdbMapper;
 import com.cyberpeace.cr.tool.service.ToolGhdbService;
-import com.cyberpeace.cr.tool.service.bo.GhdbQueryContext;
+import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
 
 /**
  * @author yinqingrong
@@ -24,11 +24,11 @@ public class ToolGhdbServiceImpl extends ServiceImpl<ToolGhdbMapper, ToolGhdb> i
 	private ToolGhdbMapper toolGhdbMapper;
 
 	@Override
-	public ListRsp<ToolGhdb> listGhdb(PageReqBase pageReqBase, GhdbQueryContext ghdbQueryContext) {
+	public ListRsp<ToolGhdb> listGhdb(PageReqBase pageReqBase, ToolGhdbRsp toolGhdbRsp) {
 		Page page = pageReqBase.toPageParam();
 
-		IPage<ToolGhdb> result = toolGhdbMapper.list(page, ghdbQueryContext.getAuthor(),
-				ghdbQueryContext.getTitle());
+		IPage<ToolGhdb> result = toolGhdbMapper.list(page, toolGhdbRsp.getAuthor(),
+				toolGhdbRsp.getTitle());
 
 		return PageUtil.getListResult(result);
 	}

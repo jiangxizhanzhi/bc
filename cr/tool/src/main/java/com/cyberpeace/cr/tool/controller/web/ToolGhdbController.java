@@ -6,7 +6,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.tool.controller.req.ToolGhdbListReq;
 import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
 import com.cyberpeace.cr.tool.service.ToolGhdbService;
-import com.cyberpeace.cr.tool.service.bo.GhdbQueryContext;
+import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,8 +29,8 @@ public class ToolGhdbController {
 	@ApiOperation("ghdb列表")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<ToolGhdb>> list(@Validated ToolGhdbListReq toolGhdbListReq) {
-		GhdbQueryContext ghdbQueryContext = BeanUtils.copy(toolGhdbListReq, GhdbQueryContext.class);
-		ListRsp<ToolGhdb> data = toolGhdbService.listGhdb(toolGhdbListReq, ghdbQueryContext);
+		ToolGhdbRsp toolGhdbRsp = BeanUtils.copy(toolGhdbListReq, ToolGhdbRsp.class);
+		ListRsp<ToolGhdb> data = toolGhdbService.listGhdb(toolGhdbListReq, toolGhdbRsp);
 		return new BaseRsp<>(data);
 	}
 

@@ -1,16 +1,19 @@
 package com.cyberpeace.cr.tool.controller.admin;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.service.ToolService;
-import com.cyberpeace.cr.tool.service.bo.ToolBo;
+import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,19 +37,20 @@ public class ToolController {
 
 	@ApiOperation("工具库列表")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<ToolBo>> getList(
+	public BaseRsp<ListRsp<ToolRsp>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
-		ListRsp<ToolBo> toolBoListRsp = toolService.selectPage(pageReqBase);
-		return new BaseRsp<>(toolBoListRsp);
+		Page page = pageReqBase.toPageParam();
+		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, pageReqBase);
+		return new BaseRsp(PageUtil.getListResult(toolBoListRsp));
 	}
 
 	@ApiOperation("工具详情")
 	@GetMapping()
-	public BaseRsp<ToolBo> getDetail(
+	public BaseRsp<ToolRsp> getDetail(
 			@ApiParam(name = "resource_id", value = "查询id", required = true)
 			@RequestParam("resource_id") @NotBlank String resourceId) {
-		ToolBo toolBo = toolService.selectById(resourceId);
-		return new BaseRsp<>(toolBo);
+		ToolRsp toolRsp = toolService.selectById(resourceId);
+		return new BaseRsp<>(toolRsp);
 	}
 
 	@ApiOperation("工具创建")

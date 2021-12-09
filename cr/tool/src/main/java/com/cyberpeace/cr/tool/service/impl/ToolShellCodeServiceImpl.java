@@ -8,7 +8,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
 import com.cyberpeace.cr.tool.dao.mapper.ToolShellCodeMapper;
 import com.cyberpeace.cr.tool.service.ToolShellCodeService;
-import com.cyberpeace.cr.tool.service.bo.ShellCodeContext;
+import com.cyberpeace.cr.tool.controller.res.ToolShellCodeRsp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +21,11 @@ public class ToolShellCodeServiceImpl extends ServiceImpl<ToolShellCodeMapper, T
 
 	@Override
 	public ListRsp<ToolShellCode> selectPage(PageReqBase pageReqBase,
-			ShellCodeContext shellCodeContext) {
+			ToolShellCodeRsp toolShellCodeRsp) {
 		Page page = pageReqBase.toPageParam();
 		IPage<ToolShellCode> result = toolShellCodeMapper
-				.list(page, shellCodeContext.getAuthor(), shellCodeContext.getPlatform(),
-						shellCodeContext.getEdbVerified());
+				.list(page, toolShellCodeRsp.getAuthor(), toolShellCodeRsp.getPlatform(),
+						toolShellCodeRsp.getEdbVerified());
 		result.convert(this::removeContent);
 		return PageUtil.getListResult(result);
 	}

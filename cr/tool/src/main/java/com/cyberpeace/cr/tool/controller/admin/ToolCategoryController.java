@@ -9,7 +9,7 @@ import com.cyberpeace.cr.tool.controller.req.CategoryUpdateReq;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
-import com.cyberpeace.cr.tool.service.bo.ToolCategoryBo;
+import com.cyberpeace.cr.tool.controller.res.ToolCategoryRsp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,12 +39,12 @@ public class ToolCategoryController {
 
 	@GetMapping()
 	@ApiOperation("工具分类详情")
-	public BaseRsp<ToolCategoryBo> getDetail(
+	public BaseRsp<ToolCategoryRsp> getDetail(
 			@ApiParam(name = "resource_id", value = "查询id", required = true)
 			@RequestParam("resource_id") @NotBlank String resource_id) {
 		ToolCategory toolCategory = toolCategoryService.getById(resource_id);
-		ToolCategoryBo toolCategoryBo = BeanUtils.copy(toolCategory, ToolCategoryBo.class);
-		return new BaseRsp<>(toolCategoryBo);
+		ToolCategoryRsp toolCategoryRsp = BeanUtils.copy(toolCategory, ToolCategoryRsp.class);
+		return new BaseRsp<>(toolCategoryRsp);
 	}
 
 	@PostMapping()

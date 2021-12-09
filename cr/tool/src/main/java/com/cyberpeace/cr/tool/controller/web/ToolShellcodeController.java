@@ -5,7 +5,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.tool.controller.req.ToolShellCodeListReq;
 import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
 import com.cyberpeace.cr.tool.service.ToolShellCodeService;
-import com.cyberpeace.cr.tool.service.bo.ShellCodeContext;
+import com.cyberpeace.cr.tool.controller.res.ToolShellCodeRsp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,10 +32,10 @@ public class ToolShellcodeController {
 	@ApiOperation("shellcode列表")
 	public BaseRsp<ListRsp<ToolShellCode>> getList(
 			@Validated ToolShellCodeListReq toolShellCodeListReq) {
-		ShellCodeContext shellCodeContext = BeanUtils
-				.copy(toolShellCodeListReq, ShellCodeContext.class);
+		ToolShellCodeRsp toolShellCodeRsp = BeanUtils
+				.copy(toolShellCodeListReq, ToolShellCodeRsp.class);
 		ListRsp<ToolShellCode> toolShellCodeListRsp = toolShellCodeService
-				.selectPage(toolShellCodeListReq, shellCodeContext);
+				.selectPage(toolShellCodeListReq, toolShellCodeRsp);
 		return new BaseRsp<>(toolShellCodeListRsp);
 	}
 

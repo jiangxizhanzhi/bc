@@ -1,11 +1,11 @@
-package com.cyberpeace.cr.tool.service.bo;
+package com.cyberpeace.cr.tool.controller.res;
 
 import java.io.Serializable;
 
 import lombok.Data;
 
 @Data
-public class GhdbQueryContext implements Serializable {
+public class ToolGhdbRsp implements Serializable {
 
 	private String title;
 

@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.tool.service.bo;
+package com.cyberpeace.cr.tool.controller.res;
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @ApiModel("工具库信息")
 @Data
-public class ToolBo implements Serializable {
+public class ToolRsp implements Serializable {
 
 	@ApiModelProperty("多个分类i18n名称逗号分割")
 	private String categoryI18nName;
@@ -29,7 +29,7 @@ public class ToolBo implements Serializable {
 	private String name;
 
 	@ApiModelProperty("平台名称")
-	private String platformsNames;
+	private List<String> platforms;
 
 	@ApiModelProperty("发布时间")
 	private String publishTime;
@@ -53,4 +53,10 @@ public class ToolBo implements Serializable {
 
 	@ApiModelProperty("附件详细列表")
 	private List<ToolFile> toolFiles;
+
+	@ApiModelProperty("介绍")
+	private String introduction;
+
+	@ApiModelProperty("版本")
+	private String version;
 }

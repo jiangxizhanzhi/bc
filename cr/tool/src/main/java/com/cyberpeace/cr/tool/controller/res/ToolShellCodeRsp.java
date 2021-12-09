@@ -1,9 +1,9 @@
-package com.cyberpeace.cr.tool.service.bo;
+package com.cyberpeace.cr.tool.controller.res;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class ShellCodeContext {
+public class ToolShellCodeRsp {
 
 	@ApiModelProperty(value = "作者")
 	private String author;

@@ -28,7 +28,7 @@ import com.cyberpeace.cr.tool.dao.mapper.ToolCategoryMapper;
 import com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolService;
-import com.cyberpeace.cr.tool.service.bo.ToolBo;
+import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -57,9 +57,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		return super.saveBatch(entityList);
 	}
 
-	private void setAboutCategory(ToolBo toolBo, Tool tool) {
+	private void setAboutCategory(ToolRsp toolRsp, Tool tool) {
 		List<String> categoryList = LocalStringUtil.strToListStr(tool.getCategory());
-		toolBo.setCategory(categoryList);
+		toolRsp.setCategory(categoryList);
 
 		List<ToolCategory> toolCategories = toolCategoryMapper.selectByResourceIds(categoryList);
 		List<String> i18nName = Lists.newArrayList();
@@ -71,50 +71,48 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 				i18nName.add(toolCategory.getEnName());
 			}
 		}
-		toolBo.setCategoryI18nName(Joiner.on(",").join(i18nName));
+		toolRsp.setCategoryI18nName(Joiner.on(",").join(i18nName));
 	}
 
-	private void setAboutDevice(ToolBo toolBo, Tool tool) {
+	private void setAboutDevice(ToolRsp toolRsp, Tool tool) {
 		if (!StringUtils.isBlank(tool.getImageResourceId())) {
 			DeviceInfo deviceInfo = remoteTerminalService.getById(tool.getImageResourceId());
-			toolBo.setDeviceName(deviceInfo.getName());
+			toolRsp.setDeviceName(deviceInfo.getName());
 		}
 	}
 
-	private void setAboutFile(ToolBo toolBo, Tool tool) {
+	private void setAboutFile(ToolRsp toolRsp, Tool tool) {
 		List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
-		toolBo.setFiles(fileList);
+		toolRsp.setFiles(fileList);
 
 		List<ToolFile> toolFiles = toolFileMapper.selectByIds(fileList);
-		toolBo.setToolFiles(toolFiles);
+		toolRsp.setToolFiles(toolFiles);
 	}
 
-	private ToolBo toBo(Tool tool, boolean isDetail) {
-		ToolBo toolBo = BeanUtils.copy(tool, ToolBo.class);
-		setAboutCategory(toolBo, tool);
-		setAboutDevice(toolBo, tool);
+	private ToolRsp toBo(Tool tool, boolean isDetail) {
+		ToolRsp toolRsp = BeanUtils.copy(tool, ToolRsp.class);
+		setAboutCategory(toolRsp, tool);
+		setAboutDevice(toolRsp, tool);
 
-		toolBo.setLanguage(Arrays.asList(StringUtils.split(tool.getLanguage(), ",")));
-		toolBo.setPlatformsNames(tool.getPlatforms());
+		toolRsp.setLanguage(Arrays.asList(StringUtils.split(tool.getLanguage(), ",")));
+		toolRsp.setPlatforms(Arrays.asList(StringUtils.split(tool.getPlatforms(),",")));
 
 		if (isDetail) {
-			setAboutFile(toolBo, tool);
+			setAboutFile(toolRsp, tool);
 		}
 
-		toolBo.setPublishTime(DateUtil.DateToString(tool.getPublishTime(), DateUtil.SHOT_PATTERN));
-		return toolBo;
+		toolRsp.setPublishTime(DateUtil.DateToString(tool.getPublishTime(), DateUtil.SHOT_PATTERN));
+		return toolRsp;
 	}
 
 	@Override
-	public ListRsp<ToolBo> selectPage(PageReqBase pageReqBase) {
-		Page page = pageReqBase.toPageParam();
+	public IPage<ToolRsp> selectPage(Page page, PageReqBase pageReqBase) {
 		IPage<Tool> result = toolMapper.list(page, pageReqBase.getPattern());
-		result.convert(tool -> toBo(tool, false));
-		return PageUtil.getListResult(result);
+		return result.convert(tool -> toBo(tool, false));
 	}
 
 	@Override
-	public ToolBo selectById(String resourceId) {
+	public ToolRsp selectById(String resourceId) {
 		Tool tool = getById(resourceId);
 		return toBo(tool, true);
 	}

@@ -58,7 +58,7 @@
         select business_template_id, date_format(start_time, '%m-%d') as `date`, count(date_format(start_time, '%m-%d')) as `count` from cr_train_record
         where business_type = 1
         and business_template_id in <foreach collection="business_template_ids" open="(" close=")" separator=", " item="template_id">#{template_id}</foreach>
-        and date_format(start_time, '%m-%d') in <foreach collection="date_range" open="(" close=")" separator=", " item="date_item">#{date_item}</foreach>
+        and date_format(start_time, '%Y-%m-%d') in <foreach collection="date_range" open="(" close=")" separator=", " item="date_item">#{date_item}</foreach>
         group by business_template_id, date_format(start_time, '%m-%d');
     </select>
 </mapper>

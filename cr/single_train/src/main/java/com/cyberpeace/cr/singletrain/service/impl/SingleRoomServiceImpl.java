@@ -181,21 +181,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
      */
     @Override
     public ListRsp<SingleRoomListBo> getSingleTrainPageList(SingleTrainListReq queryParams) {
-
-        // 向前7天日期
-        List<String> dateRange = Lists.newArrayList();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd");
-        for (int i = 0; i < 7; i++) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.DAY_OF_YEAR, calendar.get(Calendar.DAY_OF_YEAR) - i);
-            dateRange.add(0, dateFormat.format(calendar.getTime()));
-        }
-        String userId = UserInfoContext.getUserContext().getUserId();
-
         // 分页查询结果
         IPage<SingleRoomList> selectResult = singleRoomMapper.singleTrainSearch(
                 queryParams.toPageParam(),
-                userId,
+                UserInfoContext.getUserContext().getUserId(),
                 queryParams.getPattern(),
                 queryParams.getCategory(),
                 queryParams.getDifficult()
@@ -204,10 +193,23 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
             return new ListRsp<>();
         }
 
-        // 查询训练使用统计
+        // 向前7天日期
+        List<String> dateRange = Lists.newArrayList();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = 0; i < 7; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.DAY_OF_YEAR, calendar.get(Calendar.DAY_OF_YEAR) - i);
+            dateRange.add(0, dateFormat.format(calendar.getTime()));
+        }
+        // 日期截取到月份, 2021-01-01 -> 01-01
+        List<String> dateRangeForMonth = dateRange.stream().map(date -> date.substring(date.indexOf("-") + 1)).collect(Collectors.toList());
+
+        // 当前页训练数据resource_id
         List<String> template_ids = selectResult.getRecords().stream().map(
                 singleRoomList -> singleRoomList.getBusinessTemplate().getResourceId()
         ).collect(Collectors.toList());
+
+        // 查询训练使用统计
         List<SingleTrainStats> dateStats = singleRoomMapper.singleTrainStats(template_ids, dateRange);
         Map<String, List<Integer>> trainStats = dateStats.stream().collect(
                 Collectors.toMap(
@@ -216,7 +218,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
                             List<SingleTrainStats> currentTrainHistory = dateStats.stream().filter(
                                     singleTrainStats1 -> singleTrainStats1.getBusinessTemplateId().equals(singleTrainStats.getBusinessTemplateId())
                             ).collect(Collectors.toList());
-                            return dateRange.stream().map(date -> {
+                            return dateRangeForMonth.stream().map(date -> {
                                 Integer count = 0;
                                 for (SingleTrainStats dailyTrainStats : currentTrainHistory) {
                                     if (dailyTrainStats.getDate().equals(date)) {
@@ -265,7 +267,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
             singleRoomListBo.getEventData().setTrainSkill(JsonUtil.toJsonObjectArray(item.getSingleTemplate().getTrainSkills(), String.class));
             singleRoomListBo.setMissionsScheme(JsonUtil.toJsonObject(item.getMissionsScheme(), JSONObject.class));
 
-            singleRoomListBo.setLastSevenDays(dateRange);
+            singleRoomListBo.setLastSevenDays(dateRangeForMonth);
             singleRoomListBo.setTemplateUseCount(trainStats.getOrDefault(singleRoomListBo.getResourceId(), Lists.newArrayList(0, 0, 0, 0, 0, 0, 0)));
 
             singleRoomListBoList.add(singleRoomListBo);

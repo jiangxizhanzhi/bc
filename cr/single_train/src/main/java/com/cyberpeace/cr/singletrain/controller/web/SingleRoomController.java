@@ -45,7 +45,6 @@ public class SingleRoomController {
     @GetMapping("/list")
     @ApiOperation("分页查询")
     public BaseRsp<ListRsp<SingleRoomListBo>> list(SingleTrainListReq queryParams) {
-        // todo 节点数量, 日期, 日训练量
         return new BaseRsp<>(singleRoomService.getSingleTrainPageList(queryParams));
     }
 

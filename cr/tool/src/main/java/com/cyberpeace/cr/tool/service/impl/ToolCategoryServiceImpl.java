@@ -11,6 +11,8 @@ import com.cyberpeace.cr.tool.service.ToolCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, ToolCategory>
 		implements ToolCategoryService {
@@ -24,6 +26,12 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		Page page = listReq.toPageParam();
 		IPage<ToolCategory> result = toolCategoryMapper.list(page, listReq.getPattern());
 		return PageUtil.getListResult(result);
+	}
+
+	@Override
+	public List<ToolCategory> selectAll() {
+		List<ToolCategory> result = toolCategoryMapper.selectList(null);
+		return result;
 	}
 
 	@Override

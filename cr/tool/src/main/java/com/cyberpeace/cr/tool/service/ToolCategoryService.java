@@ -5,9 +5,13 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 
+import java.util.List;
+
 public interface ToolCategoryService extends IService<ToolCategory> {
 
 	ListRsp<ToolCategory> selectPage(PageReqBase listReq);
+
+	List<ToolCategory> selectAll();
 
 	ToolCategory getOrCreateByName(String name);
 }

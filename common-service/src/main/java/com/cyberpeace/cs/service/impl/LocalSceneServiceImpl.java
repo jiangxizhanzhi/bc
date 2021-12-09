@@ -2,6 +2,7 @@ package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
 
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -81,6 +82,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 				localScene.getBusinessInstanceId());
 		context.getContext().setAccessUserId(localScene.getUserId());
 
+		// 场景大json flag注入使用
+		context.setCscene(
+				JsonUtil.toJsonObject(localScene.getMeta(), LocalSceneMeta.class).getTopoData());
 		return context;
 	}
 

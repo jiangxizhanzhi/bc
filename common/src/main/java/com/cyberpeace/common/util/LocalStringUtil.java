@@ -82,7 +82,6 @@ public class LocalStringUtil {
 		return Arrays.stream(StringUtils.split(data, ',')).collect(Collectors.toList());
 	}
 
-
 	/**
 	 * 根据正则表达是获取内容中的匹配数据
 	 * @param content
@@ -115,5 +114,26 @@ public class LocalStringUtil {
 			return "";
 		}
 		return matchStr.get(CommonConstant.ZERO);
+	}
+
+	/**
+	 * 数据替换
+	 * @param content
+	 * @param old
+	 * @param newValue
+	 * @return
+	 */
+	public static String replaceAll(String content, List<String> old, List<String> newValue) {
+		if (old.size() > newValue.size()) {
+			for (int i = 0; i < old.size() - newValue.size(); i++) {
+				newValue.add("");
+			}
+		}
+
+		for (int i = 0; i < old.size(); i++) {
+			content = content.replace(old.get(i), newValue.get(i));
+		}
+
+		return content;
 	}
 }

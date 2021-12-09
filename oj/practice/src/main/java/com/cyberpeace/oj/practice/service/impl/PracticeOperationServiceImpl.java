@@ -7,12 +7,15 @@ import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.expression.Operation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -463,12 +466,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				throw new IllegalArgumentException("未检索到场景数据！");
 			}
 		}
-
-		// 初始化场景数据
 		OjLocalScene ojLocalScene = initOjLocalScene(operation, authContext);
 		LocalScene localScene = initLocalScene(operation, ojLocalScene, authContext);
 		ojLocalScene.setLocalSceneId(localScene.getResourceId());
-		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
 
 		// 场景数据启动
 		String sceneId = localSceneService.startScene(localScene);
@@ -492,6 +492,25 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	/**
+	 * 初始化实训场景数据
+	 * @param operation
+	 * @param authContext
+	 * @return
+	 */
+	private OjLocalScene initOjLocalScene(PracticeOperation operation, AuthContext authContext) {
+		// 初始化场景数据
+		InitOjSceneContext initOjSceneContext = InitOjSceneContext.builder()
+				.businessId(operation.getResourceId())
+				.businessType(LocalScene.BusinessCode.PRACTICE.getCode())
+				.dynamicFlag(operation.getDynamicFlag()).flags(operation.getAnswer())
+				.sharedType(operation.getSceneShareMode()).fromWeb(authContext.getIsWeb())
+				.userId(authContext.getUserId()).build();
+		OjLocalScene ojLocalScene = ojLocalSceneService.initOjLocalScene(initOjSceneContext);
+
+		return ojLocalScene;
+	}
+
+	/**
 	 * 组装localScene数据
 	 * @param operation
 	 * @param ojLocalScene
@@ -509,36 +528,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		localScene.setResourceId(IDGeneratorUtil.getID());
 		localScene.setTopoId(operation.getTopoId());
 		localScene.setUserId(authContext.getUserId());
-		return localScene;
-	}
+		localScene.setSceneTtl(operation.getDestroyDelay() * 60);
 
-	/**
-	 * 组装local_scene数据 未绑定localScene编号
-	 * @param operation
-	 * @param authContext
-	 * @return
-	 */
-	private OjLocalScene initOjLocalScene(PracticeOperation operation, AuthContext authContext) {
-
-		OjLocalScene localScene = new OjLocalScene();
-		localScene.setBusinessId(operation.getResourceId());
-		localScene.setBusinessType(OjLocalScene.BusinessType.OPERATION.getCode());
-		localScene.setFlags(operation.getAnswer());
-		localScene.setFromWeb(authContext.getIsWeb());
-		localScene.setShared(
-				operation.getSceneShareMode().intValue() == SceneShare.SHARED.getCode().intValue());
-		localScene.setUserId(authContext.getUserId());
-		localScene.setResourceId(IDGeneratorUtil.getID());
-		if (operation.getDynamicFlag()) {
-			localScene.setFlags(getDynamicFlags());
-		} else {
-			localScene.setFlags(operation.getAnswer());
+		// 动态环境flag设置
+		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(operation.getResourceId())
+				.build();
+		if (operation.getDynamicEnv()) {
+			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
+					operation.getTopoId());
+			sceneMeta.setTopoData(JsonUtil.toJsonString(dynamicFlag));
 		}
-
 		return localScene;
 	}
 
-	private String getDynamicFlags() {
-		return "flag{" + IDGeneratorUtil.getID() + "}";
-	}
 }

@@ -59,4 +59,7 @@ public class ToolRsp implements Serializable {
 
 	@ApiModelProperty("版本")
 	private String version;
+
+	@ApiModelProperty("是否可见")
+	private Boolean visible;
 }

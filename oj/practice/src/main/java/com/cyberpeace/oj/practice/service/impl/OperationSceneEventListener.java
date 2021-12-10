@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cyberpeace.common.model.scene.MqContext;
@@ -29,6 +30,7 @@ public class OperationSceneEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
+		OjLocalScene ojLocalScene = ojLocalSceneService.getById(businessId);
 
 		return super.onSceneStartProcess(data, businessId, context);
 	}

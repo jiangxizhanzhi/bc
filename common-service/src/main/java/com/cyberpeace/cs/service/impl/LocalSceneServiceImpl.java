@@ -110,16 +110,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean stopScene(String localSceneId) {
-		SceneOpsContext sceneOpsContext = getSceneOpsContext(
-				localSceneMapper.selectById(localSceneId));
-
-		Boolean result = remoteSceneService.stopScene(sceneOpsContext);
-
-		return result;
+		return stopScene(getById(localSceneId));
 	}
 
-	public void stopLocalScene(LocalScene scene, String userId) {
+	@Override
+	public Boolean stopScene(LocalScene localScene) {
+		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 
+		return remoteSceneService.stopScene(sceneOpsContext);
 	}
 
 	@Override

@@ -29,4 +29,6 @@ public interface WebConstant {
 	String ENCODING = "UTF-8";
 
 	String PASS_THROUGH_BUSINESS_ID = "business_id";
+
+	Integer SCENE_ID_LENGTH = 32;
 }

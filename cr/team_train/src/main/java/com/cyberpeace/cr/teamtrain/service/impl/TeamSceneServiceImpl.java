@@ -74,22 +74,29 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		// 4、启动mp场景
 		String sceneId = localSceneService.startScene(localScene);
 
-		// 5、更新本地数据库数据
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		try {
+			// 5、更新本地数据库数据
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				// 更新表数据
-				localScene.setMpSceneId(sceneId);
-				localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-				localScene.setStartTime(new Date());
-				room.setLocalSceneId(localScene.getResourceId());
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					// 更新表数据
+					localScene.setMpSceneId(sceneId);
+					localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+					localScene.setStartTime(new Date());
+					room.setLocalSceneId(localScene.getResourceId());
 
-				// 执行表更新
-				localSceneService.save(localScene);
-				teamRoomService.updateById(room);
-			}
-		});
+					// 执行表更新
+					localSceneService.save(localScene);
+					teamRoomService.updateById(room);
+				}
+			});
+			// 5.1 本地保存数据错误，删除已启动的远程场景
+		} catch (Exception e) {
+			localSceneService.stopScene(localScene);
+			log.error("Failed to save local data:", e);
+			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
+		}
 
 	}
 

@@ -76,4 +76,7 @@ public interface CrBusinessErrorCode {
 	// 场景不存在
 	String LOCAL_SCENE_NOT_EXIST = "101022";
 
+	// 启动场景时保存本地数据错误
+	String SAVE_LOCAL_DATA_FAILURE = "101023";
+
 }

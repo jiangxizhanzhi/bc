@@ -1,5 +1,7 @@
 package com.cyberpeace.integratation.service.impl;
 
+import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
@@ -126,6 +128,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		String sceneId = data.getString("id");
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("topoId=[{}] startScene error, sceneId is blank", context.getId());
+			throw new RemoteServiceException();
+		}
+		// 校验sceneId长度
+		if (sceneId.length() != SCENE_ID_LENGTH) {
+			log.error("Illegal sceneId {}", sceneId);
 			throw new RemoteServiceException();
 		}
 

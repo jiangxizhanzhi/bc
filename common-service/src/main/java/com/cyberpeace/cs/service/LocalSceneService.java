@@ -20,8 +20,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	Boolean unpauseScene(String localSceneId);
 
-	LocalScene createLocalScene(Integer appId, String topoId);
-
 	/**
 	 * create topo
 	 */
@@ -42,10 +40,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 	JSONObject getSceneData(String sceneId, String userId);
 
 	JSONObject getTopoData(String topoId);
-
-	void updateMpSceneId(LocalScene scene, String sceneId);
-
-	void stopLocalScene(LocalScene scene, String userId);
 
 	Boolean restartNode(String localSceneId, String nodeId);
 

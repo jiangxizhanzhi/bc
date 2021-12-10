@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 
 @Mapper
 @Repository
@@ -17,4 +18,6 @@ public interface MissionMapper extends BaseMapper<Mission> {
 	List<Mission> selectByRoomId(String roomId);
 
 	void batchInsert(List<Mission> missions);
+
+	void batchInsertMissionTemplate(List<MissionTemplate> missionTemplates);
 }

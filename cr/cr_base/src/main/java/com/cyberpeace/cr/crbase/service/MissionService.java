@@ -12,6 +12,7 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.context.DynamicData;
+import com.cyberpeace.cr.crbase.service.context.LoadMission;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 
 public interface MissionService extends IService<Mission> {
@@ -81,4 +82,6 @@ public interface MissionService extends IService<Mission> {
 	 * @return
 	 */
 	String getTeamTrainingManual(String roomId);
+
+	List<MissionTemplate> batchInsertMissionTemplate(List<LoadMission> templateQuestions);
 }

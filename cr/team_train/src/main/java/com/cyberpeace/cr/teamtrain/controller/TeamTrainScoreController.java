@@ -99,7 +99,6 @@ public class TeamTrainScoreController {
 		Integer sumScoreSubjective = 0;
 
 		TrainingScore trainingScore = new TrainingScore();
-		// studentScoreRsp.setTraining_percentage();
 
 		for (TaskContext task : taskList) {
 			Mission mission = task.getMission();
@@ -108,7 +107,7 @@ public class TeamTrainScoreController {
 				getScoreObjective += score;
 				sumScoreObjective += mission.getScore();
 			} else {
-				sumScoreSubjective += score;
+				getScoreSubjective += score;
 				sumScoreSubjective += mission.getScore();
 			}
 

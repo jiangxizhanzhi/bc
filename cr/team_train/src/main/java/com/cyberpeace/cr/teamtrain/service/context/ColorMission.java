@@ -2,16 +2,16 @@ package com.cyberpeace.cr.teamtrain.service.context;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.context.AddTemplateMissionScheme;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 
 import lombok.Data;
 
 @Data
-public class ColorMission {
+public class ColorMission<T> {
 
 	private Integer color;
 
-	private List<AddTemplateMissionScheme> schemeData;
+	private List<MissionSchemeObject<T>> schemeData;
 
 	private Integer template;
 

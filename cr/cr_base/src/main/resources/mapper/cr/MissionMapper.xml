@@ -26,4 +26,24 @@
         where room_id = #{roomId}
     </select>
 
+    <insert id="batchInsertMissionTemplate">
+        insert into cr_mission_template
+        ( resource_id, title
+        , description, score, skill_points
+        , answer, `option`, `type`
+        , category_id, write_up, create_user_id
+        , create_time, update_time, template_id)
+        values
+        <foreach collection="missionTemplates" item="missionTemplate" separator=",">
+            (#{missionTemplate.resourceId,jdbcType=VARCHAR} ,#{missionTemplate.title,jdbcType=VARCHAR}
+            , #{missionTemplate.description,jdbcType=VARCHAR}, #{missionTemplate.score,jdbcType=SMALLINT},
+            #{missionTemplate.skillPoints,jdbcType=VARCHAR}
+            , #{missionTemplate.answer,jdbcType=VARCHAR}, #{missionTemplate.option,jdbcType=VARCHAR},
+            #{missionTemplate.type,jdbcType=TINYINT}
+            , #{missionTemplate.categoryId,jdbcType=VARCHAR}, #{missionTemplate.writeUp,jdbcType=VARCHAR},
+            #{missionTemplate.createUserId,jdbcType=VARCHAR}
+            , #{missionTemplate.createTime,jdbcType=TIMESTAMP}, #{missionTemplate.updateTime,jdbcType=TIMESTAMP},
+            #{missionTemplate.templateId,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
 </mapper>

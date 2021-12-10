@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -11,14 +13,18 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.MultiSelectReq;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.NameValidReq;
 import com.cyberpeace.cr.crbase.controller.req.ShareReq;
 import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
@@ -29,6 +35,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
+import com.cyberpeace.cr.crbase.service.context.LoadTemplete;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.crbase.service.impl.TestSceneHandler;
@@ -41,6 +48,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.exception.ZipException;
 
 @Api(tags = "基础模板")
 @RestController
@@ -137,8 +145,39 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("导入业务模板")
 	@PostMapping("/batch_loads")
-	public BaseRsp<String> batchLoads(@RequestBody MultipartFile file) {
+	public BaseRsp<String> batchLoads(@RequestParam MultipartFile file) {
 		// todo
+		try {
+			File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+			String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+			File unzipFileDirectory = new File(unZipPath);
+
+			if (unzipFileDirectory.isDirectory()) {
+				File[] unzipFiles = unzipFileDirectory.listFiles();
+				for (File unzipFile : unzipFiles) {
+
+					// 反序列化对象
+					ParserConfig parserConfig = new ParserConfig();
+					parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+					LoadTemplete loadTemplete = JSON.parseObject(FileUtil.textFromFile(unzipFile),
+							LoadTemplete.class, parserConfig);
+
+					businessTemplateService.batchLoads(loadTemplete);
+
+					SerializeConfig config = new SerializeConfig();
+					config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+					String json123 = JSON.toJSONString(loadTemplete, config);
+
+				}
+			}
+		} catch (ZipException e) {
+			log.error("unable unzip file！filename=[{}]", file.getOriginalFilename());
+			throw new BusinessException(CrBusinessErrorCode.FILE_FORMAT_ERROR);
+		} catch (IOException e) {
+			log.error("unable save file！filename=[{}],path=[{}]", file.getOriginalFilename(),
+					ZipUtil.generatePath());
+			throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
+		}
 
 		return null;
 	}

@@ -10,11 +10,13 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamTrainTemplateReq extends BasicTemplate {
+public class TeamTrainTemplateReq<T> extends BasicTemplate {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<RoleListReq> roleList;
+	private List<RoleListReq<T>> roleList;
+
+	private Integer peopleNumber;
 
 	@ApiModelProperty(required = true)
 	@NotNull

@@ -30,28 +30,44 @@ public class FileUtil {
 	}
 
 	public static String textFromFile(File file) {
-		BufferedReader input;
+		BufferedReader reader = null;
+		StringBuilder stringBuilder = new StringBuilder();
+		String text;
+
+		// try (FileInputStream fileInputStream = new
+		// FileInputStream(file);InputStreamReader isr = new
+		// InputStreamReader(fileInputStream, "UTF-8"); input = new BufferedReader(isr)
+		// ) {
 		try {
-			input = new BufferedReader(new FileReader(file));
+			FileInputStream fileInputStream = new FileInputStream(file);
+			reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));
+			while (true) {
+				try {
+					text = reader.readLine();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+
+				if (text == null) {
+					break;
+				} ;
+
+				stringBuilder.append(text);
+			}
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("File encoding unsupported");
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException("File not found");
-		}
-
-		StringBuilder stringBuilder = new StringBuilder();
-
-		String text;
-		while (true) {
-			try {
-				text = input.readLine();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException("File not opened");
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-
-			if (text == null) {
-				break;
-			} ;
-
-			stringBuilder.append(text).append("/n");
 		}
 
 		return stringBuilder.toString();

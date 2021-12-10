@@ -1,12 +1,13 @@
 package com.cyberpeace.common.util;
 
+import java.io.File;
+import java.util.UUID;
+
 import com.cyberpeace.common.constant.CommonConstant;
+
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
-
-import java.io.File;
-import java.util.UUID;
 
 @Slf4j
 public class ZipUtil {
@@ -14,9 +15,9 @@ public class ZipUtil {
 	public static String generatePath() {
 		String tmpPath;
 		if (System.getProperty("os.name").toLowerCase().contains("win")) {
-			tmpPath = "/C:/test/";
+			tmpPath = ConfigUtil.getContextProperty("win.tmp.path");
 		} else {
-			tmpPath = "/tmp/";
+			tmpPath = ConfigUtil.getContextProperty("linux.tmp.path");
 		}
 		File file = FileUtil.mkdirs(tmpPath + UUID.randomUUID());
 		return file.getPath();

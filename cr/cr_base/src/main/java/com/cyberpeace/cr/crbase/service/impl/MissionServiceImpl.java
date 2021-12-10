@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -31,6 +32,7 @@ import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.DynamicData;
+import com.cyberpeace.cr.crbase.service.context.LoadMission;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
@@ -349,5 +351,20 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		TrainingManualTeam manual = new TrainingManualTeam(allStages, missionMap,
 				CommonContext.getLanguage());
 		return manual.toMarkDown();
+	}
+
+	@Override
+	public List<MissionTemplate> batchInsertMissionTemplate(List<LoadMission> templateQuestions) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		List<MissionTemplate> missionTemplates = templateQuestions.stream().map(loadMission -> {
+			MissionTemplate missionTemplate = BeanUtils.copy(loadMission, MissionTemplate.class);
+			missionTemplate.setCreateUserId(userId);
+			missionTemplate.setCategoryId(loadMission.getCategory());
+
+			return missionTemplate;
+		}).collect(Collectors.toList());
+
+		missionMapper.batchInsertMissionTemplate(missionTemplates);
+		return missionTemplates;
 	}
 }

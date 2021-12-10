@@ -13,6 +13,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -32,7 +34,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
-import com.cyberpeace.cr.crbase.service.context.AddTemplateMissionScheme;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -174,15 +176,18 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @return
 	 */
 	private String getNewRoomScheme(String missionsScheme, String roomId) {
+		ColorMission<AddTemplateMission> colorMission1 = JsonUtil.toJsonTObject(missionsScheme,
+				new TypeReference<ColorMission<AddTemplateMission>>() {});
 
-		ColorMission colorMission = JsonUtil.toJsonObject(missionsScheme, ColorMission.class);
+		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
+				new TypeReference<ColorMission<AddTemplateMission>>() {});
 		if (null == colorMission) {
 			return "[]";
 		}
 		List<MissionStageScheme> missionStageSchemes = Lists.newArrayList();
 		List<String> originMissionIds = Lists.newArrayList();
 		// 遍历每个阶段
-		for (AddTemplateMissionScheme schemeDatum : colorMission.getSchemeData()) {
+		for (MissionSchemeObject<AddTemplateMission> schemeDatum : colorMission.getSchemeData()) {
 
 			List<AddTemplateMission> missions = schemeDatum.getMissions();
 			// 遍历每个任务
@@ -195,7 +200,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				UserInfoContext.getUserContext().getUserId(), roomId);
 
 		// 遍历每个阶段设置新的任务id
-		for (AddTemplateMissionScheme schemeDatum : colorMission.getSchemeData()) {
+		for (MissionSchemeObject<AddTemplateMission> schemeDatum : colorMission.getSchemeData()) {
 			MissionStageScheme missionStageScheme = new MissionStageScheme();
 
 			List<AddTemplateMission> missions = schemeDatum.getMissions();
@@ -245,7 +250,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (teamTrainRoomContext.getEndTime() != null) {
 			teamRoom.setEndTime(teamTrainRoomContext.getEndTime());
 		}
-		teamRoom.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -432,6 +436,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		for (CrTaskLog crTaskLog : crTaskLogList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 
+			timeLineEvent.setResourceId(roomId);
 			timeLineEvent.setTime(crTaskLog.getCreateTime());
 			timeLineEvent.setTitle(missionService.getById(crTaskLog.getMissionId()).getTitle());
 			timeLineEvent.setUserName("");

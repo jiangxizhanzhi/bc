@@ -8,7 +8,7 @@ import com.cyberpeace.cr.teamtrain.service.context.ColorMission;
 import lombok.Data;
 
 @Data
-public class RoleListReq implements Serializable {
+public class RoleListReq<T> implements Serializable {
 
 	private String Id;
 
@@ -32,6 +32,6 @@ public class RoleListReq implements Serializable {
 
 	private String type;
 
-	private ColorMission missionsScheme;
+	private ColorMission<T> missionsScheme;
 
 }

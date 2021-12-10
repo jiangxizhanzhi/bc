@@ -127,7 +127,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		SceneConfigData sceneConfig = input.getBaseInfo().getSceneConfigData();
 
 		businessTemplate.setTopoId("");
-		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());
@@ -158,8 +157,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 				businessTemplateService.updateById(businessTemplate);
 
 				updateById(teamTemplate);
-
-				// todo更新任务
 
 			}
 		});

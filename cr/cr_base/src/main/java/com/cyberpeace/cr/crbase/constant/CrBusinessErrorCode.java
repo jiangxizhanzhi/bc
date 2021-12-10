@@ -79,4 +79,6 @@ public interface CrBusinessErrorCode {
 	// 启动场景时保存本地数据错误
 	String SAVE_LOCAL_DATA_FAILURE = "101023";
 
+	// 文件格式错误
+	String FILE_FORMAT_ERROR = "101024";
 }

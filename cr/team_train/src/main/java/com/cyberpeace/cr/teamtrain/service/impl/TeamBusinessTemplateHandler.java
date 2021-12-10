@@ -6,18 +6,29 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.LoadTempleteData;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
+import com.cyberpeace.cr.teamtrain.controller.req.RoleListReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,7 +67,7 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
 		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
 		teamTemplate.setSubType(baseInfo.getCategory());
-		teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
+		teamTemplate.setPeopleNumber(basicTemplate.getBaseInfo().getPeopleNumber());
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
 		teamTemplate.setRoleConfig(teamTrainTemplateContext.getRoleList());
 
@@ -66,6 +77,61 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		teamTemplateService.save(teamTemplate);
 
 		return teamTemplate.getResourceId();
+	}
+
+	@Autowired
+	BusinessTemplateService businessTemplateService;
+
+	@Override
+	public void realLoads(LoadTempleteData templateData,
+			List<MissionTemplate> missionTemplateList) {
+		String templateString = JsonUtil.toJsonString(templateData.getTemplateData());
+
+		ParserConfig parserConfig = new ParserConfig();
+		parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+		TeamTrainTemplateReq teamTrainTemplateAddReq = JSON.parseObject(templateString,
+				TeamTrainTemplateReq.class, parserConfig);
+
+		List<RoleListReq<Integer>> roleListReq = teamTrainTemplateAddReq.getRoleList();
+
+		List<RoleListReq<AddTemplateMission>> newRoleList = Lists.newArrayList();
+
+		for (RoleListReq<Integer> listReq : roleListReq) {
+			//
+			RoleListReq<AddTemplateMission> newRole = BeanUtils.copy(listReq, RoleListReq.class);
+
+			List<MissionSchemeObject<Integer>> stageList = listReq.getMissionsScheme()
+					.getSchemeData();
+			List<MissionSchemeObject<AddTemplateMission>> newStageList = Lists.newArrayList();
+
+			for (MissionSchemeObject<Integer> missionSchemeObject : stageList) {
+				MissionSchemeObject<AddTemplateMission> newStage = BeanUtils
+						.copy(missionSchemeObject, MissionSchemeObject.class);
+
+				List<AddTemplateMission> newMissions = Lists.newArrayList();
+				for (Integer index : missionSchemeObject.getMissions()) {
+					AddTemplateMission addTemplateMission = BeanUtils
+							.copy(missionTemplateList.get(index), AddTemplateMission.class);
+					newMissions.add(addTemplateMission);
+				}
+				newStage.setMissions(newMissions);
+				newStageList.add(newStage);
+			}
+
+			newRole.getMissionsScheme().setSchemeData(newStageList);
+			newRoleList.add(newRole);
+		}
+
+		teamTrainTemplateAddReq.setRoleList(newRoleList);
+		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils.copy(teamTrainTemplateAddReq,
+				TeamTrainTemplateContext.class);
+		teamTrainTemplateContext
+				.setRoleList(JsonUtil.toJsonString(teamTrainTemplateAddReq.getRoleList()));
+		teamTrainTemplateContext.getBaseInfo()
+				.setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		teamTrainTemplateContext.getBaseInfo()
+				.setPeopleNumber(teamTrainTemplateContext.getPeopleNumber());
+		businessTemplateService.addTemplate(teamTrainTemplateContext);
 	}
 
 }

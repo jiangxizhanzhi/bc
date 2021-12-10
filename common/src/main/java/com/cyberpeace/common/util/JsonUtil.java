@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.parser.Feature;
 import com.google.common.collect.Lists;
 
 /**
@@ -61,4 +63,10 @@ public class JsonUtil {
 	public static JSONArray StringToArray(String text) {
 		return JSONArray.parseArray(text);
 	}
+
+	public static <T> T toJsonTObject(String text, TypeReference<T> type, Feature... features) {
+		return JSON.parseObject(text, type, features);
+
+	}
+
 }

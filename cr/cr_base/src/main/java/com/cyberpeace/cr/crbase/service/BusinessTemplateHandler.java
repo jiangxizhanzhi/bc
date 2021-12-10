@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -10,6 +11,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.service.context.LoadTempleteData;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
@@ -29,7 +32,8 @@ public class BusinessTemplateHandler {
 	}
 
 	public String saveBusiness(BasicTemplate basicTemplate, String businessId) {
-		BusinessTemplate.BusinessType businessType = getBusinessType(basicTemplate);
+		BusinessTemplate.BusinessType businessType = getBusinessType(
+				basicTemplate.getBaseInfo().getType());
 
 		BusinessTemplateHandler realHandler = register.get(businessType);
 
@@ -45,15 +49,26 @@ public class BusinessTemplateHandler {
 
 	}
 
-	private BusinessTemplate.BusinessType getBusinessType(BasicTemplate basicTemplate) {
+	private BusinessTemplate.BusinessType getBusinessType(Integer businessType) {
 		// 校验外部传入的类型在BusinessTemplate.BusinessType声明的范围内
-		BusinessTemplate.BusinessType enumByCode = EnumUtils.getEnumByCode(
-				basicTemplate.getBaseInfo().getType(),
+		BusinessTemplate.BusinessType enumByCode = EnumUtils.getEnumByCode(businessType,
 				BusinessTemplate.BusinessType.class);
 		if (enumByCode == null) {
 			throw new BusinessException(CrBusinessErrorCode.TEMPLETE_TYPE_NOT_SUPPORTED);
 		}
 		return enumByCode;
 
+	}
+
+	public void loads(LoadTempleteData templateData, List<MissionTemplate> missionTemplateList) {
+		BusinessTemplate.BusinessType businessType = getBusinessType(templateData.getType());
+		BusinessTemplateHandler realHandler = register.get(businessType);
+		realHandler.realLoads(templateData, missionTemplateList);
+
+	}
+
+	public void realLoads(LoadTempleteData templateData,
+			List<MissionTemplate> missionTemplateList) {
+		// 业务定义自己的导入操作
 	}
 }

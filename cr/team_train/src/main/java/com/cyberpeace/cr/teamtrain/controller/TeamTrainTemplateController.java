@@ -18,6 +18,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
@@ -53,8 +54,8 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	public BaseRsp<TeamTrainTemplateRsp>
-			create(@RequestBody @Validated TeamTrainTemplateAddReq teamTrainTemplateAddReq) {
+	public BaseRsp<TeamTrainTemplateRsp> create(
+			@RequestBody @Validated TeamTrainTemplateAddReq<AddTemplateMission> teamTrainTemplateAddReq) {
 		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils.copy(teamTrainTemplateAddReq,
 				TeamTrainTemplateContext.class);
 		teamTrainTemplateContext
@@ -69,8 +70,8 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("修改")
 	@PatchMapping()
-	public BaseRsp<TeamTrainTemplateRsp>
-			update(@RequestBody @Validated TeamTrainTemplateModifyReq teamTrainTemplateModifyReq) {
+	public BaseRsp<TeamTrainTemplateRsp> update(
+			@RequestBody @Validated TeamTrainTemplateModifyReq<AddTemplateMission> teamTrainTemplateModifyReq) {
 		String resourceId = teamTrainTemplateModifyReq.getResourceId();
 		TeamTemplate template = teamTemplateService.getTeamTemplateByBusinessId(resourceId);
 

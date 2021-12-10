@@ -21,13 +21,12 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
-import com.cyberpeace.cr.crbase.service.context.Share;
-import com.cyberpeace.cr.crbase.service.context.ShareContext;
-import com.cyberpeace.cr.crbase.service.context.ShareTeacher;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
@@ -47,6 +46,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
@@ -120,6 +122,18 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			throw new RuntimeException();
 		}
 		return res;
+	}
+
+	@Override
+	public void batchLoads(LoadTemplete loadTemplete) {
+
+		List<LoadTempleteData> items = loadTemplete.getItems();
+		List<MissionTemplate> missionTemplateList = missionService
+				.batchInsertMissionTemplate(loadTemplete.getTemplateQuestions());
+		for (LoadTempleteData item : items) {
+			businessTemplateHandler.loads(item, missionTemplateList);
+
+		}
 	}
 
 	@Override

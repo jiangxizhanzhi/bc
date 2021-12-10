@@ -92,8 +92,8 @@ public class TeamTrainRoomController {
 	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
 		String roomId = sceneStopReq.getRoomId();
 
-		teamSceneService.stopScene(roomId);
-		return new BaseRsp();
+		Boolean result = teamSceneService.stopScene(roomId);
+		return new BaseRsp(result);
 	}
 
 	@ApiOperation("查看场景")

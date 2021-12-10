@@ -271,11 +271,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return topo;
 	}
 
-	public void updateMpSceneId(LocalScene localScene, String sceneId) {
-		localScene.setMpSceneId(sceneId);
-		localSceneMapper.updateById(localScene);
-	}
-
 	@Override
 	public void deleteRemoteScene(LocalScene localScene) {
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);

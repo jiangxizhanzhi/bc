@@ -57,10 +57,14 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		TeamRoom room = teamRoomService.getById(roomId);
 
-		// 2、如果已经有启动的场景，不能重复启动
+		// 2、如果已经有启动的场景，不能重复启动; 如果有脏数据，清除脏数据
 		LocalScene localSceneExisted = localSceneService.getByBusinessInstanceId(roomId);
-		if (null != localSceneExisted) {
-			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
+		if (localSceneExisted != null) {
+			if (StringUtils.isBlank(localSceneExisted.getMpSceneId())) {
+				clearLocal(room);
+			} else {
+				throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
+			}
 		}
 
 		// 3、构建本地scene对象

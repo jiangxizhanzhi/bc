@@ -126,7 +126,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
 
 		if (practiceOperation.getDynamicEnv() && null != ojSceneConfig) {
-			String topoId = remoteTopoService.save(ojSceneConfig);
+			String topoId = localSceneService.saveTopo(ojSceneConfig,
+					LocalScene.BusinessCode.PRACTICE.getCode());
 			practiceOperation.setTopoId(topoId);
 		}
 
@@ -196,7 +197,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.selectById(updateOperation.getResourceId());
 
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
-			remoteTopoService.save(ojSceneConfig);
+			localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId());
 		}
 
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {

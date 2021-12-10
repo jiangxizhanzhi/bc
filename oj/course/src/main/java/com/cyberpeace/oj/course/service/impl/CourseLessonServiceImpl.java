@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -130,6 +131,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private NoteMapper noteMapper;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
@@ -263,7 +267,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 场景数据新增
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
-			String topoId = remoteTopoService.save(ojSceneConfig);
+			String topoId = localSceneService.saveTopo(ojSceneConfig,
+					LocalScene.BusinessCode.LESSON.getCode());
 			courseLesson.setTopoId(topoId);
 		}
 
@@ -296,7 +301,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
-			String topoId = remoteTopoService.save(ojSceneConfig);
+			String topoId = localSceneService.saveTopo(ojSceneConfig, courseLesson.getTopoId());
 			courseLesson.setTopoId(topoId);
 		}
 

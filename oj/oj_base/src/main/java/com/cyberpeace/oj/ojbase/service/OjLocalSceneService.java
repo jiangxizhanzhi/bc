@@ -31,4 +31,9 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
      */
     JSONObject setDynamicFlag(String flags, String topoId);
 
+    /**
+     * 删除场景
+     * @param ojLocalSceneId
+     */
+    void deleteScene(String ojLocalSceneId);
 }

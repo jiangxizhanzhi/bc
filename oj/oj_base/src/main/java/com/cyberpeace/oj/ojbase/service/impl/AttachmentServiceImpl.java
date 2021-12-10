@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -177,12 +178,13 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
 
 		String content = FileUtil.getContent(markdownPath);
-		String pattern = "!\\[.*?\\]\\(.+?\\)";
-		List<String> matchStrList = LocalStringUtil.getMatchStr(content, pattern);
+
+		List<String> matchStrList = LocalStringUtil.getMatchStr(content,
+				PatternConstant.MARKDOWN_IMAGE);
 
 		for (String matchStr : matchStrList) {
-			String valuePattern = "(?<=\\()[^\\)]+";
-			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr, valuePattern);
+			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
+					PatternConstant.MARKDOWN_IMAGE_URL);
 			File replaceFile = new File(currentDir, imagePath);
 			if (replaceFile.exists()) {
 				content = content.replace(imagePath, replaceFile.getAbsolutePath());

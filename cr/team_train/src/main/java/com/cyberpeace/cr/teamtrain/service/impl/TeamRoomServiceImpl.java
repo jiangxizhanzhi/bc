@@ -102,7 +102,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (teamRoomData == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
-		teamRoomData.setTrainingStatus(getTrainingStatus(teamRoomData));
 
 		return teamRoomData;
 	}
@@ -123,6 +122,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamRoom.setCreateUserId(userId);
 		teamRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
 		teamRoom.setTeamTemplateName(businessTemplate.getName());
+		teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -156,13 +156,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 				}
 
-				LocalScene localScene = getLocalScene(teamRoom.getResourceId());
+				// LocalScene localScene = getLocalScene(teamRoom.getResourceId());
 
-				localSceneService.save(localScene);
+				// localSceneService.save(localScene);
 
-				teamRoom.setLocalSceneId(localScene.getResourceId());
+				// teamRoom.setLocalSceneId(localScene.getResourceId());
 
-				teamRoomMapper.updateById(teamRoom);
+				// teamRoomMapper.updateById(teamRoom);
 
 			}
 
@@ -287,43 +287,31 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 
 		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery);
-		for (TeamRoomData teamRoomData : data.getRecords()) {
-			teamRoomData.setTrainingStatus(getTrainingStatus(teamRoomData));
-		}
 
 		return data;
 	}
 
 	@Override
 	public Integer changeTrainingStatus(String roomId) {
-		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(roomId);
+		TeamRoom teamRoom = getById(roomId);
 
-		LocalScene localScene = localSceneService
-				.getByBusinessInstanceId(teamRoomdata.getResourceId());
-		if (localScene == null || teamRoomdata.isUnopened()) {
-			teamRoomdata.setTrainingStatus(TeamRoom.TrainingStatusCode.OPENING.getCode());
-			teamRoomdata.setSceneStartTime(new Date());
-			localScene.setStartTime(new Date());
-		}
-		// 已开始，修改local_scene数据
-		else if (teamRoomdata.isOpening()) {
-			teamRoomdata.setSceneEndTime(new Date());
-			teamRoomdata.setTrainingStatus(TeamRoom.TrainingStatusCode.ENDED.getCode());
-			localScene.setEndTime(new Date());
-		} else if (teamRoomdata.isEnded()) {
+		if (teamRoom.isUnopened()) {
+			teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.OPENING.getCode());
+		} else if (teamRoom.isOpening()) {
+			teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.ENDED.getCode());
+		} else if (teamRoom.isEnded()) {
 			log.error("teamTrain is over! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
-		localSceneService.updateById(localScene);
 
-		if (teamRoomdata.isOpening()) {
+		updateById(teamRoom);
+
+		if (teamRoom.isOpening()) {
+			// todo 审计日志
+		} else if (teamRoom.isEnded()) {
 			// todo 审计日志
 		}
-
-		else if (teamRoomdata.isEnded()) {
-			// todo 审计日志
-		}
-		return getTrainingStatus(teamRoomdata);
+		return teamRoom.getTrainingStatus();
 
 	}
 
@@ -462,14 +450,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public void checkRoomOpening(String roomId) {
-		TeamRoomData teamRoomdata = getTeamRoomDataByRoomId(roomId);
+		TeamRoom teamRoom = getById(roomId);
 		// 未开始，新增local_scene数据
-		if (teamRoomdata.isUnopened()) {
+		if (teamRoom.isUnopened()) {
 			log.error("teamTrain not begin! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
 
 		}
-		if (teamRoomdata.isEnded()) {
+		if (teamRoom.isEnded()) {
 			log.error("teamTrain is over! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 
@@ -487,16 +475,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			log.error("user does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
 					roomId, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		}
-	}
-
-	private int getTrainingStatus(TeamRoomData teamRoomdata) {
-		if (null == teamRoomdata.getSceneStartTime()) {
-			return TeamRoom.TrainingStatusCode.UNOPENED.getCode();
-		} else if (null == teamRoomdata.getSceneEndTime()) {
-			return TeamRoom.TrainingStatusCode.OPENING.getCode();
-		} else {
-			return TeamRoom.TrainingStatusCode.ENDED.getCode();
 		}
 	}
 

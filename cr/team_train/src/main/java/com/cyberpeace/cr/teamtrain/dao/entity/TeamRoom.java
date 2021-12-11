@@ -12,93 +12,43 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import lombok.Data;
 import lombok.Getter;
 
-/**
- * 
- * @TableName cr_team_room
- */
 @TableName(value = "cr_team_room")
 @Data
 public class TeamRoom extends BaseTable {
 
-	/**
-	 * 
-	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	/**
-	 * 
-	 */
 	private String teamTemplateId;
 
-	/**
-	 *
-	 */
 	private String teamTemplateName;
 
-	/**
-	 * 
-	 */
 	private String name;
 
-	/**
-	 * 
-	 */
 	private String description;
 
-	/**
-	 * 
-	 */
 	private Integer subType;
 
-	/**
-	 * 
-	 */
 	private String preSkills;
 
-	/**
-	 * 
-	 */
 	private String trainSkills;
 
-	/**
-	 * 
-	 */
 	private Date startTime;
 
-	/**
-	 * 
-	 */
 	private Date endTime;
 
-	/**
-	 * 
-	 */
 	private Integer difficulty;
 
-	/**
-	 * 
-	 */
+	private Integer trainingStatus;
+
 	private String timeLineConfig;
 
-	/**
-	 * 
-	 */
 	private String createUserId;
 
-	/**
-	 * 
-	 */
 	private String modifyUserId;
 
-	/**
-	 * 
-	 */
 	private String localSceneId;
 
-	/**
-	 *
-	 */
 	private String copyedTopoId;
 
 	public TeamRoom() {}
@@ -114,9 +64,9 @@ public class TeamRoom extends BaseTable {
 		this.endTime = input.getEndTime();
 		this.difficulty = input.getDifficult();
 		this.timeLineConfig = template.getTimeLineConfig();
-		// this.createUserId = createUserId;
-		// this.modifyUserId = modifyUserId;
-		// this.localSceneId = localSceneId;
+		this.createUserId = createUserId;
+		this.modifyUserId = modifyUserId;
+		this.localSceneId = localSceneId;
 	}
 
 	public enum TrainingStatusCode {
@@ -134,5 +84,17 @@ public class TeamRoom extends BaseTable {
 			this.desc = desc;
 		}
 
+	}
+
+	public boolean isUnopened() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
+	}
+
+	public boolean isOpening() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.OPENING.getCode());
+	}
+
+	public boolean isEnded() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.ENDED.getCode());
 	}
 }

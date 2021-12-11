@@ -15,6 +15,7 @@
         <result property="trainSkill" column="train_skills" jdbcType="VARCHAR"/>
         <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
         <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
+        <result property="trainingStatus" column="training_status" jdbcType="VARCHAR"/>
         <result property="sceneStartTime" column="scene_start_time" jdbcType="VARCHAR"/>
         <result property="sceneEndTime" column="scene_end_time" jdbcType="VARCHAR"/>
         <result property="difficult" column="difficulty" jdbcType="VARCHAR"/>
@@ -38,6 +39,7 @@
                cr_team_room.modify_user_id,
                cr_team_room.local_scene_id,
                cr_team_room.copyed_topo_id,
+               cr_team_room.training_status,
                cr_team_template.duration_time,
                local_scene.start_time scene_start_time,
                local_scene.end_time   scene_end_time,
@@ -66,6 +68,7 @@
         cr_team_room.modify_user_id,
         cr_team_room.local_scene_id,
         cr_team_room.copyed_topo_id,
+        cr_team_room.training_status,
         cr_team_template.duration_time,
         local_scene.start_time scene_start_time,
         local_scene.destroy_time scene_end_time,

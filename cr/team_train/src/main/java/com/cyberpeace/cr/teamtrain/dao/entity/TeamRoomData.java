@@ -45,15 +45,4 @@ public class TeamRoomData implements Serializable {
 
 	private Integer runtime;
 
-	public boolean isUnopened() {
-		return trainingStatus.equals(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
-	}
-
-	public boolean isOpening() {
-		return trainingStatus.equals(TeamRoom.TrainingStatusCode.OPENING.getCode());
-	}
-
-	public boolean isEnded() {
-		return trainingStatus.equals(TeamRoom.TrainingStatusCode.ENDED.getCode());
-	}
 }

@@ -300,7 +300,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		LocalScene localScene = localSceneService
 				.getByBusinessInstanceId(teamRoomdata.getResourceId());
-		if (teamRoomdata.isUnopened()) {
+		if (localScene == null || teamRoomdata.isUnopened()) {
 			teamRoomdata.setTrainingStatus(TeamRoom.TrainingStatusCode.OPENING.getCode());
 			teamRoomdata.setSceneStartTime(new Date());
 			localScene.setStartTime(new Date());

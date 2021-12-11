@@ -97,7 +97,7 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		List<RoleListReq<AddTemplateMission>> newRoleList = Lists.newArrayList();
 
 		for (RoleListReq<Integer> listReq : roleListReq) {
-			//
+
 			RoleListReq<AddTemplateMission> newRole = BeanUtils.copy(listReq, RoleListReq.class);
 
 			List<MissionSchemeObject<Integer>> stageList = listReq.getMissionsScheme()

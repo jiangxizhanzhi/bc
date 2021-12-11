@@ -145,8 +145,7 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("导入业务模板")
 	@PostMapping("/batch_loads")
-	public BaseRsp<String> batchLoads(@RequestParam MultipartFile file) {
-		// todo
+	public BaseRsp batchLoads(@RequestParam MultipartFile file) {
 		try {
 			File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
 			String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
@@ -179,7 +178,7 @@ public class BusinessTemplateController {
 			throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
 		}
 
-		return null;
+		return new BaseRsp();
 	}
 
 	/**
@@ -190,7 +189,9 @@ public class BusinessTemplateController {
 	@PostMapping("/batch_dumps")
 	public BaseRsp<String> batchDumps(@ApiParam(name = "multiSelectReq",
 			value = "模板id") @RequestBody MultiSelectReq multiSelectReq) {
-		// todo
+
+		List<BusinessTemplate> businessTemplateList = businessTemplateService
+				.listByIds(multiSelectReq.getIds());
 
 		return null;
 	}

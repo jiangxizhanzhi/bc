@@ -1,16 +1,14 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ObjUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -93,14 +91,18 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@Override
 	public List<UserInfo> getLazyUserList(UserPageContext userPageContext) {
-
-		List jsonArray = (List) HttpClientUtil
-				.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class).get("list");
-
 		List<UserInfo> userInfoList = new ArrayList<>();
-		for (Object object : jsonArray) {
-			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+
+		if (userPageContext.getIds().length() > 0) {
+			List jsonArray = (List) HttpClientUtil
+					.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class)
+					.get("list");
+
+			for (Object object : jsonArray) {
+				userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+			}
 		}
+
 		return userInfoList;
 	}
 

@@ -1,12 +1,13 @@
 package com.cyberpeace.common.util;
 
 import java.io.*;
-import java.util.List;
 import java.util.UUID;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.cyberpeace.common.constant.CommonConstant;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class FileUtil {
@@ -34,10 +35,6 @@ public class FileUtil {
 		StringBuilder stringBuilder = new StringBuilder();
 		String text;
 
-		// try (FileInputStream fileInputStream = new
-		// FileInputStream(file);InputStreamReader isr = new
-		// InputStreamReader(fileInputStream, "UTF-8"); input = new BufferedReader(isr)
-		// ) {
 		try {
 			FileInputStream fileInputStream = new FileInputStream(file);
 			reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));

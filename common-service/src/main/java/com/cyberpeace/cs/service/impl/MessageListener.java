@@ -13,9 +13,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.scene.MqContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.Channel;
 
@@ -126,15 +128,18 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 		boolean result = true;
 		try {
+			WsSceneReportBO reportBO = new WsSceneReportBO("", type, object.getJSONObject("data"));
+			String content = JsonUtil.toJsonString(reportBO);
+
 			switch (type) {
 				case SCENE_DELETE:
 					realListener.onSceneDelete(object.getString("data"), businessId, context);
 					break;
 				case SCENE:
-					realListener.onSceneStartProcess(object.getString("data"), businessId, context);
+					realListener.onSceneStartProcess(content, businessId, context);
 					break;
 				case SCENE_ELEMENT:
-					realListener.onSceneElement(object.getString("data"), businessId, context);
+					realListener.onSceneElement(content, businessId, context);
 					break;
 				default:
 					break;

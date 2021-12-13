@@ -147,7 +147,7 @@ public class ExceptionFilter implements Filter {
 			duplicateKey = matcher.group(0);
 			duplicateKey = StringUtils.substring(duplicateKey, 5, duplicateKey.length() - 1);
 		}
-		return duplicateKey;
+		return duplicateKey+"已存在";
 	}
 
 	/**

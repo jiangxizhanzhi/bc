@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.exception.InvalidParamException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.util.CollectionUtils;
@@ -164,7 +165,7 @@ public class LevelController {
 		}
 
 		if (levelIds.size() == 0) {
-			throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_FRAME);
+			throw new InvalidParamException("当前岗位层级下存在角色，不能删除");
 		}
 
 		levelService.removeByIds(levelIds);

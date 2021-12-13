@@ -36,13 +36,13 @@
                 and user_id = #{userId}
             </if>
             <if test="null != start">
-                and crete_time &gt; #{start}
+                and create_time &gt; #{start}
             </if>
             <if test="null != end">
-                and crete_time &lt; #{end}
+                and create_time &lt; #{end}
             </if>
         </where>
-        order by crete_time asc
+        order by create_time asc
     </select>
 
     <select id="selectByLessonAndUser" resultMap="baseResultMap">

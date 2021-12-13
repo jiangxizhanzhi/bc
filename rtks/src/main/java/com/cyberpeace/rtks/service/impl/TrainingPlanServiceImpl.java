@@ -187,7 +187,9 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		knowledgeService.checkKnowledgeRes(knowledgeResList, type);
 		List<RelatedCourse> basicCourseList = Lists.newArrayList();
 		for (KnowledgeRes knowledgeRes : knowledgeResList) {
-			basicCourseList.addAll(knowledgeRes.getCourseList());
+			if (knowledgeRes.getCourseList() != null) {
+				basicCourseList.addAll(knowledgeRes.getCourseList());
+			}
 		}
 		roleDetailRes.setBasicCourseList(basicCourseList);
 

@@ -1,22 +1,27 @@
 package com.cyberpeace.cr.tool.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.dao.mapper.ToolCategoryMapper;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
-public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, ToolCategory>
-		implements ToolCategoryService {
-
+@CacheConfig(cacheNames = { CacheConstant.CR_TOOL_CATEGORY })
+public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, ToolCategory> implements ToolCategoryService {
 
 	@Autowired
 	private ToolCategoryMapper toolCategoryMapper;
@@ -29,21 +34,29 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	}
 
 	@Override
+	@Cacheable
 	public List<ToolCategory> selectAll() {
 		List<ToolCategory> result = toolCategoryMapper.selectList(null);
 		return result;
 	}
 
 	@Override
-	public ToolCategory getOrCreateByName(String name) {
+	@Cacheable(key = "#p0")
+	public ToolCategory getByName(String name) {
 		ToolCategory toolCategory = toolCategoryMapper.getByCnName(name);
-		if (toolCategory != null) {
-			return toolCategory;
-		}
+
+		return toolCategory;
+	}
+
+	@Override
+	@CacheEvict
+	public ToolCategory saveCategory(String name) {
 		ToolCategory newCategory = new ToolCategory();
+
 		newCategory.setCnName(name);
 		newCategory.setEnName(name);
-		save(newCategory);
+		toolCategoryMapper.insert(newCategory);
+
 		return newCategory;
 	}
 }

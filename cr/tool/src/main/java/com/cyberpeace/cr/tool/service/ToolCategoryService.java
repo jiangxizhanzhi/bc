@@ -13,5 +13,7 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 
 	List<ToolCategory> selectAll();
 
-	ToolCategory getOrCreateByName(String name);
+	ToolCategory getByName(String name);
+
+	ToolCategory saveCategory(String name);
 }

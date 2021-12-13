@@ -1,4 +1,16 @@
 package com.cyberpeace.cr.tool.service.impl;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.ZipUtil;
@@ -14,18 +26,9 @@ import com.cyberpeace.cr.tool.utils.ParseMarkdown;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -48,7 +51,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	@Override
 	public void importResource(String path) {
 		// 兼容目录和单个压缩包
-		try{
+		try {
 			if (path.endsWith(".zip")) {
 				path = ZipUtil.unZipToTmpPath(path);
 			}
@@ -180,12 +183,17 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	}
 
 	private void setCategory(Tool tool, List<String> category) {
-		ArrayList<Integer> ids = Lists.newArrayList();
+		List<String> resourceIds = Lists.newArrayList();
 		for (String s : category) {
-			ToolCategory toolCategory = toolCategoryService.getOrCreateByName(s);
-			ids.add(toolCategory.getId());
+			ToolCategory toolCategory = toolCategoryService.getByName(s);
+
+			if (null == toolCategory) {
+				toolCategory = toolCategoryService.saveCategory(s);
+			}
+
+			resourceIds.add(toolCategory.getResourceId());
 		}
-		tool.setCategory(Joiner.on(",").join(ids));
+		tool.setCategory(Joiner.on(",").join(resourceIds));
 	}
 
 	private void setImageResourceIdAndToolType(Tool tool, List<String> imageResourceId) {

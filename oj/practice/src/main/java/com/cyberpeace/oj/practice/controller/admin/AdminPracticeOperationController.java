@@ -196,7 +196,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	}
 
 	@ApiOperation("后台场景启动测试")
-	@PostMapping("/scene")
+	@PostMapping("/start_scene")
 	public BaseRsp<JSONObject> startScene(@RequestParam("resourceId") String resourceId) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -207,7 +207,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	}
 
 	@ApiOperation("后台场景删除")
-	@PostMapping("/scene")
+	@PostMapping("/delete_scene")
 	public BaseRsp deleteScene(@RequestParam("resource_id") String resourceId) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

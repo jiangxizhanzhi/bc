@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -21,6 +24,8 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.scene.*;
+import com.cyberpeace.cr.teamtrain.controller.rsp.Flow;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
@@ -28,6 +33,8 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -210,6 +217,64 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		}
 		// 3、 发送mp恢复暂停请求
 		return localSceneService.unpauseScene(teamRoom.getLocalSceneId());
+	}
+
+	@Override
+	public List<Flow> getFlowList(String roomId) {
+		// 1.创建变量
+		TeamRoom room = teamRoomService.getById(roomId);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		List<Flow> flows = Lists.newArrayList();
+		Cpflow cpflow = null;
+		Map<String, String> elementsMap = Maps.newHashMap();
+
+		// 2. 获取topo
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+		// 2.1 场景已启动
+		if (localScene != null) {
+			// 2.1.1 请求sceneData
+			JSONObject sceneData = localSceneService.getSceneData(localScene, userId);
+			// 2.1.2 转换JsonObject为SceneData对象
+			SceneData data = sceneData.toJavaObject(SceneData.class);
+			// 2.1.3 获取流量数据
+			cpflow = data.getPlugins().getCpflow();
+			// 2.1.4 生成节点数据map
+			List<SceneElement> elements = data.getTopology().getElements();
+			for (SceneElement element : elements) {
+				elementsMap.put(element.getId(), element.getName());
+			}
+		} else {
+			// 2.2 场景未启动
+			// 2.2.1 请topoData
+			JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId());
+			TopoData data = topoData.getJSONObject("scene_config").toJavaObject(TopoData.class);
+			cpflow = data.getPlugins().getCpflow();
+
+			List<TopoElement> elements = data.getTopology().getElements();
+			for (TopoElement element : elements) {
+				elementsMap.put(element.getId(), element.getName());
+			}
+		}
+		// 3. 没有流量，返回空列表
+		if (cpflow == null) {
+			return flows;
+		}
+		// 4. 获取每个节点的流量，整合成列表
+		for (Map.Entry<String, FlowElement> entry : cpflow.getElements().entrySet()) {
+			String nodeId = entry.getKey();
+			String nodeName = elementsMap.get(nodeId);
+
+			for (FlowElementFlow flow : entry.getValue().getFlows()) {
+				Flow flowData = BeanUtils.copy(flow, Flow.class);
+				// 4.1 添加节点数据
+				flowData.setNodeId(nodeId);
+				flowData.setNodeName(nodeName);
+				flows.add(flowData);
+			}
+		}
+
+		// 5. 返回流量数据列表
+		return flows;
 	}
 
 	private JSONObject getTopoData(String topoId, CrRoleNodesData nodes) {

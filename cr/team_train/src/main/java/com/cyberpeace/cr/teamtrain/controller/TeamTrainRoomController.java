@@ -35,9 +35,7 @@ import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
-import com.cyberpeace.cr.teamtrain.controller.rsp.UserData;
+import com.cyberpeace.cr.teamtrain.controller.rsp.*;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -122,6 +120,18 @@ public class TeamTrainRoomController {
 
 		teamSceneService.unpauseScene(roomId);
 		return new BaseRsp();
+	}
+
+	@ApiOperation("查询流量")
+	@GetMapping("flow")
+	public BaseRsp<FlowRsp> getFlowList(
+			@ApiParam(name = "room_id", value = "团队训练id", required = true) String room_id) {
+
+		List<Flow> flows = teamSceneService.getFlowList(room_id);
+		FlowRsp ret = new FlowRsp();
+		ret.setData(flows);
+
+		return new BaseRsp<>(ret);
 	}
 
 	@ApiOperation("新增")

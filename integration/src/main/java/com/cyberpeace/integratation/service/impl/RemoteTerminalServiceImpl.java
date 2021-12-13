@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service.impl;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.model.scene.DeviceInfo;
@@ -15,9 +16,12 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 
 	private String DEVICE_INFO;
 
+	@Autowired
+	private MpEnvService mpEnvService;
+
 	@PostConstruct
 	public void init() {
-		DEVICE_INFO = ConfigUtil.getContextProperty("device.info");
+		DEVICE_INFO = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.info");
 	}
 
 	@Override

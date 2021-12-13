@@ -24,8 +24,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 
 @Configuration
-@MapperScan(basePackages = { "com.cyberpeace.**.mapper" },
-		sqlSessionFactoryRef = "sqlSessionFactory")
+@MapperScan(basePackages = { "com.cyberpeace.**.mapper" })
 public class MybatisConfig {
 
 	@Autowired

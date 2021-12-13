@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OperationWsMessageIdentifier extends WsMessageIdentifier {
 
-    /** 场景为共享时 sceneShare=true 非共享时 sceneShare=user_id+false*/
-    private String sceneShare;
+	private String practiceId;
 
-    private String practiceId;
+	private Boolean fromWeb;
 
-    private String topoId;
+	private Boolean shared;
 
 }

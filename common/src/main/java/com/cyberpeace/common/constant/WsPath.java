@@ -16,10 +16,13 @@ public class WsPath {
 	 */
 	public static final String CR_SCENE = "/ws/cr/ce_base/scene";
 
+	public static final String OPERATION_SCENE = "/ws/oj/operation/scene";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
 		cache.add(CR_SCENE);
+		cache.add(OPERATION_SCENE);
 	}
 
 	public static boolean validPath(String path) {

@@ -5,6 +5,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
+import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,6 +192,62 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		int result = practiceOperationMapper.updateById(operation);
 
+		return new BaseRsp(result);
+	}
+
+	@ApiOperation("后台场景启动测试")
+	@PostMapping("/scene")
+	public BaseRsp<JSONObject> startScene(@RequestParam("resourceId") String resourceId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		JSONObject scene = practiceOperationService.startScene(resourceId, authContext);
+		return new BaseRsp<>(scene);
+
+	}
+
+	@ApiOperation("后台场景删除")
+	@PostMapping("/scene")
+	public BaseRsp deleteScene(@RequestParam("resource_id") String resourceId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		practiceOperationService.deleteScene(resourceId, authContext);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("后台场景节点重启")
+	@PostMapping("/scene_node_restart")
+	public BaseRsp<Boolean> sceneNodeRestart(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Boolean result = practiceOperationService.nodeRestart(sceneNodeReq.getResourceId(),
+				sceneNodeReq.getNodeId(), authContext);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("后台场景节点重建")
+	@PostMapping("/scene_node_recreate")
+	public BaseRsp<Boolean> sceneNodeRecreate(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		Boolean result = practiceOperationService.nodeRecreate(sceneNodeReq.getResourceId(),
+				sceneNodeReq.getNodeId(), authContext);
+
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("后台场景暂停与恢复")
+	@PatchMapping("/scene_update_status")
+	public BaseRsp sceneUpdateStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Boolean result = practiceOperationService.pauseScene(sceneStatusReq.getResourceId(),
+				sceneStatusReq.getStatus(), authContext);
 		return new BaseRsp(result);
 	}
 

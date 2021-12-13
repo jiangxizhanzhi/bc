@@ -9,6 +9,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import org.apache.commons.collections.CollectionUtils;
@@ -472,7 +473,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		ojLocalScene.setLocalSceneId(localScene.getResourceId());
 
 		// 场景数据启动
-		String sceneId = localSceneService.startScene(localScene);
+		String sceneId = authContext.getIsWeb() ? localSceneService.startScene(localScene)
+				: localSceneService.testScene(localScene);
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("Operation startScene: Scene start failed! scene_id is null");
 			throw new InvalidParamException("场景启动失败！");
@@ -484,12 +486,88 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				ojLocalSceneMapper.insert(ojLocalScene);
+
+				localScene.setMpSceneId(sceneId);
 				localSceneMapper.insert(localScene);
 			}
 		});
 
 		// 场景数据查询
 		return remoteSceneService.getById(localScene.getMpSceneId(), localScene.getUserId());
+	}
+
+	@Override
+	public void deleteScene(String resourceId, AuthContext authContext) {
+
+		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
+
+		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
+				operation.getResourceId(), operation.getSceneShareMode(), authContext);
+
+		ojLocalSceneService.deleteScene(ojLocalScene.getLocalSceneId());
+	}
+
+	@Override
+	public Boolean nodeRestart(String resourceId, String nodeId, AuthContext authContext) {
+
+		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
+		Boolean result = localSceneService.restartNode(localScene.getResourceId(), nodeId);
+		return result;
+	}
+
+	@Override
+	public Boolean nodeRecreate(String resourceId, String nodeId, AuthContext authContext) {
+
+		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
+		Boolean result = localSceneService.recreateNode(localScene.getResourceId(), nodeId);
+		return result;
+	}
+
+	@Override
+	public Boolean pauseScene(String resourceId, Integer status, AuthContext authContext) {
+
+		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
+		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
+			return localSceneService.pauseScene(localScene.getResourceId());
+		} else {
+			return localSceneService.unpauseScene(localScene.getResourceId());
+		}
+	}
+
+	/**
+	 * 节点操作前校验
+	 * @param practiceId
+	 * @param authContext
+	 * @return
+	 */
+	private LocalScene sceneNodeCheck(String practiceId, AuthContext authContext) {
+
+		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
+		if (null == operation) {
+			log.error(
+					"PracticeOperationServiceImpl：Practice operation not found! practice_operation_id=[{}]",
+					practiceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(practiceId,
+				operation.getSceneShareMode(), authContext);
+		if (null == ojLocalScene) {
+			log.error(
+					"PracticeOperationServiceImpl: ojLocalScene not found! operation_id=[{}], shared=[{}], fromWeb=[{}], user_id=[{}]",
+					practiceId, operation.getSceneShareMode(), authContext.getIsWeb(),
+					authContext.getUserId());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		if (null == localScene || StringUtils.isBlank(localScene.getMpSceneId())) {
+			log.error(
+					"PracticeOperationServiceImpl: localScene not found ot scene_id is null! local_scene_id=[{}]",
+					ojLocalScene.getLocalSceneId());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		return localScene;
 	}
 
 	/**
@@ -530,15 +608,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		localScene.setTopoId(operation.getTopoId());
 		localScene.setUserId(authContext.getUserId());
 		localScene.setSceneTtl(operation.getDestroyDelay() * 60);
+		localScene.setSceneName(operation.getTitle());
 
 		// 动态环境flag设置
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(operation.getResourceId())
 				.build();
-		if (operation.getDynamicEnv()) {
+		if (operation.getDynamicEnv() && operation.getDynamicFlag()) {
 			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
 					operation.getTopoId());
 			sceneMeta.setTopoData(JsonUtil.toJsonString(dynamicFlag));
 		}
+		localScene.setMeta(JsonUtil.toJsonString(sceneMeta));
 		return localScene;
 	}
 

@@ -64,14 +64,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			AuthContext authContext) {
 
 		if (shared.intValue() == SceneShare.SHARED.getCode().intValue()) {
-
-			OjLocalScene ojLocalScene = ojLocalSceneMapper.selectPrivateScene(
-					authContext.getUserId(), businessId, authContext.getIsWeb());
-			if (null == ojLocalScene) {
-				return ojLocalSceneMapper.selectPublicScene(businessId, CommonConstant.TRUE,
-						authContext.getIsWeb());
-			}
-			return ojLocalScene;
+			return ojLocalSceneMapper.selectPublicScene(businessId, CommonConstant.TRUE,
+					authContext.getIsWeb());
 		} else {
 			return ojLocalSceneMapper.selectPrivateScene(authContext.getUserId(), businessId,
 					authContext.getIsWeb());
@@ -131,7 +125,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			}
 
 			for (int i = 0; i < initCommands.size(); i++) {
-				List<String> matchStr = LocalStringUtil.getMatchStr(initCommands.get(i), PatternConstant.DYNAMIC_FLAG);
+				List<String> matchStr = LocalStringUtil.getMatchStr(initCommands.get(i),
+						PatternConstant.DYNAMIC_FLAG);
 				String replaceCommand = LocalStringUtil.replaceAll(initCommands.get(i), matchStr,
 						JsonUtil.toJsonObjectArray(flags, String.class));
 				initCommands.set(i, replaceCommand);

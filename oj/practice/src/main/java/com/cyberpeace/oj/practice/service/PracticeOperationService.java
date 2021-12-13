@@ -76,4 +76,38 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
 	JSONObject startScene(String resourceId, AuthContext authContext);
+
+	/**
+	 * 场景删除
+	 * @param resourceId
+	 * @param authContext
+	 * @return
+	 */
+	void deleteScene(String resourceId, AuthContext authContext);
+
+	/**
+	 * 场景节点重启
+	 * @param resourceId
+	 * @param nodeId
+	 * @return
+	 */
+	Boolean nodeRestart(String resourceId, String nodeId, AuthContext authContext);
+
+	/**
+	 * 场景节点重建
+	 * @param resourceId
+	 * @param nodeId
+	 * @param authContext
+	 * @return
+	 */
+	Boolean nodeRecreate(String resourceId, String nodeId, AuthContext authContext);
+
+	/**
+	 * 场景暂停与恢复
+	 * @param resourceId
+	 * @param status
+	 * @param authContext
+	 * @return
+	 */
+	Boolean pauseScene(String resourceId, Integer status, AuthContext authContext);
 }

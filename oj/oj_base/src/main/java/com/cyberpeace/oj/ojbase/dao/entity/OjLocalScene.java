@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.ojbase.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @TableName("oj_local_scene")
 public class OjLocalScene extends BaseTable {
 
+	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	private String userId;

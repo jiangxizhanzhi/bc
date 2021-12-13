@@ -17,7 +17,6 @@
     <select id="selectByInstanceId" resultMap="baseResultMap">
         select * from test_instance
         where instance_id = #{instanceId}
-        and status = 1
     </select>
 
     <select id="selectAllInstance" resultMap="baseResultMap">

@@ -50,7 +50,6 @@
                     #{courseId}
                 </foreach>
             </if>
-            and status = 1
         </where>
     </select>
 

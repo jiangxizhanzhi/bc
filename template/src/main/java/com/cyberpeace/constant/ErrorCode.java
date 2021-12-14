@@ -18,7 +18,7 @@ public interface ErrorCode {
 	/**
 	 * 通过参数中的resource_id无法找到对应资源
 	 * */
-	String RESOURCE_NOT_FOUND = "000002";
+	String RESOURCE_NOT_FOUND = "000003";
 
 	String REMOTE_SERVICE_EXCEPTION = "010000";
 

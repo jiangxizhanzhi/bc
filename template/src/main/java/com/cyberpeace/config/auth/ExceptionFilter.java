@@ -33,6 +33,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.constant.BusinessErrorMsg;
 import com.cyberpeace.constant.ErrorCode;
 import com.google.common.collect.Maps;
 
@@ -108,9 +109,9 @@ public class ExceptionFilter implements Filter {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setCode(errCode);
 		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-			// 设置英文
+			errorInfo.setMessage(BusinessErrorMsg.ENGLISH_MAP.get(errCode));
 		} else {
-			// 设置中文
+			errorInfo.setMessage(BusinessErrorMsg.CHINESE_MAP.get(errCode));
 		}
 
 		flushErrorInfo(httpServletResponse, errorInfo);
@@ -139,6 +140,14 @@ public class ExceptionFilter implements Filter {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setMessage(duplicateKey);
 		errorInfo.setCode(getErrorCode(ErrorCode.DUPLICATE_KEY));
+
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			errorInfo.setMessage(
+					duplicateKey + BusinessErrorMsg.ENGLISH_MAP.get(ErrorCode.DUPLICATE_KEY));
+		} else {
+			errorInfo.setMessage(
+					duplicateKey + BusinessErrorMsg.CHINESE_MAP.get(ErrorCode.DUPLICATE_KEY));
+		}
 
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}

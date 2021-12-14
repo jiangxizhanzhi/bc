@@ -12,6 +12,7 @@ import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import io.swagger.annotations.Api;
@@ -40,7 +41,8 @@ public class ToolController {
 	public BaseRsp<ListRsp<ToolRsp>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
-		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, pageReqBase);
+		ToolListQuery listQuery = BeanUtils.copy(pageReqBase, ToolListQuery.class);
+		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery);
 		return new BaseRsp(PageUtil.getListResult(toolBoListRsp));
 	}
 

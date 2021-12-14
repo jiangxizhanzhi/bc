@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.tool.controller.req.WebToolListReq;
 import com.cyberpeace.cr.tool.controller.res.WebToolRsp;
+import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import io.swagger.annotations.Api;
@@ -32,10 +34,20 @@ public class WebToolController {
     @ApiOperation("工具库列表")
     @GetMapping("/list")
     public BaseRsp<ListRsp<WebToolRsp>> getList(
-            @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
-        Page page = pageReqBase.toPageParam();
-        IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, pageReqBase);
+            @ApiParam(name = "listReq", value = "查询条件") @Validated WebToolListReq webToolListReq) {
+
+        Page page = webToolListReq.toPageParam();
+        ToolListQuery listQuery = BeanUtils.copy(webToolListReq, ToolListQuery.class);
+        if (webToolListReq.getCracked() != null) {
+            if (webToolListReq.getCracked().equals(Tool.Cracked.TRIAL.getCode())) {
+                return new BaseRsp<>(PageUtil.getNullResult());
+            }
+            listQuery.setCracked(webToolListReq.getCracked().equals(Tool.Cracked.FREE.getCode()));
+        }
+
+        IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery);
         IPage<WebToolRsp> convert = toolBoListRsp.convert(webTool -> BeanUtils.copy(webTool, WebToolRsp.class));
+
         return new BaseRsp<>(PageUtil.getListResult(convert));
     }
 

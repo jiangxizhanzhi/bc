@@ -4,17 +4,26 @@
 <mapper namespace="com.cyberpeace.cr.tool.dao.mapper.ToolMapper">
 
     <select id="list" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
-        <if test="pattern != null and pattern != ''">
-            <bind name="pattern" value="'%' + pattern + '%'"/>
-        </if>
         select * from cr_tool_tool
         <where>
-            <if test="null != pattern and pattern != ''">
-                and `name` like #{pattern}
+            <if test="listQuery.pattern != null and listQuery.pattern != ''">
+                <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>
+                `name` like #{pattern}
+            </if>
+            <if test="listQuery.category != null and listQuery.category != ''">
+                and `category` = #{listQuery.category}
+            </if>
+            <if test="listQuery.cracked != null">
+                and `cracked` = #{listQuery.cracked}
+            </if>
+            <if test="listQuery.platforms != null and listQuery.platforms != ''">
+                <bind name="platforms" value="'%' + listQuery.platforms + '%'"/>
+                and `platforms` like #{platforms}
             </if>
         </where>
         order by id desc
     </select>
+
     <select id="selectByName" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
         select * from cr_tool_tool
         <where>

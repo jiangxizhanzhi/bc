@@ -1,12 +1,13 @@
 package com.cyberpeace.cr.tool.controller.res;
+
+import java.io.Serializable;
+import java.util.List;
+
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 @ApiModel("工具库信息")
 @Data
@@ -64,9 +65,9 @@ public class ToolRsp implements Serializable {
 	@ApiModelProperty("是否可见")
 	private Boolean visible;
 
-	private Date createTime;
+	private String createTime;
 
-	private Date updateTime;
+	private String updateTime;
 
 	private String deviceResourceId = "";
 
@@ -75,4 +76,10 @@ public class ToolRsp implements Serializable {
 	private String imageResourceId = "";
 
 	private String manual;
+
+	private String scene;
+
+	private String sceneData;
+
+	private String tag;
 }

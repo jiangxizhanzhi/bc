@@ -30,11 +30,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 
-import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
 
 @Service
-@Slf4j
 public class ToolResourceImportServiceImpl implements ToolResourceImportService {
 
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
@@ -228,22 +226,45 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 			return;
 		}
 
-		String[] tmps = versions.remove(0).split(" ");
-		for (String tmp : tmps) {
-			if (tmp.startsWith("v")) {
-				tool.setVersion(tmp);
-			}
+		// version和附件，默认是成对出现的
+		if (versions.size() > 1) {
+			tool.setVersion(getVersion(versions.get(versions.size() - 2)));
+		} else if (versions.size() == 1) {
+			tool.setVersion(getVersion(versions.get(versions.size() - 1)));
+			return;
+		} else {
+			return;
 		}
+
+		List<String> attachments = Lists.newArrayList();
+		for (int i = 1; i < versions.size(); i = i + 2) {
+			attachments.add(versions.get(i));
+		}
+
 		// 上传版本对应的安装包
 		ArrayList<Integer> versionFiles = Lists.newArrayList();
-		for (String filePath : versions) {
-			ToolFile toolFile = uploadFile(filePath, mdFile);
+		for (String filePath : attachments) {
+			ToolFile toolFile = uploadFile(filePath, mdFile, false);
 			if (toolFile != null) {
 				versionFiles.add(toolFile.getId());
 			}
 		}
 		String files = Joiner.on(",").join(versionFiles);
 		tool.setFiles(files);
+	}
+
+	private String getVersion(String version) {
+		String[] ss = StringUtils.split(version, " ");
+		if (null == ss || ss.length == 0) {
+			return "";
+		}
+
+		for (String s : ss) {
+			if (s.startsWith("v")) {
+				return s;
+			}
+		}
+		return "";
 	}
 
 	private void setPublishTime(Tool tool, List<String> publishTime) {
@@ -262,7 +283,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	}
 
 	private void setCover(Tool tool, List<String> logo, File mdFile) {
-		ToolFile toolFile = uploadFile(toStr(logo), mdFile);
+		ToolFile toolFile = uploadFile(toStr(logo), mdFile, true);
 		if (toolFile == null) {
 			tool.setCover("");
 		} else {
@@ -274,9 +295,10 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * 上传文件
 	 * @param string 需要解析的文件路径
 	 * @param mdFile markdown文件
+	 * @param transferName  true表示使用随机文件名
 	 * @return
 	 */
-	private ToolFile uploadFile(String string, File mdFile) {
+	private ToolFile uploadFile(String string, File mdFile, boolean transferName) {
 		Pattern compile = Pattern.compile("\\((.*)\\)");
 		Matcher matcher = compile.matcher(string);
 		if (!matcher.find()) {
@@ -287,7 +309,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		String replace = group.replace("/", File.separator).replaceFirst(".", "");
 		String filePath = mdFile.getParentFile().getPath() + replace;
 
-		return toolFileService.saveFile(filePath);
+		return toolFileService.saveFile(filePath, transferName);
 	}
 
 	private String toStr(List<String> stringList) {

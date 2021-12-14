@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -30,9 +31,16 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 	}
 
 	@Override
-	public ToolFile saveFile(String filePath) {
+	public ToolFile saveFile(String filePath, boolean transferName) {
 		String fileSuffix = filePath.substring(filePath.lastIndexOf("."));
 		String fileName = UUID.randomUUID() + fileSuffix;
+		// 工具库的附件，使用原始的附件名
+		if (!transferName) {
+			String[] ss = StringUtils.split(filePath, File.separator);
+			if (null != ss || ss.length > 0) {
+				fileName = ss[ss.length - 1];
+			}
+		}
 		String fullPath = uploadPath + fileName;
 
 		File file = new File(filePath);

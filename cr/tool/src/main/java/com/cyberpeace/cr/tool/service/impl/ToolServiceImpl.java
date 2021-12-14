@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
@@ -36,96 +37,99 @@ import com.google.common.collect.Sets;
 @Service
 public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements ToolService {
 
-    @Autowired
-    private ToolMapper toolMapper;
+	@Autowired
+	private ToolMapper toolMapper;
 
-    @Autowired
-    private ToolCategoryService toolCategoryService;
+	@Autowired
+	private ToolCategoryService toolCategoryService;
 
-    @Autowired
-    private ToolFileMapper toolFileMapper;
+	@Autowired
+	private ToolFileMapper toolFileMapper;
 
-    @Autowired
-    private RemoteTerminalService remoteTerminalService;
+	@Autowired
+	private RemoteTerminalService remoteTerminalService;
 
-    @Override
-    @Transactional(rollbackFor = {Exception.class}, transactionManager = "transactionManager")
-    public boolean saveBatch(Collection<Tool> entityList) {
-        return super.saveBatch(entityList);
-    }
+	@Override
+	@Transactional(rollbackFor = { Exception.class }, transactionManager = "transactionManager")
+	public boolean saveBatch(Collection<Tool> entityList) {
+		return super.saveBatch(entityList);
+	}
 
-    private void setAboutCategory(ToolRsp toolRsp, Tool tool) {
-        List<String> categoryList = LocalStringUtil.strToListStr(tool.getCategory());
-        toolRsp.setCategory(categoryList);
-        if (categoryList.isEmpty()) {
-            toolRsp.setCategoryI18nName("");
-            return;
-        }
+	private void setAboutCategory(ToolRsp toolRsp, Tool tool) {
+		List<String> categoryList = LocalStringUtil.strToListStr(tool.getCategory());
+		toolRsp.setCategory(categoryList);
+		if (categoryList.isEmpty()) {
+			toolRsp.setCategoryI18nName("");
+			return;
+		}
 
-        List<ToolCategory> toolCategories = toolCategoryService.selectAll();
-        Set<String> categoryIds = Sets.newHashSet();
-        categoryIds.addAll(categoryList);
+		List<ToolCategory> toolCategories = toolCategoryService.selectAll();
+		Set<String> categoryIds = Sets.newHashSet();
+		categoryIds.addAll(categoryList);
 
-        List<String> i18nName = Lists.newArrayList();
+		List<String> i18nName = Lists.newArrayList();
 
-        for (ToolCategory item : toolCategories) {
-            if (categoryIds.contains(item.getResourceId())) {
-                if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_ZH)) {
-                    i18nName.add(item.getCnName());
-                } else {
-                    i18nName.add(item.getEnName());
-                }
-            }
-        }
+		for (ToolCategory item : toolCategories) {
+			if (categoryIds.contains(item.getResourceId())) {
+				if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_ZH)) {
+					i18nName.add(item.getCnName());
+				} else {
+					i18nName.add(item.getEnName());
+				}
+			}
+		}
 
-        toolRsp.setCategoryI18nName(Joiner.on(",").join(i18nName));
-    }
+		toolRsp.setCategoryI18nName(Joiner.on(",").join(i18nName));
+	}
 
-    private void setAboutDevice(ToolRsp toolRsp, Tool tool) {
-        if (!StringUtils.isBlank(tool.getImageResourceId())) {
-            DeviceInfo deviceInfo = remoteTerminalService.getById(tool.getImageResourceId());
-            toolRsp.setDeviceName(deviceInfo.getName());
-        }
-    }
+	private void setAboutDevice(ToolRsp toolRsp, Tool tool) {
+		if (!StringUtils.isBlank(tool.getImageResourceId())) {
+			DeviceInfo deviceInfo = remoteTerminalService.getById(tool.getImageResourceId());
+			toolRsp.setDeviceName(deviceInfo.getName());
+		}
+	}
 
-    private void setAboutFile(ToolRsp toolRsp, Tool tool) {
-        List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
-        toolRsp.setFiles(fileList);
+	private void setAboutFile(ToolRsp toolRsp, Tool tool) {
+		List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
+		toolRsp.setFiles(fileList);
 
-        List<ToolFile> toolFiles = toolFileMapper.selectByIds(fileList);
-        toolRsp.setToolFiles(toolFiles);
-    }
+		List<ToolFile> toolFiles = toolFileMapper.selectByIds(fileList);
+		toolRsp.setToolFiles(toolFiles);
+	}
 
-    private ToolRsp toBo(Tool tool, boolean isDetail) {
-        ToolRsp toolRsp = BeanUtils.copy(tool, ToolRsp.class);
-        setAboutCategory(toolRsp, tool);
-        setAboutDevice(toolRsp, tool);
+	private ToolRsp toBo(Tool tool, boolean isDetail) {
+		ToolRsp toolRsp = BeanUtils.copy(tool, ToolRsp.class);
+		setAboutCategory(toolRsp, tool);
+		setAboutDevice(toolRsp, tool);
 
-        toolRsp.setLanguage(Arrays.asList(StringUtils.split(tool.getLanguage(), ",")));
-        toolRsp.setPlatforms(Arrays.asList(StringUtils.split(tool.getPlatforms(), ",")));
+		toolRsp.setLanguage(Arrays.asList(StringUtils.split(tool.getLanguage(), ",")));
+		toolRsp.setPlatforms(Arrays.asList(StringUtils.split(tool.getPlatforms(), ",")));
 
-        if (isDetail) {
-            setAboutFile(toolRsp, tool);
-        }
+		if (isDetail) {
+			setAboutFile(toolRsp, tool);
+		}
 
-        toolRsp.setPublishTime(DateUtil.DateToString(tool.getPublishTime(), DateUtil.SHOT_PATTERN));
-        return toolRsp;
-    }
+		toolRsp.setPublishTime(DateUtil.DateToString(tool.getPublishTime(), DateUtil.SHOT_PATTERN));
+		toolRsp.setCreateTime(DateUtil.DateToString(tool.getCreateTime(), DateUtil.SHOT_PATTERN));
+		toolRsp.setUpdateTime(DateUtil.DateToString(tool.getUpdateTime(), DateUtil.SHOT_PATTERN));
 
-    @Override
-    public IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery) {
-        IPage<Tool> result = toolMapper.list(page, toolListQuery);
-        return result.convert(tool -> toBo(tool, false));
-    }
+		return toolRsp;
+	}
 
-    @Override
-    public ToolRsp selectById(String resourceId) {
-        Tool tool = getById(resourceId);
-        return toBo(tool, true);
-    }
+	@Override
+	public IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery) {
+		IPage<Tool> result = toolMapper.list(page, toolListQuery);
+		return result.convert(tool -> toBo(tool, false));
+	}
 
-    @Override
-    public Tool getByName(String name) {
-        return toolMapper.selectByName(name);
-    }
+	@Override
+	public ToolRsp selectById(String resourceId) {
+		Tool tool = getById(resourceId);
+		return toBo(tool, true);
+	}
+
+	@Override
+	public Tool getByName(String name) {
+		return toolMapper.selectByName(name);
+	}
 }

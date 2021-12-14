@@ -1,11 +1,11 @@
 package com.cyberpeace.common.util;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateUtil {
+
 	public static final String SHOT_PATTERN = "yyyy-MM-dd";
 
 	public static String DateToString(Date date, String pattern) {
@@ -16,7 +16,7 @@ public class DateUtil {
 		return simpleDateFormat.format(date);
 	}
 
-	public static Date StringToDate(String strDate, String pattern){
+	public static Date StringToDate(String strDate, String pattern) {
 		SimpleDateFormat formatter = new SimpleDateFormat(pattern);
 		ParsePosition pos = new ParsePosition(0);
 		return formatter.parse(strDate, pos);

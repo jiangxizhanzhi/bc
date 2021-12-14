@@ -6,9 +6,10 @@
     <select id="list" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
         select * from cr_tool_tool
         <where>
+            visible is true
             <if test="listQuery.pattern != null and listQuery.pattern != ''">
                 <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>
-                `name` like #{pattern}
+                and `name` like #{pattern}
             </if>
             <if test="listQuery.category != null and listQuery.category != ''">
                 <bind name="category" value="'%' + listQuery.category + '%'"/>

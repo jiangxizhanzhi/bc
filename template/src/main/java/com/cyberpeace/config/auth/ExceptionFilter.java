@@ -107,6 +107,11 @@ public class ExceptionFilter implements Filter {
 
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setCode(errCode);
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			// 设置英文
+		} else {
+			// 设置中文
+		}
 
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}

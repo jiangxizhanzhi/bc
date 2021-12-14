@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @ApiModel("工具库信息")
@@ -62,4 +63,16 @@ public class ToolRsp implements Serializable {
 
 	@ApiModelProperty("是否可见")
 	private Boolean visible;
+
+	private Date createTime;
+
+	private Date updateTime;
+
+	private String deviceResourceId = "";
+
+	private String homePage = "";
+
+	private String imageResourceId = "";
+
+	private String manual;
 }

@@ -87,6 +87,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 			}
 		}
 
+		log.info("tool import finish!");
 	}
 
 	/**

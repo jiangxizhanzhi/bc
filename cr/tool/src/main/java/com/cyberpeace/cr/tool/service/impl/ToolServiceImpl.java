@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,12 +15,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
+import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
@@ -93,7 +92,12 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
 		toolRsp.setFiles(fileList);
 
-		List<ToolFile> toolFiles = toolFileMapper.selectByIds(fileList);
+		List<ToolFile> toolFiles;
+		if (null == fileList || fileList.isEmpty()) {
+			toolFiles = Lists.newArrayList();
+		} else {
+			toolFiles = toolFileMapper.selectByIds(fileList);
+		}
 		toolRsp.setToolFiles(toolFiles);
 	}
 

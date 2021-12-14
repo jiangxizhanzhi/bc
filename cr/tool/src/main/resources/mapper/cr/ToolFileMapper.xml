@@ -4,14 +4,9 @@
 <mapper namespace="com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper">
 
     <select id="selectByIds" resultType="com.cyberpeace.cr.tool.dao.entity.ToolFile">
-        select * from cr_tool_toolfile
-        <where>
-            <if test="null != ids and ids.size() > 0">
-                and id in
-                <foreach collection="ids" separator="," open="(" close=")" item="fId">
-                    #{fId}
-                </foreach>
-            </if>
-        </where>
+        select * from cr_tool_toolfile where id in
+        <foreach collection="ids" separator="," open="(" close=")" item="fId">
+            #{fId}
+        </foreach>
     </select>
 </mapper>

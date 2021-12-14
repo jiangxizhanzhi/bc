@@ -20,7 +20,7 @@ import com.google.common.io.Files;
 @Service
 public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> implements ToolFileService {
 
-	private String savePath = "/cr/tool" + File.separator;
+	private String savePath = "tool/tool" + File.separator;
 
 	private String uploadPath;
 

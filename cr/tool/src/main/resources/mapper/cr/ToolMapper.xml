@@ -11,7 +11,8 @@
                 `name` like #{pattern}
             </if>
             <if test="listQuery.category != null and listQuery.category != ''">
-                and `category` = #{listQuery.category}
+                <bind name="category" value="'%' + listQuery.category + '%'"/>
+                and `category` like #{listQuery.category}
             </if>
             <if test="listQuery.cracked != null">
                 and `cracked` = #{listQuery.cracked}

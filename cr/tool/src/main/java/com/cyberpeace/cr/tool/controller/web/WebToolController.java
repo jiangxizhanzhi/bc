@@ -15,6 +15,7 @@ import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +39,7 @@ public class WebToolController {
 
         Page page = webToolListReq.toPageParam();
         ToolListQuery listQuery = BeanUtils.copy(webToolListReq, ToolListQuery.class);
-        if (webToolListReq.getCracked() != null) {
+        if (webToolListReq.getCracked() != null && StringUtils.isNotBlank(webToolListReq.getCracked())) {
             if (webToolListReq.getCracked().equals(Tool.Cracked.TRIAL.getCode())) {
                 return new BaseRsp<>(PageUtil.getNullResult());
             }

@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/admin/red_vs_blue/red_vs_blue_templates/")
-public class RbTemplateController {
+public class RbTemplateAdminController {
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;

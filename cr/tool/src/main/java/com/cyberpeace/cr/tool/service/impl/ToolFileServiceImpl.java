@@ -26,7 +26,8 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 
 	@PostConstruct
 	public void init() {
-		uploadPath = ConfigUtil.getContextProperty("cr.local.upload.path") + savePath;
+		uploadPath = ConfigUtil.getContextProperty("cr.local.upload.path") + File.separator
+				+ savePath;
 		ensureDir(uploadPath);
 	}
 

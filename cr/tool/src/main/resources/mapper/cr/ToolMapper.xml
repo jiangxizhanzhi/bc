@@ -12,7 +12,7 @@
             </if>
             <if test="listQuery.category != null and listQuery.category != ''">
                 <bind name="category" value="'%' + listQuery.category + '%'"/>
-                and `category` like #{listQuery.category}
+                and `category` like #{category}
             </if>
             <if test="listQuery.cracked != null">
                 and `cracked` = #{listQuery.cracked}

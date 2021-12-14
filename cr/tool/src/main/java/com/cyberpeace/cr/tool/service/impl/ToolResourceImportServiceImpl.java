@@ -59,9 +59,6 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 			log.error("解压失败：{}", path);
 			throw new BusinessException(CrBusinessErrorCode.ZIP_PATH_NOT_EXTRA);
 		}
-
-		List<Tool> tools = Lists.newArrayList();
-
 		File file = new File(path);
 		File[] files = file.listFiles();
 		if (files == null) {
@@ -75,13 +72,13 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 				continue;
 			}
 
-			Tool tool = importTool(subFile);
-			if (StringUtils.isBlank(tool.getResourceId())) {
-				tools.add(tool);
+			try {
+				importTool(subFile);
+			} catch (Exception e) {
+				log.error("import tool error, toolPath=[{}]", path, e);
 			}
 		}
 
-		toolService.saveBatch(tools);
 	}
 
 	/**
@@ -130,7 +127,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		tool.setName(toStr(title));
 		Tool dbTool = toolService.getByName(tool.getName());
 		if (dbTool != null) {
-			log.info("已存在该工具{}", dbTool.getName());
+			log.info("已存在该工具[{}]", dbTool.getName());
 			return dbTool;
 		}
 

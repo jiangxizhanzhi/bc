@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -52,7 +51,6 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @return
 	 */
 	@Override
-	@Async
 	public void importResource(String path) {
 		// 兼容目录和单个压缩包
 		try {
@@ -338,16 +336,22 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 			return null;
 		}
 
+		List<File> dirs = Lists.newArrayList();
+		// 优先遍及当前目录，不做递归
 		for (File toolFile : files) {
 			if (toolFile.isDirectory()) {
-				File mdFile = getMdFile(toolFile);
-				if (mdFile != null) {
-					return mdFile;
-				}
+				dirs.add(toolFile);
 			} else {
 				if (toolFile.getName().endsWith(".md")) {
 					return toolFile;
 				}
+			}
+		}
+
+		for (File dir : dirs) {
+			File f = getMdFile(dir);
+			if (null != f) {
+				return f;
 			}
 		}
 

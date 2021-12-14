@@ -306,6 +306,14 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		}
 
 		String group = matcher.group(1);
+
+		// 兼容 [IDA_Pro_v7.0(MacOS).zip](./zip/IDA_Pro_v7.0(MacOS).zip) 格式的数据
+		String[] ss = StringUtils.split(group, "]");
+		group = ss[ss.length - 1];
+		if (StringUtils.startsWith(group, "(")) {
+			group = group.substring(1);
+		}
+
 		String replace = group.replace("/", File.separator).replaceFirst(".", "");
 		String filePath = mdFile.getParentFile().getPath() + replace;
 

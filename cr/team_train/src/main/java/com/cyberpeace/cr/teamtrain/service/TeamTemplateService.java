@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
-import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 
 /**

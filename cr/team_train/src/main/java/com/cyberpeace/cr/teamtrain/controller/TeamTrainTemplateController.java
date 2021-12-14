@@ -15,6 +15,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -29,7 +30,6 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
-import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -54,7 +54,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	public BaseRsp<TeamTrainTemplateRsp> create(
+	public BaseRsp create(
 			@RequestBody @Validated TeamTrainTemplateAddReq<AddTemplateMission> teamTrainTemplateAddReq) {
 		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils.copy(teamTrainTemplateAddReq,
 				TeamTrainTemplateContext.class);

@@ -22,7 +22,7 @@ public class RbTemplate extends BaseTable {
 
 	private String trainSkill;
 
-	private String config;
+	private String roleConfig;
 
 	private String businessTemplateId;
 

@@ -1,17 +1,18 @@
 package com.cyberpeace.cr.singletrain.dao.entity;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+
 import lombok.Data;
 
 @Data
 public class SingleRoomList {
-    private BusinessTemplate businessTemplate;
 
-    private SingleTemplate singleTemplate;
+	private BusinessTemplate businessTemplate;
 
-    private SingleRoom singleRoom;
+	private SingleTemplate singleTemplate;
 
-    private String missionsScheme;
+	private SingleRoom singleRoom;
+
+	private String missionsScheme;
 
 }

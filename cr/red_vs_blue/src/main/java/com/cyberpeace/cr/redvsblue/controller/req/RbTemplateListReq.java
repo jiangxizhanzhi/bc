@@ -1,21 +1,16 @@
-package com.cyberpeace.cr.teamtrain.service.context;
+package com.cyberpeace.cr.redvsblue.controller.req;
 
 import java.util.List;
 
 import com.cyberpeace.common.model.PageReqBase;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/*
- * 前台使用的查询类
- */
-@ApiModel
 @Data
-public class ListQuery extends PageReqBase {
+public class RbTemplateListReq extends PageReqBase {
 
-	@ApiModelProperty(value = "训练类别ID")
+	@ApiModelProperty(value = "类别ID")
 	private String category;
 
 	@ApiModelProperty(value = "检索参数")
@@ -28,5 +23,4 @@ public class ListQuery extends PageReqBase {
 	private Integer difficult;
 
 	private List<String> ids;
-
 }

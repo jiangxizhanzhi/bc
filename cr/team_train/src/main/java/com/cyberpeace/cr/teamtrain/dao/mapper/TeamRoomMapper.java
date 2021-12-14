@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.service.context.ListQuery;
 
 /**
  * @Entity com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom

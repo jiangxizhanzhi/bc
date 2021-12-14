@@ -8,7 +8,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -34,6 +37,8 @@ import net.lingala.zip4j.exception.ZipException;
 @Slf4j
 public class ToolResourceImportServiceImpl implements ToolResourceImportService {
 
+	private static final Logger log = LoggerFactory.getLogger("resourceImport");
+
 	@Autowired
 	private ToolFileService toolFileService;
 
@@ -49,6 +54,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @return
 	 */
 	@Override
+	@Async
 	public void importResource(String path) {
 		// 兼容目录和单个压缩包
 		try {
@@ -73,9 +79,11 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 			}
 
 			try {
+				log.info("tool=[{}] start import", subFile.getName());
 				importTool(subFile);
+				log.info("tool=[{}] import success", subFile.getName());
 			} catch (Exception e) {
-				log.error("import tool error, toolPath=[{}]", path, e);
+				log.error("tool=[{}] import error,", subFile.getName(), e);
 			}
 		}
 
@@ -127,7 +135,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		tool.setName(toStr(title));
 		Tool dbTool = toolService.getByName(tool.getName());
 		if (dbTool != null) {
-			log.info("已存在该工具[{}]", dbTool.getName());
+			log.info("tool=[{}] already existed, skip actual import", dbTool.getName());
 			return dbTool;
 		}
 
@@ -153,6 +161,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		List<String> language = data.get("语言支持");
 		setLanguage(tool, language);
 
+		List<String> introduction = data.get("描述");
+		setIntroduction(tool, introduction);
+
 		List<String> cracked = data.get("是否授权");
 		if (cracked == null) {
 			cracked = data.get("是否破解");
@@ -168,6 +179,11 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		List<String> version = data.get("版本号");
 		setVersionAndFiles(tool, version, mdFile);
 		return tool;
+	}
+
+	private void setIntroduction(Tool tool, List<String> introduction) {
+		String s = toStr(introduction);
+		tool.setIntroduction(s);
 	}
 
 	private void setLanguage(Tool tool, List<String> languageList) {

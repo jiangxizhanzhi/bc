@@ -3,31 +3,30 @@ package com.cyberpeace.oj.course.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-@TableName("course_classroomgroupinfo")
-public class ClassroomGroupInfo implements Serializable {
+@TableName("oj_classroom_group_info")
+public class ClassroomGroupInfo extends BaseTable {
 
-    private Integer id;
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	private String classroomId;
 
-    private String classroom;
+	private Integer groupNo;
 
-    private Integer groupNo;
+	private String groupUserIds;
 
-    private String groupUser;
+	private Integer destroyDelay;
 
-    private Integer destroyDelay;
+	private Integer sceneShareMode;
 
-    private Integer shareMode;
+	private String lessonId;
 
-    private String lesson;
-
-    private String ojSceneConfig;
+	private String topoId;
 
 }

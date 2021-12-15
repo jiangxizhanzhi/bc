@@ -132,6 +132,7 @@ public class LocalScene extends BaseTable {
 		DEFAULT(0, "默认"),
 		PRACTICE(110, "练习"),
 		LESSON(120, "课程"),
+		CLASSROOM(121, "课程表"),
 		EXAM(130, "考试"),
 		LESSON_PRACTICE(140, "课程练习"),
 		SINGLE_TRAINING(211, "单兵训练"),

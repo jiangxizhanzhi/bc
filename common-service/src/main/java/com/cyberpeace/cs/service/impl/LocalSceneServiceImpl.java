@@ -159,8 +159,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return true;
 		}
 		// 2. 发送mp请求
-		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		handler.checkPauseScene(localScene);
+//		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
+//		handler.checkPauseScene(localScene);
 		Boolean result = remoteSceneService.pauseScene(getSceneOpsContext(localScene));
 
 		if (!result) {

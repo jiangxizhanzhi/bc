@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("oj_local_scene")
 public class OjLocalScene extends BaseTable {
 

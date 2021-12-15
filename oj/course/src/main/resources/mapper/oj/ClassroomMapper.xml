@@ -47,4 +47,10 @@
         order by start_time asc
     </select>
 
+    <select id="selectByOrgAndLesson" resultMap="base">
+        <bind name="org" value="'%' + orgId + '%'"/>
+        select * from oj_classroom
+        where lesson_id = #{lessonId}
+        and organization_ids like #{org}
+    </select>
 </mapper>

@@ -3,7 +3,9 @@ package com.cyberpeace.oj.course.controller.admin;
 import java.io.File;
 import java.util.List;
 
+import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
+import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -77,6 +79,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private LessonSceneService lessonSceneService;
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
@@ -376,6 +381,49 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 				AttachmentPath.ATTACHMENT.getCode(), CommonConstant.TRUE, multipartFile);
 		return new BaseRsp<>(attachmentBo.getResourceId());
 
+	}
+
+	@ApiOperation("后台课时场景启动")
+	@PostMapping("/start_scene")
+	public BaseRsp<JSONObject> startScene(@ApiParam(name = "resource_id",
+			value = "课时编号") @RequestParam("resource_id") String resourceId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		JSONObject scene = lessonSceneService.startScene(resourceId, authContext);
+		return new BaseRsp<>(scene);
+	}
+
+	@ApiOperation("后台课时场景删除")
+	@PostMapping("/delete_scene")
+	public BaseRsp<Boolean> deleteScene(@ApiParam(name = "resource_id",
+			value = "课时编号") @RequestParam("resource_id") String resourceId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Boolean result = lessonSceneService.deleteScene(resourceId, authContext);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("后台课时节点重启")
+	@PostMapping("/node_restart")
+	public BaseRsp<Boolean> restartNode(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Boolean result = lessonSceneService.restartNode(sceneNodeReq.getResourceId(),
+				sceneNodeReq.getNodeId(), authContext);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("后台课时节点重建")
+	@PostMapping("/node_recreate")
+	public BaseRsp<Boolean> recreateNode(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Boolean result = lessonSceneService.recreateNode(sceneNodeReq.getResourceId(),
+				sceneNodeReq.getNodeId(), authContext);
+		return new BaseRsp<>(result);
 	}
 
 }

@@ -18,11 +18,14 @@ public class WsPath {
 
 	public static final String OPERATION_SCENE = "/ws/oj/operation/scene";
 
+	public static final String LESSON_SCENE = "/ws/course/lesson_scene";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
 		cache.add(CR_SCENE);
 		cache.add(OPERATION_SCENE);
+		cache.add(LESSON_SCENE);
 	}
 
 	public static boolean validPath(String path) {

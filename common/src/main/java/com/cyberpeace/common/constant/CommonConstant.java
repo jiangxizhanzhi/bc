@@ -18,11 +18,11 @@ public interface CommonConstant {
 
 	Integer ONE = 1;
 
-	Integer TWO = 2;
-
 	Integer HUNDRED = 100;
 
 	Integer NINE_NINE_NINE = 999;
+
+	Integer SIXTY = 60;
 
 	Boolean TRUE = true;
 

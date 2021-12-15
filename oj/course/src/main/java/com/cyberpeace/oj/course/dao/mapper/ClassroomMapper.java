@@ -16,4 +16,11 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	List<Classroom> listByTimeAndOrg(@Param("start") Date startOfDay, @Param("end") Date endOfDay,
 			@Param("org") List<String> organization, @Param("user") String createUser);
 
+	/**
+	 * 根据组织和课时查询课堂信息
+	 * @param orgId
+	 * @param lessonId
+	 * @return
+	 */
+	Classroom selectByOrgAndLesson(@Param("orgId") String orgId, @Param("lessonId") String lessonId);
 }

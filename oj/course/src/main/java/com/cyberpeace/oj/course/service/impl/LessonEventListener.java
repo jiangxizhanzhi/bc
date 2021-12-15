@@ -43,6 +43,11 @@ public class LessonEventListener extends MessageListener {
 	private LocalSceneMapper localSceneMapper;
 
 	@Override
+	public Integer declareMessageType() {
+		return LocalScene.BusinessCode.LESSON.getCode();
+	}
+
+	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 
 		ojLocalSceneService.deleteScene(businessId);

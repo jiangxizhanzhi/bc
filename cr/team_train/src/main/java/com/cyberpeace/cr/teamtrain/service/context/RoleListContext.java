@@ -1,14 +1,14 @@
-package com.cyberpeace.cr.teamtrain.controller.req;
+package com.cyberpeace.cr.teamtrain.service.context;
 
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.cr.teamtrain.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 
 import lombok.Data;
 
 @Data
-public class RoleListReq<T> implements Serializable {
+public class RoleListContext<T> implements Serializable {
 
 	private String Id;
 
@@ -20,11 +20,11 @@ public class RoleListReq<T> implements Serializable {
 
 	private Integer roleGroup;
 
-	private List<String> assetNodes;
+	private List<CrRoleNode> assetNodes;
 
 	private List<String> children;
 
-	private List<String> visibleNodes;
+	private List<CrRoleNode> visibleNodes;
 
 	private String key;
 

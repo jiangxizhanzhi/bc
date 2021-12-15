@@ -38,6 +38,7 @@ import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -129,41 +130,37 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
 				save(teamRoom);
 
-				List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil
-						.toJsonObjectArray(template.getRoleConfig(), TeamTrainTemplateRole.class);
+				List<RoleListContext> originRoles = JsonUtil
+						.toJsonObjectArray(template.getRoleConfig(), RoleListContext.class);
 				List<RoomRole> users = teamTrainRoomContext.getRoleConfig();
 				int index = 0;
-				TeamTrainTemplateRole teacherRole = new TeamTrainTemplateRole();
+				RoleListContext teacherRole = new RoleListContext();
 				teacherRole.setName(CrRole.TeamRoleGroupCode.TEACHER.getRole());
 				teacherRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getCode());
+				originRoles.add(0, teacherRole);
 
-				teamTrainTemplateRoleList.add(0, teacherRole);
+				for (RoleListContext originRole : originRoles) {
+					originRole.setId(null);
 
-				for (TeamTrainTemplateRole teamTrainTemplateRole : teamTrainTemplateRoleList) {
-
-					CrRole crRole = BeanUtils.deepCopy(teamTrainTemplateRole, CrRole.class);
-					// crRole.setBusinessInstanceId();
-					crRole.setUserIds(JsonUtil.toJsonString(users.get(index++).getUsers()));
-					teamTrainTemplateRole.getResourceId();
-					JsonUtil.toJsonString(teamTrainTemplateRoleList);
+					CrRole crRole = BeanUtils.deepCopy(originRole, CrRole.class);
+					crRole.setUserIds(JsonUtil.toJsonString(users.get(index).getUsers()));
 					crRole.setRoomId(teamRoom.getResourceId());
 					crRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-					crRole.setMissionScheme(getNewRoomScheme(
-							teamTrainTemplateRole.getMissionsScheme(), teamRoom.getResourceId()));
+					String copyMission = getNewRoomScheme(
+							JsonUtil.toJsonString(originRole.getMissionsScheme()),
+							teamRoom.getResourceId());
+					crRole.setMissionScheme(copyMission);
+
+					CrRoleNodesData nodesData = new CrRoleNodesData();
+					nodesData.setAssetNodes(originRole.getAssetNodes());
+					nodesData.setVisibleNodes(originRole.getVisibleNodes());
+					crRole.setNodes(JsonUtil.toJsonString(nodesData));
 					crRoleService.save(crRole);
 
+					index++;
 				}
-
-				// LocalScene localScene = getLocalScene(teamRoom.getResourceId());
-
-				// localSceneService.save(localScene);
-
-				// teamRoom.setLocalSceneId(localScene.getResourceId());
-
-				// teamRoomMapper.updateById(teamRoom);
 
 			}
 
@@ -177,14 +174,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @return
 	 */
 	private String getNewRoomScheme(String missionsScheme, String roomId) {
-		ColorMission<AddTemplateMission> colorMission1 = JsonUtil.toJsonTObject(missionsScheme,
-				new TypeReference<ColorMission<AddTemplateMission>>() {});
-
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
 				new TypeReference<ColorMission<AddTemplateMission>>() {});
-		if (null == colorMission) {
+		if (null == colorMission || null == colorMission.getSchemeData()) {
 			return "[]";
 		}
+
 		List<MissionStageScheme> missionStageSchemes = Lists.newArrayList();
 		List<String> originMissionIds = Lists.newArrayList();
 		// 遍历每个阶段
@@ -204,17 +199,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		for (MissionSchemeObject<AddTemplateMission> schemeDatum : colorMission.getSchemeData()) {
 			MissionStageScheme missionStageScheme = new MissionStageScheme();
 
-			List<AddTemplateMission> missions = schemeDatum.getMissions();
 			List<String> targetMissionIds = Lists.newArrayList();
-			missionStageScheme.setStage(schemeDatum.getStage());
-			missionStageScheme.setDynamic(schemeDatum.getDynamic());
 
 			// 遍历每个任务设置新的任务id
-			for (AddTemplateMission mission : missions) {
+			for (AddTemplateMission mission : schemeDatum.getMissions()) {
 				targetMissionIds.add(originMissionMaps.getOrDefault(mission.getResourceId(),
 						mission.getResourceId()));
 			}
+			missionStageScheme.setStage(schemeDatum.getStage());
+			missionStageScheme.setDynamic(schemeDatum.getDynamic());
 			missionStageScheme.setMissions(targetMissionIds);
+
 			missionStageSchemes.add(missionStageScheme);
 		}
 
@@ -225,8 +220,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public void updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom) {
 
-		String userId = UserInfoContext.getUserContext().getUserId();
-
 		if (!StringUtils.isBlank(teamTrainRoomContext.getName())) {
 			teamRoom.setName(teamTrainRoomContext.getName());
 		}
@@ -236,7 +229,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (!StringUtils.isBlank(teamTrainRoomContext.getDescription())) {
 			teamRoom.setDescription(teamTrainRoomContext.getDescription());
 		}
-
 		if (teamTrainRoomContext.getPreSkill() != null
 				&& teamTrainRoomContext.getPreSkill().size() > 0) {
 			teamRoom.setPreSkills(JsonUtil.toJsonString(teamTrainRoomContext.getPreSkill()));
@@ -273,7 +265,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 						crRoleService.updateById(crRole);
 
 					});
-					// crRoleService.updateBatchById(crRoleList);
 				}
 			}
 		});
@@ -526,21 +517,5 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		timeLineData.setEndTime(endTime);
 	}
-
-	private void preStartScene(String localSceneId) {
-		// TODO
-		// 根据角色校验是否启动
-	}
-	//
-	// private SceneStartContext getSceneStartContext() {
-	// // TODO
-	// // 单兵、团队、红蓝是否可以聚合
-	// SceneStartContext sceneStartContext = new SceneStartContext();
-	//
-	// sceneStartContext.setContext(new HashMap<>());
-	// sceneStartContext.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
-	//
-	// return sceneStartContext;
-	// }
 
 }

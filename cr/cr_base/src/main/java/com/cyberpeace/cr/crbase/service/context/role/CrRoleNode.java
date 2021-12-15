@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.dao.entity;
+package com.cyberpeace.cr.crbase.service.context.role;
 
 import java.io.Serializable;
 
@@ -9,5 +9,5 @@ public class CrRoleNode implements Serializable {
 
 	private String id;
 
-	private String category;
+	private Integer category;
 }

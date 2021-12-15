@@ -22,7 +22,7 @@ import com.cyberpeace.cr.crbase.service.context.LoadTempleteData;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
-import com.cyberpeace.cr.teamtrain.controller.req.RoleListReq;
+import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -92,13 +92,13 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		TeamTrainTemplateReq teamTrainTemplateAddReq = JSON.parseObject(templateString,
 				TeamTrainTemplateReq.class, parserConfig);
 
-		List<RoleListReq<Integer>> roleListReq = teamTrainTemplateAddReq.getRoleList();
+		List<RoleListContext<Integer>> roleListReq = teamTrainTemplateAddReq.getRoleList();
 
-		List<RoleListReq<AddTemplateMission>> newRoleList = Lists.newArrayList();
+		List<RoleListContext<AddTemplateMission>> newRoleList = Lists.newArrayList();
 
-		for (RoleListReq<Integer> listReq : roleListReq) {
+		for (RoleListContext<Integer> listReq : roleListReq) {
 
-			RoleListReq<AddTemplateMission> newRole = BeanUtils.copy(listReq, RoleListReq.class);
+			RoleListContext<AddTemplateMission> newRole = BeanUtils.copy(listReq, RoleListContext.class);
 
 			List<MissionSchemeObject<Integer>> stageList = listReq.getMissionsScheme()
 					.getSchemeData();

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.cr.crbase.dao.entity.CrRoleNode;
-import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 
 @Service

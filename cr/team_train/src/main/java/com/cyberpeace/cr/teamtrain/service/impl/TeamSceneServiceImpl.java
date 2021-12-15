@@ -20,7 +20,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrRoleNodesData;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;

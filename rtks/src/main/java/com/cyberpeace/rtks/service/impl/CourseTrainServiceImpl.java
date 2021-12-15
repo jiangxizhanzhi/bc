@@ -57,7 +57,8 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 			throw new InvalidParamException("未检索到相应岗位!");
 		}
 
-		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(), String.class);
+		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(),
+				String.class);
 
 		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
 				userId);
@@ -72,10 +73,13 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 				.getKnowledgeByCourseId(courseIds);
 
 		List<CourseKnowledgeSkillBo> boList = courseIds.stream()
+				.filter(courseId -> CollectionUtils
+						.isNotEmpty(courseLessonMapper.selectByCourse(courseId)))
 				.filter(courseId -> null != processBoMap.get(courseId)).map(courseId -> {
 					CourseStudyProcessBo bo = processBoMap.get(courseId);
 					CourseKnowledgeSkillBo knowledgeBo = BeanUtils
 							.deepCopy(infoMap.get(bo.getCourseId()), CourseKnowledgeSkillBo.class);
+
 					knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
 					knowledgeBo.setProcess(MathUtils.ceil(bo.getProcess()));
 					knowledgeBo.setCompleteTheory(bo.getCompleteTheory());

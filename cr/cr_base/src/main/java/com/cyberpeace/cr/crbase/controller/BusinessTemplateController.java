@@ -198,9 +198,9 @@ public class BusinessTemplateController {
 
 	@DeleteMapping()
 	@ApiOperation("批量删除")
-	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		// todo
-		return new BaseRsp<>();
+	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+		// todo 关联`cr_xxx_template`表数据待删除
+		return new BaseRsp<>(businessTemplateService.batchDelete(deleteReq.getIds()) != 0);
 	}
 
 	@ApiOperation("校验模板名字")

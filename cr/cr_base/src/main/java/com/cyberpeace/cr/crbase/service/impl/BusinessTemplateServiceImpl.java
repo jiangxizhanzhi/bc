@@ -222,4 +222,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplate;
 	}
 
+	@Override
+	public Integer batchDelete(List<String> business_template_ids) {
+		return businessTemplateMapper.deleteBatchIds(business_template_ids);
+	}
 }

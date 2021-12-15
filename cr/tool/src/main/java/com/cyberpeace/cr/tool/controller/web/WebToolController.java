@@ -37,6 +37,7 @@ public class WebToolController {
     public BaseRsp<ListRsp<WebToolRsp>> getList(
             @ApiParam(name = "listReq", value = "查询条件") @Validated WebToolListReq webToolListReq) {
 
+        Boolean isAdmin = false;
         Page page = webToolListReq.toPageParam();
         ToolListQuery listQuery = BeanUtils.copy(webToolListReq, ToolListQuery.class);
         if (webToolListReq.getCracked() != null && StringUtils.isNotBlank(webToolListReq.getCracked())) {
@@ -46,7 +47,7 @@ public class WebToolController {
             listQuery.setCracked(webToolListReq.getCracked().equals(Tool.Cracked.FREE.getCode()));
         }
 
-        IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery);
+        IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin);
         IPage<WebToolRsp> convert = toolBoListRsp.convert(webTool -> BeanUtils.copy(webTool, WebToolRsp.class));
 
         return new BaseRsp<>(PageUtil.getListResult(convert));

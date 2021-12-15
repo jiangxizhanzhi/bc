@@ -1,4 +1,5 @@
 package com.cyberpeace.cr.tool.service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -9,9 +10,9 @@ import org.apache.ibatis.annotations.Param;
 
 public interface ToolService extends IService<Tool> {
 
-	IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery);
+    IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin);
 
-	ToolRsp selectById(@Param("resourceId") String resourceId);
+    ToolRsp selectById(@Param("resourceId") String resourceId);
 
-	Tool getByName(String name);
+    Tool getByName(String name);
 }

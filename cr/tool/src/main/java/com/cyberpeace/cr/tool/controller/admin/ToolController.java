@@ -33,59 +33,60 @@ import java.util.Date;
 @RequiresAuthentication
 public class ToolController {
 
-	@Autowired
-	private ToolService toolService;
+    @Autowired
+    private ToolService toolService;
 
-	@ApiOperation("工具库列表")
-	@GetMapping("/list")
-	public BaseRsp<ListRsp<ToolRsp>> getList(
-			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
-		Page page = pageReqBase.toPageParam();
-		ToolListQuery listQuery = BeanUtils.copy(pageReqBase, ToolListQuery.class);
-		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery);
-		return new BaseRsp(PageUtil.getListResult(toolBoListRsp));
-	}
+    @ApiOperation("工具库列表")
+    @GetMapping("/list")
+    public BaseRsp<ListRsp<ToolRsp>> getList(
+            @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
+		Boolean isAdmin = true;
+        Page page = pageReqBase.toPageParam();
+        ToolListQuery listQuery = BeanUtils.copy(pageReqBase, ToolListQuery.class);
+        IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin);
+        return new BaseRsp(PageUtil.getListResult(toolBoListRsp));
+    }
 
-	@ApiOperation("工具详情")
-	@GetMapping()
-	public BaseRsp<ToolRsp> getDetail(
-			@ApiParam(name = "resource_id", value = "查询id", required = true)
-			@RequestParam("resource_id") @NotBlank String resourceId) {
-		ToolRsp toolRsp = toolService.selectById(resourceId);
-		return new BaseRsp<>(toolRsp);
-	}
+    @ApiOperation("工具详情")
+    @GetMapping()
+    public BaseRsp<ToolRsp> getDetail(
+            @ApiParam(name = "resource_id", value = "查询id", required = true)
+            @RequestParam("resource_id") @NotBlank String resourceId) {
+        ToolRsp toolRsp = toolService.selectById(resourceId);
+        return new BaseRsp<>(toolRsp);
+    }
 
-	@ApiOperation("工具创建")
-	@PostMapping()
-	public BaseRsp<String> create(@RequestBody ToolAddReq toolReq) {
-		Tool tool = BeanUtils.copy(toolReq, Tool.class);
-		if (!StringUtils.isBlank(toolReq.getPublishTime())) {
-			Date date = DateUtil.StringToDate(toolReq.getPublishTime(), DateUtil.SHOT_PATTERN);
-			tool.setPublishTime(date);
-		}
-		tool.setImageResourceId(
-				toolReq.getImageResourceId() == null ? toolReq.getImageResourceId() : "");
-		toolService.save(tool);
-		return new BaseRsp<>();
-	}
+    @ApiOperation("工具创建")
+    @PostMapping()
+    public BaseRsp<String> create(@RequestBody ToolAddReq toolReq) {
+        Tool tool = BeanUtils.copy(toolReq, Tool.class);
+        if (!StringUtils.isBlank(toolReq.getPublishTime())) {
+            Date date = DateUtil.StringToDate(toolReq.getPublishTime(), DateUtil.SHOT_PATTERN);
+            tool.setPublishTime(date);
+        }
+        tool.setImageResourceId(
+                toolReq.getImageResourceId() == null ? toolReq.getImageResourceId() : "");
+        toolService.save(tool);
+        return new BaseRsp<>();
+    }
 
-	@ApiOperation("工具更新")
-	@PatchMapping()
-	public BaseRsp<String> update(@RequestBody ToolUpdateReq toolupdateReq) {
-		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
-		if (!StringUtils.isBlank(toolupdateReq.getPublishTime())) {
-			Date date = DateUtil.StringToDate(toolupdateReq.getPublishTime(), DateUtil.SHOT_PATTERN);
-			tool.setPublishTime(date);
-		}
-		toolService.updateById(tool);
-		return new BaseRsp<>();
-	}
+    @ApiOperation("工具更新")
+    @PatchMapping()
+    public BaseRsp<String> update(@RequestBody ToolUpdateReq toolupdateReq) {
+        Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
+        if (!StringUtils.isBlank(toolupdateReq.getPublishTime())) {
+            Date date = DateUtil.StringToDate(toolupdateReq.getPublishTime(), DateUtil.SHOT_PATTERN);
+            tool.setPublishTime(date);
+        }
+        toolService.updateById(tool);
+        return new BaseRsp<>();
+    }
 
-	@ApiOperation("工具删除")
-	@DeleteMapping()
-	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
-		toolService.removeByIds(deleteReq.getIds());
-		return new BaseRsp<>();
-	}
+    @ApiOperation("工具删除")
+    @DeleteMapping()
+    public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
+        toolService.removeByIds(deleteReq.getIds());
+        return new BaseRsp<>();
+    }
 
 }

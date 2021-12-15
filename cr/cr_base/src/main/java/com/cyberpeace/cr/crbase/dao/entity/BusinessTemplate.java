@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 
 import lombok.Data;
 import lombok.Getter;
@@ -36,12 +35,8 @@ public class BusinessTemplate extends AuthTable {
 
 	public enum BusinessType implements GenericEnum {
 
-		TRAINING_SINGLE(LocalScene.BusinessCode.SINGLE_TRAINING),
-		VULN_VALIDATE(LocalScene.BusinessCode.LIVE_VULN),
-		TRAINING_TEAM(LocalScene.BusinessCode.TEAM_TRAINING),
-		RED_VS_BLUE(LocalScene.BusinessCode.RED_VS_BLUE),
-		WEAPON_ASSESS(LocalScene.BusinessCode.WEAPON_TEST),
-		SYSTEM_ASSESS(LocalScene.BusinessCode.SYSTEM_TEST);
+		TRAINING_SINGLE(1, "单兵训练"), VULN_VALIDATE(2, "漏洞库"), TRAINING_TEAM(3,
+				"团队训练"), RED_VS_BLUE(4, "红蓝对抗"), WEAPON_ASSESS(6, "装备测试"), SYSTEM_ASSESS(7, "系统测试");
 
 		@Getter
 		private Integer code;
@@ -49,9 +44,10 @@ public class BusinessTemplate extends AuthTable {
 		@Getter
 		private String desc;
 
-		private BusinessType(LocalScene.BusinessCode businessCode) {
-			this.code = businessCode.getCode();
-			this.desc = businessCode.getDesc();
+		private BusinessType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+
 		}
 	}
 }

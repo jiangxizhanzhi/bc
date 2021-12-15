@@ -66,7 +66,7 @@ public class ToolCategoryController {
 	@DeleteMapping()
 	@ApiOperation("工具分类批量删除")
 	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
-		toolCategoryService.removeByIds(deleteReq.getIds());
+		toolCategoryService.batchDelete(deleteReq.getIds());
 		return new BaseRsp<>();
 	}
 }

@@ -34,4 +34,14 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByCategory" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
+        select * from cr_tool_tool
+        <where>
+            <if test="resourceId != null and resourceId != ''">
+                <bind name="resourceId" value="'%' + resourceId + '%'"/>
+                category like #{resourceId}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -16,4 +16,6 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	ToolCategory getByName(String name);
 
 	ToolCategory saveCategory(String name);
+
+	void batchDelete(List<String> resourceIds);
 }

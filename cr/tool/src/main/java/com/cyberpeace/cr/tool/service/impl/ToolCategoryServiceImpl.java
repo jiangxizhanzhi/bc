@@ -2,6 +2,10 @@ package com.cyberpeace.cr.tool.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,6 +29,9 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 
 	@Autowired
 	private ToolCategoryMapper toolCategoryMapper;
+
+	@Autowired
+	private ToolMapper toolMapper;
 
 	@Override
 	public ListRsp<ToolCategory> selectPage(PageReqBase listReq) {
@@ -58,5 +65,17 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		toolCategoryMapper.insert(newCategory);
 
 		return newCategory;
+	}
+
+	@Override
+	public void batchDelete(List<String> resourceIds) {
+		//查询该分类是否有被工具库使用
+		for (String resourceId : resourceIds) {
+			List<Tool> tools = toolMapper.selectByCategory(resourceId);
+			if (CollectionUtils.isNotEmpty(tools)) {
+				throw new InvalidParamException("工具类型正在被使用,无法删除");
+			}
+		}
+		removeByIds(resourceIds);
 	}
 }

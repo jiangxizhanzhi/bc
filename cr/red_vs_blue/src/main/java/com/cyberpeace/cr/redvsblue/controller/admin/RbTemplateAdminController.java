@@ -29,7 +29,7 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "红蓝对抗模板")
+@Api(tags = "红蓝对抗模板后台")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/admin/red_vs_blue/red_vs_blue_templates/")

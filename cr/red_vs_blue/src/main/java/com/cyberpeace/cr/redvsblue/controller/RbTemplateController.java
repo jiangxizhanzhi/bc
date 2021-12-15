@@ -8,23 +8,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
+import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListRsp;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateRsp;
+import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRoleRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "红蓝对抗模板")
+@Api(tags = "红蓝对抗模板前台")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/red_vs_blue_templates/")
@@ -42,9 +50,9 @@ public class RbTemplateController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		List<RbTemplate> teamTemplates = rbTemplateService
+		List<RbTemplate> rbTemplates = rbTemplateService
 				.getRbTemplateByBusinessIds(deleteReq.getIds());
-		List<String> roomIds = teamTemplates.stream().map(RbTemplate::getResourceId).distinct()
+		List<String> roomIds = rbTemplates.stream().map(RbTemplate::getResourceId).distinct()
 				.collect(Collectors.toList());
 
 		rbTemplateService.batchDelete(deleteReq.getIds(), roomIds);
@@ -58,15 +66,70 @@ public class RbTemplateController {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 
-		IPage<RbTemplateData> data = rbTemplateService.getList(listQuery);
+		IPage<RbTemplateData> data = rbTemplateService.page(listQuery);
 
 		data.convert(teamTemplateData -> getRbTemplateRspByBaseInfoData(teamTemplateData));
 
 		return new BaseRsp(data);
 	}
 
-	private Object getRbTemplateRspByBaseInfoData(RbTemplateData teamTemplateData) {
-		return null;
+	private RbTemplateListRsp getRbTemplateRspByBaseInfoData(RbTemplateData teamTemplateData) {
+		RbTemplateListRsp rbTemplateListRsp = new RbTemplateListRsp();
+
+		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
+
+		rbTemplateListRsp.setResourceId(teamTemplateData.getResourceId());
+		rbTemplateListRsp.setCrEventInfo(baseInfoRsp);
+		String roleString = teamTemplateData.getRoleConfig();
+
+		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
+
+		List<RbTemplateRoleRsp> rbTemplateRoleRsps = Lists.newArrayList();
+		RbTemplateRoleRsp rbTemplateRoleRsp = new RbTemplateRoleRsp(
+				CrRole.RbRoleGroupCode.ADMIN.getRole(), CrRole.RbRoleGroupCode.ADMIN.getCode());
+		rbTemplateRoleRsps.add(rbTemplateRoleRsp);
+
+		RbTemplateRoleRsp rbTemplateRoleRsp1 = new RbTemplateRoleRsp(
+				CrRole.RbRoleGroupCode.DIRECTOR.getRole(),
+				CrRole.RbRoleGroupCode.DIRECTOR.getCode());
+		rbTemplateRoleRsps.add(rbTemplateRoleRsp1);
+
+		RbTemplateRoleRsp rbTemplateRoleRsp2 = new RbTemplateRoleRsp(
+				CrRole.RbRoleGroupCode.REFEREE.getRole(), CrRole.RbRoleGroupCode.REFEREE.getCode());
+		rbTemplateRoleRsps.add(rbTemplateRoleRsp2);
+
+		RbTemplateRoleRsp rbTemplateRoleRsp3 = new RbTemplateRoleRsp(
+				CrRole.RbRoleGroupCode.RED.getRole(), CrRole.RbRoleGroupCode.RED.getCode());
+
+		JSONArray redRoles = (JSONArray) rolejsonObject.get("redRoles");
+		List<RbTemplateRoleRsp> redTemplateRoleRsps = Lists.newArrayList();
+		for (int i = 0; i < redRoles.size(); i++) {
+
+			RbTemplateRoleRsp redTemplateRole = new RbTemplateRoleRsp(
+					redRoles.getJSONObject(i).get("name").toString(),
+					CrRole.RbRoleGroupCode.RED.getCode());
+			redTemplateRoleRsps.add(redTemplateRole);
+		}
+		rbTemplateRoleRsp3.setChildren(redTemplateRoleRsps);
+		rbTemplateRoleRsps.add(rbTemplateRoleRsp3);
+
+		RbTemplateRoleRsp rbTemplateRoleRsp4 = new RbTemplateRoleRsp(
+				CrRole.RbRoleGroupCode.BLUE.getRole(), CrRole.RbRoleGroupCode.BLUE.getCode());
+		rbTemplateRoleRsps.add(rbTemplateRoleRsp4);
+
+		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blueRoles");
+		List<RbTemplateRoleRsp> blueTemplateRoleRsps = Lists.newArrayList();
+		for (int i = 0; i < redRoles.size(); i++) {
+
+			RbTemplateRoleRsp blueTemplateRole = new RbTemplateRoleRsp(
+					blueRoles.getJSONObject(i).get("name").toString(),
+					CrRole.RbRoleGroupCode.BLUE.getCode());
+			blueTemplateRoleRsps.add(blueTemplateRole);
+		}
+		rbTemplateRoleRsp3.setChildren(blueTemplateRoleRsps);
+		rbTemplateRoleRsps.add(rbTemplateRoleRsp3);
+		rbTemplateListRsp.setRoleInfo(rbTemplateRoleRsps);
+		return rbTemplateListRsp;
 	}
 
 }

@@ -26,5 +26,5 @@ public interface RbTemplateService extends IService<RbTemplate> {
 
 	void batchDelete(List<String> ids, List<String> roomIds);
 
-	IPage<RbTemplateData> getList(ListQuery listQuery);
+	IPage<RbTemplateData> page(ListQuery listQuery);
 }

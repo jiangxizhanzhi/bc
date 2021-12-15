@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.redvsblue.controller.RbTemplateData;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 
 import lombok.Data;
@@ -51,19 +52,16 @@ public class BaseInfoRsp implements Serializable {
 		this.trainSkill = JsonUtil.toJsonObjectArray(template.getTrainSkill(), String.class);
 	}
 
-	// public BaseInfoRsp(TeamTemplateData teamTemplateData) {
-	// this.name = teamTemplateData.getName();
-	// this.category = teamTemplateData.getSubType();
-	// this.description = teamTemplateData.getDescription();
-	// this.createUser = teamTemplateData.getCreateUserId();
-	// this.createTime = teamTemplateData.getCreateTime();
-	// this.difficult = teamTemplateData.getDifficulty();
-	// this.durationTime = teamTemplateData.getDurationTime();
-	// this.preSkill = JsonUtil.toJsonObjectArray(teamTemplateData.getPreSkills(),
-	// String.class);
-	// this.trainSkill =
-	// JsonUtil.toJsonObjectArray(teamTemplateData.getTrainSkills(),
-	// String.class);
-	// this.peopleNumber = teamTemplateData.getPeopleNumber();
-	// }
+	public BaseInfoRsp(RbTemplateData rbTemplateData) {
+
+		this.name = rbTemplateData.getName();
+		this.category = rbTemplateData.getSubType();
+		this.description = rbTemplateData.getDescription();
+		this.createUser = rbTemplateData.getCreateUserId();
+		this.createTime = rbTemplateData.getCreateTime();
+		this.difficult = rbTemplateData.getDifficulty();
+		this.durationTime = rbTemplateData.getDurationTime();
+		this.preSkill = JsonUtil.toJsonObjectArray(rbTemplateData.getPreSkill(), String.class);
+		this.trainSkill = JsonUtil.toJsonObjectArray(rbTemplateData.getTrainSkill(), String.class);
+	}
 }

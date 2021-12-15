@@ -2,9 +2,6 @@ package com.cyberpeace.cr.tool.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.cr.tool.dao.entity.Tool;
-import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -16,11 +13,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CacheConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.dao.mapper.ToolCategoryMapper;
+import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
 
 @Service
@@ -69,11 +70,11 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 
 	@Override
 	public void batchDelete(List<String> resourceIds) {
-		//查询该分类是否有被工具库使用
+		// 查询该分类是否有被工具库使用
 		for (String resourceId : resourceIds) {
 			List<Tool> tools = toolMapper.selectByCategory(resourceId);
 			if (CollectionUtils.isNotEmpty(tools)) {
-				throw new InvalidParamException("工具类型正在被使用,无法删除");
+				throw new BusinessException(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE);
 			}
 		}
 		removeByIds(resourceIds);

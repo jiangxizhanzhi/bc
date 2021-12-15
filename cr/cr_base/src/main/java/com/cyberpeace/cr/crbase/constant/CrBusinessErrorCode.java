@@ -81,4 +81,7 @@ public interface CrBusinessErrorCode {
 
 	// 文件格式错误
 	String FILE_FORMAT_ERROR = "101024";
+
+	// 工具库分类在使用时不能删除
+	String TOOL_CATEGORY_IN_USE = "101025";
 }

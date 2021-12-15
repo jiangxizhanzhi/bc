@@ -2,7 +2,9 @@ package com.cyberpeace.cr.redvsblue.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 
@@ -21,6 +23,11 @@ public interface RbRoomService extends IService<RbRoom> {
 	 */
 	List<RbRoom> getAll();
 
+	/** 列表查询团队训练
+	 * @param listQuery
+	 * @return
+	 */
+	IPage<RbRoomData> list(ListQuery listQuery);
 	/**
 	 * 获取当前红蓝房间数量
 	 * @return

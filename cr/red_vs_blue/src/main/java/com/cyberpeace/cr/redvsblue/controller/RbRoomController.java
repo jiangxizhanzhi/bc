@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -19,6 +22,7 @@ import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomReq;
+import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -80,16 +84,56 @@ public class RbRoomController {
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		RbRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, RbRoomRsp.class);
-		teamRoomRsp.setRolePermission(getSelfRole(crRoles, userId));
+		teamRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
 
 		teamRoomRsp.setRolesData(getRbRoomRoleRes(crRoles));
-
+		// todo teamRoomRsp.setTrainingStatus();
 		teamRoomRsp
 				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 		teamRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 
 		return new BaseRsp<RbRoomRsp>(teamRoomRsp);
+	}
+
+	@ApiOperation("列表查询")
+	@GetMapping("/list")
+	public BaseRsp<ListRsp<RbRoomRsp>> list(@Validated RbTemplateListReq listReq) {
+		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
+		listQuery.setPer_page(listReq.getPerPage());
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 默认时间排序4
+		listQuery.setSort("-cr_team_room.create_time");
+
+		IPage<RbRoomData> data = rbRoomService.list(listQuery);
+
+		ListRsp<RbRoomRsp> teamRoomRspListRsp = new ListRsp();
+
+		List<RbRoomRsp> teamRoomRspList = Lists.newArrayList();
+
+		for (RbRoomData teamRoomData : data.getRecords()) {
+			RoleQuery roleQuery = new RoleQuery();
+			roleQuery.setRoomId(teamRoomData.getResourceId());
+
+			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+
+			RbRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, RbRoomRsp.class);
+			teamRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
+
+			teamRoomRsp.setPreSkill(
+					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
+			teamRoomRsp.setTrainSkill(
+					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+
+			teamRoomRspList.add(teamRoomRsp);
+		}
+
+		teamRoomRspListRsp.setList(teamRoomRspList);
+		teamRoomRspListRsp.setTotal(data.getTotal());
+		teamRoomRspListRsp.setLastPage(data.getPages());
+		teamRoomRspListRsp.setCurrentPage(data.getCurrent());
+
+		return new BaseRsp<ListRsp<RbRoomRsp>>(teamRoomRspListRsp);
 	}
 
 	private List<RbRoomRoleRes> getRbRoomRoleRes(List<CrRole> crRoles) {
@@ -125,7 +169,12 @@ public class RbRoomController {
 		return teamRoomRoleResList;
 	}
 
-	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
+	/** 先获取实例列表中自己的角色，再获取所有角色(查看列表用到)
+	 * @param crRoles
+	 * @param userId
+	 * @return
+	 */
+	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		List<RoleUsers> roleUsersList = Lists.newArrayList();
 		crRoles.forEach(crRole -> {
@@ -158,7 +207,7 @@ public class RbRoomController {
 	// @ApiOperation("修改")
 	// @PutMapping()
 	// public BaseRsp<RbRoomRsp>
-	// update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq)
+	// update(@RequestBody @Validated RbTrainRoomModifyReq teamTrainRoomModifyReq)
 	// {
 	//
 	// RbRoom teamRoom =

@@ -36,6 +36,7 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.teamtrain.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.StudentScoreRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 import com.cyberpeace.cr.teamtrain.service.TeamDynamicEventService;
@@ -219,6 +220,8 @@ public class TeamTrainScoreController {
 			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
 		MissionEvaluationQuery missionEvaluationQuery = BeanUtils.copy(missionEvaluationListReq,
 				MissionEvaluationQuery.class);
+		missionEvaluationQuery.setPer_page(missionEvaluationListReq.getPerPage());
+
 		if (!missionEvaluationListReq.getIsShowEvaluated()) {
 			missionEvaluationQuery.setEvaluateStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
 		}
@@ -248,6 +251,12 @@ public class TeamTrainScoreController {
 		data.convert(missionEvaluationContext -> {
 			MissionEvaluationRsp missionEvaluationRsp = BeanUtils.copy(missionEvaluationContext,
 					MissionEvaluationRsp.class);
+
+			MissionEvaluationRsp.SubmitInfo submitInfo = missionEvaluationRsp.new SubmitInfo();
+
+			submitInfo.setCreateTime(missionEvaluationContext.getCreateTime());
+			submitInfo.setUserAnswer(missionEvaluationContext.getAnswer());
+
 			missionEvaluationRsp
 					.setEvaluatorName(userInfoMap.get(missionEvaluationContext.getEvaluatorId()));
 			missionEvaluationRsp.setEvaluator(missionEvaluationContext.getEvaluatorId());
@@ -256,21 +265,18 @@ public class TeamTrainScoreController {
 			missionEvaluationRsp.setSubmitLogHash(missionEvaluationContext.getMissionHash());
 			missionEvaluationRsp.setTotalScore(missionEvaluationContext.getMission().getScore());
 			missionEvaluationRsp.setEvaluateTime(missionEvaluationContext.getEvaluateTime());
-			MissionEvaluationRsp.SubmitInfo submitInfo = missionEvaluationRsp.new SubmitInfo();
-
-			submitInfo.setCreateTime(missionEvaluationContext.getCreateTime());
-			submitInfo.setUserAnswer(missionEvaluationContext.getAnswer());
-
 			missionEvaluationRsp.setSubmitInfo(submitInfo);
-
 			missionEvaluationRsp.setMissionData(missionEvaluationContext.getMission());
+
 			return missionEvaluationRsp;
 		});
+
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
 	private TeamScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
 		TeamScore teamScore = BeanUtils.copy(studentScoreReq, TeamScore.class);
+
 		teamScore.setTeamInstanceId(studentScoreReq.getTrainingTeam());
 		teamScore.setUserId(studentScoreReq.getUser());
 		teamScore.setSkillScore(studentScoreReq.getAbilityScore());
@@ -394,7 +400,9 @@ public class TeamTrainScoreController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		TrainingReport trainingReport = new TrainingReport();
 		TeamRoomData teamRoomdata = teamRoomService.getTeamRoomDataByRoomId(resource_id);
-		if (null == teamRoomdata.getSceneStartTime()) {
+
+		if (TeamRoom.TrainingStatusCode.UNOPENED.getCode()
+				.equals(teamRoomdata.getTrainingStatus())) {
 			return new BaseRsp<>(new TrainingReport());
 		}
 

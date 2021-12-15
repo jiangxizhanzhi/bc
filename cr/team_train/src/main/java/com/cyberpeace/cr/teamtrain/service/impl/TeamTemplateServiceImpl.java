@@ -26,6 +26,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
+import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 
 /**
@@ -70,7 +71,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", topoData.getSceneConfig());
 		String topoId = localSceneService.saveTopo(topoJson,
-				teamTrainTemplateContext.getBaseInfo().getType());
+				LocalScene.BusinessCode.TEAM_TRAINING.getCode());
 		// "todo场景";
 
 		// 保存基础模板
@@ -141,7 +142,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		}
 
 		// 更新团队训练模板
- 		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+		teamTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
 		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
 		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
 		teamTemplate.setSubType(baseInfo.getCategory());

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
-import com.cyberpeace.cr.crbase.service.context.LoadTemplete;
+import com.cyberpeace.cr.crbase.service.context.LoadTemplate;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
@@ -47,7 +47,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
     BusinessTemplate getByLocalSceneId(String resourceId);
 
-	void batchLoads(LoadTemplete loadTemplete);
+	void batchLoads(LoadTemplate loadTemplate);
 
 	/**
 	 * 训练模板删除

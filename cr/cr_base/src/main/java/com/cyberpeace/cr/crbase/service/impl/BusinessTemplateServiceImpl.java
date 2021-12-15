@@ -108,8 +108,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		BusinessTemplate businessTemplate = businessTemplateMapper.selectByNameAndType(name, type,
 				id);
 		if (businessTemplate != null) {
-			log.error("templete name already exist！name=[{}]", name);
-			throw new BusinessException(CrBusinessErrorCode.TEMPLETE_NAME_EXIST_ERROR);
+			log.error("template name already exist！name=[{}]", name);
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
 		}
 
 	}
@@ -125,12 +125,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public void batchLoads(LoadTemplete loadTemplete) {
+	public void batchLoads(LoadTemplate loadTemplate) {
 
-		List<LoadTempleteData> items = loadTemplete.getItems();
+		List<LoadTemplateData> items = loadTemplate.getItems();
 		List<MissionTemplate> missionTemplateList = missionService
-				.batchInsertMissionTemplate(loadTemplete.getTemplateQuestions());
-		for (LoadTempleteData item : items) {
+				.batchInsertMissionTemplate(loadTemplate.getTemplateQuestions());
+		for (LoadTemplateData item : items) {
 			businessTemplateHandler.loads(item, missionTemplateList);
 
 		}

@@ -35,7 +35,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
-import com.cyberpeace.cr.crbase.service.context.LoadTemplete;
+import com.cyberpeace.cr.crbase.service.context.LoadTemplate;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.crbase.service.impl.TestSceneHandler;
@@ -158,14 +158,14 @@ public class BusinessTemplateController {
 					// 反序列化对象
 					ParserConfig parserConfig = new ParserConfig();
 					parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-					LoadTemplete loadTemplete = JSON.parseObject(FileUtil.textFromFile(unzipFile),
-							LoadTemplete.class, parserConfig);
+					LoadTemplate loadTemplate = JSON.parseObject(FileUtil.textFromFile(unzipFile),
+							LoadTemplate.class, parserConfig);
 
-					businessTemplateService.batchLoads(loadTemplete);
+					businessTemplateService.batchLoads(loadTemplate);
 
 					SerializeConfig config = new SerializeConfig();
 					config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-					String json123 = JSON.toJSONString(loadTemplete, config);
+					String json123 = JSON.toJSONString(loadTemplate, config);
 
 				}
 			}

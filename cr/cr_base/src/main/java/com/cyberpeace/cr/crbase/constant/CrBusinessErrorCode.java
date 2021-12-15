@@ -62,10 +62,10 @@ public interface CrBusinessErrorCode {
 	String MISSION_ISSUED = "101017";
 
 	// 模板类型不支持
-	String TEMPLETE_TYPE_NOT_SUPPORTED = "101018";
+	String TEMPLATE_TYPE_NOT_SUPPORTED = "101018";
 
 	// 模板名称已经存在
-	String TEMPLETE_NAME_EXIST_ERROR = "101019";
+	String TEMPLATE_NAME_DUPLICATE = "101019";
 
 	// 角色名称重复
 	String ROLE_NAME_DUPLICATE = "101020";

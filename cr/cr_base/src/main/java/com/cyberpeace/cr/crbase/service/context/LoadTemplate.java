@@ -5,9 +5,9 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LoadTemplete {
+public class LoadTemplate {
 
-	private List<LoadTempleteData> items;
+	private List<LoadTemplateData> items;
 
 	private List<LoadMission> templateQuestions;
 

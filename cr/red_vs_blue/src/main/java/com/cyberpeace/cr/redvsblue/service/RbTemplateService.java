@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.redvsblue.controller.RbTemplateData;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.context.RbTemplateContext;
+import com.cyberpeace.cr.redvsblue.service.context.RbTemplateData;
 
 public interface RbTemplateService extends IService<RbTemplate> {
 

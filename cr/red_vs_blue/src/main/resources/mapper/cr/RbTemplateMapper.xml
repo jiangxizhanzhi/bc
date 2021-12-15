@@ -8,7 +8,7 @@
         where business_template_id = #{businessTemplateId}
     </select>
 
-    <select id="listRbTemplate" resultType="com.cyberpeace.cr.redvsblue.controller.RbTemplateData">
+    <select id="listRbTemplate" resultType="com.cyberpeace.cr.redvsblue.service.context.RbTemplateData">
         select cr_rb_template.resource_id, cr_rb_template.business_template_id, cr_rb_template.pre_skill,
         cr_rb_template.train_skill, cr_rb_template.role_config, cr_rb_template.sub_type,
         cr_rb_template.duration_time,

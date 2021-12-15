@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 @Data
-public class LoadTempleteData {
+public class LoadTemplateData {
 
 	private JSONObject templateData;
 

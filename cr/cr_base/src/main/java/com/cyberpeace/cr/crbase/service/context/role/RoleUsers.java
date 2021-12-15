@@ -5,7 +5,7 @@ import java.util.List;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
-@ApiModel("包含用户的角色")
+@ApiModel("查询实例列表时包含所有用户的角色")
 @Data
 public class RoleUsers {
 

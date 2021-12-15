@@ -20,11 +20,11 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
-import com.cyberpeace.cr.redvsblue.controller.RbTemplateData;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.RbTemplateContext;
+import com.cyberpeace.cr.redvsblue.service.context.RbTemplateData;
 import com.cyberpeace.cs.service.LocalSceneService;
 
 import lombok.extern.slf4j.Slf4j;

@@ -14,7 +14,6 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -36,7 +35,10 @@ import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.controller.rsp.*;
+import com.cyberpeace.cr.teamtrain.controller.rsp.Flow;
+import com.cyberpeace.cr.teamtrain.controller.rsp.FlowRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -198,7 +200,7 @@ public class TeamTrainRoomController {
 		List<TeamRoomRoleRes> teamRoomRoleResList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
 			TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
-			teamRoomRoleRes.setUsersData(getUserDatas(crRole.getUserIds()));
+			teamRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIds()));
 			teamRoomRoleRes.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
 
 			teamRoomRoleRes.setTrainingTeam(crRole.getRoomId());
@@ -207,19 +209,6 @@ public class TeamTrainRoomController {
 		return teamRoomRoleResList;
 	}
 
-	private List<UserData> getUserDatas(String userIds) {
-		List<UserData> userDataList = Lists.newArrayList();
-		List<UserInfo> userInfoList = remoteUserService
-				.getByIdList(JsonUtil.toJsonObjectArray(userIds, String.class));
-		for (UserInfo userInfo : userInfoList) {
-			UserData userData = new UserData();
-			userData.setResourceId(userInfo.getUserId());
-			userData.setRepName(userInfo.getName());
-			userData.setLogo(userInfo.getAvatarUrl());
-			userDataList.add(userData);
-		}
-		return userDataList;
-	}
 
 	@ApiOperation("删除")
 	@DeleteMapping()

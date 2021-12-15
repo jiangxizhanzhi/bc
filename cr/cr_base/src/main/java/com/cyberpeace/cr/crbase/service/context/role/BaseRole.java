@@ -13,7 +13,11 @@ public class BaseRole {
 
 	private Integer roleGroup;
 
+	private Integer parentHash;
+
 	private String description;
 
 	private List<RoleUsers> roleDataList;
+
+	private ChartInfo chartInfo;
 }

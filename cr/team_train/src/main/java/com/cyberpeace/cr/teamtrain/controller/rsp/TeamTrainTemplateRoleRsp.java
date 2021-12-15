@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller.rsp;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrRoleNode;
 import com.cyberpeace.cr.teamtrain.service.context.ColorMission;
 
 import lombok.Data;
@@ -19,11 +20,11 @@ public class TeamTrainTemplateRoleRsp {
 
 	private ColorMission missionsScheme;
 
-	private List<String> assetNodes;
+	private List<CrRoleNode> assetNodes;
 
 	private List<String> children;
 
-	private List<String> visibleNodes;
+	private List<CrRoleNode> visibleNodes;
 
 	private String key;
 

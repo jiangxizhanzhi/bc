@@ -233,4 +233,19 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		return JsonUtil.toJsonString(userNames);
 	}
+
+	@Override
+	public List<UserData> getUserDatas(String userIds) {
+		List<UserData> userDataList = Lists.newArrayList();
+		List<UserInfo> userInfoList = remoteUserService
+				.getByIdList(JsonUtil.toJsonObjectArray(userIds, String.class));
+		for (UserInfo userInfo : userInfoList) {
+			UserData userData = new UserData();
+			userData.setResourceId(userInfo.getUserId());
+			userData.setRepName(userInfo.getName());
+			userData.setLogo(userInfo.getAvatarUrl());
+			userDataList.add(userData);
+		}
+		return userDataList;
+	}
 }

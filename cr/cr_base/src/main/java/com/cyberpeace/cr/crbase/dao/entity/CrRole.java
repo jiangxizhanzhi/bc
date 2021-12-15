@@ -72,9 +72,19 @@ public class CrRole extends BaseTable {
 	 */
 	private Integer businessType;
 
+	public CrRole(String role, Integer code) {
+		this.name = role;
+		this.roleGroup = code;
+	}
+
+	public CrRole() {
+
+	}
+
 	public enum TeamRoleGroupCode {
 
 		TEACHER(1, "教员"), STUDENT(2, "学员");
+
 		@Getter
 		private Integer code;
 

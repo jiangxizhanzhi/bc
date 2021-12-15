@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.redvsblue.controller.RbTemplateData;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
+import com.cyberpeace.cr.redvsblue.service.context.RbTemplateData;
 
 import lombok.Data;
 

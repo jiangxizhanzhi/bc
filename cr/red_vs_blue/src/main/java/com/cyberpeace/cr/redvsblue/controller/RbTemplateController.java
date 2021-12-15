@@ -1,21 +1,21 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -24,8 +24,8 @@ import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListRsp;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRoleRsp;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
+import com.cyberpeace.cr.redvsblue.service.context.RbTemplateData;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.google.common.collect.Lists;
 
@@ -47,18 +47,7 @@ public class RbTemplateController {
 	@Autowired
 	private LocalSceneService localSceneService;
 
-	@ApiOperation("删除")
-	@DeleteMapping()
-	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		List<RbTemplate> rbTemplates = rbTemplateService
-				.getRbTemplateByBusinessIds(deleteReq.getIds());
-		List<String> roomIds = rbTemplates.stream().map(RbTemplate::getResourceId).distinct()
-				.collect(Collectors.toList());
 
-		rbTemplateService.batchDelete(deleteReq.getIds(), roomIds);
-
-		return new BaseRsp<>();
-	}
 
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
@@ -70,7 +59,7 @@ public class RbTemplateController {
 
 		data.convert(teamTemplateData -> getRbTemplateRspByBaseInfoData(teamTemplateData));
 
-		return new BaseRsp(data);
+		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
 	private RbTemplateListRsp getRbTemplateRspByBaseInfoData(RbTemplateData teamTemplateData) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 
 public interface RbRoomService extends IService<RbRoom> {
 
@@ -25,4 +26,8 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @return
 	 */
 	Integer countAll();
+
+	RbRoom create(RbRoomContext rbRoomContext);
+
+	RbRoomData getRbRoomDataByRoomId(String resourceId);
 }

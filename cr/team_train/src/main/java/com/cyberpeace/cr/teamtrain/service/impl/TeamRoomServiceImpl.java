@@ -49,7 +49,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -68,22 +67,19 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private TeamRoomMapper teamRoomMapper;
 
 	@Autowired
-	TeamTemplateService teamTemplateService;
+	private TeamTemplateService teamTemplateService;
 
 	@Autowired
-	BusinessTemplateService businessTemplateService;
+	private BusinessTemplateService businessTemplateService;
 
 	@Autowired
-	MissionService missionService;
+	private MissionService missionService;
 
 	@Autowired
-	CrRoleService crRoleService;
+	private CrRoleService crRoleService;
 
 	@Autowired
-	CrTaskService crTaskService;
-
-	@Autowired
-	LocalSceneService localSceneService;
+	private CrTaskService crTaskService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;

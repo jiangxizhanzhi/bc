@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller.admin;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -96,6 +98,19 @@ public class RbTemplateAdminController {
 		rbTemplateService.update(rbTemplateContext, businessTemplate);
 
 		return getRbTemplate(resourceId);
+	}
+
+	@ApiOperation("删除")
+	@DeleteMapping()
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+		List<RbTemplate> rbTemplates = rbTemplateService
+				.getRbTemplateByBusinessIds(deleteReq.getIds());
+		List<String> roomIds = rbTemplates.stream().map(RbTemplate::getResourceId).distinct()
+				.collect(Collectors.toList());
+
+		rbTemplateService.batchDelete(deleteReq.getIds(), roomIds);
+
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("查询")

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service.context;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamTrainRoomContext {
+public class TeamTrainRoomContext implements Serializable {
 
 	@ApiModelProperty(required = true)
 	@NotNull

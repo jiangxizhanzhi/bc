@@ -12,7 +12,7 @@ import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
-import com.cyberpeace.cr.crbase.service.context.LoadTempleteData;
+import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
@@ -54,20 +54,20 @@ public class BusinessTemplateHandler {
 		BusinessTemplate.BusinessType enumByCode = EnumUtils.getEnumByCode(businessType,
 				BusinessTemplate.BusinessType.class);
 		if (enumByCode == null) {
-			throw new BusinessException(CrBusinessErrorCode.TEMPLETE_TYPE_NOT_SUPPORTED);
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
 		}
 		return enumByCode;
 
 	}
 
-	public void loads(LoadTempleteData templateData, List<MissionTemplate> missionTemplateList) {
+	public void loads(LoadTemplateData templateData, List<MissionTemplate> missionTemplateList) {
 		BusinessTemplate.BusinessType businessType = getBusinessType(templateData.getType());
 		BusinessTemplateHandler realHandler = register.get(businessType);
 		realHandler.realLoads(templateData, missionTemplateList);
 
 	}
 
-	public void realLoads(LoadTempleteData templateData,
+	public void realLoads(LoadTemplateData templateData,
 			List<MissionTemplate> missionTemplateList) {
 		// 业务定义自己的导入操作
 	}

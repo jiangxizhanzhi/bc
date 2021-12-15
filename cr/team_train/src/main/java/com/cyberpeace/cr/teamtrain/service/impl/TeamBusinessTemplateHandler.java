@@ -18,7 +18,7 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
-import com.cyberpeace.cr.crbase.service.context.LoadTempleteData;
+import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
@@ -83,7 +83,7 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	BusinessTemplateService businessTemplateService;
 
 	@Override
-	public void realLoads(LoadTempleteData templateData,
+	public void realLoads(LoadTemplateData templateData,
 			List<MissionTemplate> missionTemplateList) {
 		String templateString = JsonUtil.toJsonString(templateData.getTemplateData());
 

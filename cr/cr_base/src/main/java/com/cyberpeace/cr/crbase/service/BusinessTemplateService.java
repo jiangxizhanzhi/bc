@@ -6,11 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
-import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
-import com.cyberpeace.cr.crbase.service.context.LoadTemplate;
-import com.cyberpeace.cr.crbase.service.context.Share;
-import com.cyberpeace.cr.crbase.service.context.ShareContext;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
+import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**
  *
@@ -59,4 +57,15 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * 关闭后台测试场景之后删除本地数据
 	 */
 	void clearLocal(BusinessTemplate template);
+
+	/**
+	 * 启动测试场景时创建localScene
+	 */
+	LocalScene createLocalScene(BusinessTemplate template);
+
+	/**
+	 * 查看后台测试场景
+	 * @param template
+	 */
+	SceneViewContext viewScene(BusinessTemplate template);
 }

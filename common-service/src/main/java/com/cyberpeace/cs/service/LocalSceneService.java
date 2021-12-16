@@ -39,7 +39,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	JSONObject getSceneData(LocalScene scene, String userId);
 
-	JSONObject getSceneData(String sceneId, String userId);
+	JSONObject getSceneData(String mpSceneId, String userId);
 
 	JSONObject getTopoData(String topoId);
 

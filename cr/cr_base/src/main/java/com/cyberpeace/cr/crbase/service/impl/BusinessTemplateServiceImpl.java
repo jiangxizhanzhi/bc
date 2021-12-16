@@ -1,7 +1,16 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -36,6 +45,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
+import springfox.documentation.spring.web.json.Json;
 
 /**
  *
@@ -239,5 +249,73 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				updateById(template);
 			}
 		});
+	}
+
+    @Override
+    public LocalScene createLocalScene(BusinessTemplate template) {
+
+		LocalScene localScene = new LocalScene();
+
+		localScene.setBusinessCode(LocalScene.BusinessCode.TEST_SCENE.getCode());
+		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
+		// 以模板id作为后台测试场景的 businessId，
+		// 发给mp的context中会以localScene的businessInstanceId作为透明上下文（passThrough）的businessId，用于ws消息推送
+		localScene.setBusinessInstanceId(template.getResourceId());
+		localScene.setTopoId(template.getTopoId());
+		localScene.setResourceId(IDGeneratorUtil.getID());
+		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
+		localScene.setStartTime(new Date());
+		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.NULL.getCode());
+		localScene.setSceneName(template.getName());
+		localScene.setMeta(JSON.toJSONString(
+				LocalSceneMeta.builder().appResourceId(template.getResourceId()).build()));
+
+		return localScene;
+    }
+
+	@Override
+	public SceneViewContext viewScene(BusinessTemplate template) {
+		SceneViewContext ret = new SceneViewContext();
+		ret.setRoomId(template.getResourceId());
+		// 1、尝试获取启动的远程场景
+		JSONObject sceneData = getMpSceneData(template);
+		if(sceneData != null){
+			ret.setSceneData(sceneData);
+			ret.setLocalSceneId(template.getLocalSceneId());
+			return ret;
+		}
+		// 2、 远程场景不存在，返回topo数据
+		JSONObject topoData = localSceneService.getTopoData(template.getTopoId()).getJSONObject("scene_config");
+		ret.setTopoData(topoData);
+		return ret;
+	}
+
+	private JSONObject getMpSceneData(BusinessTemplate template){
+		String localSceneId = template.getLocalSceneId();
+		// localSceneId字段为空
+		if (StringUtils.isBlank(localSceneId)){
+			return null;
+		}
+		// localScene不存在，localSceneId字段是脏数据
+		LocalScene localScene = localSceneService.getById(localSceneId);
+		if (null == localScene){
+			template.setLocalSceneId("");
+			updateById(template);
+			return null;
+		}
+		// localScene 的 mpSceneId为空，localScene是脏数据
+		String mpSceneId = localScene.getMpSceneId();
+		if(StringUtils.isBlank(mpSceneId)){
+			clearLocal(template);
+			return null;
+		}
+		// 请求远程场景数据
+		JSONObject sceneData = localSceneService.getSceneData(mpSceneId, UserInfoContext.getUserContext().getUserId());
+		// 场景数据为空，清除本地脏数据
+		if(null == sceneData){
+			clearLocal(template);
+		}
+		return sceneData;
 	}
 }

@@ -159,8 +159,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return true;
 		}
 		// 2. 发送mp请求
-//		SceneHandler handler = sceneHandler.getSceneHandler(localScene.getBusinessCode());
-//		handler.checkPauseScene(localScene);
+		// SceneHandler handler =
+		// sceneHandler.getSceneHandler(localScene.getBusinessCode());
+		// handler.checkPauseScene(localScene);
 		Boolean result = remoteSceneService.pauseScene(getSceneOpsContext(localScene));
 
 		if (!result) {
@@ -199,16 +200,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			log.error("scene [{}] is not paused", localScene.getMpSceneId());
 			throw new BusinessException("scene [{}] is not paused");
 		}
-	}
-
-	public LocalScene createLocalScene(Integer businessCode, String topoId) {
-		LocalScene localScene = new LocalScene();
-		localScene.setBusinessCode(businessCode);
-		localScene.setTopoId(topoId);
-		localScene.setMpSceneId("");
-		localSceneMapper.insert(localScene);
-
-		return localScene;
 	}
 
 	@Override

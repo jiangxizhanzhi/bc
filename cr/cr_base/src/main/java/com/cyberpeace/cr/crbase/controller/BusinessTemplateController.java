@@ -23,7 +23,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.MultiSelectReq;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.NameValidReq;
@@ -35,10 +34,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
-import com.cyberpeace.cr.crbase.service.context.LoadTemplate;
-import com.cyberpeace.cr.crbase.service.context.Share;
-import com.cyberpeace.cr.crbase.service.context.ShareContext;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -219,12 +215,7 @@ public class BusinessTemplateController {
 		BusinessTemplate businessTemplate = ensureTemplateExist(templateId);
 
 		// 3、创建场景管理器
-		LocalScene localScene = new LocalScene();
-		localScene.setBusinessCode(LocalScene.BusinessCode.TEST_SCENE.getCode());
-		localScene.setTopoId(businessTemplate.getTopoId());
-		// 以模板id作为后台测试场景的 businessId，
-		// 发给mp的context中会以localScene的businessInstanceId作为透明上下文（passThrough）的businessId，用于ws消息推送
-		localScene.setBusinessInstanceId(templateId);
+		LocalScene localScene = businessTemplateService.createLocalScene(businessTemplate);
 
 		// 4、发送mp请求，创建远程场景
 		String sceneId = localSceneService.testScene(localScene);
@@ -250,6 +241,17 @@ public class BusinessTemplateController {
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
 		return new BaseRsp();
+	}
+
+	@ApiOperation("查看后台测试场景")
+	@GetMapping("/testScene")
+	public BaseRsp<SceneViewContext> getScene(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+
+		BusinessTemplate template = ensureTemplateExist(resource_id);
+		SceneViewContext context = businessTemplateService.viewScene(template);
+
+		return new BaseRsp<>(context);
 	}
 
 	@ApiOperation("关闭后台场景测试")

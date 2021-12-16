@@ -360,6 +360,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			MissionTemplate missionTemplate = BeanUtils.copy(loadMission, MissionTemplate.class);
 			missionTemplate.setCreateUserId(userId);
 			missionTemplate.setCategoryId(loadMission.getCategory());
+			missionTemplate.setResourceId(IDGeneratorUtil.getID());
 
 			return missionTemplate;
 		}).collect(Collectors.toList());

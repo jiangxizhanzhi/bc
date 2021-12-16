@@ -34,7 +34,7 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.constant.BusinessErrorMsg;
-import com.cyberpeace.constant.ErrorCode;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;

@@ -25,65 +25,6 @@ public class FileUtil {
 		return newFile;
 	}
 
-	public static String textFromFile(String filePath) {
-		File file = new File(filePath);
-		return textFromFile(file);
-	}
-
-	public static String textFromFile(File file) {
-		BufferedReader reader = null;
-		StringBuilder stringBuilder = new StringBuilder();
-		String text;
-
-		try {
-			FileInputStream fileInputStream = new FileInputStream(file);
-			reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));
-			while (true) {
-				try {
-					text = reader.readLine();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-
-				if (text == null) {
-					break;
-				} ;
-
-				stringBuilder.append(text);
-			}
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("File encoding unsupported");
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException("File not found");
-		} catch (IOException e) {
-			throw new RuntimeException("File not opened");
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return stringBuilder.toString();
-	}
-
-	public static void textToFile(String path, String text) throws IOException {
-		textToFile(new FileWriter(path), text);
-	}
-
-	public static void textToFile(File file, String text) throws IOException {
-		textToFile(new FileWriter(file), text);
-	}
-
-	public static void textToFile(FileWriter fileWriter, String text) throws IOException {
-		BufferedWriter out = new BufferedWriter(fileWriter);
-		out.write(text);
-		out.close();
-	}
-
 	public static File mkdirs(String path) {
 		File file = new File(path);
 		if (!file.exists()) {
@@ -108,15 +49,14 @@ public class FileUtil {
 
 	/**
 	 * 读取文件内容
-	 * @param filePath
+	 * @param file
 	 * @return
 	 */
-	public static String getContent(String filePath) {
-
+	public static String getContent(File file) {
 		BufferedReader br = null;
 		StringBuilder builder = new StringBuilder();
 		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "utf-8"));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
 
 			String content = "";
 			while ((content = br.readLine()) != null) {
@@ -125,8 +65,8 @@ public class FileUtil {
 
 			return builder.toString();
 		} catch (Exception e) {
-			log.error("文件读取失败！ filePath={} error:", filePath, e);
-			return "";
+			log.error("文件读取失败！ filePath={} error:", file.getAbsolutePath(), e);
+			throw new RuntimeException();
 		} finally {
 			try {
 				br.close();

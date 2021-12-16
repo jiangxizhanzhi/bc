@@ -2,14 +2,8 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +12,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -26,6 +21,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -39,13 +35,19 @@ import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
+import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
-import springfox.documentation.spring.web.json.Json;
 
 /**
  *
@@ -71,6 +73,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	@Autowired
 	@Qualifier("businessTemplateHandler")
@@ -109,7 +114,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
-
 		return businessTemplateMapper.selectIdsByUserId(userId);
 	}
 
@@ -121,7 +125,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			log.error("template name already exist！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
 		}
-
 	}
 
 	@Override
@@ -135,15 +138,52 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public void batchLoads(LoadTemplate loadTemplate) {
+	public void batchLoads(LoadTemplate loadTemplate, Map<String, String> files) {
+		// 1、上传图片
+		for (Map.Entry<String, String> item : files.entrySet()) {
+			AttachmentBo attachmentBo = attachmentService.copyFile(item.getValue(),
+					AttachmentPath.MISSION.getCode(), true, true);
+			if (null != attachmentBo) {
+				item.setValue(attachmentBo.getFilePath());
+			}
+		}
 
-		List<LoadTemplateData> items = loadTemplate.getItems();
+		// 2、设置要替换的目录
+		Map<String, String> replaced = Maps.newHashMap();
+		for (Map.Entry<String, String> item : files.entrySet()) {
+			String fileName = item.getKey();
+			for (Map.Entry<String, String> fileDesc : loadTemplate.getFile().entrySet()) {
+				if (fileDesc.getKey().contains(fileName)) {
+					replaced.put(fileDesc.getValue(), item.getValue());
+					fileDesc.setValue(item.getValue());
+					continue;
+				}
+			}
+		}
+
+		// 3、替换writeup中的文件
+		for (LoadMission mission : loadTemplate.getTemplateQuestions()) {
+			for (Map.Entry<String, String> item : replaced.entrySet()) {
+				String replacedWriteup = StringUtils.replace(mission.getWriteUp(), item.getKey(),
+						item.getValue());
+				mission.setWriteUp(replacedWriteup);
+			}
+		}
+
+		// 4、保存任务数据
 		List<MissionTemplate> missionTemplateList = missionService
 				.batchInsertMissionTemplate(loadTemplate.getTemplateQuestions());
+
+		// 5、按不同类型的导出数据，生成对应的业务数据
+		List<LoadTemplateData> items = loadTemplate.getItems();
 		for (LoadTemplateData item : items) {
 			businessTemplateHandler.loads(item, missionTemplateList);
-
 		}
+	}
+
+	@Override
+	public void batchDumps(String businessId) {
+
 	}
 
 	@Override
@@ -156,22 +196,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				businessTemplateQuery);
 
 		for (BusinessTemplateData businessTemplate : result.getRecords()) {
-			businessTemplate.setNodesNum(getCount(businessTemplate.getTopoId()));
+			String topoId = businessTemplate.getTopoId();
+			businessTemplate.setNodesNum(remoteTopoService.getTopoDigest(topoId).getNodeCounts());
 		}
 
 		return result;
 
-	}
-
-	private Integer getCount(String topoId) {
-		Integer count = 0;
-		try {
-			count = remoteTopoService.getTopoDigest(topoId).getNodeCounts();
-		} catch (Exception e) {
-			;
-		}
-
-		return count;
 	}
 
 	@Override
@@ -251,8 +281,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 	}
 
-    @Override
-    public LocalScene createLocalScene(BusinessTemplate template) {
+	@Override
+	public LocalScene createLocalScene(BusinessTemplate template) {
 
 		LocalScene localScene = new LocalScene();
 
@@ -272,7 +302,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				LocalSceneMeta.builder().appResourceId(template.getResourceId()).build()));
 
 		return localScene;
-    }
+	}
 
 	@Override
 	public SceneViewContext viewScene(BusinessTemplate template) {
@@ -280,40 +310,42 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		ret.setRoomId(template.getResourceId());
 		// 1、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(template);
-		if(sceneData != null){
+		if (sceneData != null) {
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(template.getLocalSceneId());
 			return ret;
 		}
 		// 2、 远程场景不存在，返回topo数据
-		JSONObject topoData = localSceneService.getTopoData(template.getTopoId()).getJSONObject("scene_config");
+		JSONObject topoData = localSceneService.getTopoData(template.getTopoId())
+				.getJSONObject("scene_config");
 		ret.setTopoData(topoData);
 		return ret;
 	}
 
-	private JSONObject getMpSceneData(BusinessTemplate template){
+	private JSONObject getMpSceneData(BusinessTemplate template) {
 		String localSceneId = template.getLocalSceneId();
 		// localSceneId字段为空
-		if (StringUtils.isBlank(localSceneId)){
+		if (StringUtils.isBlank(localSceneId)) {
 			return null;
 		}
 		// localScene不存在，localSceneId字段是脏数据
 		LocalScene localScene = localSceneService.getById(localSceneId);
-		if (null == localScene){
+		if (null == localScene) {
 			template.setLocalSceneId("");
 			updateById(template);
 			return null;
 		}
 		// localScene 的 mpSceneId为空，localScene是脏数据
 		String mpSceneId = localScene.getMpSceneId();
-		if(StringUtils.isBlank(mpSceneId)){
+		if (StringUtils.isBlank(mpSceneId)) {
 			clearLocal(template);
 			return null;
 		}
 		// 请求远程场景数据
-		JSONObject sceneData = localSceneService.getSceneData(mpSceneId, UserInfoContext.getUserContext().getUserId());
+		JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
+				UserInfoContext.getUserContext().getUserId());
 		// 场景数据为空，清除本地脏数据
-		if(null == sceneData){
+		if (null == sceneData) {
 			clearLocal(template);
 		}
 		return sceneData;

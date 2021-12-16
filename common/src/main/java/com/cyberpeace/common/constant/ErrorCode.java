@@ -1,4 +1,4 @@
-package com.cyberpeace.constant;
+package com.cyberpeace.common.constant;
 
 /**
  * 统一错误吗
@@ -23,4 +23,7 @@ public interface ErrorCode {
 	String REMOTE_SERVICE_EXCEPTION = "010000";
 
 	String INTERNAL_ERROR = "099999";
+
+	// 文件上传失败
+	String FILE_UPLOAD_FAIL = "100011";
 }

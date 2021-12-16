@@ -42,6 +42,16 @@ public interface AttachmentService extends IService<Attachment> {
 	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file);
 
 	/**
+	 * 从临时目录将文件拷贝到实际存储目录
+	 * @param originPath 临时目录
+	 * @param type 文件存储地址类型，参考AttachmentPath
+	 * @param insert true表示记录写入数据库
+	 * @param renameFile true表示会对文件重命名
+	 * @return
+	 */
+	AttachmentBo copyFile(String originPath, Integer type, Boolean insert, Boolean renameFile);
+
+	/**
 	 * 
 	 * @param type 类型 用于获取存放地址
 	 * @param insert 文件信息是否入库

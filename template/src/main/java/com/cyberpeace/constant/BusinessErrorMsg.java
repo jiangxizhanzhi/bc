@@ -3,6 +3,7 @@ package com.cyberpeace.constant;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 

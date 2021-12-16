@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -19,11 +19,8 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
-import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
-import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
@@ -38,6 +35,9 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 	@Autowired
 	TeamTemplateService teamTemplateService;
+
+	@Autowired
+	BusinessTemplateService businessTemplateService;
 
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -79,59 +79,66 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		return teamTemplate.getResourceId();
 	}
 
-	@Autowired
-	BusinessTemplateService businessTemplateService;
-
 	@Override
 	public void realLoads(LoadTemplateData templateData,
 			List<MissionTemplate> missionTemplateList) {
-		String templateString = JsonUtil.toJsonString(templateData.getTemplateData());
+		// 1、替换任务方案中的mission字段
+		replaceMissions(templateData, missionTemplateList);
 
-		ParserConfig parserConfig = new ParserConfig();
-		parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-		TeamTrainTemplateReq teamTrainTemplateAddReq = JSON.parseObject(templateString,
-				TeamTrainTemplateReq.class, parserConfig);
-
-		List<RoleListContext<Integer>> roleListReq = teamTrainTemplateAddReq.getRoleList();
-
-		List<RoleListContext<AddTemplateMission>> newRoleList = Lists.newArrayList();
-
-		for (RoleListContext<Integer> listReq : roleListReq) {
-
-			RoleListContext<AddTemplateMission> newRole = BeanUtils.copy(listReq, RoleListContext.class);
-
-			List<MissionSchemeObject<Integer>> stageList = listReq.getMissionsScheme()
-					.getSchemeData();
-			List<MissionSchemeObject<AddTemplateMission>> newStageList = Lists.newArrayList();
-
-			for (MissionSchemeObject<Integer> missionSchemeObject : stageList) {
-				MissionSchemeObject<AddTemplateMission> newStage = BeanUtils
-						.copy(missionSchemeObject, MissionSchemeObject.class);
-
-				List<AddTemplateMission> newMissions = Lists.newArrayList();
-				for (Integer index : missionSchemeObject.getMissions()) {
-					AddTemplateMission addTemplateMission = BeanUtils
-							.copy(missionTemplateList.get(index), AddTemplateMission.class);
-					newMissions.add(addTemplateMission);
-				}
-				newStage.setMissions(newMissions);
-				newStageList.add(newStage);
-			}
-
-			newRole.getMissionsScheme().setSchemeData(newStageList);
-			newRoleList.add(newRole);
-		}
-
-		teamTrainTemplateAddReq.setRoleList(newRoleList);
-		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils.copy(teamTrainTemplateAddReq,
-				TeamTrainTemplateContext.class);
-		teamTrainTemplateContext
-				.setRoleList(JsonUtil.toJsonString(teamTrainTemplateAddReq.getRoleList()));
+		// 2、转换成新增基础数据结构
+		TeamTrainTemplateContext teamTrainTemplateContext = JSON.parseObject(
+				templateData.getTemplateData().toJSONString(), TeamTrainTemplateContext.class);
 		teamTrainTemplateContext.getBaseInfo()
 				.setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-		teamTrainTemplateContext.getBaseInfo()
-				.setPeopleNumber(teamTrainTemplateContext.getPeopleNumber());
+
+		// 3、新增数据
 		businessTemplateService.addTemplate(teamTrainTemplateContext);
+	}
+
+	private void replaceMissions(LoadTemplateData loadTemplateData,
+			List<MissionTemplate> missions) {
+		// 从python版5.3导出的数据，在导入该版本时，role_list的mission字段要进行替换
+		JSONArray roleList = loadTemplateData.getTemplateData().getJSONArray("role_list");
+		for (int i = 0; i < roleList.size(); i++) {
+			JSONObject missionScheme = roleList.getJSONObject(i).getJSONObject("missions_scheme");
+			if (null == missionScheme) {
+				continue;
+			}
+
+			JSONArray schemaData = missionScheme.getJSONArray("scheme_data");
+			if (null == schemaData) {
+				continue;
+			}
+
+			for (int j = 0; j < schemaData.size(); j++) {
+				JSONObject stage = schemaData.getJSONObject(j);
+				if (null == stage) {
+					continue;
+				}
+
+				List<Integer> missionIds = JsonUtil.toJsonObjectArray(stage.getString("missions"),
+						Integer.class);
+
+				if (missionIds.isEmpty()) {
+					continue;
+				}
+
+				List<AddTemplateMission> replacedMissions = Lists.newArrayList();
+				for (Integer index : missionIds) {
+					replacedMissions.add(getAddTemplateMission(index, missions));
+				}
+
+				stage.put("missions", replacedMissions);
+			}
+		}
+	}
+
+	private AddTemplateMission getAddTemplateMission(Integer missionIndex,
+			List<MissionTemplate> missions) {
+		MissionTemplate origin = missions.get(missionIndex);
+
+		AddTemplateMission result = BeanUtils.copy(origin, AddTemplateMission.class);
+		return result;
 	}
 
 }

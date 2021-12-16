@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -16,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -39,6 +39,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,6 +51,7 @@ import net.lingala.zip4j.exception.ZipException;
 @RestController
 @Slf4j
 @RequestMapping("/admin/ceBase/crEvents")
+@RequiresAuthentication
 public class BusinessTemplateController {
 
 	@Autowired
@@ -146,20 +148,25 @@ public class BusinessTemplateController {
 
 			if (unzipFileDirectory.isDirectory()) {
 				File[] unzipFiles = unzipFileDirectory.listFiles();
+				Map<String, String> files = Maps.newHashMap();
 				for (File unzipFile : unzipFiles) {
+					if (unzipFile.isDirectory()) {
+						searchFile(unzipFile, files);
+						continue;
+					}
 
-					// 反序列化对象
+					if (!unzipFile.getName().endsWith(".json")) {
+						log.error("find wrong file when loads, fileName=[{}]",
+								unzipFile.getAbsolutePath());
+						continue;
+					}
+
 					ParserConfig parserConfig = new ParserConfig();
 					parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-					LoadTemplate loadTemplate = JSON.parseObject(FileUtil.textFromFile(unzipFile),
+					LoadTemplate loadTemplate = JSON.parseObject(FileUtil.getContent(unzipFile),
 							LoadTemplate.class, parserConfig);
 
-					businessTemplateService.batchLoads(loadTemplate);
-
-					SerializeConfig config = new SerializeConfig();
-					config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-					String json123 = JSON.toJSONString(loadTemplate, config);
-
+					businessTemplateService.batchLoads(loadTemplate, files);
 				}
 			}
 		} catch (ZipException e) {
@@ -172,6 +179,17 @@ public class BusinessTemplateController {
 		}
 
 		return new BaseRsp();
+	}
+
+	private void searchFile(File file, Map<String, String> map) {
+		File[] fs = file.listFiles();
+		for (File f : fs) {
+			if (f.isDirectory()) {
+				searchFile(f, map);
+			} else {
+				map.put( f.getName(), f.getAbsolutePath());
+			}
+		}
 	}
 
 	/**

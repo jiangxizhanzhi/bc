@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.cr.crbase.service.context.LoadTemplate;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -61,6 +62,8 @@ public class BusinessTemplateHandler {
 	}
 
 	public void loads(LoadTemplateData templateData, List<MissionTemplate> missionTemplateList) {
+		formatData(templateData);
+
 		BusinessTemplate.BusinessType businessType = getBusinessType(templateData.getType());
 		BusinessTemplateHandler realHandler = register.get(businessType);
 		realHandler.realLoads(templateData, missionTemplateList);
@@ -71,4 +74,12 @@ public class BusinessTemplateHandler {
 			List<MissionTemplate> missionTemplateList) {
 		// 业务定义自己的导入操作
 	}
+
+	private void formatData(LoadTemplateData templateData) {
+		// 1、团队将people_number的值设置到base_info中，兼容从页面生成到新建请求
+		Integer peopleNumber = templateData.getTemplateData().getInteger("people_number");
+		templateData.getTemplateData().getJSONObject("base_info").put("people_number",
+				peopleNumber);
+	}
+
 }

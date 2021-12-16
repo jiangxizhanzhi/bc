@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -45,7 +46,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
 	BusinessTemplate getByLocalSceneId(String resourceId);
 
-	void batchLoads(LoadTemplate loadTemplate);
+	void batchLoads(LoadTemplate loadTemplate, Map<String, String> files);
+
+	void batchDumps(String businessId);
 
 	/**
 	 * 训练模板删除

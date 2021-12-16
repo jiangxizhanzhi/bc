@@ -33,7 +33,6 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
-import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.google.common.collect.Lists;
@@ -231,16 +230,4 @@ public class RbRoomController {
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}
 
-	/**
-	 * 查询团队训练学员用户列表
-	 * @return
-	 */
-	@ApiOperation("查询训练角色得分信息")
-	@GetMapping("/get_role_score_info")
-	public BaseRsp<List<RoleScore>> getRoleScoreInfo(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		List<RoleScore> data = rbRoomService.getRoleScoreInfo(resource_id);
-
-		return new BaseRsp(data);
-	}
 }

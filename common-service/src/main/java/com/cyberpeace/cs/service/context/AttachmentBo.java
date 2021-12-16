@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.ojbase.service.bo;
+package com.cyberpeace.cs.service.context;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

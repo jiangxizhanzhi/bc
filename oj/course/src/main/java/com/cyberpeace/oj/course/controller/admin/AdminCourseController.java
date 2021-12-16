@@ -35,11 +35,11 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
-import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
-import com.cyberpeace.oj.ojbase.service.AttachmentService;
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

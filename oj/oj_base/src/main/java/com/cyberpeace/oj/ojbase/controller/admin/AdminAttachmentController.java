@@ -1,9 +1,8 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
-import io.swagger.annotations.ApiModel;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -12,11 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.res.LogoUploadRes;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
-import com.cyberpeace.oj.ojbase.service.AttachmentService;
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

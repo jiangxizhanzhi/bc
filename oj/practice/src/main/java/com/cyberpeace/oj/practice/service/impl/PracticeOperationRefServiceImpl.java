@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.ojbase.dao.mapper.AttachmentMapper;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
 import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;

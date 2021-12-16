@@ -1,12 +1,12 @@
-package com.cyberpeace.oj.ojbase.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+package com.cyberpeace.cs.service;
 
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 
 public interface AttachmentService extends IService<Attachment> {
 

@@ -1,35 +1,31 @@
-package com.cyberpeace.oj.ojbase.service.impl;
+package com.cyberpeace.cs.service.impl;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
-import com.cyberpeace.oj.ojbase.dao.mapper.AttachmentMapper;
-import com.cyberpeace.oj.ojbase.service.AttachmentService;
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.google.common.collect.Lists;
-import org.springframework.web.multipart.MultipartFile;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -137,7 +133,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		} catch (IOException e) {
 			log.error("Upload file error, upload_file_path=[{}]. catch error:",
 					uploadFile.getAbsolutePath(), e);
-			throw new BusinessException(OjBusinessErrorCode.FILE_UPLOAD_ERROR);
+			throw new InvalidParamException("文件上传失败！");
 		}
 
 		if (null != insert && insert) {

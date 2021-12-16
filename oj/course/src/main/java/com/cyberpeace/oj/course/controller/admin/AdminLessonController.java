@@ -1,10 +1,9 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import java.io.File;
 import java.util.List;
 
 import com.cyberpeace.oj.course.service.LessonSceneService;
-import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,9 +43,9 @@ import com.cyberpeace.oj.course.service.bo.AdminLessonPracticeBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
-import com.cyberpeace.oj.ojbase.service.AttachmentService;
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 
 import io.swagger.annotations.*;

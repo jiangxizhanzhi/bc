@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.ojbase.constant;
+package com.cyberpeace.cs.constant;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.util.ConfigUtil;

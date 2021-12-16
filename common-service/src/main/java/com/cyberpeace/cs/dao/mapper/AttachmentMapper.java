@@ -1,12 +1,12 @@
-package com.cyberpeace.oj.ojbase.dao.mapper;
-
-import org.apache.ibatis.annotations.Mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
-import org.apache.ibatis.annotations.Param;
+package com.cyberpeace.cs.dao.mapper;
 
 import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cs.dao.entity.Attachment;
 
 @Mapper
 public interface AttachmentMapper extends BaseMapper<Attachment> {

@@ -1,15 +1,14 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.oj.ojbase.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.NoteAttachmentReq;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
-import com.cyberpeace.oj.ojbase.dao.entity.Attachment;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
-import com.cyberpeace.oj.ojbase.service.AttachmentService;
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -29,7 +28,6 @@ import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "oj-前台笔记相关api")
 @RestController

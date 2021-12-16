@@ -3,7 +3,7 @@ package com.cyberpeace.oj.course.service.bo;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.oj.ojbase.service.bo.AttachmentBo;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -8,11 +8,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -21,6 +23,7 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
+import com.cyberpeace.cr.redvsblue.controller.req.RbRoomModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
@@ -30,6 +33,8 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
+import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
+import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.google.common.collect.Lists;
 
@@ -65,9 +70,9 @@ public class RbRoomController {
 				.setTrainSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getTrainSkill(), String.class));
 		rbRoomContext.setRoleConfig(
 				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
-		RbRoom teamRoom = rbRoomService.create(rbRoomContext);
+		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
 
-		return getRbRoom(teamRoom.getResourceId());
+		return getRbRoom(rbRoom.getResourceId());
 	}
 
 	@ApiOperation("查询")
@@ -76,24 +81,23 @@ public class RbRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		RbRoomData teamRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
+		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
 
 		RoleQuery roleQuery = new RoleQuery();
-		roleQuery.setRoomId(teamRoomData.getResourceId());
+		roleQuery.setRoomId(rbRoomData.getResourceId());
 
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		RbRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, RbRoomRsp.class);
-		teamRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
+		RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
+		rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
 
-		teamRoomRsp.setRolesData(getRbRoomRoleRes(crRoles));
-		// todo teamRoomRsp.setTrainingStatus();
-		teamRoomRsp
-				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
-		teamRoomRsp.setTrainSkill(
-				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+		rbRoomRsp.setRolesData(getRbRoomRoleRes(crRoles));
+		// todo rbRoomRsp.setTrainingStatus();
+		rbRoomRsp.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
+		rbRoomRsp.setTrainSkill(
+				JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));
 
-		return new BaseRsp<RbRoomRsp>(teamRoomRsp);
+		return new BaseRsp(rbRoomRsp);
 	}
 
 	@ApiOperation("列表查询")
@@ -103,70 +107,60 @@ public class RbRoomController {
 		listQuery.setPer_page(listReq.getPerPage());
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 默认时间排序4
-		listQuery.setSort("-cr_team_room.create_time");
+		listQuery.setSort("-cr_rb_room.create_time");
 
 		IPage<RbRoomData> data = rbRoomService.list(listQuery);
 
-		ListRsp<RbRoomRsp> teamRoomRspListRsp = new ListRsp();
-
-		List<RbRoomRsp> teamRoomRspList = Lists.newArrayList();
-
-		for (RbRoomData teamRoomData : data.getRecords()) {
+		data.convert(rbRoomData -> {
 			RoleQuery roleQuery = new RoleQuery();
-			roleQuery.setRoomId(teamRoomData.getResourceId());
+			roleQuery.setRoomId(rbRoomData.getResourceId());
 
 			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-			RbRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, RbRoomRsp.class);
-			teamRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
+			RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
+			rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
+			rbRoomRsp.setPreSkill(
+					JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
+			rbRoomRsp.setTrainSkill(
+					JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));
 
-			teamRoomRsp.setPreSkill(
-					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
-			teamRoomRsp.setTrainSkill(
-					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+			return rbRoomRsp;
+		});
 
-			teamRoomRspList.add(teamRoomRsp);
-		}
-
-		teamRoomRspListRsp.setList(teamRoomRspList);
-		teamRoomRspListRsp.setTotal(data.getTotal());
-		teamRoomRspListRsp.setLastPage(data.getPages());
-		teamRoomRspListRsp.setCurrentPage(data.getCurrent());
-
-		return new BaseRsp<ListRsp<RbRoomRsp>>(teamRoomRspListRsp);
+		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
 	private List<RbRoomRoleRes> getRbRoomRoleRes(List<CrRole> crRoles) {
-		List<RbRoomRoleRes> teamRoomRoleResList = Lists.newArrayList();
+		List<RbRoomRoleRes> rbRoomRoleResList = Lists.newArrayList();
 		List<RbRoomRoleRes> redRoles = Lists.newArrayList();
 		List<RbRoomRoleRes> blueRoles = Lists.newArrayList();
 
 		for (CrRole crRole : crRoles) {
-			RbRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, RbRoomRoleRes.class);
-			teamRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIds()));
-			teamRoomRoleRes.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+			RbRoomRoleRes rbRoomRoleRes = BeanUtils.copy(crRole, RbRoomRoleRes.class);
+			rbRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIds()));
+			rbRoomRoleRes.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
 
 			if (crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.RED.getCode())) {
-				redRoles.add(teamRoomRoleRes);
+				redRoles.add(rbRoomRoleRes);
 			} else if (crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.BLUE.getCode())) {
-				blueRoles.add(teamRoomRoleRes);
+				blueRoles.add(rbRoomRoleRes);
 			} else {
-				teamRoomRoleResList.add(teamRoomRoleRes);
+				rbRoomRoleResList.add(rbRoomRoleRes);
 			}
 		}
 		RbRoomRoleRes redRoleRes = new RbRoomRoleRes();
 		redRoleRes.setName(CrRole.RbRoleGroupCode.RED.getRole());
 		redRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.RED.getCode());
 		redRoleRes.setChildren(redRoles);
-		teamRoomRoleResList.add(redRoleRes);
+		rbRoomRoleResList.add(redRoleRes);
 
 		RbRoomRoleRes blueRoleRes = new RbRoomRoleRes();
 		blueRoleRes.setName(CrRole.RbRoleGroupCode.BLUE.getRole());
 		blueRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.BLUE.getCode());
 		blueRoleRes.setChildren(blueRoles);
-		teamRoomRoleResList.add(blueRoleRes);
+		rbRoomRoleResList.add(blueRoleRes);
 
-		return teamRoomRoleResList;
+		return rbRoomRoleResList;
 	}
 
 	/** 先获取实例列表中自己的角色，再获取所有角色(查看列表用到)
@@ -192,6 +186,7 @@ public class RbRoomController {
 			String userNamesByRoleUsers = crRoleService
 					.getUserNamesByRoleUsers(crRole.getUserIds());
 			roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
+
 			roleUsersList.add(roleUsers);
 
 		});
@@ -204,25 +199,48 @@ public class RbRoomController {
 
 		return baseRole;
 	}
-	// @ApiOperation("修改")
-	// @PutMapping()
-	// public BaseRsp<RbRoomRsp>
-	// update(@RequestBody @Validated RbTrainRoomModifyReq teamTrainRoomModifyReq)
-	// {
-	//
-	// RbRoom teamRoom =
-	// teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
-	//
-	// if (teamRoom == null) {
-	// throw new ResourceNotFoundException(teamTrainRoomModifyReq.getResourceId());
-	// }
-	// rbRoomContext rbRoomContext = BeanUtils.copy(teamTrainRoomModifyReq,
-	// rbRoomContext.class);
-	// List<RoomRole> roomRoleList = JsonUtil
-	// .toJsonObjectArray(teamTrainRoomModifyReq.getRoleConfig(), RoomRole.class);
-	// rbRoomContext.setRoleConfig(roomRoleList);
-	// teamRoomService.updateRbRoom(rbRoomContext, teamRoom);
-	//
-	// return getRbRoom(teamTrainRoomModifyReq.getResourceId());
-	// }
+
+	/**
+	 * 查询团队训练学员用户列表
+	 * @return
+	 */
+	@ApiOperation("获取控制面板信息，好友信息")
+	@GetMapping("/dashboard_info")
+	public BaseRsp<DashboardInfo> getDashboardInfo(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		DashboardInfo data = rbRoomService.getDashboardInfo(resource_id);
+
+		return new BaseRsp<>(data);
+	}
+
+	@ApiOperation("修改")
+	@PutMapping()
+	public BaseRsp<RbRoomRsp> update(@RequestBody @Validated RbRoomModifyReq rbTrainRoomModifyReq) {
+
+		RbRoom rbRoom = rbRoomService.getById(rbTrainRoomModifyReq.getResourceId());
+
+		if (rbRoom == null) {
+			throw new ResourceNotFoundException(rbTrainRoomModifyReq.getResourceId());
+		}
+		RbRoomContext rbRoomContext = BeanUtils.copy(rbTrainRoomModifyReq, RbRoomContext.class);
+		List<RoomRole> roomRoleList = JsonUtil
+				.toJsonObjectArray(rbTrainRoomModifyReq.getRoleConfig(), RoomRole.class);
+		rbRoomContext.setRoleConfig(roomRoleList);
+		rbRoomService.updateRbRoom(rbRoomContext, rbRoom);
+
+		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
+	}
+
+	/**
+	 * 查询团队训练学员用户列表
+	 * @return
+	 */
+	@ApiOperation("查询训练角色得分信息")
+	@GetMapping("/get_role_score_info")
+	public BaseRsp<List<RoleScore>> getRoleScoreInfo(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		List<RoleScore> data = rbRoomService.getRoleScoreInfo(resource_id);
+
+		return new BaseRsp(data);
+	}
 }

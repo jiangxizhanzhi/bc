@@ -1,7 +1,10 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -11,6 +14,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -20,6 +24,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -28,6 +33,7 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
+import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 
@@ -70,7 +76,14 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Override
 	public IPage<RbRoomData> list(ListQuery listQuery) {
-		return null;
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		Page page = listQuery.toPageParam();
+		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
+
+		IPage<RbRoomData> data = rbRoomMapper.listRbRoom(page, listQuery);
+
+		return data;
 	}
 
 	@Override
@@ -128,18 +141,74 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Override
 	public RbRoomData getRbRoomDataByRoomId(String resourceId) {
-		RbRoomData teamRoomData = rbRoomMapper.getRbRoomDataByRoomId(resourceId);
-		if (teamRoomData == null) {
+		RbRoomData rbRoomData = rbRoomMapper.getRbRoomDataByRoomId(resourceId);
+		if (rbRoomData == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
 
-		return teamRoomData;
+		return rbRoomData;
 	}
 
-	private List<CrRole> getCrRoleByRbTemplate(RbTemplate teamTemplateData) {
+	@Override
+	public DashboardInfo getDashboardInfo(String resourceId) {
+		// todo
+		return null;
+	}
+
+	@Override
+	public void updateRbRoom(RbRoomContext rbRoomContext, RbRoom rbRoom) {
+		if (!StringUtils.isBlank(rbRoomContext.getName())) {
+			rbRoom.setName(rbRoomContext.getName());
+		}
+		if (rbRoomContext.getCategory() != null) {
+			rbRoom.setSubType(rbRoomContext.getCategory());
+		}
+		if (!StringUtils.isBlank(rbRoomContext.getDescription())) {
+			rbRoom.setDescription(rbRoomContext.getDescription());
+		}
+		if (rbRoomContext.getPreSkill() != null && rbRoomContext.getPreSkill().size() > 0) {
+			rbRoom.setPreSkill(JsonUtil.toJsonString(rbRoomContext.getPreSkill()));
+		}
+		if (rbRoomContext.getTrainSkill() != null && rbRoomContext.getTrainSkill().size() > 0) {
+			rbRoom.setTrainSkill(JsonUtil.toJsonString(rbRoomContext.getTrainSkill()));
+		}
+		if (rbRoomContext.getStartTime() != null) {
+			rbRoom.setStartTime(rbRoomContext.getStartTime());
+		}
+		if (rbRoomContext.getEndTime() != null) {
+			rbRoom.setEndTime(rbRoomContext.getEndTime());
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				updateById(rbRoom);
+				if (rbRoomContext.getRoleConfig() != null
+						&& rbRoomContext.getRoleConfig().size() > 0) {
+
+					Map<String, RoomRole> roomRoleMap = rbRoomContext.getRoleConfig().stream()
+							.collect(Collectors.toMap(RoomRole::getResourceId, bo -> bo));
+
+					RoleQuery roleQuery = new RoleQuery();
+					roleQuery.setRoomId(rbRoom.getResourceId());
+					List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
+
+					crRoleList.forEach(crRole -> {
+						List<String> users = roomRoleMap.get(crRole.getResourceId()).getUsers();
+						crRole.setUserIds(JsonUtil.toJsonString(users));
+						crRoleService.updateById(crRole);
+
+					});
+				}
+			}
+		});
+	}
+
+	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData) {
 		List<CrRole> crRoleList = Lists.newArrayList();
 
-		String roleString = teamTemplateData.getRoleConfig();
+		String roleString = rbTemplateData.getRoleConfig();
 
 		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 

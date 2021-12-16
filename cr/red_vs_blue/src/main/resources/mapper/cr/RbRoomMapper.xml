@@ -38,4 +38,56 @@
                  left join local_scene on cr_rb_room.resource_id = local_scene.business_instance_id
         where cr_rb_room.resource_id = #{resourceId}
     </select>
+    <select id="listRbRoom" resultType="com.cyberpeace.cr.redvsblue.service.RbRoomData">
+
+        select cr_rb_room.resource_id,
+        cr_rb_room.template_id template,
+        cr_rb_room.template_name,
+        cr_rb_room.`NAME`,
+        cr_rb_room.description,
+        cr_rb_room.sub_type category,
+        cr_rb_room.pre_skill,
+        cr_rb_room.train_skill,
+        cr_rb_room.start_time,
+        cr_rb_room.end_time,
+        cr_rb_room.difficulty difficult,
+        cr_rb_room.create_user_id,
+        cr_rb_room.modify_user_id,
+        cr_rb_room.local_scene_id,
+        cr_rb_room.copyed_topo_id,
+        cr_rb_room.training_status,
+        cr_rb_template.duration_time,
+        local_scene.start_time scene_start_time,
+        local_scene.end_time scene_end_time,
+        local_scene.scene_status
+        from cr_rb_room
+        left join cr_rb_template on cr_rb_room.template_id = cr_rb_template.resource_id
+        left join local_scene on cr_rb_room.resource_id = local_scene.business_instance_id
+        <where>
+
+            cr_rb_room.resource_id in
+            <if test="listQuery.ids != null and listQuery.ids.size() != 0">
+                <foreach collection="listQuery.ids" item="roomId" separator="," close=")" open="(">
+                    #{roomId}
+                </foreach>
+            </if>
+            <if test="listQuery.ids.size() == 0">
+                ('')
+            </if>
+            <if test="listQuery.search != null and listQuery.search != ''">
+                <bind name="search" value="'%' + listQuery.search + '%'"/>
+                and cr_rb_room.name like #{search}
+            </if>
+            <if test="listQuery.difficult != null and listQuery.difficult != ''">
+                and cr_rb_room.difficulty = #{listQuery.difficult}
+            </if>
+            <if test="listQuery.name != null and listQuery.name != ''">
+                and cr_rb_room.name = #{listQuery.name}
+            </if>
+            <if test="listQuery.category != null and listQuery.category != ''">
+                and cr_rb_room.sub_type = #{listQuery.category}
+            </if>
+        </where>
+    </select>
+
 </mapper>

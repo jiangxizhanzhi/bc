@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
+import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 
 public interface RbRoomService extends IService<RbRoom> {
 
@@ -37,4 +38,9 @@ public interface RbRoomService extends IService<RbRoom> {
 	RbRoom create(RbRoomContext rbRoomContext);
 
 	RbRoomData getRbRoomDataByRoomId(String resourceId);
+
+	DashboardInfo getDashboardInfo(String resourceId);
+
+	void updateRbRoom(RbRoomContext rbRoomContext, RbRoom rbRoom);
+
 }

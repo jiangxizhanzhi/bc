@@ -14,4 +14,6 @@ public class RoomRole {
 	@NotNull
 	private List<String> users;
 
+	private String resourceId;
+
 }

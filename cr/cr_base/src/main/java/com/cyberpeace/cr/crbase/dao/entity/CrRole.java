@@ -99,7 +99,7 @@ public class CrRole extends BaseTable {
 
 	public enum RbRoleGroupCode {
 
-		ADMIN(1, "管理员"), DIRECTOR(2, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5, "蓝方");
+		ADMIN(6, "管理员"), DIRECTOR(7, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5, "蓝方");
 
 		@Getter
 		private Integer code;

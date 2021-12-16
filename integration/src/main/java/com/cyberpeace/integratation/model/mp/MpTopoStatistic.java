@@ -16,4 +16,21 @@ public class MpTopoStatistic implements Serializable {
 	private Integer switchCount;
 
 	private Integer terminalCount;
+
+	public Integer getNodesCount() {
+		int count = 0;
+		if (this.firewallCount != null) {
+			count += this.firewallCount;
+		}
+		if (this.routerCount != null) {
+			count += this.routerCount;
+		}
+		if (this.switchCount != null) {
+			count += this.switchCount;
+		}
+		if (this.terminalCount != null) {
+			count += this.terminalCount;
+		}
+		return count;
+	}
 }

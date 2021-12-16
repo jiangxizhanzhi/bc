@@ -208,5 +208,5 @@ public interface CrTaskService {
 	/**
 	 * 推送任务评估的websocket消息
 	 */
-	void pushEvaluationWS(String businessId, String userId, Integer code);
+	void pushMissionWS(String businessId, Integer code);
 }

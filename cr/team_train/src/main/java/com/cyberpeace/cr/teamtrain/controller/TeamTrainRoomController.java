@@ -18,6 +18,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
@@ -25,6 +26,7 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
@@ -70,6 +72,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private MissionService missionService;
+
+	@Autowired
+	private CrTaskService crTaskService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -208,7 +213,6 @@ public class TeamTrainRoomController {
 		}
 		return teamRoomRoleResList;
 	}
-
 
 	@ApiOperation("删除")
 	@DeleteMapping()
@@ -364,6 +368,8 @@ public class TeamTrainRoomController {
 		missionService.release(releaseMissionReq.getMissionResourceId(),
 				releaseMissionReq.getRoleResourceId(),
 				UserInfoContext.getUserContext().getUserId());
+
+		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
 
 		return new BaseRsp<>();
 	}

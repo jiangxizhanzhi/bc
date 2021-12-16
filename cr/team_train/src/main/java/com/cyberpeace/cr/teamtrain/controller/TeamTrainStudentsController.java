@@ -13,7 +13,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrMissionWsCode;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
@@ -162,8 +162,8 @@ public class TeamTrainStudentsController {
 		crTaskService.submitMissions(submitMissionsReq.getResourceId(),
 				submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
 
-		crTaskService.pushEvaluationWS(submitMissionsReq.getResourceId(), userId,
-				CrMissionWsCode.TEAM_EVALUATION_CODE);
+		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(),
+				MissionWsCode.TEAM_MISSION_CODE);
 
 		return new BaseRsp<>();
 	}

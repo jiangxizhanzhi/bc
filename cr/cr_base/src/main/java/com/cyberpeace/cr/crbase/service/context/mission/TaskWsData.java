@@ -8,11 +8,11 @@ import lombok.Data;
  * 任务相关ws的data部分
  */
 @Data
-public class MissionWsData implements Serializable {
+public class TaskWsData implements Serializable {
 
 	private Integer code;
 
-	public MissionWsData(Integer code) {
+	public TaskWsData(Integer code) {
 		this.code = code;
 	}
 }

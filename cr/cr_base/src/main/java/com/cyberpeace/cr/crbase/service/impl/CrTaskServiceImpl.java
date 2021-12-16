@@ -3,11 +3,6 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import com.cyberpeace.cr.crbase.service.context.mission.EvaluationWsIdentifier;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionWsData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -18,8 +13,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -34,6 +32,8 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
+import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -401,18 +401,17 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public void pushEvaluationWS(String businessId, String userId, Integer code) {
-		EvaluationWsIdentifier identifier = new EvaluationWsIdentifier();
+	public void pushMissionWS(String businessId, Integer code) {
+		MissionWsIdentifier identifier = new MissionWsIdentifier();
 		identifier.setBusinessId(businessId);
-		identifier.setUserId(userId);
-		identifier.setPath(WsPath.CR_EVALUATE);
+		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
+		identifier.setPath(WsPath.CR_MISSION);
 
-		MissionWsData data = new MissionWsData(code);
+		TaskWsData data = new TaskWsData(code);
 
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();
 		webSocketHandler.pushMessage(messageContext, true);
-
 
 	}
 

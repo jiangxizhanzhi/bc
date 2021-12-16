@@ -19,6 +19,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrMissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
@@ -211,6 +212,9 @@ public class TeamTrainScoreController {
 				submitEvaluationReq.getScore(), submitEvaluationReq.getDetail(),
 				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
 				UserInfoContext.getUserContext().getUserId());
+
+		crTaskService.pushEvaluationWS(submitEvaluationReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId(), CrMissionWsCode.TEAM_EVALUATION_CODE);
 		return new BaseRsp<>();
 	}
 

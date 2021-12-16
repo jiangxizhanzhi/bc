@@ -204,4 +204,9 @@ public interface CrTaskService {
 
 	IPage<MissionEvaluationContext>
 			getMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery);
+
+	/**
+	 * 推送任务评估的websocket消息
+	 */
+	void pushEvaluationWS(String businessId, String userId, Integer code);
 }

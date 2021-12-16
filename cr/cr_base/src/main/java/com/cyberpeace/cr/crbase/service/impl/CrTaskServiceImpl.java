@@ -3,6 +3,11 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+import com.cyberpeace.cr.crbase.service.context.mission.EvaluationWsIdentifier;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionWsData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -12,6 +17,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -56,6 +62,9 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
+
+	@Autowired
+	private MyWebSocketHandler webSocketHandler;
 
 	@Override
 	public CrTask getById(String taskId) {
@@ -389,6 +398,22 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		});
 
 		return data;
+	}
+
+	@Override
+	public void pushEvaluationWS(String businessId, String userId, Integer code) {
+		EvaluationWsIdentifier identifier = new EvaluationWsIdentifier();
+		identifier.setBusinessId(businessId);
+		identifier.setUserId(userId);
+		identifier.setPath(WsPath.CR_EVALUATE);
+
+		MissionWsData data = new MissionWsData(code);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().data(data).messageIdentifier(identifier).build();
+		webSocketHandler.pushMessage(messageContext, true);
+
+
 	}
 
 	private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(

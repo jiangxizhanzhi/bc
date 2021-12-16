@@ -187,7 +187,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
                 UserInfoContext.getUserContext().getUserId(),
                 queryParams.getPattern(),
                 queryParams.getCategory(),
-                queryParams.getDifficult()
+                queryParams.getDifficult(),
+                BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode()
         );
         if (selectResult.getRecords().isEmpty()) {
             return new ListRsp<>();
@@ -210,7 +211,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
         ).collect(Collectors.toList());
 
         // 查询训练使用统计
-        List<SingleTrainStats> dateStats = singleRoomMapper.singleTrainStats(template_ids, dateRange);
+        List<SingleTrainStats> dateStats = singleRoomMapper.singleTrainStats(template_ids, dateRange, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
         Map<String, List<Integer>> trainStats = dateStats.stream().collect(
                 Collectors.toMap(
                         SingleTrainStats::getBusinessTemplateId,

@@ -38,7 +38,7 @@
         left join cr_single_template T2 on T1.resource_id = T2.business_template_id
         left join cr_single_room R1 on T1.resource_id = R1.single_template_id and R1.user_id = #{user_id}
         <where>
-            T1.business_type = 1
+            T1.business_type = #{business_type}
             <if test="category != null and category">
                 and T2.sub_type = #{category}
             </if>
@@ -56,7 +56,7 @@
     
     <select id="singleTrainStats" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleTrainStats">
         select business_template_id, date_format(start_time, '%m-%d') as `date`, count(date_format(start_time, '%m-%d')) as `count` from cr_train_record
-        where business_type = 1
+        where business_type = #{business_type}
         and business_template_id in <foreach collection="business_template_ids" open="(" close=")" separator=", " item="template_id">#{template_id}</foreach>
         and date_format(start_time, '%Y-%m-%d') in <foreach collection="date_range" open="(" close=")" separator=", " item="date_item">#{date_item}</foreach>
         group by business_template_id, date_format(start_time, '%m-%d');

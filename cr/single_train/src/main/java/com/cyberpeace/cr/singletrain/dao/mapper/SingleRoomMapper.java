@@ -23,8 +23,13 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
             @Param("user_id") String userId,
             @Param("pattern") String pattern,
             @Param("category") Integer category,
-            @Param("difficult") Integer difficult
+            @Param("difficult") Integer difficult,
+            @Param("business_type") Integer businessType
     );
 
-    List<SingleTrainStats> singleTrainStats(@Param("business_template_ids") List<String> businessTemplateIds, @Param("date_range") List<String> dateRange);
+    List<SingleTrainStats> singleTrainStats(
+            @Param("business_template_ids") List<String> businessTemplateIds,
+            @Param("date_range") List<String> dateRange,
+            @Param("business_type") Integer businessType
+    );
 }

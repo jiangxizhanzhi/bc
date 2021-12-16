@@ -226,4 +226,18 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public Integer batchDelete(List<String> business_template_ids) {
 		return businessTemplateMapper.deleteBatchIds(business_template_ids);
 	}
+
+	@Override
+	public void clearLocal(BusinessTemplate template) {
+		String localSceneId = template.getLocalSceneId();
+		template.setLocalSceneId("");
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				localSceneService.removeById(localSceneId);
+				updateById(template);
+			}
+		});
+	}
 }

@@ -23,6 +23,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.MultiSelectReq;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.NameValidReq;
@@ -38,7 +39,6 @@ import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.LoadTemplate;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
-import com.cyberpeace.cr.crbase.service.impl.TestSceneHandler;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -61,9 +61,6 @@ public class BusinessTemplateController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
-
-	@Autowired
-	private TestSceneHandler testSceneHandler;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -214,23 +211,28 @@ public class BusinessTemplateController {
 	@ApiOperation("启动后台测试场景")
 	@PostMapping("/testScene")
 	public BaseRsp testScene(@RequestBody TestSceneReq testSceneReq) {
+
 		String templateId = testSceneReq.getBusinessTemplateId();
+		// 1、检查权限
+		checkBeforeTestingScene(templateId);
+		// 2、获取模板
+		BusinessTemplate businessTemplate = ensureTemplateExist(templateId);
 
-		testSceneHandler.checkBeforeTestingScene(templateId);
-
-		BusinessTemplate businessTemplate = businessTemplateService.getById(templateId);
-
+		// 3、创建场景管理器
 		LocalScene localScene = new LocalScene();
 		localScene.setBusinessCode(LocalScene.BusinessCode.TEST_SCENE.getCode());
 		localScene.setTopoId(businessTemplate.getTopoId());
-		// todo 后台测试场景的 businessId
-		localScene.setBusinessInstanceId("");
+		// 以模板id作为后台测试场景的 businessId，
+		// 发给mp的context中会以localScene的businessInstanceId作为透明上下文（passThrough）的businessId，用于ws消息推送
+		localScene.setBusinessInstanceId(templateId);
 
+		// 4、发送mp请求，创建远程场景
 		String sceneId = localSceneService.testScene(localScene);
 		localScene.setMpSceneId(sceneId);
-
+		// 5、关联模板和场景管理器
 		businessTemplate.setLocalSceneId(localScene.getResourceId());
 
+		// 6、保存本地数据
 		try {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -242,10 +244,45 @@ public class BusinessTemplateController {
 				}
 			});
 		} catch (Exception e) {
+			// 保存失败，删除远程场景
 			log.error("db error when testing scene: ", e);
 			localSceneService.deleteRemoteScene(localScene);
-			throw new RuntimeException();
+			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
 		return new BaseRsp();
+	}
+
+	@ApiOperation("关闭后台场景测试")
+	@DeleteMapping("/testScene")
+	public BaseRsp stopTestScene(@RequestBody TestSceneReq testSceneReq) {
+		// 1.获取模板
+		String templateId = testSceneReq.getBusinessTemplateId();
+		BusinessTemplate template = ensureTemplateExist(templateId);
+		// 2.鉴权
+		checkBeforeTestingScene(templateId);
+		// 3.关闭远程场景
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(templateId);
+		localSceneService.stopScene(localScene);
+		// 4.清除本地场景数据
+		businessTemplateService.clearLocal(template);
+
+		return new BaseRsp();
+	}
+
+	private void checkBeforeTestingScene(String templateId) {
+		// todo 模板授权
+		if (!UserInfoContext.getUserContext().isAdmin()) {
+			log.error("current user is not permitted to test template [{}]", templateId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+	}
+
+	private BusinessTemplate ensureTemplateExist(String templateId) {
+		BusinessTemplate businessTemplate = businessTemplateService.getById(templateId);
+		if (businessTemplate == null) {
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
+		}
+
+		return businessTemplate;
 	}
 }

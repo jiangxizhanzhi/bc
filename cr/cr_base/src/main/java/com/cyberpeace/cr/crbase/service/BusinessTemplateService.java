@@ -45,7 +45,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param resourceId
 	 * @return
 	 */
-    BusinessTemplate getByLocalSceneId(String resourceId);
+	BusinessTemplate getByLocalSceneId(String resourceId);
 
 	void batchLoads(LoadTemplate loadTemplate);
 
@@ -54,4 +54,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param business_template_ids 训练业务模板id列表
 	 */
 	Integer batchDelete(List<String> business_template_ids);
+
+	/**
+	 * 关闭后台测试场景之后删除本地数据
+	 */
+	void clearLocal(BusinessTemplate template);
 }

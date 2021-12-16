@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +51,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -77,7 +79,7 @@ public class TeamTrainRoomController {
 	private CrTaskService crTaskService;
 
 	@Autowired
-	private RemoteUserService remoteUserService;
+	private TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private TeamSceneService teamSceneService;
@@ -217,7 +219,16 @@ public class TeamTrainRoomController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		teamRoomService.removeByIds(deleteReq.getIds());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				teamRoomService.removeByIds(deleteReq.getIds());
+
+				teamSceneService.stopScene(deleteReq.getIds().get(0));
+			}
+		});
 
 		return new BaseRsp<>();
 	}

@@ -84,4 +84,7 @@ public interface CrBusinessErrorCode {
 
 	// 工具库分类在使用时不能删除
 	String TOOL_CATEGORY_IN_USE = "101025";
+
+	// 指定模板不存在
+	String TEMPLATE_NOT_EXIST = "101026";
 }

@@ -271,10 +271,6 @@ public class BusinessTemplateController {
 
 	private void checkBeforeTestingScene(String templateId) {
 		// todo 模板授权
-		if (!UserInfoContext.getUserContext().isAdmin()) {
-			log.error("current user is not permitted to test template [{}]", templateId);
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		}
 	}
 
 	private BusinessTemplate ensureTemplateExist(String templateId) {

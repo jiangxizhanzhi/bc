@@ -4,20 +4,24 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.google.common.collect.Lists;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 
 import lombok.Data;
 
-/**
- * 数据导入导出模型
- */
 @Data
-public class ResourceDumpContext implements Serializable {
+public class ResourceDumpContext<T> implements Serializable {
 
-	private List<BusinessDumpContext> items = Lists.newArrayList();
+	private List<MissionTemplate> missions;
 
-	private List<Mission> template_questions = Lists.newArrayList();
+	private BusinessTemplate businessTemplate;
 
-	private Map<String, String> file;
+	private T business;
+
+	private Map<String, String> files;
+
+	private JSONObject sceneData;
+
+	private Integer type;
 }

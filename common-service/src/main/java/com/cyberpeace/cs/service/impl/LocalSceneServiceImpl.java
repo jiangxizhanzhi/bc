@@ -261,6 +261,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public Boolean ensureSceneStarted(LocalScene localScene) {
+		if (localScene == null) {
+			return false;
+		}
+		return !StringUtils.isBlank(localScene.getMpSceneId());
+	}
+
+	@Override
 	public void deleteRemoteScene(LocalScene localScene) {
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 		remoteSceneService.stopScene(sceneOpsContext);
@@ -284,5 +292,4 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 		return nodeOpsContext;
 	}
-
 }

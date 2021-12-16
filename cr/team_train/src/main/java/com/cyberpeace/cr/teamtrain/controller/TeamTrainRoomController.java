@@ -36,10 +36,7 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
-import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
+import com.cyberpeace.cr.teamtrain.controller.req.*;
 import com.cyberpeace.cr.teamtrain.controller.rsp.Flow;
 import com.cyberpeace.cr.teamtrain.controller.rsp.FlowRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
@@ -51,6 +48,8 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -83,6 +82,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private TeamSceneService teamSceneService;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -141,6 +143,24 @@ public class TeamTrainRoomController {
 		ret.setData(flows);
 
 		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("启动流量")
+	@PostMapping("/flow")
+	public BaseRsp startFlow(@RequestBody TeamFlowOpsReq req) {
+		String roomId = req.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、鉴权
+		teamRoomService.checkTeacherPermission(roomId, userId);
+		// 2、确认场景已开启
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+		if (!localSceneService.ensureSceneStarted(localScene)) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		// 3、开启流量
+		localSceneService.startFlow(localScene.getResourceId(), req.getNodeId(), req.getFlowId());
+
+		return new BaseRsp();
 	}
 
 	@ApiOperation("新增")

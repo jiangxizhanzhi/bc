@@ -43,6 +43,11 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	JSONObject getTopoData(String topoId);
 
+	/**
+	 * 执行节点和流量操作前确认场景已开启
+	 */
+	Boolean ensureSceneStarted(LocalScene localScene);
+
 	Boolean restartNode(String localSceneId, String nodeId);
 
 	Boolean recreateNode(String localSceneId, String nodeId);

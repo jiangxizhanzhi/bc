@@ -87,4 +87,7 @@ public interface CrBusinessErrorCode {
 
 	// 指定模板不存在
 	String TEMPLATE_NOT_EXIST = "101026";
+
+	// 场景未开启
+	String SCENE_NOT_STARTED = "101027";
 }

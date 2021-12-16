@@ -246,7 +246,7 @@ public class BusinessTemplateController {
 	@ApiOperation("查看后台测试场景")
 	@GetMapping("/testScene")
 	public BaseRsp<SceneViewContext> getScene(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "业务模板id", required = true) String resource_id) {
 
 		BusinessTemplate template = ensureTemplateExist(resource_id);
 		SceneViewContext context = businessTemplateService.viewScene(template);

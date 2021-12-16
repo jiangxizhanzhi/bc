@@ -43,4 +43,7 @@ public interface RbRoomService extends IService<RbRoom> {
 
 	void updateRbRoom(RbRoomContext rbRoomContext, RbRoom rbRoom);
 
+	void checkDirectorPermission(String roomId, String userId);
+
+	void checkRoomOpening(String roomId);
 }

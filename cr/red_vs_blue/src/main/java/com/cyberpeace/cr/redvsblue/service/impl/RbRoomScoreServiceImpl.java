@@ -77,9 +77,9 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 			}
 		}
 
-		RoleScore redRoleScore = new RoleScore(CrRole.RbRoleGroupCode.RED.getRole(),
+		RoleScore redRoleScore = new RoleScore(CrRole.RbRoleGroupCode.RED.getDesc(),
 				CrRole.RbRoleGroupCode.RED.getCode(), redScore, redFinishedTaskCount, redTaskCount);
-		RoleScore blueRoleScore = new RoleScore(CrRole.RbRoleGroupCode.BLUE.getRole(),
+		RoleScore blueRoleScore = new RoleScore(CrRole.RbRoleGroupCode.BLUE.getDesc(),
 				CrRole.RbRoleGroupCode.BLUE.getCode(), blueScore, blueFinishedTaskCount,
 				blueTaskCount);
 

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
@@ -81,7 +82,7 @@ public class CrRole extends BaseTable {
 
 	}
 
-	public enum TeamRoleGroupCode {
+	public enum TeamRoleGroupCode implements GenericEnum {
 
 		TEACHER(1, "教员"), STUDENT(2, "学员");
 
@@ -89,15 +90,16 @@ public class CrRole extends BaseTable {
 		private Integer code;
 
 		@Getter
-		private final String role;
+		private final String desc;
 
-		TeamRoleGroupCode(Integer code, String role) {
+		TeamRoleGroupCode(Integer code, String desc) {
 			this.code = code;
-			this.role = role;
+			this.desc = desc;
 		}
+
 	}
 
-	public enum RbRoleGroupCode {
+	public enum RbRoleGroupCode implements GenericEnum {
 
 		ADMIN(6, "管理员"), DIRECTOR(7, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5, "蓝方");
 
@@ -105,11 +107,11 @@ public class CrRole extends BaseTable {
 		private Integer code;
 
 		@Getter
-		private String role;
+		private String desc;
 
-		RbRoleGroupCode(Integer code, String role) {
+		RbRoleGroupCode(Integer code, String desc) {
 			this.code = code;
-			this.role = role;
+			this.desc = desc;
 		}
 	}
 

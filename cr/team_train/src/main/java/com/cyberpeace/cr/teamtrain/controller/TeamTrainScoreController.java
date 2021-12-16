@@ -61,28 +61,28 @@ import lombok.extern.slf4j.Slf4j;
 public class TeamTrainScoreController {
 
 	@Autowired
-	TeamRoomService teamRoomService;
+	private TeamRoomService teamRoomService;
 
 	@Autowired
-	CrRoleService crRoleService;
+	private CrRoleService crRoleService;
 
 	@Autowired
-	CrTaskService crTaskService;
+	private CrTaskService crTaskService;
 
 	@Autowired
-	BusinessTemplateService businessTemplateService;
+	private BusinessTemplateService businessTemplateService;
 
 	@Autowired
-	TeamScoreService teamScoreService;
+	private TeamScoreService teamScoreService;
 
 	@Autowired
-	TeamDynamicEventService teamDynamicEventService;
+	private TeamDynamicEventService teamDynamicEventService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	MissionService missionService;
+	private MissionService missionService;
 
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")

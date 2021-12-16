@@ -4,12 +4,16 @@ import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -34,7 +38,6 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
-import com.cyberpeace.cs.service.LocalSceneService;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -56,9 +59,9 @@ public class RbRoomController {
 	@Autowired
 	private CrRoleService crRoleService;
 
-	@Autowired
-	private LocalSceneService localSceneService;
 
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
@@ -148,13 +151,13 @@ public class RbRoomController {
 			}
 		}
 		RbRoomRoleRes redRoleRes = new RbRoomRoleRes();
-		redRoleRes.setName(CrRole.RbRoleGroupCode.RED.getRole());
+		redRoleRes.setName(CrRole.RbRoleGroupCode.RED.getDesc());
 		redRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.RED.getCode());
 		redRoleRes.setChildren(redRoles);
 		rbRoomRoleResList.add(redRoleRes);
 
 		RbRoomRoleRes blueRoleRes = new RbRoomRoleRes();
-		blueRoleRes.setName(CrRole.RbRoleGroupCode.BLUE.getRole());
+		blueRoleRes.setName(CrRole.RbRoleGroupCode.BLUE.getDesc());
 		blueRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.BLUE.getCode());
 		blueRoleRes.setChildren(blueRoles);
 		rbRoomRoleResList.add(blueRoleRes);
@@ -230,4 +233,21 @@ public class RbRoomController {
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}
 
+	@ApiOperation("删除")
+	@DeleteMapping()
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				// todo teamSceneService.stopScene(deleteReq.getIds().get(0));
+				rbRoomService.removeByIds(deleteReq.getIds());
+
+			}
+		});
+
+		return new BaseRsp<>();
+	}
 }

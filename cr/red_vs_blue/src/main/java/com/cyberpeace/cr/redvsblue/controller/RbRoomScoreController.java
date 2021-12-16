@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -24,8 +23,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomScoreController {
 
-	@Autowired
-	private BusinessTemplateService businessTemplateService;
+
 
 	@Autowired
 	private RbRoomScoreService rbRoomService;

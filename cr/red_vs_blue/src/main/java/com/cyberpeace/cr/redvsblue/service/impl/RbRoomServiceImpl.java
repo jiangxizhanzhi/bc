@@ -16,9 +16,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -205,6 +208,43 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		});
 	}
 
+	private void permissionCheck(String roomId, String userId, Integer roleCode) {
+		RbRoom rbRoom = getById(roomId);
+		if (rbRoom == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		if (!crRole.getRoleGroup().equals(roleCode)) {
+			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
+					roomId, userId,
+					EnumUtils.getEnumDescByCode(roleCode, CrRole.TeamRoleGroupCode.class));
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+	}
+
+	@Override
+	public void checkDirectorPermission(String roomId, String userId) {
+		permissionCheck(roomId, userId, CrRole.RbRoleGroupCode.DIRECTOR.getCode());
+	}
+
+	@Override
+	public void checkRoomOpening(String roomId) {
+		RbRoom rbRoom = getById(roomId);
+		// 未开始，新增local_scene数据
+		if (rbRoom.isUnopened()) {
+			log.error("RedVsBlueTrain not begin! roomId=[{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+
+		}
+		if (rbRoom.isEnded()) {
+			log.error("RedVsBlueTrain is over! roomId=[{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+
+		}
+	}
+
 	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData) {
 		List<CrRole> crRoleList = Lists.newArrayList();
 
@@ -212,15 +252,15 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 
-		CrRole rbTemplateRoleRsp = new CrRole(CrRole.RbRoleGroupCode.ADMIN.getRole(),
+		CrRole rbTemplateRoleRsp = new CrRole(CrRole.RbRoleGroupCode.ADMIN.getDesc(),
 				CrRole.RbRoleGroupCode.ADMIN.getCode());
 		crRoleList.add(rbTemplateRoleRsp);
 
-		CrRole rbTemplateRoleRsp1 = new CrRole(CrRole.RbRoleGroupCode.DIRECTOR.getRole(),
+		CrRole rbTemplateRoleRsp1 = new CrRole(CrRole.RbRoleGroupCode.DIRECTOR.getDesc(),
 				CrRole.RbRoleGroupCode.DIRECTOR.getCode());
 		crRoleList.add(rbTemplateRoleRsp1);
 
-		CrRole rbTemplateRoleRsp2 = new CrRole(CrRole.RbRoleGroupCode.REFEREE.getRole(),
+		CrRole rbTemplateRoleRsp2 = new CrRole(CrRole.RbRoleGroupCode.REFEREE.getDesc(),
 				CrRole.RbRoleGroupCode.REFEREE.getCode());
 		crRoleList.add(rbTemplateRoleRsp2);
 

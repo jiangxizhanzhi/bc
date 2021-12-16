@@ -244,9 +244,10 @@ public class TeamTrainRoomController {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				teamRoomService.removeByIds(deleteReq.getIds());
 
 				teamSceneService.stopScene(deleteReq.getIds().get(0));
+				teamRoomService.removeByIds(deleteReq.getIds());
+
 			}
 		});
 

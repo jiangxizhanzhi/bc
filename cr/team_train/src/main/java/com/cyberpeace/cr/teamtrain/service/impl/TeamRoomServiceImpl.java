@@ -23,6 +23,7 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
@@ -133,7 +134,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				List<RoomRole> users = teamTrainRoomContext.getRoleConfig();
 				int index = 0;
 				RoleListContext teacherRole = new RoleListContext();
-				teacherRole.setName(CrRole.TeamRoleGroupCode.TEACHER.getRole());
+				teacherRole.setName(CrRole.TeamRoleGroupCode.TEACHER.getDesc());
 				teacherRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getCode());
 				originRoles.add(0, teacherRole);
 
@@ -452,16 +453,18 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 	}
 
-	private void permissionCheck(String roomId, String userId, Integer teacher) {
+	private void permissionCheck(String roomId, String userId, Integer roleCode) {
 		TeamRoom teamRoom = getById(roomId);
 		if (teamRoom == null) {
 			log.error("failed to get TeamRoom with Id [{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
+
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!crRole.getRoleGroup().equals(teacher)) {
-			log.error("user does not have TeamRoom Teacher Permission！roomId=[{}] userId=[{}]",
-					roomId, userId);
+		if (!crRole.getRoleGroup().equals(roleCode)) {
+			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
+					roomId, userId,
+					EnumUtils.getEnumDescByCode(roleCode, CrRole.TeamRoleGroupCode.class));
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}

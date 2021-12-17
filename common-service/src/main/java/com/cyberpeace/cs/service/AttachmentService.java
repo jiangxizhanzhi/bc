@@ -32,6 +32,8 @@ public interface AttachmentService extends IService<Attachment> {
 	 */
 	AttachmentBo create(String filename, String filePath);
 
+	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file, Boolean renameFile);
+
 	/**
 	 * 文件上传并入附件库
 	 * @param type

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.ErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
@@ -140,6 +140,12 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 
 	@Override
 	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
+			Boolean renameFile) {
+		return uploadFile(file, type, insert, renameFile);
+	}
+
+	@Override
+	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
 			String resourceId) {
 
 		String filePath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
@@ -245,5 +251,43 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return Arrays.stream(new File(distPath).listFiles()).filter(
 				file -> StringUtils.isBlank(fileType) ? true : file.getName().endsWith(fileType))
 				.map(File::getAbsolutePath).collect(Collectors.toList());
+	}
+
+	private AttachmentBo uploadFile(MultipartFile file, Integer type, Boolean insertDb,
+			Boolean renameFile) {
+		String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
+
+		String fileName = file.getOriginalFilename();
+		if (renameFile) {
+			String[] ss = StringUtils.split(fileName, ".");
+			if (ss.length > 1) {
+				// 如果文件没有后缀，不重命名，方便后期问题追踪。没有后缀对文件，一般是bug
+				String postfix = ss[ss.length - 1];
+				fileName = IDGeneratorUtil.getID() + "." + postfix;
+			}
+		}
+		String destPathFileName = destPath + fileName;
+		String storeInDbName = EnumUtils.getEnumByCode(type, AttachmentPath.class).getOriginDesc()
+				+ fileName;
+		File dest = new File(destPathFileName);
+
+		try {
+			if (!dest.getParentFile().exists()) {
+				dest.getParentFile().mkdirs();
+			}
+			file.transferTo(dest);
+		} catch (IOException e) {
+			log.error("复制文件失败: " + fileName + " ,to:" + dest.getAbsolutePath());
+			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
+		}
+
+		if (null != insertDb && insertDb) {
+			AttachmentBo attachmentBo = create(fileName, storeInDbName);
+			return attachmentBo;
+		}
+
+		// 返回给前端对展示名称
+		String displayName = ConfigUtil.getContextProperty("cr.local.file.prefix") + storeInDbName;
+		return AttachmentBo.builder().filePath(displayName).fileName(fileName).build();
 	}
 }

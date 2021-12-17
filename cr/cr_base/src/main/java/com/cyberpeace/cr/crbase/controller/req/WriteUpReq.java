@@ -7,7 +7,7 @@ import lombok.Data;
 public class WriteUpReq {
 
 	@ApiModelProperty(required = true)
-	private String trainingTeam;
+	private String roomId;
 
 	@ApiModelProperty(required = true)
 	private String missionResourceId;

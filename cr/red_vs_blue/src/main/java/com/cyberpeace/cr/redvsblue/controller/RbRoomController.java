@@ -21,7 +21,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
@@ -50,8 +49,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomController {
 
-	@Autowired
-	private BusinessTemplateService businessTemplateService;
+
 
 	@Autowired
 	private RbRoomService rbRoomService;
@@ -59,9 +57,9 @@ public class RbRoomController {
 	@Autowired
 	private CrRoleService crRoleService;
 
-
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {

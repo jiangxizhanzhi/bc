@@ -143,6 +143,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<CrTask> crTasks = crTaskMapper.selectByMissionId(missionId);
 
 		if (crTasks.size() > 0) {
+
 			throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 		}
 

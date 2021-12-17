@@ -101,7 +101,7 @@ public class CrRole extends BaseTable {
 
 	public enum RbRoleGroupCode implements GenericEnum {
 
-		ADMIN(6, "管理员"), DIRECTOR(7, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5, "蓝方");
+		ADMIN(1, "管理员"), DIRECTOR(2, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5, "蓝方");
 
 		@Getter
 		private Integer code;
@@ -113,6 +113,19 @@ public class CrRole extends BaseTable {
 			this.code = code;
 			this.desc = desc;
 		}
+	}
+
+	public Boolean isStudent() {
+		boolean result = false;
+		if (BusinessTemplate.BusinessType.RED_VS_BLUE.getCode().equals(this.businessType)) {
+			result = result || roleGroup.intValue() == RbRoleGroupCode.RED.getCode();
+			result = result || roleGroup.intValue() == RbRoleGroupCode.BLUE.getCode();
+		}
+		if (BusinessTemplate.BusinessType.TRAINING_TEAM.getCode().equals(this.businessType)) {
+			result = result || roleGroup.intValue() == TeamRoleGroupCode.STUDENT.getCode();
+		}
+
+		return result;
 	}
 
 }

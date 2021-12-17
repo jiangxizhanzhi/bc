@@ -141,6 +141,7 @@ public class RbTemplateAdminController {
 		RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();
 
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+		teamTrainTemplateRsp.setResourceId(template.getResourceId());
 
 		teamTrainTemplateRsp.setRedRoles(redRoleRsps);
 		teamTrainTemplateRsp.setBlueRoles(blueRoleRsps);

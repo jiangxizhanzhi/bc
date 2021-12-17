@@ -120,6 +120,7 @@ public class TeamTrainTemplateController {
 
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setPeopleNumber(baseInfoRsp.getPeopleNumber());
+		teamTrainTemplateRsp.setResourceId(template.getResourceId());
 
 		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());

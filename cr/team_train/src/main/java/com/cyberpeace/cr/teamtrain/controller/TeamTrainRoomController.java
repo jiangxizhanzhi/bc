@@ -27,7 +27,6 @@ import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
@@ -366,11 +365,10 @@ public class TeamTrainRoomController {
 	@PostMapping("/update_show_write_up")
 	public BaseRsp<String> updateShowWriteUp(@RequestBody @Validated WriteUpReq writeUpReq) {
 
-		teamRoomService.checkTeacherPermission(writeUpReq.getTrainingTeam(),
+		teamRoomService.checkTeacherPermission(writeUpReq.getRoomId(),
 				UserInfoContext.getUserContext().getUserId());
-		teamRoomService.checkRoomOpening(writeUpReq.getTrainingTeam());
+		teamRoomService.checkRoomOpening(writeUpReq.getRoomId());
 
-		Mission mission = missionService.getById(writeUpReq.getMissionResourceId());
 		missionService.updateShowWriteup(writeUpReq.getMissionResourceId(),
 				writeUpReq.getWriteUpShow());
 

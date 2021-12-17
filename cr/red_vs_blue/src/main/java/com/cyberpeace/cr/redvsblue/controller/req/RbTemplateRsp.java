@@ -12,6 +12,8 @@ public class RbTemplateRsp {
 
 	private BaseInfoRsp baseInfo;
 
+	private String resourceId;
+
 	private List<RbTemplateRoleRsp> redRoles;
 
 	private List<RbTemplateRoleRsp> blueRoles;

@@ -123,6 +123,7 @@ public class TeamTrainTemplateController {
 
 		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
+		teamTrainTemplateRsp.setResourceId(resource_id);
 
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}

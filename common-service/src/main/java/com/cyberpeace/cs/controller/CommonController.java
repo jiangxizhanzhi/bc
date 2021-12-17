@@ -29,6 +29,11 @@ public class CommonController {
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
 	public BaseRsp<AttachmentBo> imageUpload(MultipartFile file) {
+		String fileName = file.getOriginalFilename();
+
+		// TODO
+		// 对图片格式进行校验，如png，jpeg
+
 		AttachmentBo attachmentBo = attachmentService
 				.uploadFile(AttachmentPath.UPLOAD_IMAGE.getCode(), true, file, true);
 

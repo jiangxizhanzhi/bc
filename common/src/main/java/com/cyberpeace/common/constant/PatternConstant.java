@@ -11,4 +11,10 @@ public interface PatternConstant {
 	/** 动态flag匹配*/
 	String DYNAMIC_FLAG = "\\[FLAG\\[[0-9]+\\]\\]";
 
+	/** 解析markdown文件匹配标题*/
+	String MARKDOWN_TITLE = "#{2}[^#]+";
+
+	/** 解析markdown文件匹配标签*/
+	String MARKDOWN_TAG = "#{3}[^#]+";
+
 }

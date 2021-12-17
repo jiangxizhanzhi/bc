@@ -18,6 +18,10 @@ public interface CommonConstant {
 
 	Integer ONE = 1;
 
+	int TWO = 2;
+
+	int NEGATIVE_ONE = -1;
+
 	Integer HUNDRED = 100;
 
 	Integer NINE_NINE_NINE = 999;

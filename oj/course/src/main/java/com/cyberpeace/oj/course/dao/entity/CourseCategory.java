@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("oj_course_category")
 public class CourseCategory extends BaseTable {
 

@@ -55,4 +55,11 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * @return
 	 */
 	CourseCategoryBo selectById(String resourceId, Boolean children);
+
+	/**
+	 * 无则创建 有则返回
+	 * @param categoryId
+	 * @return
+	 */
+    CourseCategory getOrCreate(String categoryId);
 }

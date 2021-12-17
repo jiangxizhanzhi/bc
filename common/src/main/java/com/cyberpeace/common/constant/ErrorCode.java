@@ -26,4 +26,7 @@ public interface ErrorCode {
 
 	// 文件上传失败
 	String FILE_UPLOAD_FAIL = "100011";
+
+	/** 文件拷贝失败*/
+	String FILE_COPY_FAIL = "100012";
 }

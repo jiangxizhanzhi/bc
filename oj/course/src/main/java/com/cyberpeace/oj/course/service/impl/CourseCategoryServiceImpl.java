@@ -9,6 +9,7 @@ import com.cyberpeace.common.util.PageUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -134,6 +135,21 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 			return packageCategoryBo(courseCategory, parentMap);
 		}
 		return BeanUtils.copy(courseCategory, CourseCategoryBo.class);
+	}
+
+	@Override
+	public CourseCategory getOrCreate(String categoryName) {
+		String resourceId = IDGeneratorUtil.getID();
+		CourseCategory category = CourseCategory.builder()
+				.courseType(CourseCategory.CourseType.BASE.getCode()).code(resourceId)
+				.name(categoryName).resourceId(resourceId).build();
+		try {
+			courseCategoryMapper.insert(category);
+		} catch (DuplicateKeyException e) {
+			return courseCategoryMapper.selectByName(categoryName);
+		}
+
+		return category;
 	}
 
 	/**

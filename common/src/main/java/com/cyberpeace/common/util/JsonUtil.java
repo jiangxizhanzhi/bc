@@ -2,6 +2,7 @@ package com.cyberpeace.common.util;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -66,6 +67,32 @@ public class JsonUtil {
 
 	public static <T> T toJsonTObject(String text, TypeReference<T> type, Feature... features) {
 		return JSON.parseObject(text, type, features);
+
+	}
+
+	/**
+	 * json key转换
+	 * @param jsonObject 原json数据
+	 * @param mapping 原json的key与新key的映射关系
+	 * @return
+	 */
+	public static JSONObject filedConvert(JSONObject jsonObject, String mapping) {
+
+		JSONObject toJsonObject = JsonUtil.toJsonObject(mapping, JSONObject.class);
+		JSONObject convertValue = new JSONObject();
+
+		// 遍历旧数据 转换key值
+		for (String key : jsonObject.keySet()) {
+			String newKetStr = toJsonObject.getString(key);
+			// 因为部分字段可能会存在一对多关系 比如课程导入 课程编号同时对应resource_id和course_num
+			String[] newKeys = newKetStr.split(CommonConstant.CODE_COMMA);
+
+			for (String newKey : newKeys) {
+				convertValue.put(newKey, jsonObject.getString(key));
+			}
+		}
+
+		return convertValue;
 
 	}
 

@@ -9,6 +9,9 @@ public interface CommonConstant {
 
 	String PERIOD = ".";
 
+	/** 空字符串*/
+	String BLANK_STR = "\"\"";
+
 	/** 竖线分割符*/
 	String VERTICAL_LINE = "|";
 

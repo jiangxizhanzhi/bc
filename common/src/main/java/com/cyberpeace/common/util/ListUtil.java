@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,8 +54,11 @@ public class ListUtil {
 		StringBuilder builder = new StringBuilder();
 
 		for (T obj : subList) {
-			builder.append(
-					JSONObject.toJSONString(obj, SerializerFeature.WriteNonStringValueAsString));
+			if (obj instanceof String) {
+				builder.append(obj);
+			} else {
+				builder.append(JSONObject.toJSONString(obj));
+			}
 		}
 
 		return builder.toString().trim();

@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.*;
@@ -230,28 +229,6 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	}
 
 	@Override
-	public String parseMarkdown(String markdownPath) {
-
-		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
-
-		String content = FileUtil.getContent(new File(markdownPath));
-
-		List<String> matchStrList = LocalStringUtil.getMatchStr(content,
-				PatternConstant.MARKDOWN_IMAGE);
-
-		for (String matchStr : matchStrList) {
-			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
-					PatternConstant.MARKDOWN_IMAGE_URL);
-			File replaceFile = new File(currentDir, imagePath);
-			if (replaceFile.exists()) {
-				content = content.replace(imagePath, replaceFile.getAbsolutePath());
-			}
-		}
-
-		return content;
-	}
-
-	@Override
 	public List<String> unzipFile(String filePath, String distPath, String fileType) {
 
 		ZipUtil.unzipToDest(filePath, distPath);
@@ -259,6 +236,19 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return Arrays.stream(new File(distPath).listFiles()).filter(
 				file -> StringUtils.isBlank(fileType) ? true : file.getName().endsWith(fileType))
 				.map(File::getAbsolutePath).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<String> batchInsert(List<String> attachmentPaths) {
+
+		List<Attachment> attachments = StreamApiUtils.map(attachmentPaths,
+				path -> Attachment.builder().resourceId(IDGeneratorUtil.getID())
+						.fileName(FileUtil.getFileName(path, true)).filePath(path)
+						.isPublic(CommonConstant.TRUE).build());
+
+		saveBatch(attachments);
+
+		return StreamApiUtils.map(attachments, Attachment::getResourceId);
 	}
 
 	private AttachmentBo uploadFile(MultipartFile file, Integer type, Boolean insertDb,

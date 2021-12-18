@@ -77,13 +77,6 @@ public interface AttachmentService extends IService<Attachment> {
 	void deleteAttachment(String attachmentId);
 
 	/**
-	 * 解析markdown文件 返回文件内容
-	 * @param markdownPath
-	 * @return
-	 */
-	String parseMarkdown(String markdownPath);
-
-	/**
 	 * 文件解压缩
 	 * @param filePath zip文件路径
 	 * @param distPath 解压文件夹
@@ -91,4 +84,11 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @return
 	 */
 	List<String> unzipFile(String filePath, String distPath, String fileType);
+
+	/**
+	 * 文件目录插入数据库
+	 * @param attachmentPaths
+	 * @return
+	 */
+	List<String> batchInsert(List<String> attachmentPaths);
 }

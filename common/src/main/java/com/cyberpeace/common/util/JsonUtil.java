@@ -84,16 +84,17 @@ public class JsonUtil {
 		// 遍历旧数据 转换key值
 		for (String key : jsonObject.keySet()) {
 			String newKetStr = toJsonObject.getString(key);
-			// 因为部分字段可能会存在一对多关系 比如课程导入 课程编号同时对应resource_id和course_num
-			String[] newKeys = newKetStr.split(CommonConstant.CODE_COMMA);
+			if (StringUtils.isNotBlank(newKetStr)) {
+				// 因为部分字段可能会存在一对多关系 比如课程导入 课程编号同时对应resource_id和course_num
+				String[] newKeys = newKetStr.split(CommonConstant.CODE_COMMA);
 
-			for (String newKey : newKeys) {
-				convertValue.put(newKey, jsonObject.getString(key));
+				for (String newKey : newKeys) {
+					convertValue.put(newKey, jsonObject.getString(key));
+				}
 			}
 		}
 
 		return convertValue;
-
 	}
 
 }

@@ -25,6 +25,15 @@ public class EnumUtils {
 				.map(T::getDesc).findFirst().orElse(null);
 	}
 
+	/***
+	 * 根据desc获取code
+	 */
+	public static <T extends GenericEnum> Integer getEnumCodeByDesc(String desc,
+			Class<T> enumClass) {
+		return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getDesc().equals(desc))
+				.map(T::getCode).findFirst().orElse(null);
+	}
+
 	/**
 	 * 获取枚举值列表
 	 * @param enumClass

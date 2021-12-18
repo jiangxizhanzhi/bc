@@ -29,7 +29,8 @@ public interface CourseImportService {
 	 * 组装课时路径信息
 	 * @param course
 	 * @param path
+	 * @param nameMap
 	 * @return
 	 */
-	List<LessonConfig> parseRmLessonConfig(Course course, String path);
+	List<LessonConfig> parseRmLessonConfig(Course course, String path, Map<String, String> nameMap);
 }

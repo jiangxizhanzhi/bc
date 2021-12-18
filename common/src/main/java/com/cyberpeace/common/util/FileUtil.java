@@ -2,8 +2,10 @@ package com.cyberpeace.common.util;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,6 +15,10 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cyberpeace.common.constant.CommonConstant;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -117,8 +123,13 @@ public class FileUtil {
 	 * 文件拷贝
 	 * @param path
 	 * @param dest
+	 * @param rename true=已存在修改名称 false已存在则覆盖
 	 */
-	public static void copyFile(String path, String dest) {
+	public static String copyFile(String path, String dest, boolean rename) {
+
+		if (rename && new File(dest).exists()) {
+			dest = reName(dest);
+		}
 
 		FileChannel input = null;
 		FileChannel output = null;
@@ -140,6 +151,8 @@ public class FileUtil {
 			}
 
 		}
+
+		return dest;
 	}
 
 	/**
@@ -238,4 +251,136 @@ public class FileUtil {
 		}
 		return dir.delete();
 	}
+
+	/**
+	 * 文件目录拷贝 如果存在则覆盖
+	 * @param dir
+	 * @param destDir
+	 * @param self true=目录拷贝进目标文件夹 false=把目录下文件拷贝进目标文件夹
+	 */
+	public static void copyDirectory(String dir, String destDir, Boolean self) {
+
+		// 不存在不做任何操作
+		File originFile = new File(dir);
+		if (!originFile.exists()) {
+			return;
+		}
+
+		File destFile = new File(destDir);
+		if (!destFile.exists()) {
+			destFile.mkdirs();
+		}
+
+		String selfPre = originFile.getParentFile().getAbsolutePath();
+		String noSelfPre = originFile.getAbsolutePath();
+
+		// 拷贝目录 文件夹则创建对应文件夹 文件则拷贝文件
+		List<String> childrenFile = listDirs(dir, true);
+		for (String direction : childrenFile) {
+			File file = new File(direction);
+
+			// 创建对应目录
+			if (file.isDirectory() && self) {
+				String selfPathName = file.getAbsolutePath().replace(selfPre, "");
+				new File(destDir, selfPathName).mkdirs();
+			} else {
+				String pathName = file.getAbsolutePath().replace(noSelfPre, "");
+				new File(destDir, pathName).mkdirs();
+			}
+
+			// 拷贝对应文件
+			if (file.isFile() && self) {
+				String selfPathName = file.getAbsolutePath().replace(selfPre, "");
+				copyFile(file.getAbsolutePath(), new File(destDir, selfPathName).getAbsolutePath(),
+						false);
+			} else {
+				String pathName = file.getAbsolutePath().replace(noSelfPre, "");
+				copyFile(file.getAbsolutePath(), new File(destDir, pathName).getAbsolutePath(),
+						false);
+			}
+		}
+	}
+
+	/**
+	 * 根据传入的根目录 获取对应的目录名称的文件路径列表
+	 * @param rootFile
+	 * @param depth 深度 无限往下则为null
+	 * @param includeFile 是否包含文件 true包含 false不包含
+	 * @return
+	 */
+	public static List<String> listFileByFile(File rootFile, Integer depth, Boolean includeFile) {
+
+		// 文件校验返回
+		if (!rootFile.exists()) {
+			return Lists.newArrayList();
+		}
+
+		// 是包含文件过滤
+		if (!includeFile && rootFile.isFile()) {
+			return Lists.newArrayList();
+		}
+
+		// 根据审读计算是否继续往下
+		if (depth != null && depth >= 0) {
+			depth--;
+		} else if (depth != null && depth <= 0) {
+			return Lists.newArrayList();
+		}
+
+		// 遍历文件返回
+		File[] files = rootFile.listFiles();
+		List<String> allDirections = Lists.newArrayList();
+		for (File file : files) {
+			List<String> directionNames = listFileByFile(file, depth, includeFile);
+			allDirections.addAll(directionNames);
+		}
+
+		return allDirections;
+	}
+
+	/**
+	 * 获取目录下的文件夹
+	 *
+	 * @param path
+	 * @param includeFile true 包含文件 false不包含文件
+	 * @return
+	 */
+	public static List<String> listDirs(String path, boolean includeFile) {
+
+		File rootFile = new File(path);
+		File[] files = rootFile.listFiles();
+
+		List<String> directions = Arrays.stream(files)
+				.filter(file -> includeFile ? true : file.isDirectory()).map(File::getAbsolutePath)
+				.collect(Collectors.toList());
+		return directions;
+	}
+
+	/**
+	 * 获取文件夹下的一个文件
+	 * @param path
+	 * @return
+	 */
+	public static String getOneFile(String path) {
+		File file = new File(path);
+		if (file.isFile()) {
+			return "";
+		}
+
+		List<String> dirs = listDirs(file.getAbsolutePath(), true);
+		return CollectionUtils.isNotEmpty(dirs) ? dirs.get(CommonConstant.ZERO) : "";
+	}
+
+	/**
+	 * 文件重命名
+	 * @param dest
+	 * @return
+	 */
+	private static String reName(String dest) {
+		String suffix = dest.substring(dest.lastIndexOf("."));
+		String filePath = dest.substring(0, dest.lastIndexOf("."));
+
+		return filePath + IDGeneratorUtil.getID() + suffix;
+	}
+
 }

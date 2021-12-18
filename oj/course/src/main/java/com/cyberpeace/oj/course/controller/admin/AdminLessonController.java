@@ -355,10 +355,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			List<String> pathList = attachmentService.unzipFile(attachmentBo.getFilePath(),
 					unzipPath, Attachment.FileType.MD.getDesc());
 			courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
-			courseLesson.setHandoutUrl(pathList.get(CommonConstant.ZERO));
 
-			String content = attachmentService.parseMarkdown(pathList.get(CommonConstant.ZERO));
-			// TODO 讲义存储 待确定
+			// md文件内容作为url
+			String content = MdUtil.parseMarkdown(pathList.get(CommonConstant.ZERO));
+			courseLesson.setHandoutUrl(content);
 		}
 
 		// pdf讲义文件上传

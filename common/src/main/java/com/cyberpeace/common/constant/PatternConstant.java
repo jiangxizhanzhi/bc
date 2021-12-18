@@ -17,4 +17,7 @@ public interface PatternConstant {
 	/** 解析markdown文件匹配标签*/
 	String MARKDOWN_TAG = "#{3}[^#]+";
 
+	/** 知识点切割使用*/
+	String KNOWLEDGE_SPLIT_STR = "- ";
+
 }

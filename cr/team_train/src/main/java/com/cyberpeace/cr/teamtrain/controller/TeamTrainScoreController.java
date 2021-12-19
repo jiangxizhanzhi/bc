@@ -468,11 +468,13 @@ public class TeamTrainScoreController {
 
 		}
 
-		trainingReport.setSceneStartTime(teamRoomdata.getSceneStartTime());
 		Date endTime = teamRoomdata.getSceneEndTime() == null ? new Date()
 				: teamRoomdata.getSceneEndTime();
-		Integer timeSeconds = Math.toIntExact(
-				(endTime.getTime() - teamRoomdata.getSceneStartTime().getTime()) / 1000);
+		Date startTime = teamRoomdata.getSceneStartTime() == null ? teamRoomdata.getStartTime()
+				: teamRoomdata.getSceneStartTime();
+		Integer timeSeconds = Math.toIntExact((endTime.getTime() - startTime.getTime()) / 1000);
+
+		trainingReport.setSceneStartTime(startTime);
 		trainingReport.setTeacherName(UserInfoContext.getUserContext().getUserName());
 		trainingReport.setTrainingTime(timeSeconds);
 		trainingReport.setUsers(userReportList);

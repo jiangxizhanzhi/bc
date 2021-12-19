@@ -19,6 +19,8 @@ public class TeamTrainTemplateRsp {
 
 	private List<BaseRole> roleStructure;
 
+	private Integer nodesCount;
+
 	private Object timeLineConfig = "{}";
 
 }

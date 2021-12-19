@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,8 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -49,8 +53,6 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomController {
 
-
-
 	@Autowired
 	private RbRoomService rbRoomService;
 
@@ -58,11 +60,15 @@ public class RbRoomController {
 	private CrRoleService crRoleService;
 
 	@Autowired
+	private RemoteTopoService remoteTopoService;
+
+	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
+
 		RbRoomContext rbRoomContext = BeanUtils.copy(rbRoomReq, RbRoomContext.class);
 		rbRoomContext
 				.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getPreSkill(), String.class));
@@ -70,6 +76,7 @@ public class RbRoomController {
 				.setTrainSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getTrainSkill(), String.class));
 		rbRoomContext.setRoleConfig(
 				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
+
 		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
 
 		return getRbRoom(rbRoom.getResourceId());
@@ -79,6 +86,7 @@ public class RbRoomController {
 	@GetMapping()
 	public BaseRsp<RbRoomRsp> getRbRoom(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
@@ -90,7 +98,6 @@ public class RbRoomController {
 
 		RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
 		rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
-
 		rbRoomRsp.setRolesData(getRbRoomRoleRes(crRoles));
 		// todo rbRoomRsp.setTrainingStatus();
 		rbRoomRsp.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
@@ -106,10 +113,15 @@ public class RbRoomController {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 		String userId = UserInfoContext.getUserContext().getUserId();
-		// 默认时间排序4
+		// 默认时间排序
 		listQuery.setSort("-cr_rb_room.create_time");
 
 		IPage<RbRoomData> data = rbRoomService.list(listQuery);
+
+		// 训练场景拓扑节点数量获取
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
+				data.getRecords().stream().map(rbRoomData -> rbRoomData.getCopyedTopoId())
+						.collect(Collectors.toList()));
 
 		data.convert(rbRoomData -> {
 			RoleQuery roleQuery = new RoleQuery();
@@ -118,6 +130,8 @@ public class RbRoomController {
 			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 			RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
+			rbRoomRsp.setNodesCount(
+					topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
 			rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
 			rbRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
-import com.cyberpeace.cs.service.LocalSceneService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,16 +22,8 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomScoreController {
 
-
-
-	@Autowired
-	private RbRoomScoreService rbRoomService;
-
 	@Autowired
 	private RbRoomScoreService rbRoomScoreService;
-
-	@Autowired
-	private LocalSceneService localSceneService;
 
 	/**
 	 * 查询训练角色得分信息

@@ -35,6 +35,8 @@ public class TeamRoomData implements Serializable {
 
 	private String trainingRoleData;
 
+	private String copyedTopoId;
+
 	private Integer durationTime;
 
 	private Date sceneStartTime;

@@ -30,6 +30,8 @@ public class RbRoomData implements Serializable {
 
 	private Integer difficult;
 
+	private String copyedTopoId;
+
 	private String trainingRoleData;
 
 	private Integer durationTime;

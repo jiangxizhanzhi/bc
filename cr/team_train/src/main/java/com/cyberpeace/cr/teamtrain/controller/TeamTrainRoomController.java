@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -81,6 +84,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private TeamSceneService teamSceneService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -259,11 +265,15 @@ public class TeamTrainRoomController {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 		String userId = UserInfoContext.getUserContext().getUserId();
-		// 默认时间排序4
+		// 默认时间排序
 		listQuery.setSort("-cr_team_room.create_time");
 
 		IPage<TeamRoomData> data = teamRoomService.list(listQuery);
 
+		// 训练场景拓扑节点数量获取
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
+				data.getRecords().stream().map(rbRoomData -> rbRoomData.getCopyedTopoId())
+						.collect(Collectors.toList()));
 		ListRsp<TeamRoomRsp> teamRoomRspListRsp = new ListRsp();
 
 		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
@@ -274,13 +284,18 @@ public class TeamTrainRoomController {
 
 			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
-			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
+			List<TeamRoomRoleRes> rolesData = Lists.newArrayList();
 			crRoles.forEach(crRole -> {
-				crRole.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIds()));
+				TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
+				teamRoomRoleRes
+						.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIds()));
 			});
 
-			// teamRoomRsp.setRolesData(crRoles);
+			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
+			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
+			teamRoomRsp.setRolesData(rolesData);
+			teamRoomRsp.setNodesCount(
+					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
 			teamRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(
@@ -294,7 +309,7 @@ public class TeamTrainRoomController {
 		teamRoomRspListRsp.setLastPage(data.getPages());
 		teamRoomRspListRsp.setCurrentPage(data.getCurrent());
 
-		return new BaseRsp<ListRsp<TeamRoomRsp>>(teamRoomRspListRsp);
+		return new BaseRsp(teamRoomRspListRsp);
 	}
 
 	@ApiOperation("修改团队训练状态")

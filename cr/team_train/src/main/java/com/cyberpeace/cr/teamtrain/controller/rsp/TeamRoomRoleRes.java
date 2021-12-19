@@ -24,6 +24,8 @@ public class TeamRoomRoleRes implements Serializable {
 
 	private List<String> users;
 
+	private String userIds;
+
 	private List<UserData> usersData;
 
 	private String missionScheme;

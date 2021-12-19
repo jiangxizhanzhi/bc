@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +20,14 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListRsp;
-import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRoleRsp;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.RbTemplateData;
-import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -39,41 +40,46 @@ import io.swagger.annotations.ApiOperation;
 public class RbTemplateController {
 
 	@Autowired
-	private BusinessTemplateService businessTemplateService;
-
-	@Autowired
 	private RbTemplateService rbTemplateService;
 
 	@Autowired
-	private LocalSceneService localSceneService;
-
-
+	private RemoteTopoService remoteTopoService;
 
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<RbTemplateRsp>> list(RbTemplateListReq listReq) {
+	public BaseRsp<ListRsp<RbTemplateListRsp>> list(RbTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 
 		IPage<RbTemplateData> data = rbTemplateService.page(listQuery);
 
-		data.convert(teamTemplateData -> getRbTemplateRspByBaseInfoData(teamTemplateData));
+		// 训练场景拓扑节点数量获取
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
+				data.getRecords().stream().map(rbTemplateData -> rbTemplateData.getTopoId())
+						.collect(Collectors.toList()));
+
+		data.convert(rbTemplateData -> getRbTemplateRspByBaseInfoData(rbTemplateData,
+				topologyNodesStats));
 
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
-	private RbTemplateListRsp getRbTemplateRspByBaseInfoData(RbTemplateData teamTemplateData) {
+	private RbTemplateListRsp getRbTemplateRspByBaseInfoData(RbTemplateData rbTemplateData,
+			Map<String, TopoDigest> topologyNodesStats) {
 		RbTemplateListRsp rbTemplateListRsp = new RbTemplateListRsp();
 
-		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
+		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(rbTemplateData);
 
-		rbTemplateListRsp.setResourceId(teamTemplateData.getResourceId());
+		rbTemplateListRsp
+				.setNodesCount(topologyNodesStats.get(rbTemplateData.getTopoId()).getNodeCounts());
+		rbTemplateListRsp.setResourceId(rbTemplateData.getResourceId());
 		rbTemplateListRsp.setCrEventInfo(baseInfoRsp);
-		String roleString = teamTemplateData.getRoleConfig();
+		String roleString = rbTemplateData.getRoleConfig();
 
 		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 
 		List<RbTemplateRoleRsp> rbTemplateRoleRsps = Lists.newArrayList();
+
 		RbTemplateRoleRsp rbTemplateRoleRsp = new RbTemplateRoleRsp(
 				CrRole.RbRoleGroupCode.ADMIN.getDesc(), CrRole.RbRoleGroupCode.ADMIN.getCode());
 		rbTemplateRoleRsps.add(rbTemplateRoleRsp);
@@ -104,7 +110,6 @@ public class RbTemplateController {
 
 		RbTemplateRoleRsp rbTemplateRoleRsp4 = new RbTemplateRoleRsp(
 				CrRole.RbRoleGroupCode.BLUE.getDesc(), CrRole.RbRoleGroupCode.BLUE.getCode());
-		rbTemplateRoleRsps.add(rbTemplateRoleRsp4);
 
 		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blueRoles");
 		List<RbTemplateRoleRsp> blueTemplateRoleRsps = Lists.newArrayList();
@@ -115,9 +120,11 @@ public class RbTemplateController {
 					CrRole.RbRoleGroupCode.BLUE.getCode());
 			blueTemplateRoleRsps.add(blueTemplateRole);
 		}
-		rbTemplateRoleRsp3.setChildren(blueTemplateRoleRsps);
-		rbTemplateRoleRsps.add(rbTemplateRoleRsp3);
+		rbTemplateRoleRsp4.setChildren(blueTemplateRoleRsps);
+		rbTemplateRoleRsps.add(rbTemplateRoleRsp4);
+
 		rbTemplateListRsp.setRoleInfo(rbTemplateRoleRsps);
+
 		return rbTemplateListRsp;
 	}
 

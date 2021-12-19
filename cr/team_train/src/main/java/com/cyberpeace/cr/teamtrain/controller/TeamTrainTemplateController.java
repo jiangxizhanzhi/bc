@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -33,6 +34,8 @@ import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +51,9 @@ public class TeamTrainTemplateController {
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Autowired
 	LocalSceneService localSceneService;
@@ -149,30 +155,39 @@ public class TeamTrainTemplateController {
 		listQuery.setPer_page(listReq.getPerPage());
 
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
-
-		data.convert(
-				teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData));
+		// 训练场景拓扑节点数量获取
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
+				data.getRecords().stream().map(teamTemplateData -> teamTemplateData.getTopoId())
+						.collect(Collectors.toList()));
+		data.convert(teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData,
+				topologyNodesStats));
 
 		return new BaseRsp(data);
 	}
 
-	public TeamTrainTemplateRsp
-			getTeamTrainTemplateOutputByBaseInfoData(TeamTemplateData teamTemplateData) {
-		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
+	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(
+			TeamTemplateData teamTemplateData, Map<String, TopoDigest> topologyNodesStats) {
 
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
 
-		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
-		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+		// 获取角色列表
 		String roleString = teamTemplateData.getRoleConfig();
 
 		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
 				BaseRole.class);
+
 		BaseRole baseRole = new BaseRole();
-		baseRole.setName("教员");
+		baseRole.setName(CrRole.TeamRoleGroupCode.TEACHER.getDesc());
 		baseRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getCode());
 
 		teamTrainTemplateRoleList.add(0, baseRole);
+
+		// 设置返回对象
+		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
+		teamTrainTemplateRsp.setNodesCount(
+				topologyNodesStats.get(teamTemplateData.getTopoId()).getNodeCounts());
+		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
+		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
 
 		return teamTrainTemplateRsp;

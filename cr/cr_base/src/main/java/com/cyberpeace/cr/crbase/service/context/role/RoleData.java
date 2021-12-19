@@ -17,4 +17,6 @@ public class RoleData<T> {
 
 	private List<NameElement> users;
 
+	private String userIds;
+
 }

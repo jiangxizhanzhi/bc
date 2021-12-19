@@ -2,8 +2,8 @@ package com.cyberpeace.cr.redvsblue.controller.req;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRoleRsp;
 
 import lombok.Data;
 
@@ -14,7 +14,7 @@ public class RbTemplateRsp {
 
 	private String resourceId;
 
-	private List<RbTemplateRoleRsp> redRoles;
+	private List<JSONObject> redRoles;
 
-	private List<RbTemplateRoleRsp> blueRoles;
+	private List<JSONObject> blueRoles;
 }

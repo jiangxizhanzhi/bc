@@ -21,7 +21,6 @@ import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateAddReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRoleRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.RbTemplateContext;
@@ -125,10 +124,10 @@ public class RbTemplateAdminController {
 
 		String roleString = template.getRoleConfig();
 		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
-		List<RbTemplateRoleRsp> redRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("redRoles").toString(), RbTemplateRoleRsp.class);
-		List<RbTemplateRoleRsp> blueRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("blueRoles").toString(), RbTemplateRoleRsp.class);
+		List<JSONObject> redRoleRsps = JsonUtil
+				.toJsonObjectArray(roleObject.get("redRoles").toString(), JSONObject.class);
+		List<JSONObject> blueRoleRsps = JsonUtil
+				.toJsonObjectArray(roleObject.get("blueRoles").toString(), JSONObject.class);
 		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
 		String sceneManagerId = "";
 		LocalScene localScene = localSceneService

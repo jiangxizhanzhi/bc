@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.cyberpeace.cr.crbase.service.context.RbUserData;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -38,4 +41,6 @@ public class RoleMissionRsp implements Serializable {
 	@ApiModelProperty("任务分数")
 	private Integer score;
 
+	@ApiModelProperty("用户列表")
+	private List<RbUserData> deliveryDetails;
 }

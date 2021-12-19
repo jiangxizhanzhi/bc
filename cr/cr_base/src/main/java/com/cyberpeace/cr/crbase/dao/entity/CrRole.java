@@ -1,10 +1,13 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import com.google.common.collect.Lists;
 
 import lombok.Data;
 import lombok.Getter;
@@ -126,6 +129,13 @@ public class CrRole extends BaseTable {
 		}
 
 		return result;
+	}
+
+	public final static List<Integer> RB_STUDENT_ROLE_GROUPS = Lists.newArrayList();
+
+	static {
+		RB_STUDENT_ROLE_GROUPS.add(RbRoleGroupCode.RED.getCode());
+		RB_STUDENT_ROLE_GROUPS.add(RbRoleGroupCode.BLUE.getCode());
 	}
 
 }

@@ -11,8 +11,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,6 +29,12 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
@@ -34,6 +42,7 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
+import com.cyberpeace.cr.redvsblue.service.context.ColorMission;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
@@ -54,6 +63,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
@@ -118,7 +130,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 				save(rbRoom);
-				List<CrRole> crRoles = getCrRoleByRbTemplate(template);
+				List<CrRole> crRoles = getCrRoleByRbTemplate(template, rbRoom.getResourceId());
 
 				List<RoomRole> users = rbRoomContext.getRoleConfig();
 				int index = 0;
@@ -245,12 +257,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 	}
 
-	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData) {
+	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData, String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();
 
+		// 获取红蓝的角色组
 		String roleString = rbTemplateData.getRoleConfig();
-
-		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 
 		CrRole rbTemplateRoleRsp = new CrRole(CrRole.RbRoleGroupCode.ADMIN.getDesc(),
 				CrRole.RbRoleGroupCode.ADMIN.getCode());
@@ -264,31 +275,96 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				CrRole.RbRoleGroupCode.REFEREE.getCode());
 		crRoleList.add(rbTemplateRoleRsp2);
 
+		// 获取红队的角色任务
+		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 		JSONArray redRoles = (JSONArray) rolejsonObject.get("redRoles");
 		for (int i = 0; i < redRoles.size(); i++) {
 
-			CrRole redTemplateRole = new CrRole(redRoles.getJSONObject(i).get("name").toString(),
+			CrRole crRole = getRoleByJson(roomId, i, redRoles,
 					CrRole.RbRoleGroupCode.RED.getCode());
-			redTemplateRole
-					.setMissionScheme(redRoles.getJSONObject(i).get("missionsScheme").toString());
-			redTemplateRole.setNodes(redRoles.getJSONObject(i).get("assetNodes").toString());
 
-			crRoleList.add(redTemplateRole);
+			crRoleList.add(crRole);
 		}
 
+		// 获取蓝队的角色任务
 		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blueRoles");
-		for (int i = 0; i < redRoles.size(); i++) {
+		for (int i = 0; i < blueRoles.size(); i++) {
 
-			CrRole blueTemplateRole = new CrRole(blueRoles.getJSONObject(i).get("name").toString(),
+			CrRole crRole = getRoleByJson(roomId, i, blueRoles,
 					CrRole.RbRoleGroupCode.BLUE.getCode());
-			blueTemplateRole
-					.setMissionScheme(redRoles.getJSONObject(i).get("missionsScheme").toString());
-			blueTemplateRole.setNodes(redRoles.getJSONObject(i).get("assetNodes").toString());
 
-			crRoleList.add(blueTemplateRole);
+			crRoleList.add(crRole);
+
 		}
 
 		return crRoleList;
 	}
 
+	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles, Integer code) {
+		JSONObject rolesJSONObject = redRoles.getJSONObject(index);
+
+		CrRoleNodesData nodesData = new CrRoleNodesData();
+
+		String assetNodes = rolesJSONObject.get("assetNodes").toString();
+		nodesData.setAssetNodes(JsonUtil.toJsonObjectArray(assetNodes, CrRoleNode.class));
+
+		String visibleNodes = rolesJSONObject.get("visibleNodes").toString();
+		nodesData.setVisibleNodes(JsonUtil.toJsonObjectArray(visibleNodes, CrRoleNode.class));
+
+		CrRole crRole = new CrRole(rolesJSONObject.get("name").toString(), code);
+
+		crRole.setMissionScheme(
+				getNewRoomScheme(rolesJSONObject.get("missionsScheme").toString(), roomId));
+		crRole.setNodes(JsonUtil.toJsonString(nodesData));
+
+		return crRole;
+	}
+
+	/** 根据模板的任务id，复制任务并获取新的id，返回新的json字符串
+	 * @param missionsScheme
+	 * @return
+	 */
+	private String getNewRoomScheme(String missionsScheme, String roomId) {
+		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
+				new TypeReference<ColorMission<AddTemplateMission>>() {});
+		if (null == colorMission || null == colorMission.getSchemeData()) {
+			return "[]";
+		}
+
+		List<MissionStageScheme> missionStageSchemes = Lists.newArrayList();
+		List<String> originMissionIds = Lists.newArrayList();
+		// 遍历每个阶段
+		for (MissionSchemeObject<AddTemplateMission> schemeDatum : colorMission.getSchemeData()) {
+
+			List<AddTemplateMission> missions = schemeDatum.getMissions();
+			// 遍历每个任务
+			for (AddTemplateMission mission : missions) {
+				originMissionIds.add(mission.getResourceId());
+			}
+		}
+
+		Map<String, String> originMissionMaps = missionService.copyScheme(originMissionIds,
+				UserInfoContext.getUserContext().getUserId(), roomId);
+
+		// 遍历每个阶段设置新的任务id
+		for (MissionSchemeObject<AddTemplateMission> schemeDatum : colorMission.getSchemeData()) {
+			MissionStageScheme missionStageScheme = new MissionStageScheme();
+
+			List<String> targetMissionIds = Lists.newArrayList();
+
+			// 遍历每个任务设置新的任务id
+			for (AddTemplateMission mission : schemeDatum.getMissions()) {
+				targetMissionIds.add(originMissionMaps.getOrDefault(mission.getResourceId(),
+						mission.getResourceId()));
+			}
+			missionStageScheme.setStage(schemeDatum.getStage());
+			missionStageScheme.setDynamic(schemeDatum.getDynamic());
+			missionStageScheme.setMissions(targetMissionIds);
+
+			missionStageSchemes.add(missionStageScheme);
+		}
+
+		return JsonUtil.toJsonString(missionStageSchemes);
+
+	}
 }

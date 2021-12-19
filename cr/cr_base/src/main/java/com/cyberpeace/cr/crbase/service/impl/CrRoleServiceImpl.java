@@ -59,9 +59,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public CrRoleContext<MissionContext> getRoles(String roomId) {
+	public CrRoleContext<MissionContext> getRoles(String roomId, Integer roleCode) {
 		CrRoleContext<MissionContext> crRoleContext = new CrRoleContext();
-		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		RoleQuery roleQuery = new RoleQuery(roomId, roleCode);
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 		if (crRoles == null) {
@@ -79,6 +79,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			roleResData.setResourceId(crRole.getResourceId());
 			roleResData.setMissionsList(missionSchemeObjectList);
 			roleResData.setUsers(getUserByRoleUsers(crRole.getUserIds()));
+			roleResData.setUserIds(crRole.getUserIds());
 
 			roleResDataList.add(roleResData);
 		}

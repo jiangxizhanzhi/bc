@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller.director;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +16,21 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
+import com.cyberpeace.cr.crbase.controller.rsp.RoleMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
+import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
+import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.redvsblue.controller.req.ExercisePaperReq;
 import com.cyberpeace.cr.redvsblue.controller.req.MissionConfig;
@@ -33,9 +38,14 @@ import com.cyberpeace.cr.redvsblue.controller.req.RbMissionDeleteReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomMissionReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.ExercisePaperRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
+import com.cyberpeace.cr.redvsblue.service.context.GroupData;
+import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -237,4 +247,100 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("查询角色")
+	@GetMapping("/roles")
+	public BaseRsp<CrRbRoleContext> getRoles(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		CrRbRoleContext crRbRoleContext = new CrRbRoleContext();
+		List<GroupData> groups = Lists.newArrayList();
+		// 遍历角色组
+		for (Integer roleCode : CrRole.RB_STUDENT_ROLE_GROUPS) {
+
+			Integer missionCount = 0;
+			Integer peopleCount = 0;
+			List<GroupRole> childRoleInfoList = Lists.newArrayList();
+			String roleGroupName = EnumUtils.getEnumDescByCode(roleCode,
+					CrRole.RbRoleGroupCode.class);
+
+			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id,
+					roleCode);
+
+			CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
+					CrRoleContext.class);
+
+			// 遍历每一个角色
+			for (int i = 0; i < crRoleContextRsp.getRoles().size(); i++) {
+				RoleData<RoleMissionRsp> roleData = crRoleContextRsp.getRoles().get(i);
+
+				List<String> userIds = JsonUtil.toJsonObjectArray(roleData.getUserIds(),
+						String.class);
+
+				List<RoleMissionRsp> roleMissionRspList = Lists.newArrayList();
+
+				// 遍历每一个阶段
+				for (int j = 0; j < roleData.getMissionsList().size(); j++) {
+					MissionSchemeObject<RoleMissionRsp> roleMissionObject = roleData
+							.getMissionsList().get(j);
+					// 遍历获取mission列表
+					List<MissionContext> missions = crRoleContext.getRoles().get(i)
+							.getMissionsList().get(j).getMissions();
+
+					List<RoleMissionRsp> roleStageMissionRspList = missions.stream()
+							.map(roleMission -> {
+
+								// 获取mission的用户列表
+								List<UserData> userDatas = crRoleService
+										.getUserDatas(roleData.getUserIds());
+								List<RbUserData> rbUserDatas = userDatas.stream().map(userData -> {
+									RbUserData rbUserData = BeanUtils.copy(userData,
+											RbUserData.class);
+
+									rbUserData.setGroupName(roleGroupName);
+									rbUserData.setRoleName(roleData.getName());
+
+									return rbUserData;
+								}).collect(Collectors.toList());
+
+								RoleMissionRsp roleMissionRsp = BeanUtils.copy(roleMission,
+										RoleMissionRsp.class);
+								roleMissionRsp.setCategory(roleMission.getCategoryId());
+								roleMissionRsp.setDeliveryDetails(rbUserDatas);
+
+								return roleMissionRsp;
+							}).collect(Collectors.toList());
+
+					roleMissionRspList.addAll(roleStageMissionRspList);
+					roleMissionObject.setMissions(roleMissionRspList);
+
+				}
+
+				GroupRole groupRole = new GroupRole();
+				groupRole.setName(roleData.getName());
+				groupRole.setMissions(roleMissionRspList);
+				groupRole.setPeopleNumber(userIds.size());
+				groupRole.setMissionNumber(roleMissionRspList.size());
+				groupRole.setRoleResourceId(roleData.getResourceId());
+
+				peopleCount += userIds.size();
+				missionCount += roleMissionRspList.size();
+			}
+
+			GroupData groupData = new GroupData();
+
+			groupData.setGroup(roleGroupName);
+			groupData.setGroupHash(roleCode);
+			groupData.setRoles(childRoleInfoList);
+			groupData.setGroupNumber(crRoleContextRsp.getRoles().size());
+			groupData.setPeopleNumber(peopleCount);
+			groupData.setMissionNumber(missionCount);
+			groupData.setRoles(childRoleInfoList);
+
+			groups.add(groupData);
+
+		}
+
+		crRbRoleContext.setGroups(groups);
+
+		return new BaseRsp(crRbRoleContext);
+	}
 }

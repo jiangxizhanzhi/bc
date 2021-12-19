@@ -9,7 +9,7 @@ import com.cyberpeace.cr.crbase.service.context.role.ShowWriteup;
 import lombok.Data;
 
 @Data
-public class CrRoleContext<T> {
+public class CrRbRoleContext {
 
 	private List<GroupData> groups;
 

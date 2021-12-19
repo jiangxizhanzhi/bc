@@ -13,7 +13,7 @@ public class GroupData {
 
 	private Integer groupHash;
 
-	private List<RoomRole> roles;
+	private List<GroupRole> roles;
 
 	private Integer peopleNumber;
 

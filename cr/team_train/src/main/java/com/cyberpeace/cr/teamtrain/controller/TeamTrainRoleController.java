@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.RoleMissionRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
@@ -37,7 +38,8 @@ public class TeamTrainRoleController {
 	@GetMapping()
 	public BaseRsp<CrRoleContext<RoleMissionRsp>> getRoles(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id);
+		CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id,
+				CrRole.TeamRoleGroupCode.STUDENT.getCode());
 
 		CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
 				CrRoleContext.class);

@@ -16,7 +16,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.context.AddRbTemplateMission;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateAddReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateRsp;
@@ -48,7 +47,7 @@ public class RbTemplateAdminController {
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp create(
-			@RequestBody @Validated RbTemplateAddReq<AddRbTemplateMission> rbTemplateAddReq) {
+			@RequestBody @Validated RbTemplateAddReq rbTemplateAddReq) {
 
 		RbTemplateContext rbTemplateContext = BeanUtils.copy(rbTemplateAddReq,
 				RbTemplateContext.class);
@@ -69,7 +68,7 @@ public class RbTemplateAdminController {
 	@ApiOperation("修改")
 	@PatchMapping()
 	public BaseRsp update(
-			@RequestBody @Validated RbTemplateModifyReq<AddRbTemplateMission> rbTemplateModifyReq) {
+			@RequestBody @Validated RbTemplateModifyReq rbTemplateModifyReq) {
 		String resourceId = rbTemplateModifyReq.getResourceId();
 		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resourceId);
 
@@ -120,14 +119,18 @@ public class RbTemplateAdminController {
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
 
-		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
-
+		// 获取红蓝角色
 		String roleString = template.getRoleConfig();
 		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
+
 		List<JSONObject> redRoleRsps = JsonUtil
 				.toJsonObjectArray(roleObject.get("redRoles").toString(), JSONObject.class);
 		List<JSONObject> blueRoleRsps = JsonUtil
 				.toJsonObjectArray(roleObject.get("blueRoles").toString(), JSONObject.class);
+
+		// 获取基本信息
+		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
+
 		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
 		String sceneManagerId = "";
 		LocalScene localScene = localSceneService
@@ -137,11 +140,11 @@ public class RbTemplateAdminController {
 		}
 		baseInfoRsp.setSceneManagerId(sceneManagerId);
 
+		// 获取返回对象
 		RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();
 
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setResourceId(template.getResourceId());
-
 		teamTrainTemplateRsp.setRedRoles(redRoleRsps);
 		teamTrainTemplateRsp.setBlueRoles(blueRoleRsps);
 

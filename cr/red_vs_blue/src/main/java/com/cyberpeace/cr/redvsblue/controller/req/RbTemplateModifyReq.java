@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class RbTemplateModifyReq<T> extends RbTemplateAddReq<T> {
+public class RbTemplateModifyReq extends RbTemplateAddReq {
 
 	@ApiModelProperty(required = true)
 	@NotNull

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
@@ -71,4 +73,24 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param template
 	 */
 	SceneViewContext viewScene(BusinessTemplate template);
+
+	/**
+	 * 将BusinessType转换为BusinessCode
+	 */
+	LocalScene.BusinessCode convertTypeToCode(Integer type);
+
+	/**
+	 * @param templateId
+	 * @return
+	 */
+	ResourceDumpContext dumpTemplate(String templateId);
+
+	/**
+	 * 生成导出压缩包文件
+	 * @param templateIds
+	 * @param tempDir
+	 * @return 压缩包路径
+	 * @throws IOException
+	 */
+	String makeDumpFile(List<String> templateIds, String tempDir) throws IOException;
 }

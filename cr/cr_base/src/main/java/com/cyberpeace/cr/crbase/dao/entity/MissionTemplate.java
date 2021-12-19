@@ -10,4 +10,6 @@ public class MissionTemplate extends MissionBase {
 
 	private String templateId;
 
+	private String attachment;
+
 }

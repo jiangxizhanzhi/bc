@@ -90,7 +90,8 @@ public class MissionController {
 
 		MissionTemplate toUpdateMissionTemplate = requestToMissionTemplate(modifyReq);
 		missionService.updateMissionTemplate(toUpdateMissionTemplate);
-		MissionTemplate ret = missionService.getByMissionTemplateId(toUpdateMissionTemplate.getResourceId());
+		MissionTemplate ret = missionService
+				.getByMissionTemplateId(toUpdateMissionTemplate.getResourceId());
 
 		return new BaseRsp(ret);
 	}

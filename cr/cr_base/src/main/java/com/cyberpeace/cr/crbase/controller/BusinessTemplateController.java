@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -22,7 +24,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.MultiSelectReq;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.NameValidReq;
@@ -187,24 +188,9 @@ public class BusinessTemplateController {
 			if (f.isDirectory()) {
 				searchFile(f, map);
 			} else {
-				map.put( f.getName(), f.getAbsolutePath());
+				map.put(f.getName(), f.getAbsolutePath());
 			}
 		}
-	}
-
-	/**
-	 * 导出业务模板
-	 * @return
-	 */
-	@ApiOperation("导出业务模板")
-	@PostMapping("/batch_dumps")
-	public BaseRsp<String> batchDumps(@ApiParam(name = "multiSelectReq",
-			value = "模板id") @RequestBody MultiSelectReq multiSelectReq) {
-
-		List<BusinessTemplate> businessTemplateList = businessTemplateService
-				.listByIds(multiSelectReq.getIds());
-
-		return null;
 	}
 
 	@DeleteMapping()
@@ -287,6 +273,28 @@ public class BusinessTemplateController {
 		businessTemplateService.clearLocal(template);
 
 		return new BaseRsp();
+	}
+
+	@ApiOperation("批量导出场景模板")
+	@PostMapping("/batchDump")
+	public void batchDump(HttpServletResponse response, @RequestBody List<String> templateIds)
+			throws IOException {
+		// 1. generate dump file
+		String tempDir = ZipUtil.generatePath();
+		try {
+			String zipPath = businessTemplateService.makeDumpFile(templateIds, tempDir);
+			// 2. generate file response
+			File zip = new File(zipPath);
+			FileUtil.setResponse(zip, false, response);
+		} catch (Exception e) {
+			log.error("failed to dump business template");
+			throw new RuntimeException(e);
+		} finally {
+			// 3. delete temp dir
+			if (!FileUtil.deleteDir(new File(tempDir))) {
+				log.error("failed to remove temp dir :{}", tempDir);
+			}
+		}
 	}
 
 	private void checkBeforeTestingScene(String templateId) {

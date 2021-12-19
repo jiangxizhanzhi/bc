@@ -19,6 +19,13 @@ public interface AttachmentService extends IService<Attachment> {
 	List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb);
 
 	/**
+	 * 批量查询
+	 * @param attachmentIds
+	 * @return
+	 */
+	List<Attachment> batchGetByIds(List<String> attachmentIds);
+
+	/**
 	 * 删除修改后
 	 * @return
 	 */

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper">
+    <select id="selectByBusinessTemplateId" resultType="com.cyberpeace.cr.crbase.dao.entity.MissionTemplate">
+        select *
+        from cr_mission_template
+        where template_id = #{templateId}
+    </select>
+</mapper>

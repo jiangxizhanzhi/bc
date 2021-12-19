@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.cr.crbase.service.context.LoadTemplate;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -14,6 +13,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
+import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
@@ -80,6 +80,12 @@ public class BusinessTemplateHandler {
 		Integer peopleNumber = templateData.getTemplateData().getInteger("people_number");
 		templateData.getTemplateData().getJSONObject("base_info").put("people_number",
 				peopleNumber);
+	}
+
+	public ResourceDumpContext dumpBusiness(BusinessTemplate template) {
+		BusinessTemplate.BusinessType type = getBusinessType(template.getBusinessType());
+		BusinessTemplateHandler handler = register.get(type);
+		return handler.dumpBusiness(template);
 	}
 
 }

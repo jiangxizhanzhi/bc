@@ -52,6 +52,14 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	}
 
 	@Override
+	public List<Attachment> batchGetByIds(List<String> attachmentIds) {
+		if (attachmentIds == null || attachmentIds.size() == 0) {
+			return Lists.newArrayList();
+		}
+		return attachmentMapper.selectBatchIds(attachmentIds);
+	}
+
+	@Override
 	public Integer deleteDifferenceSet(String oldAttachmentIds, String attachmentIds) {
 		if (StringUtils.isBlank(oldAttachmentIds)) {
 			return CommonConstant.ZERO;

@@ -1,5 +1,10 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +26,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
@@ -32,10 +36,12 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -320,6 +326,102 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				.getJSONObject("scene_config");
 		ret.setTopoData(topoData);
 		return ret;
+	}
+
+	@Override
+	public LocalScene.BusinessCode convertTypeToCode(Integer code) {
+		BusinessTemplate.BusinessType type = EnumUtils.getEnumByCode(code,
+				BusinessTemplate.BusinessType.class);
+
+		if (type.equals(BusinessTemplate.BusinessType.TRAINING_SINGLE)) {
+			return LocalScene.BusinessCode.SINGLE_TRAINING;
+		}
+		if (type.equals(BusinessTemplate.BusinessType.VULN_VALIDATE)) {
+			return LocalScene.BusinessCode.LIVE_VULN;
+		}
+		if (type.equals(BusinessTemplate.BusinessType.TRAINING_TEAM)) {
+			return LocalScene.BusinessCode.TEAM_TRAINING;
+		}
+		if (type.equals(BusinessTemplate.BusinessType.RED_VS_BLUE)) {
+			return LocalScene.BusinessCode.RED_VS_BLUE;
+		}
+		if (type.equals(BusinessTemplate.BusinessType.WEAPON_ASSESS)) {
+			return LocalScene.BusinessCode.WEAPON_TEST;
+		}
+		if (type.equals(BusinessTemplate.BusinessType.SYSTEM_ASSESS)) {
+			return LocalScene.BusinessCode.SYSTEM_TEST;
+		}
+		return null;
+	}
+
+	@Override
+	public String makeDumpFile(List<String> templateIds, String tempDir) throws IOException {
+		if (templateIds.isEmpty()) {
+			throw new BusinessException(CrBusinessErrorCode.EMPTY_RESOURCE_ID_LIST);
+		}
+		// 1. make temp dir
+		FileUtil.mkdirs(tempDir);
+		List<ResourceDumpContext> contextList = Lists.newArrayList();
+		for (String templateId : templateIds) {
+			ResourceDumpContext context = dumpTemplate(templateId);
+			Map<String, String> fileMap = context.getFiles();
+			// 2. copy pics
+			for (String fileName : fileMap.values()) {
+				String originPath = AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName;
+				String destPath = tempDir + File.separator + "images/" + fileName;
+				try {
+					FileUtil.copyFile(originPath, destPath);
+				} catch (Exception e) {
+					log.error("error occurred when copying picture");
+					throw new IOException(e);
+				}
+			}
+			// 3.collect template data
+			contextList.add(context);
+		}
+
+		// 4. generate data.json
+		String jsonPath = tempDir + File.separator + "data.json";
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(jsonPath),
+				StandardCharsets.UTF_8);
+		String data = JsonUtil.arrayToString(contextList);
+		FileUtil.writeString(data, osw);
+
+		// 5. generate zip file, return zip file path
+		return ZipUtil.toZip(tempDir);
+	}
+
+	@Override
+	public ResourceDumpContext dumpTemplate(String templateId) {
+		// 1. 获取要导出的模板
+		BusinessTemplate template = businessTemplateMapper.selectById(templateId);
+		if (template == null) {
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
+		}
+		// 2. 生成导出模型, 包含 template, missions
+		ResourceDumpContext<Object> context = businessTemplateHandler.dumpBusiness(template);
+		context.setBusinessTemplate(template);
+
+		// 3. 获取拓扑
+		JSONObject topoData = localSceneService.getTopoData(template.getTopoId());
+		context.setSceneData(topoData);
+		// 4. 获取文件
+		Map<String, String> fileMap = Maps.newHashMap();
+		context.setFiles(fileMap);
+
+		for (MissionTemplate missionTemplate : context.getMissions()) {
+			List<String> attachmentIds = JSON.parseArray(missionTemplate.getAttachment(),
+					String.class);
+
+			List<Attachment> attachments = attachmentService.batchGetByIds(attachmentIds);
+			for (Attachment attachment : attachments) {
+				fileMap.put(attachment.getResourceId(), attachment.getFileName());
+			}
+		}
+		// 5. 设置业务类型
+		context.setType(template.getBusinessType());
+
+		return context;
 	}
 
 	private JSONObject getMpSceneData(BusinessTemplate template) {

@@ -17,8 +17,10 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
+import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -38,6 +40,9 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 	@Autowired
 	BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	MissionService missionService;
 
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -93,6 +98,20 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 		// 3、新增数据
 		businessTemplateService.addTemplate(teamTrainTemplateContext);
+	}
+
+	@Override
+	public ResourceDumpContext<TeamTemplate> dumpBusiness(BusinessTemplate template) {
+		ResourceDumpContext<TeamTemplate> context = new ResourceDumpContext<>();
+		// 获取 teamTemplate
+		TeamTemplate teamTemplate = teamTemplateService
+				.getTeamTemplateByBusinessId(template.getResourceId());
+		context.setBusiness(teamTemplate);
+		// 获取任务
+		String missionScheme = teamTemplate.getRoleConfig();
+		context.setMissions(missionService.batchGetByMissionSchemeJson(missionScheme));
+
+		return context;
 	}
 
 	private void replaceMissions(LoadTemplateData loadTemplateData,

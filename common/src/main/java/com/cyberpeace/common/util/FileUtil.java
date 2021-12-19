@@ -4,20 +4,15 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.google.common.collect.Lists;
-import net.sf.jsqlparser.statement.create.table.Index;
-import org.apache.commons.lang3.StringUtils;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -145,5 +140,102 @@ public class FileUtil {
 			}
 
 		}
+	}
+
+	/**
+	 * 将字符串写入文件
+	 * @param data 要写入的字符串
+	 * @param osw 输出流
+	 * @throws IOException
+	 */
+	public static void writeString(String data, OutputStreamWriter osw) throws IOException {
+		try {
+			osw.write(data);
+		} catch (Exception e) {
+			log.error("error occurred when writing data.json", e);
+			throw new IOException(e);
+		} finally {
+			try {
+				osw.flush();
+				osw.close();
+			} catch (IOException e) {
+				log.error("failed to close OutputStreamWriter", e);
+				throw new IOException(e);
+			}
+		}
+	}
+
+	/**
+	 * @Author 陈卓
+	 * 生成文件响应
+	 * @param file 返回的文件
+	 * @param delete 是否删除本地文件
+	 * @param response 响应
+	 */
+	public static void setResponse(File file, Boolean delete, HttpServletResponse response) {
+		// 以流的形式下载文件。
+		InputStream fis = null;
+		OutputStream outputStream = null;
+		try {
+			fis = new BufferedInputStream(new FileInputStream(file));
+			byte[] buffer = new byte[fis.available()];
+			fis.read(buffer);
+			if (fis != null) {
+				fis.close();
+			}
+			// 清空response
+			response.reset();
+
+			// 设置返回
+			response.setContentType("application/x-msdownload;charset=UTF-8");
+			String fileName = new String(file.getName().getBytes("gb2312"), "iso8859-1");
+			response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+			outputStream = response.getOutputStream();
+			outputStream.write(buffer);
+			outputStream.flush();
+		} catch (IOException e) {
+			log.error("setResponse error:", e);
+		} finally {
+			try {
+				if (null != fis) {
+					fis.close();
+				}
+				if (outputStream != null) {
+					outputStream.close();
+				}
+			} catch (IOException e) {
+				log.error("setResponse error:", e);
+			}
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					log.error("setResponse error:", e);
+				}
+			}
+
+			if (delete && null != file) {
+				file.delete();
+			}
+		}
+	}
+
+	/**
+	 * 递归删除文件夹
+	 * @param dir 要删除的文件夹
+	 * @return true: 删除成功； false: 删除失败
+	 */
+	public static Boolean deleteDir(File dir) {
+		if (dir.isDirectory()) {
+			File[] children = dir.listFiles();
+			assert children != null;
+			for (File file : children) {
+				if (!deleteDir(file)) {
+					log.error("failed to delete file {}", file);
+					return false;
+				}
+			}
+		}
+		return dir.delete();
 	}
 }

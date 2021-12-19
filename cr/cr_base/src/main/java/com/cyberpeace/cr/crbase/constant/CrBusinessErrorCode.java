@@ -90,4 +90,7 @@ public interface CrBusinessErrorCode {
 
 	// 场景未开启
 	String SCENE_NOT_STARTED = "101027";
+
+	// 资源id列表为空
+	String EMPTY_RESOURCE_ID_LIST = "101028";
 }

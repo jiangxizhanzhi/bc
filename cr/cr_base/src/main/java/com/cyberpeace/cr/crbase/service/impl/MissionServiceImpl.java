@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -368,5 +370,23 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 		missionMapper.batchInsertMissionTemplate(missionTemplates);
 		return missionTemplates;
+	}
+
+	@Override
+	public List<MissionTemplate> batchGetByBusinessTemplateId(String templateId) {
+		return missionTemplateMapper.selectByBusinessTemplateId(templateId);
+	}
+
+	@Override
+	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
+		String reg = "\"([a-z0-9]{32})\"";
+		Pattern pattern = Pattern.compile(reg);
+		Matcher matcher = pattern.matcher(schemeJson);
+		List<String> missionTemplateIds = new ArrayList<>();
+		while (matcher.find()) {
+			missionTemplateIds.add(matcher.group(1));
+		}
+
+		return missionTemplateMapper.selectBatchIds(missionTemplateIds);
 	}
 }

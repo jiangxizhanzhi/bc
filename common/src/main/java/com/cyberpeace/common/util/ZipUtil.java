@@ -1,7 +1,12 @@
 package com.cyberpeace.common.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import com.cyberpeace.common.constant.CommonConstant;
 
@@ -44,6 +49,87 @@ public class ZipUtil {
 					"ParseMarkdown unzip markdown package error! markdown_path=[{}], dest_path=[{}] catch error:",
 					zipPath, destPath, e);
 			return CommonConstant.FALSE;
+		}
+	}
+
+	private static final int BUFFER_SIZE = 2 * 1024;
+
+	private static final String SUFFIX = ".zip";
+
+	/**
+	 * 将某文件夹下所有文件压缩，生成zip包到该文件夹下
+	 * 如 /tmp/xyz/* ---> /tmp/xyz/xyz.zip
+	 * @param srcDir 被压缩的文件夹路径
+	 * @throws RuntimeException
+	 */
+	public static String toZip(String srcDir) throws RuntimeException {
+		ZipOutputStream zos = null;
+		File src = new File(srcDir);
+		String zipPath = srcDir + File.separator + src.getName() + SUFFIX;
+		try {
+			zos = new ZipOutputStream(new FileOutputStream(zipPath));
+			File[] listFiles = new File(srcDir).listFiles();
+			assert listFiles != null;
+			for (File file : listFiles) {
+				// 跳过生成的zip文件本身
+				if (file.getName().equals(src.getName() + SUFFIX)) {
+					continue;
+				}
+				compress(file, zos, file.getName());
+			}
+		} catch (Exception e) {
+			log.error("failed to Zip Directory {}", srcDir);
+			e.printStackTrace();
+		} finally {
+			if (zos != null) {
+				try {
+					zos.close();
+				} catch (IOException e) {
+					log.error("failed to close ZipOutputStream");
+					e.printStackTrace();
+				}
+			}
+		}
+		return zipPath;
+	}
+
+	/**
+	 * 递归压缩方法
+	 * @param sourceFile 源文件
+	 * @param zos		 zip输出流
+	 * @param name		 压缩后的名称
+	 * @throws Exception
+	 */
+	private static void compress(File sourceFile, ZipOutputStream zos, String name)
+			throws Exception {
+		byte[] buf = new byte[BUFFER_SIZE];
+		// 压缩文件
+		if (sourceFile.isFile()) {
+			// 向zip输出流中添加一个zip实体，构造器中name为zip实体的文件的名字
+			zos.putNextEntry(new ZipEntry(name));
+			// copy文件到zip输出流中
+			int len;
+			FileInputStream in = new FileInputStream(sourceFile);
+			while ((len = in.read(buf)) != -1) {
+				zos.write(buf, 0, len);
+			}
+			// Complete the entry
+			zos.closeEntry();
+			in.close();
+		} else {
+			// 压缩文件夹
+			File[] listFiles = sourceFile.listFiles();
+			if (listFiles == null || listFiles.length == 0) {
+				// 空文件夹的处理
+				zos.putNextEntry(new ZipEntry(name + File.separator));
+				// 没有文件，不需要文件的copy
+				zos.closeEntry();
+			} else {
+				for (File file : listFiles) {
+					// 递归写入
+					compress(file, zos, name + File.separator + file.getName());
+				}
+			}
 		}
 	}
 }

@@ -305,16 +305,16 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		CrRoleNodesData nodesData = new CrRoleNodesData();
 
-		String assetNodes = rolesJSONObject.get("assetNodes").toString();
+		String assetNodes = rolesJSONObject.get("asset_nodes").toString();
 		nodesData.setAssetNodes(JsonUtil.toJsonObjectArray(assetNodes, CrRoleNode.class));
 
-		String visibleNodes = rolesJSONObject.get("visibleNodes").toString();
+		String visibleNodes = rolesJSONObject.get("visible_nodes").toString();
 		nodesData.setVisibleNodes(JsonUtil.toJsonObjectArray(visibleNodes, CrRoleNode.class));
 
 		CrRole crRole = new CrRole(rolesJSONObject.get("name").toString(), code);
 
 		crRole.setMissionScheme(
-				getNewRoomScheme(rolesJSONObject.get("missionsScheme").toString(), roomId));
+				getNewRoomScheme(rolesJSONObject.get("missions_scheme").toString(), roomId));
 		crRole.setNodes(JsonUtil.toJsonString(nodesData));
 
 		return crRole;

@@ -265,6 +265,9 @@ public class RbRoomDirectorController {
 			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id,
 					roleCode);
 
+			crRbRoleContext.setMissionMapping(crRoleContext.getMissionMapping());
+			crRbRoleContext.setShowWriteupMapping(crRoleContext.getShowWriteupMapping());
+
 			CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
 					CrRoleContext.class);
 
@@ -304,6 +307,7 @@ public class RbRoomDirectorController {
 								RoleMissionRsp roleMissionRsp = BeanUtils.copy(roleMission,
 										RoleMissionRsp.class);
 								roleMissionRsp.setCategory(roleMission.getCategoryId());
+								roleMissionRsp.setMissionStatus(roleMission.getState());
 								roleMissionRsp.setDeliveryDetails(rbUserDatas);
 
 								return roleMissionRsp;
@@ -321,6 +325,8 @@ public class RbRoomDirectorController {
 				groupRole.setMissionNumber(roleMissionRspList.size());
 				groupRole.setRoleResourceId(roleData.getResourceId());
 
+				childRoleInfoList.add(groupRole);
+
 				peopleCount += userIds.size();
 				missionCount += roleMissionRspList.size();
 			}
@@ -333,7 +339,6 @@ public class RbRoomDirectorController {
 			groupData.setGroupNumber(crRoleContextRsp.getRoles().size());
 			groupData.setPeopleNumber(peopleCount);
 			groupData.setMissionNumber(missionCount);
-			groupData.setRoles(childRoleInfoList);
 
 			groups.add(groupData);
 

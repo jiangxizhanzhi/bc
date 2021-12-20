@@ -301,7 +301,7 @@ public class TeamTrainScoreController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
 		MissionDynamicRsp missionDynamicRsp = new MissionDynamicRsp();
-		TaskCounter taskCounter = teamScoreService.getTaskCounter(resource_id, student_id);
+		TaskCounter taskCounter = crRoleService.getTaskCounter(resource_id, student_id);
 
 		List<StatisticalInfo> statisticalInfoList = Lists.newArrayList();
 

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.TaskCounter;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -67,6 +68,13 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @return
 	 */
 	String getUserNamesByRoleUsers(String userIds);
+
+	/**获取团队训练实战任务统计信息
+	 * @param roomId
+	 * @param studentId
+	 * @return (已完成，未下发，已下发)
+	 */
+	TaskCounter getTaskCounter(String roomId, String studentId);
 
 	List<UserData> getUserDatas(String userIds);
 }

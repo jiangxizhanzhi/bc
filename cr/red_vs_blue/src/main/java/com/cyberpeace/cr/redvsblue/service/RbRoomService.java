@@ -11,6 +11,8 @@ import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 
 public interface RbRoomService extends IService<RbRoom> {
 
+	Integer getTrainingStatus(String roomId);
+
 	/**
 	 * 根据ids批量获取
 	 * @param roomIds

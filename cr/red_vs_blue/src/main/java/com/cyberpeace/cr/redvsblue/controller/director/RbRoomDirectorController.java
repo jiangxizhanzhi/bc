@@ -250,7 +250,7 @@ public class RbRoomDirectorController {
 	@ApiOperation("查询角色")
 	@GetMapping("/roles")
 	public BaseRsp<CrRbRoleContext> getRoles(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		CrRbRoleContext crRbRoleContext = new CrRbRoleContext();
 		List<GroupData> groups = Lists.newArrayList();
 		// 遍历角色组

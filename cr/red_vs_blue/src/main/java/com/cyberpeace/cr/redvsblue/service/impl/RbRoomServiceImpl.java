@@ -77,6 +77,13 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	private TransactionTemplate transactionTemplate;
 
 	@Override
+	public Integer getTrainingStatus(String roomId) {
+		RbRoomData teamRoomdata = getRbRoomDataByRoomId(roomId);
+
+		return teamRoomdata.getTrainingStatus();
+	}
+
+	@Override
 	public List<RbRoom> getByIds(List<String> roomIds) {
 		if (roomIds.size() == 0) {
 			return Lists.newArrayList();

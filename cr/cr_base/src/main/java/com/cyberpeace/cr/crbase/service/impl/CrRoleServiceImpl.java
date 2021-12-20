@@ -236,6 +236,34 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
+	public TaskCounter getTaskCounter(String roomId, String studentId) {
+		TaskCounter taskCounter = new TaskCounter();
+
+		CrRole crRole = getCrRoleByRoomIdAndUserId(roomId, studentId);
+		List<MissionStageScheme> missionStageSchemes = JsonUtil
+				.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
+		Integer finished = 0;
+		Integer released = 0;
+		List<TaskContext> taskContextList = crTaskService.getByRoomIdAndUser(roomId, studentId);
+
+		for (TaskContext taskContext : taskContextList) {
+			if (taskContext.isFinished()) {
+				finished++;
+			} else {
+				released++;
+			}
+		}
+		taskCounter.setFinished(finished);
+		taskCounter.setReleased(released);
+		int countMissions = 0;
+		for (MissionStageScheme missionStageScheme : missionStageSchemes) {
+			countMissions += missionStageScheme.getMissions().size();
+		}
+		taskCounter.setNotReleased(countMissions - finished - released);
+
+		return taskCounter;
+	}
+	@Override
 	public List<UserData> getUserDatas(String userIds) {
 		List<UserData> userDataList = Lists.newArrayList();
 		List<UserInfo> userInfoList = remoteUserService

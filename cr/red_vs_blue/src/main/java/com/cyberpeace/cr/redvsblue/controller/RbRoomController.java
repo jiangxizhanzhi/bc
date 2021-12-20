@@ -221,7 +221,7 @@ public class RbRoomController {
 	@ApiOperation("获取控制面板信息，好友信息")
 	@GetMapping("/dashboard_info")
 	public BaseRsp<DashboardInfo> getDashboardInfo(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		DashboardInfo data = rbRoomService.getDashboardInfo(resource_id);
 
 		return new BaseRsp<>(data);

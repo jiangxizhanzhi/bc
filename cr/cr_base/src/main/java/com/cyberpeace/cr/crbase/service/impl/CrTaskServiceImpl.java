@@ -415,6 +415,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	}
 
+
 	private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
 			CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
 			CrTaskLog.ActionCode.MAN_SUCCESS.getCode(), CrTaskSubmit.EvaluateStatus.FAIL.getCode(),

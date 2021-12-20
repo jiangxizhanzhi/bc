@@ -1,5 +1,14 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
@@ -14,22 +23,12 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseImportService;
-import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -167,13 +166,20 @@ public class CourseImportServiceImpl implements CourseImportService {
 				.getCode().intValue()
 						? new File(path, ResourceImportConstant.HANDOUT).getAbsolutePath()
 						: new File(path, ResourceImportConstant.DOC).getAbsolutePath();
+
+		// 目录拷贝
 		String destHandoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
 				course.getResourceId());
 		String dest = new File(destHandoutPath, courseLesson.getName()).getAbsolutePath();
 		FileUtil.copyDirectory(handoutPath, dest, false);
 
-		String handoutFilePath = new File(dest, ResourceImportConstant.HANDOUT_FILE_NAME)
-				.getAbsolutePath();
+		// 目录压缩设置原始markdown文件地址
+
+		// 文件解析
+		String handoutFilePath = courseLesson.getType().intValue() == CourseLesson.LessonType.THEORY
+				.getCode().intValue()
+						? new File(dest, ResourceImportConstant.HANDOUT_FILE_NAME).getAbsolutePath()
+						: new File(dest, ResourceImportConstant.DOC_FILE_NAME).getAbsolutePath();
 		String markdown = MdUtil.parseMarkdown(handoutFilePath);
 		courseLesson.setHandoutUrl(markdown);
 
@@ -212,7 +218,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		if (new File(path, ResourceImportConstant.ENV).exists()) {
 			courseLesson.setSceneShareMode(SceneShare.PRIVATE.getCode());
 			courseLesson.setSceneShareMode(CommonConstant.TWO);
-			courseLesson.setTopoId(envReqs.get(courseLesson.getName()));
+			courseLesson.setTopoId(envReqs.get(new File(path).getName()));
 		}
 
 		return courseLesson;

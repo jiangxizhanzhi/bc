@@ -35,6 +35,12 @@ public class ZipUtil {
 		return tmpPath;
 	}
 
+	/**
+	 * 压缩文件解压
+	 * @param zipPath
+	 * @param destPath
+	 * @return
+	 */
 	public static Boolean unzipToDest(String zipPath, String destPath) {
 
 		try {
@@ -45,8 +51,7 @@ public class ZipUtil {
 
 			return CommonConstant.TRUE;
 		} catch (Exception e) {
-			log.error(
-					"ParseMarkdown unzip markdown package error! markdown_path=[{}], dest_path=[{}] catch error:",
+			log.error("unzipToDest: Unzip failed! zip_path=[{}], dest_path=[{}] catch error:",
 					zipPath, destPath, e);
 			return CommonConstant.FALSE;
 		}

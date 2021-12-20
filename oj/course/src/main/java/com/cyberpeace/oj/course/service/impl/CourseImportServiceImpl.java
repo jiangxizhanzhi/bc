@@ -287,7 +287,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 			// 课时数据组装
 			List<String> lessonPathList = FileUtil.listDirs(chapterPath, false);
 			for (String lessonPath : lessonPathList) {
-				String name = new File(lessonPath).getName();
+				String[] nameArray = new File(lessonPath).getName()
+						.split(PatternConstant.UNDER_LINE, CommonConstant.TWO);
+				String name = nameArray.length > CommonConstant.ONE ? nameArray[CommonConstant.ONE]
+						: nameArray[0];
+
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode())

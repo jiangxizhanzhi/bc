@@ -370,7 +370,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				String originPath = AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName;
 				String destPath = tempDir + File.separator + "images/" + fileName;
 				try {
-					FileUtil.copyFile(originPath, destPath);
+					FileUtil.copyFile(originPath, destPath, false);
 				} catch (Exception e) {
 					log.error("error occurred when copying picture");
 					throw new IOException(e);

@@ -20,4 +20,7 @@ public interface PatternConstant {
 	/** 知识点切割使用*/
 	String KNOWLEDGE_SPLIT_STR = "- ";
 
+	/** 横线*/
+	String UNDER_LINE = "_";
+
 }

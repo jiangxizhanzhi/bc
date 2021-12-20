@@ -34,5 +34,5 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	CourseLesson selectByPublic(@Param("resourceId") String resourceId,
 			@Param("isPublic") Boolean isPublic);
 
-	CourseLesson deleteByCourse(@Param("courseIds") List<String> courseIds);
+	void deleteByCourse(@Param("courseIds") List<String> courseIds);
 }

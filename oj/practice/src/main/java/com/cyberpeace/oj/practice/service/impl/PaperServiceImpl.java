@@ -76,7 +76,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 		// 解析试卷信息
 		Paper paper = BeanUtils.copy(paperContext, Paper.class);
-		paper.setResourceId(IDGeneratorUtil.getID());
+		if (StringUtils.isBlank(paper.getResourceId())) {
+			paper.setResourceId(IDGeneratorUtil.getID());
+		}
 		paper.setIsPublic(CommonConstant.TRUE);
 
 		// 数据设置

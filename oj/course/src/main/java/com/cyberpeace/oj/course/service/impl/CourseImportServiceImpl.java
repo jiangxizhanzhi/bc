@@ -273,12 +273,16 @@ public class CourseImportServiceImpl implements CourseImportService {
 			if (new File(chapterPath).getName().equals(ResourceImportConstant.IMAGE_NAME)) {
 				continue;
 			}
-
+			String[] chapterNameArray = new File(chapterPath).getName()
+					.split(PatternConstant.UNDER_LINE, CommonConstant.TWO);
+			String chapterName = chapterNameArray.length > CommonConstant.ONE
+					? chapterNameArray[CommonConstant.ONE]
+					: chapterNameArray[0];
 			// 生成章节配置
 			LessonConfig chapterConfig = LessonConfig.builder().courseId(course.getResourceId())
 					.parentId(courseConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
-					.nodeType(LessonConfig.NodeType.NODE_CHAPTER.getCode())
-					.name(FileUtil.getFileName(chapterPath, false)).index(index).build();
+					.nodeType(LessonConfig.NodeType.NODE_CHAPTER.getCode()).name(chapterName)
+					.index(index).build();
 			lessonConfigs.add(chapterConfig);
 
 			// 索引加1
@@ -294,9 +298,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
-						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode())
-						.name(FileUtil.getFileName(lessonPath, false)).lessonId(nameMap.get(name))
-						.index(index).build();
+						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)
+						.lessonId(nameMap.get(name)).index(index).build();
 				lessonConfigs.add(lessonConfig);
 
 				// 索引加一

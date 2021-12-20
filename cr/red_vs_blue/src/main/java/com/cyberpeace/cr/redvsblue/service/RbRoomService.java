@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 
 public interface RbRoomService extends IService<RbRoom> {
@@ -31,6 +32,7 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @return
 	 */
 	IPage<RbRoomData> list(ListQuery listQuery);
+
 	/**
 	 * 获取当前红蓝房间数量
 	 * @return

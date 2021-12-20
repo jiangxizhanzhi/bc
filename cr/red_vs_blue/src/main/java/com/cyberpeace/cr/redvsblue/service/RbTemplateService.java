@@ -21,7 +21,6 @@ public interface RbTemplateService extends IService<RbTemplate> {
 
 	RbTemplate update(RbTemplateContext rbTemplateContext, BusinessTemplate businessTemplate);
 
-
 	List<RbTemplate> getRbTemplateByBusinessIds(List<String> ids);
 
 	void batchDelete(List<String> ids, List<String> roomIds);

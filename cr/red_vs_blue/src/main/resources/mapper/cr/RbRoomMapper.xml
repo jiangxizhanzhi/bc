@@ -11,7 +11,7 @@
         select count(`id`)
         from cr_rb_room
     </select>
-    <select id="getRbRoomDataByRoomId" resultType="com.cyberpeace.cr.redvsblue.service.RbRoomData"
+    <select id="getRbRoomDataByRoomId" resultType="com.cyberpeace.cr.redvsblue.service.context.RbRoomData"
             parameterType="java.lang.String">
         select cr_rb_room.resource_id,
                cr_rb_room.template_id template,
@@ -38,7 +38,7 @@
                  left join local_scene on cr_rb_room.resource_id = local_scene.business_instance_id
         where cr_rb_room.resource_id = #{resourceId}
     </select>
-    <select id="listRbRoom" resultType="com.cyberpeace.cr.redvsblue.service.RbRoomData">
+    <select id="listRbRoom" resultType="com.cyberpeace.cr.redvsblue.service.context.RbRoomData">
 
         select cr_rb_room.resource_id,
         cr_rb_room.template_id template,

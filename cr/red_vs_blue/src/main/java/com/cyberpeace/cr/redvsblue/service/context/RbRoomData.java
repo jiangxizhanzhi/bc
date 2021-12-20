@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.service;
+package com.cyberpeace.cr.redvsblue.service.context;
 
 import java.io.Serializable;
 import java.util.Date;

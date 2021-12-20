@@ -46,8 +46,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	public BaseRsp create(
-			@RequestBody @Validated RbTemplateAddReq rbTemplateAddReq) {
+	public BaseRsp create(@RequestBody @Validated RbTemplateAddReq rbTemplateAddReq) {
 
 		RbTemplateContext rbTemplateContext = BeanUtils.copy(rbTemplateAddReq,
 				RbTemplateContext.class);
@@ -67,8 +66,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("修改")
 	@PatchMapping()
-	public BaseRsp update(
-			@RequestBody @Validated RbTemplateModifyReq rbTemplateModifyReq) {
+	public BaseRsp update(@RequestBody @Validated RbTemplateModifyReq rbTemplateModifyReq) {
 		String resourceId = rbTemplateModifyReq.getResourceId();
 		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resourceId);
 

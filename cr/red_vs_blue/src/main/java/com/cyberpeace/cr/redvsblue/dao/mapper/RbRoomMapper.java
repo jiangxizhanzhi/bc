@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
-import com.cyberpeace.cr.redvsblue.service.RbRoomData;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 
 @Mapper
 @Repository

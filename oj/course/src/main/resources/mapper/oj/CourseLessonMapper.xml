@@ -59,4 +59,12 @@
             and `public` = #{isPublic}
         </if>
     </select>
+
+    <delete id="deleteByCourse">
+        delete from oj_course_lesson
+        where course_id in
+        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+            #{courseId}
+        </foreach>
+    </delete>
 </mapper>

@@ -59,4 +59,12 @@
         delete from oj_lesson_config
         where course_id = #{courseId}
     </delete>
+
+    <delete id="batchDelete">
+        delete from oj_lesson_config
+        where course_id in
+        <foreach collection="courseIds" separator="," open="(" close=")" item="courseId">
+            #{courseId}
+        </foreach>
+    </delete>
 </mapper>

@@ -52,7 +52,7 @@ public class AdminCourseImportController {
 
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/course/import")
-	public BaseRsp<Boolean> zgCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
+	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
 
 		// 路径是否存在校验
 		File file = new File(courseImportReq.getPath());

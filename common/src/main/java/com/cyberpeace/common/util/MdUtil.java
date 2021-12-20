@@ -63,7 +63,8 @@ public class MdUtil {
 			}
 
 			if (index + 1 == contentList.size()) {
-				valueObj.put(key, contentList.get(index));
+				String value = ListUtil.joinList(contentList, startIndex, contentList.size());
+				valueObj.put(key, value);
 			}
 		}
 

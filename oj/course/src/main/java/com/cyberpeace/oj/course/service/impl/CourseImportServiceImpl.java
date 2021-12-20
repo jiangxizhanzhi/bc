@@ -20,10 +20,14 @@ import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +61,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		// 用户修改
 		course.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+		course.setModifyUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
 
 		// 课程分类数据查询或创建
 		CourseCategory category = courseCategoryService.getOrCreate(course.getCategoryId());
@@ -68,8 +73,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 			logoFile = new File(path, ResourceImportConstant.JPG_LOGO);
 		}
 		String dest = EnumUtils.getEnumDescByCode(AttachmentPath.LOGO.getCode(),
-				AttachmentPath.class) + CommonConstant.LEFT_OBLIQUE_LINE + logoFile.getName();
-		FileUtil.copyFile(logoFile.getAbsolutePath(), dest, false);
+				AttachmentPath.class) + logoFile.getName();
+		FileUtil.copyFile(logoFile.getAbsolutePath(), dest, true);
 		course.setLogo(dest);
 
 		// 课程大纲数据读取
@@ -84,7 +89,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 		course.setBuiltin(CommonConstant.TRUE);
 		course.setHeat(CommonConstant.ZERO);
 		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setReadAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
 		course.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setOperationAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
 		course.setIsPublic(CommonConstant.FALSE);
 		course.setScore(CommonConstant.ZERO);
 
@@ -119,7 +126,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		for (String chapter : chapterPaths) {
 			File file = new File(chapter);
 			// 镜像目录过滤
-			if (file.getName().equals(ResourceImportConstant.IMAGE_NAME)) {
+			if (file.isFile() || file.getName().equals(ResourceImportConstant.IMAGE_NAME)) {
 				continue;
 			}
 
@@ -143,6 +150,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		// 解析课时数据
 		File file = new File(path, ResourceImportConstant.README_NAME);
+		if (!file.exists()) {
+			return null;
+		}
 		JSONObject jsonMarkdown = MdUtil.parseJsonMarkdown(file);
 
 		// 字段类型转换
@@ -184,9 +194,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 		String videoPath = String.format(AttachmentPath.VIDEO.getDesc(), course.getResourceId());
 		String video = FileUtil
 				.getOneFile(new File(path, ResourceImportConstant.VIDEO).getAbsolutePath());
-		String videoUrl = FileUtil.copyFile(video, videoPath + FileUtil.getFileName(video, true),
-				true);
-		courseLesson.setVideoUrl(videoUrl);
+		if (StringUtils.isNotBlank(video)) {
+			String videoUrl = FileUtil.copyFile(video,
+					videoPath + FileUtil.getFileName(video, true), true);
+			courseLesson.setVideoUrl(videoUrl);
+		}
 
 		// 其他数据初始化
 		courseLesson.setCourseId(course.getResourceId());
@@ -216,9 +228,6 @@ public class CourseImportServiceImpl implements CourseImportService {
 		String difficulty = (String) jsonObject.remove("difficulty");
 		Integer difficultyCode = EnumUtils.getEnumCodeByDesc(difficulty, Difficulty.class);
 
-		String knowledge = (String) jsonObject.remove("knowledge");
-		String[] knowledges = knowledge.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
-
 		String compulsory = (String) jsonObject.remove("compulsory");
 		Integer compulsoryCode = EnumUtils.getEnumCodeByDesc(compulsory,
 				CourseLesson.CompulsoryType.class);
@@ -228,7 +237,16 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		CourseLesson courseLesson = jsonObject.toJavaObject(CourseLesson.class);
 		courseLesson.setType(typeCode);
-		courseLesson.setKnowledge(JsonUtil.toJsonString(knowledges));
+
+		// 知识点数据处理
+		String knowledge = (String) jsonObject.remove("knowledge");
+		String[] strArray = knowledge.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
+		// 经过剪切 第一个为空字符 删掉
+		if (strArray.length > CommonConstant.ZERO) {
+			String[] knowledges = Arrays.copyOfRange(strArray, CommonConstant.ONE, strArray.length);
+			courseLesson.setKnowledge(JsonUtil.toJsonString(knowledges));
+		}
+
 		courseLesson.setCompulsory(compulsoryCode);
 		courseLesson.setDifficulty(difficultyCode);
 		courseLesson.setResourceId(IDGeneratorUtil.getID());

@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
@@ -53,6 +54,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
+
+	@Autowired
+	private LessonConfigMapper lessonConfigMapper;
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
@@ -289,5 +293,24 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				authContext.getIsWeb());
 
 		return courseIds;
+	}
+
+	@Override
+	public Boolean batchDelete(List<String> courseIds) {
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				// 课时数据删除
+				courseLessonMapper.deleteByCourse(courseIds);
+				// 章节数据删除
+				lessonConfigMapper.batchDelete(courseIds);
+				// 课程数据删除
+				courseMapper.deleteBatchIds(courseIds);
+			}
+		});
+
+		return true;
 	}
 }

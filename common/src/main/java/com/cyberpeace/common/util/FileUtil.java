@@ -55,6 +55,17 @@ public class FileUtil {
 	public static String getFileName(String filePath, Boolean suffix) {
 
 		File file = new File(filePath);
+
+		// 文件加返回名称
+		if (file.isDirectory()) {
+			return file.getName();
+		}
+
+		// 无后缀名称直接返回文件名
+		if (file.getName().indexOf(CommonConstant.PERIOD) != -1) {
+			return file.getName();
+		}
+
 		return !suffix
 				? file.getName().substring(CommonConstant.ZERO, file.getName().lastIndexOf("."))
 				: file.getName();
@@ -127,20 +138,29 @@ public class FileUtil {
 	 */
 	public static String copyFile(String path, String dest, boolean rename) {
 
-		if (rename && new File(dest).exists()) {
+		File destFile = new File(dest);
+
+		// 文件重命名
+		if (rename && destFile.exists()) {
 			dest = reName(dest);
 		}
 
+		// 父级文件目录创建
+		if (!destFile.getParentFile().exists()) {
+			destFile.getParentFile().mkdirs();
+		}
+
+		// 文件拷贝
 		FileChannel input = null;
 		FileChannel output = null;
-
 		try {
 			input = new FileInputStream(path).getChannel();
 			output = new FileOutputStream(dest).getChannel();
 
 			output.transferFrom(input, 0, input.size());
 		} catch (Exception e) {
-			log.error("copyFile: File copy failed! path=[{}], dest=[{}]", path, dest);
+			log.error("copyFile: File copy failed! path=[{}], dest=[{}], catch error:", path, dest,
+					e);
 			throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
 		} finally {
 			try {
@@ -279,22 +299,23 @@ public class FileUtil {
 		for (String direction : childrenFile) {
 			File file = new File(direction);
 
+			// 过滤不必要的文件夹 隐藏文件夹
+			if (file.getName().startsWith(".")) {
+				continue;
+			}
 			// 创建对应目录
-			if (file.isDirectory() && self) {
-				String selfPathName = file.getAbsolutePath().replace(selfPre, "");
-				new File(destDir, selfPathName).mkdirs();
-			} else {
-				String pathName = file.getAbsolutePath().replace(noSelfPre, "");
-				new File(destDir, pathName).mkdirs();
+			if (file.isDirectory()) {
+				String pathName = self ? file.getAbsolutePath().replace(selfPre, "")
+						: file.getAbsolutePath().replace(noSelfPre, "");
+				File copyDir = new File(destDir, pathName);
+				copyDir.mkdirs();
+				copyDirectory(file.getAbsolutePath(), copyDir.getAbsolutePath(), false);
 			}
 
 			// 拷贝对应文件
-			if (file.isFile() && self) {
-				String selfPathName = file.getAbsolutePath().replace(selfPre, "");
-				copyFile(file.getAbsolutePath(), new File(destDir, selfPathName).getAbsolutePath(),
-						false);
-			} else {
-				String pathName = file.getAbsolutePath().replace(noSelfPre, "");
+			if (file.isFile()) {
+				String pathName = self ? file.getAbsolutePath().replace(selfPre, "")
+						: file.getAbsolutePath().replace(noSelfPre, "");
 				copyFile(file.getAbsolutePath(), new File(destDir, pathName).getAbsolutePath(),
 						false);
 			}
@@ -321,7 +342,7 @@ public class FileUtil {
 		}
 
 		// 根据审读计算是否继续往下
-		if (depth != null && depth >= 0) {
+		if (depth != null && depth > 0) {
 			depth--;
 		} else if (depth != null && depth <= 0) {
 			return Lists.newArrayList();
@@ -329,13 +350,14 @@ public class FileUtil {
 
 		// 遍历文件返回
 		File[] files = rootFile.listFiles();
-		List<String> allDirections = Lists.newArrayList();
+		List<String> allDir = Lists.newArrayList();
 		for (File file : files) {
-			List<String> directionNames = listFileByFile(file, depth, includeFile);
-			allDirections.addAll(directionNames);
+			allDir.add(file.getAbsolutePath());
+			List<String> childrenDirs = listFileByFile(file, depth, includeFile);
+			allDir.addAll(childrenDirs);
 		}
 
-		return allDirections;
+		return allDir;
 	}
 
 	/**
@@ -351,6 +373,7 @@ public class FileUtil {
 		File[] files = rootFile.listFiles();
 
 		List<String> directions = Arrays.stream(files)
+				.filter(file -> !file.getName().startsWith("."))
 				.filter(file -> includeFile ? true : file.isDirectory()).map(File::getAbsolutePath)
 				.collect(Collectors.toList());
 		return directions;

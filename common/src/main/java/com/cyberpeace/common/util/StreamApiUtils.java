@@ -90,7 +90,8 @@ public class StreamApiUtils {
 		if (CollectionUtils.isEmpty(collection)) {
 			return Lists.newArrayList();
 		}
-		return collection.stream().map(mapperValue).collect(Collectors.toList());
+		return collection.stream().map(mapperValue)
+				.filter(e -> null != e).collect(Collectors.toList());
 	}
 
 	/**

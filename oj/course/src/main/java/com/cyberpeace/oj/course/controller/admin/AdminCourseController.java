@@ -177,9 +177,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("批量删除课程信息")
 	@DeleteMapping("/batch")
-	public BaseRsp<Integer> batchDelete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
-		int row = courseMapper.deleteBatchIds(batchDeleteReq.getResourceIds());
-		return new BaseRsp<>(row);
+	public BaseRsp<Boolean> batchDelete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
+
+		Boolean result = courseService.batchDelete(batchDeleteReq.getResourceIds());
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("课程大纲文件上传")

@@ -13,58 +13,65 @@ import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 
 public interface CourseService extends IService<Course> {
 
-    /**
-     * 根据编号查询课程信息
-     * @param courseId
-     * @param userId
-     * @return
-     */
-    CourseInfoBo selectById(String courseId, String userId);
+	/**
+	 * 根据编号查询课程信息
+	 * @param courseId
+	 * @param userId
+	 * @return
+	 */
+	CourseInfoBo selectById(String courseId, String userId);
 
+	/**
+	 * 根据课程编号集合查询课程信息
+	 * @param ids
+	 * @return
+	 */
+	List<CourseInfoBo> selectByIds(List<String> ids);
 
-    /**
-     * 根据课程编号集合查询课程信息
-     * @param ids
-     * @return
-     */
-    List<CourseInfoBo> selectByIds(List<String> ids);
+	/**
+	 * 根据课程条件信息查询
+	 * @param page
+	 * @param courseContext
+	 * @return
+	 */
+	ListRsp<CourseInfoBo> selectPage(Page page, CourseQueryBo courseContext,
+			AuthContext authContext);
 
-    /**
-     * 根据课程条件信息查询
-     * @param page
-     * @param courseContext
-     * @return
-     */
-    ListRsp<CourseInfoBo> selectPage(Page page, CourseQueryBo courseContext, AuthContext authContext);
+	/**
+	 * 筛选未被删除的课程编号
+	 * @param courseIds
+	 * @return
+	 */
+	List<String> idsByNotDeleteIds(List<String> courseIds);
 
-    /**
-     * 筛选未被删除的课程编号
-     * @param courseIds
-     * @return
-     */
-    List<String> idsByNotDeleteIds(List<String> courseIds);
+	/**
+	 * 课程新增
+	 * @param userId
+	 * @param course
+	 * @return
+	 */
+	Course addCourse(String userId, Course course);
 
-    /**
-     * 课程新增
-     * @param userId
-     * @param course
-     * @return
-     */
-    Course addCourse(String userId, Course course);
+	/**
+	 * 课程修改
+	 * @param userId
+	 * @param course
+	 * @return
+	 */
+	Course updateCourse(String userId, Course course);
 
-    /**
-     * 课程修改
-     * @param userId
-     * @param course
-     * @return
-     */
-    Course updateCourse(String userId, Course course);
+	/**
+	 * 根据分类查询课程编号
+	 * @param category
+	 * @param authContext
+	 * @return
+	 */
+	List<String> selectIdsByCategory(String category, AuthContext authContext);
 
-    /**
-     * 根据分类查询课程编号
-     * @param category
-     * @param authContext
-     * @return
-     */
-    List<String> selectIdsByCategory(String category, AuthContext authContext);
+	/**
+	 * 批量删除 暂定课时记录不删除
+	 * @param courseIds
+	 * @return
+	 */
+	Boolean batchDelete(List<String> courseIds);
 }

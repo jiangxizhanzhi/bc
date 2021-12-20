@@ -17,7 +17,6 @@ import javax.annotation.PostConstruct;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Component
 public class Attachment extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

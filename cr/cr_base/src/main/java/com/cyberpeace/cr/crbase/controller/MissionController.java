@@ -198,8 +198,8 @@ public class MissionController {
 
 	@ApiOperation("批量删除任务方案")
 	@DeleteMapping("/combat_techs/batch_destroy/")
-	public BaseRsp<?> batchDeleteSchemeTemplate(@RequestBody @Validated List<String> ids) {
-		missionService.batchDeleteSchemeTemplate(ids);
+	public BaseRsp<?> batchDeleteSchemeTemplate(@RequestBody @Validated BatchDeleteReq deleteReq) {
+		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
 
 		return new BaseRsp<>();
 	}

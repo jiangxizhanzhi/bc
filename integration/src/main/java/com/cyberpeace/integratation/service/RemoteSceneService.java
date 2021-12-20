@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 import com.cyberpeace.integratation.model.scene.NodeOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
@@ -31,4 +32,9 @@ public interface RemoteSceneService {
 	Boolean restartNode(NodeOpsContext nodeOpsContext);
 
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
+
+	/**
+	 * 启动流量
+	 */
+    Boolean startFlow(FlowOpsContext flowOpsContext);
 }

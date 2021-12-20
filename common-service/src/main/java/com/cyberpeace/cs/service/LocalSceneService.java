@@ -52,7 +52,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	Boolean recreateNode(String localSceneId, String nodeId);
 
-	Boolean startFlow(String localSceneId, String nodeId, String flowId);
+	Boolean startFlow(LocalScene localScene, String nodeId, String flowId);
 
 	/**
 	 * 关闭mp场景

@@ -93,4 +93,7 @@ public interface CrBusinessErrorCode {
 
 	// 资源id列表为空
 	String EMPTY_RESOURCE_ID_LIST = "101028";
+
+	// 启动流量失败
+	String START_FLOW_FAILURE = "101029";
 }

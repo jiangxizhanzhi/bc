@@ -17,10 +17,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.scene.NodeOpsContext;
-import com.cyberpeace.integratation.model.scene.ReferenceMetaData;
-import com.cyberpeace.integratation.model.scene.SceneOpsContext;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 
@@ -147,8 +144,15 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public Boolean startFlow(String localSceneId, String nodeId, String flowId) {
-		return null;
+	public Boolean startFlow(LocalScene localScene, String nodeId, String flowId) {
+		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
+		Boolean result = remoteSceneService.startFlow(context);
+		if (!result) {
+			log.error("failed to start flow [{}] of node [{}] in scene [{}]", flowId, nodeId,
+					localScene.getMpSceneId());
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -291,5 +295,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 				localScene.getBusinessInstanceId());
 
 		return nodeOpsContext;
+	}
+
+	private FlowOpsContext getFlowOpsContext(LocalScene localScene, String nodeId, String flowId) {
+		FlowOpsContext flowOpsContext = new FlowOpsContext();
+		flowOpsContext.setId(localScene.getMpSceneId());
+		flowOpsContext.setFlowId(flowId);
+		flowOpsContext.setNodeId(nodeId);
+		flowOpsContext.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
+				localScene.getBusinessInstanceId());
+
+		return flowOpsContext;
 	}
 }

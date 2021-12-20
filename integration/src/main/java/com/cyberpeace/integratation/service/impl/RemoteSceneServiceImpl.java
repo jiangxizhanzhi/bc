@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 import com.cyberpeace.integratation.model.scene.NodeOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneOpsContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
@@ -44,6 +45,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String NODE_RECREATE_URL;
 
+	private String FLOW_START_URL;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost()
@@ -68,6 +71,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		NODE_RECREATE_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.recreate");
+
+		FLOW_START_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.start");
 	}
 
 	@Override
@@ -115,6 +121,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean startFlow(FlowOpsContext flowOpsContext) {
+		return HttpClientUtil.post(FLOW_START_URL, flowOpsContext, Boolean.class);
 	}
 
 	private String startScene(SceneStartContext context, String url) {

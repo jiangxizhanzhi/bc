@@ -163,8 +163,10 @@ public class TeamTrainRoomController {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		// 3、开启流量
-		localSceneService.startFlow(localScene.getResourceId(), req.getNodeId(), req.getFlowId());
-
+		Boolean result = localSceneService.startFlow(localScene, req.getNodeId(), req.getFlowId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
+		}
 		return new BaseRsp();
 	}
 

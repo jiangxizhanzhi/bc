@@ -124,8 +124,8 @@ public class LessonEventListener extends MessageListener {
 		identifier.setFromWeb(ojLocalScene.getFromWeb());
 		identifier.setShared(ojLocalScene.getShared());
 		identifier.setLessonId(ojLocalScene.getBusinessId());
-		identifier.setPath(WsPath.OPERATION_SCENE);
-		identifier.setUserId(mqContext.getUserId());
+		identifier.setPath(WsPath.LESSON_SCENE);
+		identifier.setUserId(ojLocalScene.getUserId());
 
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();

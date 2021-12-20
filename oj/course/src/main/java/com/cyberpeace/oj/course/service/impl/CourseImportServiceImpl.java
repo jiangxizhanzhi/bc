@@ -217,7 +217,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 是否具有环境地址
 		if (new File(path, ResourceImportConstant.ENV).exists()) {
 			courseLesson.setSceneShareMode(SceneShare.PRIVATE.getCode());
-			courseLesson.setSceneShareMode(CommonConstant.TWO);
+			courseLesson.setDestroyDelay(CommonConstant.TWO);
 			courseLesson.setTopoId(envReqs.get(new File(path).getName()));
 		}
 

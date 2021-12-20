@@ -95,7 +95,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		OjLocalScene initOjLocalScene = initLessonOjLocalScene(courseLesson, authContext);
 		// 初始化localScene
 		LocalScene localScene = initLocalScene(courseLesson, initOjLocalScene, authContext);
-		ojLocalScene.setLocalSceneId(localScene.getResourceId());
+		initOjLocalScene.setLocalSceneId(localScene.getResourceId());
 
 		// 场景启动
 		String sceneId = localSceneService.startScene(localScene);
@@ -224,6 +224,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 			AuthContext authContext) {
 		LocalScene localScene = new LocalScene();
 		// 设置场景基本信息
+		localScene.setResourceId(IDGeneratorUtil.getID());
 		localScene.setSceneName(courseLesson.getName());
 		localScene.setBusinessCode(LocalScene.BusinessCode.LESSON.getCode());
 		localScene.setTopoId(courseLesson.getTopoId());

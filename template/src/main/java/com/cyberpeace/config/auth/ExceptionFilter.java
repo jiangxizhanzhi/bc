@@ -22,6 +22,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.util.NestedServletException;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
@@ -34,7 +35,6 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.constant.BusinessErrorMsg;
-import com.cyberpeace.common.constant.ErrorCode;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -124,7 +124,13 @@ public class ExceptionFilter implements Filter {
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setCode(ErrorCode.REMOTE_SERVICE_EXCEPTION);
-
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			errorInfo.setMessage(
+					BusinessErrorMsg.ENGLISH_MAP.get(ErrorCode.REMOTE_SERVICE_EXCEPTION));
+		} else {
+			errorInfo.setMessage(
+					BusinessErrorMsg.CHINESE_MAP.get(ErrorCode.REMOTE_SERVICE_EXCEPTION));
+		}
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 

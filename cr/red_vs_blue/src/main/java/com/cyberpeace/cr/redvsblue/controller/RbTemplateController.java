@@ -113,7 +113,7 @@ public class RbTemplateController {
 
 		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blueRoles");
 		List<RbTemplateRoleRsp> blueTemplateRoleRsps = Lists.newArrayList();
-		for (int i = 0; i < redRoles.size(); i++) {
+		for (int i = 0; i < blueRoles.size(); i++) {
 
 			RbTemplateRoleRsp blueTemplateRole = new RbTemplateRoleRsp(
 					blueRoles.getJSONObject(i).get("name").toString(),

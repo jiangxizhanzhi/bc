@@ -44,6 +44,7 @@ public interface BusinessErrorMsg {
 			put(RtksBusinessErrorCode.UNABLE_DELETE_SKILL, "无法删除技能点");
 
 			put(ErrorCode.DUPLICATE_KEY, "已存在");
+			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "远程服务异常");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE, "工具分类有关联的工具，不能删除");
 
@@ -86,6 +87,7 @@ public interface BusinessErrorMsg {
 			put(RtksBusinessErrorCode.UNABLE_DELETE_SKILL, "unable to delete skill");
 
 			put(ErrorCode.DUPLICATE_KEY, " already exist");
+			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "REMOTE_SERVICE_EXCEPTION");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE,
 					"unable to delete category, category in use");

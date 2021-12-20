@@ -31,4 +31,6 @@ public interface CommonConstant {
 	Boolean TRUE = true;
 
 	Boolean FALSE = false;
+
+	String EMPTY_LIST_JSON = "[]";
 }

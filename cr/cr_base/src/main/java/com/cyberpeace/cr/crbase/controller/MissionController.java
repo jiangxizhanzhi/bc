@@ -11,8 +11,10 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -23,6 +25,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.*;
+import com.cyberpeace.cr.crbase.controller.rsp.ImageUploadRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionCategoryRes;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionTemplateRsp;
@@ -32,6 +35,9 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
@@ -50,6 +56,9 @@ public class MissionController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	@ApiOperation("获取任务")
 	@GetMapping("/missions")
@@ -80,6 +89,15 @@ public class MissionController {
 		return new BaseRsp(missionTemplate);
 	}
 
+	@ApiOperation("上传任务附件图片")
+	@PostMapping("/upload/image")
+	public BaseRsp<ImageUploadRsp> uploadAttachment(@RequestParam("image") MultipartFile image) {
+		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.LOGO.getCode(),
+				CommonConstant.TRUE, image);
+		return new BaseRsp<>(
+				new ImageUploadRsp(attachmentBo.getResourceId(), attachmentBo.getFilePath()));
+	}
+
 	@ApiOperation("后台更新任务")
 	@PutMapping("/missions")
 	public BaseRsp<MissionTemplate>
@@ -103,6 +121,7 @@ public class MissionController {
 		missionTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		missionTemplate.setSkillPoints(JSON.toJSONString(missionTemplateReq.getSkillPoints()));
 		missionTemplate.setResourceId(IDGeneratorUtil.getID());
+		missionTemplate.setAttachment(missionTemplateReq.getImages());
 
 		return missionTemplate;
 	}
@@ -112,6 +131,7 @@ public class MissionController {
 
 		missionTemplate.setCategoryId(modifyReq.getCategory());
 		missionTemplate.setSkillPoints(JSON.toJSONString(modifyReq.getSkillPoints()));
+		missionTemplate.setAttachment(modifyReq.getImages());
 
 		return missionTemplate;
 	}

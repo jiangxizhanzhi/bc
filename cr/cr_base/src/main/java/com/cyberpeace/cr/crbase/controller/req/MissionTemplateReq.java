@@ -35,4 +35,7 @@ public class MissionTemplateReq implements Serializable {
 
 	@ApiModelProperty(value = "题解", required = true)
 	private String writeUp;
+
+	@ApiModelProperty(value = "附件图片id列表")
+	private List<String> images;
 }

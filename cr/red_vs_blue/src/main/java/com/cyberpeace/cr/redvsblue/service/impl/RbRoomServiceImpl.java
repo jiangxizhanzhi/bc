@@ -263,7 +263,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Override
 	public void checkRoomOpening(String roomId) {
 		RbRoom rbRoom = getById(roomId);
-		// 未开始，新增local_scene数据
+
+		if (rbRoom == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
 		if (rbRoom.isUnopened()) {
 			log.error("RedVsBlueTrain not begin! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);

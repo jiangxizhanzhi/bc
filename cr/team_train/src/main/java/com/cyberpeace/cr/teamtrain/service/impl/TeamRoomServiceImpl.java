@@ -440,7 +440,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public void checkRoomOpening(String roomId) {
 		TeamRoom teamRoom = getById(roomId);
-		// 未开始，新增local_scene数据
+
 		if (teamRoom.isUnopened()) {
 			log.error("teamTrain not begin! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);

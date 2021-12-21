@@ -52,7 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "红蓝对抗导演")
 @RestController
 @RequiresAuthentication
-@RequestMapping("/cr/director/red_vs_blue/red_vs_blue_templates/")
+@RequestMapping("/cr/director/red_vs_blue/red_vs_blue/")
 public class RbRoomDirectorController {
 
 	@Autowired
@@ -87,16 +87,17 @@ public class RbRoomDirectorController {
 	}
 
 	@ApiOperation("获取演习文书")
-	@GetMapping("/get_mission_detail")
+	@GetMapping("/get_exercise_paper")
 	public BaseRsp<ExercisePaperRsp>
-			get_exercise_paper(@RequestBody @Validated ExercisePaperReq exercisePaperReq) {
+			getExercisePaper(ExercisePaperReq exercisePaperReq) {
 		RoleQuery roleQuery = new RoleQuery(exercisePaperReq.getResourceId(),
 				exercisePaperReq.getGroupHash());
 
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		ExercisePaperRsp exercisePaperRsp = new ExercisePaperRsp();
+		exercisePaperRsp.setExercisePaper("");
 		if (crRoles.size() > 0) {
-			exercisePaperRsp.setExercisePaper("");
+			exercisePaperRsp.setExercisePaper(crRoles.get(0).getExercisePaper());
 		}
 		return new BaseRsp(exercisePaperRsp);
 	}

@@ -389,4 +389,25 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 		return missionTemplateMapper.selectBatchIds(missionTemplateIds);
 	}
+
+	@Override
+	public Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates) {
+		if (missionTemplates == null || missionTemplates.size() == 0) {
+			return false;
+		}
+		String userId = UserInfoContext.getUserContext().getUserId();
+		for (MissionTemplate template : missionTemplates) {
+			template.setId(null);
+			template.setCreateTime(null);
+			template.setUpdateTime(null);
+			template.setCreateUserId(userId);
+
+			if (missionTemplateMapper.selectById(template.getResourceId()) != null) {
+				missionTemplateMapper.updateById(template);
+			} else {
+				missionTemplateMapper.insert(template);
+			}
+		}
+		return true;
+	}
 }

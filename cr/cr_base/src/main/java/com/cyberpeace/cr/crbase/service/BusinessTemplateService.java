@@ -93,4 +93,11 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @throws IOException
 	 */
 	String makeDumpFile(List<String> templateIds, String tempDir) throws IOException;
+
+	/**
+	 * 导入场景模板资源
+	 * @param unZipPath
+	 * @return
+	 */
+	Boolean batchLoad(String unZipPath);
 }

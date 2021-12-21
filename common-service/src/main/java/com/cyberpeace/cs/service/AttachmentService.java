@@ -91,4 +91,9 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @return
 	 */
 	List<String> batchInsert(List<String> attachmentPaths);
+
+	/**
+	 * 导入场景模板时，将图片存入统一文件夹，插入或更新数据库条目
+	 */
+	Boolean loadImage(String imageId, String fileName, String imageDir);
 }

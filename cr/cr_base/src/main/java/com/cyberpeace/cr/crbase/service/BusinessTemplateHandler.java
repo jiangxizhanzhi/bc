@@ -17,6 +17,8 @@ import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 @Service
 public class BusinessTemplateHandler {
 
@@ -25,6 +27,11 @@ public class BusinessTemplateHandler {
 
 	public BusinessTemplate.BusinessType setBusinessType() {
 		return null;
+	}
+
+	public BusinessTemplateHandler getHandler(Integer type) {
+		BusinessTemplate.BusinessType businessType = getBusinessType(type);
+		return register.get(businessType);
 	}
 
 	@PostConstruct
@@ -83,9 +90,21 @@ public class BusinessTemplateHandler {
 	}
 
 	public ResourceDumpContext dumpBusiness(BusinessTemplate template) {
-		BusinessTemplate.BusinessType type = getBusinessType(template.getBusinessType());
-		BusinessTemplateHandler handler = register.get(type);
-		return handler.dumpBusiness(template);
+		BusinessTemplateHandler handler = getHandler(template.getBusinessType());
+		return handler.realDumpBusiness(template);
+
 	}
 
+	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
+		throw new NotImplementedException();
+	}
+
+	public void loadBusinessResource(ResourceDumpContext resource) {
+		BusinessTemplateHandler handler = getHandler(resource.getType());
+		handler.realLoadBusinessResource(resource);
+	}
+
+	public void realLoadBusinessResource(ResourceDumpContext resource) {
+		throw new NotImplementedException();
+	}
 }

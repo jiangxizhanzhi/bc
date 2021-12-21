@@ -28,6 +28,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
@@ -368,7 +369,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			// 2. copy pics
 			for (String fileName : fileMap.values()) {
 				String originPath = AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName;
-				String destPath = tempDir + File.separator + "images/" + fileName;
+				String destPath = tempDir + File.separator + CrCommonConstants.RESOURCE_IMAGE_DIR
+						+ File.separator + fileName;
 				try {
 					FileUtil.copyFile(originPath, destPath, false);
 				} catch (Exception e) {
@@ -381,7 +383,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 
 		// 4. generate data.json
-		String jsonPath = tempDir + File.separator + "data.json";
+		String jsonPath = tempDir + File.separator + CrCommonConstants.RESOURCE_FILE_NAME;
 		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(jsonPath),
 				StandardCharsets.UTF_8);
 		String data = JsonUtil.arrayToString(contextList);
@@ -422,6 +424,67 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		context.setType(template.getBusinessType());
 
 		return context;
+	}
+
+	@Override
+	public Boolean batchLoad(String unZipPath) {
+		// 1. read data.json
+		String dataJson = FileUtil.getContent(
+				new File(unZipPath + File.separator + CrCommonConstants.RESOURCE_FILE_NAME));
+		List<ResourceDumpContext> resources = JsonUtil.toJsonObjectArray(dataJson,
+				ResourceDumpContext.class);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				for (ResourceDumpContext resource : resources) {
+					// 2.load business
+					businessTemplateHandler.loadBusinessResource(resource);
+					// 3. load missions
+					List<MissionTemplate> missionTemplates = resource.getMissions();
+					missionService.batchLoadMissionTemplates(missionTemplates);
+					// 3. load businessTemplate
+					BusinessTemplate template = resource.getBusinessTemplate();
+					loadBusinessTemplate(template);
+
+					// 4. save topo
+					JSONObject topoData = resource.getSceneData();
+					remoteTopoService.save(topoData);
+
+					// 5. save images
+					Map<String, String> files = resource.getFiles();
+					loadImages(files,
+							unZipPath + File.separator + CrCommonConstants.RESOURCE_IMAGE_DIR);
+				}
+			}
+		});
+		return true;
+	}
+
+	private Boolean loadImages(Map<String, String> files, String imageDir) {
+		if (files == null || files.size() == 0) {
+			return false;
+		}
+		for (Map.Entry<String, String> entry : files.entrySet()) {
+			attachmentService.loadImage(entry.getKey(), entry.getValue(), imageDir);
+		}
+
+		return true;
+	}
+
+	private void loadBusinessTemplate(BusinessTemplate template) {
+		template.setId(null);
+		template.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		template.setCreateTime(null);
+		template.setUpdateTime(null);
+		template.setLocalSceneId(null);
+		template.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		template.setOperationAuthIds("[]");
+		if (getById(template.getResourceId()) != null) {
+			updateById(template);
+		} else {
+			save(template);
+		}
 	}
 
 	private JSONObject getMpSceneData(BusinessTemplate template) {

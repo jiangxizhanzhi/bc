@@ -251,6 +251,20 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return StreamApiUtils.map(attachments, Attachment::getResourceId);
 	}
 
+	@Override
+	public Boolean loadImage(String imageId, String fileName, String imageDir) {
+		// 图片附件已存在，不做操作
+		if (attachmentMapper.selectById(imageId) != null) {
+			return true;
+		}
+		// 复制图片
+		String originalPath = imageDir + File.separator + fileName;
+		copyFile(originalPath, AttachmentPath.UPLOAD_IMAGE.getCode(), CommonConstant.TRUE,
+				CommonConstant.FALSE);
+
+		return true;
+	}
+
 	private AttachmentBo uploadFile(MultipartFile file, Integer type, Boolean insertDb,
 			Boolean renameFile) {
 		String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
@@ -275,7 +289,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			}
 			file.transferTo(dest);
 		} catch (IOException e) {
-			log.error("复制文件失败: " + fileName + " ,to:" + dest.getAbsolutePath());
+			log.error("复制文件失败: " + fileName + " ,to:" + dest.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 

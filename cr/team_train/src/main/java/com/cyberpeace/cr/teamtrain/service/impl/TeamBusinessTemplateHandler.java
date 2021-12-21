@@ -101,17 +101,32 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public ResourceDumpContext<TeamTemplate> dumpBusiness(BusinessTemplate template) {
+	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<TeamTemplate> context = new ResourceDumpContext<>();
 		// 获取 teamTemplate
 		TeamTemplate teamTemplate = teamTemplateService
 				.getTeamTemplateByBusinessId(template.getResourceId());
+		teamTemplate.setId(null);
 		context.setBusiness(teamTemplate);
 		// 获取任务
 		String missionScheme = teamTemplate.getRoleConfig();
 		context.setMissions(missionService.batchGetByMissionSchemeJson(missionScheme));
 
 		return context;
+	}
+
+	@Override
+	public void realLoadBusinessResource(ResourceDumpContext resource) {
+		TeamTemplate teamTemplate = ((JSONObject) resource.getBusiness())
+				.toJavaObject(TeamTemplate.class);
+		teamTemplate.setId(null);
+		teamTemplate.setCreateTime(null);
+		teamTemplate.setUpdateTime(null);
+		if (null != teamTemplateService.getById(teamTemplate.getResourceId())) {
+			teamTemplateService.updateById(teamTemplate);
+		} else {
+			teamTemplateService.save(teamTemplate);
+		}
 	}
 
 	private void replaceMissions(LoadTemplateData loadTemplateData,

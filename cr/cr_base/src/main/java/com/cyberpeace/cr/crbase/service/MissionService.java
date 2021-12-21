@@ -96,4 +96,11 @@ public interface MissionService extends IService<Mission> {
 	 * @return
 	 */
 	List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson);
+
+	/**
+	 * 导入场景模板时批量导入 mission
+	 * @param missionTemplates
+	 * @return
+	 */
+	Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates);
 }

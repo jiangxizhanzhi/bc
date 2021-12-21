@@ -277,8 +277,7 @@ public class BusinessTemplateController {
 
 	@ApiOperation("批量导出场景模板")
 	@PostMapping("/batchDump")
-	public void batchDump(HttpServletResponse response, @RequestBody List<String> templateIds)
-			throws IOException {
+	public void batchDump(HttpServletResponse response, @RequestBody List<String> templateIds) {
 		// 1. generate dump file
 		String tempDir = ZipUtil.generatePath();
 		try {
@@ -295,6 +294,23 @@ public class BusinessTemplateController {
 				log.error("failed to remove temp dir :{}", tempDir);
 			}
 		}
+	}
+
+	@ApiOperation("批量导入场景模板")
+	@PutMapping("/batchLoad")
+	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
+			throws IOException, ZipException {
+		// 1. save file to temp dir
+		File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+		// 2. unzip file
+		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+		// 3. load resources
+		businessTemplateService.batchLoad(unZipPath);
+		// 4. delete temp dir
+		if (!FileUtil.deleteDir(new File(unZipPath))) {
+			log.error("failed to delete temp dir");
+		}
+		return new BaseRsp();
 	}
 
 	private void checkBeforeTestingScene(String templateId) {

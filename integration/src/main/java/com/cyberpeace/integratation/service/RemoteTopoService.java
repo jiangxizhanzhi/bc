@@ -1,11 +1,11 @@
 package com.cyberpeace.integratation.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
-
-import java.util.List;
-import java.util.Map;
 
 public interface RemoteTopoService {
 
@@ -25,6 +25,10 @@ public interface RemoteTopoService {
 
 	Map<String, TopoDigest> batchGetTopoDigest(List<String> topoIds);
 
+	/**
+	 * 保存mp拓扑
+	 * 新建和修改用同一个接口
+	 */
 	String save(JSONObject json);
 
 	SceneConfig getById(String topoId);

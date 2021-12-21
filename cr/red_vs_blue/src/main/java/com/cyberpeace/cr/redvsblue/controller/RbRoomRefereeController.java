@@ -1,0 +1,163 @@
+package com.cyberpeace.cr.redvsblue.controller;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
+import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
+import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+@Api(tags = "红蓝对抗裁判")
+@RestController
+@RequiresAuthentication
+@RequestMapping("/cr/red_vs_blue/referee/")
+public class RbRoomRefereeController {
+
+	@Autowired
+	private RbRoomService rbRoomService;
+
+	@Autowired
+	private CrRoleService crRoleService;
+
+	@Autowired
+	private CrTaskService crTaskService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
+
+	@ApiOperation("获取学员的评估提交记录")
+	@GetMapping("/mission_evaluation")
+	public BaseRsp<List<MissionEvaluationRsp>>
+			getMissionEvaluations(@Validated RbMissionEvaluationListReq missionEvaluationListReq) {
+
+		MissionEvaluationQuery missionEvaluationQuery = BeanUtils.copy(missionEvaluationListReq,
+				MissionEvaluationQuery.class);
+		missionEvaluationQuery.setPer_page(missionEvaluationListReq.getPerPage());
+
+		rbRoomService.checkRefereePermission(missionEvaluationListReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+
+		IPage<MissionEvaluationContext> data = crTaskService
+				.getRbMissionEvaluationList(missionEvaluationQuery);
+
+		List<String> userIds = data.getRecords().stream()
+				.map(MissionEvaluationContext::getSubmitUser).distinct()
+				.collect(Collectors.toList());
+
+		userIds.addAll(data.getRecords().stream().map(MissionEvaluationContext::getEvaluatorId)
+				.distinct().collect(Collectors.toList()));
+		Map<String, String> userInfoMap = remoteUserService.getIdNameMap(userIds);
+
+		data.convert(missionEvaluationContext -> {
+			MissionEvaluationRsp missionEvaluationRsp = BeanUtils.copy(missionEvaluationContext,
+					MissionEvaluationRsp.class);
+
+			MissionEvaluationRsp.SubmitInfo submitInfo = missionEvaluationRsp.new SubmitInfo();
+
+			submitInfo.setCreateTime(missionEvaluationContext.getCreateTime());
+			submitInfo.setUserAnswer(missionEvaluationContext.getAnswer());
+
+			missionEvaluationRsp
+					.setEvaluatorName(userInfoMap.get(missionEvaluationContext.getEvaluatorId()));
+			missionEvaluationRsp.setEvaluator(missionEvaluationContext.getEvaluatorId());
+			missionEvaluationRsp
+					.setSubmitUserName(userInfoMap.get(missionEvaluationContext.getSubmitUser()));
+			missionEvaluationRsp.setSubmitLogHash(missionEvaluationContext.getMissionHash());
+			missionEvaluationRsp.setTotalScore(missionEvaluationContext.getMission().getScore());
+			missionEvaluationRsp.setEvaluateTime(missionEvaluationContext.getEvaluateTime());
+			missionEvaluationRsp.setSubmitInfo(submitInfo);
+			missionEvaluationRsp.setMissionData(missionEvaluationContext.getMission());
+
+			return missionEvaluationRsp;
+		});
+
+		return new BaseRsp(PageUtil.getListResult(data));
+	}
+
+	/**
+	 * 查询红蓝对抗学员用户列表
+	 * @return
+	 */
+	@ApiOperation("查询红蓝对抗学员用户列表")
+	@GetMapping("/get_user_list")
+	public BaseRsp<List<UserRole>> getUserList(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		List<UserRole> data = rbRoomService.getUserList(resource_id);
+
+		return new BaseRsp<>(data);
+	}
+
+	/**
+	 * 获取统计数据
+	 * @return
+	 */
+	@ApiOperation("获取统计数据")
+	@GetMapping("/get_statistical_info")
+	public BaseRsp<JSONObject> getStatisticalInfo(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		MissionEvaluationQuery missionEvaluationQuery = new MissionEvaluationQuery();
+		missionEvaluationQuery.setRoomId(resource_id);
+		missionEvaluationQuery.setPage(1);
+
+		IPage<MissionEvaluationContext> data = crTaskService
+				.getRbMissionEvaluationList(missionEvaluationQuery);
+
+		Integer successMissionsCount = 0;
+		Integer failMissionsCount = 0;
+		Integer rejectMissionsCount = 0;
+		Integer submitMissionCount = 0;
+		Integer waitMissionsCount = 0;
+
+		List<MissionEvaluationContext> taskSubmits = data.getRecords();
+		for (MissionEvaluationContext taskSubmit : taskSubmits) {
+			submitMissionCount++;
+
+			if (CrTaskSubmit.EvaluateStatus.SUCCESS.getCode()
+					.equals(taskSubmit.getEvaluateStatus())) {
+				successMissionsCount++;
+			} else if (CrTaskSubmit.EvaluateStatus.FAIL.getCode()
+					.equals(taskSubmit.getEvaluateStatus())) {
+				failMissionsCount++;
+			} else if (CrTaskSubmit.EvaluateStatus.REJECT.getCode()
+					.equals(taskSubmit.getEvaluateStatus())) {
+				rejectMissionsCount++;
+			} else {
+				waitMissionsCount++;
+			}
+		}
+
+		JSONObject result = new JSONObject();
+		result.put("success_missions_count", successMissionsCount);
+		result.put("fail_missions_count", failMissionsCount);
+		result.put("reject_missions_count", rejectMissionsCount);
+		result.put("submit_mission_count", submitMissionCount);
+		result.put("wait_missions_count", waitMissionsCount);
+
+		return new BaseRsp(result);
+	}
+}

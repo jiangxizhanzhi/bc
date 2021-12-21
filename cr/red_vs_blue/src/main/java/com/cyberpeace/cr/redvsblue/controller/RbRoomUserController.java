@@ -6,14 +6,16 @@ import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
@@ -84,6 +86,41 @@ public class RbRoomUserController {
 				}).collect(Collectors.toList());
 
 		return new BaseRsp(missionSchemeList);
+	}
+
+	@ApiOperation("开始答题")
+	@PostMapping("/begin_mission")
+	public BaseRsp<String>
+			beginMission(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		rbRoomService.checkStudentPermission(submitMissionsReq.getResourceId(), userId);
+		rbRoomService.checkRoomOpening(submitMissionsReq.getResourceId());
+
+		CrTask task = crTaskService.getByUserIdAndMissionId(userId,
+				submitMissionsReq.getMissionHash());
+
+		crTaskService.startTask(task);
+
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("提交任务答案")
+	@PostMapping("/submit_missions")
+	public BaseRsp<String>
+			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		rbRoomService.checkStudentPermission(submitMissionsReq.getResourceId(), userId);
+		rbRoomService.checkRoomOpening(submitMissionsReq.getResourceId());
+
+		crTaskService.submitMissions(submitMissionsReq.getResourceId(),
+				submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
+
+		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(),
+				MissionWsCode.RVB_MISSION_CODE);
+
+		return new BaseRsp<>();
 	}
 
 }

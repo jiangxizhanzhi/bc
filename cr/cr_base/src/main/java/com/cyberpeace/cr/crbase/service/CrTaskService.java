@@ -210,4 +210,6 @@ public interface CrTaskService {
 	 */
 	void pushMissionWS(String businessId, Integer code);
 
+	IPage<MissionEvaluationContext>
+			getRbMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery);
 }

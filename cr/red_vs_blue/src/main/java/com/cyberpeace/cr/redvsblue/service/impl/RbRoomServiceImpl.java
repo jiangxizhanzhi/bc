@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -36,6 +37,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -46,7 +48,9 @@ import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
+import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +73,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Autowired
 	private CrRoleService crRoleService;
@@ -249,6 +256,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
+	public void checkRefereePermission(String roomId, String userId) {
+		permissionCheck(roomId, userId, CrRole.RbRoleGroupCode.REFEREE.getCode());
+	}
+
+	@Override
 	public void checkRoomOpening(String roomId) {
 		RbRoom rbRoom = getById(roomId);
 		// 未开始，新增local_scene数据
@@ -262,6 +274,63 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 
 		}
+	}
+
+	@Override
+	public void checkStudentPermission(String roomId, String userId) {
+		RbRoom rbRoom = getById(roomId);
+		if (rbRoom == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		if (!crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.RED.getCode())
+				&& !crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.BLUE.getCode())) {
+			log.error("user does not have RbRoom student Permission！roomId=[{}], userId=[{}]",
+					roomId, userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+
+	}
+
+	@Override
+	public List<UserRole> getUserList(String roomId) {
+		List<UserRole> userRoleList = Lists.newArrayList();
+
+		List<String> userList = Lists.newArrayList();
+
+		for (Integer roleCode : CrRole.RB_STUDENT_ROLE_GROUPS) {
+
+			RoleQuery roleQuery = new RoleQuery(roomId, roleCode);
+			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+			for (CrRole crRole : crRoles) {
+				List<String> users = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+				users.forEach(user -> {
+					UserRole userRole = new UserRole();
+					userRole.setResourceId(user);
+					userRole.setRoleName(crRole.getName());
+					userRole.setRoleDesc(
+							crRole.getDescription() == null ? "" : crRole.getDescription());
+					userRoleList.add(userRole);
+					userList.add(user);
+				});
+			}
+		}
+
+		UserPageContext userPageContext = new UserPageContext();
+		userPageContext.setIds(String.join(",", userList));
+		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+
+		Map<String, UserInfo> userInfoMap = userInfoList.stream()
+				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
+
+		for (UserRole userRole : userRoleList) {
+			userRole.setName(userInfoMap.get(userRole.getResourceId()).getName());
+			userRole.setLogo(userInfoMap.get(userRole.getResourceId()).getAvatarUrl());
+		}
+
+		return userRoleList;
 	}
 
 	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData, String roomId) {

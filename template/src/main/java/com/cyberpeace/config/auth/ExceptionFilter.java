@@ -151,8 +151,15 @@ public class ExceptionFilter implements Filter {
 			errorInfo.setMessage(
 					duplicateKey + BusinessErrorMsg.ENGLISH_MAP.get(ErrorCode.DUPLICATE_KEY));
 		} else {
-			errorInfo.setMessage(
-					duplicateKey + BusinessErrorMsg.CHINESE_MAP.get(ErrorCode.DUPLICATE_KEY));
+			// 特殊处理编号情况
+			if ("resource_id".equals(duplicateKey)) {
+				duplicateKey = "编号已存在";
+			} else {
+				duplicateKey = duplicateKey
+						+ BusinessErrorMsg.CHINESE_MAP.get(ErrorCode.DUPLICATE_KEY);
+			}
+
+			errorInfo.setMessage(duplicateKey);
 		}
 
 		flushErrorInfo(httpServletResponse, errorInfo);

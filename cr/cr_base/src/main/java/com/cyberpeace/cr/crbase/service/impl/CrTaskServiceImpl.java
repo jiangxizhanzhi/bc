@@ -127,7 +127,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public CrTask getByUserIdAndMissionId(String userId, String missionId) {
-		return crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
+		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
+
+		if (null == task) {
+			log.error("user‘s mission does not release！userId=[{}] missionId=[{}]", userId,
+					missionId);
+			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
+		}
+
+		return task;
 	}
 
 	@Override
@@ -374,12 +382,18 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public IPage<MissionEvaluationContext>
-			getMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery) {
+			getRbMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery) {
 		missionEvaluationQuery.setSort("-evaluate_time");
+		missionEvaluationQuery.setPer_page(10000);
+
 		Page page = missionEvaluationQuery.toPageParam();
-		IPage<MissionEvaluationContext> data = crTaskSubmitMapper.listCrTaskSubmit(page,
+		IPage<MissionEvaluationContext> data = crTaskSubmitMapper.listRbCrTaskSubmit(page,
 				missionEvaluationQuery);
 
+		return setMission(data);
+	}
+
+	private IPage<MissionEvaluationContext> setMission(IPage<MissionEvaluationContext> data) {
 		List<String> missionIds = data.getRecords().stream()
 				.map(MissionEvaluationContext::getMissionHash).distinct()
 				.collect(Collectors.toList());
@@ -394,10 +408,22 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		data.convert(missionEvaluationContext -> {
 			missionEvaluationContext
 					.setMission(missionMap.get(missionEvaluationContext.getMissionHash()));
+
 			return missionEvaluationContext;
 		});
-
 		return data;
+	}
+
+	@Override
+	public IPage<MissionEvaluationContext>
+			getMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery) {
+		missionEvaluationQuery.setSort("-evaluate_time");
+
+		Page page = missionEvaluationQuery.toPageParam();
+		IPage<MissionEvaluationContext> data = crTaskSubmitMapper.listCrTaskSubmit(page,
+				missionEvaluationQuery);
+
+		return setMission(data);
 	}
 
 	@Override
@@ -414,7 +440,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		webSocketHandler.pushMessage(messageContext, true);
 
 	}
-
 
 	private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
 			CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),

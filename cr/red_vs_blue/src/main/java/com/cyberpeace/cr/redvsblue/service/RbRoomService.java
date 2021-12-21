@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
@@ -49,5 +50,11 @@ public interface RbRoomService extends IService<RbRoom> {
 
 	void checkDirectorPermission(String roomId, String userId);
 
+	void checkRefereePermission(String roomId, String userId);
+
 	void checkRoomOpening(String roomId);
+
+	void checkStudentPermission(String roomId, String userId);
+
+	List<UserRole> getUserList(String roomId);
 }

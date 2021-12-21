@@ -10,6 +10,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.constant.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -33,7 +34,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
-import com.cyberpeace.constant.ErrorCode;
+import com.cyberpeace.constant.BusinessErrorMsg;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +52,7 @@ public class ExceptionFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-			FilterChain filterChain) throws IOException, ServletException {
+						 FilterChain filterChain) throws IOException, ServletException {
 		try {
 			filterChain.doFilter(servletRequest, servletResponse);
 		} catch (Exception e) {
@@ -67,7 +68,7 @@ public class ExceptionFilter implements Filter {
 	}
 
 	private void dealException(HttpServletRequest servletRequest,
-			HttpServletResponse servletResponse, Exception e) {
+							   HttpServletResponse servletResponse, Exception e) {
 		log.error("exceptionfilter catch error", e);
 
 		if (e instanceof NestedServletException || e instanceof ServletException) {
@@ -102,11 +103,16 @@ public class ExceptionFilter implements Filter {
 	 * @param e
 	 */
 	private void parseBusinessException(HttpServletResponse httpServletResponse,
-			BusinessException e) {
+										BusinessException e) {
 		String errCode = e.getMessage();
 
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setCode(errCode);
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			errorInfo.setMessage(BusinessErrorMsg.ENGLISH_MAP.get(errCode));
+		} else {
+			errorInfo.setMessage(BusinessErrorMsg.CHINESE_MAP.get(errCode));
+		}
 
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}
@@ -118,7 +124,13 @@ public class ExceptionFilter implements Filter {
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setCode(ErrorCode.REMOTE_SERVICE_EXCEPTION);
-
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			errorInfo.setMessage(
+					BusinessErrorMsg.ENGLISH_MAP.get(ErrorCode.REMOTE_SERVICE_EXCEPTION));
+		} else {
+			errorInfo.setMessage(
+					BusinessErrorMsg.CHINESE_MAP.get(ErrorCode.REMOTE_SERVICE_EXCEPTION));
+		}
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
@@ -127,13 +139,21 @@ public class ExceptionFilter implements Filter {
 	 * @param httpServletResponse
 	 */
 	private void parseDuplicateKeyException(HttpServletResponse httpServletResponse,
-			DuplicateKeyException e) {
+											DuplicateKeyException e) {
 		String errorMsg = e.getCause().getMessage();
 		String duplicateKey = getDuplicateKey(errorMsg);
 
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setMessage(duplicateKey);
 		errorInfo.setCode(getErrorCode(ErrorCode.DUPLICATE_KEY));
+
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			errorInfo.setMessage(
+					duplicateKey + BusinessErrorMsg.ENGLISH_MAP.get(ErrorCode.DUPLICATE_KEY));
+		} else {
+			errorInfo.setMessage(
+					duplicateKey + BusinessErrorMsg.CHINESE_MAP.get(ErrorCode.DUPLICATE_KEY));
+		}
 
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}
@@ -147,7 +167,7 @@ public class ExceptionFilter implements Filter {
 			duplicateKey = matcher.group(0);
 			duplicateKey = StringUtils.substring(duplicateKey, 5, duplicateKey.length() - 1);
 		}
-		return duplicateKey+"已存在";
+		return duplicateKey;
 	}
 
 	/**
@@ -163,10 +183,10 @@ public class ExceptionFilter implements Filter {
 	 * 处理根据resource_id找不到对应资源时的异常
 	 **/
 	private void parseResourceNotFoundException(HttpServletResponse httpServletResponse,
-			ResourceNotFoundException e) {
+												ResourceNotFoundException e) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setMessage(e.getMessage());
-		errorInfo.setCode(getErrorCode(ErrorCode.RESOURCE_NOT_FOUND));
+
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
@@ -174,7 +194,7 @@ public class ExceptionFilter implements Filter {
 	 * 处理用户输入参数异常
 	 **/
 	private void parseInvalidParamException(HttpServletResponse httpServletResponse,
-			InvalidParamException e) {
+											InvalidParamException e) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setMessage(e.getMessage());
 		errorInfo.setCode(getErrorCode(ErrorCode.METHOD_ARG_NOT_VALID));
@@ -185,7 +205,7 @@ public class ExceptionFilter implements Filter {
 	 * 处理权限相关的异常
 	 */
 	private void parseUnauthorizedException(HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse, Exception e) {
+											HttpServletResponse httpServletResponse, Exception e) {
 		// 直接返回403
 		httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
 	}
@@ -194,7 +214,7 @@ public class ExceptionFilter implements Filter {
 	 * 参数校验异常处理
 	 */
 	private void parseArgumentNotValidException(HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse, Exception e) {
+												HttpServletResponse httpServletResponse, Exception e) {
 		BindingResult br = null;
 
 		if (e instanceof MethodArgumentNotValidException) {

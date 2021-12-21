@@ -165,7 +165,7 @@ public class LevelController {
 		}
 
 		if (levelIds.size() == 0) {
-			throw new InvalidParamException("当前岗位层级下存在角色，不能删除");
+			throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_FRAME);
 		}
 
 		levelService.removeByIds(levelIds);

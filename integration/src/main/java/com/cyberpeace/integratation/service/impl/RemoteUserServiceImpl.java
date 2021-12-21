@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.StreamApiUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -38,6 +39,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String USERINFO_LIST_URL;
 
+	private String ORG_INFO_LIST_URL;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -49,6 +52,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				+ ConfigUtil.getContextProperty("userinfo.by.id");
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.list");
+		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
 	}
 
 	@Override
@@ -126,6 +130,21 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
 	}
 
+	@Override
+	public List<UserInfo> ListByOrgId(String organizationId) {
+		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + organizationId,
+				JSONArray.class);
+
+		List<UserInfo> userInfos = StreamApiUtils.map(userArray,
+				obj -> userInfoFromJsonObject((JSONObject) obj));
+		return userInfos;
+	}
+
+	/**
+	 * 用户数据转换
+	 * @param jsonObject
+	 * @return
+	 */
 	private UserInfo userInfoFromJsonObject(JSONObject jsonObject) {
 
 		if (null == jsonObject) {

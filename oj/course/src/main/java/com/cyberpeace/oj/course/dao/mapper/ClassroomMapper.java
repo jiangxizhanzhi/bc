@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -23,4 +24,6 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @return
 	 */
 	Classroom selectByOrgAndLesson(@Param("orgId") String orgId, @Param("lessonId") String lessonId);
+
+	List<Classroom> selectPage(@Param("userId") String userId, @Param("listQuery") ClassRoomListQuery listQuery);
 }

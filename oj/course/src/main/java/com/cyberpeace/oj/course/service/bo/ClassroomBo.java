@@ -1,33 +1,47 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
+@ApiModel
 public class ClassroomBo implements Serializable {
 
-    private String resourceId;
+	@ApiModelProperty("资源编号")
+	private String resourceId;
 
-    private Date startTime;
+	@ApiModelProperty("开始时间")
+	private Date startTime;
 
-    private Date endTime;
+	@ApiModelProperty("结束时间")
+	private Date endTime;
 
-    private String courseId;
+	@ApiModelProperty("课程编号")
+	private String courseId;
 
-    private String courseName;
+	@ApiModelProperty("课程名称")
+	private String courseName;
 
-    private Integer courseType;
+	@ApiModelProperty("课程类型")
+	private Integer courseType;
 
-    private String lessonId;
+	@ApiModelProperty("课时编号")
+	private String lessonId;
 
-    private String lessonName;
+	@ApiModelProperty("课时名称")
+	private String lessonName;
 
-    private Integer lessonType;
+	@ApiModelProperty("课时类型")
+	private Integer lessonType;
 
-    private String organizationId;
+	@ApiModelProperty("组织编号")
+	private String organizationId;
 
-    private String organizationIds;
+	@ApiModelProperty("组织名称")
+	private String organizationName;
 
 }

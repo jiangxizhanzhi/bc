@@ -25,4 +25,11 @@ public interface RemoteUserService {
 	List<UserInfo> getByIdList(List<String> ids);
 
 	Map<String, String> getIdNameMap(List<String> ids);
+
+	/**
+	 * 查询组织下的用户信息
+	 * @param organizationId
+	 * @return
+	 */
+	List<UserInfo> ListByOrgId(String organizationId);
 }

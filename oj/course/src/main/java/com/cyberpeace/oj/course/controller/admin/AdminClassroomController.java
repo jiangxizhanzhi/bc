@@ -1,26 +1,36 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
-import com.cyberpeace.oj.course.controller.res.AdminClassroomRes;
+import com.cyberpeace.oj.course.controller.req.ClassroomReq;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.ClassroomBo;
+import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @Api(tags = "oj-后台课程表api")
 @RestController
@@ -35,24 +45,82 @@ public class AdminClassroomController {
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
-	@ApiOperation("课程表分页查询")
-	@GetMapping("/list")
-	public BaseRsp<List<AdminClassroomRes>> list(@Validated ClassroomListReq classroomListReq) {
+	@Autowired
+	private RemoteOrganizationService remoteOrganizationService;
 
-		boolean isAdmin = UserInfoContext.getUserContext().isAdmin();
-		String user_id = UserInfoContext.getUserContext().getUserId();
-		if (!isAdmin && !Objects.equals(classroomListReq.getCreateUser(), user_id)) {
-			return new BaseRsp<>();
+	@ApiOperation("后台课程表分页查询")
+	@GetMapping("/list")
+	public BaseRsp<List<ClassroomBo>> list(@Validated ClassroomListReq classroomListReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		ClassRoomListQuery roomListQuery = BeanUtils.copy(classroomListReq,
+				ClassRoomListQuery.class);
+
+		// 查询数据组装
+		if (StringUtils.isNotBlank(classroomListReq.getOrganizationId())) {
+			List<String> orgIds = remoteOrganizationService
+					.childrenList(classroomListReq.getOrganizationId(), true);
+			roomListQuery.setOrgIds(orgIds);
 		}
 
-		List<ClassroomBo> classroomBos = classroomService.listByTimeAndOrg(
-				classroomListReq.getStartDate(), classroomListReq.getEndDate(),
-				classroomListReq.getOrganization(), classroomListReq.getCreateUser());
+		// 数据查询
+		List<ClassroomBo> classroomBos = classroomService.selectPage(roomListQuery, authContext);
 
-		List<AdminClassroomRes> adminClassroomRes = StreamApiUtils.map(classroomBos,
-				courseSchedule -> BeanUtils.copy(courseSchedule, AdminClassroomRes.class));
+		return new BaseRsp<>(classroomBos);
+	}
 
-		return new BaseRsp<>(adminClassroomRes);
+	@ApiOperation("后台课程表创建")
+	@PostMapping("")
+	public BaseRsp
+			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
+
+		// 组织数据获取
+		List<String> orgIds = remoteOrganizationService
+				.childrenList(classroomReq.getOrganizationId(), true);
+
+		// 基本数据设置
+		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
+		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
+		classroom.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+		Classroom insertResult = classroomService.create(classroom);
+
+		return new BaseRsp(insertResult);
+	}
+
+	@ApiOperation("后台课程表信息修改")
+	@PatchMapping("")
+	public BaseRsp
+			updateClassRoom(@RequestBody @Validated(Update.class) ClassroomReq classroomReq) {
+		// 组织数据获取
+		List<String> orgIds = remoteOrganizationService
+				.childrenList(classroomReq.getOrganizationId(), true);
+
+		// 基本数据设置
+		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
+		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
+
+		classroomMapper.updateById(classroom);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("查询课堂信息/进入课堂")
+	@GetMapping("/get_group_info")
+	public BaseRsp<List<GroupInfoBo>> getGroupInfo(@RequestParam("resource_id") String resourceId) {
+
+		Classroom classroom = classroomMapper.selectById(resourceId);
+		if (null == classroom) {
+			log.error("");
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		List<GroupInfoBo> groupInfoBos = classroomService.getGroupInfo(resourceId, authContext);
+		return new BaseRsp<>(groupInfoBos);
+
 	}
 
 }

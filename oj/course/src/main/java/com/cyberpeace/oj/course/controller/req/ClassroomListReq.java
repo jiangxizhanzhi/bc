@@ -1,27 +1,46 @@
 package com.cyberpeace.oj.course.controller.req;
 
+import com.cyberpeace.common.util.TimeUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
-
 
 @ApiModel
 @Data
-public class ClassroomListReq {
-    @ApiModelProperty("开始日期")
-    @NotNull
-    private Date startDate;
+public class ClassroomListReq implements Serializable {
 
-    @ApiModelProperty("结束日期")
-    @NotNull
-    private Date endDate;
+	@ApiModelProperty(name = "start_time", value = "开始日期")
+	@NotNull
+	private String startTime;
 
-    @ApiModelProperty("组织")
-    String organization;
+	@ApiModelProperty(name = "end_time", value = "结束日期")
+	@NotNull
+	private String endTime;
 
-    @ApiModelProperty("创建者")
-    String createUser;
+	@ApiModelProperty(name = "organization_id", value = "组织编号")
+	private String organizationId;
+
+	public void setStart_time(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public void setEnd_time(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public void setOrganization_id(String organizationId) {
+		this.organizationId = organizationId;
+	}
+
+	public Date getStartTime() {
+		return TimeUtil.toDate1(startTime);
+	}
+
+	public Date getEndTime() {
+		return TimeUtil.toDate1(endTime);
+	}
 }

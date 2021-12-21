@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.course.controller.res.SimpleCourseRes;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,6 +192,21 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OUTLINE.getCode(),
 				false, outlineFile);
 		return new BaseRsp<>(attachmentBo);
+	}
+
+	@ApiOperation("查询全部课程信息")
+	@GetMapping("/all/course")
+	public BaseRsp<List<SimpleCourseRes>> allCourse() {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		List<String> courseIds = courseMapper.selectByAuth(authContext);
+
+		List<Course> courses = courseMapper.selectBatchIds(courseIds);
+
+		List<SimpleCourseRes> courseRes = StreamApiUtils.map(courses,
+				course -> BeanUtils.copy(course, SimpleCourseRes.class));
+		return new BaseRsp<>(courseRes);
 	}
 
 }

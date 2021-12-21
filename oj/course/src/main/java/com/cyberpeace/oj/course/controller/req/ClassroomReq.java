@@ -1,0 +1,42 @@
+package com.cyberpeace.oj.course.controller.req;
+
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
+
+@Data
+@ApiModel
+public class ClassroomReq implements Serializable {
+
+	@ApiModelProperty
+	@NotBlank(groups = { Update.class })
+	private String resourceId;
+
+	@ApiModelProperty("课程编号")
+	@NotBlank(groups = { Create.class, Update.class })
+	private String courseId;
+
+	@ApiModelProperty("课时编号")
+	@NotBlank(groups = { Create.class, Update.class })
+	private String lessonId;
+
+	@ApiModelProperty("组织编号")
+	@NotBlank(groups = { Create.class, Update.class })
+	private String organizationId;
+
+	@ApiModelProperty("开始时间")
+	@NotNull(groups = { Create.class, Update.class })
+	private Date startTime;
+
+	@ApiModelProperty("结束时间")
+	@NotNull(groups = { Create.class, Update.class })
+	private Date endTime;
+
+}

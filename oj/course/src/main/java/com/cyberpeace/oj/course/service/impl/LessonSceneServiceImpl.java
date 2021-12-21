@@ -68,6 +68,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	@Override
 	public JSONObject startScene(String resourceId, AuthContext authContext) {
 
+		// 场景启动数据校验
+		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
+
 		// 先查询课程表场景
 		LocalScene groupScene = getGroupScene(resourceId, authContext);
 		if (null != groupScene) {

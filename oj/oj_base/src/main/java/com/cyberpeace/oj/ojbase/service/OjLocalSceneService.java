@@ -8,32 +8,46 @@ import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 
 public interface OjLocalSceneService extends IService<OjLocalScene> {
 
-    /**
-     * 查询ojLocalScene数据
-     * @param businessId 资源编号 课程编号 课时编号 习题编号
-     * @param shared 是否共享 1=私有 2=共享
-     * @param authContext 前后台权限数据
-     * @return
-     */
-    OjLocalScene selectOjLocalScene(String businessId, Integer shared, AuthContext authContext);
+	/**
+	 * 查询ojLocalScene数据
+	 * @param businessId 资源编号 课程编号 课时编号 习题编号
+	 * @param shared 是否共享 1=私有 2=共享
+	 * @param authContext 前后台权限数据
+	 * @return
+	 */
+	OjLocalScene selectOjLocalScene(String businessId, Integer shared, AuthContext authContext);
 
-    /**
-     * 初始化ojLocalScene
-     * @param sceneContext
-     * @return
-     */
-    OjLocalScene initOjLocalScene(InitOjSceneContext sceneContext);
+	/**
+	 * 初始化ojLocalScene
+	 * @param sceneContext
+	 * @return
+	 */
+	OjLocalScene initOjLocalScene(InitOjSceneContext sceneContext);
 
-    /**
-     * 设置topo结构中注入flag命令
-     * @param flags
-     * @return
-     */
-    JSONObject setDynamicFlag(String flags, String topoId);
+	/**
+	 * 设置topo结构中注入flag命令
+	 * @param flags
+	 * @return
+	 */
+	JSONObject setDynamicFlag(String flags, String topoId);
 
-    /**
-     * 删除场景
-     * @param ojLocalSceneId
-     */
-    void deleteScene(String ojLocalSceneId);
+	/**
+	 * 删除场景
+	 * @param ojLocalSceneId
+	 */
+	void deleteScene(String ojLocalSceneId);
+
+	/**
+	 * 组装实训场景启动消息体
+	 * @param message 场景启动相关消息
+	 * @return
+	 */
+	JSONObject getStartSceneMessage(String message, OjLocalScene ojLocalScene);
+
+	/**
+	 * 检查场景启动数量是否超过最大数量
+	 * @param userId
+	 * @return
+	 */
+	void checkSceneStartCount(String userId, Integer createCount);
 }

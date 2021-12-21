@@ -56,7 +56,6 @@ public class OperationEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		OjLocalScene ojLocalScene = ojLocalSceneService.getById(businessId);
-
 		if (null == ojLocalScene) {
 			log.error(
 					"OperationSceneEventListener.onSceneStartProcess: OjLocalScene not found! oj_local_scene_id=[{}]",
@@ -64,35 +63,15 @@ public class OperationEventListener extends MessageListener {
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
 		}
 
+		// 场景启动code值
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
-		// 设置场景启动code值
 		dataObj.put("code", Event.SCENE_UPDATE.getCode());
-		// 消息推送
 		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene, context);
 
-		// 场景启动完成更新数据库
-		JSONObject scene = dataObj.getJSONObject("data").getJSONObject("data")
-				.getJSONObject("scene");
-		if (null != scene && !scene.isEmpty()
-				&& scene.getIntValue("event") == SceneEvent.CREATE.getCode().intValue()
-				&& scene.getIntValue("event_status") == SceneEventStatus.FINISH.getCode()) {
-
-			// 更新localScene数据
-			LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-			localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-			localScene.setDestroyTime(TimeUtil.addMins(new Date(), localScene.getSceneTtl()));
-			localScene.setStartTime(new Date());
-			localSceneMapper.updateById(localScene);
-
-			// 推送倒计时
-			JSONObject json = new JSONObject();
-			json.put("code", OjEvent.SCENE_CREATE_FINISH.getCode());
-			JSONObject countDown = new JSONObject();
-			countDown.put("remaining_time", localScene.getSceneTtl() * 60);
-			json.put("data", countDown);
-
-			pushMessageToWeb(JsonUtil.toJsonString(json), ojLocalScene, context);
-
+		// 场景启动完成更新数据库 消息推送
+		JSONObject startSceneMessage = ojLocalSceneService.getStartSceneMessage(data, ojLocalScene);
+		if (null != startSceneMessage) {
+			pushMessageToWeb(JsonUtil.toJsonString(startSceneMessage), ojLocalScene, context);
 		}
 
 		return true;

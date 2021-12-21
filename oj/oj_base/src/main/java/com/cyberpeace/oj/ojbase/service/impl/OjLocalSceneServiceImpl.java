@@ -5,16 +5,22 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.SceneEvent;
+import com.cyberpeace.cs.constant.SceneEventStatus;
+import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.SystemConfigService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +35,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -140,9 +147,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	public void deleteScene(String ojLocalSceneId) {
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(ojLocalSceneId);
 		if (ojLocalScene == null) {
-			log.error("deleteScene: OjLocalScene not found! oj_local_scene_id=[{}]",
-					ojLocalSceneId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			return;
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -153,5 +158,59 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				localSceneMapper.deleteById(ojLocalScene.getLocalSceneId());
 			}
 		});
+	}
+
+	@Override
+	public JSONObject getStartSceneMessage(String message, OjLocalScene ojLocalScene) {
+
+		// 场景启动完成更新数据库
+		JSONObject dataObj = JsonUtil.toJsonObject(message, JSONObject.class);
+		JSONObject scene = dataObj.getJSONObject("data").getJSONObject("data")
+				.getJSONObject("scene");
+		if (null != scene && !scene.isEmpty()
+				&& scene.getIntValue("event") == SceneEvent.CREATE.getCode().intValue()
+				&& scene.getIntValue("event_status") == SceneEventStatus.FINISH.getCode()) {
+
+			// 更新localScene数据
+			LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+			localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+			localScene.setDestroyTime(TimeUtil.addMins(new Date(), localScene.getSceneTtl()));
+			localScene.setStartTime(new Date());
+			localSceneMapper.updateById(localScene);
+
+			// 推送倒计时
+			JSONObject json = new JSONObject();
+			json.put("code", OjEvent.SCENE_CREATE_FINISH.getCode());
+			JSONObject countDown = new JSONObject();
+			countDown.put("remaining_time", localScene.getSceneTtl() * CommonConstant.SIXTY);
+			json.put("data", countDown);
+
+			return json;
+
+		}
+		return null;
+	}
+
+	@Override
+	public void checkSceneStartCount(String userId, Integer createCount) {
+
+		String limitCount = systemConfigService.getSystemConfig("env_per_person");
+		Integer startCount = ojLocalSceneMapper.selectByUser(userId);
+
+		boolean flag = StringUtils.isNotBlank(limitCount)
+				&& startCount.intValue() > Integer.parseInt(limitCount);
+
+		if (null != createCount || createCount.intValue() != CommonConstant.ZERO.intValue()) {
+			flag |= StringUtils.isNotBlank(limitCount)
+					&& (startCount + createCount) > Integer.parseInt(limitCount);
+		}
+		
+		if (flag) {
+			log.error(
+					"checkSceneStartCount: Scene start greater limit count! start_scene=[{}], limit_scene=[{}]",
+					startCount, limitCount);
+			throw new InvalidParamException("场景数量启动启动过多！");
+		}
+
 	}
 }

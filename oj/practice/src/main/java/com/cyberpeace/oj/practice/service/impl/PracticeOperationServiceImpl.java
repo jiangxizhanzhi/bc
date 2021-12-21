@@ -433,6 +433,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public JSONObject startScene(String resourceId, AuthContext authContext) {
 
+		// 场景启动数量校验
+		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
+
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
 			log.error("StartScene operation practice not found! operation_practice_id=[{}]");

@@ -110,7 +110,7 @@ public class WebLessonController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("前台课时场景重启")
+	@ApiOperation("前台课时场景节点重启")
 	@PostMapping("/node_restart")
 	public BaseRsp<Boolean> restartNode(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
@@ -121,7 +121,7 @@ public class WebLessonController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("前台课时场景重建")
+	@ApiOperation("前台课时场景节点重建")
 	@PostMapping("/node_recreate")
 	public BaseRsp<Boolean> recreateNode(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 

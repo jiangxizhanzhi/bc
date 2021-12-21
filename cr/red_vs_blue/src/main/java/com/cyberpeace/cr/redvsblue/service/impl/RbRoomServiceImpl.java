@@ -237,13 +237,13 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	private void permissionCheck(String roomId, String userId, Integer roleCode) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
-			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			log.error("failed to get RbRoom with Id [{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (!crRole.getRoleGroup().equals(roleCode)) {
-			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
 					roomId, userId,
 					EnumUtils.getEnumDescByCode(roleCode, CrRole.TeamRoleGroupCode.class));
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
@@ -265,7 +265,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		RbRoom rbRoom = getById(roomId);
 
 		if (rbRoom == null) {
-			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			log.error("failed to get RbRoom with Id [{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -285,7 +285,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	public void checkStudentPermission(String roomId, String userId) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
-			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			log.error("failed to get RbRoom with Id [{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -337,6 +337,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		return userRoleList;
 	}
+
 
 	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData, String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();

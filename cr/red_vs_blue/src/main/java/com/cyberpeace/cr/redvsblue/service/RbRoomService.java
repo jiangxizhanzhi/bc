@@ -57,4 +57,5 @@ public interface RbRoomService extends IService<RbRoom> {
 	void checkStudentPermission(String roomId, String userId);
 
 	List<UserRole> getUserList(String roomId);
+
 }

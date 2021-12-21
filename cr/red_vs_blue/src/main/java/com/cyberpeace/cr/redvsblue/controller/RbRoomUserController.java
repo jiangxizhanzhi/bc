@@ -48,10 +48,11 @@ public class RbRoomUserController {
 	private RemoteUserService remoteUserService;
 
 	@ApiOperation("获取红蓝实例运行状态")
-	@GetMapping("/start_end_team")
-	public BaseRsp<Map> getTrainingStatus(
+	@GetMapping("/get_running_status")
+	public BaseRsp<Map> getRunningStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		Integer status = rbRoomService.getTrainingStatus(resource_id);
+
 		Map map = Maps.newHashMap();
 		map.put("time_management_status", status);
 

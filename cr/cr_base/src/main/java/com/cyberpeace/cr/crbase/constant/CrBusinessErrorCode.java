@@ -96,4 +96,10 @@ public interface CrBusinessErrorCode {
 
 	// 启动流量失败
 	String START_FLOW_FAILURE = "101029";
+
+	// 训练已开始
+	String TRAIN_HAS_BEGUN = "101030";
+
+	// 训练速率范围超限
+	String RATE_VALUE_RANGE_ERROR = "101031";
 }

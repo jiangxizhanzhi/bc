@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -21,6 +22,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -31,10 +33,13 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
+import com.cyberpeace.cr.redvsblue.controller.req.RbTimeManagementReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
@@ -46,8 +51,10 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "红蓝对抗实例")
+@Slf4j
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
@@ -64,6 +71,9 @@ public class RbRoomController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private RbTimeManagementService rbTimeManagementService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -261,5 +271,51 @@ public class RbRoomController {
 		});
 
 		return new BaseRsp<>();
+	}
+
+	/**
+	 * 获取时间管理数据
+	 * @return
+	 */
+	@ApiOperation("获取时间管理数据")
+	@GetMapping("/get_time_management")
+	public BaseRsp<RbTimeManagement> getTimeManagement(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		RbTimeManagement data = rbTimeManagementService.getByRoomId(resource_id);
+
+		return new BaseRsp(data);
+	}
+
+	/**
+	 * 创建时间管理
+	 * @return
+	 */
+	@ApiOperation("创建时间管理")
+	@PostMapping("/create_time_management")
+	public BaseRsp<RbTimeManagement>
+			addTimeManagement(@RequestBody @Validated RbTimeManagementReq rbTimeManagementReq) {
+		rbRoomService.checkDirectorPermission(rbTimeManagementReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+
+		if (rbTimeManagementService.getByRoomId(rbTimeManagementReq.getRoomId()) != null) {
+			log.error("Rbtrain has begun！roleId=[{}]", rbTimeManagementReq.getRoomId());
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_HAS_BEGUN);
+
+		}
+
+		Integer rate = rbTimeManagementReq.getRate();
+		if (rate > RbTimeManagement.RateStatus.FIVE.getCode()
+				|| rate < RbTimeManagement.RateStatus.ONCE.getCode()) {
+			log.error("Rate Value Error！rate=[{}]", rate);
+			throw new BusinessException(CrBusinessErrorCode.RATE_VALUE_RANGE_ERROR);
+		}
+
+		RbTimeManagement timeManagement = BeanUtils.copy(rbTimeManagementReq,
+				RbTimeManagement.class);
+
+		rbTimeManagementService.save(timeManagement);
+
+		return new BaseRsp();
 	}
 }

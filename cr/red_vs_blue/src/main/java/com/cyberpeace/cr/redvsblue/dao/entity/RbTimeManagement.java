@@ -46,4 +46,21 @@ public class RbTimeManagement extends BaseTable {
 			this.desc = desc;
 		}
 	}
+
+	public enum RateStatus {
+
+		ONCE(1, "1"), TWO(2, "2"), THREE(3, "3"), FOUR(4, "4"), FIVE(5, "5");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		RateStatus(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
+
 }

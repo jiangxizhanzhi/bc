@@ -44,6 +44,13 @@ public class SwaggerConfig {
 	}
 
 	@Bean
+	public Docket apiCs() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cs"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("cs");
+	}
+
+	@Bean
 	public Docket apiOj() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()

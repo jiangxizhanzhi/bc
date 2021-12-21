@@ -42,7 +42,7 @@ public interface BusinessErrorMsg {
 			put(RtksBusinessErrorCode.UNABLE_DELETE_SKILL, "unable to delete skill");
 
 			put(ErrorCode.DUPLICATE_KEY, " already exist");
-			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "REMOTE_SERVICE_EXCEPTION");
+			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "remote service error");
 
 		}
 	};

@@ -7,8 +7,7 @@ import java.util.Map;
 
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
@@ -29,8 +28,6 @@ import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
-import com.cyberpeace.oj.course.service.CourseCategoryService;
-import com.cyberpeace.oj.course.service.CourseImportService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -68,6 +65,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Autowired
 	private PaperService paperService;
+
+	@Autowired
+	private CourseService courseService;
 
 	@Value("${import.resource.cover}")
 	private Boolean resourceCover;
@@ -398,14 +398,17 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				// 课程数据存储
+				// 如果覆盖的话先删除
+				if (resourceCover) {
+					courseService.batchDelete(Arrays.asList(course.getResourceId()));
+				}
+
+				// 课程相关数据存储
 				courseMapper.insert(course);
-
-				// 课时数据存储
+				// 试卷数据初始化存储
 				StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
+				// 课时和课时目录数据存储
 				courseLessonService.saveBatch(lessons);
-
-				// 课程目录数据存储
 				lessonConfigService.saveBatch(lessonConfigs);
 
 			}

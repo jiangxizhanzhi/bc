@@ -626,10 +626,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 场景数据查询
 			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
 					courseLesson.getResourceId(), courseLesson.getSceneShareMode(), authContext);
-			LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-			JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
-					localScene.getUserId());
-			topoSceneDataRes.setSceneData(sceneData);
+			if (null != ojLocalScene) {
+				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+				JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
+						localScene.getUserId());
+				topoSceneDataRes.setSceneData(sceneData);
+			}
 		}
 
 		return topoSceneDataRes;

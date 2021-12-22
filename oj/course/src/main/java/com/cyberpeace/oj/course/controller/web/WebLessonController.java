@@ -3,9 +3,11 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.oj.course.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
+import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,10 +27,6 @@ import com.cyberpeace.oj.course.service.bo.PracticeAnswerContext;
 import com.cyberpeace.oj.course.service.bo.SubmitAnswerContext;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-前台课时相关api")
@@ -91,6 +89,16 @@ public class WebLessonController {
 
 	}
 
+	@ApiOperation("前台课时获取拓扑信息")
+	@GetMapping("/scene_topo")
+	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
+			value = "课时编号") @RequestParam("resource_id") String lessonId) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		TopoSceneDataBo topoScene = courseLessonService.getTopoScene(lessonId, authContext);
+		return new BaseRsp<>(topoScene);
+	}
+
 	@ApiOperation("前台课程场景启动")
 	@PostMapping("/start_scene")
 	public BaseRsp<JSONObject> startScene(@RequestParam("resource_id") String resourceId) {
@@ -132,7 +140,7 @@ public class WebLessonController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("/前台课时场景暂停与恢复")
+	@ApiOperation("前台课时场景暂停与恢复")
 	@PatchMapping("/update_status")
 	public BaseRsp<Boolean>
 			updateSceneStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {

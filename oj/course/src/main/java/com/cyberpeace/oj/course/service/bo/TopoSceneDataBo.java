@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.course.controller.res;
+package com.cyberpeace.oj.course.service.bo;
 
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel
-public class TopoSceneDataRes implements Serializable {
+public class TopoSceneDataBo implements Serializable {
 
 	@ApiModelProperty("topo数据")
 	private JSONObject sceneConfigData;

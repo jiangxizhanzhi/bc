@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +133,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private OjLocalSceneService ojLocalSceneService;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
@@ -600,6 +604,35 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 		Paper paper = paperService.update(paperContext);
 		return null != paper;
+	}
+
+	@Override
+	public TopoSceneDataBo getTopoScene(String lessonId, AuthContext authContext) {
+
+		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
+		if (null == courseLesson) {
+			log.error("getTopoScene: lesson not found! lesson_id=[{}]", lessonId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+		}
+
+		TopoSceneDataBo topoSceneDataRes = new TopoSceneDataBo();
+		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+				&& StringUtils.isNotBlank(courseLesson.getTopoId())) {
+
+			// topo数据查询
+			JSONObject topo = remoteTopoService.getTopoById(courseLesson.getTopoId());
+			topoSceneDataRes.setSceneConfigData(topo);
+
+			// 场景数据查询
+			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
+					courseLesson.getResourceId(), courseLesson.getSceneShareMode(), authContext);
+			LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+			JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
+					localScene.getUserId());
+			topoSceneDataRes.setSceneData(sceneData);
+		}
+
+		return topoSceneDataRes;
 	}
 
 	/**

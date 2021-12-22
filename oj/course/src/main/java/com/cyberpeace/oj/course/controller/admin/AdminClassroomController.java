@@ -34,7 +34,7 @@ import java.util.List;
 
 @Api(tags = "oj-后台课程表api")
 @RestController
-@RequestMapping("/oj/admin/course/course_schedules")
+@RequestMapping("/oj/admin/course/classroom")
 @RequiresAuthentication
 @Slf4j
 public class AdminClassroomController {

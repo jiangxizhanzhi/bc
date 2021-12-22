@@ -33,4 +33,12 @@ public interface CourseImportService {
 	 * @return
 	 */
 	List<LessonConfig> parseRmLessonConfig(Course course, String path, Map<String, String> nameMap);
+
+	/**
+	 * 课程数据导入
+	 * @param path 课程资源所在地址
+	 * @param envReqs topo与课时绑定数据 key=课时文件夹名称 value=topo编号
+	 * @return
+	 */
+	Boolean rMCourseImport(String path, Map<String, String> envReqs);
 }

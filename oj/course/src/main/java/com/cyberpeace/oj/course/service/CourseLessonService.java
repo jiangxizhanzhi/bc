@@ -104,7 +104,8 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param authContext
 	 * @return
 	 */
-	List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId, AuthContext authContext);
+	List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId,
+			AuthContext authContext);
 
 	/**
 	 * 新增和修改练习数据
@@ -113,4 +114,12 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @return
 	 */
 	Boolean addLessonPractice(String resourceId, List<PaperPracticeContext> practiceList);
+
+	/**
+	 * 查询topo和场景数据信息
+	 * @param lessonId
+	 * @param authContext
+	 * @return
+	 */
+	TopoSceneDataBo getTopoScene(String lessonId, AuthContext authContext);
 }

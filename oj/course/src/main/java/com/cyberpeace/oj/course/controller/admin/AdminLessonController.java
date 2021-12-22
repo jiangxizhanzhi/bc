@@ -30,7 +30,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.controller.req.*;
-import com.cyberpeace.oj.course.controller.res.TopoSceneDataRes;
+import com.cyberpeace.oj.course.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -264,24 +264,14 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时场景拓扑信息查询")
 	@GetMapping("/scene_topo")
-	public BaseRsp<TopoSceneDataRes> getTopoScene(@ApiParam(name = "resource_id",
-			value = "资源数据编号") @RequestParam("resource_id") String resourceId) {
+	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
+			value = "资源数据编号") @RequestParam("resource_id") String lessonId) {
 
-		CourseLesson courseLesson = courseLessonMapper.selectById(resourceId);
-		if (null == courseLesson) {
-			log.error("getTopoScene: lesson not found! lesson_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
-		}
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		TopoSceneDataBo topoSceneData = courseLessonService.getTopoScene(lessonId, authContext);
 
-		TopoSceneDataRes topoSceneDataRes = new TopoSceneDataRes();
-		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
-				&& StringUtils.isNotBlank(courseLesson.getTopoId())) {
-			JSONObject topo = remoteTopoService.getTopoById(courseLesson.getTopoId());
-			topoSceneDataRes.setSceneConfigData(topo);
-		}
-
-		// TODO 场景信息查询
-		return new BaseRsp(topoSceneDataRes);
+		return new BaseRsp(topoSceneData);
 	}
 
 	@ApiOperation("课时监控")

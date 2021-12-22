@@ -43,21 +43,6 @@ public class AdminCourseImportController {
 	@Autowired
 	private CourseImportService courseImportService;
 
-	@Autowired
-	private TransactionTemplate transactionTemplate;
-
-	@Autowired
-	private CourseMapper courseMapper;
-
-	@Autowired
-	private CourseLessonService courseLessonService;
-
-	@Autowired
-	private LessonConfigService lessonConfigService;
-
-	@Autowired
-	private PaperService paperService;
-
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/course/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
@@ -69,54 +54,10 @@ public class AdminCourseImportController {
 			throw new InvalidParamException("路径不存在！");
 		}
 
-		// 课程信息组装
-		Course course = courseImportService.parseRmCourse(courseImportReq.getPath());
+		// 执行课程数据导入
+		Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(), courseImportReq.getEnvReqs());
 
-		// 课时信息组装
-		List<CourseLesson> lessons = courseImportService.parseRmLesson(course,
-				courseImportReq.getPath(), courseImportReq.getEnvReqs());
-
-		// 目录数据组装
-		Map<String, String> nameMap = StreamApiUtils.toMap(lessons, CourseLesson::getName,
-				CourseLesson::getResourceId);
-		List<LessonConfig> lessonConfigs = courseImportService.parseRmLessonConfig(course,
-				courseImportReq.getPath(), nameMap);
-
-		// 数据入库
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				// 课程数据存储
-				courseMapper.insert(course);
-
-				// 课时数据存储
-				StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
-				courseLessonService.saveBatch(lessons);
-
-				// 课程目录数据存储
-				lessonConfigService.saveBatch(lessonConfigs);
-
-			}
-		});
-
-		return new BaseRsp<>(true);
-	}
-
-	/**
-	 * 初始化课后练习题
-	 * @param courseLesson
-	 * @return
-	 */
-	private Paper initPaper(CourseLesson courseLesson) {
-
-		PaperContext paperContext = PaperContext.builder().resourceId(courseLesson.getResourceId())
-				.type(Paper.PaperType.LESSON.getCode()).name(courseLesson.getName())
-				.description(courseLesson.getName()).isPublic(CommonConstant.TRUE).build();
-		Paper paper = paperService.create(paperContext);
-		courseLesson.setPaperId(paper.getResourceId());
-
-		return paper;
+		return new BaseRsp<>(result);
 	}
 
 }

@@ -5,8 +5,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.bo.PaperContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -29,6 +37,9 @@ import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Slf4j
 @Service
@@ -39,6 +50,27 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private CourseMapper courseMapper;
+
+	@Autowired
+	private CourseLessonMapper courseLessonMapper;
+
+	@Autowired
+	private CourseLessonService courseLessonService;
+
+	@Autowired
+	private LessonConfigService lessonConfigService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private PaperService paperService;
+
+	@Value("${import.resource.cover}")
+	private Boolean resourceCover;
 
 	@Override
 	public Course parseRmCourse(String path) {
@@ -94,6 +126,21 @@ public class CourseImportServiceImpl implements CourseImportService {
 		course.setIsPublic(CommonConstant.FALSE);
 		course.setScore(CommonConstant.ZERO);
 
+		// 查询是否已存在课程数据 已存在则进行课时编号转换
+		if (resourceCover) {
+			Course existCourse = courseMapper.selectById(course.getResourceId());
+			if (null != existCourse) {
+				course.setResourceId(existCourse.getResourceId());
+				return course;
+			}
+
+			// 根据名称查询
+			String existId = courseMapper.selectByName(course.getName());
+			Course existNameCourse = courseMapper.selectById(existId);
+			course.setResourceId(existNameCourse.getResourceId());
+			return course;
+		}
+
 		return course;
 	}
 
@@ -134,6 +181,22 @@ public class CourseImportServiceImpl implements CourseImportService {
 			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths,
 					lessonPath -> parseLesson(lessonPath, course, envReqs));
 			allLessons.addAll(courseLessons);
+		}
+
+		if (resourceCover) {
+			// 查询全部课时信息
+			List<CourseLesson> courseLessons = courseLessonMapper
+					.selectByCourse(course.getResourceId(), false);
+			Map<String, String> lessonNameMap = StreamApiUtils.toMap(courseLessons,
+					CourseLesson::getName, CourseLesson::getResourceId);
+
+			// 已存在的替换为原来的课时编号
+			for (CourseLesson lesson : allLessons) {
+				String lessonId = lessonNameMap.get(lesson.getName());
+				if (StringUtils.isNotBlank(lessonId)) {
+					lesson.setResourceId(lessonId);
+				}
+			}
 		}
 
 		return allLessons;
@@ -314,5 +377,56 @@ public class CourseImportServiceImpl implements CourseImportService {
 		}
 
 		return lessonConfigs;
+	}
+
+	@Override
+	public Boolean rMCourseImport(String path, Map<String, String> envReqs) {
+
+		// 课程信息组装
+		Course course = parseRmCourse(path);
+
+		// 课时信息组装
+		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs);
+
+		// 目录数据组装
+		Map<String, String> nameMap = StreamApiUtils.toMap(lessons, CourseLesson::getName,
+				CourseLesson::getResourceId);
+		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, nameMap);
+
+		// 数据入库
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				// 课程数据存储
+				courseMapper.insert(course);
+
+				// 课时数据存储
+				StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
+				courseLessonService.saveBatch(lessons);
+
+				// 课程目录数据存储
+				lessonConfigService.saveBatch(lessonConfigs);
+
+			}
+		});
+
+		return true;
+	}
+
+	/**
+	 * 初始化课后练习题
+	 * @param courseLesson
+	 * @return
+	 */
+	private Paper initPaper(CourseLesson courseLesson) {
+
+		PaperContext paperContext = PaperContext.builder().resourceId(courseLesson.getResourceId())
+				.type(Paper.PaperType.LESSON.getCode()).name(courseLesson.getName())
+				.description(courseLesson.getName()).isPublic(CommonConstant.TRUE).build();
+		Paper paper = paperService.create(paperContext);
+		courseLesson.setPaperId(paper.getResourceId());
+
+		return paper;
 	}
 }

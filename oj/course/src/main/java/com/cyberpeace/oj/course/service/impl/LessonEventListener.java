@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,7 +96,8 @@ public class LessonEventListener extends MessageListener {
 
 		LessonWsMessageIdentifier identifier = new LessonWsMessageIdentifier();
 		identifier.setFromWeb(ojLocalScene.getFromWeb());
-		identifier.setShared(ojLocalScene.getShared());
+		identifier.setShared(ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
+				: SceneShare.PRIVATE.getCode());
 		identifier.setLessonId(ojLocalScene.getBusinessId());
 		identifier.setPath(WsPath.LESSON_SCENE);
 		identifier.setUserId(ojLocalScene.getUserId());

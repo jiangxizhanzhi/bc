@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LessonWsMessageIdentifier extends WsMessageIdentifier {
 
-    private String lessonId;
+	private String lessonId;
 
-    private Boolean shared;
+	private Integer shared;
 
-    private Boolean fromWeb;
+	private Boolean fromWeb;
 
 }

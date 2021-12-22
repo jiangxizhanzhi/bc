@@ -374,23 +374,23 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景启动")
 	@PostMapping("/start_scene")
-	public BaseRsp<JSONObject> startScene(@ApiParam(name = "resource_id",
-			value = "课时编号") @RequestParam("resource_id") String resourceId) {
+	public BaseRsp<JSONObject> startScene(@RequestBody @Validated LessonSceneReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		JSONObject scene = lessonSceneService.startScene(resourceId, authContext);
+		JSONObject scene = lessonSceneService.startScene(lessonSceneReq.getResourceId(),
+				authContext);
 		return new BaseRsp<>(scene);
 	}
 
 	@ApiOperation("后台课时场景删除")
 	@PostMapping("/delete_scene")
-	public BaseRsp<Boolean> deleteScene(@ApiParam(name = "resource_id",
-			value = "课时编号") @RequestParam("resource_id") String resourceId) {
+	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated LessonSceneReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		Boolean result = lessonSceneService.deleteScene(resourceId, authContext);
+		Boolean result = lessonSceneService.deleteScene(lessonSceneReq.getResourceId(),
+				authContext);
 		return new BaseRsp<>(result);
 	}
 

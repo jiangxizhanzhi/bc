@@ -294,8 +294,8 @@ public class RbRoomController {
 	@PostMapping("/create_time_management")
 	public BaseRsp<RbTimeManagement>
 			addTimeManagement(@RequestBody @Validated RbTimeManagementReq rbTimeManagementReq) {
-		rbRoomService.checkDirectorPermission(rbTimeManagementReq.getRoomId(),
-				UserInfoContext.getUserContext().getUserId());
+		String userId = UserInfoContext.getUserContext().getUserId();
+		rbRoomService.checkDirectorPermission(rbTimeManagementReq.getRoomId(), userId);
 
 		if (rbTimeManagementService.getByRoomId(rbTimeManagementReq.getRoomId()) != null) {
 			log.error("Rbtrain has begun！roleId=[{}]", rbTimeManagementReq.getRoomId());
@@ -313,6 +313,7 @@ public class RbRoomController {
 				RbTimeManagement.class);
 
 		timeManagement.setStatus(RbTimeManagement.TimeManagementStatus.START.getCode());
+		timeManagement.setCreateUserId(userId);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -322,7 +323,7 @@ public class RbRoomController {
 				RbRoom rbRoom = rbRoomService.getById(rbTimeManagementReq.getRoomId());
 				rbRoom.setTrainingStatus(timeManagement.getStatus());
 
-				rbRoomService.save(rbRoom);
+				rbRoomService.updateById(rbRoom);
 				rbTimeManagementService.save(timeManagement);
 
 			}

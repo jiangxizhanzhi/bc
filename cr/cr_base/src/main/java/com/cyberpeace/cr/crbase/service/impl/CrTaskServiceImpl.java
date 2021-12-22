@@ -91,8 +91,14 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public List<TaskContext> getByRoomIdAndUser(String roomId, String userId) {
-		List<CrTask> taskList = crTaskMapper.selectByRoomIdAndUserId(roomId, userId);
+	public List<TaskContext> getTaskContextByRoomId(String roomId) {
+		List<CrTask> taskList = crTaskMapper.selectByRoomId(roomId);
+
+		return getTaskContext(taskList);
+
+	}
+
+	private List<TaskContext> getTaskContext(List<CrTask> taskList) {
 		List<TaskContext> taskContextList = new ArrayList<>();
 
 		List<String> missionIds = new ArrayList<>();
@@ -116,6 +122,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		}
 
 		return taskContextList;
+	}
+
+	@Override
+	public List<TaskContext> getByRoomIdAndUser(String roomId, String userId) {
+		List<CrTask> taskList = crTaskMapper.selectByRoomIdAndUserId(roomId, userId);
+
+		return getTaskContext(taskList);
 	}
 
 	@Override

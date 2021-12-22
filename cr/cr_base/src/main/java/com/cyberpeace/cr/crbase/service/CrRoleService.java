@@ -77,4 +77,6 @@ public interface CrRoleService extends IService<CrRole> {
 	TaskCounter getTaskCounter(String roomId, String studentId);
 
 	List<UserData> getUserDatas(String userIds);
+
+	List<CrRole> selectRbStudentsRoleByRoomId(String roomId);
 }

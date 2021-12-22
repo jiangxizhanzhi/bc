@@ -15,7 +15,6 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
@@ -69,24 +68,20 @@ public class RbRoomScoreController {
 		List<MissionsStatistic> missionsStatistics = Lists.newArrayList();
 		List<String> allUserIds = Lists.newArrayList();
 
-		for (Integer roleCode : CrRole.RB_STUDENT_ROLE_GROUPS) {
+		List<CrRole> crRoles = crRoleService.selectRbStudentsRoleByRoomId(resource_id);
+		for (CrRole crRole : crRoles) {
+			List<String> userIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
 
-			RoleQuery roleQuery = new RoleQuery(resource_id, roleCode);
-			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
-			for (CrRole crRole : crRoles) {
-				List<String> userIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(),
-						String.class);
-				allUserIds.addAll(userIds);
+			allUserIds.addAll(userIds);
 
-				for (String userId : userIds) {
-					TaskCounter taskCounter = crRoleService.getTaskCounter(resource_id, userId);
-					MissionsStatistic missionsStatistic = new MissionsStatistic(roleCode, userId,
-							taskCounter);
-					missionsStatistics.add(missionsStatistic);
-				}
+			for (String userId : userIds) {
+				TaskCounter taskCounter = crRoleService.getTaskCounter(resource_id, userId);
+				MissionsStatistic missionsStatistic = new MissionsStatistic(crRole.getRoleGroup(),
+						userId, taskCounter);
+				missionsStatistics.add(missionsStatistic);
 			}
-
 		}
+
 		Map<String, String> idNameMap = remoteUserService.getIdNameMap(allUserIds);
 		missionsStatistics.forEach(missionsStatistic -> {
 			missionsStatistic.setUserName(idNameMap.get(missionsStatistic.getUserResourceId()));

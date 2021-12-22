@@ -109,7 +109,6 @@ public class RbRoomController {
 		RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
 		rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
 		rbRoomRsp.setRolesData(getRbRoomRoleRes(crRoles));
-		// todo rbRoomRsp.setTrainingStatus();
 		rbRoomRsp.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
 		rbRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));

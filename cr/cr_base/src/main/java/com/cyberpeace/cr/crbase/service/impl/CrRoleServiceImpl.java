@@ -263,6 +263,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		return taskCounter;
 	}
+
 	@Override
 	public List<UserData> getUserDatas(String userIds) {
 		List<UserData> userDataList = Lists.newArrayList();
@@ -276,5 +277,18 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			userDataList.add(userData);
 		}
 		return userDataList;
+	}
+
+	@Override
+	public List<CrRole> selectRbStudentsRoleByRoomId(String roomId) {
+		List<CrRole> crRoleList = Lists.newArrayList();
+
+		for (Integer roleCode : CrRole.RB_STUDENT_ROLE_GROUPS) {
+			RoleQuery roleQuery = new RoleQuery(roomId, roleCode);
+			List<CrRole> crRoles = selectCrRoleByRoomId(roleQuery);
+			crRoleList.addAll(crRoles);
+		}
+
+		return crRoleList;
 	}
 }

@@ -36,6 +36,14 @@ public interface CrTaskService {
 	List<TaskContext> getByRoomIdAndUser(String roomId, String userId);
 
 	/**
+	 * 根据roomId获取task
+	 * @param roomId
+	 * @param userId
+	 * @return List<Task>  实例列表
+	 */
+	List<TaskContext> getTaskContextByRoomId(String roomId);
+
+	/**
 	 * 用户开始任务
 	 * @param task
 	 */

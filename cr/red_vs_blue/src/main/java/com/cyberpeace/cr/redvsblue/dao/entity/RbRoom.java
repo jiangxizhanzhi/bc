@@ -47,6 +47,10 @@ public class RbRoom extends BaseTable {
 
 	private String copyedTopoId;
 
+	public RbRoom() {
+
+	}
+
 	public RbRoom(RbRoomContext input, RbTemplate template) {
 		this.templateId = template.getResourceId();
 		this.name = input.getName();

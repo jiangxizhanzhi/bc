@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller.director;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,10 +38,14 @@ import com.cyberpeace.cr.redvsblue.controller.req.MissionConfig;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionDeleteReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomMissionReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.ExercisePaperRsp;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
+import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -57,6 +62,9 @@ public class RbRoomDirectorController {
 
 	@Autowired
 	private RbRoomService rbRoomService;
+
+	@Autowired
+	private RbTimeManagementService rbTimeManagementService;
 
 	@Autowired
 	private CrRoleService crRoleService;
@@ -88,8 +96,7 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("获取演习文书")
 	@GetMapping("/get_exercise_paper")
-	public BaseRsp<ExercisePaperRsp>
-			getExercisePaper(ExercisePaperReq exercisePaperReq) {
+	public BaseRsp<ExercisePaperRsp> getExercisePaper(ExercisePaperReq exercisePaperReq) {
 		RoleQuery roleQuery = new RoleQuery(exercisePaperReq.getResourceId(),
 				exercisePaperReq.getGroupHash());
 
@@ -348,5 +355,37 @@ public class RbRoomDirectorController {
 		crRbRoleContext.setGroups(groups);
 
 		return new BaseRsp(crRbRoleContext);
+	}
+
+	/**
+	 * 查询红蓝对抗时间线
+	 * @return
+	 */
+	@ApiOperation("查询红蓝对抗导演时间线")
+	@GetMapping("/mission_timeline")
+	public BaseRsp<TimeLineData> getMissionTimeline(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		RbRoom rbRoom = rbRoomService.getById(resource_id);
+		Date startTime = rbRoom.getStartTime();
+		Date endTime = rbRoom.getEndTime();
+
+		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(resource_id);
+		if (rbTimeManagement != null) {
+			startTime = rbTimeManagement.getCreateTime();
+
+			if (RbTimeManagement.TimeManagementStatus.STOP.getCode()
+					.equals(rbTimeManagement.getStatus())) {
+				endTime = rbTimeManagement.getUpdateTime();
+			} else {
+				endTime = new Date();
+			}
+		}
+
+		TimeLineData data = rbRoomService.getMissionTimeline(resource_id);
+
+		data.setStartTime(startTime);
+		data.setEndTime(endTime);
+
+		return new BaseRsp(data);
 	}
 }

@@ -38,6 +38,9 @@ public class RoleMissionRsp implements Serializable {
 	@ApiModelProperty("任务题解")
 	private String writeUp;
 
+	@ApiModelProperty("任务答案")
+	private String answer;
+
 	@ApiModelProperty("任务分数")
 	private Integer score;
 

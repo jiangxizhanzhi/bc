@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -21,7 +22,9 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.*;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionCategoryRes;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
@@ -32,6 +35,7 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
@@ -103,7 +107,7 @@ public class MissionController {
 		missionTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		missionTemplate.setSkillPoints(JSON.toJSONString(missionTemplateReq.getSkillPoints()));
 		missionTemplate.setResourceId(IDGeneratorUtil.getID());
-		missionTemplate.setAttachment(missionTemplateReq.getImages());
+		missionTemplate.setAttachment(getAttachments(missionTemplate.getWriteUp()));
 
 		return missionTemplate;
 	}
@@ -113,9 +117,21 @@ public class MissionController {
 
 		missionTemplate.setCategoryId(modifyReq.getCategory());
 		missionTemplate.setSkillPoints(JSON.toJSONString(modifyReq.getSkillPoints()));
-		missionTemplate.setAttachment(modifyReq.getImages());
+		missionTemplate.setAttachment(getAttachments(missionTemplate.getWriteUp()));
 
 		return missionTemplate;
+	}
+
+	private String getAttachments(String writeup) {
+		if (writeup == null || writeup.length() < CrCommonConstants.GENERATED_UUID_LENGTH) {
+			return CommonConstant.EMPTY_LIST_JSON;
+		}
+		String imagePath = AttachmentPath.UPLOAD_IMAGE.getOriginDesc();
+		String regex = String.format("!\\[[^]]*]\\(.*%s([0-9a-z]{%d})\\.(?:jpg|jpeg|png|bmp|webp|gif)\\)",
+				imagePath, CrCommonConstants.GENERATED_UUID_LENGTH);
+		List<String> imageIds = LocalStringUtil.getMatchStr(writeup, regex, 1);
+
+		return JsonUtil.arrayToString(imageIds);
 	}
 
 	@ApiOperation("前台更新任务")

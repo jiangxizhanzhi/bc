@@ -1,16 +1,17 @@
 package com.cyberpeace.common.util;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.google.common.collect.Lists;
 
 public class LocalStringUtil {
 
@@ -96,6 +97,25 @@ public class LocalStringUtil {
 
 		while (matcher.find()) {
 			strList.add(matcher.group());
+		}
+		return strList;
+	}
+
+	/**
+	 * 根据正则表达是获取内容中的匹配数据
+	 * @param content 内容
+	 * @param regex 正则表达式
+	 * @param index 子匹配序号
+	 * @return 匹配到的字符串列表
+	 */
+	public static List<String> getMatchStr(String content, String regex, Integer index) {
+
+		List<String> strList = Lists.newArrayList();
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			strList.add(matcher.group(index));
 		}
 		return strList;
 	}

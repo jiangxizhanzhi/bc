@@ -13,4 +13,6 @@ public interface CrCommonConstants {
      * 场景模板资源导入导出包图片文件夹名
      */
     String RESOURCE_IMAGE_DIR = "images";
+
+    Integer GENERATED_UUID_LENGTH = 32;
 }

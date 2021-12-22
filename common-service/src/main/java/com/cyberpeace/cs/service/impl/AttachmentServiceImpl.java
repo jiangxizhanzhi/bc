@@ -294,12 +294,29 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(fileName, storeInDbName);
+			AttachmentBo attachmentBo = create(fileName, storeInDbName, renameFile);
 			return attachmentBo;
 		}
 
 		// 返回给前端对展示名称
 		String displayName = ConfigUtil.getContextProperty("cr.local.file.prefix") + storeInDbName;
 		return AttachmentBo.builder().filePath(displayName).fileName(fileName).build();
+	}
+
+	/**
+	 * 如果重命名上传的文件，将文件名和id设置为同一个uuid
+	 */
+	private AttachmentBo create(String filename, String filePath, Boolean rename) {
+		if (rename == null || !rename) {
+			return create(filename, filePath);
+		}
+		String resourceId = StringUtils.split(filename, '.')[0];
+		Attachment attachment = Attachment.builder().resourceId(resourceId).fileName(filename)
+				.filePath(filePath).isPublic(CommonConstant.TRUE).build();
+		int insert = attachmentMapper.insert(attachment);
+		if (insert > 0) {
+			return BeanUtils.copy(attachment, AttachmentBo.class);
+		}
+		return null;
 	}
 }

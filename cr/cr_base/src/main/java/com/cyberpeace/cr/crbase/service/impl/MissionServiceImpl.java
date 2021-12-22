@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -24,11 +22,9 @@ import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
@@ -379,14 +375,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
-		String reg = "\"([a-z0-9]{32})\"";
-		Pattern pattern = Pattern.compile(reg);
-		Matcher matcher = pattern.matcher(schemeJson);
-		List<String> missionTemplateIds = new ArrayList<>();
-		while (matcher.find()) {
-			missionTemplateIds.add(matcher.group(1));
+		String reg = String.format("\"([a-z0-9]{%d})\"", CrCommonConstants.GENERATED_UUID_LENGTH);
+		List<String> missionTemplateIds = LocalStringUtil.getMatchStr(schemeJson, reg, 1);
+		if (missionTemplateIds.size() == 0) {
+			return new ArrayList<>();
 		}
-
 		return missionTemplateMapper.selectBatchIds(missionTemplateIds);
 	}
 

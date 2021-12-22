@@ -15,12 +15,4 @@ public class MissionTemplate extends MissionBase {
 	private String templateId;
 
 	private String attachment;
-
-	public void setAttachment(List<String> images) {
-		if (images == null || images.size() == 0) {
-			this.attachment = CommonConstant.EMPTY_LIST_JSON;
-		} else {
-			this.attachment = JsonUtil.toJsonString(images);
-		}
-	}
 }

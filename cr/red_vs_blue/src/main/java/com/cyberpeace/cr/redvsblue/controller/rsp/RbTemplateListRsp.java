@@ -1,9 +1,6 @@
-package com.cyberpeace.cr.redvsblue.controller.req;
+package com.cyberpeace.cr.redvsblue.controller.rsp;
 
 import java.util.List;
-
-import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRoleRsp;
 
 import lombok.Data;
 

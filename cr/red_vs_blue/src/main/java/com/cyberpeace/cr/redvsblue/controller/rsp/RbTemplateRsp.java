@@ -1,11 +1,10 @@
-package com.cyberpeace.cr.redvsblue.controller.req;
+package com.cyberpeace.cr.redvsblue.controller.rsp;
 
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

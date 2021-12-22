@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -56,7 +55,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Api(tags = "红蓝对抗导演")
 @RestController
-@RequiresAuthentication
 @RequestMapping("/cr/director/red_vs_blue/red_vs_blue/")
 public class RbRoomDirectorController {
 
@@ -190,7 +188,7 @@ public class RbRoomDirectorController {
 
 				}
 				crRole.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
-				crRoleService.save(crRole);
+				crRoleService.updateById(crRole);
 			}
 		});
 

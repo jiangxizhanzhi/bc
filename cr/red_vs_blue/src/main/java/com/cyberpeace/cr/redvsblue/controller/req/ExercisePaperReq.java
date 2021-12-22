@@ -1,10 +1,12 @@
 package com.cyberpeace.cr.redvsblue.controller.req;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class ExercisePaperReq {
+public class ExercisePaperReq implements Serializable {
 
 	private String exercisePaper;
 

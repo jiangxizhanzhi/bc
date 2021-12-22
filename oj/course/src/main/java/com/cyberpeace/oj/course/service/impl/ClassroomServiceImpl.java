@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -86,7 +87,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Course course = courseMapper.selectById(classroom.getCourseId());
 		if (course == null) {
 			log.error("Course not found! course_id=[{}]", classroom.getCourseId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		classroomBo.setCourseName(course.getName());
 		classroomBo.setCourseType(course.getCourseType());
@@ -95,7 +96,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
 		if (lesson == null) {
 			log.error("Lesson not found! lesson_id=[{}]", classroom.getLessonId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		classroomBo.setLessonName(lesson.getName());
 		classroomBo.setLessonType(lesson.getType());

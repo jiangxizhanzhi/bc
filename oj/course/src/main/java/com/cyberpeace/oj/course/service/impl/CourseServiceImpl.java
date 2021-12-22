@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -11,6 +12,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.UtilService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import org.apache.commons.collections.CollectionUtils;
@@ -76,16 +78,19 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private UtilService utilService;
+
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
 			log.error("Course not found! course_id=[{}]", courseId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		CourseInfoBo courseInfoBo = courseToBo(course, true);
+		courseInfoBo.setLogo(utilService.handlerFileUrl(course.getLogo()));
 		// 设置是否收藏
-
 		Boolean collection = resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.COURSE.getCode(), courseId);
 		courseInfoBo.setIsCollection(collection);
@@ -124,6 +129,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		courseInfoBo.setTheoryCount(theoryCount.size());
 		courseInfoBo
 				.setExerciseCount(courseInfoBo.getLessonCount() - courseInfoBo.getTheoryCount());
+
+		// logo数据地址转换
+		courseInfoBo.setLogo(utilService.handlerFileUrl(course.getLogo()));
 		return courseInfoBo;
 	}
 
@@ -271,7 +279,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		Course existCourse = courseMapper.selectById(course.getResourceId());
 		if (null == existCourse) {
 			log.error("Course not found! course_id=[{}]", course.getResourceId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		course.setModifyUserId(userId);

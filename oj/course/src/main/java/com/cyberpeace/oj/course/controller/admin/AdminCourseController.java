@@ -5,8 +5,11 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.controller.res.SimpleCourseRes;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,8 +138,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		Course course = BeanUtils.copy(addReq, Course.class);
 		course.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-		course.setOperationAuthIds("[]");
-		course.setReadAuthIds("[]");
+		course.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+		course.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		course.setCourseType(CommonConstant.ZERO);
 
@@ -144,7 +147,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		if (null == courseCategory) {
 			log.error("When add course but category not found! category_id=[{}]",
 					addReq.getCategoryId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		Course courseRsp = courseService.addCourse(userId, course);
@@ -171,7 +174,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		if (null == course) {
 			log.error("Course not found! course_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		AdminCourseRes adminCourseRes = BeanUtils.copy(course, AdminCourseRes.class);
 		return new BaseRsp<>(adminCourseRes);

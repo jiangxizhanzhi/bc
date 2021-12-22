@@ -12,9 +12,11 @@ import com.cyberpeace.cs.constant.SceneEvent;
 import com.cyberpeace.cs.constant.SceneEventStatus;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.SystemConfigService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
+import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -66,6 +68,9 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	@Autowired
+	private RemoteSceneService remoteSceneService;
+
 	@Override
 	public OjLocalScene selectOjLocalScene(String businessId, Integer shared,
 			AuthContext authContext) {
@@ -101,32 +106,31 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	}
 
 	@Override
-	public JSONObject setDynamicFlag(String flags, String topoId) {
+	public JSONObject setDynamicFlag(String flags, JSONObject topo) {
 
-		JSONObject topo = remoteTopoService.getTopoById(topoId);
 		if (null == topo || topo.isEmpty()) {
 			return topo;
 		}
 
-		JSONObject sceneConfig = topo.getJSONObject("scene_config");
+		JSONObject sceneConfig = topo.getJSONObject(JsonKeyConstant.SCENE_CONFIG);
 		if (sceneConfig.isEmpty()) {
 			return topo;
 		}
 
-		JSONObject topology = sceneConfig.getJSONObject("topology");
+		JSONObject topology = sceneConfig.getJSONObject(JsonKeyConstant.TOPOLOGY);
 		if (topology.isEmpty()) {
 			return topo;
 		}
 
-		JSONArray elements = sceneConfig.getJSONArray("elements");
+		JSONArray elements = sceneConfig.getJSONArray(JsonKeyConstant.ELEMENTS);
 		if (elements.size() <= 0) {
 			return topo;
 		}
 
 		for (Object element : elements) {
 			JSONObject node = (JSONObject) element;
-			List<String> initCommands = JsonUtil.toJsonObjectArray(node.getString("init_commands"),
-					String.class);
+			List<String> initCommands = JsonUtil
+					.toJsonObjectArray(node.getString(JsonKeyConstant.INIT_COMMANDS), String.class);
 			if (CollectionUtils.isEmpty(initCommands)) {
 				return topo;
 			}
@@ -165,29 +169,54 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 		// 场景启动完成更新数据库
 		JSONObject dataObj = JsonUtil.toJsonObject(message, JSONObject.class);
-		JSONObject scene = dataObj.getJSONObject("data").getJSONObject("data")
-				.getJSONObject("scene");
-		if (null != scene && !scene.isEmpty()
-				&& scene.getIntValue("event") == SceneEvent.CREATE.getCode().intValue()
-				&& scene.getIntValue("event_status") == SceneEventStatus.FINISH.getCode()) {
+		JSONObject scene = dataObj.getJSONObject(JsonKeyConstant.DATA)
+				.getJSONObject(JsonKeyConstant.DATA).getJSONObject(JsonKeyConstant.SCENE_DATA);
 
-			// 更新localScene数据
-			LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-			localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-			localScene.setDestroyTime(TimeUtil.addMins(new Date(), localScene.getSceneTtl()));
-			localScene.setStartTime(new Date());
-			localSceneMapper.updateById(localScene);
+		if (null != scene
+				&& scene.getIntValue(JsonKeyConstant.SCENE_EVENT) == SceneEvent.CREATE.getCode()
+						.intValue()
+				&& scene.getIntValue(JsonKeyConstant.SCENE_EVENT_STATUS) == SceneEventStatus.FINISH
+						.getCode()) {
 
-			// 推送倒计时
-			JSONObject json = new JSONObject();
-			json.put("code", OjEvent.SCENE_CREATE_FINISH.getCode());
+			// 组装推送消息
+			JSONObject startMessage = new JSONObject();
+			startMessage.put(JsonKeyConstant.CODE, OjEvent.SCENE_CREATE_FINISH.getCode());
+
 			JSONObject countDown = new JSONObject();
-			countDown.put("remaining_time", localScene.getSceneTtl() * CommonConstant.SIXTY);
-			json.put("data", countDown);
+			LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
 
-			return json;
+			// 可能存在重复推送启动消息 保证仅更新一次
+			if (null == localScene.getStartTime()) {
+				// 更新数据
+				localScene.setStartTime(new Date());
+				localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 
+				// 更新localScene
+				if (localScene.getBusinessCode().intValue() != LocalScene.BusinessCode.CLASSROOM
+						.getCode().intValue()) {
+					localScene.setEndTime(
+							TimeUtil.addMins(localScene.getStartTime(), localScene.getSceneTtl()));
+
+					// 设置倒计时
+					countDown.put(JsonKeyConstant.REMAIN_TIME,
+							localScene.getSceneTtl() * CommonConstant.SIXTY);
+					startMessage.put(JsonKeyConstant.DATA, countDown);
+				}
+
+				localSceneMapper.updateById(localScene);
+			} else {
+
+				// 计算倒计时
+				if (localScene.getBusinessCode().intValue() != LocalScene.BusinessCode.CLASSROOM
+						.getCode().intValue()) {
+					countDown.put(JsonKeyConstant.REMAIN_TIME, TimeUtil.getIntervalSeconds(
+							localScene.getStartTime(), localScene.getEndTime()));
+					startMessage.put(JsonKeyConstant.DATA, countDown);
+				}
+			}
+			return startMessage;
 		}
+
 		return null;
 	}
 
@@ -204,7 +233,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			flag |= StringUtils.isNotBlank(limitCount)
 					&& (startCount + createCount) > Integer.parseInt(limitCount);
 		}
-		
+
 		if (flag) {
 			log.error(
 					"checkSceneStartCount: Scene start greater limit count! start_scene=[{}], limit_scene=[{}]",
@@ -212,5 +241,39 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			throw new InvalidParamException("场景数量启动启动过多！");
 		}
 
+	}
+
+	@Override
+	public JSONObject getSceneData(OjLocalScene ojLocalScene) {
+		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
+				localScene.getUserId());
+		// 设置类型
+		sceneData.put(JsonKeyConstant.REFERENCE_TYPE, localScene.getBusinessCode());
+
+		// 设置场景共享类型与倒计时
+		if (localScene.getBusinessCode().intValue() == LocalScene.BusinessCode.CLASSROOM
+				.getCode()) {
+
+			// 课堂不需要倒计时
+			sceneData.put(JsonKeyConstant.SCENE_SHARE_MODE, SceneShare.GROUP.getCode());
+		} else {
+			sceneData.put(JsonKeyConstant.SCENE_SHARE_MODE,
+					ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
+							: SceneShare.PRIVATE.getCode());
+
+			if (null == localScene.getStartTime() || null == localScene.getEndTime()) {
+				return sceneData;
+			}
+
+			long remain = null != localScene.getPauseTime()
+					? TimeUtil.getIntervalSeconds(localScene.getPauseTime(),
+							localScene.getDestroyTime())
+					: TimeUtil.getIntervalSeconds(localScene.getStartTime(),
+							localScene.getDestroyTime());
+			sceneData.put(JsonKeyConstant.REMAIN_TIME, remain);
+		}
+
+		return sceneData;
 	}
 }

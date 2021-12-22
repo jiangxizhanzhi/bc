@@ -8,11 +8,11 @@ import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> {
 
 	/**
-	 * 查询课堂场景
+	 * 查询课堂场景 前台使用后台直接返回为空
 	 * @param lessonId
 	 * @param authContext
 	 * @return
 	 */
-	LocalScene selectByLessonAndUser(String lessonId, AuthContext authContext);
+	ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext);
 
 }

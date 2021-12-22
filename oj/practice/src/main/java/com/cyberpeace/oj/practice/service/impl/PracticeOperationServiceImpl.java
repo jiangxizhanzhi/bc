@@ -4,10 +4,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import org.apache.commons.collections.CollectionUtils;
@@ -218,7 +220,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
 			log.error("Operation practice not found! practice_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		OperationBo operationBo = BeanUtils.copy(operation, OperationBo.class);
 
@@ -389,7 +391,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
 			log.error("Operation practice not found! practice_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		PracticeSolved solved = practiceSolvedMapper.selectUserAndId(userId,
@@ -439,7 +441,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
 			log.error("StartScene operation practice not found! operation_practice_id=[{}]");
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		if (!operation.getDynamicEnv() || StringUtils.isBlank(operation.getTopoId())) {
@@ -453,19 +455,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				operation.getResourceId(), operation.getSceneShareMode(), authContext);
 
 		if (null != existOjLocalScene) {
-			LocalScene localScene = localSceneMapper
-					.selectById(existOjLocalScene.getLocalSceneId());
-			if (null != localScene) {
-				return remoteSceneService.getById(localScene.getMpSceneId(),
-						authContext.getUserId());
-			} else {
-				log.error(
-						"StartScene not found localScene data! oj_local_scene=[{}], local_scene_id=[{}]",
-						JsonUtil.toJsonString(existOjLocalScene),
-						existOjLocalScene.getLocalSceneId());
-				throw new IllegalArgumentException("未检索到场景数据！");
-			}
+			return ojLocalSceneService.getSceneData(existOjLocalScene);
 		}
+
+		// 初始化场景基本数据
 		OjLocalScene ojLocalScene = initOjLocalScene(operation, authContext);
 		LocalScene localScene = initLocalScene(operation, ojLocalScene, authContext);
 		ojLocalScene.setLocalSceneId(localScene.getResourceId());
@@ -545,7 +538,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			log.error(
 					"PracticeOperationServiceImpl：Practice operation not found! practice_operation_id=[{}]",
 					practiceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(practiceId,
 				operation.getSceneShareMode(), authContext);
@@ -554,7 +547,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					"PracticeOperationServiceImpl: ojLocalScene not found! operation_id=[{}], shared=[{}], fromWeb=[{}], user_id=[{}]",
 					practiceId, operation.getSceneShareMode(), authContext.getIsWeb(),
 					authContext.getUserId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
@@ -562,7 +555,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			log.error(
 					"PracticeOperationServiceImpl: localScene not found ot scene_id is null! local_scene_id=[{}]",
 					ojLocalScene.getLocalSceneId());
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		return localScene;
@@ -608,13 +601,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		localScene.setSceneTtl(operation.getDestroyDelay() * 60);
 		localScene.setSceneName(operation.getTitle());
 
-		// 动态环境flag设置
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(operation.getResourceId())
 				.build();
+		// 设置场景类型
+		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
+		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
+
+		// 动态环境flag设置
 		if (operation.getDynamicEnv() && operation.getDynamicFlag()) {
 			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
-					operation.getTopoId());
-			sceneMeta.setTopoData(JsonUtil.toJsonString(dynamicFlag));
+					topoData);
+			sceneMeta.setTopoData(dynamicFlag);
 		}
 		localScene.setMeta(JsonUtil.toJsonString(sceneMeta));
 		return localScene;

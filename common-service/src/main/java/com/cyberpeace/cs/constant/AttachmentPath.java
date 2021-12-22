@@ -12,22 +12,22 @@ import lombok.Getter;
  */
 public enum AttachmentPath implements GenericEnum {
 
-	HANDOUT(0, "course/%s/handout/"),
-	VIDEO(1, "course/%s/video/"),
+	HANDOUT(0, "oj/course/%s/handout/"),
+	VIDEO(1, "oj/course/%s/video/"),
 	/** 课程附件*/
-	ATTACHMENT(2, "course_attachment/"),
-	MARKDOWN(3, "course/%s/markdown/"),
-	OUTLINE(4, "outline/"),
+	ATTACHMENT(2, "oj/course_attachment/"),
+	MARKDOWN(3, "oj/course/%s/markdown/"),
+	OUTLINE(4, "oj/outline/"),
 	/** 课后练习解题思路附件存放地址*/
-	PRACTICE_KEY(6, "lesson_practice_key/"),
+	PRACTICE_KEY(6, "oj/lesson_practice_key/"),
 	/** 笔记附件存放地址*/
-	NOTE(7, "note/"),
+	NOTE(7, "oj/note/"),
 	/** 实验报告存放地址*/
-	REPORT(8, "report/"),
+	REPORT(8, "oj/report/"),
 	/** 资源logo存放地址*/
 	LOGO(9, "logo/"),
 	/** 练习附件存放地址*/
-	PRACTICE_ATTACHMENT(10, "practice_attachment/"),
+	PRACTICE_ATTACHMENT(10, "oj/practice_attachment/"),
 	MISSION(11, "cr/mission/"),
 	UPLOAD_IMAGE(12,"upload/images/"),
 	OTHER(99, "other/");

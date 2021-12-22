@@ -1,7 +1,11 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
+import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,19 +43,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class LessonSceneServiceImpl implements LessonSceneService {
 
 	@Autowired
-	private ClassroomMapper classroomMapper;
-
-	@Autowired
-	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
-
-	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
-
-	@Autowired
-	private RemoteSceneService remoteSceneService;
 
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
@@ -63,35 +58,36 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	private LocalSceneService localSceneService;
 
 	@Autowired
+	private ClassroomGroupInfoService classroomGroupInfoService;
+
+	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+
 	@Override
-	public JSONObject startScene(String resourceId, AuthContext authContext) {
+	public JSONObject startScene(String lessonId, AuthContext authContext) {
 
 		// 场景启动数据校验
 		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
 
 		// 先查询课程表场景
-		LocalScene groupScene = getGroupScene(resourceId, authContext);
-		if (null != groupScene) {
-			return remoteSceneService.getById(groupScene.getMpSceneId(), groupScene.getUserId());
+		ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId,
+				authContext);
+		if (null != groupInfo) {
+			OjLocalScene groupScene = ojLocalSceneMapper
+					.selectGroupScene(groupInfo.getResourceId());
+			return ojLocalSceneService.getSceneData(groupScene);
 		}
 
 		// 无课程表场景 查询课时场景
-		CourseLesson courseLesson = lessonSceneStartCheck(resourceId);
-		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(resourceId,
+		CourseLesson courseLesson = lessonSceneStartCheck(lessonId);
+		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 				courseLesson.getSceneShareMode(), authContext);
 
 		if (null != ojLocalScene) {
-			LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-			if (null == localScene) {
-				log.error(
-						"startScene: ojLocalScene exist but localScene not found! oj_local_scene_id=[{}]",
-						localScene.getResourceId());
-				throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
-			}
-
-			return remoteSceneService.getById(localScene.getMpSceneId(), localScene.getUserId());
+			return ojLocalSceneService.getSceneData(ojLocalScene);
 		}
 
 		// 初始化ojlocalscene
@@ -118,7 +114,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 			}
 		});
 
-		return remoteSceneService.getById(sceneId, authContext.getUserId());
+		return ojLocalSceneService.getSceneData(initOjLocalScene);
 	}
 
 	@Override
@@ -126,7 +122,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		CourseLesson courseLesson = courseLessonMapper.selectById(resourceId);
 		if (null == courseLesson) {
 			log.error("deleteScene: Lesson not found! lesson_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(resourceId,
@@ -184,7 +180,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
 			log.error("deleteScene: Lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
@@ -193,7 +189,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 			log.error(
 					"restartNode: ojLocalScene not found! lesson_id=[{}], scene_share_mode=[{}], authContext=[{}]",
 					lessonId, courseLesson.getSceneShareMode(), JsonUtil.toJsonString(authContext));
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		return ojLocalScene;
@@ -246,6 +242,11 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		String appResourceId = courseLesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
 				+ courseLesson.getResourceId();
 		localSceneMeta.setAppResourceId(appResourceId);
+
+		// 设置大场景数据 部分课程为资源导入 无法设置reference_type
+		JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());
+		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.LESSON.getCode());
+		localSceneMeta.setTopoData(topoData);
 		localScene.setMeta(JsonUtil.toJsonString(localSceneMeta));
 
 		return localScene;
@@ -260,45 +261,15 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
 			log.error("lessonSceneStartCheck: Lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		if (StringUtils.isBlank(courseLesson.getTopoId())) {
 			log.error("lessonSceneStartCheck: Topo not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		return courseLesson;
 
-	}
-
-	private LocalScene getGroupScene(String lessonId, AuthContext authContext) {
-
-		if (authContext.getIsWeb()) {
-			// 查询课堂信息
-			Classroom classroom = classroomMapper
-					.selectByOrgAndLesson(authContext.getOrganization(), lessonId);
-			if (null == classroom) {
-				return null;
-			}
-
-			// 查询分组信息
-			ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
-					.selectByRoomAndUser(classroom.getResourceId(), authContext.getUserId());
-			if (null == groupInfo) {
-				return null;
-			}
-
-			// 查询本地场景
-			OjLocalScene ojLocalScene = ojLocalSceneMapper.selectByGroup(groupInfo.getResourceId());
-			if (null != ojLocalScene || StringUtils.isBlank(ojLocalScene.getLocalSceneId())) {
-				return null;
-			}
-
-			// 查询远程场景信息
-			return localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-		}
-
-		return null;
 	}
 }

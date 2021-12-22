@@ -52,17 +52,6 @@ public class Course extends AuthTable {
 
 	private String courseNum;
 
-	public String getLogo() {
-		if (StringUtils.isNotBlank(this.logo)) {
-			String fastdfsPrefix = ConfigUtil.getContextProperty("common.fastdfs.url.prefix");
-			String startStr = ConfigUtil.getContextProperty("common.fastdfs.url.start.str");
-			if (StringUtils.isNotBlank(fastdfsPrefix) && this.logo.startsWith(startStr)) {
-				return fastdfsPrefix + this.logo;
-			}
-		}
-		return this.logo;
-	}
-
 	public enum Difficulty implements GenericEnum {
 
 		PRIMARY(0, "初级"), MIDDLE(1, "中级"), HIGH(2, "高级");

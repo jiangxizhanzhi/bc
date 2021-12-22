@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
@@ -230,7 +231,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson lesson = courseLessonMapper.selectById(resourceId);
 		if (null == lesson) {
 			log.error("Lesson not found! lesson_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(lesson.getAttachmentIds(),
 				false);

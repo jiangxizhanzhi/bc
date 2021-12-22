@@ -10,6 +10,9 @@ import java.util.zip.ZipOutputStream;
 
 import com.cyberpeace.common.constant.CommonConstant;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -95,6 +98,39 @@ public class ZipUtil {
 				}
 			}
 		}
+		return zipPath;
+	}
+
+	/**
+	 * 压缩文件到目的文件夹 文件名称为src文件夹名称.zip
+	 * @param srcDir 需要压缩的文件夹
+	 * @param destDir 目标文件夹
+	 * @return 压缩后文件地址
+	 */
+	public static String toZipDest(String srcDir, String destDir) {
+
+		ZipOutputStream zos = null;
+		File src = new File(srcDir);
+		String zipPath = destDir + File.separator + src.getName() + SUFFIX;
+		try {
+			zos = new ZipOutputStream(new FileOutputStream(zipPath));
+			File[] listFiles = src.listFiles();
+
+			for (File file : listFiles) {
+				compress(file, zos, file.getName());
+			}
+		} catch (Exception e) {
+			log.error("toZipDest: Zip file failed! src=[{}], dest=[{}]; catch error:", srcDir,
+					destDir, e);
+			throw new BusinessException(ErrorCode.FILE_ZIP_FAIL);
+		} finally {
+			try {
+				zos.close();
+			} catch (IOException e) {
+				// io流关闭失败 不做任何操作
+			}
+		}
+
 		return zipPath;
 	}
 

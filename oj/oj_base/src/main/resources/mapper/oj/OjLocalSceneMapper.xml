@@ -18,10 +18,9 @@
         and from_web = #{isWeb}
     </select>
 
-    <select id="selectByGroup" resultMap="ojScene">
+    <select id="selectGroupScene" resultMap="ojScene">
         select * from oj_local_scene
         where business_id = #{groupId}
-        and from_web = 0
     </select>
 
     <select id="selectByUser" resultType="java.lang.Integer">

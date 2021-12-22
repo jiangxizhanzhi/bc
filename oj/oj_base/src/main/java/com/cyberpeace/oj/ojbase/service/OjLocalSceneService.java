@@ -29,7 +29,7 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 * @param flags
 	 * @return
 	 */
-	JSONObject setDynamicFlag(String flags, String topoId);
+	JSONObject setDynamicFlag(String flags, JSONObject topoId);
 
 	/**
 	 * 删除场景
@@ -38,7 +38,7 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	void deleteScene(String ojLocalSceneId);
 
 	/**
-	 * 组装实训场景启动消息体
+	 * 组装实训场景启动完成消息体
 	 * @param message 场景启动相关消息
 	 * @return
 	 */
@@ -50,4 +50,11 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 * @return
 	 */
 	void checkSceneStartCount(String userId, Integer createCount);
+
+	/**
+	 * 查询场景信息
+	 * @param ojLocalScene
+	 * @return
+	 */
+	JSONObject getSceneData(OjLocalScene ojLocalScene);
 }

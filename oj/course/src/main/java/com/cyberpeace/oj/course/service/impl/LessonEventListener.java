@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class LessonEventListener extends MessageListener {
 			log.error(
 					"LessonEventListener.onSceneStartProcess: OjLocalScene not found! oj_local_scene_id=[{}]",
 					businessId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		// 推送code更新
@@ -77,7 +78,7 @@ public class LessonEventListener extends MessageListener {
 			log.error(
 					"OperationEventListener onSceneElement: OjLocalScene not found! oj_local_scene_id=[{}]",
 					businessId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		// 推送code更新

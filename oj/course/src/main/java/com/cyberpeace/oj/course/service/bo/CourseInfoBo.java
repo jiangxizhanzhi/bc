@@ -2,9 +2,11 @@ package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
 
+import com.cyberpeace.common.util.ConfigUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @ApiModel("课程基本信息")

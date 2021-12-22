@@ -29,4 +29,7 @@ public interface ErrorCode {
 
 	/** 文件拷贝失败*/
 	String FILE_COPY_FAIL = "100012";
+
+	/** 文件压缩失败*/
+	String FILE_ZIP_FAIL = "100013";
 }

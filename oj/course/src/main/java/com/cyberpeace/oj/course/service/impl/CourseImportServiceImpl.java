@@ -237,6 +237,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 		FileUtil.copyDirectory(handoutPath, dest, false);
 
 		// 目录压缩设置原始markdown文件地址
+		String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
+				course.getResourceId());
+		String originUrl = ZipUtil.toZipDest(dest, markdownPath);
+		courseLesson.setOriginMarkdownFile(originUrl);
 
 		// 文件解析
 		String handoutFilePath = courseLesson.getType().intValue() == CourseLesson.LessonType.THEORY

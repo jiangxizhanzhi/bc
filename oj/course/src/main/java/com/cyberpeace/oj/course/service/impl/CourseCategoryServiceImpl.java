@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.PageUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -92,7 +93,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 				if (null == category) {
 					log.error("Parent course category not found! category_id=[{}]",
 							categoryAddBo.getParentId());
-					throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+					throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 				}
 				courseCategory.setCode(category.getCode() + CommonConstant.CODE_COMMA + resourceId);
 			} else {
@@ -127,7 +128,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		CourseCategory courseCategory = courseCategoryMapper.selectById(resourceId);
 		if (null == courseCategory) {
 			log.error("CourseCategory not found! category_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		if (children) {

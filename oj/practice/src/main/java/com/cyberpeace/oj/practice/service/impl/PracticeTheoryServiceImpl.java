@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
@@ -154,7 +155,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
 		if (null == practiceTheory) {
 			log.error("Theory practice not found! practice_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);
@@ -223,7 +224,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(theoryId);
 		if (null == practiceTheory) {
 			log.info("Theory practice not found! practice_id=[{}]", theoryId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		// 判断是否已完成答题
@@ -320,7 +321,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			if (null == category) {
 				log.error("When add practice theory, the category not found! category_id=[{}]",
 						practiceTheory.getCategoryId());
-				throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 			} else {
 				if (category.getPracticeType().intValue() != PracticeCategory.PracticeType.THEORY
 						.getCode().intValue()) {

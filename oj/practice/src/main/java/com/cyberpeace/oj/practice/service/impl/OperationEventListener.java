@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.Date;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.ojbase.constant.Event;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class OperationEventListener extends MessageListener {
 			log.error(
 					"OperationSceneEventListener.onSceneStartProcess: OjLocalScene not found! oj_local_scene_id=[{}]",
 					businessId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		// 场景启动code值
@@ -84,7 +85,7 @@ public class OperationEventListener extends MessageListener {
 			log.error(
 					"OperationEventListener onSceneElement: OjLocalScene not found! oj_local_scene_id=[{}]",
 					businessId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		pushMessageToWeb(data, ojLocalScene, context);

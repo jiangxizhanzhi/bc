@@ -7,11 +7,11 @@ public interface LessonSceneService {
 
     /**
      * 课时场景启动
-     * @param resourceId
+     * @param lessonId
      * @param authContext
      * @return
      */
-    JSONObject startScene(String resourceId, AuthContext authContext);
+    JSONObject startScene(String lessonId, AuthContext authContext);
 
     /**
      * 课时场景删除

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -108,12 +109,6 @@ public class AdminClassroomController {
 	@ApiOperation("查询课堂信息/进入课堂")
 	@GetMapping("/get_group_info")
 	public BaseRsp<List<GroupInfoBo>> getGroupInfo(@RequestParam("resource_id") String resourceId) {
-
-		Classroom classroom = classroomMapper.selectById(resourceId);
-		if (null == classroom) {
-			log.error("");
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
-		}
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

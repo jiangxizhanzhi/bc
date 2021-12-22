@@ -2,6 +2,7 @@ package com.cyberpeace.cs.dao.entity;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,5 +29,5 @@ public class LocalSceneMeta implements Serializable {
 	 */
 	private String appResourceId;
 
-	private String topoData;
+	private JSONObject topoData;
 }

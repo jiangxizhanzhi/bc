@@ -10,10 +10,4 @@ public interface OjBusinessErrorCode {
 	/** 资源无权限*/
 	String RESOURCE_PERMISSION = "102004";
 
-	/** 文件上传错误*/
-	String FILE_UPLOAD_ERROR = "102002";
-
-	/** 资源未找到*/
-	String RESOURCE_NOT_FIND = "102001";
-
 }

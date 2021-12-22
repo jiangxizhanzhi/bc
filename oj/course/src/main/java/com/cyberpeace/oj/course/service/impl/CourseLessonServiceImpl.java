@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.oj.course.dao.mapper.*;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,12 +37,6 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.*;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonPaperEvaluateMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -137,24 +134,32 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	@Autowired
+	private ClassroomGroupInfoService classroomGroupInfoService;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
+
+		Course course = courseMapper.selectById(courseId);
+		if (null == course) {
+			log.error("getLessonDetail: Course not found! lesson_id=[{}]", lessonId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 		if (null == lesson) {
 			log.error("Lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		// 增加热度
-		lesson.setHeat(lesson.getHeat() + 1);
+		lesson.setHeat(lesson.getHeat() + CommonConstant.ONE);
 		courseLessonMapper.updateById(lesson);
 
 		// 基本信息拷贝
 		LessonInfoBo infoBo = BeanUtils.copy(lesson, LessonInfoBo.class);
 
 		// 课程名称数据
-		Course course = courseMapper.selectById(courseId);
 		infoBo.setCourseName(null != course ? course.getName() : "");
 
 		// 知识点数据转换
@@ -183,25 +188,35 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				ResourceCollection.BusinessType.LESSON.getCode(), lessonId);
 		infoBo.setIsCollection(collection);
 
-		// 场景相关数据查询
-		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+		// 查询课时场景信息
+		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
 				&& StringUtils.isNotBlank(lesson.getTopoId())) {
+
+			// 拓扑信息查询
 			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
-			OjLocalScene ojLocalScene = lesson.getSceneShareMode().intValue() == SceneShare.PRIVATE
-					.getCode().intValue()
-							? ojLocalSceneMapper.selectPrivateScene(authContext.getUserId(),
-									lessonId, CommonConstant.TRUE)
-							: ojLocalSceneMapper.selectPublicScene(lessonId, CommonConstant.TRUE,
-									CommonConstant.TRUE);
+
+			// 前台需要先查询课堂场景
+			OjLocalScene ojLocalScene = null;
+			if (authContext.getIsWeb()) {
+				ClassroomGroupInfo groupInfo = classroomGroupInfoService
+						.selectByLessonAndUser(lessonId, authContext);
+				if (null != groupInfo) {
+					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
+					infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
+				} else {
+					ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
+							lesson.getSceneShareMode(), authContext);
+				}
+			} else {
+				ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
+						lesson.getSceneShareMode(), authContext);
+			}
 
 			if (null != ojLocalScene) {
-				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-				if (null != localScene) {
-					JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
-							authContext.getUserId());
-					infoBo.setSceneData(sceneData);
-				}
+				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+				infoBo.setSceneData(sceneData);
 			}
+
 		}
 
 		// 添加学习记录
@@ -222,13 +237,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
 			log.error("Course not found! course_id=[{}]", courseId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 		if (null == lesson) {
 			log.error("Lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		AdminLessonBo lessonInfoBo = BeanUtils.copy(lesson, AdminLessonBo.class);
@@ -430,7 +445,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
 			log.error("Course not found! course_id=[{}]", courseId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
@@ -598,7 +613,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		CourseLesson courseLesson = courseLessonMapper.selectById(resourceId);
 		if (null == courseLesson) {
 			log.error("addLessonPractice: lesson not found! lesson_id=[{}]", resourceId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
@@ -612,7 +627,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
 			log.error("getTopoScene: lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		TopoSceneDataBo topoSceneDataRes = new TopoSceneDataBo();
@@ -732,7 +747,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		CourseLesson lesson = courseLessonMapper.selectByPublic(lessonId, isWeb);
 		if (null == lesson) {
 			log.error("Lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		return lesson;

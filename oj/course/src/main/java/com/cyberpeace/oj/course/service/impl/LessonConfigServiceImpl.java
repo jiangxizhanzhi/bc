@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -57,7 +58,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		Course course = courseMapper.selectById(courseId);
 		if (null == course) {
 			log.error("Course not found! course_id=[{}]", courseId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_NOT_FIND);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		LessonConfig firstNode = lessonConfigMapper.getCourseNode(courseId);

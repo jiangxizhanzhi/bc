@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -18,12 +19,14 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.rsp.RoleMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
@@ -55,6 +58,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Api(tags = "红蓝对抗导演")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/cr/director/red_vs_blue/red_vs_blue/")
 public class RbRoomDirectorController {
 
@@ -94,9 +98,11 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("获取演习文书")
 	@GetMapping("/get_exercise_paper")
-	public BaseRsp<ExercisePaperRsp> getExercisePaper(ExercisePaperReq exercisePaperReq) {
-		RoleQuery roleQuery = new RoleQuery(exercisePaperReq.getResourceId(),
-				exercisePaperReq.getGroupHash());
+	public BaseRsp<ExercisePaperRsp> getExercisePapern(
+			@RequestParam("resource_id") String businessTemplateId,
+			@RequestParam("group_hash") Integer group_hash) {
+
+		RoleQuery roleQuery = new RoleQuery(businessTemplateId, group_hash);
 
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		ExercisePaperRsp exercisePaperRsp = new ExercisePaperRsp();
@@ -165,6 +171,7 @@ public class RbRoomDirectorController {
 		mission.setCategoryId(rbRoomMissionReq.getCategory());
 		mission.setSkillPoints(JsonUtil.toJsonString(rbRoomMissionReq.getSkillPoints()));
 		mission.setCategoryId(rbRoomMissionReq.getCategory());
+		mission.setShowWriteup(false);
 
 		CrRole crRole = crRoleService.getById(rbRoomMissionReq.getRoleResourceId());
 
@@ -273,11 +280,15 @@ public class RbRoomDirectorController {
 
 			crRbRoleContext.setMissionMapping(crRoleContext.getMissionMapping());
 			crRbRoleContext.setShowWriteupMapping(crRoleContext.getShowWriteupMapping());
-			// todo
+			// todo Dynamic
 			crRbRoleContext.setDynamic(Lists.newArrayList());
 
 			CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
 					CrRoleContext.class);
+
+			// 获取下发mission的id列表
+			List<CrTask> crTasks = crTaskService.getByRoomId(resource_id);
+			List<String> missionIds = StreamApiUtils.getColumn(crTasks, CrTask::getMissionId);
 
 			// 遍历每一个角色
 			for (int i = 0; i < crRoleContextRsp.getRoles().size(); i++) {
@@ -299,24 +310,29 @@ public class RbRoomDirectorController {
 					List<RoleMissionRsp> roleStageMissionRspList = missions.stream()
 							.map(roleMission -> {
 
-								// 获取mission的用户列表
-								List<UserData> userDatas = crRoleService
-										.getUserDatas(roleData.getUserIds());
-								List<RbUserData> rbUserDatas = userDatas.stream().map(userData -> {
-									RbUserData rbUserData = BeanUtils.copy(userData,
-											RbUserData.class);
-
-									rbUserData.setGroupName(roleGroupName);
-									rbUserData.setRoleName(roleData.getName());
-
-									return rbUserData;
-								}).collect(Collectors.toList());
-
 								RoleMissionRsp roleMissionRsp = BeanUtils.copy(roleMission,
 										RoleMissionRsp.class);
 								roleMissionRsp.setCategory(roleMission.getCategoryId());
 								roleMissionRsp.setMissionStatus(roleMission.getState());
-								roleMissionRsp.setDeliveryDetails(rbUserDatas);
+
+								// 如果下发，获取mission的用户列表
+								if (missionIds.contains(roleMission.getResourceId())) {
+									List<UserData> userDatas = crRoleService
+											.getUserDatas(roleData.getUserIds());
+
+									List<RbUserData> rbUserDatas = userDatas.stream()
+											.map(userData -> {
+												RbUserData rbUserData = BeanUtils.copy(userData,
+														RbUserData.class);
+
+												rbUserData.setGroupName(roleGroupName);
+												rbUserData.setRoleName(roleData.getName());
+
+												return rbUserData;
+											}).collect(Collectors.toList());
+
+									roleMissionRsp.setDeliveryDetails(rbUserDatas);
+								}
 
 								return roleMissionRsp;
 							}).collect(Collectors.toList());

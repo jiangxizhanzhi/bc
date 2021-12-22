@@ -55,7 +55,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		if (attachmentIds == null || attachmentIds.size() == 0) {
 			return Lists.newArrayList();
 		}
-		return attachmentMapper.selectBatchIds(attachmentIds);
+		// 不根据isPublic做筛选
+		return attachmentMapper.selectBatchIds(attachmentIds, false);
 	}
 
 	@Override

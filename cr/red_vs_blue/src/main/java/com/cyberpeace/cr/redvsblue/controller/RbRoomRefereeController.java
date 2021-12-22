@@ -7,9 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -17,6 +15,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -160,4 +160,23 @@ public class RbRoomRefereeController {
 
 		return new BaseRsp(result);
 	}
+
+	@ApiOperation("提交任务的人工评估")
+	@PostMapping("/submit_evaluation")
+	public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
+			value = "学员评分") @RequestBody SubmitEvaluationReq submitEvaluationReq) {
+		rbRoomService.checkRoomOpening(submitEvaluationReq.getRoomId());
+		rbRoomService.checkRefereePermission(submitEvaluationReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+
+		crTaskService.submitEvaluation(submitEvaluationReq.getSubmitId(),
+				submitEvaluationReq.getScore(), submitEvaluationReq.getDetail(),
+				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
+				UserInfoContext.getUserContext().getUserId());
+
+		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
+				MissionWsCode.RVB_MISSION_CODE);
+		return new BaseRsp<>();
+	}
+
 }

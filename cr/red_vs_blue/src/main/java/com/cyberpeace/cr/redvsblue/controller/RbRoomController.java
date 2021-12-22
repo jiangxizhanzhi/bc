@@ -309,11 +309,24 @@ public class RbRoomController {
 			log.error("Rate Value Error！rate=[{}]", rate);
 			throw new BusinessException(CrBusinessErrorCode.RATE_VALUE_RANGE_ERROR);
 		}
-
 		RbTimeManagement timeManagement = BeanUtils.copy(rbTimeManagementReq,
 				RbTimeManagement.class);
 
-		rbTimeManagementService.save(timeManagement);
+		timeManagement.setStatus(RbTimeManagement.TimeManagementStatus.START.getCode());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				RbRoom rbRoom = rbRoomService.getById(rbTimeManagementReq.getRoomId());
+				rbRoom.setTrainingStatus(timeManagement.getStatus());
+
+				rbRoomService.save(rbRoom);
+				rbTimeManagementService.save(timeManagement);
+
+			}
+		});
 
 		return new BaseRsp();
 	}

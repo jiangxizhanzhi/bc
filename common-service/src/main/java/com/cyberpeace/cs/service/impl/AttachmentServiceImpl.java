@@ -260,9 +260,11 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 		// 复制图片
 		String originalPath = imageDir + File.separator + fileName;
-		copyFile(originalPath, AttachmentPath.UPLOAD_IMAGE.getCode(), CommonConstant.TRUE,
+		// 仅复制图片
+		copyFile(originalPath, AttachmentPath.UPLOAD_IMAGE.getCode(), CommonConstant.FALSE,
 				CommonConstant.FALSE);
-
+		// 插入数据库
+		create(fileName, AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName, true);
 		return true;
 	}
 
@@ -304,11 +306,16 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return AttachmentBo.builder().filePath(displayName).fileName(fileName).build();
 	}
 
+
 	/**
 	 * 如果重命名上传的文件，将文件名和id设置为同一个uuid
+	 * @param filename 文件名
+	 * @param filePath 文件路径
+	 * @param idIsName 文件名和id是否一致
+	 * @return
 	 */
-	private AttachmentBo create(String filename, String filePath, Boolean rename) {
-		if (rename == null || !rename) {
+	private AttachmentBo create(String filename, String filePath, Boolean idIsName) {
+		if (idIsName == null || !idIsName) {
 			return create(filename, filePath);
 		}
 		String resourceId = StringUtils.split(filename, '.')[0];

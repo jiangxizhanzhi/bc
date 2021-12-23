@@ -68,4 +68,7 @@ public class AdminLessonListBo implements Serializable {
 
 	@ApiModelProperty("课时附件数据")
 	private List<AttachmentBo> lessonFile;
+
+	@ApiModelProperty("场景共享类型 1=个人 2=共享 3=小组")
+	private Integer sceneShareMode;
 }

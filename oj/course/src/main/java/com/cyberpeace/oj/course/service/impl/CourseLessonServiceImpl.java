@@ -390,6 +390,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		IPage<CourseLesson> iPage = courseLessonMapper.pageByContext(page, context, isWeb);
 		IPage<AdminLessonListBo> boIPage = iPage.convert(courseLesson -> {
+			// 前台没有课程列表查询 不用管是否存在课堂场景 修改sceneShareMode
 			AdminLessonListBo adminLessonListBo = BeanUtils.copy(courseLesson,
 					AdminLessonListBo.class);
 
@@ -399,6 +400,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 						.selectByIds(courseLesson.getAttachmentIds(), isWeb);
 				adminLessonListBo.setLessonFile(attachmentBoList);
 			}
+
+			// 文件相关处理
+			if (courseLesson.getHandoutType().intValue() == CourseLesson.HandoutType.MD.getCode()
+					.intValue()) {
+				adminLessonListBo.setHandoutUrl(courseLesson.getHandoutUrl());
+			}
+			adminLessonListBo.setVideoUrl(utilService.handlerFileUrl(courseLesson.getVideoUrl()));
 
 			// 试卷相关
 			Paper paper = paperMapper.selectById(courseLesson.getPaperId());

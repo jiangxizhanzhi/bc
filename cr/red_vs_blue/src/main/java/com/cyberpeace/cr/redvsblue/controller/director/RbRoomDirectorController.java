@@ -249,7 +249,7 @@ public class RbRoomDirectorController {
 					}
 
 					crRole.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
-					crRoleService.save(crRole);
+					crRoleService.updateById(crRole);
 					missionService.removeByIds(deleteMissions);
 
 				}

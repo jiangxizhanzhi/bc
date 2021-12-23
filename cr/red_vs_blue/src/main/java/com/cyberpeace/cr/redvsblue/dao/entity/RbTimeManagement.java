@@ -31,6 +31,24 @@ public class RbTimeManagement extends BaseTable {
 
 	private String updateUserId;
 
+	public Boolean isStopped() {
+		boolean result = status.intValue() == TimeManagementStatus.STOP.getCode();
+
+		return result;
+	}
+
+	public Boolean isPaused() {
+		boolean result = status.intValue() == TimeManagementStatus.PAUSE.getCode();
+
+		return result;
+	}
+
+	public Boolean isRunning() {
+		boolean result = status.intValue() == TimeManagementStatus.RECOVERY.getCode();
+
+		return result;
+	}
+
 	public enum TimeManagementStatus {
 
 		STOP(0, "停止"), PAUSE(1, "暂停"), START(2, "开始"), RECOVERY(3, "恢复");

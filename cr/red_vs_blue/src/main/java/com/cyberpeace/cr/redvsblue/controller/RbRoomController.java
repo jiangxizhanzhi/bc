@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTimeManagementReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbTimeManagementRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
@@ -278,12 +280,37 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取时间管理数据")
 	@GetMapping("/get_time_management")
-	public BaseRsp<RbTimeManagement> getTimeManagement(
+	public BaseRsp<RbTimeManagementRsp> getTimeManagement(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
-		RbTimeManagement data = rbTimeManagementService.getByRoomId(resource_id);
+		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(resource_id);
 
-		return new BaseRsp(data);
+		RbTimeManagementRsp rbTimeManagementRsp = BeanUtils.copy(rbTimeManagement,
+				RbTimeManagementRsp.class);
+
+		// 计算当前天文时间
+		long time = rbTimeManagement.getAstronomicalTime().getTime() + System.currentTimeMillis()
+				- rbTimeManagement.getCreateTime().getTime();
+		Date currentAstronomicalTime = new Date(time);
+
+		rbTimeManagementRsp.setCurrentAstronomicalTime(currentAstronomicalTime);
+		rbTimeManagementRsp.setCreateUser(rbTimeManagement.getCreateUserId());
+		rbTimeManagementRsp.setModifyTime(rbTimeManagement.getUpdateTime());
+		rbTimeManagementRsp.setModifyUser(rbTimeManagement.getUpdateUserId());
+		rbTimeManagementRsp.setRedVsBlue(rbTimeManagement.getRoomId());
+
+		// 计算当前作战时间
+		if (rbTimeManagement.isStopped() || rbTimeManagement.isPaused()) {
+			rbTimeManagementRsp.setCurrentCombatTime(rbTimeManagement.getCombatTime());
+		} else {
+			time = rbTimeManagement.getCombatTime().getTime()
+					+ (System.currentTimeMillis() - rbTimeManagement.getUpdateTime().getTime())
+							* rbTimeManagement.getRate();
+			Date currentCombatTime = new Date(time);
+			rbTimeManagementRsp.setCurrentCombatTime(currentCombatTime);
+		}
+
+		return new BaseRsp(rbTimeManagementRsp);
 	}
 
 	/**

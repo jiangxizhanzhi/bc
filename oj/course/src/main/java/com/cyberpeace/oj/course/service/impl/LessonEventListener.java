@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class LessonEventListener extends MessageListener {
 
 		// 推送code更新
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
-		dataObj.put("code", Event.SCENE_UPDATE.getCode());
+		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
 
 		// 消息推送
 		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene);
@@ -83,7 +84,7 @@ public class LessonEventListener extends MessageListener {
 
 		// 推送code更新
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
-		dataObj.put("code", Event.SCENE_UPDATE.getCode());
+		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
 		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene);
 		return true;
 	}

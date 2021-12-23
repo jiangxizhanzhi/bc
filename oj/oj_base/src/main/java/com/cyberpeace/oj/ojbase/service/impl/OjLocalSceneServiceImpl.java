@@ -268,9 +268,9 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 			long remain = null != localScene.getPauseTime()
 					? TimeUtil.getIntervalSeconds(localScene.getPauseTime(),
-							localScene.getDestroyTime())
+							localScene.getEndTime())
 					: TimeUtil.getIntervalSeconds(localScene.getStartTime(),
-							localScene.getDestroyTime());
+							localScene.getEndTime());
 			sceneData.put(JsonKeyConstant.REMAIN_TIME, remain);
 		}
 

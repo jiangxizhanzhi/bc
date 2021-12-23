@@ -1,11 +1,19 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
+import com.cyberpeace.oj.course.service.bo.LessonMonitorBo;
+import com.cyberpeace.oj.course.service.bo.MonitorInfoBo;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +46,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Service
 public class LessonSceneServiceImpl implements LessonSceneService {
@@ -65,6 +76,12 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
@@ -167,6 +184,54 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		} else {
 			return localSceneService.unpauseScene(ojLocalScene.getLocalSceneId());
 		}
+	}
+
+	@Override
+	public List<LessonMonitorBo> lessonMonitor(String lessonId) {
+
+		// 查询前台用户启动的场景
+		List<OjLocalScene> ojLocalScenes = ojLocalSceneMapper.selectByBusiness(lessonId, true);
+		if (CollectionUtils.isEmpty(ojLocalScenes)) {
+			return Lists.newArrayList();
+		}
+		List<String> localSceneIds = StreamApiUtils.map(ojLocalScenes,
+				OjLocalScene::getLocalSceneId);
+
+		// 查询具体场景信息
+		List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
+		List<String> sceneIds = StreamApiUtils.map(localScenes, LocalScene::getMpSceneId);
+
+		// 查询会话信息
+		JSONArray nodeSessions = remoteSceneService.getNodeSessions(sceneIds);
+
+		// 会话信息处理
+		List<LessonMonitorBo> lessonMonitorBos = Lists.newArrayList();
+
+		Map<String, List<Object>> userSessions = StreamApiUtils.groupBy(nodeSessions,
+				nodeSession -> ((JSONObject) nodeSession).getString(JsonKeyConstant.USER_KEY));
+		userSessions.forEach((user, sessions) -> {
+
+			// 用户信息查询与设置
+			UserInfo userInfo = remoteUserService.getById(user);
+			LessonMonitorBo monitorBo = new LessonMonitorBo();
+			monitorBo.setUserId(user);
+			monitorBo.setUserName(userInfo.getUserName());
+
+			// 会话信息设置
+			List<MonitorInfoBo> infoBoList = StreamApiUtils.map(sessions, session -> {
+				JSONObject sessionObj = (JSONObject) session;
+				MonitorInfoBo monitorInfoBo = new MonitorInfoBo();
+				monitorInfoBo.setMonitorSessions(sessionObj);
+				monitorInfoBo.setServer(sessionObj.getString(JsonKeyConstant.NODE_NAME));
+				monitorInfoBo.setUserName(userInfo.getUserName());
+				return monitorInfoBo;
+			});
+
+			monitorBo.setMonitorInfo(infoBoList);
+			lessonMonitorBos.add(monitorBo);
+		});
+
+		return lessonMonitorBos;
 	}
 
 	/**

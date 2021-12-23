@@ -375,7 +375,7 @@ public class FileUtil {
 		List<String> directions = Arrays.stream(files)
 				.filter(file -> !file.getName().startsWith("."))
 				.filter(file -> includeFile ? true : file.isDirectory()).map(File::getAbsolutePath)
-				.collect(Collectors.toList());
+				.sorted().collect(Collectors.toList());
 		return directions;
 	}
 

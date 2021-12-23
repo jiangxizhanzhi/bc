@@ -4,6 +4,8 @@ import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,10 @@ import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -47,6 +53,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String FLOW_START_URL;
 
+	private String NODE_SESSION_URL;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost()
@@ -74,6 +82,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		FLOW_START_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.flow.start");
+
+		NODE_SESSION_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.session");
+
 	}
 
 	@Override
@@ -148,5 +160,16 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		}
 
 		return sceneId;
+	}
+
+	@Override
+	public JSONArray getNodeSessions(List<String> sceneIds) {
+
+		if (CollectionUtils.isEmpty(sceneIds)) {
+			return new JSONArray();
+		}
+
+		String sceneIdStr = String.join(CommonConstant.CODE_COMMA, sceneIds);
+		return HttpClientUtil.rawGet(NODE_SESSION_URL + sceneIdStr, JSONArray.class);
 	}
 }

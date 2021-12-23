@@ -39,9 +39,9 @@ public interface ClassroomService extends IService<Classroom> {
 
 	/**
 	 *  查询课堂分组信息
-	 * @param resourceId
+	 * @param classroomId
 	 * @param authContext
 	 * @return
 	 */
-	List<GroupInfoBo> getGroupInfo(String resourceId, AuthContext authContext);
+	List<GroupInfoBo> getGroupInfo(String classroomId, AuthContext authContext);
 }

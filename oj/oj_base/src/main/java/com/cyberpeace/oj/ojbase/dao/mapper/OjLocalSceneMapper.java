@@ -5,6 +5,8 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
@@ -40,5 +42,14 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 * @param userId
 	 * @return
 	 */
-    Integer selectByUser(@Param("userId") String userId);
+	Integer selectByUser(@Param("userId") String userId);
+
+	/**
+	 * 查询资源启动的场景
+	 * @param businessId
+	 * @param fromWeb
+	 * @return
+	 */
+	List<OjLocalScene> selectByBusiness(@Param("businessId") String businessId,
+			@Param("fromWeb") Boolean fromWeb);
 }

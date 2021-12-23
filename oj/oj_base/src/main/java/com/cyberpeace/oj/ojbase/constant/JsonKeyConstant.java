@@ -36,6 +36,12 @@ public interface JsonKeyConstant {
 	String ELEMENTS = "elements";
 
 	/** 场景数据中初始化命令key 用于获取动态设置*/
-	String INIT_COMMANDS = "";
+	String INIT_COMMANDS = "init_commands";
+
+	/** 会话信息用户编号key*/
+	String USER_KEY = "user";
+
+	/** 节点名称key*/
+	String NODE_NAME = "node_name";
 
 }

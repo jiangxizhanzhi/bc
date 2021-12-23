@@ -5,6 +5,7 @@ import java.util.List;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import org.apache.commons.collections.CollectionUtils;
@@ -32,16 +33,12 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.controller.req.*;
-import com.cyberpeace.oj.course.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
-import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
-import com.cyberpeace.oj.course.service.bo.AdminLessonPracticeBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
@@ -71,9 +68,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private CourseService courseService;
-
-	@Autowired
-	private RemoteTopoService remoteTopoService;
 
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
@@ -388,7 +382,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("后台课时场景暂停与恢复")
 	@PatchMapping("/update_status")
 	public BaseRsp<Boolean>
-	updateSceneStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
+			updateSceneStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
@@ -398,7 +392,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	}
 
 	@ApiOperation("后台课时场景删除")
-	@PostMapping("/delete_scene")
+	@DeleteMapping("/delete_scene")
 	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated LessonSceneReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -427,6 +421,16 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		Boolean result = lessonSceneService.recreateNode(sceneNodeReq.getResourceId(),
 				sceneNodeReq.getNodeId(), authContext);
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("后台课时场景监控")
+	@GetMapping("/lesson_monitor")
+	public BaseRsp<List<LessonMonitorBo>> lessonMonitor(@ApiParam(name = "resource_id",
+			value = "课时编号") @RequestParam("resource_id") String lessonId) {
+
+		List<LessonMonitorBo> monitorBos = lessonSceneService.lessonMonitor(lessonId);
+		return new BaseRsp<>(monitorBos);
+
 	}
 
 }

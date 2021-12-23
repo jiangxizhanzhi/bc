@@ -263,11 +263,11 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				return sceneData;
 			}
 
-			long remain = null != localScene.getPauseTime()
-					? TimeUtil.getIntervalSeconds(localScene.getPauseTime(),
-							localScene.getEndTime())
-					: TimeUtil.getIntervalSeconds(new Date(),
-							localScene.getEndTime());
+			long remain = localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE
+					.getCode().intValue() && null != localScene.getPauseTime()
+							? TimeUtil.getIntervalSeconds(localScene.getPauseTime(),
+									localScene.getEndTime())
+							: TimeUtil.getIntervalSeconds(new Date(), localScene.getEndTime());
 			sceneData.put(JsonKeyConstant.REMAIN_TIME, remain);
 		}
 

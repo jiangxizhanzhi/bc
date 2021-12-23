@@ -69,7 +69,16 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	@Override
-	public List<GroupInfoBo> getGroupInfo(String resourceId, AuthContext authContext) {
+	public List<GroupInfoBo> getGroupInfo(String classroomId, AuthContext authContext) {
+
+		Classroom classroom = classroomMapper.selectById(classroomId);
+		if (null == classroom) {
+			log.error("Classroom not found! classroom_id=[{}]", classroomId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+
+
 		// todo
 		return null;
 	}

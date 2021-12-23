@@ -27,4 +27,10 @@
         select count(id) from oj_local_scene
         where user_id = #{userId}
     </select>
+
+    <select id="selectByBusiness" resultMap="ojScene">
+        select * from oj_local_scene
+        where business_id = #{businessId}
+        and from_web = #{fromWeb}
+    </select>
 </mapper>

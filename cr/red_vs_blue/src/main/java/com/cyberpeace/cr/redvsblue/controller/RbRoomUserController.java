@@ -77,11 +77,6 @@ public class RbRoomUserController {
 		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(resource_id, userId);
 		List<MissionInfoRsp> missionInfoRsps = tasks.stream().map(taskContext -> {
 
-			MissionInfoRsp missionInfoRsp = BeanUtils.copy(taskContext, MissionInfoRsp.class);
-
-			if (!taskContext.getMission().getShowWriteup()) {
-				missionInfoRsp.setWriteUp("");
-			}
 
 			// 获取评估状态
 			List<CrTaskReject> rejectLogs = Lists.newArrayList();
@@ -110,7 +105,16 @@ public class RbRoomUserController {
 				}
 			}
 
+			MissionInfoRsp missionInfoRsp = BeanUtils.copy(taskContext.getMission(),
+					MissionInfoRsp.class);
+
+			if (!taskContext.getMission().getShowWriteup()) {
+				missionInfoRsp.setWriteUp("");
+			}
+
 			missionInfoRsp.setMissionStatus(taskContext.getStatus());
+			missionInfoRsp.setCategory(taskContext.getMission().getCategoryId());
+			missionInfoRsp.setWriteUpShow(taskContext.getMission().getShowWriteup());
 
 			if (CrTask.TaskStatus.RELEASED.getCode().equals(taskContext.getStatus())) {
 				missionInfoRsp.setUserMissionStatus(

@@ -9,6 +9,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.controller.res.SimpleCourseRes;
+import com.cyberpeace.oj.course.service.UtilService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -72,6 +73,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private UtilService utilService;
 
 	// LGD在使用 知识点和技能点绑定课程
 	@GetMapping("/all/list")
@@ -177,6 +181,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		AdminCourseRes adminCourseRes = BeanUtils.copy(course, AdminCourseRes.class);
+		adminCourseRes.setLogo(utilService.handlerFileUrl(course.getLogo()));
 		return new BaseRsp<>(adminCourseRes);
 	}
 

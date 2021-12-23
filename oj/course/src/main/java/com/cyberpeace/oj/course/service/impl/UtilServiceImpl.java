@@ -37,6 +37,6 @@ public class UtilServiceImpl implements UtilService {
 			}
 		}
 
-		return "";
+		return fileUrl;
 	}
 }

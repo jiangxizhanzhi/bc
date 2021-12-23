@@ -60,9 +60,6 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	private SystemConfigService systemConfigService;
 
 	@Autowired
-	private RemoteTopoService remoteTopoService;
-
-	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
@@ -209,8 +206,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				// 计算倒计时
 				if (localScene.getBusinessCode().intValue() != LocalScene.BusinessCode.CLASSROOM
 						.getCode().intValue()) {
-					countDown.put(JsonKeyConstant.REMAIN_TIME, TimeUtil.getIntervalSeconds(
-							localScene.getStartTime(), localScene.getEndTime()));
+					countDown.put(JsonKeyConstant.REMAIN_TIME,
+							TimeUtil.getIntervalSeconds(new Date(), localScene.getEndTime()));
 					startMessage.put(JsonKeyConstant.DATA, countDown);
 				}
 			}
@@ -269,7 +266,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			long remain = null != localScene.getPauseTime()
 					? TimeUtil.getIntervalSeconds(localScene.getPauseTime(),
 							localScene.getEndTime())
-					: TimeUtil.getIntervalSeconds(localScene.getStartTime(),
+					: TimeUtil.getIntervalSeconds(new Date(),
 							localScene.getEndTime());
 			sceneData.put(JsonKeyConstant.REMAIN_TIME, remain);
 		}

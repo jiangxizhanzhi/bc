@@ -137,6 +137,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private ClassroomGroupInfoService classroomGroupInfoService;
 
+	@Autowired
+	private UtilService utilService;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
 
@@ -187,6 +190,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Boolean collection = resourceCollectionService.selectByUnique(authContext.getUserId(),
 				ResourceCollection.BusinessType.LESSON.getCode(), lessonId);
 		infoBo.setIsCollection(collection);
+
+		// 文件地址处理
+		if (lesson.getType().intValue() != CourseLesson.HandoutType.MD.getCode().intValue()) {
+			infoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
+		}
+		infoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
 
 		// 查询课时场景信息
 		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
@@ -258,12 +267,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 知识点数据转换
 		lessonInfoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));
 
-		// topo数据组装
-		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
-				&& StringUtils.isNotBlank(lesson.getTopoId())) {
-			JSONObject topo = remoteTopoService.getTopoById(lesson.getTopoId());
-			lessonInfoBo.setSceneConfig(topo);
-		}
 		return lessonInfoBo;
 	}
 
@@ -634,19 +637,32 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& StringUtils.isNotBlank(courseLesson.getTopoId())) {
 
+			// 拓扑信息查询
+			JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());
+			topoSceneDataRes.setSceneConfigData(topoData);
+
+			// 前台需要先查询课堂场景
+			OjLocalScene ojLocalScene = null;
+			if (authContext.getIsWeb()) {
+				ClassroomGroupInfo groupInfo = classroomGroupInfoService
+						.selectByLessonAndUser(lessonId, authContext);
+				ojLocalScene = null != groupInfo
+						? ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId())
+						: ojLocalSceneService.selectOjLocalScene(lessonId,
+								courseLesson.getSceneShareMode(), authContext);
+			} else {
+				ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
+						courseLesson.getSceneShareMode(), authContext);
+			}
+
+			if (null != ojLocalScene) {
+				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+				topoSceneDataRes.setSceneData(sceneData);
+			}
+
 			// topo数据查询
 			JSONObject topo = remoteTopoService.getTopoById(courseLesson.getTopoId());
 			topoSceneDataRes.setSceneConfigData(topo);
-
-			// 场景数据查询
-			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
-					courseLesson.getResourceId(), courseLesson.getSceneShareMode(), authContext);
-			if (null != ojLocalScene) {
-				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-				JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
-						localScene.getUserId());
-				topoSceneDataRes.setSceneData(sceneData);
-			}
 		}
 
 		return topoSceneDataRes;

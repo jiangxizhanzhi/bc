@@ -436,8 +436,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		RoleStudyBo studyBo = new RoleStudyBo();
 		studyBo.setTotalCourses(processBoList.size());
 
-		List<CourseStudyProcessBo> bos = processBoList.stream()
-				.filter(bo -> bo.getLessonCount().intValue() == bo.getCompleteCount())
+		List<CourseStudyProcessBo> bos = processBoList.stream().filter(
+				bo -> bo.getLessonCount().intValue() != 0 && bo.getCompleteCount().intValue() > 0)
 				.collect(Collectors.toList());
 		studyBo.setFinishedCourses(bos.size());
 

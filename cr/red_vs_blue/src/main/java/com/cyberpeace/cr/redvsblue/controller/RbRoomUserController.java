@@ -15,12 +15,16 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.redvsblue.controller.rsp.CrTaskReject;
 import com.cyberpeace.cr.redvsblue.controller.rsp.MissionInfoRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.context.mission.MissionsStatistic;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
@@ -59,6 +63,7 @@ public class RbRoomUserController {
 
 	/**
 	 * 获取任务方案信息
+	 *
 	 * @return
 	 */
 	@ApiOperation("获取任务方案信息")
@@ -72,12 +77,57 @@ public class RbRoomUserController {
 		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(resource_id, userId);
 		List<MissionInfoRsp> missionInfoRsps = tasks.stream().map(taskContext -> {
 
-					MissionInfoRsp missionInfoRsp = BeanUtils.copy(taskContext,
-							MissionInfoRsp.class);
-					missionInfoRsp.setMissionStatus(taskContext.getStatus());
+			MissionInfoRsp missionInfoRsp = BeanUtils.copy(taskContext, MissionInfoRsp.class);
 
-					return missionInfoRsp;
-				}).collect(Collectors.toList());
+			if (!taskContext.getMission().getShowWriteup()) {
+				missionInfoRsp.setWriteUp("");
+			}
+
+			// 获取评估状态
+			List<CrTaskReject> rejectLogs = Lists.newArrayList();
+
+			List<CrTaskSubmit> taskSubmits = crTaskService
+					.getOrderedSubmitsByTask(taskContext.getResourceId());
+
+			Integer evaluateStatus = taskContext.getStatus();
+			if (taskSubmits == null) {
+				evaluateStatus = CrTaskSubmit.EvaluateStatus.TASK_NOT_SUBMITTED.getCode();
+			}
+			// 已提交过，获取任务驳回记录
+			else {
+
+				for (CrTaskSubmit taskSubmit : taskSubmits) {
+					if (taskSubmit.getEvaluateStatus()
+							.equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
+						CrTaskReject crTaskReject = new CrTaskReject();
+
+						crTaskReject.setRejectTime(taskSubmit.getUpdateTime());
+						crTaskReject.setRejectReason(taskSubmit.getReason());
+						crTaskReject.setReferee(taskSubmit.getEvaluatorId());
+
+						rejectLogs.add(crTaskReject);
+					}
+				}
+			}
+
+			missionInfoRsp.setMissionStatus(taskContext.getStatus());
+
+			if (CrTask.TaskStatus.RELEASED.getCode().equals(taskContext.getStatus())) {
+				missionInfoRsp.setUserMissionStatus(
+						MissionsStatistic.MissionStatisticalState.MISSION_NOT_STARTED.getCode());
+			} else if (taskContext.isFinished()) {
+				missionInfoRsp.setUserMissionStatus(
+						MissionsStatistic.MissionStatisticalState.MISSION_COMPLETED.getCode());
+			} else {
+				missionInfoRsp.setUserMissionStatus(
+						MissionsStatistic.MissionStatisticalState.MISSION_ONGOING.getCode());
+			}
+
+			missionInfoRsp.setEvaluateStatus(evaluateStatus);
+			missionInfoRsp.setRejectLog(rejectLogs);
+
+			return missionInfoRsp;
+		}).collect(Collectors.toList());
 
 		return new BaseRsp(missionInfoRsps);
 	}

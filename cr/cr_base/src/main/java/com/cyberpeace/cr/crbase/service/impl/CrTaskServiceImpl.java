@@ -406,6 +406,11 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return setMission(data);
 	}
 
+	@Override
+	public List<CrTaskSubmit> getOrderedSubmitsByTask(String resourceId) {
+		return crTaskSubmitMapper.selectOrderedSubmitsByTask(resourceId);
+	}
+
 	private IPage<MissionEvaluationContext> setMission(IPage<MissionEvaluationContext> data) {
 		List<String> missionIds = data.getRecords().stream()
 				.map(MissionEvaluationContext::getMissionHash).distinct()

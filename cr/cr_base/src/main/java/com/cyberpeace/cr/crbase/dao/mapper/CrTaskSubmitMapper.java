@@ -26,4 +26,6 @@ public interface CrTaskSubmitMapper extends BaseMapper<CrTaskSubmit> {
 
 	IPage<MissionEvaluationContext> listRbCrTaskSubmit(@Param("page") Page page,
 			@Param("listQuery") MissionEvaluationQuery listQuery);
+
+	List<CrTaskSubmit> selectOrderedSubmitsByTask(String resourceId);
 }

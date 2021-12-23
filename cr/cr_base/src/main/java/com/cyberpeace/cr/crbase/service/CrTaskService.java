@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -220,4 +221,6 @@ public interface CrTaskService {
 
 	IPage<MissionEvaluationContext>
 			getRbMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery);
+
+	List<CrTaskSubmit> getOrderedSubmitsByTask(String resourceId);
 }

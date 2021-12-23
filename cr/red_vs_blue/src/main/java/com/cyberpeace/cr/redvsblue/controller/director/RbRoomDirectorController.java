@@ -188,7 +188,7 @@ public class RbRoomDirectorController {
 				for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
 					List<String> missions = missionStageScheme.getMissions();
 
-					if (index == rbRoomMissionReq.getMissionStage().intValue()) {
+					if (index++ == rbRoomMissionReq.getMissionStage().intValue()) {
 						missions.add(mission.getResourceId());
 						missionStageScheme.setMissions(missions);
 					}

@@ -108,10 +108,22 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<Mission> batchGet(List<String> resourceIds) {
+		List<Mission> ret = Lists.newArrayList();
 		if (resourceIds.size() == 0) {
-			return Lists.newArrayList();
+			return ret;
 		}
-		return missionMapper.batchSelect(resourceIds);
+		// 返回的顺序保持输入的resourceId的顺序
+		List<Mission> missions = missionMapper.batchSelect(resourceIds);
+		Map<String, Mission> map = Maps.newHashMap();
+		for (Mission mission : missions) {
+			map.put(mission.getResourceId(), mission);
+		}
+		for (String resourceId : resourceIds) {
+			if (map.containsKey(resourceId)) {
+				ret.add(map.get(resourceId));
+			}
+		}
+		return ret;
 	}
 
 	@Override

@@ -84,7 +84,7 @@ public class FileUtil {
 
 			String content = "";
 			while ((content = br.readLine()) != null) {
-				builder.append(content);
+				builder.append(content + System.lineSeparator());
 			}
 
 			return builder.toString();

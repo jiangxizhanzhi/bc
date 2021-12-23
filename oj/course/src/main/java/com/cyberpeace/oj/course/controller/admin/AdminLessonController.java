@@ -6,6 +6,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -382,6 +383,18 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		JSONObject scene = lessonSceneService.startScene(lessonSceneReq.getResourceId(),
 				authContext);
 		return new BaseRsp<>(scene);
+	}
+
+	@ApiOperation("后台课时场景暂停与恢复")
+	@PatchMapping("/update_status")
+	public BaseRsp<Boolean>
+	updateSceneStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Boolean result = lessonSceneService.updateSceneStatus(sceneStatusReq.getResourceId(),
+				sceneStatusReq.getStatus(), authContext);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("后台课时场景删除")

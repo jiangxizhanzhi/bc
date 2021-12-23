@@ -15,11 +15,11 @@ public interface LessonSceneService {
 
     /**
      * 课时场景删除
-     * @param resourceId
+     * @param lessonId
      * @param authContext
      * @return
      */
-    Boolean deleteScene(String resourceId, AuthContext authContext);
+    Boolean deleteScene(String lessonId, AuthContext authContext);
 
     /**
      * 课时场景节点重启

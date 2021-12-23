@@ -118,14 +118,14 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	}
 
 	@Override
-	public Boolean deleteScene(String resourceId, AuthContext authContext) {
-		CourseLesson courseLesson = courseLessonMapper.selectById(resourceId);
+	public Boolean deleteScene(String lessonId, AuthContext authContext) {
+		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
-			log.error("deleteScene: Lesson not found! lesson_id=[{}]", resourceId);
+			log.error("deleteScene: Lesson not found! lesson_id=[{}]", lessonId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(resourceId,
+		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 				courseLesson.getSceneShareMode(), authContext);
 		if (null == ojLocalScene) {
 			return true;
@@ -179,7 +179,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
-			log.error("deleteScene: Lesson not found! lesson_id=[{}]", lessonId);
+			log.error("Lesson not found! lesson_id=[{}]", lessonId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -187,7 +187,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 				courseLesson.getSceneShareMode(), authContext);
 		if (null == ojLocalScene) {
 			log.error(
-					"restartNode: ojLocalScene not found! lesson_id=[{}], scene_share_mode=[{}], authContext=[{}]",
+					"ojLocalScene not found! lesson_id=[{}], scene_share_mode=[{}], authContext=[{}]",
 					lessonId, courseLesson.getSceneShareMode(), JsonUtil.toJsonString(authContext));
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}

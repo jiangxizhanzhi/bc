@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.mapper.*;
@@ -64,6 +66,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -675,6 +678,72 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		return topoSceneDataRes;
+	}
+
+	@Override
+	public void uploadHandout(CourseLesson courseLesson, MultipartFile handout) {
+
+		if (null == handout) {
+			return;
+		}
+
+		int periodIndex = handout.getOriginalFilename().lastIndexOf(CommonConstant.PERIOD);
+		if (periodIndex == CommonConstant.NEGATIVE_ONE) {
+			log.error("Handout file type error! file_name=[{}]", handout.getOriginalFilename());
+			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+		}
+		String suffix = handout.getOriginalFilename().substring(periodIndex + CommonConstant.ONE);
+
+		// zip可能为md 或者 html
+		if (suffix.equals(Attachment.FileType.ZIP.getDesc())) {
+
+			// 文件上传至服务器 原始文件地址存储
+			String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
+					courseLesson.getCourseId());
+			AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, handout,
+					true);
+			courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
+
+			// 获取讲义文件存储地址
+			String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
+					courseLesson.getCourseId());
+			String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+
+			// 计算要解压的文件地址
+			String unzipPath = handoutPath + FileUtil.getFileName(realPath, false);
+			ZipUtil.unzipToDest(realPath, unzipPath);
+
+			// 获取解压的讲义文件
+			String mdFilePath = FileUtil.getOneFile(unzipPath, Attachment.FileType.MD.getDesc());
+			courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
+
+			// md文件内容作为url
+			String content = MdUtil.parseMarkdown(mdFilePath);
+			courseLesson.setHandoutUrl(content);
+		}
+
+		// pdf讲义文件上传
+		if (suffix.equals(Attachment.FileType.PDF.getDesc())) {
+			String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
+					courseLesson.getCourseId());
+			AttachmentBo attachmentBo = attachmentService.uploadDest(handoutPath, false, handout,
+					true);
+			courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
+			courseLesson.setHandoutUrl(attachmentBo.getFilePath());
+		}
+	}
+
+	@Override
+	public void uploadVideo(CourseLesson courseLesson, MultipartFile video) {
+
+		if (null == video) {
+			return;
+		}
+
+		String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
+				courseLesson.getCourseId());
+		AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video, true);
+		courseLesson.setVideoUrl(attachmentBo.getFilePath());
 	}
 
 	/**

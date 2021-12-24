@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +57,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	@Autowired
+	private UtilService utilService;
+
 	@ApiOperation("习题集新增")
 	@PostMapping("")
 	public BaseRsp<Integer> add(@RequestBody @Validated(Create.class) PracticeSetAddReq setAddReq) {
@@ -69,6 +73,10 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		practiceSet.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+
+		// 文件路径处理
+		practiceSet.setLogo(utilService.replaceFileUrl(setAddReq.getLogo()));
+
 		int result = practiceSetMapper.insert(practiceSet);
 
 		return new BaseRsp(result);
@@ -82,6 +90,8 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 				CommonConstant.FALSE);
 
 		PracticeSet practiceSet = BeanUtils.copy(updateReq, PracticeSet.class);
+		// 文件路径处理
+		practiceSet.setLogo(utilService.replaceFileUrl(updateReq.getLogo()));
 
 		Boolean result = practiceSetService.updateByAuth(practiceSet, authContext);
 		return new BaseRsp(result);

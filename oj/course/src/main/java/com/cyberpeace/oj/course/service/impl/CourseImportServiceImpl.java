@@ -266,7 +266,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 解析课时视频
 		String videoPath = String.format(AttachmentPath.VIDEO.getDesc(), course.getResourceId());
 		String video = FileUtil
-				.getOneFile(new File(path, ResourceImportConstant.VIDEO).getAbsolutePath());
+				.getOneFile(new File(path, ResourceImportConstant.VIDEO).getAbsolutePath(), null);
 		if (StringUtils.isNotBlank(video)) {
 			String videoUrl = FileUtil.copyFile(video,
 					videoPath + FileUtil.getFileName(video, true), true);

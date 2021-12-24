@@ -14,6 +14,7 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface CourseLessonService extends IService<CourseLesson> {
 
@@ -122,4 +123,18 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @return
 	 */
 	TopoSceneDataBo getTopoScene(String lessonId, AuthContext authContext);
+
+	/**
+	 * 上传课时讲义 如果为makdown则解析 数据绑定课时
+	 * @param courseLesson
+	 * @param handout
+	 */
+	void uploadHandout(CourseLesson courseLesson, MultipartFile handout);
+
+	/**
+	 * 上传视频文件
+	 * @param courseLesson
+	 * @param video
+	 */
+	void uploadVideo(CourseLesson courseLesson, MultipartFile video);
 }

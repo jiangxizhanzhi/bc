@@ -63,7 +63,7 @@ public class FileUtil {
 		}
 
 		// 无后缀名称直接返回文件名
-		if (file.getName().indexOf(CommonConstant.PERIOD) != -1) {
+		if (file.getName().lastIndexOf(CommonConstant.PERIOD) == -1) {
 			return file.getName();
 		}
 
@@ -383,16 +383,31 @@ public class FileUtil {
 	/**
 	 * 获取文件夹下的一个文件
 	 * @param path
+	 * @param fileSuffix
 	 * @return
 	 */
-	public static String getOneFile(String path) {
+	public static String getOneFile(String path, String fileSuffix) {
 		File file = new File(path);
 		if (file.isFile()) {
 			return "";
 		}
 
-		List<String> dirs = listDirs(file.getAbsolutePath(), true);
-		return CollectionUtils.isNotEmpty(dirs) ? dirs.get(CommonConstant.ZERO) : "";
+		List<String> files = listDirs(file.getAbsolutePath(), true);
+		for (String dir : files) {
+			File underFile = new File(dir);
+
+			if (underFile.isFile() && StringUtils.isBlank(fileSuffix)) {
+				// 无后缀直接返回文件地址
+				return dir;
+			}
+
+			if (underFile.isFile() && StringUtils.isNotBlank(fileSuffix)
+					&& underFile.getName().endsWith(fileSuffix)) {
+				// 有后缀则进行过滤
+				return dir;
+			}
+		}
+		return "";
 	}
 
 	/**

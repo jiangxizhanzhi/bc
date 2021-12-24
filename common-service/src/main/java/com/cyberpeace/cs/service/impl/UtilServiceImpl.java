@@ -48,15 +48,15 @@ public class UtilServiceImpl implements UtilService {
 
 		if (StringUtils.isNotBlank(fileUrl)) {
 			if (fileUrl.startsWith(LOCAL_PARENT_PATH)) {
-				return fileUrl.replace(fileUrl, LOCAL_PARENT_PATH);
+				return fileUrl.replace(LOCAL_PARENT_PATH + File.separator, "");
 			}
 
 			if (fileUrl.startsWith(LOCAL_PREFIX)) {
-				return fileUrl.replace(fileUrl, LOCAL_PREFIX);
+				return fileUrl.replace(LOCAL_PREFIX, "");
 			}
 
 			if (fileUrl.startsWith(FDFS_PREFIX)) {
-				return fileUrl.replace(fileUrl, FDFS_PREFIX);
+				return fileUrl.replace(FDFS_PREFIX, "");
 			}
 		}
 
@@ -80,8 +80,11 @@ public class UtilServiceImpl implements UtilService {
 			}
 
 			if (fileUrl.startsWith(LOCAL_PREFIX)) {
-				fileUrl.replace(LOCAL_PREFIX, LOCAL_PARENT_PATH + File.separator);
+				return fileUrl.replace(LOCAL_PREFIX, LOCAL_PARENT_PATH + File.separator);
 			}
+
+			return LOCAL_PARENT_PATH + File.separator + fileUrl;
+
 		}
 
 		return fileUrl;

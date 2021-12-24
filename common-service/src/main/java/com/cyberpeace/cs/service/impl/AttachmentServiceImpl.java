@@ -45,8 +45,11 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 
 			List<Attachment> attachments = attachmentMapper
 					.selectBatchIds(Lists.newArrayList(attachmentArr), isWeb);
-			List<AttachmentBo> attachmentBos = StreamApiUtils.map(attachments,
-					attachment -> BeanUtils.copy(attachment, AttachmentBo.class));
+			List<AttachmentBo> attachmentBos = StreamApiUtils.map(attachments, attachment -> {
+				AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
+				attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
+				return attachmentBo;
+			});
 			return attachmentBos;
 		}
 		return Lists.newArrayList();
@@ -67,7 +70,9 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 				.fileName(filename).filePath(filePath).isPublic(CommonConstant.TRUE).build();
 		int insert = attachmentMapper.insert(attachment);
 		if (insert > 0) {
-			return BeanUtils.copy(attachment, AttachmentBo.class);
+			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
+			attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
+			return attachmentBo;
 		}
 		return null;
 	}
@@ -269,7 +274,9 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 				.filePath(filePath).isPublic(CommonConstant.TRUE).build();
 		int insert = attachmentMapper.insert(attachment);
 		if (insert > 0) {
-			return BeanUtils.copy(attachment, AttachmentBo.class);
+			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
+			attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
+			return attachmentBo;
 		}
 		return null;
 	}

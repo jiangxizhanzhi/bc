@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.admin;
 import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.course.service.bo.*;
@@ -77,6 +78,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private LessonSceneService lessonSceneService;
+
+	@Autowired
+	private UtilService utilService;
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
@@ -176,23 +180,18 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		// 有文件路径 并且文件不为空 则修改文件
 		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())
 				&& null != lessonUpdateReq.getVideo()) {
+			courseLessonService.uploadVideo(courseLesson, lessonUpdateReq.getVideo());
 
-			String destPath = String.format(AttachmentPath.VIDEO.getDesc(),
-					lessonUpdateReq.getResourceId());
-			AttachmentBo uploadFile = attachmentService.uploadDest(destPath, false,
-					lessonUpdateReq.getVideo(), false);
-			courseLesson.setVideoUrl(uploadFile.getFilePath());
-
-			// 文件为空 url为空则置空
 		} else if (null == lessonUpdateReq.getVideo()
 				&& StringUtils.isBlank(lessonUpdateReq.getVideoUrl())) {
+			// 文件为空 url为空则置空
 			courseLesson.setVideoUrl("");
 		}
 
 		// 有讲义地址并且讲义不为空 则修改文件
 		if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
 				&& null != lessonUpdateReq.getHandout()) {
-			uploadHandout(courseLesson, lessonUpdateReq.getHandout());
+			courseLessonService.uploadHandout(courseLesson, lessonUpdateReq.getHandout());
 
 			// 讲义为空 并且讲义地址为空 则置空
 		} else if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
@@ -272,12 +271,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(topoSceneData);
 	}
 
-	@ApiOperation("课时监控")
-	public BaseRsp getLessonMonitor() {
-		// TODO
-		return null;
-	}
-
 	@ApiOperation("课时练习公开与隐藏")
 	@PatchMapping("/practice/batch_public")
 	public BaseRsp<Boolean>
@@ -306,63 +299,11 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
 		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		if (lessonAddReq.getVideo() != null) {
-			String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
-					lessonAddReq.getCourseId());
-			AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false,
-					lessonAddReq.getVideo(), true);
-			courseLesson.setVideoUrl(attachmentBo.getFilePath());
-		}
 
-		if (lessonAddReq.getHandout() != null) {
-			uploadHandout(courseLesson, lessonAddReq.getHandout());
-		}
+		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());
+		courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());
 
 		return courseLesson;
-	}
-
-	/**
-	 * 附件上传
-	 * @param courseLesson
-	 * @param handout
-	 */
-	private void uploadHandout(CourseLesson courseLesson, MultipartFile handout) {
-
-		String suffix = handout.getOriginalFilename()
-				.substring(handout.getOriginalFilename().lastIndexOf(".") + 1);
-
-		// zip可能为md 或者 html
-		if (suffix.equals(Attachment.FileType.ZIP.getDesc())) {
-			String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
-					courseLesson.getCourseId());
-			AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, handout,
-					true);
-			courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
-
-			// 解析markdown文件
-			String handoutPath = EnumUtils.getEnumDescByCode(AttachmentPath.HANDOUT.getCode(),
-					AttachmentPath.class);
-			String unzipPath = String.format(handoutPath, courseLesson.getCourseId())
-					+ FileUtil.getFileName(attachmentBo.getFilePath(), false);
-			List<String> pathList = attachmentService.unzipFile(attachmentBo.getFilePath(),
-					unzipPath, Attachment.FileType.MD.getDesc());
-			courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
-
-			// md文件内容作为url
-			String content = MdUtil.parseMarkdown(pathList.get(CommonConstant.ZERO));
-			courseLesson.setHandoutUrl(content);
-		}
-
-		// pdf讲义文件上传
-		if (suffix.equals(Attachment.FileType.PDF.getDesc())) {
-			String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
-					courseLesson.getCourseId());
-			AttachmentBo attachmentBo = attachmentService.uploadDest(handoutPath, false, handout,
-					true);
-			courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
-			courseLesson.setHandoutUrl(attachmentBo.getFilePath());
-		}
-
 	}
 
 	@ApiOperation("课时新增附件上传")

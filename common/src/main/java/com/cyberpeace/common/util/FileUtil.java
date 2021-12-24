@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.CommonConstant;
@@ -404,6 +405,36 @@ public class FileUtil {
 		String filePath = dest.substring(0, dest.lastIndexOf("."));
 
 		return filePath + IDGeneratorUtil.getID() + suffix;
+	}
+
+	/**
+	 * 校验文件后缀名
+	 * @param destFilePath 目标文件地址 文件名称和绝对路径均可以
+	 * @param fileTypeStr 文件后缀字符串 可参考FileTypeContant传入数据
+	 * @return
+	 */
+	public static void validateFileSuffix(String destFilePath, String fileTypeStr) {
+
+		// 文件类型为空 不校验
+		if (StringUtils.isBlank(fileTypeStr)) {
+			return;
+		}
+
+		int periodIndex = destFilePath.lastIndexOf(CommonConstant.PERIOD);
+		// 无文件后缀名 不做校验
+		if (periodIndex == -1) {
+			return;
+		}
+
+		String suffixStr = destFilePath.substring(periodIndex + 1).toUpperCase();
+		List<String> typeList = Arrays.asList(fileTypeStr.split(CommonConstant.CODE_COMMA));
+
+		if (!typeList.contains(suffixStr)) {
+			log.error("File type error! file_path=[{}], suffix=[{}], file_type_str=[{}]",
+					destFilePath, suffixStr, fileTypeStr);
+			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+		}
+
 	}
 
 }

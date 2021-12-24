@@ -2,12 +2,11 @@ package com.cyberpeace.cs.service.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
+import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +35,9 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	@Autowired
 	private AttachmentMapper attachmentMapper;
 
+	@Autowired
+	private UtilService utilService;
+
 	@Override
 	public List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb) {
 		if (StringUtils.isNotBlank(attachmentIds)) {
@@ -57,27 +59,6 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 		// 不根据isPublic做筛选
 		return attachmentMapper.selectBatchIds(attachmentIds, false);
-	}
-
-	@Override
-	public Integer deleteDifferenceSet(String oldAttachmentIds, String attachmentIds) {
-		if (StringUtils.isBlank(oldAttachmentIds)) {
-			return CommonConstant.ZERO;
-		}
-		List<Serializable> oldIdList = Arrays.asList(StringUtils.split(oldAttachmentIds),
-				CommonConstant.CODE_COMMA);
-
-		if (StringUtils.isNotBlank(attachmentIds)) {
-			List<String> newIds = Arrays
-					.asList(StringUtils.split(attachmentIds, CommonConstant.CODE_COMMA));
-			oldIdList.removeAll(newIds);
-		}
-
-		if (CollectionUtils.isNotEmpty(oldIdList)) {
-			int row = attachmentMapper.deleteBatchIds(oldIdList);
-			return row;
-		}
-		return CommonConstant.ZERO;
 	}
 
 	@Override
@@ -136,74 +117,41 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	}
 
 	@Override
-	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file) {
-
-		String filePath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
-		if (StringUtils.isBlank(filePath)) {
-			throw new InvalidParamException("不支持此类型文件上传！");
-		}
-
-		return uploadFile(filePath, file, insert);
-	}
-
-	@Override
 	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
 			Boolean renameFile) {
 		return uploadFile(file, type, insert, renameFile);
 	}
 
 	@Override
-	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
-			String resourceId) {
+	public AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file,
+			boolean renameFile) {
 
-		String filePath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
-
-		if (StringUtils.isBlank(filePath)) {
-			throw new InvalidParamException("不支持此类型文件上传！");
-		}
-
-		String finalPath = String.format(filePath, resourceId);
-		return uploadFile(finalPath, file, insert);
-	}
-
-	/**
-	 * 文件上传操作
-	 * @param filePath 要上传的文件目录
-	 * @param file 上传的文件
-	 * @param insert 
-	 * @return
-	 */
-	private AttachmentBo uploadFile(String filePath, MultipartFile file, Boolean insert) {
-
-		if (file.isEmpty()) {
-			throw new InvalidParamException("请选择文件上传！");
-		}
-
-		File uploadFile = new File(filePath + file.getOriginalFilename());
-
-		if (uploadFile.exists()) {
-			uploadFile = new File(filePath + reFileName(file.getOriginalFilename()));
-		}
-
-		if (!uploadFile.getParentFile().exists()) {
-			uploadFile.getParentFile().mkdirs();
+		FileUtil.mkdirs(destDir);
+		String destFileName = destDir + file.getOriginalFilename();
+		File destFile = new File(destFileName);
+		if (destFile.exists() && renameFile) {
+			destFileName = reFileName(destFileName);
 		}
 
 		try {
-			file.transferTo(uploadFile);
-		} catch (IOException e) {
-			log.error("Upload file error, upload_file_path=[{}]. catch error:",
-					uploadFile.getAbsolutePath(), e);
-			throw new InvalidParamException("文件上传失败！");
+			file.transferTo(new File(destFileName));
+		} catch (Exception e) {
+			log.error("file upload failed! dest_file_name=[{}], origin_file_name=[{}]",
+					destFileName, file.getOriginalFilename(), e);
+			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 
-		if (null != insert && insert) {
-			AttachmentBo attachmentBo = create(uploadFile.getName(), uploadFile.getAbsolutePath());
-			return attachmentBo;
+		String viewUrl = utilService.replaceFileUrl(destFileName);
+		Attachment attachment = Attachment.builder().fileName(new File(destFileName).getName())
+				.filePath(viewUrl).isPublic(true).build();
+
+		// 插入数据库
+		if (insert) {
+			attachment.setResourceId(IDGeneratorUtil.getID());
+			return BeanUtils.copy(attachment, AttachmentBo.class);
 		}
 
-		return AttachmentBo.builder().filePath(uploadFile.getAbsolutePath())
-				.fileName(uploadFile.getName()).build();
+		return BeanUtils.copy(attachment, AttachmentBo.class);
 	}
 
 	/**
@@ -302,10 +250,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		// 返回给前端对展示名称
-		String displayName = ConfigUtil.getContextProperty("cr.local.file.prefix") + storeInDbName;
-		return AttachmentBo.builder().filePath(displayName).fileName(fileName).build();
+		return AttachmentBo.builder().filePath(storeInDbName).fileName(fileName).build();
 	}
-
 
 	/**
 	 * 如果重命名上传的文件，将文件名和id设置为同一个uuid

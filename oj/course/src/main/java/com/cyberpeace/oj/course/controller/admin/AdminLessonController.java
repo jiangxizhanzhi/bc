@@ -177,8 +177,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())
 				&& null != lessonUpdateReq.getVideo()) {
 
-			AttachmentBo uploadFile = attachmentService.uploadFile(AttachmentPath.VIDEO.getCode(),
-					false, lessonUpdateReq.getVideo(), lessonUpdateReq.getCourseId());
+			String destPath = String.format(AttachmentPath.VIDEO.getDesc(),
+					lessonUpdateReq.getResourceId());
+			AttachmentBo uploadFile = attachmentService.uploadDest(destPath, false,
+					lessonUpdateReq.getVideo(), false);
 			courseLesson.setVideoUrl(uploadFile.getFilePath());
 
 			// 文件为空 url为空则置空
@@ -305,8 +307,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		if (lessonAddReq.getVideo() != null) {
-			AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.VIDEO.getCode(),
-					false, lessonAddReq.getVideo(), lessonAddReq.getCourseId());
+			String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
+					lessonAddReq.getCourseId());
+			AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false,
+					lessonAddReq.getVideo(), true);
 			courseLesson.setVideoUrl(attachmentBo.getFilePath());
 		}
 
@@ -329,8 +333,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		// zip可能为md 或者 html
 		if (suffix.equals(Attachment.FileType.ZIP.getDesc())) {
-			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					AttachmentPath.MARKDOWN.getCode(), false, handout, courseLesson.getCourseId());
+			String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
+					courseLesson.getCourseId());
+			AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, handout,
+					true);
 			courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
 
 			// 解析markdown文件
@@ -349,8 +355,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		// pdf讲义文件上传
 		if (suffix.equals(Attachment.FileType.PDF.getDesc())) {
-			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					AttachmentPath.HANDOUT.getCode(), false, handout, courseLesson.getCourseId());
+			String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
+					courseLesson.getCourseId());
+			AttachmentBo attachmentBo = attachmentService.uploadDest(handoutPath, false, handout,
+					true);
 			courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
 			courseLesson.setHandoutUrl(attachmentBo.getFilePath());
 		}
@@ -362,10 +370,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	public BaseRsp<String>
 			uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
 
-		AttachmentBo attachmentBo = attachmentService.uploadFile(
-				AttachmentPath.ATTACHMENT.getCode(), CommonConstant.TRUE, multipartFile);
+		AttachmentBo attachmentBo = attachmentService
+				.uploadDest(AttachmentPath.ATTACHMENT.getDesc(), true, multipartFile, true);
 		return new BaseRsp<>(attachmentBo.getResourceId());
-
 	}
 
 	@ApiOperation("后台课时场景启动")

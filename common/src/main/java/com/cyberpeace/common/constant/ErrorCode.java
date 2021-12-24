@@ -32,4 +32,7 @@ public interface ErrorCode {
 
 	/** 文件压缩失败*/
 	String FILE_ZIP_FAIL = "100013";
+
+	/** 文件类型不正确*/
+	String FILE_TYPE_ERROR = "10014";
 }

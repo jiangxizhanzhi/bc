@@ -45,6 +45,7 @@ public interface BusinessErrorMsg {
 
 			put(ErrorCode.DUPLICATE_KEY, "已存在");
 			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "远程服务异常");
+			put(ErrorCode.FILE_TYPE_ERROR, "文件类型错误");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE, "工具分类有关联的工具，不能删除");
 
@@ -88,9 +89,11 @@ public interface BusinessErrorMsg {
 
 			put(ErrorCode.DUPLICATE_KEY, " already exist");
 			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "remote service error");
+			put(ErrorCode.FILE_TYPE_ERROR, "file type error");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE,
 					"unable to delete category, category in use");
+
 		}
 	};
 

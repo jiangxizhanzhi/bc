@@ -22,7 +22,7 @@ public enum AttachmentPath implements GenericEnum {
 	PRACTICE_KEY(6, "oj/lesson_practice_key/"),
 	/** 笔记附件存放地址*/
 	NOTE(7, "oj/note/"),
-	/** 实验报告存放地址*/
+	/** 实验报告文件存放地址*/
 	REPORT(8, "oj/report/"),
 	/** 资源logo存放地址*/
 	LOGO(9, "logo/"),

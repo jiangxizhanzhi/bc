@@ -79,7 +79,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		PracticeOperation addOperation = convertReq(addReq);
 		if (null != addReq.getFile()) {
 			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), false, addReq.getFile());
+					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, addReq.getFile(), true);
 			addOperation.setAttachmentId(attachmentBo.getResourceId());
 		}
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
@@ -110,7 +110,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		if (null != updateReq.getFile()) {
 			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), false, updateReq.getFile());
+					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, updateReq.getFile(), true);
 			updateOperation.setAttachmentId(attachmentBo.getResourceId());
 		}
 		Integer result = practiceOperationService.updateOperation(updateOperation,

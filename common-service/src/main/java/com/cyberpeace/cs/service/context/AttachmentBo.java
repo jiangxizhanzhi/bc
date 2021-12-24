@@ -30,8 +30,4 @@ public class AttachmentBo implements Serializable {
 	@ApiModelProperty("附件公开与隐藏状态 true=公开 false=隐藏")
 	private Boolean isPublic;
 
-	public String getFilePath() {
-		return ConfigUtil.getContextProperty("cr.local.file.prefix") + filePath;
-	}
-
 }

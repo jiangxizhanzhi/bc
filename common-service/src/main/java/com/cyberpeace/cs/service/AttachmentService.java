@@ -26,12 +26,6 @@ public interface AttachmentService extends IService<Attachment> {
 	List<Attachment> batchGetByIds(List<String> attachmentIds);
 
 	/**
-	 * 删除修改后
-	 * @return
-	 */
-	Integer deleteDifferenceSet(String oldAttachmentIds, String attachmentIds);
-
-	/**
 	 *
 	 * @param filename
 	 * @param filePath
@@ -39,16 +33,25 @@ public interface AttachmentService extends IService<Attachment> {
 	 */
 	AttachmentBo create(String filename, String filePath);
 
-	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file, Boolean renameFile);
-
 	/**
-	 * 文件上传并入附件库
+	 * 根据类型上传到对应的文件夹
 	 * @param type
 	 * @param insert
 	 * @param file
+	 * @param renameFile
 	 * @return
 	 */
-	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file);
+	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file, Boolean renameFile);
+
+	/**
+	 * 文件上传到目的文件夹
+	 * @param destDir 目的文件夹
+	 * @param insert 是否插入数据库
+	 * @param file 上传的源文件
+	 * @param renameFile 是否重命名 true=文件已存在则重命名 false=覆盖
+	 * @return
+	 */
+	AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file, boolean renameFile);
 
 	/**
 	 * 从临时目录将文件拷贝到实际存储目录
@@ -59,16 +62,6 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @return
 	 */
 	AttachmentBo copyFile(String originPath, Integer type, Boolean insert, Boolean renameFile);
-
-	/**
-	 * 
-	 * @param type 类型 用于获取存放地址
-	 * @param insert 文件信息是否入库
-	 * @param file 文件
-	 * @param resourceId 资源编号 用于文件资源隔离 不需要隔离请使用重载方法
-	 * @return
-	 */
-	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file, String resourceId);
 
 	/**
 	 *

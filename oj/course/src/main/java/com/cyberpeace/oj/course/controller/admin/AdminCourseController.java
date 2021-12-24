@@ -9,7 +9,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.controller.res.SimpleCourseRes;
-import com.cyberpeace.oj.course.service.UtilService;
+import com.cyberpeace.cs.service.UtilService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -42,7 +42,6 @@ import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -198,7 +197,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	public BaseRsp<AttachmentBo>
 			upload_attachment(@RequestParam("file") MultipartFile outlineFile) {
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OUTLINE.getCode(),
-				false, outlineFile);
+				false, outlineFile, true);
+
+		// 文件路径处理
+		String viewUrl = utilService.handlerFileUrl(attachmentBo.getFilePath());
+		attachmentBo.setFilePath(viewUrl);
+
 		return new BaseRsp<>(attachmentBo);
 	}
 

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.ojbase.controller.req.NoteAttachmentReq;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
@@ -46,6 +47,9 @@ public class WebNoteController {
 
 	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
+
+	@Autowired
+	private UtilService utilService;
 
 	@ApiOperation("笔记、实验报告新增")
 	@PostMapping("")
@@ -125,8 +129,12 @@ public class WebNoteController {
 			type = AttachmentPath.REPORT.getCode();
 		}
 
-		AttachmentBo uploadFile = attachmentService.uploadFile(type, false,
-				attachmentReq.getFile());
+		AttachmentBo uploadFile = attachmentService.uploadFile(type, false, attachmentReq.getFile(),
+				true);
+
+		// 文件路径处理
+		String viewPath = utilService.handlerFileUrl(uploadFile.getFilePath());
+		uploadFile.setFilePath(viewPath);
 		return new BaseRsp(uploadFile);
 	}
 

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.ojbase.controller.admin;
 
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +33,17 @@ public class AdminAttachmentController {
 	@Autowired
 	private AttachmentService attachmentService;
 
+	@Autowired
+	private UtilService utilService;
+
 	@ApiOperation("logo文件上传")
 	@PostMapping("/image_upload")
 	public BaseRsp<LogoUploadRes> uploadAttachment(@RequestParam("file") MultipartFile file) {
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.LOGO.getCode(),
-				CommonConstant.FALSE, file);
-		return new BaseRsp<>(new LogoUploadRes(attachmentBo.getFilePath()));
+				CommonConstant.FALSE, file, true);
+
+		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
+		return new BaseRsp<>(new LogoUploadRes(viewPath));
 	}
 
 	@ApiOperation("附件公开与隐藏")

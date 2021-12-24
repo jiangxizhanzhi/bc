@@ -14,4 +14,8 @@ public class PlaneCoordinate implements Serializable {
     @ApiModelProperty("y坐标")
     private Float y;
 
+    public PlaneCoordinate(Float x, Float y) {
+        this.x = x;
+        this.y = y;
+    }
 }

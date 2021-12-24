@@ -1,11 +1,13 @@
 package com.cyberpeace.situation.model;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+@Data
 public class SituationTopo implements Serializable {
 
     @ApiModelProperty("场景信息")

@@ -9,7 +9,7 @@ public class DashboardInfo {
 
 	private DashboardUser mine;
 
-	private DashboardFriend friend;
+	private List<DashboardFriend> friend;
 
 	private List<DashboardGroup> group;
 }

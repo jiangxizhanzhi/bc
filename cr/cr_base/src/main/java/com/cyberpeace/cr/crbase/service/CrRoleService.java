@@ -49,7 +49,7 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 
-	/** 获取学员在团队训练的角色任务列表
+	/** 获取学员在训练的角色任务列表
 	 * @param roomId
 	 * @param userId
 	 * @return

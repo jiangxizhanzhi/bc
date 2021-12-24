@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
@@ -45,7 +46,7 @@ public interface RbRoomService extends IService<RbRoom> {
 
 	RbRoomData getRbRoomDataByRoomId(String resourceId);
 
-	DashboardInfo getDashboardInfo(String resourceId);
+	DashboardInfo getDashboardInfo(CrRole crRole, String resourceId, String userId);
 
 	void updateRbRoom(RbRoomContext rbRoomContext, RbRoom rbRoom);
 
@@ -60,4 +61,6 @@ public interface RbRoomService extends IService<RbRoom> {
 	List<UserRole> getUserList(String roomId);
 
 	TimeLineData getMissionTimeline(String roomId);
+
+	CrRole checkRoomPermission(String roomId, String userId);
 }

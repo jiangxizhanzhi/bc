@@ -233,9 +233,12 @@ public class RbRoomController {
 	@GetMapping("/dashboard_info")
 	public BaseRsp<DashboardInfo> getDashboardInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-		DashboardInfo data = rbRoomService.getDashboardInfo(resource_id);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
 
-		return new BaseRsp<>(data);
+		DashboardInfo data = rbRoomService.getDashboardInfo(crRole, resource_id, userId);
+
+		return new BaseRsp(data);
 	}
 
 	@ApiOperation("修改")

@@ -50,7 +50,10 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.*;
 import com.cyberpeace.cr.redvsblue.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.redvsblue.service.context.room.DashboardFriend;
+import com.cyberpeace.cr.redvsblue.service.context.room.DashboardGroup;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
+import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -188,9 +191,112 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
-	public DashboardInfo getDashboardInfo(String resourceId) {
+	public DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId) {
 		// todo
-		return null;
+
+		DashboardInfo dashboardInfo = new DashboardInfo();
+
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(roomId);
+
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+		List<String> userIds = Lists.newArrayList();
+
+		DashboardUser mine = new DashboardUser();
+		List<DashboardUser> friend = Lists.newArrayList();
+
+		List<String> redMembers = Lists.newArrayList();
+		List<String> blueMembers = Lists.newArrayList();
+
+		for (CrRole crRole : crRoles) {
+			// 如果是红方或蓝方角色
+			if (CrRole.RB_STUDENT_ROLE_GROUPS.contains(myRole.getRoleGroup())) {
+				// 如果自己也是红蓝角色，并且不是己方角色，直接跳过
+				if (!crRole.getRoleGroup().equals(myRole.getRoleGroup())
+						&& CrRole.RB_STUDENT_ROLE_GROUPS.contains(myRole.getRoleGroup())) {
+					continue;
+				}
+			}
+
+			// 获取所有用户
+			List<String> roleUserIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(),
+					String.class);
+			userIds.addAll(roleUserIds);
+			if (!CrRole.RbRoleGroupCode.BLUE.getCode().equals(crRole.getRoleGroup())) {
+				redMembers.addAll(roleUserIds);
+			}
+			if (!CrRole.RbRoleGroupCode.RED.getCode().equals(crRole.getRoleGroup())) {
+				blueMembers.addAll(roleUserIds);
+			}
+
+			for (String userId : roleUserIds) {
+				DashboardUser dashboardUser = new DashboardUser();
+				dashboardUser.setId(userId);
+				dashboardUser.setStatus("online");
+				dashboardUser.setSign("");
+				dashboardUser.setUsername(getFullRoleName(crRole));
+
+				// 找到当前用户角色
+				if (userId.equals(currentUserId)) {
+					crRole.getRoomId();
+					mine = dashboardUser;
+				} else {
+
+					friend.add(dashboardUser);
+				}
+			}
+
+		}
+
+		List<DashboardGroup> groups = Lists.newArrayList();
+
+		DashboardGroup redGroup = new DashboardGroup(CrRole.RbRoleGroupCode.RED.getDesc());
+		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroupCode.BLUE.getDesc());
+		redGroup.setMembers(redMembers);
+		blueGroup.setMembers(blueMembers);
+		groups.add(redGroup);
+		groups.add(blueGroup);
+
+		// 获取全部用户
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
+		Map<String, UserInfo> userInfoMap = userInfoList.stream()
+				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
+
+		mine.setUsername(userInfoMap.get(mine.getId()).getUserName());
+		mine.setRole(userInfoMap.get(mine.getId()).getUserName());
+		mine.setAvatar(userInfoMap.get(mine.getId()).getAvatarUrl());
+
+		for (DashboardUser dashboardUser : friend) {
+			UserInfo userInfo = userInfoMap.getOrDefault(dashboardUser.getId(), new UserInfo());
+			dashboardUser.setRole(userInfo.getUserName());
+			dashboardUser.setAvatar(userInfo.getAvatarUrl());
+			dashboardUser.setUsername(userInfo.getUserName() + "/" + dashboardUser.getUsername());
+
+		}
+
+		DashboardFriend dashboardFriend = new DashboardFriend();
+		dashboardFriend.setId(1);
+		dashboardFriend.setGroupname(DashboardFriend.GROUP_NAME.FRIEND_LIST.getDesc());
+		dashboardFriend.setList(friend);
+
+		dashboardInfo.setMine(mine);
+		dashboardInfo.setFriend(Lists.newArrayList(dashboardFriend));
+		dashboardInfo.setGroup(groups);
+
+		return dashboardInfo;
+	}
+
+	private String getFullRoleName(CrRole crRole) {
+		String roleName = crRole.getName();
+
+		if (CrRole.RbRoleGroupCode.BLUE.getCode().equals(crRole.getRoleGroup())) {
+			roleName = CrRole.RbRoleGroupCode.BLUE.getDesc() + "/" + roleName;
+		}
+		if (CrRole.RbRoleGroupCode.RED.getCode().equals(crRole.getRoleGroup())) {
+			roleName = CrRole.RbRoleGroupCode.RED.getDesc() + "/" + roleName;
+		}
+
+		return roleName;
 	}
 
 	@Override
@@ -337,8 +443,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 
 		for (UserRole userRole : userRoleList) {
-			userRole.setName(userInfoMap.get(userRole.getResourceId()).getName());
-			userRole.setLogo(userInfoMap.get(userRole.getResourceId()).getAvatarUrl());
+			if (userInfoMap.containsKey(userRole.getResourceId())) {
+				userRole.setName(userInfoMap.get(userRole.getResourceId()).getName());
+				userRole.setLogo(userInfoMap.get(userRole.getResourceId()).getAvatarUrl());
+			}
 		}
 
 		return userRoleList;
@@ -402,6 +510,23 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		timeLineData.setData(timeLineEventList);
 
 		return timeLineData;
+	}
+
+	@Override
+	public CrRole checkRoomPermission(String roomId, String userId) {
+		RbRoom rbRoom = getById(roomId);
+		if (rbRoom == null) {
+			log.error("failed to get RbRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		if (crRole == null) {
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", roomId,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+		return crRole;
 	}
 
 	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData, String roomId) {

@@ -219,6 +219,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public String renameTopo(String topoId, String name) {
+		JSONObject body = new JSONObject();
+		body.put("id", topoId);
+		body.put("name", name);
+		return remoteTopoService.save(body);
+	}
+
+	@Override
 	public Integer getNodeCount(LocalScene localScene) {
 		if (null != localScene.getNodeCount()) {
 			return localScene.getNodeCount();

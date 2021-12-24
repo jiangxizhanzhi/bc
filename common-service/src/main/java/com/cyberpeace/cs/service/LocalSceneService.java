@@ -33,6 +33,11 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	String saveTopo(JSONObject topoData, String topoId);
 
+	/**
+	 * 重命名中台场景模板
+	 */
+	String renameTopo(String topoId, String name);
+
 	Integer getNodeCount(LocalScene localScene);
 
 	Integer getNodeCount(String localSceneId);

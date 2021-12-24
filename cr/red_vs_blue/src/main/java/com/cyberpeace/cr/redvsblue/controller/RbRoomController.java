@@ -288,33 +288,35 @@ public class RbRoomController {
 
 		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(resource_id);
 
-		RbTimeManagementRsp rbTimeManagementRsp = new RbTimeManagementRsp();
-		if (rbTimeManagement != null) {
-			BeanUtils.copy(rbTimeManagement, RbTimeManagementRsp.class);
-
-			// 计算当前天文时间
-			long time = rbTimeManagement.getAstronomicalTime().getTime()
-					+ System.currentTimeMillis() - rbTimeManagement.getCreateTime().getTime();
-			Date currentAstronomicalTime = new Date(time);
-
-			rbTimeManagementRsp.setCurrentAstronomicalTime(currentAstronomicalTime);
-			rbTimeManagementRsp.setCreateUser(rbTimeManagement.getCreateUserId());
-			rbTimeManagementRsp.setModifyTime(rbTimeManagement.getUpdateTime());
-			rbTimeManagementRsp.setModifyUser(rbTimeManagement.getUpdateUserId());
-			rbTimeManagementRsp.setRedVsBlue(rbTimeManagement.getRoomId());
-
-			// 计算当前作战时间
-			if (rbTimeManagement.isStopped() || rbTimeManagement.isPaused()) {
-				rbTimeManagementRsp.setCurrentCombatTime(rbTimeManagement.getCombatTime());
-			} else {
-				time = rbTimeManagement.getCombatTime().getTime()
-						+ (System.currentTimeMillis() - rbTimeManagement.getUpdateTime().getTime())
-								* rbTimeManagement.getRate();
-				Date currentCombatTime = new Date(time);
-				rbTimeManagementRsp.setCurrentCombatTime(currentCombatTime);
-			}
-
+		if (rbTimeManagement == null) {
+			return new BaseRsp(null);
 		}
+
+		RbTimeManagementRsp rbTimeManagementRsp = BeanUtils.copy(rbTimeManagement,
+				RbTimeManagementRsp.class);
+
+		// 计算当前天文时间
+		long time = rbTimeManagement.getAstronomicalTime().getTime() + System.currentTimeMillis()
+				- rbTimeManagement.getCreateTime().getTime();
+		Date currentAstronomicalTime = new Date(time);
+
+		rbTimeManagementRsp.setCurrentAstronomicalTime(currentAstronomicalTime);
+		rbTimeManagementRsp.setCreateUser(rbTimeManagement.getCreateUserId());
+		rbTimeManagementRsp.setModifyTime(rbTimeManagement.getUpdateTime());
+		rbTimeManagementRsp.setModifyUser(rbTimeManagement.getUpdateUserId());
+		rbTimeManagementRsp.setRedVsBlue(rbTimeManagement.getRoomId());
+
+		// 计算当前作战时间
+		if (rbTimeManagement.isStopped() || rbTimeManagement.isPaused()) {
+			rbTimeManagementRsp.setCurrentCombatTime(rbTimeManagement.getCombatTime());
+		} else {
+			time = rbTimeManagement.getCombatTime().getTime()
+					+ (System.currentTimeMillis() - rbTimeManagement.getUpdateTime().getTime())
+							* rbTimeManagement.getRate();
+			Date currentCombatTime = new Date(time);
+			rbTimeManagementRsp.setCurrentCombatTime(currentCombatTime);
+		}
+
 		return new BaseRsp(rbTimeManagementRsp);
 	}
 

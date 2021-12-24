@@ -96,7 +96,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		SceneConfigData topoData = basicTemplate.getBaseInfo().getSceneConfigData();
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", topoData.getSceneConfig());
-		String topoId = localSceneService.saveTopo(topoJson, basicTemplate.getBaseInfo().getType());
+		LocalScene.BusinessCode businessCode = convertTypeToCode(basicTemplate.getBaseInfo().getType());
+		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
 
 		// 保存基础模板
 		businessTemplate.setTopoId(topoId);
@@ -352,7 +353,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (type.equals(BusinessTemplate.BusinessType.SYSTEM_ASSESS)) {
 			return LocalScene.BusinessCode.SYSTEM_TEST;
 		}
-		return null;
+		throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
 	}
 
 	@Override

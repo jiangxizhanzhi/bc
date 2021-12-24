@@ -3,10 +3,12 @@ package com.cyberpeace.oj.person.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.oj.person.dao.entity.*;
@@ -43,8 +45,11 @@ public class PersonController {
     public ListRsp<PersonComment> listComments(@ApiParam @Validated PageReqBase pageReq) {
         Page page = pageReq.toPageParam();
         String userId = UserInfoContext.getUserContext().getUserId();
-
-        IPage<PersonComment> comments = personCommentService.pageComment(page, userId);
+        // 权限数据获取
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                true);
+        String parent = "";
+        IPage<PersonComment> comments = personCommentService.pageComment(page, userId, parent,authContext);
         return PageUtil.getListResult(comments);
 
     }
@@ -54,8 +59,11 @@ public class PersonController {
     public ListRsp<PersonComment> listReplies(@ApiParam @Validated PageReqBase pageReq) {
         Page page = pageReq.toPageParam();
         String userId = UserInfoContext.getUserContext().getUserId();
-
-        IPage<PersonComment> comments = personCommentService.pageReplies(page, userId);
+        // 权限数据获取
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                true);
+        String parent = "parent";
+        IPage<PersonComment> comments = personCommentService.pageComment(page, userId, parent, authContext);
         return PageUtil.getListResult(comments);
 
     }
@@ -65,8 +73,10 @@ public class PersonController {
     public ListRsp<PersonNote> listNotes(@ApiParam @Validated PageReqBase pageReq) {
         Page page = pageReq.toPageParam();
         String userId = UserInfoContext.getUserContext().getUserId();
-
-        IPage<PersonNote> comments = personCommentService.pageNotes(page, userId);
+        // 权限数据获取
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                true);
+        IPage<PersonNote> comments = personCommentService.pageNotes(page, userId, authContext);
         return PageUtil.getListResult(comments);
 
     }
@@ -77,7 +87,11 @@ public class PersonController {
         Page page = pageReq.toPageParam();
         String userId = UserInfoContext.getUserContext().getUserId();
 
-        IPage<PersonCollection> collections = personCommentService.pageCollections(page, userId, type);
+        // 权限数据获取
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                true);
+
+        IPage<PersonCollection> collections = personCommentService.pageCollections(page, userId, type, authContext);
         return PageUtil.getListResult(collections);
 
     }
@@ -86,8 +100,10 @@ public class PersonController {
     @GetMapping("/study_records")
     public BaseRsp<StudyRecord> courseAndPracticeRecords() {
         String userId = UserInfoContext.getUserContext().getUserId();
-
-        return personCommentService.studyRecords(userId);
+        // 权限数据获取
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                true);
+        return personCommentService.studyRecords(userId, authContext);
 
     }
 
@@ -102,8 +118,10 @@ public class PersonController {
             throw new InvalidParamException("时间格式不正确！");
         }
         String userId = UserInfoContext.getUserContext().getUserId();
-
-        return personCommentService.studyPeriodRecords(userId,TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
+        // 权限数据获取
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                true);
+        return personCommentService.studyPeriodRecords(userId,TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime), authContext);
 
     }
 

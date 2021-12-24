@@ -11,4 +11,6 @@ public class PersonCollection  implements Serializable {
 
     private String name;
 
+    private String businessType;
+
 }

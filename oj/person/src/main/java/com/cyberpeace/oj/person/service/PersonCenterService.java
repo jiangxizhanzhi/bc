@@ -2,6 +2,7 @@ package com.cyberpeace.oj.person.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.person.dao.entity.*;
 
@@ -15,16 +16,7 @@ public interface PersonCenterService {
      * @param userId 用户ID
      * @return
      */
-    IPage<PersonComment> pageComment(Page page, String userId);
-
-
-    /**
-     * 分页查询用户所有的回复
-     * @param page
-     * @param userId 用户ID
-     * @return
-     */
-    IPage<PersonComment> pageReplies(Page page, String userId);
+    IPage<PersonComment> pageComment(Page page, String userId, String parent, AuthContext authContext);
 
     /**
      * 分页查询用户所有笔记
@@ -32,7 +24,7 @@ public interface PersonCenterService {
      * @param userId 用户ID
      * @return
      */
-    IPage<PersonNote> pageNotes(Page page, String userId);
+    IPage<PersonNote> pageNotes(Page page, String userId, AuthContext authContext);
 
     /**
      * 分页查询用户所有收藏
@@ -40,14 +32,14 @@ public interface PersonCenterService {
      * @param userId 用户ID
      * @return
      */
-    IPage<PersonCollection> pageCollections(Page page, String userId, String type);
+    IPage<PersonCollection> pageCollections(Page page, String userId, String type, AuthContext authContext);
 
     /**
      * 查询用户的学习课程与训练的记录
      * @param userId 用户ID
      * @return
      */
-    BaseRsp<StudyRecord> studyRecords(String userId);
+    BaseRsp<StudyRecord> studyRecords(String userId, AuthContext authContext);
 
     /**
      * 查询30天内用户的学习课程与训练的记录
@@ -56,5 +48,5 @@ public interface PersonCenterService {
      * @param endTime
      * @return
      */
-    BaseRsp<BrokenLine> studyPeriodRecords(String userId, Date startTime, Date endTime);
+    BaseRsp<BrokenLine> studyPeriodRecords(String userId, Date startTime, Date endTime, AuthContext authContext);
 }

@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.FileUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,13 @@ import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 import com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper;
 import com.cyberpeace.cr.tool.service.ToolFileService;
 import com.google.common.io.Files;
+import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> implements ToolFileService {
 
-	private String savePath = "tool/tool" + File.separator;
+	private final String savePath = "tool"+ File.separator + "tool" + File.separator;
 
 	private String uploadPath;
 
@@ -52,12 +56,28 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 			throw new BusinessException("复制文件失败: " + filePath + " ,to:" + fullPath);
 		}
 
-		ToolFile toolFile = new ToolFile();
-		toolFile.setFileName(fileName);
-		toolFile.setSavePath(savePath + fileName);
-		save(toolFile);
+		return newToolFile(fileName, fileName);
+	}
 
+	private ToolFile newToolFile(String OriginalFileName, String FileName) {
+		ToolFile toolFile = new ToolFile();
+		toolFile.setFileName(OriginalFileName);
+		toolFile.setSavePath(savePath + FileName);
+		save(toolFile);
 		return toolFile;
+	}
+
+	public ToolFile saveFile(MultipartFile multipartFile) {
+		File newFile;
+		try {
+			newFile = FileUtil.saveFile(multipartFile, uploadPath);
+		} catch (IOException e) {
+			log.error("保存文件{} -> {} 路径失败: {}", multipartFile.getOriginalFilename(), uploadPath,
+					e.getMessage());
+			throw new BusinessException("保存文件失败");
+		}
+
+		return newToolFile(multipartFile.getOriginalFilename(), newFile.getName());
 	}
 
 	private void ensureDir(String uploadPath) {

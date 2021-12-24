@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 
 /**
@@ -8,4 +9,7 @@ import com.cyberpeace.common.model.scene.DeviceInfo;
 public interface RemoteTerminalService {
 
 	DeviceInfo getById(String deviceId);
+
+	JSONObject getAllCategorie();
+
 }

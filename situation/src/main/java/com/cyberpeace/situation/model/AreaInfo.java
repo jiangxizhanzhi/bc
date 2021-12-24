@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class AreaInfo implements Serializable {
@@ -15,13 +16,13 @@ public class AreaInfo implements Serializable {
     private String name;
 
     @ApiModelProperty("区域描述")
-    private String description;
+    private String desc;
 
     @ApiModelProperty("区域形状")
     private String shape;
 
     @ApiModelProperty("区域范围")
-    private PlaneCoordinate[] scope;
+    private List<PlaneCoordinate> scope;
 
     @ApiModelProperty("区域状态")
     private String status;
@@ -30,6 +31,6 @@ public class AreaInfo implements Serializable {
     private LineStyle style;
 
     @ApiModelProperty("区域动效")
-    private String[] effect;
+    private List<String> effect;
 
 }

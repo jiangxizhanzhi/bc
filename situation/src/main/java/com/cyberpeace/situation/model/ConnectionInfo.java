@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class ConnectionInfo implements Serializable {
@@ -18,6 +19,6 @@ public class ConnectionInfo implements Serializable {
     private LineStyle style;
 
     @ApiModelProperty("连线动效")
-    private String[] effect;
+    private List<String> effect;
 
 }

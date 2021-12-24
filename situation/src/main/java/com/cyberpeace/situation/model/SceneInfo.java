@@ -4,20 +4,21 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SceneInfo implements Serializable {
 
     @ApiModelProperty("场景id")
-    private String sceneId;
+    private String id;
 
     @ApiModelProperty("场景名称")
     private String name;
 
     @ApiModelProperty("场景描述")
-    private String description;
+    private String desc;
 
     @ApiModelProperty("场景范围")
-    private PlaneCoordinate[] scope;
+    private List<PlaneCoordinate> scope;
 
 }

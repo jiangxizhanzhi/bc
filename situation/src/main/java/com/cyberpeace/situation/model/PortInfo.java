@@ -15,4 +15,6 @@ public class PortInfo implements Serializable {
     @ApiModelProperty("端口名称")
     private String name;
 
+    @ApiModelProperty("端口IP")
+    private String ip;
 }

@@ -12,9 +12,9 @@ public interface WebConstant {
 
 	String LANGUAGE = "X-Language";
 
-	String LANGUAGE_ZH = "zh";
+	String LANGUAGE_ZH = "zh-CN";
 
-	String LANGUAGE_EN = "en";
+	String LANGUAGE_EN = "en-US";
 
 	/**
 	 * mp鉴权参数

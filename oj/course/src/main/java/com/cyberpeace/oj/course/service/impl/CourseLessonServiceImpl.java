@@ -671,10 +671,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
 				topoSceneDataRes.setSceneData(sceneData);
 			}
-
-			// topo数据查询
-			JSONObject topo = remoteTopoService.getTopoById(courseLesson.getTopoId());
-			topoSceneDataRes.setSceneConfigData(topo);
 		}
 
 		return topoSceneDataRes;

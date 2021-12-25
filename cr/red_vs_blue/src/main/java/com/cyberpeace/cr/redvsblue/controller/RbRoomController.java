@@ -182,7 +182,7 @@ public class RbRoomController {
 
 		RbRoomRoleRes blueRoleRes = new RbRoomRoleRes();
 		blueRoleRes.setName(CrRole.RbRoleGroupCode.BLUE.getDesc());
-		redRoleRes.setResourceId("blueResourceId");
+		blueRoleRes.setResourceId("blueResourceId");
 		blueRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.BLUE.getCode());
 		blueRoleRes.setChildren(blueRoles);
 		rbRoomRoleResList.add(blueRoleRes);

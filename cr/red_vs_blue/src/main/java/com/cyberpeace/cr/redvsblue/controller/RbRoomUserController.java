@@ -77,14 +77,20 @@ public class RbRoomUserController {
 		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(resource_id, userId);
 		List<MissionInfoRsp> missionInfoRsps = tasks.stream().map(taskContext -> {
 
-
 			// 获取评估状态
 			List<CrTaskReject> rejectLogs = Lists.newArrayList();
 
 			List<CrTaskSubmit> taskSubmits = crTaskService
 					.getOrderedSubmitsByTask(taskContext.getResourceId());
 
+			// 获取评估人名字
+			List<String> userIds = taskSubmits.stream().map(CrTaskSubmit::getEvaluatorId).distinct()
+					.collect(Collectors.toList());
+			Map<String, String> userInfoMap = remoteUserService.getIdNameMap(userIds);
+
 			Integer evaluateStatus = taskContext.getStatus();
+
+			// 未提交过
 			if (taskSubmits == null) {
 				evaluateStatus = CrTaskSubmit.EvaluateStatus.TASK_NOT_SUBMITTED.getCode();
 			}
@@ -98,7 +104,8 @@ public class RbRoomUserController {
 
 						crTaskReject.setRejectTime(taskSubmit.getUpdateTime());
 						crTaskReject.setRejectReason(taskSubmit.getReason());
-						crTaskReject.setReferee(taskSubmit.getEvaluatorId());
+						crTaskReject.setReferee(userInfoMap
+								.getOrDefault(taskSubmit.getEvaluatorId(), "new UserInfo()"));
 
 						rejectLogs.add(crTaskReject);
 					}

@@ -175,12 +175,14 @@ public class RbRoomController {
 		}
 		RbRoomRoleRes redRoleRes = new RbRoomRoleRes();
 		redRoleRes.setName(CrRole.RbRoleGroupCode.RED.getDesc());
+		redRoleRes.setResourceId("redResourceId");
 		redRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.RED.getCode());
 		redRoleRes.setChildren(redRoles);
 		rbRoomRoleResList.add(redRoleRes);
 
 		RbRoomRoleRes blueRoleRes = new RbRoomRoleRes();
 		blueRoleRes.setName(CrRole.RbRoleGroupCode.BLUE.getDesc());
+		redRoleRes.setResourceId("blueResourceId");
 		blueRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.BLUE.getCode());
 		blueRoleRes.setChildren(blueRoles);
 		rbRoomRoleResList.add(blueRoleRes);

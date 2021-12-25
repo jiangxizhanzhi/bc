@@ -1,11 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ModelConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
@@ -112,13 +114,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<Course> courses = courseMapper.selectBatchIds(ids);
 		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course))
 				.map(infBo -> {
-					if (infBo.getLessonCount().intValue() > 0) {
-						infBo.setInterview(
-								infBo.getIsPublic() && CollectionUtils.isNotEmpty(authCourseIds)
-										&& authCourseIds.contains(infBo.getResourceId()));
-					} else {
-						infBo.setInterview(Boolean.FALSE);
-					}
+					infBo.setInterview(
+							infBo.getIsPublic() && CollectionUtils.isNotEmpty(authCourseIds)
+									&& authCourseIds.contains(infBo.getResourceId()));
+
 					return infBo;
 				}).collect(Collectors.toList());
 		return infoBos;

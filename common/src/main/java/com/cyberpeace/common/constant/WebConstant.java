@@ -10,7 +10,7 @@ public interface WebConstant {
 
 	String TRACE_HEADER = "X-Request-Id";
 
-	String LANGUAGE = "X-Language";
+	String LANGUAGE = "Accept-Language";
 
 	String LANGUAGE_ZH = "zh-CN";
 

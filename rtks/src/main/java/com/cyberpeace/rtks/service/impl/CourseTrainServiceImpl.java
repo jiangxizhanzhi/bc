@@ -73,8 +73,6 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 				.getKnowledgeByCourseId(courseIds);
 
 		List<CourseKnowledgeSkillBo> boList = courseIds.stream()
-				.filter(courseId -> CollectionUtils
-						.isNotEmpty(courseLessonMapper.selectByCourse(courseId)))
 				.filter(courseId -> null != processBoMap.get(courseId)).map(courseId -> {
 					CourseStudyProcessBo bo = processBoMap.get(courseId);
 					CourseKnowledgeSkillBo knowledgeBo = BeanUtils

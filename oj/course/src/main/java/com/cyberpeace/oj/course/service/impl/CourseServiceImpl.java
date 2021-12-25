@@ -3,47 +3,47 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.entity.LessonConfig;
-import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
-import com.cyberpeace.oj.course.service.LessonConfigService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -145,13 +145,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<Course> courses = courseMapper.selectBatchIds(ids);
 		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course, true))
 				.map(infBo -> {
-					if (infBo.getLessonCount().intValue() > 0) {
-						infBo.setInterview(
-								infBo.getIsPublic() && CollectionUtils.isNotEmpty(authCourseIds)
-										&& authCourseIds.contains(infBo.getResourceId()));
-					} else {
-						infBo.setInterview(Boolean.FALSE);
-					}
+					infBo.setInterview(
+							infBo.getIsPublic() && CollectionUtils.isNotEmpty(authCourseIds)
+									&& authCourseIds.contains(infBo.getResourceId()));
+
 					return infBo;
 				}).collect(Collectors.toList());
 		return infoBos;

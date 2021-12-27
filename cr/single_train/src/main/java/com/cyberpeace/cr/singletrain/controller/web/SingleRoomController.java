@@ -112,7 +112,7 @@ public class SingleRoomController {
 	}
 
 	@ApiOperation("重启节点")
-	@PostMapping("/scene/node")
+	@PostMapping("/scene/node/restart")
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom room = singleRoomService
@@ -121,6 +121,23 @@ public class SingleRoomController {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		return new BaseRsp();
+	}
+
+	@ApiOperation("重建节点")
+	@PostMapping("/scene/node/recreate")
+	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom room = singleRoomService
+				.getByBusinessTemplateIdAndUserId(nodeOpsReq.getResourceId(), userId);
+		if (room == null) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.recreateNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);

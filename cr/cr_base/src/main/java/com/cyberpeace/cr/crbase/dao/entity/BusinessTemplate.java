@@ -31,6 +31,9 @@ public class BusinessTemplate extends AuthTable {
 
 	private String createUserId;
 
+	/**
+	 * 用于关联后台测试场景
+	 */
 	private String localSceneId;
 
 	public enum BusinessType implements GenericEnum {

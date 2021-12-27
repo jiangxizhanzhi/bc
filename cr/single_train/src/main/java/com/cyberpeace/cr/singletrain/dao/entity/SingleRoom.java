@@ -46,8 +46,4 @@ public class SingleRoom extends BaseTable {
 	 */
 	private String userId;
 
-	/**
-	 * 使用的topologyId
-	 */
-	private String copyedTopoId;
 }

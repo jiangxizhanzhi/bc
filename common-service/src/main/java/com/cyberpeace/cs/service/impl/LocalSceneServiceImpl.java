@@ -17,6 +17,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.RenameTopoContext;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -220,10 +221,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public String renameTopo(String topoId, String name) {
-		JSONObject body = new JSONObject();
-		body.put("id", topoId);
-		body.put("name", name);
-		return remoteTopoService.save(body);
+		RenameTopoContext context = new RenameTopoContext(topoId, name);
+		return remoteTopoService.save((JSONObject) JSONObject.toJSON(context));
 	}
 
 	@Override

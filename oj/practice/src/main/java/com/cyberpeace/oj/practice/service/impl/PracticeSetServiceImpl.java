@@ -104,6 +104,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
     private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext) {
 
         AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
+        setBo.setLogo(utilService.handlerFileUrl(practiceSet.getLogo()));
         UserInfo userInfo = remoteUserService.getById(practiceSet.getCreateUserId());
         setBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 

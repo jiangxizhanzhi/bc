@@ -7,14 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomOpsReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
+import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cs.service.LocalSceneService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,10 +35,13 @@ public class SingleRoomController {
 	@Autowired
 	private SingleRoomService singleRoomService;
 
+	@Autowired
+	private LocalSceneService localSceneService;
+
 	@PostMapping
 	@ApiOperation("创建")
 	public BaseRsp<SingleRoomBo> create(@RequestBody @Validated SingleRoomOpsReq req) {
-		return new BaseRsp<>(singleRoomService.createRoom(req.getBusinessTemplateId()));
+		return new BaseRsp<>(singleRoomService.createRoom(req.getResourceId()));
 	}
 
 	@GetMapping
@@ -53,7 +62,7 @@ public class SingleRoomController {
 	@DeleteMapping
 	@ApiOperation("关闭")
 	public BaseRsp<Boolean> delete(@RequestBody @Validated SingleRoomOpsReq req) {
-		return new BaseRsp<>(singleRoomService.deleteRoom(req.getBusinessTemplateId()));
+		return new BaseRsp<>(singleRoomService.deleteRoom(req.getResourceId()));
 	}
 
 	@GetMapping("/list")
@@ -100,5 +109,22 @@ public class SingleRoomController {
 	public BaseRsp<TrainTimeLineBo>
 			trainTimeLine(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTimeLineData(businessTemplateId));
+	}
+
+	@ApiOperation("重启节点")
+	@PostMapping("/scene/node")
+	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom room = singleRoomService
+				.getByBusinessTemplateIdAndUserId(nodeOpsReq.getResourceId(), userId);
+		if (room == null) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		return new BaseRsp();
 	}
 }

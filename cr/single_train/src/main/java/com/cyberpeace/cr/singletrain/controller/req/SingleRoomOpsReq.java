@@ -12,5 +12,5 @@ public class SingleRoomOpsReq implements Serializable {
 
 	@ApiModelProperty(value = "单兵训练业务模板id", required = true)
 	@NotBlank
-	private String businessTemplateId;
+	private String resourceId;
 }

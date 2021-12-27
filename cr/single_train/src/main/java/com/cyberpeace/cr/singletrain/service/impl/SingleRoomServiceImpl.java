@@ -97,7 +97,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 已存在运行中训练, 返回
 		SingleRoomBo singleRoomBo = getRoomInfo(businessTemplateId);
 		if (singleRoomBo.getRoomInfo() != null) {
-			return singleRoomBo;
+			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
 		}
 
 		BusinessTemplate businessTemplate = businessTemplateService.getById(businessTemplateId);

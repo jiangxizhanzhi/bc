@@ -36,6 +36,8 @@ public class RbRoomData implements Serializable {
 
 	private Integer durationTime;
 
+	private Date createTime;
+
 	private Date sceneStartTime;
 
 	private Date sceneEndTime;

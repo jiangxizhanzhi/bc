@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,13 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
+import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
+import com.cyberpeace.cr.redvsblue.service.context.TimeData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
 import com.google.common.collect.Lists;
 
@@ -24,7 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> implements RbRoomScoreService {
 
 	@Autowired
-	private RbRoomMapper rbRoomMapper;
+	private RbRoomService rbRoomService;
+
+	@Autowired
+	private RbTimeManagementService rbTimeManagementService;
 
 	@Autowired
 	CrTaskService crTaskService;
@@ -88,6 +97,29 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		roleScores.add(blueRoleScore);
 
 		return roleScores;
+	}
+
+	@Override
+	public TimeData getRbTimeData(String roomId) {
+		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(roomId);
+
+		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(roomId);
+
+		Date endtime = rbRoomData.getEndTime();
+
+		// 进行中
+		TimeData timeDate = new TimeData(1, rbTimeManagement.getCreateTime(), new Date(), endtime);
+		// 未开始
+		if (rbTimeManagement == null) {
+			timeDate = new TimeData(0, rbRoomData.getStartTime(), endtime, endtime);
+		}
+		// 已结束
+		if (rbTimeManagement.isStopped()) {
+			timeDate = new TimeData(2, rbTimeManagement.getCreateTime(),
+					rbTimeManagement.getUpdateTime(), endtime);
+		}
+
+		return timeDate;
 	}
 
 }

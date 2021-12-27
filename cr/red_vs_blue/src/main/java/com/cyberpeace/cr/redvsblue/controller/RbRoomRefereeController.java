@@ -19,7 +19,6 @@ import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -40,9 +39,6 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private RbRoomService rbRoomService;
-
-	@Autowired
-	private CrRoleService crRoleService;
 
 	@Autowired
 	private CrTaskService crTaskService;

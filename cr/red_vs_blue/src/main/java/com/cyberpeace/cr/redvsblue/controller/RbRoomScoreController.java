@@ -13,7 +13,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.context.mission.MissionsStatistic;
@@ -36,9 +35,6 @@ public class RbRoomScoreController {
 
 	@Autowired
 	private CrRoleService crRoleService;
-
-	@Autowired
-	private CrTaskService crTaskService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;

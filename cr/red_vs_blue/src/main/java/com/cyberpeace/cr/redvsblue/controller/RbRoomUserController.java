@@ -16,7 +16,6 @@ import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.redvsblue.controller.rsp.CrTaskReject;
@@ -39,9 +38,6 @@ public class RbRoomUserController {
 
 	@Autowired
 	private RbRoomService rbRoomService;
-
-	@Autowired
-	private CrRoleService crRoleService;
 
 	@Autowired
 	private CrTaskService crTaskService;

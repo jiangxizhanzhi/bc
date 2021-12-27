@@ -26,104 +26,97 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @Api(tags = "oj-前台个人中心api")
 @RestController
 @RequestMapping("/oj/person")
 @RequiresAuthentication
 public class PersonController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PersonController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(PersonController.class);
 
+  @Autowired private PersonCenterService personCommentService;
 
-    @Autowired
-    private PersonCenterService personCommentService;
+  @ApiOperation("当前用户所有评论")
+  @GetMapping("/comments")
+  public ListRsp<PersonComment> listComments(@ApiParam @Validated PageReqBase pageReq) {
+    Page page = pageReq.toPageParam();
+    String userId = UserInfoContext.getUserContext().getUserId();
+    // 权限数据获取
+    AuthContext authContext =
+        AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+    String parent = "";
+    IPage<PersonComment> comments =
+        personCommentService.pageComment(page, userId, parent, authContext);
+    return PageUtil.getListResult(comments);
+  }
 
+  @ApiOperation("当前用户所有回复")
+  @GetMapping("/replies")
+  public ListRsp<PersonComment> listReplies(@ApiParam @Validated PageReqBase pageReq) {
+    Page page = pageReq.toPageParam();
+    String userId = UserInfoContext.getUserContext().getUserId();
+    // 权限数据获取
+    AuthContext authContext =
+        AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+    String parent = "parent";
+    IPage<PersonComment> comments =
+        personCommentService.pageComment(page, userId, parent, authContext);
+    return PageUtil.getListResult(comments);
+  }
 
-    @ApiOperation("当前用户所有评论")
-    @GetMapping("/comments")
-    public ListRsp<PersonComment> listComments(@ApiParam @Validated PageReqBase pageReq) {
-        Page page = pageReq.toPageParam();
-        String userId = UserInfoContext.getUserContext().getUserId();
-        // 权限数据获取
-        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-                true);
-        String parent = "";
-        IPage<PersonComment> comments = personCommentService.pageComment(page, userId, parent,authContext);
-        return PageUtil.getListResult(comments);
+  @ApiOperation("当前用户所有笔记")
+  @GetMapping("/notes")
+  public ListRsp<PersonNote> listNotes(@ApiParam @Validated PageReqBase pageReq) {
+    Page page = pageReq.toPageParam();
+    String userId = UserInfoContext.getUserContext().getUserId();
+    // 权限数据获取
+    AuthContext authContext =
+        AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+    IPage<PersonNote> comments = personCommentService.pageNotes(page, userId, authContext);
+    return PageUtil.getListResult(comments);
+  }
 
+  @ApiOperation("当前用户所有收藏")
+  @GetMapping("/collections")
+  public ListRsp<PersonCollection> listCollections(
+      @ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type) {
+    Page page = pageReq.toPageParam();
+    String userId = UserInfoContext.getUserContext().getUserId();
+
+    // 权限数据获取
+    AuthContext authContext =
+        AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+
+    IPage<PersonCollection> collections =
+        personCommentService.pageCollections(page, userId, type, authContext);
+    return PageUtil.getListResult(collections);
+  }
+
+  @ApiOperation("当前用户学习课程和练习记录")
+  @GetMapping("/study_records")
+  public BaseRsp<StudyRecord> courseAndPracticeRecords() {
+    String userId = UserInfoContext.getUserContext().getUserId();
+    // 权限数据获取
+    AuthContext authContext =
+        AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+    return personCommentService.studyRecords(userId, authContext);
+  }
+
+  @ApiOperation("当前用户30天内课程、实验报告数量")
+  @GetMapping("/study_period_records")
+  public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(
+      @RequestParam("start_time") String startTime, @RequestParam("end_time") String endTime) {
+
+    boolean startValidate = TimeUtil.isValidDate(startTime);
+    boolean endValidate = TimeUtil.isValidDate(endTime);
+    if (!startValidate || !endValidate) {
+      throw new InvalidParamException("时间格式不正确！");
     }
-
-    @ApiOperation("当前用户所有回复")
-    @GetMapping("/replies")
-    public ListRsp<PersonComment> listReplies(@ApiParam @Validated PageReqBase pageReq) {
-        Page page = pageReq.toPageParam();
-        String userId = UserInfoContext.getUserContext().getUserId();
-        // 权限数据获取
-        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-                true);
-        String parent = "parent";
-        IPage<PersonComment> comments = personCommentService.pageComment(page, userId, parent, authContext);
-        return PageUtil.getListResult(comments);
-
-    }
-
-    @ApiOperation("当前用户所有笔记")
-    @GetMapping("/notes")
-    public ListRsp<PersonNote> listNotes(@ApiParam @Validated PageReqBase pageReq) {
-        Page page = pageReq.toPageParam();
-        String userId = UserInfoContext.getUserContext().getUserId();
-        // 权限数据获取
-        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-                true);
-        IPage<PersonNote> comments = personCommentService.pageNotes(page, userId, authContext);
-        return PageUtil.getListResult(comments);
-
-    }
-
-    @ApiOperation("当前用户所有收藏")
-    @GetMapping("/collections")
-    public ListRsp<PersonCollection> listCollections(@ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type) {
-        Page page = pageReq.toPageParam();
-        String userId = UserInfoContext.getUserContext().getUserId();
-
-        // 权限数据获取
-        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-                true);
-
-        IPage<PersonCollection> collections = personCommentService.pageCollections(page, userId, type, authContext);
-        return PageUtil.getListResult(collections);
-
-    }
-
-    @ApiOperation("当前用户学习课程和练习记录")
-    @GetMapping("/study_records")
-    public BaseRsp<StudyRecord> courseAndPracticeRecords() {
-        String userId = UserInfoContext.getUserContext().getUserId();
-        // 权限数据获取
-        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-                true);
-        return personCommentService.studyRecords(userId, authContext);
-
-    }
-
-    @ApiOperation("当前用户30天内课程、实验报告数量")
-    @GetMapping("/study_period_records")
-    public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam("start_time") String startTime,
-                                                               @RequestParam("end_time") String endTime) {
-
-        boolean startValidate = TimeUtil.isValidDate(startTime);
-        boolean endValidate = TimeUtil.isValidDate(endTime);
-        if (!startValidate || !endValidate) {
-            throw new InvalidParamException("时间格式不正确！");
-        }
-        String userId = UserInfoContext.getUserContext().getUserId();
-        // 权限数据获取
-        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-                true);
-        return personCommentService.studyPeriodRecords(userId,TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime), authContext);
-
-    }
-
-
+    String userId = UserInfoContext.getUserContext().getUserId();
+    // 权限数据获取
+    AuthContext authContext =
+        AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+    return personCommentService.studyPeriodRecords(
+        userId, TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime), authContext);
+  }
 }

@@ -33,14 +33,13 @@
     </resultMap>
 
     <sql id="orderByTimeDesc">
-        order by oj_comment.create_time desc
+        order by oj_comment.create_time
+        desc
     </sql>
 
     <sql id="filterByPublic">
-       public = True
+        public = True
     </sql>
-
-
 
 
     <select id="selectCommentByUser" resultMap="personComment">
@@ -70,15 +69,15 @@
 
     <select id="selectNoteByUser" resultMap="personNote">
         select oj_note.user_id,
-               oj_note.content,
-               oj_note.business_type,
-               oj_note.note_type,
-               (IF(oj_note.business_type = 2, concat(oj_course_lesson.course_id, '/',
-                                                     oj_course_lesson.resource_id), oj_note.business_id)) as business_id
+        oj_note.content,
+        oj_note.business_type,
+        oj_note.note_type,
+        (IF(oj_note.business_type = 2, concat(oj_course_lesson.course_id, '/',
+        oj_course_lesson.resource_id), oj_note.business_id)) as business_id
         from oj_note
-                 left join oj_course_lesson on oj_note.business_id = oj_course_lesson.resource_id
+        left join oj_course_lesson on oj_note.business_id = oj_course_lesson.resource_id
         where oj_note.`user_id` = #{userId}
-          and oj_note.note_type = #{noteType}
+        and oj_note.note_type = #{noteType}
         <if test="businessIds != null and businessIds.size() != 0">
             and oj_note.business_id in
             <foreach collection="businessIds" item="businessId" open="(" close=")" separator=",">
@@ -122,23 +121,28 @@
 
 
     <select id="selectByUser" resultMap="base">
-        select  (case when oj_course_lesson.resource_id is not null then concat(oj_course_lesson.course_id,'/',oj_course_lesson.resource_id)
-                    when oj_course.resource_id is not null  then oj_course.resource_id
-                    when  oj_practice_theory.resource_id is not null then oj_practice_theory.resource_id
-                    when  oj_practice_operation.resource_id is not null then oj_practice_operation.resource_id
-            END) as resource_id,
-               (case when oj_course.name is not  null then oj_course.name
-                   when oj_course_lesson.name is not null then oj_course_lesson.name
-                   when oj_practice_theory.title is not null then oj_practice_theory.title
-                   when oj_practice_theory.content is not null then oj_practice_theory.content
-                   when oj_practice_operation.title is not null then oj_practice_operation.title
-                   when oj_practice_operation.content is not null then oj_practice_operation.content END) as name,
+        select (case when oj_course_lesson.resource_id is not null then
+        concat(oj_course_lesson.course_id,'/',oj_course_lesson.resource_id)
+        when oj_course.resource_id is not null then oj_course.resource_id
+        when oj_practice_theory.resource_id is not null then oj_practice_theory.resource_id
+        when oj_practice_operation.resource_id is not null then oj_practice_operation.resource_id
+        END) as resource_id,
+        (case when oj_course.name is not null then oj_course.name
+        when oj_course_lesson.name is not null then oj_course_lesson.name
+        when oj_practice_theory.title is not null then oj_practice_theory.title
+        when oj_practice_theory.content is not null then oj_practice_theory.content
+        when oj_practice_operation.title is not null then oj_practice_operation.title
+        when oj_practice_operation.content is not null then oj_practice_operation.content END) as name,
         oj_resource_collection.business_type as business_type
         from oj_resource_collection
-                 left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and oj_resource_collection.business_type = 3
-                 left join oj_course_lesson on oj_resource_collection.business_id = oj_course_lesson.resource_id and oj_resource_collection.business_type = 4
-                 left join oj_practice_theory on oj_resource_collection.business_id = oj_practice_theory.resource_id and oj_resource_collection.business_type = 0
-                 left join oj_practice_operation on oj_resource_collection.business_id = oj_practice_operation.resource_id and oj_resource_collection.business_type = 2
+        left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and
+        oj_resource_collection.business_type = 3
+        left join oj_course_lesson on oj_resource_collection.business_id = oj_course_lesson.resource_id and
+        oj_resource_collection.business_type = 4
+        left join oj_practice_theory on oj_resource_collection.business_id = oj_practice_theory.resource_id and
+        oj_resource_collection.business_type = 0
+        left join oj_practice_operation on oj_resource_collection.business_id = oj_practice_operation.resource_id and
+        oj_resource_collection.business_type = 2
         where user_id = #{userId}
         <if test="null != businessType ">
             and business_type = #{businessType}
@@ -154,10 +158,10 @@
 
     <select id="selectRecordByUser" resultMap="studyRecord">
         select count(distinct oj_course.resource_id) as course_count,
-               SUM(oj_course_lesson.duration) as duration,
-               SUM(case when oj_course_lesson.type = 0 then 1 END)as theory_count ,
-               SUM(case when oj_course_lesson.type = 1 then 1 END ) as exp_count
-            from oj_lesson_record
+        SUM(oj_course_lesson.duration) as duration,
+        SUM(case when oj_course_lesson.type = 0 then 1 END)as theory_count ,
+        SUM(case when oj_course_lesson.type = 1 then 1 END ) as exp_count
+        from oj_lesson_record
         left join oj_course on oj_course.resource_id = oj_lesson_record.course_id
         left join oj_course_lesson on oj_course_lesson.resource_id = oj_lesson_record.lesson_id
         where oj_lesson_record.user_id = #{userId} and oj_course.public = true
@@ -171,7 +175,7 @@
 
     <select id="selectReportCount" resultType="java.lang.Integer">
         select count(resource_id) from oj_note
-            where note_type =  2 and user_id = #{userId}
+        where note_type = 2 and user_id = #{userId}
         <if test="lessonIds != null and lessonIds.size() != 0">
             and oj_note.business_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
@@ -188,7 +192,7 @@
 
     <select id="selectPracticeByUser" resultMap="studyRecord">
         select sum(case when score is not null then score else 0 end) as score,
-               row_number() over (order by score desc) as practice_ranking
+        row_number() over (order by score desc) as practice_ranking
         from oj_practice_solved
         where submit_user_id = #{userId}
         <if test="practiceIds != null and practiceIds.size() != 0">
@@ -203,8 +207,8 @@
         select create_time,course_id
         from oj_lesson_record
         where user_id = #{userId}
-          and create_time &gt; #{startTime}
-          and create_time &lt; #{endTime}
+        and create_time &gt; #{startTime}
+        and create_time &lt; #{endTime}
         <if test="lessonIds != null and lessonIds.size() != 0">
             and oj_lesson_record.lesson_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
@@ -217,8 +221,8 @@
         select *
         from oj_note
         where user_id = #{userId} and note_type = 2 and business_type = 2
-          and create_time &gt; #{startTime}
-          and create_time &lt; #{endTime}
+        and create_time &gt; #{startTime}
+        and create_time &lt; #{endTime}
         <if test="lessonIds != null and lessonIds.size() != 0">
             and oj_note.business_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">

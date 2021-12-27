@@ -9,12 +9,11 @@ import lombok.Data;
 @ApiModel
 public class PersonComment extends CommentReq {
 
-    @ApiModelProperty("用户名")
-    private String username;
+  @ApiModelProperty("用户名")
+  private String username;
 
-    @ApiModelProperty("上层资源编号")
-    private String rootBusinessId;
+  @ApiModelProperty("上层资源编号")
+  private String rootBusinessId;
 
-    private String userId;
+  private String userId;
 }
-

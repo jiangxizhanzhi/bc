@@ -7,12 +7,11 @@ import lombok.Data;
 @Data
 public class PersonNote extends NoteAddReq {
 
-    @ApiModelProperty("评论资源编号")
-    private String resourceId;
+  @ApiModelProperty("评论资源编号")
+  private String resourceId;
 
-    @ApiModelProperty("用户名称")
-    private String userName;
+  @ApiModelProperty("用户名称")
+  private String userName;
 
-    private String userId;
-
+  private String userId;
 }

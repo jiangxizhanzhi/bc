@@ -29,14 +29,13 @@
         <result column="training_record" property="singleRoom.trainingRecord"/>
         <result column="missions_scheme" property="missionsScheme"/>
         <result column="topo_id" property="businessTemplate.topoId"/>
-        <result column="copyed_topo_id" property="singleRoom.copyedTopoId"/>
     </resultMap>
 
     <select id="singleTrainSearch" resultMap="listResultMap">
         select *
         from cr_business_template T1
         left join cr_single_template T2 on T1.resource_id = T2.business_template_id
-        left join cr_single_room R1 on T1.resource_id = R1.single_template_id and R1.user_id = #{user_id}
+        left join cr_single_room R1 on T2.resource_id = R1.single_template_id and R1.user_id = #{user_id}
         <where>
             T1.business_type = #{business_type}
             <if test="category != null and category">

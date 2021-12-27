@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller.rsp;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.teamtrain.service.context.ColorMission;
 
@@ -18,7 +19,7 @@ public class TeamTrainTemplateRoleRsp {
 
 	private Integer roleGroup;
 
-	private ColorMission missionsScheme;
+	private ColorMission<AddTemplateMission> missionsScheme;
 
 	private List<CrRoleNode> assetNodes;
 

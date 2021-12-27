@@ -256,6 +256,11 @@ public class RbRoomController {
 		List<RoomRole> roomRoleList = JsonUtil
 				.toJsonObjectArray(rbTrainRoomModifyReq.getRoleConfig(), RoomRole.class);
 		rbRoomContext.setRoleConfig(roomRoleList);
+		rbRoomContext.setPreSkill(
+				JsonUtil.toJsonObjectArray(rbTrainRoomModifyReq.getPreSkill(), String.class));
+		rbRoomContext.setTrainSkill(
+				JsonUtil.toJsonObjectArray(rbTrainRoomModifyReq.getTrainSkill(), String.class));
+
 		rbRoomService.updateRbRoom(rbRoomContext, rbRoom);
 
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());

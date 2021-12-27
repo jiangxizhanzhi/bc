@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.google.common.collect.Lists;
 
 import lombok.Data;
 
@@ -20,6 +21,6 @@ public class RbRoomRoleRes implements Serializable {
 
 	private List<UserData> usersData;
 
-	private List<RbRoomRoleRes> children;
+	private List<RbRoomRoleRes> children = Lists.newArrayList();
 
 }

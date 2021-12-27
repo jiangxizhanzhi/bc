@@ -36,4 +36,6 @@ public interface CommonConstant {
 	Boolean FALSE = false;
 
 	String EMPTY_LIST_JSON = "[]";
+
+	String RIGHT = "是";
 }

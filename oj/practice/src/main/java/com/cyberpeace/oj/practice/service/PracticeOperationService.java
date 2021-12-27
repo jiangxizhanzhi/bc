@@ -6,108 +6,130 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.service.bo.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PracticeOperationService extends IService<PracticeOperation> {
 
-	/**
-	 * 实践操作习题新增
-	 * @param practiceOperation
-	 * @param ojSceneConfig
-	 * @return
-	 */
-	Integer addPracticeOperation(PracticeOperation practiceOperation, JSONObject ojSceneConfig,
-			AuthContext authContext);
+    /**
+     * 实践操作习题新增
+     *
+     * @param practiceOperation
+     * @param ojSceneConfig
+     * @return
+     */
+    Integer addPracticeOperation(PracticeOperation practiceOperation, JSONObject ojSceneConfig,
+                                 AuthContext authContext);
 
-	/**
-	 * 实践操作习题修改
-	 * @param updateOperation
-	 * @param ojSceneConfig
-	 * @return
-	 */
-	Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig);
+    /**
+     * 实践操作习题修改
+     *
+     * @param updateOperation
+     * @param ojSceneConfig
+     * @return
+     */
+    Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig);
 
-	/**
-	 * 根据id查询实践操作信息
-	 * @param resourceId
-	 * @return
-	 */
-	OperationBo selectById(String resourceId);
+    /**
+     * 根据id查询实践操作信息
+     *
+     * @param resourceId
+     * @return
+     */
+    OperationBo selectById(String resourceId);
 
-	/**
-	 * 前台查询习题详细信息
-	 * @param resourceId
-	 * @param authContext 后台数据查询不需要
-	 * @return
-	 */
-	WebOperationBo selectById(String resourceId, AuthContext authContext);
+    /**
+     * 前台查询习题详细信息
+     *
+     * @param resourceId
+     * @param authContext 后台数据查询不需要
+     * @return
+     */
+    WebOperationBo selectById(String resourceId, AuthContext authContext);
 
-	/**
-	 * 分页查询实操习题
-	 * @param page
-	 * @param listQuery
-	 * @param authContext
-	 * @return
-	 */
-	IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery,
-			AuthContext authContext);
+    /**
+     * 分页查询实操习题
+     *
+     * @param page
+     * @param listQuery
+     * @param authContext
+     * @return
+     */
+    IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery,
+                                            AuthContext authContext);
 
-	/**
-	 * 实操练习习题解答
-	 * @param userId
-	 * @param resourceId
-	 * @param submitAnswer
-	 * @return
-	 */
-	EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer);
+    /**
+     * 实操练习习题解答
+     *
+     * @param userId
+     * @param resourceId
+     * @param submitAnswer
+     * @return
+     */
+    EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer);
 
-	/**
-	 * 获取所有的实操习题编号
-	 * @param authContext
-	 * @return
-	 */
+    /**
+     * 获取所有的实操习题编号
+     *
+     * @param authContext
+     * @return
+     */
     List<String> selectPracticeIds(AuthContext authContext);
 
-	/**
-	 * 启动场景
-	 * @param resourceId
-	 * @return
-	 */
-	JSONObject startScene(String resourceId, AuthContext authContext);
+    /**
+     * 启动场景
+     *
+     * @param resourceId
+     * @return
+     */
+    JSONObject startScene(String resourceId, AuthContext authContext);
 
-	/**
-	 * 场景删除
-	 * @param resourceId
-	 * @param authContext
-	 * @return
-	 */
-	void deleteScene(String resourceId, AuthContext authContext);
+    /**
+     * 场景删除
+     *
+     * @param resourceId
+     * @param authContext
+     * @return
+     */
+    void deleteScene(String resourceId, AuthContext authContext);
 
-	/**
-	 * 场景节点重启
-	 * @param resourceId
-	 * @param nodeId
-	 * @return
-	 */
-	Boolean nodeRestart(String resourceId, String nodeId, AuthContext authContext);
+    /**
+     * 场景节点重启
+     *
+     * @param resourceId
+     * @param nodeId
+     * @return
+     */
+    Boolean nodeRestart(String resourceId, String nodeId, AuthContext authContext);
 
-	/**
-	 * 场景节点重建
-	 * @param resourceId
-	 * @param nodeId
-	 * @param authContext
-	 * @return
-	 */
-	Boolean nodeRecreate(String resourceId, String nodeId, AuthContext authContext);
+    /**
+     * 场景节点重建
+     *
+     * @param resourceId
+     * @param nodeId
+     * @param authContext
+     * @return
+     */
+    Boolean nodeRecreate(String resourceId, String nodeId, AuthContext authContext);
 
-	/**
-	 * 场景暂停与恢复
-	 * @param resourceId
-	 * @param status
-	 * @param authContext
-	 * @return
-	 */
-	Boolean pauseScene(String resourceId, Integer status, AuthContext authContext);
+    /**
+     * 场景暂停与恢复
+     *
+     * @param resourceId
+     * @param status
+     * @param authContext
+     * @return
+     */
+    Boolean pauseScene(String resourceId, Integer status, AuthContext authContext);
+
+    /**
+     * 资管习题数据导入
+     *
+     * @param envReqs
+     * @return
+     */
+    boolean importRmCtf(String path, Map<String, String> envReqs, PracticeSet practiceSet);
 }

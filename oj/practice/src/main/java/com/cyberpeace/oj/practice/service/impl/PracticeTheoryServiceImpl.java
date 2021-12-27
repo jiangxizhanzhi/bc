@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -298,7 +299,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         List<List<String>> sheetData = dataHandler.getSheetData(1);
 
         // 数据类型转换
-        List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData, rowData -> excelDataToEntity(rowData));
+        List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData, rowData -> excelDataToEntity(rowData, practiceSet));
         saveBatch(theoryList);
 
         return true;
@@ -310,7 +311,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
      * @param excelRowData
      * @return
      */
-    private PracticeTheory excelDataToEntity(List<String> excelRowData) {
+    private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet) {
         PracticeTheory practiceTheory = new PracticeTheory();
         practiceTheory.setContent(excelRowData.get(0));
         practiceTheory.setTitle(excelRowData.get(0));
@@ -337,6 +338,38 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
         // excel数据中题型=当前代码枚举值+1
         practiceTheory.setTheoryType(Integer.parseInt(excelRowData.get(3)) - 1);
+
+        if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode() || practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE.getCode().intValue()) {
+            JSONObject option = new JSONObject();
+            option.put("A", excelRowData.get(5));
+            option.put("B", excelRowData.get(6));
+            option.put("C", excelRowData.get(7));
+            option.put("D", excelRowData.get(8));
+            practiceTheory.setOption(JsonUtil.toJsonString(option));
+            practiceTheory.setAnswer(excelRowData.get(4));
+        }
+
+        if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT.getCode().intValue()) {
+            practiceTheory.setAnswer(excelRowData.get(4));
+            practiceTheory.setOption(JsonUtil.toJsonString(null));
+        }
+
+        // TODO 无参考数据 不知道怎么导入
+        if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK.getCode().intValue()) {
+
+        }
+
+        // TODO 无参考数据 不知道怎么导入
+        if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER.getCode().intValue()) {
+
+        }
+
+        practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
+        practiceTheory.setBuiltin(CommonConstant.TRUE);
+        practiceTheory.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+        practiceTheory.setIsPublic(CommonConstant.FALSE);
+        practiceTheory.setPracticeSetId(practiceSet.getResourceId());
+        practiceTheory.setResourceId(IDGeneratorUtil.getID());
 
         return practiceTheory;
     }

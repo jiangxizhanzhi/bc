@@ -23,6 +23,7 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
@@ -31,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -59,6 +61,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
     @Autowired
     private PracticeTheoryService practiceTheoryService;
+
+    @Autowired
+    private PracticeOperationService practiceOperationService;
 
     @Override
     public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
@@ -156,12 +161,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
         }
 
         PracticeSet existSet = practiceSetMapper.selectById(practiceSet.getResourceId());
+        String categoryId = practiceSetMapper.selectByName(practiceSet.getName());
         // 名称校验
-        if (StringUtils.isNotBlank(existSet.getName())) {
-            String categoryId = practiceSetMapper.selectByName(existSet.getName());
-            if (StringUtils.isNotBlank(categoryId)) {
-                throw new InvalidParamException("习题集名称已存在！");
-            }
+        if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(existSet.getResourceId())) {
+            throw new InvalidParamException("习题集名称已存在！");
         }
 
         // 类型校验 防止习题集类型改变
@@ -193,6 +196,39 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
     @Override
     public boolean importRmTheorySet(String path) {
 
+        // 习题集数据插入处理
+        PracticeSet practiceSet = handlerPracticeSet(path);
+
+        //习题数据导入
+        practiceTheoryService.importRmTheory(path, practiceSet);
+
+        return false;
+    }
+
+    @Override
+    public boolean importRmCtfSet(String path, Map<String, String> envReqs) {
+        // 习题集数据处理
+        PracticeSet practiceSet = handlerPracticeSet(path);
+
+        // 遍历习题数据处理
+        File setFileDir = new File(path);
+        List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
+
+        for (String ctfPracticeDir : ctfPracticeDirs) {
+            boolean result = practiceOperationService.importRmCtf(ctfPracticeDir, envReqs, practiceSet);
+        }
+
+        return true;
+    }
+
+    /**
+     * 习题集数据读取
+     *
+     * @param path
+     * @return
+     */
+    private PracticeSet handlerPracticeSet(String path) {
+
         // 读取习题集数据信息
         File setMarkdownFile = new File(path, ResourceImportConstant.README_NAME);
         JSONObject setData = MdUtil.parseJsonMarkdown(setMarkdownFile);
@@ -214,34 +250,24 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
         // 名称数据校验
         String existSetId = practiceSetMapper.selectByName(practiceSet.getName());
 
+        // 不存在则创建 存在则直接返回
         if (StringUtils.isBlank(existSetId)) {
-            practiceSet.setBuiltin(CommonConstant.TRUE);
-            practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
-            practiceSet.setIsPublic(CommonConstant.FALSE);
-            practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-            practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-            practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-            practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+            try {
+                practiceSet.setBuiltin(CommonConstant.TRUE);
+                practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+                practiceSet.setIsPublic(CommonConstant.FALSE);
+                practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+                practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+                practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+                practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 
-            practiceSetMapper.insert(practiceSet);
-        } else {
-            PracticeSet existSet = practiceSetMapper.selectById(existSetId);
-            if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()) {
-                throw new InvalidParamException("已存在习题集，习题集类型与当前体型不匹配");
+                practiceSetMapper.insert(practiceSet);
+            } catch (DuplicateKeyException e) {
+                return practiceSetMapper.selectById(practiceSet.getResourceId());
             }
-            practiceSet.setResourceId(existSet.getResourceId());
-            practiceSetMapper.updateById(practiceSet);
         }
 
-        //习题数据导入
-        practiceTheoryService.importRmTheory(path, practiceSet);
-
-        return false;
-    }
-
-    @Override
-    public boolean importRmCtfSet(String path, Map<String, String> envReqs) {
-        return false;
+        return practiceSetMapper.selectById(existSetId);
     }
 
     /**

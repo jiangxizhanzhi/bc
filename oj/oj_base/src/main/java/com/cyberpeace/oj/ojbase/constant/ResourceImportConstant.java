@@ -81,6 +81,11 @@ public interface ResourceImportConstant {
     String PRACTICE_SET_DATA_MAPPING = "{\"题库名称\":\"name\", \"题库编号\":\"resource_id\", \"题库类型\":\"practice_type\", \"LOGO\":\"logo\"}";
 
     /**
+     * markdown文件中 实操习题与数据映射关系
+     */
+    String OPERATION_PRACTICE_DATA_MAPPING = "{\"标题\":\"title\", \"作者\":\"create_user_id\", \"方向\":\"category_id\", \"知识点\":\"knowledge\", \"难度\":\"difficulty\", \"内容\":\"content\", \"提示\":\"writeup\", \"是否可共享\":\"scene_share_mode\"}";
+
+    /**
      * 内置导入超级管理员编号
      */
     String SUPER_ADMIN_HASH = "3f655d87112f4ae094bbaf70830e20aa";

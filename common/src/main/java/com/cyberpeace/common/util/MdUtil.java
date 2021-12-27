@@ -76,8 +76,8 @@ public class MdUtil {
 	 * @param lineContent
 	 */
 	private static String validateMarkdownContent(String lineContent, String path) {
-		String[] titleArray = lineContent.split(" ", 2);
-		if (titleArray.length != CommonConstant.TWO) {
+		String[] titleArray = lineContent.split(" ");
+		if (titleArray.length < CommonConstant.TWO) {
 			log.error("parseJsonMarkdown: markdown_path=[{}]", path);
 			throw new InvalidParamException("md文件内容格式错误！");
 		}

@@ -452,4 +452,18 @@ public class FileUtil {
 
 	}
 
+	/**
+	 * 获取文件后缀名称
+	 * @param filePath
+	 * @return
+	 */
+	public static String getFileSuffix(String filePath) {
+		int indexOf = filePath.lastIndexOf(CommonConstant.PERIOD);
+		if (indexOf == -1) {
+			return "";
+		}
+
+		return filePath.substring(indexOf + 1);
+	}
+
 }

@@ -66,6 +66,16 @@ public interface ResourceImportConstant {
     String ENV = "env";
 
     /**
+     * write文件夹名称
+     */
+    String WRITEUP = "writeup";
+
+    /**
+     * 习题附件文件夹
+     */
+    String PRACTICE_ATTACHMENT = "attachment";
+
+    /**
      * markdown文件中 标题和标签与数据库字段映射关系
      */
     String COURSE_DATA_MAPPING = "{\"作者\":\"create_user_id\",\"课程名称\":\"name\",\"课程编号\": \"resource_id,course_num\", \"方向\": \"category_id\", \"LOGO\":\"logo\", \"课程难度\": \"difficulty\",\"简介\":\"description\"}";
@@ -83,7 +93,7 @@ public interface ResourceImportConstant {
     /**
      * markdown文件中 实操习题与数据映射关系
      */
-    String OPERATION_PRACTICE_DATA_MAPPING = "{\"标题\":\"title\", \"作者\":\"create_user_id\", \"方向\":\"category_id\", \"知识点\":\"knowledge\", \"难度\":\"difficulty\", \"内容\":\"content\", \"提示\":\"writeup\", \"是否可共享\":\"scene_share_mode\"}";
+    String OPERATION_PRACTICE_DATA_MAPPING = "{\"标题\":\"title\", \"作者\":\"create_user_id\", \"方向\":\"category_id\", \"知识点\":\"knowledge\", \"难度\":\"difficulty\", \"内容\":\"content\", \"是否可共享\":\"scene_share_mode\", \"FLAG\":\"answer\"}";
 
     /**
      * 内置导入超级管理员编号

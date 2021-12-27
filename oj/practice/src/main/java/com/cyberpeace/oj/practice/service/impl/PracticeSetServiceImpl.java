@@ -44,268 +44,274 @@ import java.util.Map;
 @Slf4j
 public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, PracticeSet> implements PracticeSetService {
 
-    @Autowired
-    private PracticeSetMapper practiceSetMapper;
+	@Autowired
+	private PracticeSetMapper practiceSetMapper;
 
-    @Autowired
-    private RemoteUserService remoteUserService;
+	@Autowired
+	private RemoteUserService remoteUserService;
 
-    @Autowired
-    private PracticeOperationMapper practiceOperationMapper;
+	@Autowired
+	private PracticeOperationMapper practiceOperationMapper;
 
-    @Autowired
-    private PracticeTheoryMapper practiceTheoryMapper;
+	@Autowired
+	private PracticeTheoryMapper practiceTheoryMapper;
 
-    @Autowired
-    private UtilService utilService;
+	@Autowired
+	private UtilService utilService;
 
-    @Autowired
-    private PracticeTheoryService practiceTheoryService;
+	@Autowired
+	private PracticeTheoryService practiceTheoryService;
 
-    @Autowired
-    private PracticeOperationService practiceOperationService;
+	@Autowired
+	private PracticeOperationService practiceOperationService;
 
-    @Override
-    public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
+	@Override
+	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
 
-        // 无权限则无数据返回
-        List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-        if (!authIds.contains(resourceId)) {
-            return null;
-        }
+		// 无权限则无数据返回
+		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (!authIds.contains(resourceId)) {
+			return null;
+		}
 
-        PracticeSet practiceSet = practiceSetMapper.selectById(resourceId);
-        if (null == practiceSet) {
-            log.error("Practice set not found! practice_set_id=[{}]", resourceId);
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
+		PracticeSet practiceSet = practiceSetMapper.selectById(resourceId);
+		if (null == practiceSet) {
+			log.error("Practice set not found! practice_set_id=[{}]", resourceId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 
-        return entityToSetBo(practiceSet, authContext);
-    }
+		return entityToSetBo(practiceSet, authContext);
+	}
 
-    @Override
-    public void enableAccess(String resourceId, AuthContext authContext) {
+	@Override
+	public void enableAccess(String resourceId, AuthContext authContext) {
 
-        // 数据权限校验
-        List<String> accessSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		// 数据权限校验
+		List<String> accessSetIds = practiceSetMapper.selectByAuthContext(authContext);
 
-        if (CollectionUtils.isEmpty(accessSetIds) || !accessSetIds.contains(resourceId)) {
-            log.error("This set not permission! practice_set_id=[{}]", resourceId);
-            throw new InvalidParamException("非法操作！");
-        }
-    }
+		if (CollectionUtils.isEmpty(accessSetIds) || !accessSetIds.contains(resourceId)) {
+			log.error("This set not permission! practice_set_id=[{}]", resourceId);
+			throw new InvalidParamException("非法操作！");
+		}
+	}
 
-    /**
-     * 实体类数据转换
-     *
-     * @param practiceSet
-     * @return
-     */
-    private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext) {
+	/**
+	 * 实体类数据转换
+	 *
+	 * @param practiceSet
+	 * @return
+	 */
+	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext) {
 
-        AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
-        setBo.setLogo(utilService.handlerFileUrl(practiceSet.getLogo()));
-        UserInfo userInfo = remoteUserService.getById(practiceSet.getCreateUserId());
-        setBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
+		AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
+		setBo.setLogo(utilService.handlerFileUrl(practiceSet.getLogo()));
+		UserInfo userInfo = remoteUserService.getById(practiceSet.getCreateUserId());
+		setBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 
-        if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION.getCode()
-                .intValue()) {
-            List<String> practiceOperations = practiceOperationMapper.selectBySetIds(
-                    Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
-            setBo.setPracticeCount(practiceOperations.size());
-        } else {
-            List<String> theoryIds = practiceTheoryMapper.selectBySetIds(
-                    Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
-            setBo.setPracticeCount(theoryIds.size());
-        }
+		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION.getCode()
+				.intValue()) {
+			List<String> practiceOperations = practiceOperationMapper.selectBySetIds(
+					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
+			setBo.setPracticeCount(practiceOperations.size());
+		} else {
+			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(
+					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
+			setBo.setPracticeCount(theoryIds.size());
+		}
 
-        List<String> operationIds = JsonUtil.toJsonObjectArray(practiceSet.getOperationAuthIds(),
-                String.class);
-        setBo.setOperationCount(operationIds.size());
+		List<String> operationIds = JsonUtil.toJsonObjectArray(practiceSet.getOperationAuthIds(),
+				String.class);
+		setBo.setOperationCount(operationIds.size());
 
-        List<String> readIds = JsonUtil.toJsonObjectArray(practiceSet.getReadAuthIds(),
-                String.class);
-        setBo.setReadCount(readIds.size());
+		List<String> readIds = JsonUtil.toJsonObjectArray(practiceSet.getReadAuthIds(),
+				String.class);
+		setBo.setReadCount(readIds.size());
 
-        return setBo;
-    }
+		return setBo;
+	}
 
-    @Override
-    public IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType,
-                                                         String pattern, AuthContext authContext) {
+	@Override
+	public IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType,
+			String pattern, AuthContext authContext) {
 
-        List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-        if (CollectionUtils.isEmpty(authIds)) {
-            return null;
-        }
+		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(authIds)) {
+			return null;
+		}
 
-        SetListQuery listQuery = SetListQuery.builder().practiceType(practiceType).setIds(authIds)
-                .pattern(pattern).build();
-        IPage<PracticeSet> iPage = practiceSetMapper.pageByTypeAndName(page, listQuery,
-                authContext.getIsWeb());
+		SetListQuery listQuery = SetListQuery.builder().practiceType(practiceType).setIds(authIds)
+				.pattern(pattern).build();
+		IPage<PracticeSet> iPage = practiceSetMapper.pageByTypeAndName(page, listQuery,
+				authContext.getIsWeb());
 
-        IPage<AdminPracticeSetBo> boIPage = iPage
-                .convert(practiceSet -> entityToSetBo(practiceSet, authContext));
-        return boIPage;
-    }
+		IPage<AdminPracticeSetBo> boIPage = iPage
+				.convert(practiceSet -> entityToSetBo(practiceSet, authContext));
+		return boIPage;
+	}
 
-    @Override
-    public Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext) {
+	@Override
+	public Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext) {
 
-        List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
-        // 权限校验
-        if (CollectionUtils.isEmpty(permissionIds)
-                || !permissionIds.contains(practiceSet.getResourceId())) {
-            log.error("This practice not permission! practice_set_id=[{}]",
-                    practiceSet.getResourceId());
-            throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
-        }
+		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
+		// 权限校验
+		if (CollectionUtils.isEmpty(permissionIds)
+				|| !permissionIds.contains(practiceSet.getResourceId())) {
+			log.error("This practice not permission! practice_set_id=[{}]",
+					practiceSet.getResourceId());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
 
-        PracticeSet existSet = practiceSetMapper.selectById(practiceSet.getResourceId());
-        String categoryId = practiceSetMapper.selectByName(practiceSet.getName());
-        // 名称校验
-        if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(existSet.getResourceId())) {
-            throw new InvalidParamException("习题集名称已存在！");
-        }
+		PracticeSet existSet = practiceSetMapper.selectById(practiceSet.getResourceId());
+		String categoryId = practiceSetMapper.selectByName(practiceSet.getName());
+		// 名称校验
+		if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(existSet.getResourceId())) {
+			throw new InvalidParamException("习题集名称已存在！");
+		}
 
-        // 类型校验 防止习题集类型改变
-        if (null != practiceSet.getPracticeType()) {
-            if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()) {
-                throw new InvalidParamException("非法操作,习题集下存在不兼容类型习题！");
-            }
-        }
+		// 类型校验 防止习题集类型改变
+		if (null != practiceSet.getPracticeType()) {
+			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()) {
+				throw new InvalidParamException("非法操作,习题集下存在不兼容类型习题！");
+			}
+		}
 
-        return practiceSetMapper.updateById(practiceSet) > CommonConstant.ZERO;
-    }
+		return practiceSetMapper.updateById(practiceSet) > CommonConstant.ZERO;
+	}
 
-    @Override
-    public void enableDelete(List<String> resourceIds, AuthContext authContext) {
+	@Override
+	public void enableDelete(List<String> resourceIds, AuthContext authContext) {
 
-        for (String setId : resourceIds) {
-            // 权限校验
-            enableAccess(setId, authContext);
+		for (String setId : resourceIds) {
+			// 权限校验
+			enableAccess(setId, authContext);
 
-            // 数据校验
-            PracticeSet practiceSet = practiceSetMapper.selectById(setId);
-            List<String> practiceIds = hasPractice(practiceSet, authContext);
-            if (CollectionUtils.isNotEmpty(practiceIds)) {
-                throw new InvalidParamException("习题集[" + practiceSet.getName() + "]下存在习题！");
-            }
-        }
-    }
+			// 数据校验
+			PracticeSet practiceSet = practiceSetMapper.selectById(setId);
+			List<String> practiceIds = hasPractice(practiceSet, authContext);
+			if (CollectionUtils.isNotEmpty(practiceIds)) {
+				throw new InvalidParamException("习题集[" + practiceSet.getName() + "]下存在习题！");
+			}
+		}
+	}
 
-    @Override
-    public boolean importRmTheorySet(String path) {
+	@Override
+	public boolean importRmTheorySet(String path) {
 
-        // 习题集数据插入处理
-        PracticeSet practiceSet = handlerPracticeSet(path);
+		// 习题集数据插入处理
+		PracticeSet practiceSet = handlerPracticeSet(path);
 
-        //习题数据导入
-        practiceTheoryService.importRmTheory(path, practiceSet);
+		// 习题数据导入
+		practiceTheoryService.importRmTheory(path, practiceSet);
 
-        return false;
-    }
+		return true;
+	}
 
-    @Override
-    public boolean importRmCtfSet(String path, Map<String, String> envReqs) {
-        // 习题集数据处理
-        PracticeSet practiceSet = handlerPracticeSet(path);
+	@Override
+	public boolean importRmCtfSet(String path, Map<String, String> envReqs) {
+		// 习题集数据处理
+		PracticeSet practiceSet = handlerPracticeSet(path);
 
-        // 遍历习题数据处理
-        File setFileDir = new File(path);
-        List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
+		// 遍历习题数据处理
+		File setFileDir = new File(path);
+		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
 
-        for (String ctfPracticeDir : ctfPracticeDirs) {
-            boolean result = practiceOperationService.importRmCtf(ctfPracticeDir, envReqs, practiceSet);
-        }
+		for (String ctfPracticeDir : ctfPracticeDirs) {
+			boolean result = practiceOperationService.importRmCtf(ctfPracticeDir, envReqs,
+					practiceSet);
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * 习题集数据读取
-     *
-     * @param path
-     * @return
-     */
-    private PracticeSet handlerPracticeSet(String path) {
+	/**
+	 * 习题集数据读取
+	 *
+	 * @param path
+	 * @return
+	 */
+	private PracticeSet handlerPracticeSet(String path) {
 
-        // 读取习题集数据信息
-        File setMarkdownFile = new File(path, ResourceImportConstant.README_NAME);
-        JSONObject setData = MdUtil.parseJsonMarkdown(setMarkdownFile);
-        JSONObject setJson = JsonUtil.filedConvert(setData, ResourceImportConstant.PRACTICE_SET_DATA_MAPPING);
+		// 读取习题集数据信息
+		File setMarkdownFile = new File(path, ResourceImportConstant.README_NAME);
+		JSONObject setData = MdUtil.parseJsonMarkdown(setMarkdownFile);
+		JSONObject setJson = JsonUtil.filedConvert(setData,
+				ResourceImportConstant.PRACTICE_SET_DATA_MAPPING);
 
-        // 格式化习题习题集数据 并存储数据库
-        PracticeSet practiceSet = jsonParsePracticeSet(setJson);
+		// 格式化习题习题集数据 并存储数据库
+		PracticeSet practiceSet = jsonParsePracticeSet(setJson);
 
-        // logo文件地址转换
-        File file = new File(path, ResourceImportConstant.PNG_LOGO);
-        File destFile = new File(AttachmentPath.LOGO.getDesc(), ResourceImportConstant.PNG_LOGO);
-        if (!file.exists()) {
-            file = new File(path, ResourceImportConstant.JPG_LOGO);
-            destFile = new File(AttachmentPath.LOGO.getDesc(), ResourceImportConstant.JPG_LOGO);
-        }
-        String destLogoPath = FileUtil.copyFile(file.getAbsolutePath(), destFile.getAbsolutePath(), true);
-        practiceSet.setLogo(utilService.replaceFileUrl(destLogoPath));
+		// logo文件地址转换
+		File file = new File(path, ResourceImportConstant.PNG_LOGO);
+		File destFile = new File(AttachmentPath.LOGO.getDesc(), ResourceImportConstant.PNG_LOGO);
+		if (!file.exists()) {
+			file = new File(path, ResourceImportConstant.JPG_LOGO);
+			destFile = new File(AttachmentPath.LOGO.getDesc(), ResourceImportConstant.JPG_LOGO);
+		}
+		String destLogoPath = FileUtil.copyFile(file.getAbsolutePath(), destFile.getAbsolutePath(),
+				true);
+		practiceSet.setLogo(utilService.replaceFileUrl(destLogoPath));
 
-        // 名称数据校验
-        String existSetId = practiceSetMapper.selectByName(practiceSet.getName());
+		// 名称数据校验
+		String existSetId = practiceSetMapper.selectByName(practiceSet.getName());
 
-        // 不存在则创建 存在则直接返回
-        if (StringUtils.isBlank(existSetId)) {
-            try {
-                practiceSet.setBuiltin(CommonConstant.TRUE);
-                practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
-                practiceSet.setIsPublic(CommonConstant.FALSE);
-                practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-                practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-                practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-                practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+		// 不存在则创建 存在则直接返回
+		if (StringUtils.isBlank(existSetId)) {
+			try {
+				practiceSet.setBuiltin(CommonConstant.TRUE);
+				practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+				practiceSet.setIsPublic(CommonConstant.FALSE);
+				practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+				practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+				practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+				practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 
-                practiceSetMapper.insert(practiceSet);
-            } catch (DuplicateKeyException e) {
-                return practiceSetMapper.selectById(practiceSet.getResourceId());
-            }
-        }
+				practiceSetMapper.insert(practiceSet);
+				return practiceSet;
+			} catch (DuplicateKeyException e) {
 
-        return practiceSetMapper.selectById(existSetId);
-    }
+				return practiceSetMapper.selectById(practiceSet.getResourceId());
+			}
+		}
 
-    /**
-     * 格式化习题集数据
-     *
-     * @param setJson
-     * @return
-     */
-    private PracticeSet jsonParsePracticeSet(JSONObject setJson) {
-        // 习题集类型处理
-        String typeName = (String) setJson.remove("practice_type");
-        Integer practiceType = EnumUtils.getEnumCodeByDesc(typeName, PracticeSet.PracticeType.class);
+		return practiceSetMapper.selectById(existSetId);
+	}
 
-        PracticeSet practiceSet = setJson.toJavaObject(PracticeSet.class);
-        practiceSet.setPracticeType(practiceType);
+	/**
+	 * 格式化习题集数据
+	 *
+	 * @param setJson
+	 * @return
+	 */
+	private PracticeSet jsonParsePracticeSet(JSONObject setJson) {
+		// 习题集类型处理
+		String typeName = (String) setJson.remove("practice_type");
+		Integer practiceType = EnumUtils.getEnumCodeByDesc(typeName,
+				PracticeSet.PracticeType.class);
 
-        return practiceSet;
+		PracticeSet practiceSet = setJson.toJavaObject(PracticeSet.class);
+		practiceSet.setPracticeType(practiceType);
 
-    }
+		return practiceSet;
 
-    /**
-     * 查询习题集下是否存在数据
-     *
-     * @param practiceSet
-     * @param authContext
-     * @return
-     */
-    private List<String> hasPractice(PracticeSet practiceSet, AuthContext authContext) {
+	}
 
-        if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.THEORY.getCode()
-                .intValue()) {
-            return practiceTheoryMapper.selectBySetIds(Arrays.asList(practiceSet.getResourceId()),
-                    authContext.getIsWeb());
-        } else {
-            return practiceOperationMapper.selectBySetIds(
-                    Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
-        }
+	/**
+	 * 查询习题集下是否存在数据
+	 *
+	 * @param practiceSet
+	 * @param authContext
+	 * @return
+	 */
+	private List<String> hasPractice(PracticeSet practiceSet, AuthContext authContext) {
 
-    }
+		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.THEORY.getCode()
+				.intValue()) {
+			return practiceTheoryMapper.selectBySetIds(Arrays.asList(practiceSet.getResourceId()),
+					authContext.getIsWeb());
+		} else {
+			return practiceOperationMapper.selectBySetIds(
+					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
+		}
+
+	}
 }

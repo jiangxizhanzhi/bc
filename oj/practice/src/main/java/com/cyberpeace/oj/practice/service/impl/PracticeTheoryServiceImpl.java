@@ -287,7 +287,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public boolean importRmTheory(String path, PracticeSet practiceSet) {
+	public List<PracticeTheory> parseRmTheory(String path, PracticeSet practiceSet) {
 		// 获取excel数据
 		String oneFile = FileUtil.getOneFile(path, "xls");
 		if (StringUtils.isBlank(oneFile)) {
@@ -300,9 +300,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 数据类型转换
 		List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData,
 				rowData -> excelDataToEntity(rowData, practiceSet));
-		saveBatch(theoryList);
 
-		return true;
+		return theoryList;
 	}
 
 	/**

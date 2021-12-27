@@ -70,5 +70,5 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param path
 	 * @return
 	 */
-    boolean importRmTheory(String path, PracticeSet practiceSet);
+	List<PracticeTheory> parseRmTheory(String path, PracticeSet practiceSet);
 }

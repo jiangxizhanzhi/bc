@@ -530,7 +530,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public boolean importRmCtf(String path, Map<String, String> envReqs, PracticeSet practiceSet) {
+	public PracticeOperation parseRmCtf(String path, Map<String, String> envReqs,
+			PracticeSet practiceSet) {
 		File operationFile = new File(path, ResourceImportConstant.README_NAME);
 		JSONObject operationData = MdUtil.parseJsonMarkdown(operationFile);
 
@@ -559,9 +560,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 		operation.setWriteupPublic(CommonConstant.TRUE);
 
-		practiceOperationMapper.insert(operation);
-
-		return true;
+		return operation;
 	}
 
 	/**

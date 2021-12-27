@@ -20,6 +20,7 @@ import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
@@ -198,38 +199,54 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	public boolean importRmTheorySet(String path) {
 
 		// 习题集数据插入处理
-		PracticeSet practiceSet = handlerPracticeSet(path);
+		PracticeSet practiceSet = handlerPracticeSet(path, true);
 
 		// 习题数据导入
-		practiceTheoryService.importRmTheory(path, practiceSet);
-
-		return true;
+		List<PracticeTheory> theoryList = practiceTheoryService.parseRmTheory(path, practiceSet);
+		return practiceTheoryService.saveBatch(theoryList);
 	}
 
 	@Override
 	public boolean importRmCtfSet(String path, Map<String, String> envReqs) {
 		// 习题集数据处理
-		PracticeSet practiceSet = handlerPracticeSet(path);
+		PracticeSet practiceSet = handlerPracticeSet(path, false);
 
 		// 遍历习题数据处理
-		File setFileDir = new File(path);
 		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
 
+		List<String> failOperations = Lists.newArrayList();
+		List<PracticeOperation> operationList = Lists.newArrayList();
+
 		for (String ctfPracticeDir : ctfPracticeDirs) {
-			boolean result = practiceOperationService.importRmCtf(ctfPracticeDir, envReqs,
-					practiceSet);
+			try {
+				PracticeOperation operation = practiceOperationService.parseRmCtf(ctfPracticeDir,
+						envReqs, practiceSet);
+				operationList.add(operation);
+			} catch (Exception e) {
+				failOperations.add(ctfPracticeDir);
+				log.error("Parse ctf practice fail! ctf_practice_path=[{}], catch error:",
+						ctfPracticeDir, e);
+				continue;
+			}
 		}
 
-		return true;
+		if (CollectionUtils.isNotEmpty(failOperations)) {
+			String failOperation = String.join(",", failOperations);
+			log.error("Import fail ctf practices is [{}]", failOperation);
+			return false;
+		}
+
+		return practiceOperationService.saveBatch(operationList);
 	}
 
 	/**
 	 * 习题集数据读取
 	 *
-	 * @param path
+	 * @param path 习题集路径
+	 * @param throwException 习题集已存在 覆盖或者抛出异常
 	 * @return
 	 */
-	private PracticeSet handlerPracticeSet(String path) {
+	private PracticeSet handlerPracticeSet(String path, boolean throwException) {
 
 		// 读取习题集数据信息
 		File setMarkdownFile = new File(path, ResourceImportConstant.README_NAME);
@@ -256,21 +273,22 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 不存在则创建 存在则直接返回
 		if (StringUtils.isBlank(existSetId)) {
-			try {
-				practiceSet.setBuiltin(CommonConstant.TRUE);
-				practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
-				practiceSet.setIsPublic(CommonConstant.FALSE);
-				practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-				practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-				practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-				practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+			practiceSet.setBuiltin(CommonConstant.TRUE);
+			practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+			practiceSet.setIsPublic(CommonConstant.FALSE);
+			practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+			practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+			practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+			practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 
-				practiceSetMapper.insert(practiceSet);
-				return practiceSet;
-			} catch (DuplicateKeyException e) {
+			practiceSetMapper.insert(practiceSet);
+			return practiceSet;
+		}
 
-				return practiceSetMapper.selectById(practiceSet.getResourceId());
-			}
+		if (throwException) {
+			log.error("Practice set exist! practice_set_id=[{}], practice_set_name=[{}]",
+					existSetId, practiceSet.getName());
+			throw new BusinessException(ErrorCode.DUPLICATE_KEY);
 		}
 
 		return practiceSetMapper.selectById(existSetId);

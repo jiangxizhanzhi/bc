@@ -131,5 +131,5 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
      * @param envReqs
      * @return
      */
-    boolean importRmCtf(String path, Map<String, String> envReqs, PracticeSet practiceSet);
+    PracticeOperation parseRmCtf(String path, Map<String, String> envReqs, PracticeSet practiceSet);
 }

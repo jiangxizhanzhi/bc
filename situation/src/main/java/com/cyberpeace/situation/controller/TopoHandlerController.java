@@ -3,6 +3,7 @@ package com.cyberpeace.situation.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.situation.model.*;
@@ -36,79 +37,72 @@ public class TopoHandlerController {
     @Autowired
     private TopoHandlerService topoHandlerService;
 
-//    String sceneId = "5fb9de782ecf4e968ac3ac9c55388f97";
-
-    @GetMapping("topo_3d")
+    @GetMapping("topology")
     public BaseRsp<SituationTopo> topo3d(@ApiParam(name = "scene_id",
             value = "场景编号") @RequestParam("scene_id") @Valid @NotBlank String sceneId) {
 
+        // 获取中台场景数据
         JSONObject sceneTopo = remoteSceneService.getById(sceneId, null);
+
+        // 获取中台靶标类型数据
         JSONObject deviceCategorie = remoteTerminalService.getAllCategorie();
 
+        // 处理靶标类型数据
+        CategorieMap categorieMap = topoHandlerService.getCategorieMap(deviceCategorie);
+
+        // 提取有效数据
         JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
-        JSONObject extendElementInfo = sceneTopo.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
-        List<Float> xList = Lists.newArrayList();
-        List<Float> yList = Lists.newArrayList();
-        Map<String, String> portElementMap = Maps.newHashMap();
+        JSONObject extendElementInfo = sceneTopo.getJSONObject("scene").getJSONObject("plugins").
+                getJSONObject("cpcloud").getJSONObject("elements");
 
-        Map<String, AreaInfo> areas = getAreas(topology, xList, yList);
-        Map<String, ElementInfo> elements = getElements(topology, extendElementInfo, xList, yList, portElementMap);
-        List<ConnectionInfo> connections = getConnections(topology, portElementMap);
-        SceneInfo sceneInfo = getSceneInfo(sceneId, topology, xList, yList);
+        SceneData sceneData = new SceneData();
+        sceneData.setSceneId(sceneId);
+        sceneData.setSceneName(topology.getJSONObject("scene").getString("name"));
+        sceneData.setSceneDesc(topology.getJSONObject("scene").getString("description"));
+        sceneData.setAreas((JSONArray) topology.getOrDefault("areas", Lists.newArrayList()));
+        sceneData.setElements((JSONArray) topology.getOrDefault("elements", Lists.newArrayList()));
+        sceneData.setConnections((JSONArray) topology.getOrDefault("connections", Lists.newArrayList()));
+        sceneData.setExtendElementInfo(extendElementInfo);
+        sceneData.setXList(Lists.newArrayList());
+        sceneData.setYList(Lists.newArrayList());
+        sceneData.setExternalNetwork(Lists.newArrayList());
+        sceneData.setPortElementMap(Maps.newHashMap());
+        sceneData.setCategorieMap(categorieMap);
 
+        // 处理拓扑数据
+        Map<String, AreaInfo> areasInfo = getAreas(sceneData);
+        Map<String, ElementInfo> elementsInfo = getElements(sceneData, areasInfo);
+        List<ConnectionInfo> connectionsInfo = getConnections(sceneData, elementsInfo);
+        SceneInfo sceneInfo = getSceneInfo(sceneData);
+
+        // 构造返回数据
         SituationTopo situationTopo = new SituationTopo();
+        situationTopo.setAreas(areasInfo);
+        situationTopo.setElements(elementsInfo);
+        situationTopo.setConnections(connectionsInfo);
         situationTopo.setScene(sceneInfo);
-        situationTopo.setAreas(areas);
-        situationTopo.setElements(elements);
-        situationTopo.setConnections(connections);
 
         return new BaseRsp<>(situationTopo);
     }
 
-    private SceneInfo getSceneInfo(String sceneId, JSONObject topology, List<Float> xList, List<Float> yList) {
+    private Map<String, AreaInfo> getAreas(SceneData sceneData) {
 
-        JSONObject sceneData = topology.getJSONObject("scene");
-        String name = sceneData.getString("name");
-        String description = sceneData.getString("description");
-
-        Float xMax = Collections.max(xList);
-        Float xMin = Collections.min(xList);
-        Float yMax = Collections.max(yList);
-        Float yMin = Collections.min(yList);
-
-        List<PlaneCoordinate> scope = Lists.newArrayList();
-        scope.add(new PlaneCoordinate(xMin, yMin));
-        scope.add(new PlaneCoordinate(xMin, yMax));
-        scope.add(new PlaneCoordinate(xMax, yMax));
-        scope.add(new PlaneCoordinate(xMax, yMin));
-
-        SceneInfo sceneInfo = new SceneInfo();
-        sceneInfo.setId(sceneId);
-        sceneInfo.setName(name);
-        sceneInfo.setDesc(description);
-        sceneInfo.setScope(scope);
-
-        return sceneInfo;
-
-    }
-
-    private Map<String, AreaInfo> getAreas(JSONObject topology, List<Float> xList, List<Float> yList) {
-
+        JSONArray areas = sceneData.getAreas();
         Map<String, AreaInfo> areasInfo = Maps.newHashMap();
-
-        JSONArray areas = (JSONArray) topology.getOrDefault("areas", Lists.newArrayList());
 
         for (int i = 0; i < areas.size(); i++) {
 
             JSONObject area = areas.getJSONObject(i);
+
+            // 处理区域坐标数据
             JSONObject position = area.getJSONObject("position2");
             Float x = position.getJSONObject("origin").getFloat("x");
             Float y = position.getJSONObject("origin").getFloat("y");
             Float width = position.getFloat("width");
             Float height = position.getFloat("height");
 
-            xList.add(x);
-            yList.add(y);
+            sceneData.getXList().add(x);
+            sceneData.getYList().add(y);
 
             List<PlaneCoordinate> scope = Lists.newArrayList();
             scope.add(new PlaneCoordinate(x, y));
@@ -116,22 +110,16 @@ public class TopoHandlerController {
             scope.add(new PlaneCoordinate(x + width, y + height));
             scope.add(new PlaneCoordinate(x + width, y));
 
-            LineStyle style = new LineStyle();
-            style.setColor("#FFFFFF");
-            style.setWidth(1);
-            style.setLineType("fly");
-
-            List<String> effects = Lists.newArrayList();
-
+            // 构造区域数据
             AreaInfo areaInfo = new AreaInfo();
             areaInfo.setAreaId(area.getString("id"));
-            areaInfo.setName(area.getString("name"));
+            areaInfo.setName("区域" + (i + 1));
             areaInfo.setDesc(area.getString("description"));
-            areaInfo.setShape((String) area.getOrDefault("shape", "rectangle"));
-            areaInfo.setStatus((String) area.getOrDefault("status", "normal"));
+            areaInfo.setShape(topoHandlerService.getAreaShape(area));
+            areaInfo.setStatus(topoHandlerService.getAreaStatus(area));
             areaInfo.setScope(scope);
-            areaInfo.setStyle(style);
-            areaInfo.setEffect(effects);
+            areaInfo.setStyle(topoHandlerService.getLineStyle());
+            areaInfo.setEffect(topoHandlerService.getLineEffect());
 
             areasInfo.put(area.getString("id"), areaInfo);
         }
@@ -139,31 +127,42 @@ public class TopoHandlerController {
 
     }
 
-    private Map<String, ElementInfo> getElements(JSONObject topology, JSONObject extendElementInfo, List<Float> xList, List<Float> yList, Map<String, String> portElementMap) {
+    private Map<String, ElementInfo> getElements(SceneData sceneData, Map<String, AreaInfo> areasInfo) {
 
+        JSONArray elements = sceneData.getElements();
+        JSONObject extendElementInfo = sceneData.getExtendElementInfo();
+        CategorieMap categorieMap = sceneData.getCategorieMap();
         Map<String, ElementInfo> elementsInfo = Maps.newHashMap();
 
-        JSONArray elements = (JSONArray) topology.getOrDefault("elements", Lists.newArrayList());
-
         for (int i = 0; i < elements.size(); i++) {
+
             JSONObject element = elements.getJSONObject(i);
             String elementId = element.getString("id");
-            String name = element.getString("name");
-            String desc = element.getString("description");
             JSONObject elementExtendedInfo = extendElementInfo.getJSONObject(elementId);
-            // Integer role = element.getInteger("role");
-            String role = "终端节点";
+
+            //处理设备类型（虚/实）
             Integer virtualType = elementExtendedInfo.getInteger("virtual_type");
             String deviceType = virtualType != 0 ? "virtual" : "entity";
-//            String deviceType = "virtual";
+
             // 处理类型数据
             Integer category = elementExtendedInfo.getInteger("category");
             Integer category2 = elementExtendedInfo.getInteger("category2");
-            String type = "暂无";
+            String firstType = categorieMap.getFirstCategorie().getOrDefault(category, "其他");
+            String secondType = categorieMap.getSecondCategorie().getOrDefault(category2, "其他");
+            String type = firstType + "-" + secondType;
 
-            // 处理状态数据
-            String actionStatus = "normal";
-            String status = "running";
+            // 处理角色数据
+            Integer roleId = elementExtendedInfo.getInteger("role");
+            String role = categorieMap.getRole().getOrDefault(roleId, "其他");
+
+            // 初次处理层级数据
+            Integer hierarchy;
+            if ("外部网络".equals(role)) {
+                sceneData.getExternalNetwork().add(elementId);
+                hierarchy = 2;
+            } else {
+                hierarchy = 0;
+            }
 
             // 处理区域数据
             List<String> areas = Lists.newArrayList();
@@ -172,7 +171,8 @@ public class TopoHandlerController {
             JSONObject position2 = element.getJSONObject("position2");
             Float x = position2.getFloat("x");
             Float y = position2.getFloat("y");
-            PlaneCoordinate position = new PlaneCoordinate(x, y);
+            sceneData.getXList().add(x);
+            sceneData.getYList().add(y);
 
             // 处理端口数据
             Map<String, PortInfo> portsInfo = Maps.newHashMap();
@@ -180,32 +180,25 @@ public class TopoHandlerController {
             for (int j = 0; j < ports.size(); j++) {
                 JSONObject port = ports.getJSONObject(j);
                 String portId = port.getString("id");
-                String portIp = port.getString("ip");
-                String portName = port.getString("name");
+                sceneData.getPortElementMap().put(portId, elementId);
 
-                PortInfo portInfo = new PortInfo();
+                PortInfo portInfo = BeanUtils.deepCopy(port, PortInfo.class);
                 portInfo.setPortId(portId);
-                portInfo.setName(portName);
-                portInfo.setIp(portIp);
 
-                portElementMap.put(portId, elementId);
                 portsInfo.put(portId, portInfo);
             }
 
-            // 处理初步等级数据
-            Integer hierarchy = 0;
-
             ElementInfo elementInfo = new ElementInfo();
             elementInfo.setElementId(elementId);
-            elementInfo.setName(name);
+            elementInfo.setName(element.getString("name"));
             elementInfo.setRole(role);
-            elementInfo.setDesc(desc);
+            elementInfo.setDesc(element.getString("description"));
             elementInfo.setDeviceType(deviceType);
             elementInfo.setType(type);
-            elementInfo.setActionStatus(actionStatus);
-            elementInfo.setStatus(status);
-            elementInfo.setAreas(areas);
-            elementInfo.setPosition(position);
+            elementInfo.setActionStatus(topoHandlerService.getElementActionStatus(element));
+            elementInfo.setStatus(topoHandlerService.getElementStatus(element));
+            elementInfo.setAreas(topoHandlerService.getElementAreas(x, y, areasInfo));
+            elementInfo.setPosition(new PlaneCoordinate(x, y));
             elementInfo.setPorts(portsInfo);
             elementInfo.setHierarchy(hierarchy);
 
@@ -215,28 +208,51 @@ public class TopoHandlerController {
         return elementsInfo;
     }
 
-    private List<ConnectionInfo> getConnections(JSONObject topology, Map<String, String> portElementMap) {
+    private List<ConnectionInfo> getConnections(SceneData sceneData, Map<String, ElementInfo> elements) {
 
-        JSONArray connections = (JSONArray) topology.getOrDefault("connections", Lists.newArrayList());
+        JSONArray connections = sceneData.getConnections();
+        Map<String, String> portElementMap = sceneData.getPortElementMap();
+        List<String> externalNetwork = sceneData.getExternalNetwork();
 
         List<ConnectionInfo> connectionsInfo = Lists.newArrayList();
 
         for (int i = 0; i < connections.size(); i++) {
             JSONObject connection = connections.getJSONObject(i);
-
             String source = portElementMap.get(connection.getString("source"));
             String target = portElementMap.get(connection.getString("target"));
 
+            // 二次处理层级数据
+            if (externalNetwork.contains(source) && !"终端节点".equals(elements.get(target).getRole())) {
+                elements.get(target).setHierarchy(1);
+            }
+
+            if (externalNetwork.contains(target) && !"终端节点".equals(elements.get(source).getRole())) {
+                elements.get(source).setHierarchy(1);
+            }
+
+            // 构造返回连线数据
             ConnectionInfo connectionInfo = new ConnectionInfo();
             connectionInfo.setSource(source);
             connectionInfo.setTarget(target);
-//            connectionInfo.setStyle();
-//            connectionInfo.setEffect();
-
+            connectionInfo.setStyle(topoHandlerService.getLineStyle());
+            connectionInfo.setEffect(topoHandlerService.getLineEffect());
             connectionsInfo.add(connectionInfo);
         }
 
         return connectionsInfo;
+
+    }
+
+    private SceneInfo getSceneInfo(SceneData sceneData) {
+
+        // 构造场景基础信息
+        SceneInfo sceneInfo = new SceneInfo();
+        sceneInfo.setId(sceneData.getSceneId());
+        sceneInfo.setName(sceneData.getSceneName());
+        sceneInfo.setDesc(sceneData.getSceneDesc());
+        sceneInfo.setScope(topoHandlerService.getSceneScope(sceneData.getXList(), sceneData.getYList()));
+
+        return sceneInfo;
 
     }
 

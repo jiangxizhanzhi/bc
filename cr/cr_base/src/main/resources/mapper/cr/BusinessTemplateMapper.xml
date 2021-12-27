@@ -39,6 +39,9 @@
 
     </select>
     <select id="selectIdsByUserId" resultType="java.lang.String" parameterType="java.lang.String">
+        <if test="userId != null and userId != ''">
+            <bind name="likeUserId" value="'%' + userId + '%'"/>
+        </if>
         <include refid="share_constant"/>
         select
         resource_id
@@ -47,7 +50,7 @@
 
         (`operation_auth_type` = ${ALL_SHARE_MODE} or (`operation_auth_type` = ${CUSTOM_SHARE_MODE} and
         `operation_auth_ids` like
-        #{userId}) or `create_user_id` =#{userId})
+        #{likeUserId}) or `create_user_id` =#{userId})
     </select>
 
     <select id="selectByNameAndType" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">

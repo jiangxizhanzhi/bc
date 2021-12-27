@@ -32,252 +32,255 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachment> implements AttachmentService {
 
-	@Autowired
-	private AttachmentMapper attachmentMapper;
+    @Autowired
+    private AttachmentMapper attachmentMapper;
 
-	@Autowired
-	private UtilService utilService;
+    @Autowired
+    private UtilService utilService;
 
-	@Override
-	public List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb) {
-		if (StringUtils.isNotBlank(attachmentIds)) {
-			String[] attachmentArr = StringUtils.split(attachmentIds, CommonConstant.CODE_COMMA);
+    @Override
+    public List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb) {
+        if (StringUtils.isNotBlank(attachmentIds)) {
+            String[] attachmentArr = StringUtils.split(attachmentIds, CommonConstant.CODE_COMMA);
 
-			List<Attachment> attachments = attachmentMapper
-					.selectBatchIds(Lists.newArrayList(attachmentArr), isWeb);
-			List<AttachmentBo> attachmentBos = StreamApiUtils.map(attachments, attachment -> {
-				AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
-				attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
-				return attachmentBo;
-			});
-			return attachmentBos;
-		}
-		return Lists.newArrayList();
-	}
+            List<Attachment> attachments = attachmentMapper
+                    .selectBatchIds(Lists.newArrayList(attachmentArr), isWeb);
+            List<AttachmentBo> attachmentBos = StreamApiUtils.map(attachments, attachment -> {
+                AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
+                attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
+                return attachmentBo;
+            });
+            return attachmentBos;
+        }
+        return Lists.newArrayList();
+    }
 
-	@Override
-	public List<Attachment> batchGetByIds(List<String> attachmentIds) {
-		if (attachmentIds == null || attachmentIds.size() == 0) {
-			return Lists.newArrayList();
-		}
-		// 不根据isPublic做筛选
-		return attachmentMapper.selectBatchIds(attachmentIds, false);
-	}
+    @Override
+    public List<Attachment> batchGetByIds(List<String> attachmentIds) {
+        if (attachmentIds == null || attachmentIds.size() == 0) {
+            return Lists.newArrayList();
+        }
+        // 不根据isPublic做筛选
+        return attachmentMapper.selectBatchIds(attachmentIds, false);
+    }
 
-	@Override
-	public AttachmentBo create(String filename, String filePath) {
-		Attachment attachment = Attachment.builder().resourceId(IDGeneratorUtil.getID())
-				.fileName(filename).filePath(filePath).isPublic(CommonConstant.TRUE).build();
-		int insert = attachmentMapper.insert(attachment);
-		if (insert > 0) {
-			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
-			attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
-			return attachmentBo;
-		}
-		return null;
-	}
+    @Override
+    public AttachmentBo create(String filename, String filePath) {
+        Attachment attachment = Attachment.builder().resourceId(IDGeneratorUtil.getID())
+                .fileName(filename).filePath(filePath).isPublic(CommonConstant.TRUE).build();
+        int insert = attachmentMapper.insert(attachment);
+        if (insert > 0) {
+            AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
+            attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
+            return attachmentBo;
+        }
+        return null;
+    }
 
-	@Override
-	public AttachmentBo copyFile(String originPath, Integer type, Boolean insertDb,
-			Boolean renameFile) {
-		File origin = new File(originPath);
-		if (!origin.exists() || origin.isDirectory()) {
-			throw new InvalidParamException("不支持此类型文件上传！");
-		}
+    @Override
+    public AttachmentBo copyFile(String originPath, Integer type, Boolean insertDb,
+                                 Boolean renameFile) {
+        File origin = new File(originPath);
+        if (!origin.exists() || origin.isDirectory()) {
+            throw new InvalidParamException("不支持此类型文件上传！");
+        }
 
-		String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
+        String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
 
-		String fileName = origin.getName();
-		if (renameFile) {
-			String[] ss = StringUtils.split(fileName, ".");
-			if (ss.length > 1) {
-				// 如果文件没有后缀，不重命名，方便后期问题追踪。没有后缀对文件，一般是bug
-				String postfix = ss[ss.length - 1];
-				fileName = IDGeneratorUtil.getID() + "." + postfix;
-			}
-		}
-		String destPathFileName = destPath + fileName;
-		String storeInDbName = EnumUtils.getEnumByCode(type, AttachmentPath.class).getOriginDesc()
-				+ fileName;
-		File dest = new File(destPathFileName);
+        String fileName = origin.getName();
+        if (renameFile) {
+            String[] ss = StringUtils.split(fileName, ".");
+            if (ss.length > 1) {
+                // 如果文件没有后缀，不重命名，方便后期问题追踪。没有后缀对文件，一般是bug
+                String postfix = ss[ss.length - 1];
+                fileName = IDGeneratorUtil.getID() + "." + postfix;
+            }
+        }
+        String destPathFileName = destPath + fileName;
+        String storeInDbName = EnumUtils.getEnumByCode(type, AttachmentPath.class).getOriginDesc()
+                + fileName;
+        File dest = new File(destPathFileName);
 
-		try {
-			if (!dest.getParentFile().exists()) {
-				dest.getParentFile().mkdirs();
-			}
-			Files.copy(origin, dest);
-		} catch (IOException e) {
-			log.error("复制文件失败: " + origin.getAbsolutePath() + " ,to:" + dest.getAbsolutePath());
-			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
-		}
+        try {
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
+            }
+            Files.copy(origin, dest);
+        } catch (IOException e) {
+            log.error("复制文件失败: " + origin.getAbsolutePath() + " ,to:" + dest.getAbsolutePath());
+            throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
+        }
 
-		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(fileName, storeInDbName);
-			return attachmentBo;
-		}
+        if (null != insertDb && insertDb) {
+            AttachmentBo attachmentBo = create(fileName, storeInDbName);
+            return attachmentBo;
+        }
 
-		// 返回给前端对展示名称
-		String displayName = ConfigUtil.getContextProperty("cr.local.file.prefix") + storeInDbName;
-		return AttachmentBo.builder().filePath(displayName).fileName(fileName).build();
-	}
+        // 返回给前端对展示名称
+        String displayName = ConfigUtil.getContextProperty("cr.local.file.prefix") + storeInDbName;
+        return AttachmentBo.builder().filePath(displayName).fileName(fileName).build();
+    }
 
-	@Override
-	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
-			Boolean renameFile) {
-		return uploadFile(file, type, insert, renameFile);
-	}
+    @Override
+    public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
+                                   Boolean renameFile) {
+        return uploadFile(file, type, insert, renameFile);
+    }
 
-	@Override
-	public AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file,
-			boolean renameFile) {
+    @Override
+    public AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file,
+                                   boolean renameFile) {
 
-		FileUtil.mkdirs(destDir);
-		String destFileName = destDir + file.getOriginalFilename();
-		File destFile = new File(destFileName);
-		if (destFile.exists() && renameFile) {
-			destFileName = reFileName(destFileName);
-		}
+        FileUtil.mkdirs(destDir);
+        String destFileName = destDir + file.getOriginalFilename();
+        File destFile = new File(destFileName);
+        if (destFile.exists() && renameFile) {
+            destFileName = reFileName(destFileName);
+        }
 
-		try {
-			file.transferTo(new File(destFileName));
-		} catch (Exception e) {
-			log.error("file upload failed! dest_file_name=[{}], origin_file_name=[{}]",
-					destFileName, file.getOriginalFilename(), e);
-			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
-		}
+        try {
+            file.transferTo(new File(destFileName));
+        } catch (Exception e) {
+            log.error("file upload failed! dest_file_name=[{}], origin_file_name=[{}]",
+                    destFileName, file.getOriginalFilename(), e);
+            throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
+        }
 
-		String viewUrl = utilService.replaceFileUrl(destFileName);
-		Attachment attachment = Attachment.builder().fileName(new File(destFileName).getName())
-				.filePath(viewUrl).isPublic(true).build();
+        String viewUrl = utilService.replaceFileUrl(destFileName);
+        Attachment attachment = Attachment.builder().fileName(new File(destFileName).getName())
+                .filePath(viewUrl).isPublic(true).build();
 
-		// 插入数据库
-		if (insert) {
-			attachment.setResourceId(IDGeneratorUtil.getID());
-			return BeanUtils.copy(attachment, AttachmentBo.class);
-		}
+        // 插入数据库
+        if (insert) {
+            attachment.setResourceId(IDGeneratorUtil.getID());
+            attachmentMapper.insert(attachment);
+            return BeanUtils.copy(attachment, AttachmentBo.class);
+        }
 
-		return BeanUtils.copy(attachment, AttachmentBo.class);
-	}
+        return BeanUtils.copy(attachment, AttachmentBo.class);
+    }
 
-	/**
-	 * 修改文件名称
-	 * @param fileName
-	 * @return
-	 */
-	public String reFileName(String fileName) {
-		String name = fileName.substring(0, fileName.lastIndexOf("."));
-		String afterFix = fileName.substring(fileName.lastIndexOf(".") + 1);
-		return name + IDGeneratorUtil.getID() + CommonConstant.PERIOD + afterFix;
-	}
+    /**
+     * 修改文件名称
+     *
+     * @param fileName
+     * @return
+     */
+    public String reFileName(String fileName) {
+        String name = fileName.substring(0, fileName.lastIndexOf("."));
+        String afterFix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        return name + IDGeneratorUtil.getID() + CommonConstant.PERIOD + afterFix;
+    }
 
-	@Override
-	public void deleteAttachment(String attachmentId) {
-		Attachment attachment = attachmentMapper.selectById(attachmentId);
-		if (null != attachment) {
-			attachmentMapper.deleteById(attachmentId);
-			File file = new File(attachment.getFilePath());
-			if (file.exists()) {
-				file.delete();
-			}
-		}
-	}
+    @Override
+    public void deleteAttachment(String attachmentId) {
+        Attachment attachment = attachmentMapper.selectById(attachmentId);
+        if (null != attachment) {
+            attachmentMapper.deleteById(attachmentId);
+            File file = new File(attachment.getFilePath());
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
 
-	@Override
-	public List<String> unzipFile(String filePath, String distPath, String fileType) {
+    @Override
+    public List<String> unzipFile(String filePath, String distPath, String fileType) {
 
-		ZipUtil.unzipToDest(filePath, distPath);
+        ZipUtil.unzipToDest(filePath, distPath);
 
-		return Arrays.stream(new File(distPath).listFiles()).filter(
-				file -> StringUtils.isBlank(fileType) ? true : file.getName().endsWith(fileType))
-				.map(File::getAbsolutePath).collect(Collectors.toList());
-	}
+        return Arrays.stream(new File(distPath).listFiles()).filter(
+                file -> StringUtils.isBlank(fileType) ? true : file.getName().endsWith(fileType))
+                .map(File::getAbsolutePath).collect(Collectors.toList());
+    }
 
-	@Override
-	public List<String> batchInsert(List<String> attachmentPaths) {
+    @Override
+    public List<String> batchInsert(List<String> attachmentPaths) {
 
-		List<Attachment> attachments = StreamApiUtils.map(attachmentPaths,
-				path -> Attachment.builder().resourceId(IDGeneratorUtil.getID())
-						.fileName(FileUtil.getFileName(path, true)).filePath(path)
-						.isPublic(CommonConstant.TRUE).build());
+        List<Attachment> attachments = StreamApiUtils.map(attachmentPaths,
+                path -> Attachment.builder().resourceId(IDGeneratorUtil.getID())
+                        .fileName(FileUtil.getFileName(path, true)).filePath(path)
+                        .isPublic(CommonConstant.TRUE).build());
 
-		saveBatch(attachments);
+        saveBatch(attachments);
 
-		return StreamApiUtils.map(attachments, Attachment::getResourceId);
-	}
+        return StreamApiUtils.map(attachments, Attachment::getResourceId);
+    }
 
-	@Override
-	public Boolean loadImage(String imageId, String fileName, String imageDir) {
-		// 图片附件已存在，不做操作
-		if (attachmentMapper.selectById(imageId) != null) {
-			return true;
-		}
-		// 复制图片
-		String originalPath = imageDir + File.separator + fileName;
-		// 仅复制图片
-		copyFile(originalPath, AttachmentPath.UPLOAD_IMAGE.getCode(), CommonConstant.FALSE,
-				CommonConstant.FALSE);
-		// 插入数据库
-		create(fileName, AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName, true);
-		return true;
-	}
+    @Override
+    public Boolean loadImage(String imageId, String fileName, String imageDir) {
+        // 图片附件已存在，不做操作
+        if (attachmentMapper.selectById(imageId) != null) {
+            return true;
+        }
+        // 复制图片
+        String originalPath = imageDir + File.separator + fileName;
+        // 仅复制图片
+        copyFile(originalPath, AttachmentPath.UPLOAD_IMAGE.getCode(), CommonConstant.FALSE,
+                CommonConstant.FALSE);
+        // 插入数据库
+        create(fileName, AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName, true);
+        return true;
+    }
 
-	private AttachmentBo uploadFile(MultipartFile file, Integer type, Boolean insertDb,
-			Boolean renameFile) {
-		String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
+    private AttachmentBo uploadFile(MultipartFile file, Integer type, Boolean insertDb,
+                                    Boolean renameFile) {
+        String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
 
-		String fileName = file.getOriginalFilename();
-		if (renameFile) {
-			String[] ss = StringUtils.split(fileName, ".");
-			if (ss.length > 1) {
-				// 如果文件没有后缀，不重命名，方便后期问题追踪。没有后缀对文件，一般是bug
-				String postfix = ss[ss.length - 1];
-				fileName = IDGeneratorUtil.getID() + "." + postfix;
-			}
-		}
-		String destPathFileName = destPath + fileName;
-		String storeInDbName = EnumUtils.getEnumByCode(type, AttachmentPath.class).getOriginDesc()
-				+ fileName;
-		File dest = new File(destPathFileName);
+        String fileName = file.getOriginalFilename();
+        if (renameFile) {
+            String[] ss = StringUtils.split(fileName, ".");
+            if (ss.length > 1) {
+                // 如果文件没有后缀，不重命名，方便后期问题追踪。没有后缀对文件，一般是bug
+                String postfix = ss[ss.length - 1];
+                fileName = IDGeneratorUtil.getID() + "." + postfix;
+            }
+        }
+        String destPathFileName = destPath + fileName;
+        String storeInDbName = EnumUtils.getEnumByCode(type, AttachmentPath.class).getOriginDesc()
+                + fileName;
+        File dest = new File(destPathFileName);
 
-		try {
-			if (!dest.getParentFile().exists()) {
-				dest.getParentFile().mkdirs();
-			}
-			file.transferTo(dest);
-		} catch (IOException e) {
-			log.error("复制文件失败: " + fileName + " ,to:" + dest.getAbsolutePath(), e);
-			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
-		}
+        try {
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
+            }
+            file.transferTo(dest);
+        } catch (IOException e) {
+            log.error("复制文件失败: " + fileName + " ,to:" + dest.getAbsolutePath(), e);
+            throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
+        }
 
-		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(fileName, storeInDbName, renameFile);
-			return attachmentBo;
-		}
+        if (null != insertDb && insertDb) {
+            AttachmentBo attachmentBo = create(fileName, storeInDbName, renameFile);
+            return attachmentBo;
+        }
 
-		// 返回给前端对展示名称
-		return AttachmentBo.builder().filePath(storeInDbName).fileName(fileName).build();
-	}
+        // 返回给前端对展示名称
+        return AttachmentBo.builder().filePath(storeInDbName).fileName(fileName).build();
+    }
 
-	/**
-	 * 如果重命名上传的文件，将文件名和id设置为同一个uuid
-	 * @param filename 文件名
-	 * @param filePath 文件路径
-	 * @param idIsName 文件名和id是否一致
-	 * @return
-	 */
-	private AttachmentBo create(String filename, String filePath, Boolean idIsName) {
-		if (idIsName == null || !idIsName) {
-			return create(filename, filePath);
-		}
-		String resourceId = StringUtils.split(filename, '.')[0];
-		Attachment attachment = Attachment.builder().resourceId(resourceId).fileName(filename)
-				.filePath(filePath).isPublic(CommonConstant.TRUE).build();
-		int insert = attachmentMapper.insert(attachment);
-		if (insert > 0) {
-			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
-			attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
-			return attachmentBo;
-		}
-		return null;
-	}
+    /**
+     * 如果重命名上传的文件，将文件名和id设置为同一个uuid
+     *
+     * @param filename 文件名
+     * @param filePath 文件路径
+     * @param idIsName 文件名和id是否一致
+     * @return
+     */
+    private AttachmentBo create(String filename, String filePath, Boolean idIsName) {
+        if (idIsName == null || !idIsName) {
+            return create(filename, filePath);
+        }
+        String resourceId = StringUtils.split(filename, '.')[0];
+        Attachment attachment = Attachment.builder().resourceId(resourceId).fileName(filename)
+                .filePath(filePath).isPublic(CommonConstant.TRUE).build();
+        int insert = attachmentMapper.insert(attachment);
+        if (insert > 0) {
+            AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
+            attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
+            return attachmentBo;
+        }
+        return null;
+    }
 }

@@ -35,4 +35,7 @@ public interface ErrorCode {
 
 	/** 文件类型不正确*/
 	String FILE_TYPE_ERROR = "10014";
+
+	/** 文件读取失败*/
+	String FILE_READ_FAIL = "10015";
 }

@@ -79,9 +79,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@Autowired
 	private LessonSceneService lessonSceneService;
 
-	@Autowired
-	private UtilService utilService;
-
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListLessonReq lessonReq) {
@@ -307,7 +304,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	}
 
 	@ApiOperation("课时新增附件上传")
-	@PostMapping("upload_attachment")
+	@PostMapping("/upload_attachment")
 	public BaseRsp<String>
 			uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
 

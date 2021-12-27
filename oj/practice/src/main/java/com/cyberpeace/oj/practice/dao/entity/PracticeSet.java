@@ -36,7 +36,7 @@ public class PracticeSet extends AuthTable {
 
 	public enum PracticeType implements GenericEnum {
 
-		THEORY(0, "基础理论"), OPERATION(2, "实操练习");
+		THEORY(0, "理论基础"), OPERATION(2, "实操练习");
 
 		@Getter
 		private Integer code;

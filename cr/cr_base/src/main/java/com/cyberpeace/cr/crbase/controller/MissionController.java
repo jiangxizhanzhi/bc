@@ -203,7 +203,7 @@ public class MissionController {
 	}
 
 	@ApiOperation("编辑任务方案")
-	@PutMapping("/combat_techs/")
+	@PutMapping("/combat_techs")
 	public BaseRsp<?> editSchemeTemplate(
 			@RequestBody @Validated MissionSchemeTemplateModifyReq templateModifyReq) {
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);

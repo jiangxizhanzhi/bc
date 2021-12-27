@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
+import com.cyberpeace.common.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -26,10 +27,6 @@ import org.slf4j.impl.TraceIdContext;
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.HttpDeleteWithBody;
-import com.cyberpeace.common.model.HttpclientContext;
-import com.cyberpeace.common.model.HttpclientModel;
 import com.google.common.collect.Lists;
 
 public class HttpClientUtil {
@@ -60,6 +57,7 @@ public class HttpClientUtil {
 		HttpPost post = new HttpPost(url);
 		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		post.setEntity(entity);
 
 		// 3、执行实际调用、返回序列化后的结果
@@ -76,6 +74,7 @@ public class HttpClientUtil {
 		HttpDeleteWithBody delete = new HttpDeleteWithBody(url);
 		delete.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		delete.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		delete.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		delete.setEntity(entity);
 
 		// 3、执行实际调用、返回序列化后的结果
@@ -97,7 +96,7 @@ public class HttpClientUtil {
 		// 2、生成get请求
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-
+		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(httpGet, resultType);
 	}

@@ -36,4 +36,20 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * 单兵查看场景
 	 */
 	SceneViewContext viewScene(String businessTemplateId);
+
+	/**
+	 * 查找单兵训练房间
+	 * @param businessTemplateId 业务模板id
+	 * @param userId 用户id
+	 * @return
+	 */
+	SingleRoom getByBusinessTemplateIdAndUserId(String businessTemplateId, String userId);
+
+	/**
+	 * @param businessId 用于消息和ws的id， 格式为 businessTemplateId_userId
+	 * @return
+	 */
+	SingleRoom getByBusinessId(String businessId);
+
+	void clearLocal(SingleRoom room);
 }

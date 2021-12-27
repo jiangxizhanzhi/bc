@@ -626,6 +626,21 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return ret;
 	}
 
+	@Override
+	public SingleRoom getByBusinessTemplateIdAndUserId(String businessTemplateId, String userId) {
+		return singleRoomMapper.getSingleRoom(businessTemplateId, userId);
+	}
+
+	@Override
+	public SingleRoom getByBusinessId(String businessId) {
+		String[] ids = StringUtils.split(businessId, "_", 1);
+		if (ids.length != 2) {
+			log.error(String.format("invalid business id for single training: %s", businessId));
+			return null;
+		}
+		return singleRoomMapper.getSingleRoom(ids[0], ids[1]);
+	}
+
 	private JSONObject getMpSceneData(SingleRoom room) {
 		if (room == null) {
 			return null;
@@ -657,7 +672,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return sceneData;
 	}
 
-	private void clearLocal(SingleRoom room) {
+	@Override
+	public void clearLocal(SingleRoom room) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

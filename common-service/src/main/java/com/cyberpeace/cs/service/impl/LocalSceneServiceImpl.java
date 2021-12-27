@@ -101,14 +101,20 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public LocalScene getById(String localSceneId) {
-		LocalScene localScene = localSceneMapper.selectById(localSceneId);
 
-		return localScene;
+		return localSceneMapper.selectById(localSceneId);
 	}
 
 	@Override
 	public Boolean stopScene(String localSceneId) {
-		return stopScene(getById(localSceneId));
+		if (StringUtils.isBlank(localSceneId)) {
+			return false;
+		}
+		LocalScene localScene = getById(localSceneId);
+		if (null == localScene) {
+			return false;
+		}
+		return stopScene(localScene);
 	}
 
 	@Override

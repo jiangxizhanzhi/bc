@@ -1,22 +1,22 @@
 package com.cyberpeace.cr.singletrain.service.bo;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
 
 @Data
 @ApiModel("单兵训练详情")
 public class SingleRoomBo extends SingleTemplateBo implements Serializable {
 
-    @ApiModelProperty("训练模板id")
-    private String resourceId;
+	@ApiModelProperty("训练模板id")
+	private String resourceId;
 
-    @ApiModelProperty("用户使用训练")
-    private SingleRoomInfoBo roomInfo;
+	@ApiModelProperty("用户使用训练")
+	private SingleRoomInfoBo roomInfo;
 
-    @ApiModelProperty("场景id")
-    private String sceneManageId;
+	@ApiModelProperty("本地场景id")
+	private String localSceneId;
 
 }

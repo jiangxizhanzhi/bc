@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
@@ -30,6 +33,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
@@ -79,7 +83,6 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Autowired
 	private MissionService missionService;
 
-	// todo 待调整
 	@Autowired
 	private MissionTemplateMapper missionTemplateMapper;
 
@@ -111,18 +114,24 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		LocalScene localScene = createLocalScene(businessTemplate);
 		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);
-		// 单兵训练不进行任务复制, 引用原模板任务方案数据
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		try {
+			// 单兵训练不进行任务复制, 引用原模板任务方案数据
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				save(room);
-				localSceneService.save(localScene);
-				trainRecordService.saveRecord(businessTemplateId, userId,
-						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
-			}
-		});
-		localSceneService.startScene(localScene);
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					localSceneService.save(localScene);
+					room.setLocalSceneId(localScene.getResourceId());
+					save(room);
+					trainRecordService.saveRecord(businessTemplateId, userId,
+							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				}
+			});
+		} catch (Exception e) {
+			log.error("db error when start train single scene: ", e);
+			localSceneService.deleteRemoteScene(localScene);
+			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
+		}
 
 		return getRoomInfo(room.getSingleTemplateId());
 	}
@@ -135,7 +144,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 		localScene.setTopoId(template.getTopoId());
 		localScene.setBusinessCode(LocalScene.BusinessCode.SINGLE_TRAINING.getCode());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		localScene.setBusinessInstanceId(businessId);
 		localScene.setResourceId(IDGeneratorUtil.getID());
@@ -173,7 +182,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 生成数据
 		SingleRoomInfoBo singleRoomInfoBo = new SingleRoomInfoBo();
 		singleRoomInfoBo.setStartTime(singleRoom.getStartTime());
-		singleRoomInfoBo.setTraining_record_data(
+		singleRoomInfoBo.setTrainingRecordData(
 				JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class));
 		singleRoomBo.setRoomInfo(singleRoomInfoBo);
 
@@ -192,8 +201,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		if (singleRoom == null) {
 			return false;
 		}
-
-		// todo 场景关闭
+		// 关闭场景
+		localSceneService.stopScene(singleRoom.getLocalSceneId());
 
 		// 删除单兵训练房间, 记录结束时间
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -201,6 +210,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				singleRoomMapper.deleteById(singleRoom);
+				localSceneService.removeById(singleRoom.getLocalSceneId());
 				trainRecordService.updateEndDate(businessTemplateId, userId,
 						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 			}
@@ -587,6 +597,75 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		trainTimeLineBo.setData(missionRecord);
 
 		return trainTimeLineBo;
+	}
+
+	@Override
+	public SceneViewContext viewScene(String businessTemplateId) {
+		BusinessTemplate businessTemplate = businessTemplateService.getById(businessTemplateId);
+		if (businessTemplate == null) {
+			return null;
+		}
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom room = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
+
+		SceneViewContext ret = new SceneViewContext();
+		if (room != null) {
+			ret.setRoomId(room.getResourceId());
+		}
+		// 1、尝试获取启动的远程场景
+		JSONObject sceneData = getMpSceneData(room);
+		if (sceneData != null) {
+			ret.setSceneData(sceneData);
+			ret.setLocalSceneId(room.getLocalSceneId());
+			return ret;
+		}
+		// 2、 远程场景不存在，返回topo数据
+		JSONObject topoData = localSceneService.getTopoData(businessTemplate.getTopoId())
+				.getJSONObject("scene_config");
+		ret.setTopoData(topoData);
+		return ret;
+	}
+
+	private JSONObject getMpSceneData(SingleRoom room) {
+		if (room == null) {
+			return null;
+		}
+		String localSceneId = room.getLocalSceneId();
+		// localSceneId字段为空
+		if (StringUtils.isBlank(localSceneId)) {
+			return null;
+		}
+		// localScene不存在，删除room
+		LocalScene localScene = localSceneService.getById(localSceneId);
+		if (null == localScene) {
+			removeById(room.getResourceId());
+			return null;
+		}
+		// localScene 的 mpSceneId为空，localScene是脏数据
+		String mpSceneId = localScene.getMpSceneId();
+		if (StringUtils.isBlank(mpSceneId)) {
+			clearLocal(room);
+			return null;
+		}
+		// 请求远程场景数据
+		JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
+				UserInfoContext.getUserContext().getUserId());
+		// 场景数据为空，清除本地脏数据
+		if (null == sceneData) {
+			clearLocal(room);
+		}
+		return sceneData;
+	}
+
+	private void clearLocal(SingleRoom room) {
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				localSceneService.removeById(room.getLocalSceneId());
+				removeById(room.getResourceId());
+			}
+		});
 	}
 
 	// todo 待迁移

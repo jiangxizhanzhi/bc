@@ -38,7 +38,7 @@ public class PersonController {
 
   @ApiOperation("当前用户所有评论")
   @GetMapping("/comments")
-  public ListRsp<PersonComment> listComments(@ApiParam @Validated PageReqBase pageReq) {
+  public BaseRsp<ListRsp<PersonComment>> listComments(@ApiParam @Validated PageReqBase pageReq) {
     Page page = pageReq.toPageParam();
     String userId = UserInfoContext.getUserContext().getUserId();
     // 权限数据获取
@@ -47,12 +47,12 @@ public class PersonController {
     String parent = "";
     IPage<PersonComment> comments =
         personCommentService.pageComment(page, userId, parent, authContext);
-    return PageUtil.getListResult(comments);
+    return new BaseRsp<>(PageUtil.getListResult(comments));
   }
 
   @ApiOperation("当前用户所有回复")
   @GetMapping("/replies")
-  public ListRsp<PersonComment> listReplies(@ApiParam @Validated PageReqBase pageReq) {
+  public BaseRsp<ListRsp<PersonComment>> listReplies(@ApiParam @Validated PageReqBase pageReq) {
     Page page = pageReq.toPageParam();
     String userId = UserInfoContext.getUserContext().getUserId();
     // 权限数据获取
@@ -61,24 +61,24 @@ public class PersonController {
     String parent = "parent";
     IPage<PersonComment> comments =
         personCommentService.pageComment(page, userId, parent, authContext);
-    return PageUtil.getListResult(comments);
+    return new BaseRsp<>(PageUtil.getListResult(comments));
   }
 
   @ApiOperation("当前用户所有笔记")
   @GetMapping("/notes")
-  public ListRsp<PersonNote> listNotes(@ApiParam @Validated PageReqBase pageReq) {
+  public BaseRsp<ListRsp<PersonNote>> listNotes(@ApiParam @Validated PageReqBase pageReq) {
     Page page = pageReq.toPageParam();
     String userId = UserInfoContext.getUserContext().getUserId();
     // 权限数据获取
     AuthContext authContext =
         AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
     IPage<PersonNote> comments = personCommentService.pageNotes(page, userId, authContext);
-    return PageUtil.getListResult(comments);
+    return new BaseRsp<>(PageUtil.getListResult(comments));
   }
 
   @ApiOperation("当前用户所有收藏")
   @GetMapping("/collections")
-  public ListRsp<PersonCollection> listCollections(
+  public BaseRsp<ListRsp<PersonCollection>> listCollections(
       @ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type) {
     Page page = pageReq.toPageParam();
     String userId = UserInfoContext.getUserContext().getUserId();
@@ -89,7 +89,7 @@ public class PersonController {
 
     IPage<PersonCollection> collections =
         personCommentService.pageCollections(page, userId, type, authContext);
-    return PageUtil.getListResult(collections);
+    return new BaseRsp<>(PageUtil.getListResult(collections));
   }
 
   @ApiOperation("当前用户学习课程和练习记录")

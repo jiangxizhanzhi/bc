@@ -264,7 +264,7 @@ public class MissionController {
 	}
 
 	@ApiOperation("查询单个任务方案")
-	@GetMapping("/combat_techs/")
+	@GetMapping("/combat_techs")
 	public BaseRsp<MissionSchemeTemplateRsp> getSchemeTemplate(@ApiParam(name = "resource_id",
 			value = "任务方案编号") @RequestParam("resource_id") @Valid @NotBlank String resourceId) {
 		MissionSchemeTemplateRsp templateRsp = missionService.getSchemeTemplateRspById(resourceId);

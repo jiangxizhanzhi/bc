@@ -23,8 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Api(tags = "oj-前台个人中心api")
 @RestController
@@ -104,9 +108,14 @@ public class PersonController {
 
   @ApiOperation("当前用户30天内课程、实验报告数量")
   @GetMapping("/study_period_records")
-  public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(
-      @RequestParam("start_time") String startTime, @RequestParam("end_time") String endTime) {
-
+  public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth() {
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date date = new Date(System.currentTimeMillis());
+    String endTime = format.format(date);
+    Calendar now = Calendar.getInstance();
+    now.setTime(date);
+    now.add(Calendar.DAY_OF_MONTH, -30);
+    String startTime = format.format(now.getTime());
     boolean startValidate = TimeUtil.isValidDate(startTime);
     boolean endValidate = TimeUtil.isValidDate(endTime);
     if (!startValidate || !endValidate) {
@@ -118,5 +127,27 @@ public class PersonController {
         AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
     return personCommentService.studyPeriodRecords(
         userId, TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime), authContext);
+  }
+
+  @ApiOperation("当前用户课程表")
+  @GetMapping("/class_schedule")
+  public BaseRsp<List<ListSchedule>> listSchedules(@ApiParam @Validated String type) {
+    String userId = UserInfoContext.getUserContext().getUserId();
+
+    // 权限数据获取
+    AuthContext authContext =
+            AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+
+    List<ListSchedule> listSchedules =
+            personCommentService.listSchedules(userId, type, authContext);
+    return new BaseRsp<>(listSchedules);
+  }
+
+
+  @ApiOperation("当前用户训练任务")
+  @GetMapping("/train_statistics")
+  public BaseRsp<TrainInfo> trainingStatistics() {
+    String userId = UserInfoContext.getUserContext().getUserId();
+    return personCommentService.trainingStatistics(userId);
   }
 }

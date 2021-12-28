@@ -4,10 +4,12 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@ApiModel
 public class SceneOperationReq implements Serializable {
 
 	@ApiModelProperty("课时、习题编号")

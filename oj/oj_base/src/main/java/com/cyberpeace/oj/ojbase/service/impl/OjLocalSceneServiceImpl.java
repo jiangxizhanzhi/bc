@@ -119,7 +119,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			return topo;
 		}
 
-		JSONArray elements = sceneConfig.getJSONArray(JsonKeyConstant.ELEMENTS);
+		JSONArray elements = topology.getJSONArray(JsonKeyConstant.ELEMENTS);
 		if (elements.size() <= 0) {
 			return topo;
 		}
@@ -129,7 +129,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			List<String> initCommands = JsonUtil
 					.toJsonObjectArray(node.getString(JsonKeyConstant.INIT_COMMANDS), String.class);
 			if (CollectionUtils.isEmpty(initCommands)) {
-				return topo;
+				continue;
 			}
 
 			for (int i = 0; i < initCommands.size(); i++) {

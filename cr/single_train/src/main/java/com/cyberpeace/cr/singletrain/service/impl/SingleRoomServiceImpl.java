@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -699,7 +700,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	}
 
 	private Map<String, MissionTemplate> getMissionMapByScheme(String missionScheme) {
-		return missionTemplateMapper.selectBatchIds(getMissionIdsByScheme(missionScheme)).stream()
+		List<String> missionIds = getMissionIdsByScheme(missionScheme);
+
+		if (missionIds.isEmpty()) {
+			return Maps.newHashMap();
+		}
+
+		return missionTemplateMapper.selectBatchIds(missionIds).stream()
 				.collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
 	}
 }

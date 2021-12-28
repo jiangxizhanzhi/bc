@@ -122,7 +122,7 @@
         <foreach collection="userIds" item="userId" separator="," open="(" close=")">
             #{userId}
         </foreach>
-        and report_time = null
+        and last_submit_time = null
     </select>
 
     <select id="selectByMissionId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">

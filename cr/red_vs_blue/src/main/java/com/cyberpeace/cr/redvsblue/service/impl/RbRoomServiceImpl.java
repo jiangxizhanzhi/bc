@@ -529,6 +529,14 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		return crRole;
 	}
 
+	@Override
+	public void checkTeacherPermission(String roomId, String userId) {
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		if (role.isStudent()) {
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+	}
+
 	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData, String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();
 

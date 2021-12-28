@@ -1,10 +1,10 @@
 package com.cyberpeace.cr.teamtrain.service;
 
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.teamtrain.controller.rsp.Flow;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
-
 import java.util.List;
+
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.scene.Flow;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 
 public interface TeamSceneService {
 

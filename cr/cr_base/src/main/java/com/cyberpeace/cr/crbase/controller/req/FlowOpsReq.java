@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.controller.req;
+package com.cyberpeace.cr.crbase.controller.req;
 
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamFlowOpsReq implements Serializable {
+public class FlowOpsReq implements Serializable {
 
 	@ApiModelProperty("团队训练实例id")
 	private String roomId;

@@ -1,0 +1,155 @@
+package com.cyberpeace.cr.redvsblue.controller;
+
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.scene.Flow;
+import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.RbSceneService;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+
+@Api(tags = "红蓝对抗实例")
+@Slf4j
+@RestController
+@RequiresAuthentication
+@RequestMapping("/cr/red_vs_blue/scene/")
+public class RbSceneController {
+
+	@Autowired
+	private RbRoomService rbRoomService;
+
+	@Autowired
+	private RbSceneService rbSceneService;
+
+	@Autowired
+	private LocalSceneService localSceneService;
+
+	@ApiOperation("启动场景")
+	@PostMapping("")
+	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
+		String roomId = sceneStartReq.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		rbSceneService.startScene(roomId, userId);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("停止场景")
+	@DeleteMapping("")
+	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
+		String roomId = sceneStopReq.getRoomId();
+
+		Boolean result = rbSceneService.stopScene(roomId);
+		return new BaseRsp(result);
+	}
+
+	@ApiOperation("查看场景")
+	@GetMapping("")
+	public BaseRsp<SceneViewContext> getScene(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
+			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
+		SceneViewContext context = rbSceneService.viewScene(resource_id, role_id);
+
+		return new BaseRsp<>(context);
+	}
+
+	@ApiOperation("暂停场景")
+	@PostMapping("/pause")
+	public BaseRsp pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+		String roomId = sceneOpsReq.getRoomId();
+
+		rbSceneService.pauseScene(roomId);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("从暂停中恢复场景")
+	@PostMapping("/unpause")
+	public BaseRsp unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+		String roomId = sceneOpsReq.getRoomId();
+
+		rbSceneService.unpauseScene(roomId);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("查询流量")
+	@GetMapping("flow")
+	public BaseRsp<FlowRsp> getFlowList(
+			@ApiParam(name = "room_id", value = "团队训练id", required = true) String room_id) {
+
+		List<Flow> flows = rbSceneService.getFlowList(room_id);
+		FlowRsp ret = new FlowRsp();
+		ret.setData(flows);
+
+		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("启动流量")
+	@PostMapping("/flow")
+	public BaseRsp startFlow(@RequestBody FlowOpsReq req) {
+		String roomId = req.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、鉴权
+		rbRoomService.checkTeacherPermission(roomId, userId);
+		// 2、确认场景已开启
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+		if (!localSceneService.ensureSceneStarted(localScene)) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		// 3、开启流量
+		Boolean result = localSceneService.startFlow(localScene, req.getNodeId(), req.getFlowId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
+		}
+		return new BaseRsp();
+	}
+
+	@ApiOperation("重启节点")
+	@PostMapping("/node/restart")
+	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		RbRoom room = rbRoomService.getById(nodeOpsReq.getResourceId());
+		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
+		}
+		return new BaseRsp();
+	}
+
+	@ApiOperation("重建节点")
+	@PostMapping("/node/recreate")
+	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		RbRoom room = rbRoomService.getById(nodeOpsReq.getResourceId());
+		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
+		}
+		return new BaseRsp();
+	}
+}

@@ -96,7 +96,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		SceneConfigData topoData = basicTemplate.getBaseInfo().getSceneConfigData();
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", topoData.getSceneConfig());
-		LocalScene.BusinessCode businessCode = convertTypeToCode(basicTemplate.getBaseInfo().getType());
+		LocalScene.BusinessCode businessCode = convertTypeToCode(
+				basicTemplate.getBaseInfo().getType());
 		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
 
 		// 保存基础模板
@@ -325,7 +326,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 		// 2、 远程场景不存在，返回topo数据
 		JSONObject topoData = localSceneService.getTopoData(template.getTopoId())
-				.getJSONObject("scene_config");
+				.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
 		ret.setTopoData(topoData);
 		return ret;
 	}

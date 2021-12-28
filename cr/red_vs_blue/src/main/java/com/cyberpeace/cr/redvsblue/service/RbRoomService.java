@@ -63,4 +63,11 @@ public interface RbRoomService extends IService<RbRoom> {
 	TimeLineData getMissionTimeline(String roomId);
 
 	CrRole checkRoomPermission(String roomId, String userId);
+
+	/**
+	 * 校验是否有操作场景的权限
+	 * @param roomId
+	 * @param userId
+	 */
+	void checkTeacherPermission(String roomId, String userId);
 }

@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
+import static com.cyberpeace.cr.crbase.constant.CrCommonConstants.MP_SCENE_ID_KEY;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -7,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
@@ -53,6 +55,7 @@ import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleRoom> implements SingleRoomService {
@@ -618,12 +621,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		if (sceneData != null) {
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());
-			ret.setMpSceneId(sceneData.getString("resource_id"));
+			ret.setMpSceneId(sceneData.getString(MP_SCENE_ID_KEY));
 			return ret;
 		}
 		// 2、 远程场景不存在，返回topo数据
 		JSONObject topoData = localSceneService.getTopoData(businessTemplate.getTopoId())
-				.getJSONObject("scene_config");
+				.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
 		ret.setTopoData(topoData);
 		return ret;
 	}
@@ -672,7 +675,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			clearLocal(room);
 			return null;
 		}
-		sceneData.put("resource_id", mpSceneId);
+		sceneData.put(MP_SCENE_ID_KEY, mpSceneId);
 		return sceneData;
 	}
 

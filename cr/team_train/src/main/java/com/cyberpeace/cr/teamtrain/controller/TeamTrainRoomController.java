@@ -24,6 +24,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
@@ -38,9 +39,12 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
-import com.cyberpeace.cr.teamtrain.controller.req.*;
-import com.cyberpeace.cr.teamtrain.controller.rsp.Flow;
-import com.cyberpeace.cr.teamtrain.controller.rsp.FlowRsp;
+import com.cyberpeace.cr.crbase.service.context.scene.Flow;
+import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
+import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -154,7 +158,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
-	public BaseRsp startFlow(@RequestBody TeamFlowOpsReq req) {
+	public BaseRsp startFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 1、鉴权

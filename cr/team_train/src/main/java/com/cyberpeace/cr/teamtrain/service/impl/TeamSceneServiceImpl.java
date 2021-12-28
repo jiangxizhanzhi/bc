@@ -19,13 +19,13 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.*;
-import com.cyberpeace.cr.teamtrain.controller.rsp.Flow;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
@@ -247,7 +247,8 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			// 2.2 场景未启动
 			// 2.2.1 请求topoData
 			JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId());
-			TopoData data = topoData.getJSONObject("scene_config").toJavaObject(TopoData.class);
+			TopoData data = topoData.getJSONObject(CrCommonConstants.TOPO_DATA_KEY)
+					.toJavaObject(TopoData.class);
 			cpflow = data.getPlugins().getCpflow();
 
 			List<TopoElement> elements = data.getTopology().getElements();

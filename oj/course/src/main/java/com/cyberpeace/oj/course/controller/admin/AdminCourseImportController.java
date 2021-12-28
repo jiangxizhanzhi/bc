@@ -37,14 +37,14 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "oj-后台课程数据导入相关api")
 @Slf4j
 @RestController
-@RequestMapping("/oj/admin")
+@RequestMapping("/oj/admin/course")
 public class AdminCourseImportController {
 
 	@Autowired
 	private CourseImportService courseImportService;
 
 	@ApiOperation("资管课程数据导入")
-	@PostMapping("/rm/course/import")
+	@PostMapping("/rm/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
 
 		// 路径是否存在校验

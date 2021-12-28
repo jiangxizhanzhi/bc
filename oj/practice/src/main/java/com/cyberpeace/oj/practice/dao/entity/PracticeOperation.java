@@ -25,7 +25,7 @@ public class PracticeOperation extends PracticeBase {
 	private String topoId;
 
 	/** 共享模式 (拥有场景时使用)*/
-	private Integer sceneShareMode = SceneShare.PRIVATE.getCode();
+	private Integer sceneShareMode;
 
 	/** 是否使用动态FLAG (拥有场景时使用)*/
 	private Boolean dynamicFlag;

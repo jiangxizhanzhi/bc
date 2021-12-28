@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.oj.course.controller.req.LessonSceneReq;
-import com.cyberpeace.oj.course.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;

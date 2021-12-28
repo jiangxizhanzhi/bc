@@ -16,6 +16,7 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -285,13 +286,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					operationBo.getResourceId(), operationBo.getSceneShareMode(), authContext);
 
 			if (null != ojLocalScene) {
-				LocalScene sceneLocal = localSceneMapper
-						.getByBusinessInstanceId(ojLocalScene.getResourceId());
-				if (null != sceneLocal && StringUtils.isNotBlank(sceneLocal.getMpSceneId())) {
-					JSONObject jsonObject = remoteSceneService.getById(sceneLocal.getMpSceneId(),
-							authContext.getUserId());
-					webOperationBo.setSceneData(jsonObject);
-				}
+				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+				webOperationBo.setSceneData(sceneData);
 			}
 		}
 
@@ -527,6 +523,37 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		} else {
 			return localSceneService.unpauseScene(localScene.getResourceId());
 		}
+	}
+
+	@Override
+	public TopoSceneDataBo getTopoScene(String operationId, AuthContext authContext) {
+
+		PracticeOperation operation = practiceOperationMapper.selectById(operationId);
+		if (null == operation) {
+			log.error("Operation not found! practice_operation_id=[{}]", operationId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		if (!operation.getDynamicEnv()) {
+			return null;
+		}
+
+		// 拓扑数据查询
+		TopoSceneDataBo topoSceneDataBo = new TopoSceneDataBo();
+		if (StringUtils.isNotBlank(operation.getTopoId())) {
+			JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
+			topoSceneDataBo.setSceneConfigData(topoData);
+		}
+
+		// 场景数据查询
+		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(operationId,
+				operation.getSceneShareMode(), authContext);
+		if (null != ojLocalScene) {
+			JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+			topoSceneDataBo.setSceneData(sceneData);
+		}
+
+		return topoSceneDataBo;
 	}
 
 	@Override

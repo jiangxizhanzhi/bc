@@ -7,6 +7,7 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,16 +168,13 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("获取场景拓扑信息")
 	@GetMapping("/scene_topo")
-	public BaseRsp sceneTopo(@RequestParam("resource_id") String resourceId) {
+	public BaseRsp sceneTopo(@ApiParam(name = "resource_id",
+			value = "习题编号") @RequestParam("resource_id") String operationId) {
 
-		PracticeOperation practiceOperation = practiceOperationMapper.selectById(resourceId);
-		if (null != practiceOperation && practiceOperation.getDynamicEnv()
-				&& StringUtils.isNotBlank(practiceOperation.getTopoId())) {
-			JSONObject sceneConfigData = remoteTopoService.getTopoById(resourceId);
-			return new BaseRsp(sceneConfigData);
-		}
-
-		return new BaseRsp();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		TopoSceneDataBo topoScene = practiceOperationService.getTopoScene(operationId, authContext);
+		return new BaseRsp(topoScene);
 	}
 
 	@ApiOperation("隔离模式设置")

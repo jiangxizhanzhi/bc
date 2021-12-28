@@ -35,5 +35,9 @@ public class CourseName implements Serializable {
 
 	private Integer lessonCount;
 
+	private Integer theoryCount = 0;
+
+	private Integer exerciseCount = 0;
+
 	private Boolean interview = false;
 }

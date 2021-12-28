@@ -102,4 +102,10 @@ public interface CrBusinessErrorCode {
 
 	// 训练速率范围超限
 	String RATE_VALUE_RANGE_ERROR = "101031";
+
+	// 重启节点失败
+	String FAILED_TO_RESTART_NODE = "101032";
+
+	// 重建节点失败
+	String FAILED_TO_RECREATE_NODE = "101033";
 }

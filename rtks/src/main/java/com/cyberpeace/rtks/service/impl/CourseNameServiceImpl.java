@@ -11,6 +11,7 @@ import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseName;
 import com.cyberpeace.rtks.dao.mapper.CourseNameMapper;
 import com.cyberpeace.rtks.service.CourseNameService;
+import com.google.common.collect.Lists;
 
 /**
  *
@@ -28,5 +29,16 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 		}).collect(Collectors.toList());
 
 		saveOrUpdateBatch(courseNameList);
+	}
+
+	@Override
+	public List<CourseName> selectByIds(List<String> notExistIds) {
+		List<CourseName> courseNames = Lists.newArrayList();
+
+		if (notExistIds.size() > 0) {
+			courseNames = this.listByIds(notExistIds);
+		}
+
+		return courseNames;
 	}
 }

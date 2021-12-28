@@ -74,7 +74,7 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 				}
 			}
 			// 调用本地接口获取课程内容列表
-			List<CourseName> courseNames = courseNameService.listByIds(notExistIds);
+			List<CourseName> courseNames = courseNameService.selectByIds(notExistIds);
 
 			// 增加远程接口的课程列表
 			List<CourseInfoBo> courseList = BeanUtils.deepCopyList(courseNames, CourseInfoBo.class);
@@ -86,19 +86,22 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 							courseStatisticsService.statisticByIds(existIds, userInfo.getUserId()));
 
 				}
-
 				courseList.addAll(courseService.selectByIds(existIds));
+			}
 
-				Map<String, CourseInfoBo> allCourseMap = getAllCourseMap(courseList);
+			Map<String, CourseInfoBo> allCourseMap = getAllCourseMap(courseList);
 
-				for (RelatedCourse relatedCourse : relatedCourseList) {
-					Integer weight = relatedCourse.getWeight();
+			for (RelatedCourse relatedCourse : relatedCourseList) {
+				Integer weight = relatedCourse.getWeight();
 
-					relatedCourse = BeanUtils.copy(allCourseMap.get(relatedCourse.getResourceId()),
-							RelatedCourse.class);
+				CourseInfoBo courseInfoBo = allCourseMap.get(relatedCourse.getResourceId());
+
+				if (courseInfoBo != null) {
+					org.springframework.beans.BeanUtils.copyProperties(courseInfoBo,relatedCourse);
+
 					relatedCourse.setWeight(weight);
-
 				}
+
 			}
 		}
 

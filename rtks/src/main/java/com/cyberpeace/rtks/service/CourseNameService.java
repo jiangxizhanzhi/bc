@@ -12,4 +12,6 @@ import java.util.List;
 public interface CourseNameService extends IService<CourseName> {
 
     void addCourseName(List<RelatedCourse> relatedCourseList);
+
+    List<CourseName> selectByIds(List<String> notExistIds);
 }

@@ -16,6 +16,9 @@ public class SceneViewContext implements Serializable {
 	@ApiModelProperty("场景管理器id")
 	private String localSceneId;
 
+	@ApiModelProperty("场景id")
+	private String mpSceneId;
+
 	@ApiModelProperty("拓扑模板数据")
 	private JSONObject topoData;
 

@@ -617,6 +617,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		if (sceneData != null) {
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());
+			ret.setMpSceneId(sceneData.getString("resource_id"));
 			return ret;
 		}
 		// 2、 远程场景不存在，返回topo数据
@@ -668,7 +669,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 场景数据为空，清除本地脏数据
 		if (null == sceneData) {
 			clearLocal(room);
+			return null;
 		}
+		sceneData.put("resource_id", mpSceneId);
 		return sceneData;
 	}
 

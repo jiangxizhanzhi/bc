@@ -22,6 +22,8 @@ public class WsPath {
 
 	public static final String LESSON_SCENE = "/ws/course/lesson_scene";
 
+	public static final String LESSON_PRACTICE_SCENE = "/ws/course/lesson/operation/scene";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
@@ -29,6 +31,7 @@ public class WsPath {
 		cache.add(CR_MISSION);
 		cache.add(OPERATION_SCENE);
 		cache.add(LESSON_SCENE);
+		cache.add(LESSON_PRACTICE_SCENE);
 	}
 
 	public static boolean validPath(String path) {

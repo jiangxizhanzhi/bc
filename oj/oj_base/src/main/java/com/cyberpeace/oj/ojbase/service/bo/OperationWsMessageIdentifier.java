@@ -16,6 +16,6 @@ public class OperationWsMessageIdentifier extends WsMessageIdentifier {
 
 	private Boolean fromWeb;
 
-	private Boolean shared;
+	private Integer shared;
 
 }

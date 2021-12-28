@@ -5,6 +5,7 @@ import java.util.Date;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.ojbase.constant.Event;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,7 +96,8 @@ public class OperationEventListener extends MessageListener {
 	private void pushMessageToWeb(String data, OjLocalScene ojLocalScene, MqContext mqContext) {
 		OperationWsMessageIdentifier identifier = new OperationWsMessageIdentifier();
 		identifier.setFromWeb(ojLocalScene.getFromWeb());
-		identifier.setShared(ojLocalScene.getShared());
+		identifier.setShared(ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
+				: SceneShare.PRIVATE.getCode());
 		identifier.setPracticeId(ojLocalScene.getBusinessId());
 		identifier.setPath(WsPath.OPERATION_SCENE);
 		identifier.setUserId(mqContext.getUserId());

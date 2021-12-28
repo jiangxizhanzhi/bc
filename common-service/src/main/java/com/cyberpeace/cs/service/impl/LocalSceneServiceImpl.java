@@ -24,6 +24,9 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author SN
+ */
 @Slf4j
 @Service
 public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalScene> implements LocalSceneService {
@@ -127,6 +130,10 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public Boolean restartNode(String localSceneId, String nodeId) {
 		LocalScene localScene = getById(localSceneId);
+		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
+			log.error("invalid localScene {}", localSceneId);
+			return false;
+		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
 		Boolean result = remoteSceneService.restartNode(nodeOpsContext);
 		if (!result) {
@@ -140,6 +147,10 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public Boolean recreateNode(String localSceneId, String nodeId) {
 		LocalScene localScene = getById(localSceneId);
+		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
+			log.error("invalid localScene {}", localSceneId);
+			return false;
+		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
 		Boolean result = remoteSceneService.recreateNode(nodeOpsContext);
 		if (!result) {

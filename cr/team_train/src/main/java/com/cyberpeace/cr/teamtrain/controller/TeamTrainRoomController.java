@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -26,6 +27,7 @@ import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -166,6 +168,36 @@ public class TeamTrainRoomController {
 		Boolean result = localSceneService.startFlow(localScene, req.getNodeId(), req.getFlowId());
 		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
+		}
+		return new BaseRsp();
+	}
+
+	@ApiOperation("重启节点")
+	@PostMapping("/scene/node/restart")
+	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
+		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
+		}
+		return new BaseRsp();
+	}
+
+	@ApiOperation("重建节点")
+	@PostMapping("/scene/node/recreate")
+	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
+		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp();
 	}

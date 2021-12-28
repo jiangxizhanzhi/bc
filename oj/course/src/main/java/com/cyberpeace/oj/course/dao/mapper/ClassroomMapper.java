@@ -23,7 +23,13 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @param lessonId
 	 * @return
 	 */
-	Classroom selectByOrgAndLesson(@Param("orgId") String orgId, @Param("lessonId") String lessonId);
+	Classroom selectByOrgAndLesson(@Param("orgId") String orgId,
+			@Param("lessonId") String lessonId);
 
-	List<Classroom> selectPage(@Param("userId") String userId, @Param("listQuery") ClassRoomListQuery listQuery);
+	/**
+	 * 查询课程表数据
+	 * @param listQuery
+	 * @return
+	 */
+	List<Classroom> selectList(@Param("listQuery") ClassRoomListQuery listQuery);
 }

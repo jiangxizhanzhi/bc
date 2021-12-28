@@ -13,6 +13,8 @@ public class ClassRoomListQuery implements Serializable {
 
 	private Date endTime;
 
-	private List<String> orgIds;
+	private String orgId;
+
+	private List<String> childrenOrg;
 
 }

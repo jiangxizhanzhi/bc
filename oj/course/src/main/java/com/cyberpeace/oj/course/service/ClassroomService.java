@@ -14,15 +14,6 @@ import java.util.List;
 public interface ClassroomService extends IService<Classroom> {
 
 	/**
-	 * 根据时间范围获取课堂信息
-	 *
-	 * @param startOfDay
-	 * @param endOfDay
-	 * @return
-	 */
-	List<TimeScheduleBo> listByTime(Date startOfDay, Date endOfDay);
-
-	/**
 	 * 新建课堂表
 	 * @param classroom
 	 * @return
@@ -35,7 +26,7 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param authContext
 	 * @return
 	 */
-	List<ClassroomBo> selectPage(ClassRoomListQuery roomListQuery, AuthContext authContext);
+	List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext);
 
 	/**
 	 *  查询课堂分组信息

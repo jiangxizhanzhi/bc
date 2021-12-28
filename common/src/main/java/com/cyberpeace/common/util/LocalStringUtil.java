@@ -144,6 +144,11 @@ public class LocalStringUtil {
 	 * @return
 	 */
 	public static String replaceAll(String content, List<String> old, List<String> newValue) {
+
+		if (StringUtils.isBlank(content)) {
+			return content;
+		}
+
 		if (old.size() > newValue.size()) {
 			for (int i = 0; i < old.size() - newValue.size(); i++) {
 				newValue.add("");

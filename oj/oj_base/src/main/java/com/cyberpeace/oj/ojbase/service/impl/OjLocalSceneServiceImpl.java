@@ -37,6 +37,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -94,7 +95,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 		// flag设置
 		if (sceneContext.getDynamicFlag()) {
-			ojLocalScene.setFlags(String.format(FLAG_TEMPLATE, IDGeneratorUtil.getID()));
+			String flag = String.format(FLAG_TEMPLATE, IDGeneratorUtil.getID());
+			ojLocalScene.setFlags(JsonUtil.arrayToString(Arrays.asList(flag)));
 		} else {
 			ojLocalScene.setFlags(JsonUtil.toJsonString(sceneContext.getFlags()));
 		}

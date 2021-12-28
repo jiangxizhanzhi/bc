@@ -46,13 +46,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	private RemoteOrganizationService remoteOrganizationService;
 
 	@Override
-	public List<TimeScheduleBo> listByTime(Date startOfDay, Date endOfDay) {
-
-		List<Classroom> classrooms = classroomMapper.listByTime(startOfDay, endOfDay);
-		return null;
-	}
-
-	@Override
 	public Classroom create(Classroom classroom) {
 		classroom.setResourceId(IDGeneratorUtil.getID());
 		classroomMapper.insert(classroom);
@@ -60,10 +53,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	@Override
-	public List<ClassroomBo> selectPage(ClassRoomListQuery roomListQuery, AuthContext authContext) {
+	public List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext) {
 
-		List<Classroom> classrooms = classroomMapper.selectPage(authContext.getUserId(),
-				roomListQuery);
+		List<Classroom> classrooms = classroomMapper.selectList(roomListQuery);
 
 		return StreamApiUtils.map(classrooms, classroom -> entityToBo(classroom));
 	}
@@ -76,8 +68,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			log.error("Classroom not found! classroom_id=[{}]", classroomId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-
-
 
 		// todo
 		return null;

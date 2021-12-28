@@ -49,12 +49,16 @@ public class AdminClassroomController {
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
-	@ApiOperation("后台课程表分页查询")
+	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
 	public BaseRsp<List<ClassroomBo>> list(@Validated ClassroomListReq classroomListReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
+		if (!authContext.getSuperAdmin() && StringUtils.isBlank(authContext.getOrganization())) {
+			return new BaseRsp<>();
+		}
+
 		ClassRoomListQuery roomListQuery = BeanUtils.copy(classroomListReq,
 				ClassRoomListQuery.class);
 
@@ -62,11 +66,11 @@ public class AdminClassroomController {
 		if (StringUtils.isNotBlank(classroomListReq.getOrganizationId())) {
 			List<String> orgIds = remoteOrganizationService
 					.childrenList(classroomListReq.getOrganizationId(), true);
-			roomListQuery.setOrgIds(orgIds);
+			roomListQuery.setChildrenOrg(orgIds);
 		}
 
 		// 数据查询
-		List<ClassroomBo> classroomBos = classroomService.selectPage(roomListQuery, authContext);
+		List<ClassroomBo> classroomBos = classroomService.selectList(roomListQuery, authContext);
 
 		return new BaseRsp<>(classroomBos);
 	}

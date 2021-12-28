@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 
+import java.util.List;
+
 public interface ResourceCollectionService extends IService<ResourceCollection> {
 
 	/**
@@ -29,5 +31,5 @@ public interface ResourceCollectionService extends IService<ResourceCollection> 
 	 * @param businessType
 	 * @return
 	 */
-	Boolean selectByType(String userId, Integer businessType);
+	List<ResourceCollection> selectByType(String userId, Integer businessType);
 }

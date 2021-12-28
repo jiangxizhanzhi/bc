@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection> {
@@ -21,4 +24,13 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	 * @return
 	 */
 	ResourceCollection selectByUnique(CollectionContext collectionContext);
+
+	/**
+	 * 查询对应类型的收藏资源
+	 * @param userId
+	 * @param businessType
+	 * @return
+	 */
+	List<ResourceCollection> selectByType(@Param("userId") String userId,
+			@Param("businessType") Integer businessType);
 }

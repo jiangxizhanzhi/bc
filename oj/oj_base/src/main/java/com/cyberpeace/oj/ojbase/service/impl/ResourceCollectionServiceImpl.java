@@ -2,12 +2,15 @@ package com.cyberpeace.oj.ojbase.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectionMapper, ResourceCollection> implements ResourceCollectionService {
@@ -41,9 +44,8 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 	}
 
 	@Override
-	public Boolean selectByType(String userId, Integer businessType) {
-		// todo
-		// resourceCollectionMapper.selectByType
-		return null;
+	public List<ResourceCollection> selectByType(String userId, Integer businessType) {
+
+		return resourceCollectionMapper.selectByType(userId, businessType);
 	}
 }

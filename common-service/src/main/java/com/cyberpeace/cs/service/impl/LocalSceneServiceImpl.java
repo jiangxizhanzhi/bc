@@ -2,6 +2,7 @@ package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
 
+import com.cyberpeace.common.util.TimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -212,6 +213,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 		// 3、修改本地数据
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+
+		// 计算暂停时间
+		long seconds = TimeUtil.getIntervalSeconds(localScene.getPauseTime(), new Date());
+		Date endTime = TimeUtil.addSeconds(localScene.getEndTime(), seconds);
+		localScene.setEndTime(endTime);
 		updateById(localScene);
 
 		return true;

@@ -69,12 +69,15 @@
     </select>
 
     <select id="selectNoteByUser" resultMap="personNote">
-        select oj_note.user_id,
+        select distinct oj_note.business_id, oj_note.user_id,
         oj_note.content,
         oj_note.business_type as resource_type,
         oj_note.note_type,
-        (IF(oj_note.business_type = 2, concat(oj_course_lesson.course_id, '/',
-        oj_course_lesson.resource_id), oj_note.business_id)) as business_id,
+        (case
+            when oj_note.business_type = 2 then concat(oj_course_lesson.course_id, '/',
+                 oj_course_lesson.resource_id), oj_note.business_id
+            when oj_note.business_type = 4 then concat(oj_course_lesson.course_id, '/',
+                 oj_course_lesson.resource_id,'/',oj_paper.resource_id), oj_note.business_idend) as business_id,
         (case when oj_note.business_type = 1 then oj_course.name
         when oj_note.business_type = 2 then oj_course_lesson.name
         when oj_note.business_type = 3 then (case when oj_practice_operation.title is not null then
@@ -246,9 +249,5 @@
         select *
     </select>
 
-
-    <select id="selectTrainingCount" resultType="com.cyberpeace.oj.person.dao.entity.TrainInfo">
-        select *
-    </select>
 
 </mapper>

@@ -193,7 +193,8 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("后台场景启动测试")
 	@PostMapping("/start_scene")
-	public BaseRsp<JSONObject> startScene(@RequestParam("resourceId") String resourceId) {
+	public BaseRsp<JSONObject> startScene(@ApiParam(name = "resource_id",
+			value = "实操习题编号") @RequestParam("resource_id") String resourceId) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

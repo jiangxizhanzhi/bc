@@ -15,10 +15,12 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.req.SceneShareModeReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.bo.*;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -145,7 +147,7 @@ public class PracticeOperationController {
 
 	}
 
-	@ApiOperation("后台场景节点重建")
+	@ApiOperation("场景节点重建")
 	@PostMapping("/scene_node_recreate")
 	public BaseRsp<Boolean> sceneNodeRecreate(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
@@ -158,7 +160,7 @@ public class PracticeOperationController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("后台场景暂停与恢复")
+	@ApiOperation("场景暂停与恢复")
 	@PatchMapping("/scene_update_status")
 	public BaseRsp sceneUpdateStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
 
@@ -169,6 +171,15 @@ public class PracticeOperationController {
 		return new BaseRsp(result);
 	}
 
+	@ApiOperation("获取场景和拓扑信息")
+	@GetMapping("/topo_scene")
+	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
+			value = "课时编号") @RequestParam("resource_id") String operationId) {
 
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		TopoSceneDataBo topoScene = practiceOperationService.getTopoScene(operationId, authContext);
+		return new BaseRsp<>(topoScene);
+	}
 
 }

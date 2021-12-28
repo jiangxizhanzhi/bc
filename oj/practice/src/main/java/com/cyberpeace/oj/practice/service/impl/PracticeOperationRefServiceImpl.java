@@ -47,6 +47,8 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 							practiceOperationRef.getSnapshot(), PracticeOperation.class);
 					OperationLessonBo operationLessonBo = BeanUtils.copy(operation,
 							OperationLessonBo.class);
+					//  todo 设置原习题数据资源编号
+					// operationLessonBo.setResourceId(practiceOperationRef.getOriginId());
 
 					// 附件内容查询
 					if (!simpleData && StringUtils.isNotBlank(operation.getAttachmentId())) {

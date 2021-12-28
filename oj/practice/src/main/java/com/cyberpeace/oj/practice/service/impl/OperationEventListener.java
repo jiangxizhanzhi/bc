@@ -1,29 +1,22 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.Date;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.oj.ojbase.constant.Event;
-import com.cyberpeace.oj.ojbase.constant.OjEvent;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cs.constant.SceneEvent;
-import com.cyberpeace.cs.constant.SceneEventStatus;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.impl.MessageListener;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.Event;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
@@ -39,9 +32,6 @@ public class OperationEventListener extends MessageListener {
 
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
-
-	@Autowired
-	private LocalSceneMapper localSceneMapper;
 
 	@Override
 	public Integer declareMessageType() {
@@ -67,7 +57,7 @@ public class OperationEventListener extends MessageListener {
 
 		// 场景启动code值
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
-		dataObj.put("code", Event.SCENE_UPDATE.getCode());
+		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
 		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene, context);
 
 		// 场景启动完成更新数据库 消息推送

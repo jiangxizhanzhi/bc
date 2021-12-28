@@ -38,6 +38,8 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 			PracticeTheory practiceTheory = JsonUtil.toJsonObject(practiceTheoryRef.getSnapshot(),
 					PracticeTheory.class);
 			TheoryLessonBo theoryLesonBo = BeanUtils.copy(practiceTheory, TheoryLessonBo.class);
+			// 设置原习题数据资源编号
+			// theoryLesonBo.setResourceId(practiceTheoryRef.getOriginId());
 
 			PracticeCategory category = practiceCategoryMapper
 					.selectById(practiceTheory.getCategoryId());

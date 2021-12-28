@@ -52,7 +52,7 @@ public class SingleRoomController {
 
 	@ApiOperation("单兵场景详情")
 	@GetMapping("/scene")
-	public BaseRsp<SceneViewContext> viewScene(
+	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "resource_id", value = "业务模板id", required = true) String resource_id) {
 		SceneViewContext context = singleRoomService.viewScene(resource_id);
 
@@ -74,7 +74,8 @@ public class SingleRoomController {
 	@PostMapping("/mission_submit")
 	@ApiOperation("任务提交")
 	public BaseRsp<Boolean> submitMission(@RequestBody @Validated SubmitMissionReq requestData) {
-		return new BaseRsp<>(singleRoomService.submitMission(requestData.getBusinessTemplateId(), requestData));
+		return new BaseRsp<>(
+				singleRoomService.submitMission(requestData.getBusinessTemplateId(), requestData));
 	}
 
 	@GetMapping("/mission")

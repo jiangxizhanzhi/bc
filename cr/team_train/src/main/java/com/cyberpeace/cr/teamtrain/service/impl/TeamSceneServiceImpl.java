@@ -135,6 +135,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		if (sceneData != null) {
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
 			ret.setSceneData(sceneData);
+			ret.setMpSceneId(sceneId);
 			ret.setLocalSceneId(room.getLocalSceneId());
 		} else {
 			log.info("roomId=[{}] local has sceneId=[{}], remote is null", room, sceneId);

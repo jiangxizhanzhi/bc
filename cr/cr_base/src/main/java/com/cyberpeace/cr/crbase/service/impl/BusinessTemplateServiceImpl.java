@@ -322,6 +322,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (sceneData != null) {
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(template.getLocalSceneId());
+			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
 			return ret;
 		}
 		// 2、 远程场景不存在，返回topo数据
@@ -514,7 +515,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		// 场景数据为空，清除本地脏数据
 		if (null == sceneData) {
 			clearLocal(template);
+			return null;
 		}
+		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
 		return sceneData;
 	}
 }

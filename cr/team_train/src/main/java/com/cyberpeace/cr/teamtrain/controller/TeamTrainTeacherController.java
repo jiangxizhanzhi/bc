@@ -32,7 +32,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "团队训练教员")
+@Api(tags = "团队训练实例")
 @RestController
 @RequestMapping("/cr/training_team/training_team_teacher")
 public class TeamTrainTeacherController {

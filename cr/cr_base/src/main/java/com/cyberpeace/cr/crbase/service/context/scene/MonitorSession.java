@@ -1,0 +1,44 @@
+package com.cyberpeace.cr.crbase.service.context.scene;
+
+import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+public class MonitorSession implements Serializable {
+
+	@ApiModelProperty(value = "协助url")
+	private String assistanceUrl;
+
+	@ApiModelProperty(value = "监控url")
+	private String monitorUrl;
+
+	@ApiModelProperty(value = "节点id")
+	private String nodeId;
+
+	@ApiModelProperty(value = "节点名称")
+	private String nodeName;
+
+	@ApiModelProperty(value = "会话协议")
+	private String protocol;
+
+	@ApiModelProperty(value = "场景id")
+	private String sceneId;
+
+	@ApiModelProperty(value = "场景名称")
+	private String sceneName;
+
+	@ApiModelProperty(value = "用户id")
+	private String user;
+
+	@ApiModelProperty(value = "")
+	private String username;
+
+	@ApiModelProperty(value = "")
+	private String avatar;
+
+	@ApiModelProperty(value = "")
+	private String ip;
+
+}

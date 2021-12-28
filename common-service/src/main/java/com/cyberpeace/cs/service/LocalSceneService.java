@@ -1,5 +1,6 @@
 package com.cyberpeace.cs.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -64,5 +65,13 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param scene
 	 */
 	void deleteRemoteScene(LocalScene scene);
+
+	/**
+	 * 获取监控会话
+	 * @param localScene
+	 * @param studentId
+	 * @return
+	 */
+	JSONArray getMonitorSessions(LocalScene localScene, String studentId);
 
 }

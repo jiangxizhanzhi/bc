@@ -2,15 +2,18 @@ package com.cyberpeace.integratation.service.impl;
 
 import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
-import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
@@ -21,10 +24,6 @@ import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -171,5 +170,15 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		String sceneIdStr = String.join(CommonConstant.CODE_COMMA, sceneIds);
 		return HttpClientUtil.rawGet(NODE_SESSION_URL + sceneIdStr, JSONArray.class);
+	}
+
+	@Override
+	public JSONArray getMonitorSessions(String mpSceneId, String studentId) {
+
+		String url = NODE_SESSION_URL + mpSceneId;
+		if (StringUtils.isNotBlank(studentId)) {
+			url = url + "&userIds=" + studentId;
+		}
+		return HttpClientUtil.rawGet(url, JSONArray.class);
 	}
 }

@@ -2,18 +2,19 @@ package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
 
-import com.cyberpeace.common.util.TimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
@@ -306,6 +307,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public void deleteRemoteScene(LocalScene localScene) {
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 		remoteSceneService.stopScene(sceneOpsContext);
+	}
+
+	@Override
+	public JSONArray getMonitorSessions(LocalScene localScene, String studentId) {
+		if (null == localScene || StringUtils.isBlank(localScene.getMpSceneId())) {
+			return new JSONArray();
+		}
+		return remoteSceneService.getMonitorSessions(localScene.getMpSceneId(), studentId);
 	}
 
 	private SceneOpsContext getSceneOpsContext(LocalScene localScene) {

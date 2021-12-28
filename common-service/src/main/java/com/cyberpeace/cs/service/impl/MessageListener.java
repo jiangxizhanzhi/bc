@@ -53,7 +53,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 		String realMessage = new String(message.getBody(), WebConstant.ENCODING);
 
-		log.debug("MessageListener: {}", realMessage);
+		log.error("MessageListener: {}", realMessage);
 
 		boolean result = dispatch(realMessage);
 

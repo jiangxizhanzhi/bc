@@ -38,7 +38,8 @@ public class PersonController {
 
   private static final Logger LOG = LoggerFactory.getLogger(PersonController.class);
 
-  @Autowired private PersonCenterService personCommentService;
+  @Autowired
+  private PersonCenterService personCommentService;
 
   @ApiOperation("当前用户所有评论")
   @GetMapping("/comments")

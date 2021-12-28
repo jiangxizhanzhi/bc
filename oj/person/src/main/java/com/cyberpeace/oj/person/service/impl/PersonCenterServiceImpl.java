@@ -36,21 +36,29 @@ import java.util.stream.Collectors;
 public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
     implements PersonCenterService {
 
-  @Autowired private RemoteUserService remoteUserService;
+  @Autowired
+  private RemoteUserService remoteUserService;
 
-  @Autowired CommentMapper commentMapper;
+  @Autowired
+  private CommentMapper commentMapper;
 
-  @Autowired CourseLessonMapper courseLessonMapper;
+  @Autowired
+  private CourseLessonMapper courseLessonMapper;
 
-  @Autowired LessonRecordMapper lessonRecordMapper;
+  @Autowired
+  private LessonRecordMapper lessonRecordMapper;
 
-  @Autowired CourseMapper courseMapper;
+  @Autowired
+  private CourseMapper courseMapper;
 
-  @Autowired ResourceCollectionMapper resourceCollectionMapper;
+  @Autowired
+  private ResourceCollectionMapper resourceCollectionMapper;
 
-  @Autowired PersonCenterMapper personCenterMapper;
+  @Autowired
+  private PersonCenterMapper personCenterMapper;
 
-  @Autowired NoteMapper noteMapper;
+  @Autowired
+  private NoteMapper noteMapper;
 
   @Override
   public IPage<PersonComment> pageComment(
@@ -76,7 +84,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
       resourceIds.addAll(courseIds);
       resourceIds.addAll(personCenterMapper.selectLessonByAuth(courseIds));
       resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
-//      resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
       resourceIds.addAll(personCenterMapper.selectAfterclassPracticeByAuth());
     }
     IPage<PersonNote> iPage =

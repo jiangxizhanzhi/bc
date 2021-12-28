@@ -64,7 +64,7 @@ public class PracticeOperationController {
 	@ApiOperation("获取单个实践操作")
 	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.FALSE);
+				CommonConstant.TRUE);
 		WebOperationBo operationBo = practiceOperationService.selectById(resourceId, authContext);
 
 		return new BaseRsp<>(operationBo);
@@ -134,7 +134,7 @@ public class PracticeOperationController {
 				true);
 		practiceOperationService.deleteScene(sceneOperationReq.getResourceId(), authContext);
 
-		return new BaseRsp();
+		return new BaseRsp(true);
 	}
 
 	@ApiOperation("场景节点重启")

@@ -495,7 +495,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
 				operation.getResourceId(), operation.getSceneShareMode(), authContext);
 
-		ojLocalSceneService.deleteScene(ojLocalScene.getLocalSceneId());
+		ojLocalSceneService.deleteScene(ojLocalScene.getResourceId());
 	}
 
 	@Override

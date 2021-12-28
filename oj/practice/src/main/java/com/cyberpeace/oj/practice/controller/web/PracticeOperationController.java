@@ -10,6 +10,7 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -113,23 +114,25 @@ public class PracticeOperationController {
 
 	@ApiOperation("场景启动")
 	@PostMapping("/scene")
-	public BaseRsp<JSONObject> startScene(@RequestParam("resource_id") String resourceId) {
+	public BaseRsp<JSONObject>
+			startScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
 
-		JSONObject sceneData = practiceOperationService.startScene(resourceId, authContext);
+		JSONObject sceneData = practiceOperationService
+				.startScene(sceneOperationReq.getResourceId(), authContext);
 
 		return new BaseRsp<>(sceneData);
 	}
 
 	@ApiOperation("场景删除")
 	@DeleteMapping("/scene")
-	public BaseRsp deleteScene(@RequestParam("resource_id") String resourceId) {
+	public BaseRsp deleteScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
-		practiceOperationService.deleteScene(resourceId, authContext);
+		practiceOperationService.deleteScene(sceneOperationReq.getResourceId(), authContext);
 
 		return new BaseRsp();
 	}

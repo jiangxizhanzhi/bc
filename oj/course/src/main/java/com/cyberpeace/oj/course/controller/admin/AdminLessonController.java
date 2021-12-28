@@ -6,6 +6,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
@@ -312,7 +313,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景启动")
 	@PostMapping("/start_scene")
-	public BaseRsp<JSONObject> startScene(@RequestBody @Validated LessonSceneReq lessonSceneReq) {
+	public BaseRsp<JSONObject> startScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
@@ -335,7 +336,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景删除")
 	@DeleteMapping("/delete_scene")
-	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated LessonSceneReq lessonSceneReq) {
+	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

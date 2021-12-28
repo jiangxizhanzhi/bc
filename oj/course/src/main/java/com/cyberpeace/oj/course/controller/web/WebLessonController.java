@@ -3,7 +3,7 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.oj.course.controller.req.LessonSceneReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
@@ -102,7 +102,7 @@ public class WebLessonController {
 
 	@ApiOperation("前台课程场景启动")
 	@PostMapping("/start_scene")
-	public BaseRsp<JSONObject> startScene(@RequestBody @Validated LessonSceneReq lessonSceneReq) {
+	public BaseRsp<JSONObject> startScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
@@ -113,7 +113,7 @@ public class WebLessonController {
 
 	@ApiOperation("前台场景删除")
 	@DeleteMapping("/delete_scene")
-	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated LessonSceneReq lessonSceneReq) {
+	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		Boolean result = lessonSceneService.deleteScene(lessonSceneReq.getResourceId(),

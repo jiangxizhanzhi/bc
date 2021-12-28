@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import org.apache.commons.lang3.StringUtils;
@@ -193,23 +194,23 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("后台场景启动测试")
 	@PostMapping("/start_scene")
-	public BaseRsp<JSONObject> startScene(@ApiParam(name = "resource_id",
-			value = "实操习题编号") @RequestParam("resource_id") String resourceId) {
+	public BaseRsp<JSONObject> startScene(@RequestBody @Validated SceneOperationReq operationReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		JSONObject scene = practiceOperationService.startScene(resourceId, authContext);
+		JSONObject scene = practiceOperationService.startScene(operationReq.getResourceId(),
+				authContext);
 		return new BaseRsp<>(scene);
 
 	}
 
 	@ApiOperation("后台场景删除")
-	@PostMapping("/delete_scene")
-	public BaseRsp deleteScene(@RequestParam("resource_id") String resourceId) {
+	@DeleteMapping("/delete_scene")
+	public BaseRsp deleteScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		practiceOperationService.deleteScene(resourceId, authContext);
+		practiceOperationService.deleteScene(sceneOperationReq.getResourceId(), authContext);
 		return new BaseRsp<>();
 	}
 

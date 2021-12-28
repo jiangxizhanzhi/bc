@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.course.controller.req;
+package com.cyberpeace.oj.ojbase.controller.req;
 
 import java.io.Serializable;
 
@@ -8,9 +8,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class LessonSceneReq implements Serializable {
+public class SceneOperationReq implements Serializable {
 
-	@ApiModelProperty("课时编号")
+	@ApiModelProperty("课时、习题编号")
 	@NotBlank
 	private String resourceId;
 

@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.StreamApiUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +19,7 @@ import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -130,6 +130,18 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
 	}
 
+	@Override
+	public Map<String, UserInfo> getIdUserInfoMap(List<String> ids) {
+		Set<String> idsSet = Sets.newHashSet(ids);
+		List<UserInfo> userInfos = getByIdList(ids);
+		if (idsSet.size() != userInfos.size()) {
+			for (UserInfo info : userInfos) {
+				idsSet.remove(info.getUserId());
+			}
+			log.error("invalid user_id: " + idsSet);
+		}
+		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
+	}
 	@Override
 	public List<UserInfo> ListByOrgId(String organizationId) {
 		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + organizationId,

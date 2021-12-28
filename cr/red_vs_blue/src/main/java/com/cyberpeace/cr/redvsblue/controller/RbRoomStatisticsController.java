@@ -9,13 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
 import com.cyberpeace.cr.redvsblue.controller.rsp.TimeDataRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
+import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.MissionsStatistic;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -24,15 +29,20 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "红蓝对抗实例统计")
 @RestController
+@Slf4j
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/statistics/")
 public class RbRoomStatisticsController {
 
 	@Autowired
 	private RbRoomScoreService rbRoomScoreService;
+
+	@Autowired
+	private RbRoomService rbRoomService;
 
 	@Autowired
 	private CrRoleService crRoleService;
@@ -57,6 +67,75 @@ public class RbRoomStatisticsController {
 		timeDataRsp.setStatus(data.getStatus());
 
 		return new BaseRsp(timeDataRsp);
+	}
+
+	/**
+	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
+	 *     获取实例下的角色任务分类分布数据
+	 * @return
+	 */
+	@ApiOperation("获取实例下的角色任务分类分布数据")
+	@GetMapping("/team_mission_category")
+	public BaseRsp<XYData> getRbMissionCategory(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+
+		XYData data = rbRoomScoreService.getRbMissionCategory(resource_id, role_type);
+
+		return new BaseRsp(data);
+	}
+
+	/**
+	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
+	 *     获取实例下的角色任务分类分布数据
+	 * @return
+	 */
+	@ApiOperation("获取实例下的角色任务分类分布数据")
+	@GetMapping("/team_members_ranking")
+	public BaseRsp<XYData> getRbMembersRanking(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+
+		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+
+		JSONObject data = rbRoomScoreService.getRbMembersRanking(resource_id, role_type);
+
+		return new BaseRsp(data);
+	}
+
+	/**
+	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
+	 *     获取实例下的角色任务分类分布数据
+	 * @return
+	 */
+	@ApiOperation("获取实例下的任务评估数据统计")
+	@GetMapping("/team_mission_evaluation")
+	public BaseRsp<XYData> getRbMissionEvaluation(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+
+		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+
+		JSONObject data = rbRoomScoreService.getRbMissionEvaluation(resource_id, role_type);
+
+		return new BaseRsp(data);
 	}
 
 	/**

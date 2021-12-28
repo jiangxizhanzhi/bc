@@ -39,10 +39,17 @@ public interface CrTaskService {
 	/**
 	 * 根据roomId获取task
 	 * @param roomId
-	 * @param userId
 	 * @return List<Task>  实例列表
 	 */
 	List<TaskContext> getTaskContextByRoomId(String roomId);
+
+	/**
+	 * 根据roomId,roleIds获取task
+	 * @param roomId
+	 * @param userIds
+	 * * @return List<Task>  实例列表
+	 */
+	List<TaskContext> getTaskContextByRoomIdAndUsers(String roomId, List<String> userIds);
 
 	/**
 	 * 用户开始任务
@@ -223,4 +230,5 @@ public interface CrTaskService {
 			getRbMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery);
 
 	List<CrTaskSubmit> getOrderedSubmitsByTask(String resourceId);
+
 }

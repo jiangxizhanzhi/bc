@@ -28,4 +28,6 @@ public interface CrTaskSubmitMapper extends BaseMapper<CrTaskSubmit> {
 			@Param("listQuery") MissionEvaluationQuery listQuery);
 
 	List<CrTaskSubmit> selectOrderedSubmitsByTask(String resourceId);
+
+	List<CrTaskSubmit> selectByRoomIdAndUsers(String roomId, List<String> userIds);
 }

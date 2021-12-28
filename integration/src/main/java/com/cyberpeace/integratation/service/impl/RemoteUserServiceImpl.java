@@ -97,8 +97,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			// userInfo.setOrganizationData("");
 		}
 		// userInfo.setRoles();
-		userInfo.setAdmin((int) jsonObject.get("is_admin") == 0);
-		userInfo.setSuperuser((int) jsonObject.get("is_super_user") == 0);
+		userInfo.setAdmin((int) jsonObject.get("is_admin") == 1);
+		userInfo.setSuperuser((int) jsonObject.get("is_super_user") == 1);
 		return userInfo;
 	}
 
@@ -114,6 +114,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setAvatarUrl(mpAuthenticatedUser.getAvatar());
 		userInfo.setUserName(mpAuthenticatedUser.getName());
 		userInfo.setUserId(mpAuthenticatedUser.getId());
+
+		UserInfo byId = getById(mpAuthenticatedUser.getId());
+		userInfo.setOrganizationId(byId.getOrganizationId());
+		userInfo.setSuperuser(byId.isSuperuser());
+		userInfo.setAdmin(byId.isAdmin());
 
 		return userInfo;
 	}

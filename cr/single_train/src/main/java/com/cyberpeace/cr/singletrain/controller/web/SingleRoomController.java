@@ -123,7 +123,7 @@ public class SingleRoomController {
 		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
-			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		return new BaseRsp();
 	}
@@ -140,7 +140,7 @@ public class SingleRoomController {
 		Boolean result = localSceneService.recreateNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
-			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp();
 	}

@@ -49,6 +49,9 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE, "工具分类有关联的工具，不能删除");
 
+			put(CrBusinessErrorCode.FAILED_TO_RESTART_NODE, "重启节点失败");
+			put(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE, "重建节点失败");
+
 		}
 	};
 
@@ -93,6 +96,9 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE,
 					"unable to delete category, category in use");
+
+			put(CrBusinessErrorCode.FAILED_TO_RESTART_NODE, "Failed to restart node.");
+			put(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE, "Failed to recreate node.");
 
 		}
 	};

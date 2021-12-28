@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -29,6 +30,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.NameValidReq;
 import com.cyberpeace.cr.crbase.controller.req.ShareReq;
 import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.TestSceneReq;
 import com.cyberpeace.cr.crbase.controller.rsp.BusinessTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
@@ -272,6 +274,36 @@ public class BusinessTemplateController {
 		// 4.清除本地场景数据
 		businessTemplateService.clearLocal(template);
 
+		return new BaseRsp();
+	}
+
+	@ApiOperation("后台测试场景重启节点")
+	@PostMapping("/testScene/node/restart")
+	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
+		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.restartNode(template.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
+		}
+		return new BaseRsp();
+	}
+
+	@ApiOperation("后台测试场景重建节点")
+	@PostMapping("/testScene/node/restart")
+	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
+		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.recreateNode(template.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
+		}
 		return new BaseRsp();
 	}
 

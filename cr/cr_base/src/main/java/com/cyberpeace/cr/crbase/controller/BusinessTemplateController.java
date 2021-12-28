@@ -293,7 +293,7 @@ public class BusinessTemplateController {
 	}
 
 	@ApiOperation("后台测试场景重建节点")
-	@PostMapping("/testScene/node/restart")
+	@PostMapping("/testScene/node/recreate")
 	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {

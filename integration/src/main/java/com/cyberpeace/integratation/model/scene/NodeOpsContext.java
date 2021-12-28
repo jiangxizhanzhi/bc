@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class NodeOpsContext extends SceneOpsContext implements Serializable {
 
-	private String nodeId;
+	private String node_id;
 }

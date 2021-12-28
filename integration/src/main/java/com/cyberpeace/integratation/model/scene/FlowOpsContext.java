@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class FlowOpsContext extends NodeOpsContext {
 
-	private String flowId;
+	private String flow_id;
 }

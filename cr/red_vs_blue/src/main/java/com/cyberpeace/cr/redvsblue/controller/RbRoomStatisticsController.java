@@ -89,6 +89,30 @@ public class RbRoomStatisticsController {
 	}
 
 	/**
+	 * 指定队伍（红/蓝）排行榜 得分排名 任务进展排名
+	 * @return
+	 */
+	@ApiOperation("获取实例下的角色任务分类分布数据")
+	@GetMapping("/team_leader_board")
+	public BaseRsp<XYData> getRbLeaderBoard(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+
+		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+
+		JSONObject data = rbRoomScoreService.getRbLeaderBoard(resource_id, role_type);
+
+		return new BaseRsp(data);
+	}
+
+	/**
 	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
 	 *     获取实例下的角色任务分类分布数据
 	 * @return

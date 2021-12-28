@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -187,12 +188,17 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		Collections.sort(rankDataList);
 
 		int ranking = 1;
+		Integer total = 0;
+
 		for (RankData rankData : rankDataList) {
 			rankData.setRanking(ranking++);
+			total += rankData.getScore();
 		}
 
 		JSONObject json = new JSONObject();
 		json.put("ranking_data", rankDataList);
+		json.put("time_stamp", System.currentTimeMillis() / 1000);
+		json.put("total_score", total);
 
 		return json;
 	}
@@ -238,6 +244,47 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		json.put("fail", failCount);
 		json.put("reject", rejectCount);
 		json.put("unreported", unreportedCount);
+
+		return json;
+	}
+
+	@Override
+	public JSONObject getRbLeaderBoard(String roomId, Integer roleType) {
+
+		List<RankData> rankDataList = getUserScoreMissionData(roomId, roleType);
+
+		Collections.sort(rankDataList);
+
+		int ranking = 1;
+		List<RankData> missionDataList = Lists.newArrayList();
+
+		for (RankData rankData : rankDataList) {
+			rankData.setRanking(ranking++);
+
+			RankData missionData = BeanUtils.deepCopy(rankData, RankData.class);
+			missionData.setSortType("missionRatio");
+
+			missionDataList.add(missionData);
+		}
+
+		for (int i = 10; i < 27; i++) {
+			RankData missionData = BeanUtils.deepCopy(rankDataList.get(0), RankData.class);
+			missionData.setSortType("missionRatio");
+			missionData.setName("name" + i);
+
+			missionDataList.add(missionData);
+		}
+
+		ranking = 1;
+
+		for (RankData missionData : missionDataList) {
+			missionData.setRanking(ranking++);
+		}
+		JSONObject json = new JSONObject();
+
+		json.put("ranking_data", rankDataList);
+		json.put("time_stamp", System.currentTimeMillis() / 1000);
+		json.put("mission_data", missionDataList);
 
 		return json;
 	}

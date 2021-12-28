@@ -20,4 +20,6 @@ public interface RbRoomScoreService extends IService<RbRoom> {
 	JSONObject getRbMembersRanking(String roomId, Integer roleType);
 
 	JSONObject getRbMissionEvaluation(String roomId, Integer roleType);
+
+	JSONObject getRbLeaderBoard(String roomId, Integer roleType);
 }

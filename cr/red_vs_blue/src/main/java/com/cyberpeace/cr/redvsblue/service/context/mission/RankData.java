@@ -17,8 +17,14 @@ public class RankData implements Comparable<RankData> {
 
 	private Integer score;
 
+	private String sortType;
+
 	@Override
 	public int compareTo(RankData o) {
+		if (sortType.equals("missionRatio")) {
+			return this.missionRatio - o.missionRatio;
+		}
+
 		return this.score - o.score;
 	}
 }

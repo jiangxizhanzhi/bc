@@ -92,7 +92,7 @@ public class RbRoomStatisticsController {
 	 * 指定队伍（红/蓝）排行榜 得分排名 任务进展排名
 	 * @return
 	 */
-	@ApiOperation("获取实例下的角色任务分类分布数据")
+	@ApiOperation("指定队伍（红/蓝）排行榜 得分排名")
 	@GetMapping("/team_leader_board")
 	public BaseRsp<XYData> getRbLeaderBoard(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,

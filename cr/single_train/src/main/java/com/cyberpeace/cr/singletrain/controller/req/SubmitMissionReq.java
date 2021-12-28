@@ -18,4 +18,8 @@ public class SubmitMissionReq implements Serializable {
     @NotNull
     @ApiModelProperty("记录内容")
     private String trainingRecord;
+
+    @NotNull
+    @ApiModelProperty("业务模板ID")
+    private String businessTemplateId;
 }

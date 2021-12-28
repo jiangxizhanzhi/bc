@@ -73,9 +73,8 @@ public class SingleRoomController {
 
 	@PostMapping("/mission_submit")
 	@ApiOperation("任务提交")
-	public BaseRsp<Boolean> submitMission(@RequestParam("resource_id") String businessTemplateId,
-			@RequestBody @Validated SubmitMissionReq requestData) {
-		return new BaseRsp<>(singleRoomService.submitMission(businessTemplateId, requestData));
+	public BaseRsp<Boolean> submitMission(@RequestBody @Validated SubmitMissionReq requestData) {
+		return new BaseRsp<>(singleRoomService.submitMission(requestData.getBusinessTemplateId(), requestData));
 	}
 
 	@GetMapping("/mission")

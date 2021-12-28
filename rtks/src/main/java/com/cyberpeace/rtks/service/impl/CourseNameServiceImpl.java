@@ -27,6 +27,6 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 			return courseName;
 		}).collect(Collectors.toList());
 
- 		saveOrUpdateBatch(courseNameList);
+		saveOrUpdateBatch(courseNameList);
 	}
 }

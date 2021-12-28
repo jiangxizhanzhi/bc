@@ -19,9 +19,21 @@ public class CourseName implements Serializable {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	/**
-	 * 知识点id
-	 */
 	private String name;
 
+	private String description;
+
+	private String direction;
+
+	private Integer eBook;
+
+	private String courseNum;
+
+	private String directionName;
+
+	private Integer difficulty;
+
+	private Integer lessonCount;
+
+	private Boolean interview = false;
 }

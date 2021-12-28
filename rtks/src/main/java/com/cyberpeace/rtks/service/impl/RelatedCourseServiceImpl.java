@@ -4,12 +4,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
@@ -17,6 +17,8 @@ import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
+import com.cyberpeace.rtks.dao.entity.CourseName;
+import com.cyberpeace.rtks.service.CourseNameService;
 import com.cyberpeace.rtks.service.RelatedCourseService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -29,6 +31,9 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 
 	@Autowired
 	private CourseService courseService;
+
+	@Autowired
+	private CourseNameService courseNameService;
 
 	@Autowired
 	private CourseStatisticsService courseStatisticsService;
@@ -52,21 +57,27 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 		}
 
 		if (ids.size() > 0) {
-			// 直接赋值，不会有被删除的课程内容
-			List<String> existIds = ids;
 
-			// 存在被删除的课程内容,返回true
+			// 先查询已存在的课程id
+			List<String> existIds = courseService.idsByNotDeleteIds(ids);
+
+			// 再获取不存在的课程id
+			List<String> notExistIds = Lists.newArrayList();
 			if (existIds.size() < ids.size()) {
 				Iterator<RelatedCourse> iterator = relatedCourseList.iterator();
 				while (iterator.hasNext()) {
 					RelatedCourse relatedCourse = iterator.next();
+
 					if (existIds.indexOf(relatedCourse.getResourceId()) == -1) {
-						iterator.remove();
+						notExistIds.add(relatedCourse.getResourceId());
 					}
 				}
-				isDeleted = true;
-				// 返回true，需要更新课程内容
 			}
+			// 调用本地接口获取课程内容列表
+			List<CourseName> courseNames = courseNameService.listByIds(notExistIds);
+
+			// 增加远程接口的课程列表
+			List<CourseInfoBo> courseList = BeanUtils.deepCopyList(courseNames, CourseInfoBo.class);
 			if (existIds.size() > 0) {
 				// 查询课程或者学习情况
 				if (RoleDetailRes.RELATED_COURSE_STUDY.equals(relatedCourseType)
@@ -76,14 +87,15 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 
 				}
 
-				List<CourseInfoBo> courseList = courseService.selectByIds(existIds);
+				courseList.addAll(courseService.selectByIds(existIds));
 
 				Map<String, CourseInfoBo> allCourseMap = getAllCourseMap(courseList);
 
 				for (RelatedCourse relatedCourse : relatedCourseList) {
 					Integer weight = relatedCourse.getWeight();
-					BeanUtils.copyProperties(allCourseMap.get(relatedCourse.getResourceId()),
-							relatedCourse);
+
+					relatedCourse = BeanUtils.copy(allCourseMap.get(relatedCourse.getResourceId()),
+							RelatedCourse.class);
 					relatedCourse.setWeight(weight);
 
 				}

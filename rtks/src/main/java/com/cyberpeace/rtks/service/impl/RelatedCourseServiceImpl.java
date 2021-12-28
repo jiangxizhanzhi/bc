@@ -36,7 +36,7 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 	@Override
 	public boolean setCourseResult(UserInfo userInfo, String courses,
 			List<RelatedCourse> relatedCourseList, List<CourseStudyProcessBo> processBos,
-			String related_course_type) {
+			String relatedCourseType) {
 		boolean isDeleted = false;
 		UserInfoContext.setUserContext(userInfo);
 		try {
@@ -52,9 +52,11 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 		}
 
 		if (ids.size() > 0) {
-			List<String> existIds = courseService.idsByNotDeleteIds(ids);
+			// 直接赋值，不会有被删除的课程内容
+			List<String> existIds = ids;
 
-			if (existIds.size() < ids.size()) { // 存在被删除的课程内容,返回true
+			// 存在被删除的课程内容,返回true
+			if (existIds.size() < ids.size()) {
 				Iterator<RelatedCourse> iterator = relatedCourseList.iterator();
 				while (iterator.hasNext()) {
 					RelatedCourse relatedCourse = iterator.next();
@@ -67,8 +69,8 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 			}
 			if (existIds.size() > 0) {
 				// 查询课程或者学习情况
-				if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)
-						|| RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
+				if (RoleDetailRes.RELATED_COURSE_STUDY.equals(relatedCourseType)
+						|| RoleDetailRes.RELATED_COURSE_ALL.equals(relatedCourseType)) {
 					processBos.addAll(
 							courseStatisticsService.statisticByIds(existIds, userInfo.getUserId()));
 

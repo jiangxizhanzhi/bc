@@ -89,6 +89,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 			String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
 					knowledge.getResourceId(), CourseRelated.RELATED_TYPE_KNOWLEDGE);
 			knowledge.setCourses(courses);
+
 			updateById(knowledge);
 
 		}

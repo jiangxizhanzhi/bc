@@ -108,7 +108,7 @@ public class RoleController {
 	private SkillSystemService skillSystemService;
 
 	@Autowired
-	private CourseService courseService;
+	private CourseNameService courseNameService;
 
 	private Boolean singleFrame;
 
@@ -196,10 +196,6 @@ public class RoleController {
 
 		int courseCount = courseIds.size();
 		List<CourseConfigOutput> outputList = getCourseConfigOutputList(courseIds);
-		// 发现被删除的课程则更新数据库
-		if (courseCount > courseIds.size()) {
-			updateRoleCourse(resource_id, courseIds, field);
-		}
 
 		return new BaseRsp<>(outputList);
 	}
@@ -268,7 +264,7 @@ public class RoleController {
 
 	/**
 	 * 根据课程id列表获取课程的详细信息
-	 * @param courseIds 课程id列表 注意 如果有课程找不到 courseIds数组会剔除这些课程id
+	 * @param courseIds 课程id列表 注意 如果有课程找不到 courseIds数组会剔除这些课程id(12.28修改为不再删除课程)
 	 */
 	private List<CourseConfigOutput> getCourseConfigOutputList(List<String> courseIds) {
 		List<CourseConfigOutput> courseConfigOutputList = new ArrayList<>();
@@ -278,7 +274,8 @@ public class RoleController {
 			CourseConfigOutput courseConfigOutput = new CourseConfigOutput();
 			courseConfigOutput.setResourceId(courseId);
 
-			Course course = courseService.getById(courseId);
+
+			CourseName course = courseNameService.getById(courseId);
 			if (course == null) {
 				removedIds.add(courseId);
 				continue;

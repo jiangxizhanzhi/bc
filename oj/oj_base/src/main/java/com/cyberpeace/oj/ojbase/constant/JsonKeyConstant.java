@@ -5,6 +5,9 @@ public interface JsonKeyConstant {
 	/** 倒计时*/
 	String REMAIN_TIME = "remaining_time";
 
+	/** 场景状态*/
+	String SCENE_STATUS = "status";
+
 	/** 场景类型 1=私有 2=共享 3=小组*/
 	String SCENE_SHARE_MODE = "scene_share_mode";
 

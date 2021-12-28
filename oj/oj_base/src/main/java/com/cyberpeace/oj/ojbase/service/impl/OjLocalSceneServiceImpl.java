@@ -249,6 +249,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				localScene.getUserId());
 		// 设置类型
 		sceneData.put(JsonKeyConstant.REFERENCE_TYPE, localScene.getBusinessCode());
+		sceneData.put(JsonKeyConstant.SCENE_STATUS, localScene.getSceneStatus());
 
 		// 设置场景共享类型与倒计时
 		if (localScene.getBusinessCode().intValue() == LocalScene.BusinessCode.CLASSROOM

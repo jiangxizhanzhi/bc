@@ -7,6 +7,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.person.dao.entity.*;
 
 import java.util.Date;
+import java.util.List;
 
 public interface PersonCenterService {
 
@@ -57,4 +58,8 @@ public interface PersonCenterService {
    */
   BaseRsp<BrokenLine> studyPeriodRecords(
       String userId, Date startTime, Date endTime, AuthContext authContext);
+
+  List<ListSchedule> listSchedules(String userId, String type, AuthContext authContext);
+
+  BaseRsp<TrainInfo> trainingStatistics(String userId);
 }

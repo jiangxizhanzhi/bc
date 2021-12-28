@@ -76,7 +76,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
       resourceIds.addAll(courseIds);
       resourceIds.addAll(personCenterMapper.selectLessonByAuth(courseIds));
       resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
-      resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
+//      resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
       resourceIds.addAll(personCenterMapper.selectAfterclassPracticeByAuth());
     }
     IPage<PersonNote> iPage =
@@ -122,7 +122,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
       StudyRecord practiceRecord = personCenterMapper.selectPracticeByUser(userId, lessonIds);
       studyRecord.setPracticeFinishCount(practiceRecord.getPracticeFinishCount());
       Integer score = practiceRecord.getScore();
-      String practiceRanking = practiceRecord.getPracticeRanking();
+      Integer practiceRanking = practiceRecord.getPracticeRanking();
       studyRecord.setPracticeRanking(practiceRanking);
       studyRecord.setScore(score);
     }
@@ -183,6 +183,28 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
     res.setYSecondValues(reportRecords);
     baseRsp.setData(res);
     return baseRsp;
+  }
+
+    @Override
+    public List<ListSchedule> listSchedules(String userId, String type, AuthContext authContext) {
+      // 校验是否有用户信息
+      if (null != authContext) {
+        throw new RuntimeException();
+      }
+
+      List<ListSchedule> res = personCenterMapper.selectSchedules(userId);
+      return res;
+
+    }
+
+  @Override
+  public BaseRsp<TrainInfo> trainingStatistics(String userId) {
+    List<TrainInfo> completedList = new ArrayList<>();
+    List<TrainInfo> incompletedList = new ArrayList<>();
+    List<TrainInfo> relationList = new ArrayList<>();
+    List<TrainInfo> trainCounts= personCenterMapper.selectTrainingCount(userId);
+
+    return null;
   }
 
   /**

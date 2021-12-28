@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
-import com.cyberpeace.oj.person.dao.entity.PersonCollection;
-import com.cyberpeace.oj.person.dao.entity.PersonComment;
-import com.cyberpeace.oj.person.dao.entity.PersonNote;
-import com.cyberpeace.oj.person.dao.entity.StudyRecord;
+import com.cyberpeace.oj.person.dao.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -127,4 +124,8 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
   List<String> selectAfterclassPracticeByAuth();
 
   List<String> selectTheoryPracticeByAuth();
+
+  List<ListSchedule> selectSchedules(String userId);
+
+  List<TrainInfo> selectTrainingCount(String userId);
 }

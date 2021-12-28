@@ -23,9 +23,10 @@
     <resultMap id="personNote" type="com.cyberpeace.oj.person.dao.entity.PersonNote">
         <result property="businessId" column="business_id" jdbcType="VARCHAR"/>
         <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
+        <result property="resourceType" column="resource_type" jdbcType="VARCHAR"/>
         <result property="userId" column="user_id" jdbcType="VARCHAR"/>
         <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+        <result property="themeName" column="theme_name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="personComment" type="com.cyberpeace.oj.person.dao.entity.PersonComment">
@@ -70,12 +71,21 @@
     <select id="selectNoteByUser" resultMap="personNote">
         select oj_note.user_id,
         oj_note.content,
-        oj_note.business_type,
+        oj_note.business_type as resource_type,
         oj_note.note_type,
         (IF(oj_note.business_type = 2, concat(oj_course_lesson.course_id, '/',
-        oj_course_lesson.resource_id), oj_note.business_id)) as business_id
+        oj_course_lesson.resource_id), oj_note.business_id)) as business_id,
+        (case when oj_note.business_type = 1 then oj_course.name
+        when oj_note.business_type = 2 then oj_course_lesson.name
+        when oj_note.business_type = 3 then (case when oj_practice_operation.title is not null then
+        oj_practice_operation.title else '' END )
+        when oj_note.business_type = 4 then oj_paper.name
+        END ) as theme_name
         from oj_note
         left join oj_course_lesson on oj_note.business_id = oj_course_lesson.resource_id
+        left join oj_course on oj_note.business_id = oj_course.resource_id
+        left join oj_practice_operation on oj_note.business_id = oj_course_lesson.resource_id
+        left join oj_paper on oj_note.business_id = oj_paper.resource_id
         where oj_note.`user_id` = #{userId}
         and oj_note.note_type = #{noteType}
         <if test="businessIds != null and businessIds.size() != 0">
@@ -229,6 +239,16 @@
                 #{lessonId}
             </foreach>
         </if>
+    </select>
+
+
+    <select id="selectSchedules" resultType="com.cyberpeace.oj.person.dao.entity.ListSchedule">
+        select *
+    </select>
+
+
+    <select id="selectTrainingCount" resultType="com.cyberpeace.oj.person.dao.entity.TrainInfo">
+        select *
     </select>
 
 </mapper>

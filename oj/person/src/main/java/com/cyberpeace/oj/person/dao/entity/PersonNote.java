@@ -4,6 +4,8 @@ import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class PersonNote extends NoteAddReq {
 
@@ -14,4 +16,11 @@ public class PersonNote extends NoteAddReq {
   private String userName;
 
   private String userId;
+
+  @ApiModelProperty("主题名")
+  private String themeName;
+
+  @ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习")
+  @NotNull
+  private Integer resourceType;
 }

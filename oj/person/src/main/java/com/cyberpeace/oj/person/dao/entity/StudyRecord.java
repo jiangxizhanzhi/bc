@@ -9,19 +9,19 @@ import java.io.Serializable;
 public class StudyRecord implements Serializable {
 
   @ApiModelProperty("完成课程数")
-  private String courseCount;
+  private Integer courseCount;
 
   @ApiModelProperty("理论课时数")
-  private String theoryCount;
+  private Integer theoryCount;
 
   @ApiModelProperty("实验课时数")
-  private String ExpCount;
+  private Integer ExpCount;
 
   @ApiModelProperty("学习时长")
   private String duration;
 
   @ApiModelProperty("完成练习数")
-  private String practiceFinishCount;
+  private Integer practiceFinishCount;
 
   @ApiModelProperty("完成报告数")
   private Integer reportCount;
@@ -29,7 +29,7 @@ public class StudyRecord implements Serializable {
   private Integer score;
 
   @ApiModelProperty("练习排名")
-  private String practiceRanking;
+  private Integer practiceRanking;
 
   private String userId;
 }

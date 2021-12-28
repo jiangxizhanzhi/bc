@@ -7,6 +7,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Course;
@@ -20,6 +21,7 @@ import com.cyberpeace.oj.course.service.bo.ClassroomBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -50,6 +53,30 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroom.setResourceId(IDGeneratorUtil.getID());
 		classroomMapper.insert(classroom);
 		return classroom;
+	}
+
+	@Override
+	public List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery,
+			AuthContext authContext) {
+		// 查询转换数据
+		List<Classroom> classrooms = classroomMapper.selectList(roomListQuery);
+		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
+				classroom -> entityToBo(classroom));
+
+		// 根据开始时间转换为map
+		Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(classroomBos,
+				classroomBo -> TimeUtil.format6(classroomBo.getStartTime()));
+
+		// 对key进行排序
+		List<String> sortKeys = Lists.newArrayList(startTimeMap.keySet()).stream().sorted()
+				.collect(Collectors.toList());
+
+		return StreamApiUtils.map(sortKeys, key -> {
+			TimeScheduleBo scheduleBo = new TimeScheduleBo();
+			scheduleBo.setDate(key);
+			scheduleBo.setClassrooms(startTimeMap.get(key));
+			return scheduleBo;
+		});
 	}
 
 	@Override

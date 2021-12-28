@@ -6,20 +6,28 @@ import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 
 public interface ResourceCollectionService extends IService<ResourceCollection> {
 
-    /**
-     * 资源收藏和取消收藏
-     * @param collectionContext
-     * @param isCollection
-     * @return
-     */
-    Boolean collectionResource(CollectionContext collectionContext, Boolean isCollection);
+	/**
+	 * 资源收藏和取消收藏
+	 * @param collectionContext
+	 * @param isCollection
+	 * @return
+	 */
+	Boolean collectionResource(CollectionContext collectionContext, Boolean isCollection);
 
-    /**
-     * 查询资源是否被收藏
-     * @param userId
-     * @param businessId
-     * @param businessType
-     * @return
-     */
-    Boolean selectByUnique(String userId, Integer businessType, String businessId);
+	/**
+	 * 查询资源是否被收藏
+	 * @param userId
+	 * @param businessId
+	 * @param businessType
+	 * @return
+	 */
+	Boolean selectByUnique(String userId, Integer businessType, String businessId);
+
+	/**
+	 * 查询
+	 * @param userId
+	 * @param businessType
+	 * @return
+	 */
+	Boolean selectByType(String userId, Integer businessType);
 }

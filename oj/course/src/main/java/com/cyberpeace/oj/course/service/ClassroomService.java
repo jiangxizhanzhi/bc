@@ -21,6 +21,14 @@ public interface ClassroomService extends IService<Classroom> {
 	Classroom create(Classroom classroom);
 
 	/**
+	 * 前台课程表数据查询
+	 * @param roomListQuery
+	 * @param authContext
+	 * @return
+	 */
+	List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery, AuthContext authContext);
+
+	/**
 	 * 分页查询课时表信息
 	 * @param roomListQuery
 	 * @param authContext

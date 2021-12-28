@@ -39,4 +39,11 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 		ResourceCollection resourceCollection = resourceCollectionMapper.selectByUnique(context);
 		return null != resourceCollection;
 	}
+
+	@Override
+	public Boolean selectByType(String userId, Integer businessType) {
+		// todo
+		// resourceCollectionMapper.selectByType
+		return null;
+	}
 }

@@ -58,7 +58,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 	SceneFilterService sceneFilterService;
 
 	@Override
-	public void startScene(String roomId, String userId) {
+	public String startScene(String roomId, String userId) {
 		// 1、权限校验，学员是不可以启动场景的
 		rbRoomService.checkTeacherPermission(roomId, userId);
 
@@ -104,6 +104,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
 
+		return sceneId;
 	}
 
 	private LocalScene createLocalScene(RbRoom room, String topoId) {

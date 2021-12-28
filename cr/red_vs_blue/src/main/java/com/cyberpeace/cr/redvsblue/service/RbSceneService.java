@@ -8,7 +8,7 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 
 public interface RbSceneService {
 
-	void startScene(String roomId, String userId);
+	String startScene(String roomId, String userId);
 
 	/**
 	 * 查看场景

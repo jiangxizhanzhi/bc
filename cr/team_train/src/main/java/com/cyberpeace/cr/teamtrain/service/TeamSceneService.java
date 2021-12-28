@@ -8,7 +8,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 
 public interface TeamSceneService {
 
-	void startScene(String roomId, String userId);
+	String startScene(String roomId, String userId);
 
 	/**
 	 * 查看场景

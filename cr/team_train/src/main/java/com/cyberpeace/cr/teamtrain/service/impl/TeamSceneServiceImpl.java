@@ -58,7 +58,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	private SceneFilterService sceneFilterService;
 
 	@Override
-	public void startScene(String roomId, String userId) {
+	public String startScene(String roomId, String userId) {
 		// 1、权限校验，学员是不可以启动场景的
 		teamRoomService.checkTeacherPermission(roomId, userId);
 
@@ -105,6 +105,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
 
+		return sceneId;
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
+import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
@@ -103,8 +104,8 @@ public class TeamTrainRoomController {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		teamSceneService.startScene(roomId, userId);
-		return new BaseRsp();
+		String sceneId = teamSceneService.startScene(roomId, userId);
+		return new BaseRsp(new StartSceneRsp(sceneId));
 	}
 
 	@ApiOperation("停止场景")

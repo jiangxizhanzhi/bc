@@ -14,6 +14,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
+import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
@@ -50,8 +51,8 @@ public class RbSceneController {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		rbSceneService.startScene(roomId, userId);
-		return new BaseRsp();
+		String sceneId = rbSceneService.startScene(roomId, userId);
+		return new BaseRsp(new StartSceneRsp(sceneId));
 	}
 
 	@ApiOperation("停止场景")

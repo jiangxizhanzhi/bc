@@ -69,7 +69,7 @@ public class RelatedCourse implements Serializable {
 	private Integer exerciseCount;
 
 	@ApiModelProperty("建议学习时长")
-	private Integer suggestDuration;
+	private Integer suggestDuration = 0;
 
 	@ApiModelProperty("是否具有访问权限")
 	private Boolean interview;

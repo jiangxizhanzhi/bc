@@ -76,8 +76,27 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 			// 调用本地接口获取课程内容列表
 			List<CourseName> courseNames = courseNameService.selectByIds(notExistIds);
 
+			List<CourseInfoBo> courseList = Lists.newArrayList();
+					BeanUtils.deepCopyList(courseNames, CourseInfoBo.class);
+
+			for (CourseName courseName : courseNames) {
+
+				CourseInfoBo course =BeanUtils.copy(courseName,CourseInfoBo.class);
+
+				courseList.add(course);
+
+				CourseStudyProcessBo courseStudyProcessBo = BeanUtils.copy(courseName,CourseStudyProcessBo.class);
+
+				courseStudyProcessBo.setCourseId(courseName.getResourceId());
+				courseStudyProcessBo.setCourseName(courseName.getName());
+				courseStudyProcessBo.setLessonCount(courseName.getLessonCount());
+				courseStudyProcessBo.setInterview(courseName.getInterview());
+				courseStudyProcessBo.setCourseId(courseName.getResourceId());
+
+				processBos.add(courseStudyProcessBo);
+			}
+
 			// 增加远程接口的课程列表
-			List<CourseInfoBo> courseList = BeanUtils.deepCopyList(courseNames, CourseInfoBo.class);
 			if (existIds.size() > 0) {
 				// 查询课程或者学习情况
 				if (RoleDetailRes.RELATED_COURSE_STUDY.equals(relatedCourseType)
@@ -97,7 +116,7 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 				CourseInfoBo courseInfoBo = allCourseMap.get(relatedCourse.getResourceId());
 
 				if (courseInfoBo != null) {
-					org.springframework.beans.BeanUtils.copyProperties(courseInfoBo,relatedCourse);
+					org.springframework.beans.BeanUtils.copyProperties(courseInfoBo, relatedCourse);
 
 					relatedCourse.setWeight(weight);
 				}

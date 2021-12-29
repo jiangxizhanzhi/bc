@@ -82,7 +82,7 @@ public class RbRoomStatisticsController {
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+		permissionCheckTeacherOrGroup(resource_id, userId, role_type);
 
 		XYData data = rbRoomScoreService.getRbMissionCategory(resource_id, role_type);
 
@@ -95,18 +95,12 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("指定队伍（红/蓝）排行榜 得分排名")
 	@GetMapping("/team_leader_board")
-	public BaseRsp<XYData> getRbLeaderBoard(
+	public BaseRsp<JSONObject> getRbLeaderBoard(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
-
-		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
-			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id,
-					userId);
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		}
+		permissionCheckTeacherOrGroup(resource_id, userId, role_type);
 
 		JSONObject data = rbRoomScoreService.getRbLeaderBoard(resource_id, role_type);
 
@@ -120,18 +114,12 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取实例下的角色任务分类分布数据")
 	@GetMapping("/team_members_ranking")
-	public BaseRsp<XYData> getRbMembersRanking(
+	public BaseRsp<JSONObject> getRbMembersRanking(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
-
-		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
-			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id,
-					userId);
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		}
+		permissionCheckTeacherOrGroup(resource_id, userId, role_type);
 
 		JSONObject data = rbRoomScoreService.getRbMembersRanking(resource_id, role_type);
 
@@ -145,18 +133,12 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取实例下的任务评估数据统计")
 	@GetMapping("/team_mission_evaluation")
-	public BaseRsp<XYData> getRbMissionEvaluation(
+	public BaseRsp<JSONObject> getRbMissionEvaluation(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
-
-		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
-			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id,
-					userId);
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		}
+		permissionCheckTeacherOrGroup(resource_id, userId, role_type);
 
 		JSONObject data = rbRoomScoreService.getRbMissionEvaluation(resource_id, role_type);
 
@@ -205,11 +187,56 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取任务下发和完成任务数进展")
 	@GetMapping("/team_mission_progress")
-	public BaseRsp<XYData> getRbMissionProgress(
+	public BaseRsp<JSONObject> getRbMissionProgress(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
+		permissionCheckTeacherOrGroup(resource_id, userId, role_type);
+
+		JSONObject data = rbRoomScoreService.getRbMissionProgress(resource_id, role_type);
+
+		return new BaseRsp(data);
+	}
+
+	/**
+	 *  红方/蓝方成绩页面 右侧下折线图 得分趋势
+	 *     队伍得分趋势统计
+	 * @return
+	 */
+	@ApiOperation("队伍得分趋势统计")
+	@GetMapping("/team_score_progress")
+	public BaseRsp<JSONObject> getRbScoreProgress(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		if (CrRole.RbRoleGroupCode.RED_BLUE.getCode().equals(role_type)) {
+			return new BaseRsp(getRbScoreProgress_6(resource_id, role_type, userId));
+		}
+
+		permissionCheckTeacherOrGroup(resource_id, userId, role_type);
+
+		JSONObject data = rbRoomScoreService.getRbScoreProgress(resource_id, role_type);
+
+		return new BaseRsp(data);
+	}
+
+	/**
+	 *  红蓝实时战况页面 正下方 红蓝得分
+	 * @return
+	 */
+	private JSONObject getRbScoreProgress_6(String resource_id, Integer role_type, String userId) {
+
+		rbRoomService.checkRoomPermission(resource_id, userId);
+
+		JSONObject data = rbRoomScoreService.getAllRbScoreProgress(resource_id, role_type);
+
+		return data;
+	}
+
+	private void permissionCheckTeacherOrGroup(String resource_id, String userId,
+			Integer role_type) {
 		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
 
 		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
@@ -217,9 +244,5 @@ public class RbRoomStatisticsController {
 					userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
-
-		JSONObject data = rbRoomScoreService.getRbMissionProgress(resource_id, role_type);
-
-		return new BaseRsp(data);
 	}
 }

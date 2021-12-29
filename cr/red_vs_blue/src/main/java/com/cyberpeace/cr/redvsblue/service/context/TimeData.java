@@ -115,6 +115,7 @@ public class TimeData {
 				}
 			}
 		}
+		this.accumulatedValue = accumulatedValue;
 		return yData;
 	}
 }

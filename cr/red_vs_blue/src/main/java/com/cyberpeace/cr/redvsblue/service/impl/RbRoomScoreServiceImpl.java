@@ -268,6 +268,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 			missionDataList.add(missionData);
 		}
 
+		Collections.sort(missionDataList);
 
 		ranking = 1;
 		for (RankData missionData : missionDataList) {
@@ -278,6 +279,78 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		json.put("ranking_data", rankDataList);
 		json.put("time_stamp", System.currentTimeMillis() / 1000);
 		json.put("mission_data", missionDataList);
+
+		return json;
+	}
+
+	@Override
+	public JSONObject getRbScoreProgress(String roomId, Integer roleType) {
+		// 获取实例实际开始时间和理论结束时间
+		TimeData timeData = getRbTimeData(roomId);
+
+		List<Integer> yData = getScoreProgress(timeData, roomId, roleType);
+
+		JSONObject json = new JSONObject();
+
+		json.put("status", timeData.getStatus());
+		json.put("time_stamp", System.currentTimeMillis() / 1000);
+		json.put("start_time", timeData.getStartTime());
+		json.put("running", timeData.getRunning());
+		json.put("total_score", timeData.getAccumulatedValue());
+		json.put("x_data", timeData.getXData());
+		json.put("y_data", yData);
+
+		return json;
+
+	}
+
+	private List<Integer> getScoreProgress(TimeData timeData, String roomId, Integer roleType) {
+		// 获取角色组数据
+		RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
+
+		// 一次取出所有用户的得分纪录
+		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(roomId,
+				roleUserIds.getUserIds());
+
+		List<ObjWithTime> taskTimes = finishedTasks.stream().map(taskContext -> {
+			ObjWithTime objWithTime = new ObjWithTime();
+			objWithTime.setTime(taskContext.getLastSubmitTime());
+			objWithTime.setValue(taskContext.getScore());
+
+			return objWithTime;
+		}).collect(Collectors.toList());
+
+		List<Integer> yData = timeData.calculateCountByTime(taskTimes);
+
+		return yData;
+	}
+
+	@Override
+	public JSONObject getAllRbScoreProgress(String roomId, Integer roleType) {
+
+		// 获取实例实际开始时间和理论结束时间
+		TimeData timeData = getRbTimeData(roomId);
+
+		JSONObject json = new JSONObject();
+
+		json.put("status", timeData.getStatus());
+		json.put("time_stamp", System.currentTimeMillis() / 1000);
+		json.put("start_time", timeData.getStartTime());
+		json.put("running", timeData.getRunning());
+		json.put("total_score", 0);
+		json.put("x_data", timeData.getXData());
+
+		List<Integer> yRedData = getScoreProgress(timeData, roomId,
+				CrRole.RbRoleGroupCode.RED.getCode());
+
+		json.put("red_total_score", timeData.getAccumulatedValue());
+		json.put("y_red_score", yRedData);
+
+		List<Integer> yBlueData = getScoreProgress(timeData, roomId,
+				CrRole.RbRoleGroupCode.BLUE.getCode());
+
+		json.put("blue_total_score", timeData.getAccumulatedValue());
+		json.put("y_blue_score", yBlueData);
 
 		return json;
 	}

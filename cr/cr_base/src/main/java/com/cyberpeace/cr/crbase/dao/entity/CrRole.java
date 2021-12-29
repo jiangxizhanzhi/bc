@@ -104,7 +104,8 @@ public class CrRole extends BaseTable {
 
 	public enum RbRoleGroupCode implements GenericEnum {
 
-		ADMIN(1, "管理员"), DIRECTOR(2, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5, "蓝方");
+		ADMIN(1, "管理员"), DIRECTOR(2, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5,
+				"蓝方"), RED_BLUE(6, "红方蓝方");
 
 		@Getter
 		private Integer code;

@@ -313,7 +313,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景启动")
 	@PostMapping("/start_scene")
-	public BaseRsp<JSONObject> startScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
+	public BaseRsp<JSONObject>
+			startScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
@@ -373,6 +374,15 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		List<LessonMonitorBo> monitorBos = lessonSceneService.lessonMonitor(lessonId);
 		return new BaseRsp<>(monitorBos);
+
+	}
+
+	@ApiOperation("场景监控信息刷新时间")
+	@GetMapping("/monitor_refresh_interval")
+	public BaseRsp<Integer> getMonitorRefreshInterval() {
+
+		String refreshInterval = ConfigUtil.getContextProperty("oj.monitor.refresh.interval");
+		return new BaseRsp<>(Integer.parseInt(refreshInterval));
 
 	}
 

@@ -21,5 +21,6 @@ public class DashboardGroup {
 		this.role = role;
 		this.avatar = "";
 		this.groupname = role;
+		this.id = role;
 	}
 }

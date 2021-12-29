@@ -67,9 +67,9 @@ public class RbSceneController {
 	@ApiOperation("查看场景")
 	@GetMapping("")
 	public BaseRsp<SceneViewContext> getScene(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
+			@ApiParam(name = "room_id", value = "红蓝对抗实例id", required = true) String room_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
-		SceneViewContext context = rbSceneService.viewScene(resource_id, role_id);
+		SceneViewContext context = rbSceneService.viewScene(room_id, role_id);
 
 		return new BaseRsp<>(context);
 	}

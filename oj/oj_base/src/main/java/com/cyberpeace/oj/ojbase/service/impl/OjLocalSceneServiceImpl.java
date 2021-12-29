@@ -12,6 +12,7 @@ import com.cyberpeace.cs.constant.SceneEvent;
 import com.cyberpeace.cs.constant.SceneEventStatus;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.SystemConfigService;
@@ -68,6 +69,9 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@Override
 	public OjLocalScene selectOjLocalScene(String businessId, Integer shared,
@@ -147,10 +151,10 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	}
 
 	@Override
-	public void deleteScene(String ojLocalSceneId) {
+	public Boolean deleteLocalScene(String ojLocalSceneId) {
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(ojLocalSceneId);
 		if (ojLocalScene == null) {
-			return;
+			return true;
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -161,6 +165,31 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				localSceneMapper.deleteById(ojLocalScene.getLocalSceneId());
 			}
 		});
+
+		return true;
+	}
+
+	@Override
+	public Boolean deleteLocalAndRemoteScene(OjLocalScene ojLocalScene) {
+
+		if (null == ojLocalScene) {
+			return true;
+		}
+		// 删除中台场景
+		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		localSceneService.deleteRemoteScene(localScene);
+
+		// 删除本地场景
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				localSceneMapper.deleteById(localScene.getResourceId());
+				ojLocalSceneMapper.deleteById(ojLocalScene.getResourceId());
+			}
+		});
+
+		return true;
 	}
 
 	@Override

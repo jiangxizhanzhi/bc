@@ -113,8 +113,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(businessId,
 				operation.getSceneShareMode(), authContext);
 
-		ojLocalSceneService.deleteScene(ojLocalScene.getResourceId());
-		return true;
+		return ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
 	}
 
 	@Override
@@ -168,8 +167,11 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		sceneDataBo.setSceneConfigData(topo);
 
 		// 场景信息
-		JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
-		sceneDataBo.setSceneData(sceneData);
+		if (null != ojLocalScene) {
+			JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+			sceneDataBo.setSceneData(sceneData);
+		}
+
 		return sceneDataBo;
 	}
 
@@ -213,8 +215,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	 * @return
 	 */
 	private String getBusinessId(CourseLesson lesson, PracticeOperation operation) {
-		return lesson.getResourceId() + CommonConstant.LEFT_OBLIQUE_LINE
-				+ operation.getResourceId();
+		return lesson.getResourceId() + CommonConstant.CODE_COMMA + operation.getResourceId();
 	}
 
 	/**

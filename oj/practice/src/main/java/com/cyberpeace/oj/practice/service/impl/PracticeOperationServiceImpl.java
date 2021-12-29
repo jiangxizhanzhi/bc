@@ -488,14 +488,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public void deleteScene(String resourceId, AuthContext authContext) {
+	public Boolean deleteScene(String resourceId, AuthContext authContext) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
-
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
 				operation.getResourceId(), operation.getSceneShareMode(), authContext);
 
-		ojLocalSceneService.deleteScene(ojLocalScene.getResourceId());
+		return ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
 	}
 
 	@Override

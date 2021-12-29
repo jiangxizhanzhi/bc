@@ -95,7 +95,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param authContext
 	 * @return
 	 */
-	void deleteScene(String resourceId, AuthContext authContext);
+	Boolean deleteScene(String resourceId, AuthContext authContext);
 
 	/**
 	 * 场景节点重启

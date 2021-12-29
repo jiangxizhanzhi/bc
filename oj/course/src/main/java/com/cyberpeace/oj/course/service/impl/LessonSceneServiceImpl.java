@@ -144,23 +144,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 				courseLesson.getSceneShareMode(), authContext);
-		if (null == ojLocalScene) {
-			return true;
-		}
-
-		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-		localSceneService.deleteRemoteScene(localScene);
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				ojLocalSceneMapper.deleteById(ojLocalScene);
-				localSceneMapper.deleteById(localScene);
-			}
-		});
-
-		return true;
+		return ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
 	}
 
 	@Override

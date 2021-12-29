@@ -16,6 +16,8 @@ public class LessonPracticeWsMessageIdentifier extends WsMessageIdentifier {
 
 	private String practiceId;
 
-	private String fromWeb;
+	private Boolean fromWeb;
+
+	private Integer shared;
 
 }

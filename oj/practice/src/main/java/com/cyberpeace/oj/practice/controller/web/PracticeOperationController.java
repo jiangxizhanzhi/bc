@@ -132,9 +132,10 @@ public class PracticeOperationController {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
-		practiceOperationService.deleteScene(sceneOperationReq.getResourceId(), authContext);
+		Boolean result = practiceOperationService.deleteScene(sceneOperationReq.getResourceId(),
+				authContext);
 
-		return new BaseRsp(true);
+		return new BaseRsp(result);
 	}
 
 	@ApiOperation("场景节点重启")

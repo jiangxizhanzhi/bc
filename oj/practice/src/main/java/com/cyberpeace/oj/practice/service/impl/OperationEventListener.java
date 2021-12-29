@@ -40,8 +40,7 @@ public class OperationEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
-		ojLocalSceneService.deleteScene(businessId);
-
+		ojLocalSceneService.deleteLocalScene(businessId);
 		return true;
 	}
 
@@ -79,7 +78,9 @@ public class OperationEventListener extends MessageListener {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		pushMessageToWeb(data, ojLocalScene, context);
+		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
+		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
+		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene, context);
 		return true;
 	}
 

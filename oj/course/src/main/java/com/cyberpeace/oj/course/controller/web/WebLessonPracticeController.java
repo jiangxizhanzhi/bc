@@ -1,5 +1,10 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -9,17 +14,11 @@ import com.cyberpeace.oj.course.controller.req.LessonPracticeSceneNodeReq;
 import com.cyberpeace.oj.course.controller.req.LessonPracticeSceneReq;
 import com.cyberpeace.oj.course.controller.req.LessonPracticeSceneStatusReq;
 import com.cyberpeace.oj.course.service.LessonPracticeSceneService;
-import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
-import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
-import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "oj-前台课后练习相关api")
 @RestController

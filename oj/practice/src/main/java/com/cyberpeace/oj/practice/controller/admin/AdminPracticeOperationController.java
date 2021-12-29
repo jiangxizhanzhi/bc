@@ -210,8 +210,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		practiceOperationService.deleteScene(sceneOperationReq.getResourceId(), authContext);
-		return new BaseRsp<>(true);
+		Boolean result = practiceOperationService.deleteScene(sceneOperationReq.getResourceId(),
+				authContext);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("后台场景节点重启")

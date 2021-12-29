@@ -42,7 +42,7 @@ public class LessonEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 
-		ojLocalSceneService.deleteScene(businessId);
+		ojLocalSceneService.deleteLocalScene(businessId);
 		return true;
 	}
 

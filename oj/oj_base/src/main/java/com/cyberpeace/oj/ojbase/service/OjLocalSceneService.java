@@ -32,10 +32,17 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	JSONObject setDynamicFlag(String flags, JSONObject topoId);
 
 	/**
-	 * 删除场景
-	 * @param ojLocalSceneId
+	 * 删除本地场景
+	 * @param 
 	 */
-	void deleteScene(String ojLocalSceneId);
+	Boolean deleteLocalScene(String ojLocalSceneId);
+
+	/**
+	 * 删除本地和中台场景
+	 * @param ojLocalScene
+	 * @return
+	 */
+	Boolean deleteLocalAndRemoteScene(OjLocalScene ojLocalScene);
 
 	/**
 	 * 组装实训场景启动完成消息体

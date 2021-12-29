@@ -33,6 +33,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionWsUpdateStatusMessage;
 import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -453,17 +454,26 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public void pushMissionWS(String businessId, Integer code) {
+
+		TaskWsData data = new TaskWsData(code);
+		sendWsData(data, businessId);
+	}
+
+	@Override
+	public void pushStatusWs(String businessId, Integer runningStatus) {
+		MissionWsUpdateStatusMessage message = new MissionWsUpdateStatusMessage(runningStatus);
+		sendWsData(message, businessId);
+	}
+
+	private <T> void sendWsData(T data, String businessId) {
 		MissionWsIdentifier identifier = new MissionWsIdentifier();
 		identifier.setBusinessId(businessId);
 		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
 		identifier.setPath(WsPath.CR_MISSION);
 
-		TaskWsData data = new TaskWsData(code);
-
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();
 		webSocketHandler.pushMessage(messageContext, true);
-
 	}
 
 	private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(

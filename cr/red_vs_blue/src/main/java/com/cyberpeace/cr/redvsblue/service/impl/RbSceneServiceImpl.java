@@ -22,13 +22,16 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
+import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -46,16 +49,22 @@ public class RbSceneServiceImpl implements RbSceneService {
 	private RbRoomService rbRoomService;
 
 	@Autowired
-	TransactionTemplate transactionTemplate;
+	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	LocalSceneService localSceneService;
+	private LocalSceneService localSceneService;
 
 	@Autowired
-	CrRoleService crRoleService;
+	private CrRoleService crRoleService;
 
 	@Autowired
-	SceneFilterService sceneFilterService;
+	private SceneFilterService sceneFilterService;
+
+	@Autowired
+	private RbTimeManagementService rbTimeManagementService;
+
+	@Autowired
+	private CrTaskService crTaskService;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -191,34 +200,59 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	@Override
 	public Boolean pauseScene(String roomId) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 1、只有教员可以操作场景
-		rbRoomService.checkTeacherPermission(roomId, userId);
-
+		// 1. 校验场景存在和用户权限
 		RbRoom room = rbRoomService.getById(roomId);
+		checkBeforeOps(room);
 
-		// 2、如果场景不存在
-		if (StringUtils.isBlank(room.getLocalSceneId())) {
-			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+		// 2、 发送mp暂停请求
+		if (!localSceneService.pauseScene(room.getLocalSceneId())) {
+			return false;
 		}
-		// 3、 发送mp暂停请求
-		return localSceneService.pauseScene(room.getLocalSceneId());
+		// 3. 更新时间管理
+		RbTimeManagement timeManagement = rbTimeManagementService.getByRoomId(roomId);
+		rbTimeManagementService.updateTimeManagement(timeManagement,
+				RbTimeManagement.TimeManagementStatus.PAUSE.getCode(),
+				UserInfoContext.getUserContext().getUserId());
+
+		// 4.发送ws提醒前端刷新训练状态
+		crTaskService.pushStatusWs(roomId, RbTimeManagement.TimeManagementStatus.PAUSE.getCode());
+
+		return true;
 	}
 
 	@Override
 	public Boolean unpauseScene(String roomId) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 1、只有教员可以操作场景
-		rbRoomService.checkTeacherPermission(roomId, userId);
-
+		// 1. 校验场景存在和用户权限
 		RbRoom room = rbRoomService.getById(roomId);
+		checkBeforeOps(room);
 
-		// 2、如果场景不存在
-		if (StringUtils.isBlank(room.getLocalSceneId())) {
-			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+		// 2、 发送mp暂停请求
+		if (!localSceneService.unpauseScene(room.getLocalSceneId())) {
+			return false;
 		}
-		// 3、 发送mp恢复暂停请求
-		return localSceneService.unpauseScene(room.getLocalSceneId());
+		// 3. 更新时间管理
+		RbTimeManagement timeManagement = rbTimeManagementService.getByRoomId(roomId);
+		rbTimeManagementService.updateTimeManagement(timeManagement,
+				RbTimeManagement.TimeManagementStatus.RECOVERY.getCode(),
+				UserInfoContext.getUserContext().getUserId());
+
+		// 4.发送ws提醒前端刷新训练状态
+		crTaskService.pushStatusWs(roomId,
+				RbTimeManagement.TimeManagementStatus.RECOVERY.getCode());
+
+		return true;
+	}
+
+	private void checkBeforeOps(RbRoom room) {
+		if (room == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		if (!localSceneService.ensureSceneStarted(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		// 只有教员可以操作场景
+		String userId = UserInfoContext.getUserContext().getUserId();
+		rbRoomService.checkTeacherPermission(room.getResourceId(), userId);
 	}
 
 	@Override

@@ -226,6 +226,13 @@ public interface CrTaskService {
 	 */
 	void pushMissionWS(String businessId, Integer code);
 
+	/**
+	 * 推送训练状态的ws，暂停状态不允许答题
+	 * @param businessId
+	 * @param runningStatus
+	 */
+	void pushStatusWs(String businessId, Integer runningStatus);
+
 	IPage<MissionEvaluationContext>
 			getRbMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery);
 

@@ -45,8 +45,13 @@ public class RbTimeManagement extends BaseTable {
 
 	public Boolean isRunning() {
 		boolean result = status.intValue() == TimeManagementStatus.RECOVERY.getCode();
+		result = result || status.intValue() == TimeManagementStatus.START.getCode();
 
 		return result;
+	}
+
+	public Boolean isRecovering() {
+		return status.intValue() == TimeManagementStatus.RECOVERY.getCode();
 	}
 
 	public enum TimeManagementStatus {

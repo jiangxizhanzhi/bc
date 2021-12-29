@@ -32,7 +32,7 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	}
 
 	@Override
-	public List<RbTimeManagement> getALl() {
+	public List<RbTimeManagement> getAll() {
 		return rbTimeManagementMapper.selectAll();
 	}
 
@@ -46,6 +46,20 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	public List<RbTimeManagement> getUnstopped() {
 		return rbTimeManagementMapper
 				.selectExcludeStatus(RbTimeManagement.TimeManagementStatus.STOP.getCode());
+	}
+
+	@Override
+	public void updateTimeManagement(RbTimeManagement timeManagement, Integer status,
+			String userId) {
+		timeManagement.setStatus(status);
+		timeManagement.setUpdateUserId(userId);
+
+		// todo 逻辑待整理
+		// if (timeManagement.isRecovering()){
+		// Date currentCombatTime =
+		// timeManagement.setCombatTime(timeManagement.get);
+		// }
+		updateById(timeManagement);
 	}
 
 }

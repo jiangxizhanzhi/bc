@@ -300,7 +300,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		if (localScene == null) {
 			return false;
 		}
-		return !StringUtils.isBlank(localScene.getMpSceneId());
+		return StringUtils.isNotBlank(localScene.getMpSceneId());
+	}
+
+	@Override
+	public Boolean ensureSceneStarted(String localSceneId) {
+		if (StringUtils.isBlank(localSceneId)) {
+			return false;
+		}
+		LocalScene localScene = getById(localSceneId);
+		return ensureSceneStarted(localScene);
 	}
 
 	@Override

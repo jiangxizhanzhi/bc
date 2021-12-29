@@ -24,7 +24,7 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	 * 获取所有
 	 * @return
 	 */
-	List<RbTimeManagement> getALl();
+	List<RbTimeManagement> getAll();
 
 	/**
 	 * 获取所有已停止的
@@ -37,4 +37,12 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	 * @return
 	 */
 	List<RbTimeManagement> getUnstopped();
+
+	/**
+	 * 更新时间管理器
+	 * @param timeManagement
+	 * @param status
+	 * @param userId
+	 */
+	void updateTimeManagement(RbTimeManagement timeManagement, Integer status, String userId);
 }

@@ -54,6 +54,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	Boolean ensureSceneStarted(LocalScene localScene);
 
+	Boolean ensureSceneStarted(String localSceneId);
+
 	Boolean restartNode(String localSceneId, String nodeId);
 
 	Boolean recreateNode(String localSceneId, String nodeId);

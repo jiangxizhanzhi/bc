@@ -21,6 +21,12 @@ public class OperationLessonBo extends TheoryLessonBo {
 	@ApiModelProperty("拓扑编号")
 	private String topoId;
 
-	@ApiModelProperty("场景配置信息")
+	@ApiModelProperty("场景共享类型")
+	private Integer sceneShareMode;
+
+	@ApiModelProperty("拓扑配置信息")
 	private JSONObject sceneConfigData;
+
+	@ApiModelProperty("场景信息")
+	private JSONObject sceneData;
 }

@@ -3,8 +3,15 @@ package com.cyberpeace.oj.practice.service.impl;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +41,15 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	@Autowired
+	private UtilService utilService;
+
+	@Autowired
+	private OjLocalSceneService ojLocalSceneService;
+
 	@Override
-	public List<OperationLessonBo> selectByPaperId(String paperId, Boolean viewAnswer,
-			Boolean simpleData) {
+	public List<OperationLessonBo> selectByPaperId(String lessonId, String paperId,
+			Boolean viewAnswer, Boolean simpleData, AuthContext authContext) {
 
 		List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
 				.selectByPracticeIds(paperId, null);
@@ -47,21 +60,31 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 							practiceOperationRef.getSnapshot(), PracticeOperation.class);
 					OperationLessonBo operationLessonBo = BeanUtils.copy(operation,
 							OperationLessonBo.class);
-					//  todo 设置原习题数据资源编号
-					// operationLessonBo.setResourceId(practiceOperationRef.getOriginId());
 
 					// 附件内容查询
 					if (!simpleData && StringUtils.isNotBlank(operation.getAttachmentId())) {
 						Attachment attachment = attachmentMapper
 								.selectById(operation.getAttachmentId());
-						operationLessonBo.setFilePath(attachment.getFilePath());
+
+						operationLessonBo
+								.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
 						operationLessonBo.setFileName(attachment.getFileName());
 					}
 
+					// 场景相关数据查询
 					if (!simpleData && operation.getDynamicEnv()
 							&& StringUtils.isNotBlank(operation.getTopoId())) {
 						JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 						operationLessonBo.setSceneConfigData(topoData);
+
+						String businessId = lessonId + CommonConstant.CODE_COMMA
+								+ operationLessonBo.getResourceId();
+						OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
+								businessId, operationLessonBo.getSceneShareMode(), authContext);
+						if (null != ojLocalScene) {
+							JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+							operationLessonBo.setSceneData(sceneData);
+						}
 					}
 
 					// 是否展示答案

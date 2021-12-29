@@ -37,6 +37,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE, "启动场景时保存本地数据错误");
 			put(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST, "场景不存在");
 			put(CrBusinessErrorCode.FILE_FORMAT_ERROR, "文件格式错误");
+			put(CrBusinessErrorCode.SCENE_NOT_STARTED, "场景未开启");
 
 			put(RtksBusinessErrorCode.UNABLE_DELETE_FRAME, "当前层级下存在岗位，无法删除");
 			put(RtksBusinessErrorCode.UNABLE_ADD_FRAME, "已经绑定了岗位，无法新增层级");
@@ -85,6 +86,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE, "save local data failure");
 			put(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST, "local scene not exist");
 			put(CrBusinessErrorCode.FILE_FORMAT_ERROR, "file format error");
+
+			put(CrBusinessErrorCode.SCENE_NOT_STARTED, "Scene not started");
 
 			put(RtksBusinessErrorCode.UNABLE_DELETE_FRAME,
 					"role already exist under the level, unable to delete level");

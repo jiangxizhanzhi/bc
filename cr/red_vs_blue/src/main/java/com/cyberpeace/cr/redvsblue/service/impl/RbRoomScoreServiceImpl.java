@@ -34,6 +34,7 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoleUserIds;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
+import com.cyberpeace.cr.redvsblue.service.context.mission.ObjWithTime;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RankData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
 import com.cyberpeace.cr.redvsblue.service.context.mission.UserCounter;
@@ -267,16 +268,8 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 			missionDataList.add(missionData);
 		}
 
-		for (int i = 10; i < 27; i++) {
-			RankData missionData = BeanUtils.deepCopy(rankDataList.get(0), RankData.class);
-			missionData.setSortType("missionRatio");
-			missionData.setName("name" + i);
-
-			missionDataList.add(missionData);
-		}
 
 		ranking = 1;
-
 		for (RankData missionData : missionDataList) {
 			missionData.setRanking(ranking++);
 		}
@@ -285,6 +278,53 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		json.put("ranking_data", rankDataList);
 		json.put("time_stamp", System.currentTimeMillis() / 1000);
 		json.put("mission_data", missionDataList);
+
+		return json;
+	}
+
+	@Override
+	public JSONObject getRbMissionProgress(String roomId, Integer roleType) {
+
+		// 获取角色组数据
+		RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
+
+		// 获取实例实际开始时间和理论结束时间
+		TimeData timeData = getRbTimeData(roomId);
+
+		// 获取组内已下发的任务
+		List<TaskContext> crTasks = crTaskService.getTaskContextByRoomIdAndUsers(roomId,
+				roleUserIds.getUserIds());
+
+		List<ObjWithTime> taskTimes = crTasks.stream().map(taskContext -> {
+			ObjWithTime objWithTime = new ObjWithTime();
+			objWithTime.setTime(taskContext.getReleaseTime());
+
+			return objWithTime;
+		}).collect(Collectors.toList());
+
+		List<Integer> totalProgressYData = timeData.calculateCountByTime(taskTimes);
+
+		// 获取已完成的任务
+		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(roomId,
+				roleUserIds.getUserIds());
+
+		List<ObjWithTime> finishedTimes = finishedTasks.stream().map(crTask -> {
+			ObjWithTime objWithTime = new ObjWithTime();
+			objWithTime.setTime(crTask.getLastSubmitTime());
+
+			return objWithTime;
+		}).collect(Collectors.toList());
+
+		List<Integer> completedProgressYData = timeData.calculateCountByTime(finishedTimes);
+
+		JSONObject json = new JSONObject();
+
+		json.put("total_mission", crTasks.size());
+		json.put("completed_mission", finishedTasks.size());
+		json.put("total_members", roleUserIds.getUserIds().size());
+		json.put("x_data", timeData.getXData());
+		json.put("y_total", totalProgressYData);
+		json.put("y_complete", completedProgressYData);
 
 		return json;
 	}

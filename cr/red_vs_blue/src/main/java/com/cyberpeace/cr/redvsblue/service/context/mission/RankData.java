@@ -17,7 +17,7 @@ public class RankData implements Comparable<RankData> {
 
 	private Integer score;
 
-	private String sortType;
+	private String sortType = "score";
 
 	@Override
 	public int compareTo(RankData o) {

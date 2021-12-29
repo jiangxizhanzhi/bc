@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.controller.director;
+package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.Date;
 import java.util.List;

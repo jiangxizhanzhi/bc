@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.controller.admin;
+package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;

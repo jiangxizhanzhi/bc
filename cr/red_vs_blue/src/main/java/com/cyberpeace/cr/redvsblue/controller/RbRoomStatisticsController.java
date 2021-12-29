@@ -60,6 +60,7 @@ public class RbRoomStatisticsController {
 	public BaseRsp<TimeDataRsp> getRbTimeData(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		TimeData data = rbRoomScoreService.getRbTimeData(resource_id);
+
 		TimeDataRsp timeDataRsp = new TimeDataRsp();
 		timeDataRsp.setStartTime((int) (data.getStartTime().getTime() / 1000));
 		timeDataRsp.setTimeStamp((int) (System.currentTimeMillis() / 1000));
@@ -196,4 +197,29 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(missionsStatistics);
 	}
 
+	/**
+	 *  红方/蓝方成绩页面 右侧中折线图 任务进展
+	 *     红蓝实时战况页面 左右两侧 任务进展
+	 *     队内任务下发和完成任务数进展
+	 * @return
+	 */
+	@ApiOperation("获取任务下发和完成任务数进展")
+	@GetMapping("/team_mission_progress")
+	public BaseRsp<XYData> getRbMissionProgress(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+
+		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+
+		JSONObject data = rbRoomScoreService.getRbMissionProgress(resource_id, role_type);
+
+		return new BaseRsp(data);
+	}
 }

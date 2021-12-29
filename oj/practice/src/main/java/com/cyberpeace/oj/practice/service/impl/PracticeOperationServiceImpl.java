@@ -13,6 +13,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
@@ -116,6 +117,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
+
+	@Autowired
+	private UtilService utilService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -238,7 +242,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
 		if (null != attachment) {
 			operationBo.setFileName(attachment.getFileName());
-			operationBo.setFileUrl(attachment.getFilePath());
+			operationBo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
 		}
 		return operationBo;
 	}

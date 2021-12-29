@@ -66,6 +66,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 	@Autowired
 	private CrTaskService crTaskService;
 
+	private static final Integer PAUSE_FLAG = 1;
+
+	private static final Integer UNPAUSE_FLAG = 2;
+
 	@Override
 	public String startScene(String roomId, String userId) {
 		// 1、权限校验，学员是不可以启动场景的
@@ -202,7 +206,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 	public Boolean pauseScene(String roomId) {
 		// 1. 校验场景存在和用户权限
 		RbRoom room = rbRoomService.getById(roomId);
-		checkBeforeOps(room);
+		checkBeforePauseOps(room, PAUSE_FLAG);
 
 		// 2、 发送mp暂停请求
 		if (!localSceneService.pauseScene(room.getLocalSceneId())) {
@@ -224,9 +228,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	public Boolean unpauseScene(String roomId) {
 		// 1. 校验场景存在和用户权限
 		RbRoom room = rbRoomService.getById(roomId);
-		checkBeforeOps(room);
+		checkBeforePauseOps(room, UNPAUSE_FLAG);
 
-		// 2、 发送mp暂停请求
+		// 2、 发送mp解除暂停请求
 		if (!localSceneService.unpauseScene(room.getLocalSceneId())) {
 			return false;
 		}
@@ -243,16 +247,31 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return true;
 	}
 
-	private void checkBeforeOps(RbRoom room) {
+	private void checkBeforePauseOps(RbRoom room, Integer flag) {
 		if (room == null) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		if (!localSceneService.ensureSceneStarted(room.getLocalSceneId())) {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
-		// 只有教员可以操作场景
+		// 只有导演可以暂停、恢复
 		String userId = UserInfoContext.getUserContext().getUserId();
-		rbRoomService.checkTeacherPermission(room.getResourceId(), userId);
+		rbRoomService.checkDirectorPermission(room.getResourceId(), userId);
+
+		// 校验当前状态
+		RbTimeManagement management = rbTimeManagementService.getByRoomId(room.getResourceId());
+		if (management == null) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+		}
+		if (management.isStopped()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+		}
+		if (flag.equals(PAUSE_FLAG) && management.isPaused()) {
+			throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
+		}
+		if (flag.equals(UNPAUSE_FLAG) && !management.isPaused()) {
+			throw new BusinessException(CrBusinessErrorCode.NOT_PAUSED);
+		}
 	}
 
 	@Override

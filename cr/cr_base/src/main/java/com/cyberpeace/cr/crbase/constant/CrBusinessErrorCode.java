@@ -108,4 +108,10 @@ public interface CrBusinessErrorCode {
 
 	// 重建节点失败
 	String FAILED_TO_RECREATE_NODE = "101033";
+
+	// 场景已暂停，不能执行暂停操作
+	String ALREADY_PAUSED = "101034";
+
+	// 非暂停状态不能执行恢复操作
+	String NOT_PAUSED = "101035";
 }

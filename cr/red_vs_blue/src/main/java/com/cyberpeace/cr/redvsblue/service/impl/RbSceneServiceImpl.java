@@ -191,13 +191,14 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	@Override
 	public void clearLocal(RbRoom room) {
+		String localSceneId = room.getLocalSceneId();
 		room.setLocalSceneId("");
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				rbRoomService.updateById(room);
-				localSceneService.removeById(room.getLocalSceneId());
+				localSceneService.removeById(localSceneId);
 			}
 		});
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -17,7 +18,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -25,6 +25,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
@@ -41,6 +42,7 @@ import com.cyberpeace.cr.redvsblue.controller.rsp.RbTimeManagementRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
@@ -76,6 +78,9 @@ public class RbRoomController {
 
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
+
+	@Autowired
+	private RbSceneService rbSceneService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -268,16 +273,17 @@ public class RbRoomController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
-	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-
+	public BaseRsp<String> batchDelete(@RequestBody @Validated SceneOpsReq opsReq) {
+		String roomId = opsReq.getRoomId();
+		if (StringUtils.isBlank(roomId)) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-				// todo teamSceneService.stopScene(deleteReq.getIds().get(0));
-				rbRoomService.removeByIds(deleteReq.getIds());
-
+				rbSceneService.stopScene(roomId);
+				rbRoomService.removeById(roomId);
 			}
 		});
 

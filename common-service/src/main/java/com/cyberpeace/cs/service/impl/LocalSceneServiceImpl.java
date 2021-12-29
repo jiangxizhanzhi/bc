@@ -215,10 +215,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		// 3、修改本地数据
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 
-		// 计算暂停时间
-		long seconds = TimeUtil.getIntervalSeconds(localScene.getPauseTime(), new Date());
-		Date endTime = TimeUtil.addSeconds(localScene.getEndTime(), seconds);
-		localScene.setEndTime(endTime);
+		if (localScene.getEndTime() != null) {
+			// 计算暂停时间
+			long seconds = TimeUtil.getIntervalSeconds(localScene.getPauseTime(), new Date());
+			Date endTime = TimeUtil.addSeconds(localScene.getEndTime(), seconds);
+			localScene.setEndTime(endTime);
+		}
 		updateById(localScene);
 
 		return true;

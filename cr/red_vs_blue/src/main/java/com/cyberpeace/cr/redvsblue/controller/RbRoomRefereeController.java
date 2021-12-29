@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -11,19 +12,24 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.service.CommonSceneService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
@@ -45,6 +51,9 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private CommonSceneService commonSceneService;
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
@@ -173,6 +182,17 @@ public class RbRoomRefereeController {
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
 				MissionWsCode.RVB_MISSION_CODE);
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("获取监控")
+	@GetMapping("/sessions")
+	public BaseRsp<List<MonitorSession>> getSessions(
+			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id) {
+		RbRoom room = rbRoomService.getById(room_id);
+		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		return new BaseRsp<>(commonSceneService.getMonitorSessions(room.getLocalSceneId(), null));
 	}
 
 }

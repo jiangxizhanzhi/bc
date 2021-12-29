@@ -49,16 +49,16 @@ public class TeamTrainTeacherController {
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
 	BaseRsp<List<MonitorSession>> getSessions(
-			@ApiParam(name = "room_id", value = "训练实例id", required = true) String roomId,
-			@ApiParam(name = "student_id", value = "学员id", required = false) String studentId) {
-		TeamRoom room = teamRoomService.getById(roomId);
+			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id,
+			@ApiParam(name = "student_id", value = "学员id", required = false) String student_id) {
+		TeamRoom room = teamRoomService.getById(room_id);
 		// 1. 确认场景已开启
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
 		// 2. 获取中台会话数据
-		JSONArray sessions = localSceneService.getMonitorSessions(localScene, studentId);
+		JSONArray sessions = localSceneService.getMonitorSessions(localScene, student_id);
 		List<MonitorSession> sessionList = sessions.toJavaList(MonitorSession.class);
 		// 3. 获取用户名、用户头像、ip
 		JSONObject sceneData = localSceneService.getSceneData(localScene,

@@ -35,6 +35,16 @@ public class CommonSceneServiceImpl implements CommonSceneService {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 场景删除事件代号
+	 */
+	private static final Integer MP_SCENE_DELETE_EVENT_CODE = 9;
+
+	/**
+	 * 场景事件完成代号
+	 */
+	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
+
 	@Override
 	public List<MonitorSession> getMonitorSessions(String localSceneId, String studentId) {
 		// 1. 查询localScene
@@ -74,5 +84,12 @@ public class CommonSceneServiceImpl implements CommonSceneService {
 		}
 
 		return sessionList;
+	}
+
+	@Override
+	public Boolean isStopped(JSONObject sceneData) {
+		SceneData data = sceneData.toJavaObject(SceneData.class);
+		return data.getTopology().getScene().getEvent().equals(MP_SCENE_DELETE_EVENT_CODE) && data
+				.getTopology().getScene().getEventStatus().equals(MP_SCENE_PROGRESS_FINISH_CODE);
 	}
 }

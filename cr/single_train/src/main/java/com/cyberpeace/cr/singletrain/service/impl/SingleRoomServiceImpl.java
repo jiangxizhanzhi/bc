@@ -213,8 +213,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				singleRoomMapper.deleteById(singleRoom);
 				localSceneService.removeById(singleRoom.getLocalSceneId());
+				singleRoomMapper.deleteById(singleRoom);
 				trainRecordService.updateEndDate(businessTemplateId, userId,
 						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 			}

@@ -12,6 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/cr/common")
 @RequiresAuthentication
-public class CommonController {
+public class CrCommonController {
 
 }

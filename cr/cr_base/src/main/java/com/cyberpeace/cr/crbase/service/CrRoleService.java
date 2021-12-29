@@ -79,4 +79,11 @@ public interface CrRoleService extends IService<CrRole> {
 	List<UserData> getUserDatas(String userIds);
 
 	List<CrRole> selectRbStudentsRoleByRoomId(String roomId);
+
+	/**
+	 * 删除训练房间后删除训练角色
+	 * @param roomId
+	 * @return
+	 */
+	Boolean clearRoomRoles(String roomId);
 }

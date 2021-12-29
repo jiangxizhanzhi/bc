@@ -291,4 +291,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		return crRoleList;
 	}
+
+	@Override
+	public Boolean clearRoomRoles(String roomId) {
+		return crRoleMapper.batchDeleteByRoomId(roomId);
+	}
 }

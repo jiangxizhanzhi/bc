@@ -5,7 +5,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 
-public interface CommonSceneService {
+public interface CommonService {
 
 	/**
 	 * 获取监控会话

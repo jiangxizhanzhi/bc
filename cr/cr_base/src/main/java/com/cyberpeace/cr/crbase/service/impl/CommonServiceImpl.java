@@ -12,7 +12,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.service.CommonSceneService;
+import com.cyberpeace.cr.crbase.service.CommonService;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.crbase.service.context.scene.Port;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneData;
@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class CommonSceneServiceImpl implements CommonSceneService {
+public class CommonServiceImpl implements CommonService {
 
 	@Autowired
 	private LocalSceneService localSceneService;

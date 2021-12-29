@@ -17,7 +17,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -285,16 +284,16 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
-	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+	public BaseRsp<String> batchDelete(@RequestBody @Validated SceneOpsReq opsReq) {
 
+		String roomId = opsReq.getRoomId();
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-				teamSceneService.stopScene(deleteReq.getIds().get(0));
-				teamRoomService.removeByIds(deleteReq.getIds());
-
+				teamSceneService.stopScene(roomId);
+				crRoleService.clearRoomRoles(roomId);
+				teamRoomService.removeById(roomId);
 			}
 		});
 

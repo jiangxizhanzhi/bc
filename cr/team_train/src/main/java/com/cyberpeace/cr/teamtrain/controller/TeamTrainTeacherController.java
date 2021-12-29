@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.service.CommonSceneService;
+import com.cyberpeace.cr.crbase.service.CommonService;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -29,7 +29,7 @@ public class TeamTrainTeacherController {
 	private TeamRoomService teamRoomService;
 
 	@Autowired
-	CommonSceneService commonSceneService;
+	CommonService commonService;
 
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
@@ -41,7 +41,6 @@ public class TeamTrainTeacherController {
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
-		return new BaseRsp<>(
-				commonSceneService.getMonitorSessions(room.getLocalSceneId(), student_id));
+		return new BaseRsp<>(commonService.getMonitorSessions(room.getLocalSceneId(), student_id));
 	}
 }

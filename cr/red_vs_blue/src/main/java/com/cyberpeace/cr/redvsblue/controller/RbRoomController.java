@@ -283,6 +283,7 @@ public class RbRoomController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				rbSceneService.stopScene(roomId);
+				crRoleService.clearRoomRoles(roomId);
 				rbRoomService.removeById(roomId);
 			}
 		});

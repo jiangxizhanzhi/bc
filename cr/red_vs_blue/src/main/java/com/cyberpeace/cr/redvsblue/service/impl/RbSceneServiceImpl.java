@@ -145,7 +145,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		ret.setRoomId(roomId);
 		RbRoom room = rbRoomService.getById(roomId);
 		if (room == null) {
-			return null;
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		// 1. 获取用户可见节点
 		String userId = UserInfoContext.getUserContext().getUserId();

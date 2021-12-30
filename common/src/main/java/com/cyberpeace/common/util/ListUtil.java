@@ -61,4 +61,15 @@ public class ListUtil {
 
 		return builder.toString().trim();
 	}
+
+	public static <E> List<E> pageList(List<E> list, int page, int perPage, int listSize) {
+		int startIndex = (page - 1) * perPage;
+		int endIndex = page * perPage;
+		endIndex = Math.min(endIndex, listSize);
+		startIndex = Math.max(0, startIndex);
+		if (startIndex >= endIndex) {
+			return Lists.newArrayList();
+		}
+		return list.subList(startIndex, endIndex);
+	}
 }

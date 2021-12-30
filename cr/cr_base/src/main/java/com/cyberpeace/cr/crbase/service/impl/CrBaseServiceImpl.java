@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
@@ -54,10 +55,9 @@ public class CrBaseServiceImpl implements CrBaseService {
 		// 5.paginate
 		IPage<TrainingData> trainingDataPage = new Page<>(page.getPage(), page.getPerPage(),
 				trainingDataList.size());
-		int startIndex = (page.getPage() - 1) * page.getPerPage();
-		int endIndex = Math.min(page.getPage() * page.getPerPage(),
-				(int) trainingDataPage.getTotal());
-		trainingDataPage.setRecords(trainingDataList.subList(startIndex, endIndex));
+
+		trainingDataPage.setRecords(ListUtil.pageList(trainingDataList, page.getPage(),
+				page.getPerPage(), (int) trainingDataPage.getTotal()));
 
 		ListRsp<TrainingData> trainingDataListRsp = PageUtil.getListResult(trainingDataPage);
 		// 6. make rsp

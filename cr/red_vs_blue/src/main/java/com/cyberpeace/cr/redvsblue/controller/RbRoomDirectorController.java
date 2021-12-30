@@ -281,6 +281,7 @@ public class RbRoomDirectorController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		CrRbRoleContext crRbRoleContext = new CrRbRoleContext();
 		List<GroupData> groups = Lists.newArrayList();
+		List<String> dynamics = Lists.newArrayList();
 
 		// 遍历学员角色组
 		for (Integer roleCode : CrRole.RB_STUDENT_ROLE_GROUPS) {
@@ -297,7 +298,7 @@ public class RbRoomDirectorController {
 
 			crRbRoleContext.setMissionMapping(crRoleContext.getMissionMapping());
 			crRbRoleContext.setShowWriteupMapping(crRoleContext.getShowWriteupMapping());
-			crRbRoleContext.setDynamic(crRoleContext.getDynamic());
+			dynamics.addAll(crRoleContext.getDynamic());
 
 			CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
 					CrRoleContext.class);
@@ -370,6 +371,8 @@ public class RbRoomDirectorController {
 				peopleCount += userIds.size();
 				missionCount += roleMissionRspList.size();
 			}
+
+			crRbRoleContext.setDynamic(dynamics);
 
 			GroupData groupData = new GroupData();
 

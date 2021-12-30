@@ -297,8 +297,7 @@ public class RbRoomDirectorController {
 
 			crRbRoleContext.setMissionMapping(crRoleContext.getMissionMapping());
 			crRbRoleContext.setShowWriteupMapping(crRoleContext.getShowWriteupMapping());
-			// todo Dynamic
-			crRbRoleContext.setDynamic(Lists.newArrayList());
+			crRbRoleContext.setDynamic(crRoleContext.getDynamic());
 
 			CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
 					CrRoleContext.class);

@@ -76,6 +76,12 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole(
 					crRole);
 
+			for (MissionSchemeObject<MissionContext> missionSchemeObject : missionSchemeObjectList) {
+				if (missionSchemeObject.getDynamic() != null) {
+					dynamics.addAll(missionSchemeObject.getDynamic());
+				}
+			}
+
 			RoleData<MissionContext> roleResData = new RoleData();
 			roleResData.setName(crRole.getName());
 			roleResData.setResourceId(crRole.getResourceId());

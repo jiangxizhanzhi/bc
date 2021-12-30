@@ -47,14 +47,14 @@ public class TeamSceneEventListener extends MessageListener {
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
 
-		return false;
+		return true;
 	}
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
 
-		return false;
+		return true;
 	}
 
 	/**

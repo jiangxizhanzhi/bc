@@ -34,20 +34,20 @@ public class TestSceneEventListener extends MessageListener {
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		BusinessTemplate template = businessTemplateService.getById(businessId);
 		businessTemplateService.clearLocal(template);
-		return false;
+		return true;
 	}
 
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
-		return false;
+		return true;
 	}
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
 
-		return false;
+		return true;
 	}
 
 	private void pushDataToWeb(String data, String businessId) {

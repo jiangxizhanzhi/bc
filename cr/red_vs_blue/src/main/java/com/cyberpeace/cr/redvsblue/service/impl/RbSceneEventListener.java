@@ -38,20 +38,20 @@ public class RbSceneEventListener extends MessageListener {
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		RbRoom room = rbRoomService.getById(businessId);
 		rbSceneService.clearLocal(room);
-		return false;
+		return true;
 	}
 
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
-		return false;
+		return true;
 	}
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
 
-		return false;
+		return true;
 	}
 
 	private void pushDataToWeb(String data, String businessId) {

@@ -192,7 +192,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Override
 	public DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId) {
-		// todo
 
 		DashboardInfo dashboardInfo = new DashboardInfo();
 

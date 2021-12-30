@@ -190,6 +190,7 @@ public class RbRoomDirectorController {
 
 					if (index++ == rbRoomMissionReq.getMissionStage().intValue()) {
 						missions.add(mission.getResourceId());
+						missionStageScheme.getDynamic().add(mission.getResourceId());
 						missionStageScheme.setMissions(missions);
 					}
 
@@ -266,11 +267,13 @@ public class RbRoomDirectorController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		CrRbRoleContext crRbRoleContext = new CrRbRoleContext();
 		List<GroupData> groups = Lists.newArrayList();
-		// 遍历角色组
+
+		// 遍历学员角色组
 		for (Integer roleCode : CrRole.RB_STUDENT_ROLE_GROUPS) {
 
 			Integer missionCount = 0;
 			Integer peopleCount = 0;
+
 			List<GroupRole> childRoleInfoList = Lists.newArrayList();
 			String roleGroupName = EnumUtils.getEnumDescByCode(roleCode,
 					CrRole.RbRoleGroupCode.class);

@@ -69,6 +69,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		}
 
 		List<RoleData<MissionContext>> roleResDataList = Lists.newArrayList();
+		List<String> dynamics = Lists.newArrayList();
+
 		for (CrRole crRole : crRoles) {
 
 			List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole(
@@ -102,6 +104,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		crRoleContext.setShowWriteupMapping(showWriteupMap);
 		crRoleContext.setMissionMapping(missionCompletionMapping);
+		crRoleContext.setDynamic(dynamics);
 
 		return crRoleContext;
 	}

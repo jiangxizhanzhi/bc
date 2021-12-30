@@ -16,4 +16,6 @@ public class CrRoleContext<T> {
 
 	private Map<String, ShowWriteup> showWriteupMapping;
 
+	private List<String> dynamic;
+
 }

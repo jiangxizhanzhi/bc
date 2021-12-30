@@ -110,18 +110,4 @@ public class AdminClassroomController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("查询课堂信息/进入课堂")
-	@GetMapping("/get_group_info")
-	public BaseRsp<List<GroupInfoBo>> getGroupInfo(@RequestParam("resource_id") String resourceId) {
-
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				false);
-
-		List<GroupInfoBo> groupInfoBos = classroomService.getGroupInfo(resourceId, authContext);
-		return new BaseRsp<>(groupInfoBos);
-
-	}
-
-
-
 }

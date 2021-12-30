@@ -11,4 +11,16 @@
         where classroom_id = #{roomId}
         and group_user_ids like #{groupUser}
     </select>
+
+    <select id="selectByRoom" resultMap="base">
+        select * from oj_classroom_group_info
+        where classroom_id = #{roomId}
+    </select>
+
+    <select id="selectLastGroupByRoom" resultType="java.lang.Integer">
+        select group_no from oj_classroom_group_info
+        where classroom_id = #{roomId}
+        order by group_no desc
+        limit 0,1
+    </select>
 </mapper>

@@ -23,6 +23,6 @@ public class GroupInfoBo implements Serializable {
 	private String resourceId;
 
 	@ApiModelProperty("组员信息")
-	private List<UserInfo> userInfos;
+	private List<SimpleUserData> userInfos;
 
 }

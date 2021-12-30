@@ -94,6 +94,43 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
+	public JSONObject getList(Long page, Long perPage, String pattern, String organization) {
+		String targetUrl = USERINFO_LIST_URL;
+		if (!targetUrl.endsWith("?")) {
+			targetUrl += "?";
+		}
+
+		// 参数拼接
+		List<String> queryParams = Lists.newArrayList();
+		if (page != null) {
+			queryParams.add(String.format("page=%s", page));
+		}
+		if (perPage != null) {
+			queryParams.add(String.format("per_page=%s", perPage));
+		}
+		if (pattern != null) {
+			queryParams.add(String.format("username=%s", pattern));
+		}
+		if (organization != null) {
+			queryParams.add(String.format("org=%s", organization));
+		}
+
+		targetUrl += String.join("&", queryParams);
+
+		JSONObject jsonResponse = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		List jsonArray = (List) jsonResponse.get("list");
+		List<UserInfo> userInfoList = new ArrayList<>();
+		for (Object object : jsonArray) {
+			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+		}
+		JSONObject result = new JSONObject();
+		result.put("total", jsonResponse.getInteger("total"));
+		result.put("list", userInfoList);
+
+		return result;
+	}
+
+	@Override
 	public List<UserInfo> getLazyUserList(UserPageContext userPageContext) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 

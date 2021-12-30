@@ -3,8 +3,10 @@ package com.cyberpeace.integratation.service;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
+import org.checkerframework.checker.guieffect.qual.UI;
 
 public interface RemoteUserService {
 
@@ -19,6 +21,8 @@ public interface RemoteUserService {
 	UserInfo getById(String userId);
 
 	List<UserInfo> getList();
+
+	JSONObject getList(Long page, Long perPage, String pattern, String organization);
 
 	List<UserInfo> getLazyUserList(UserPageContext userPageContext);
 

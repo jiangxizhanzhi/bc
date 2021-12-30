@@ -20,4 +20,6 @@ public interface CrCommonConstants {
 	String MP_SCENE_ID_KEY = "resource_id";
 
 	String TOPO_DATA_KEY = "scene_config";
+
+	Integer STUDENT_ROLE = 1;
 }

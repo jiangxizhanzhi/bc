@@ -54,6 +54,21 @@
         where room_id = #{roomId}
         and user_ids like #{userId}
     </select>
+    <select id="getRoomIdsByUserIdAndType" resultType="java.lang.String">
+        <bind name="user_id" value="'%' + userId + '%'"/>
+        select room_id
+        from cr_role
+        where business_type = #{code}
+        and user_ids like #{user_id}
+    </select>
+    <select id="getRoomIdsAndRoleGroupByUserIdAndType"
+            resultType="com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext">
+        <bind name="user_id" value="'%' + userId + '%'"/>
+        select room_id, role_group
+        from cr_role
+        where business_type = #{code}
+        and user_ids like #{user_id}
+    </select>
 
 
 </mapper>

@@ -1,0 +1,23 @@
+package com.cyberpeace.cr.crbase.service.context.statistics;
+
+import java.io.Serializable;
+
+import com.cyberpeace.common.model.PageReqBase;
+
+import lombok.Data;
+
+@Data
+public class TrainingStatisticsPage implements Serializable {
+
+	private Integer page;
+
+	private Integer perPage;
+
+	private Boolean sort;
+
+	public TrainingStatisticsPage(PageReqBase req) {
+		this.page = req.getPage();
+		this.perPage = req.getPerPage();
+		this.sort = "asc".equals(req.getSort());
+	}
+}

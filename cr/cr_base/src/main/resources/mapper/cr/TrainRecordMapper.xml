@@ -9,8 +9,16 @@
             end_time = now()
         </set>
         <where>
-            business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type} and end_time is null
+            business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}
+            and end_time is null
         </where>
     </update>
+    <select id="countFinishedByUserIdAndType" resultType="java.lang.Integer">
+        select count(id)
+        from cr_train_record
+        where user_id = #{userId}
+          and business_type = #{type}
+          and end_time is not null
+    </select>
 
 </mapper>

@@ -200,26 +200,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig) {
 
-		PracticeOperation practiceOperation = practiceOperationMapper
-				.selectById(updateOperation.getResourceId());
-
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
 			localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId());
 		}
 
-		return transactionTemplate.execute(new TransactionCallback<Integer>() {
-
-			@Override
-			public Integer doInTransaction(TransactionStatus status) {
-				// 附件删除更新
-				if (StringUtils.isBlank(updateOperation.getAttachmentId())) {
-					attachmentService.deleteAttachment(practiceOperation.getAttachmentId());
-					updateOperation.setAttachmentId("");
-				}
-
-				return practiceOperationMapper.updateById(updateOperation);
-			}
-		});
+		return practiceOperationMapper.updateById(updateOperation);
 
 	}
 

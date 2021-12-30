@@ -190,13 +190,27 @@ public class RbRoomDirectorController {
 
 					if (index++ == rbRoomMissionReq.getMissionStage().intValue()) {
 						missions.add(mission.getResourceId());
-						missionStageScheme.getDynamic().add(mission.getResourceId());
+						missionStageScheme.setDynamic(
+								getDynamicIds(missionStageScheme, mission.getResourceId()));
 						missionStageScheme.setMissions(missions);
 					}
 
 				}
 				crRole.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
 				crRoleService.updateById(crRole);
+			}
+
+			private List<String> getDynamicIds(MissionStageScheme missionStageScheme,
+					String resourceId) {
+
+				List<String> ids = missionStageScheme.getDynamic();
+				if (ids == null) {
+					ids = Lists.newArrayList();
+				}
+
+				ids.add(mission.getResourceId());
+
+				return ids;
 			}
 		});
 

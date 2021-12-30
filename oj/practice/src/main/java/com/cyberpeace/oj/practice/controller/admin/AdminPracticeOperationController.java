@@ -100,6 +100,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
 
+		// 文件路径为空则代表 前端页面删除了附件
+		if (StringUtils.isBlank(updateReq.getFileUrl())) {
+			updateOperation.setAttachmentId("");
+		}
+
+		// 文件不为空则 前端上传了新的附件
 		if (null != updateReq.getFile() && !updateReq.getFile().isEmpty()) {
 			AttachmentBo attachmentBo = attachmentService.uploadFile(
 					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, updateReq.getFile(), true);

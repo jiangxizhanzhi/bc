@@ -4,6 +4,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.oj.course.controller.req.ClassroomGroupReq;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
@@ -11,10 +12,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,7 +33,19 @@ public class AdminClassroomGroupInfoController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 
-		List<GroupInfoBo> groupInfoBos = classroomGroupInfoService.getGroupInfoByRoom(roomId, authContext);
+		List<GroupInfoBo> groupInfoBos = classroomGroupInfoService.getGroupInfoByRoom(roomId,
+				authContext);
+		return new BaseRsp<>(groupInfoBos);
+
+	}
+
+	@ApiOperation("课堂组信息更新")
+	@PostMapping("/update")
+	public BaseRsp<List<GroupInfoBo>>
+			updateGroupInfo(@RequestBody @Validated ClassroomGroupReq groupReq) {
+
+		List<GroupInfoBo> groupInfoBos = classroomGroupInfoService
+				.updateGroupInfo(groupReq.getClassroomId(), groupReq.getGroupCount());
 		return new BaseRsp<>(groupInfoBos);
 
 	}

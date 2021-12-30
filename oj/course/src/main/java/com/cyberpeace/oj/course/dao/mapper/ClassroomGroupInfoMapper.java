@@ -33,4 +33,9 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 */
 	Integer selectLastGroupByRoom(@Param("roomId") String roomId);
 
+	/**
+	 * 删除组信息
+	 * @param classroomId
+	 */
+    void deleteByRoom(@Param("roomId") String classroomId);
 }

@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
@@ -11,6 +12,7 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -78,8 +80,10 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 
-		PracticeOperation addOperation = convertReq(addReq);
-		if (null != addReq.getFile()) {
+		PracticeOperation addOperation = BeanUtils.copy(addReq, PracticeOperation.class);
+		addOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+		if (null != addReq.getFile() && !addReq.getFile().isEmpty()) {
 			AttachmentBo attachmentBo = attachmentService.uploadFile(
 					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, addReq.getFile(), true);
 			addOperation.setAttachmentId(attachmentBo.getResourceId());
@@ -90,31 +94,18 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp(result);
 	}
 
-	/**
-	 * 将实践操作增加和删除的请求值转换为实体类
-	 * @param addReq
-	 * @return
-	 */
-	private PracticeOperation convertReq(OperationAddReq addReq) {
-
-		PracticeOperation practiceOperation = BeanUtils.copy(addReq, PracticeOperation.class);
-
-		practiceOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-
-		return practiceOperation;
-	}
-
 	@ApiOperation("实践操作习题修改")
 	@PatchMapping("")
 	public BaseRsp<Integer> update(@Validated(Update.class) OperationUpdateReq updateReq) {
 
-		PracticeOperation updateOperation = convertReq(updateReq);
+		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
 
-		if (null != updateReq.getFile()) {
+		if (null != updateReq.getFile() && !updateReq.getFile().isEmpty()) {
 			AttachmentBo attachmentBo = attachmentService.uploadFile(
 					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, updateReq.getFile(), true);
 			updateOperation.setAttachmentId(attachmentBo.getResourceId());
 		}
+
 		Integer result = practiceOperationService.updateOperation(updateOperation,
 				JsonUtil.toJsonObject(updateReq.getSceneConfigData(), JSONObject.class));
 		return new BaseRsp(result);

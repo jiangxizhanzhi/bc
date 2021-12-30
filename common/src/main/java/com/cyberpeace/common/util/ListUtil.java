@@ -2,12 +2,10 @@ package com.cyberpeace.common.util;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 
 public class ListUtil {

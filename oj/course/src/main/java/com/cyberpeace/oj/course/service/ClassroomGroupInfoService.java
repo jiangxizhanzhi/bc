@@ -25,4 +25,12 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @return
 	 */
 	List<GroupInfoBo> getGroupInfoByRoom(String classroomId, AuthContext authContext);
+
+	/**
+	 * 更新课堂分组信息
+	 * @param classroomId
+	 * @param groupCount
+	 * @return
+	 */
+	List<GroupInfoBo> updateGroupInfo(String classroomId, Integer groupCount);
 }

@@ -23,4 +23,9 @@
         order by group_no desc
         limit 0,1
     </select>
+
+    <delete id="deleteByRoom">
+        delete from oj_classroom_group_info
+        where classroom_id = #{roomId}
+    </delete>
 </mapper>

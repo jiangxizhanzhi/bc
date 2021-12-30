@@ -10,4 +10,7 @@ public interface OjBusinessErrorCode {
 	/** 资源无权限*/
 	String RESOURCE_PERMISSION = "102004";
 
+	/** 课堂场景已启动*/
+	String GROUP_SCENE_IS_RUNNING = "102005";
+
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -14,8 +15,10 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.SimpleUserData;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
@@ -35,6 +38,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +62,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	@Override
 	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext) {
@@ -94,19 +101,19 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
 
-		List<String> classroomIds = groupInfos.stream()
+		List<String> classroomUserIds = groupInfos.stream()
 				.map(classroomGroupInfo -> JsonUtil
 						.toJsonObjectArray(classroomGroupInfo.getGroupUserIds(), String.class))
 				.flatMap(Collection::stream).collect(Collectors.toList());
 		// 计算新用户 给新用户创建组
 		List<String> newUserIds = (List<String>) CollectionUtils.retainAll(orgUserIds,
-				classroomIds);
+				classroomUserIds);
 		Integer lastGroupNo = classroomGroupInfoMapper.selectLastGroupByRoom(classroomId);
 		List<ClassroomGroupInfo> groupInfoList = initClassroomGroupInfo(classroomId, courseLesson,
 				newUserIds, lastGroupNo);
 
 		// 计算删除的用户 将用户从组中删除
-		List<String> deleteUserIds = (List<String>) CollectionUtils.retainAll(classroomIds,
+		List<String> deleteUserIds = (List<String>) CollectionUtils.retainAll(classroomUserIds,
 				orgUserIds);
 		List<ClassroomGroupInfo> updateGroups = getUpdateAndDeleteNoneGroup(classroomId,
 				deleteUserIds);
@@ -128,6 +135,82 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		groupInfoList.addAll(updateGroups);
 		return StreamApiUtils.map(groupInfoList,
 				classroomGroupInfo -> entityTBo(classroomGroupInfo));
+	}
+
+	@Override
+	public List<GroupInfoBo> updateGroupInfo(String classroomId, Integer groupCount) {
+		// 基本数据校验
+		Classroom classroom = validateRoom(classroomId);
+		CourseLesson courseLesson = validateLesson(classroom);
+
+		// 场景数据校验
+		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
+		enableUpdateGroup(groupInfos);
+
+		List<String> classroomUserIds = groupInfos.stream()
+				.map(classroomGroupInfo -> JsonUtil
+						.toJsonObjectArray(classroomGroupInfo.getGroupUserIds(), String.class))
+				.flatMap(Collection::stream).collect(Collectors.toList());
+
+		// 无用户直接返回
+		if (CollectionUtils.isEmpty(classroomUserIds)) {
+			return Lists.newArrayList();
+		}
+
+		int remainUser = classroomUserIds.size() % groupCount;
+		int totalGroup = remainUser == CommonConstant.ZERO ? (classroomUserIds.size() / groupCount)
+				: (classroomUserIds.size() / groupCount) + CommonConstant.ONE;
+
+		int start = CommonConstant.ZERO;
+		int end = groupCount;
+		List<ClassroomGroupInfo> groupInfoList = Lists.newArrayList();
+
+		// 实体类数据组装
+		for (int i = 1; i < totalGroup + 1; i++) {
+			ClassroomGroupInfo groupInfo = new ClassroomGroupInfo();
+			groupInfo.setGroupNo(i);
+			groupInfo.setClassroomId(classroomId);
+			groupInfo.setResourceId(IDGeneratorUtil.getID());
+			groupInfo.setLessonId(courseLesson.getResourceId());
+			groupInfo.setTopoId(courseLesson.getTopoId());
+			groupInfo.setSceneShareMode(courseLesson.getSceneShareMode());
+			groupInfo.setDestroyDelay(courseLesson.getDestroyDelay());
+
+			// 用户数据处理
+			if (classroomUserIds.size() < end) {
+				end = classroomUserIds.size();
+			}
+			groupInfo.setGroupUserIds(JsonUtil.arrayToString(classroomUserIds.subList(start, end)));
+			end += groupCount;
+			groupInfoList.add(groupInfo);
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				classroomGroupInfoMapper.deleteByRoom(classroomId);
+				saveBatch(groupInfoList);
+			}
+		});
+
+		return StreamApiUtils.map(groupInfoList, groupInfo -> entityTBo(groupInfo));
+	}
+
+	/**
+	 * 校验场景是否存在
+	 * @param groupInfos
+	 */
+	public void enableUpdateGroup(List<ClassroomGroupInfo> groupInfos) {
+		for (ClassroomGroupInfo groupInfo : groupInfos) {
+			OjLocalScene ojLocalScene = ojLocalSceneMapper
+					.selectGroupScene(groupInfo.getResourceId());
+			if (null != ojLocalScene) {
+				log.error("Group scene is running! classroom_id=[{}], group_id=[{}]",
+						groupInfo.getClassroomId(), groupInfo.getResourceId());
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+			}
+		}
 	}
 
 	/**

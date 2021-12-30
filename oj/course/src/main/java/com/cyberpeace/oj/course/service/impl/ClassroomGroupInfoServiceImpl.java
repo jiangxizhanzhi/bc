@@ -1,24 +1,27 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupArchiveMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.bo.ArchiveGroupBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.SimpleUserData;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
@@ -65,6 +68,15 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	@Autowired
+	private ClassroomGroupArchiveMapper classroomGroupArchiveMapper;
+
+	@Autowired
+	private OjLocalSceneService ojLocalSceneService;
+
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
 
 	@Override
 	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext) {
@@ -197,6 +209,129 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		return StreamApiUtils.map(groupInfoList, groupInfo -> entityTBo(groupInfo));
 	}
 
+	@Override
+	public Integer saveGroupInfo(String classroomId, String name, List<GroupInfoBo> data) {
+
+		// 数据校验
+		validateRoom(classroomId);
+
+		ClassroomGroupArchive archive = classroomGroupArchiveMapper.selectByRoomAndName(classroomId,
+				name);
+		if (null != archive) {
+			log.error("ClassroomGroupArchive name is exist! classroom_id=[{}], name=[{}]",
+					classroomId, name);
+			throw new BusinessException(ErrorCode.DUPLICATE_KEY);
+		}
+
+		ClassroomGroupArchive groupArchive = new ClassroomGroupArchive();
+		groupArchive.setGroups(JsonUtil.arrayToString(data));
+		groupArchive.setName(name);
+		groupArchive.setClassroomId(classroomId);
+
+		return classroomGroupArchiveMapper.insert(groupArchive);
+	}
+
+	@Override
+	public Integer deleteClassroomArchive(String classroomId, String groupArchiveId) {
+		// 数据校验
+		validateRoom(classroomId);
+
+		return classroomGroupArchiveMapper.deleteById(groupArchiveId);
+	}
+
+	@Override
+	public List<GroupInfoBo> userGroupInfo(String classroomId, String groupArchiveId) {
+
+		// 基本数据校验
+		Classroom classroom = validateRoom(classroomId);
+		validateLesson(classroom);
+
+		// 场景数据校验
+		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
+		enableUpdateGroup(groupInfos);
+
+		ClassroomGroupArchive archive = classroomGroupArchiveMapper.selectById(groupArchiveId);
+		if (null == archive) {
+			log.error("ClassroomGroupArchive not found! classroomGroupArchive_id=[{}]",
+					groupArchiveId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 这个时候肯定没有场景启动 所以不用查询场景信息
+		List<ArchiveGroupBo> groupBos = JsonUtil.toJsonObjectArray(archive.getGroups(),
+				ArchiveGroupBo.class);
+
+		return StreamApiUtils.map(groupBos,
+				archiveGroupBo -> BeanUtils.copy(archiveGroupBo, GroupInfoBo.class));
+	}
+
+	@Override
+	public Boolean setGroupSceneDelay(String classroomId, Boolean end) {
+
+		// 基本数据校验
+		Classroom classroom = validateRoom(classroomId);
+		CourseLesson courseLesson = validateLesson(classroom);
+
+		// 查询分组场景 并根据是否延时设置时间
+		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
+
+		// 统计更新数据
+		List<LocalScene> localScenes = Lists.newArrayList();
+		List<ClassroomGroupInfo> groupInfoList = Lists.newArrayList();
+
+		for (ClassroomGroupInfo groupInfo : groupInfos) {
+			OjLocalScene ojLocalScene = ojLocalSceneMapper
+					.selectGroupScene(groupInfo.getResourceId());
+			// 需要更新的场景数据
+			if (null != ojLocalScene) {
+				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+				localScene.setEndTime(end ? TimeUtil.addHours(localScene.getStartTime(),
+						courseLesson.getDestroyDelay()) : null);
+				localScenes.add(localScene);
+			}
+
+			// 需要更新的分组数据
+			String destroyCloseStr = ConfigUtil.getContextProperty("oj.destroy.delay.close");
+			groupInfo.setDestroyDelay(
+					end ? Integer.parseInt(destroyCloseStr) : courseLesson.getDestroyDelay());
+
+			groupInfoList.add(groupInfo);
+		}
+
+		// 数据更新
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				if (CollectionUtils.isNotEmpty(localScenes)) {
+					localScenes.forEach(localScene -> localSceneMapper.updateById(localScene));
+				}
+				if (CollectionUtils.isNotEmpty(groupInfoList)) {
+					groupInfoList
+							.forEach(groupInfo -> classroomGroupInfoMapper.updateById(groupInfo));
+				}
+			}
+		});
+
+		// 消息推送 todo
+
+		return true;
+	}
+
+	@Override
+	public Boolean getGroupSceneDelayStatus(String classroomId) {
+
+		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
+		for (ClassroomGroupInfo groupInfo : groupInfos) {
+			if (groupInfo.getDestroyDelay().intValue() == Integer
+					.parseInt(ConfigUtil.getContextProperty("oj.destroy.delay.close"))) {
+				return CommonConstant.TRUE;
+			}
+		}
+
+		return CommonConstant.FALSE;
+	}
+
 	/**
 	 * 校验场景是否存在
 	 * @param groupInfos
@@ -230,6 +365,13 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			List<SimpleUserData> userData = StreamApiUtils.map(userInfos,
 					user -> BeanUtils.copy(user, SimpleUserData.class));
 			groupInfoBo.setUserInfos(userData);
+		}
+
+		// 场景数据查询
+		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
+		if (null != ojLocalScene) {
+			JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+			groupInfoBo.setSceneData(sceneData);
 		}
 
 		return groupInfoBo;

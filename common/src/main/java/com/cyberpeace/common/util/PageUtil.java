@@ -1,13 +1,18 @@
 package com.cyberpeace.common.util;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.ListRsp;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class PageUtil {
 
@@ -41,6 +46,54 @@ public class PageUtil {
 		ret.setCurrentPage(data.getCurrent());
 
 		return ret;
+	}
+
+	public static <K> ListRsp<K> getListResult(List<K> data, Page page, long total) {
+
+		// 空数据直接返回
+		if (CollectionUtils.isEmpty(data)) {
+			return PageUtil.getNullResult();
+		}
+
+		for (Object order : page.getOrders()) {
+			// 获取对应字段
+			String column = ((OrderItem) order).getColumn();
+			K k = data.get(CommonConstant.ZERO);
+
+			// 判断是否存在该字段
+			String fieldValue = ObjUtil.getCertainFieldValue(k, column);
+			if (StringUtils.isBlank(fieldValue)) {
+				continue;
+			}
+
+			// 对数据排序
+			if (((OrderItem) order).isAsc()) {
+				data.sort(Comparator.comparing(classroomMonitorBo -> ObjUtil
+						.getFieldValueByName(column, classroomMonitorBo).toString()));
+
+			} else {
+				data.sort(Comparator
+						.comparing(classroomMonitorBo -> ObjUtil
+								.getFieldValueByName(column, classroomMonitorBo).toString())
+						.reversed());
+			}
+		}
+
+		long remainData = total % page.getSize();
+		long totalPage = remainData == CommonConstant.ZERO.longValue() ? (total / page.getSize())
+				: (total / page.getSize()) + CommonConstant.ONE;
+
+		long start = (page.getCurrent() - CommonConstant.ONE) * page.getSize();
+		long end = page.getCurrent() == totalPage ? total : start + page.getSize();
+		List<K> subList = data.subList(new Long(start).intValue(), new Long(end).intValue());
+
+		ListRsp<K> listRsp = new ListRsp<>();
+		listRsp.setList(subList);
+		listRsp.setCurrentPage(page.getCurrent());
+		listRsp.setLastPage(totalPage);
+		listRsp.setTotal(total);
+
+		return listRsp;
 	}
 
 	public static ListRsp getNullResult() {

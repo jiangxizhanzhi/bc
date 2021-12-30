@@ -1,10 +1,13 @@
 package com.cyberpeace.oj.course.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.ClassroomBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
 
@@ -36,4 +39,11 @@ public interface ClassroomService extends IService<Classroom> {
 	 */
 	List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext);
 
+	/**
+	 * 获取用户签到信息列表
+	 * @param page
+	 * @param classroomId
+	 * @return
+	 */
+	ListRsp<ClassroomMonitorBo> selectSignList(Page page, String classroomId);
 }

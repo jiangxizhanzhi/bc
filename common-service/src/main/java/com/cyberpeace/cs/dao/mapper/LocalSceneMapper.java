@@ -12,4 +12,10 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 
 	LocalScene getByBusinessInstanceId(String businessInstanceId);
 
+	/**
+	 * 修改销毁时间 空数据也修改
+	 * @param localScene
+	 */
+	void updateEndTime(LocalScene localScene);
+
 }

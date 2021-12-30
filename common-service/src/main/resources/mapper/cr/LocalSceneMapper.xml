@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cs.dao.mapper.LocalSceneMapper">
-
     <resultMap id="baseResultMap" type="com.cyberpeace.cs.dao.entity.LocalScene"/>
 
     <select id="getByBusinessInstanceId" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
@@ -11,4 +10,10 @@
         from local_scene
         where business_instance_id = #{businessInstanceId}
     </select>
+
+    <update id="updateEndTime">
+        update local_scene
+        set destroy_time = #{destroyTime}
+        where resource_id = #{resourceId}
+    </update>
 </mapper>

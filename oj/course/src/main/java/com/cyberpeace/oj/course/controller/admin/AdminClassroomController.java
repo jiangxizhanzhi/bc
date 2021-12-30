@@ -1,25 +1,30 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
+import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
 import com.cyberpeace.oj.course.controller.req.ClassroomReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.ClassroomBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.Api;
@@ -106,8 +111,19 @@ public class AdminClassroomController {
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
-		classroomMapper.updateById(classroom);
-		return new BaseRsp();
+		int result = classroomMapper.updateById(classroom);
+		return new BaseRsp(result);
+	}
+
+	@ApiOperation("课堂监控获取用户签到列表")
+	@GetMapping("/classroom_monitor")
+	public BaseRsp<ListRsp<ClassroomMonitorBo>> classroomMonitor(ClassroomMonitorReq monitorReq) {
+
+		Page page = monitorReq.toPageParam();
+		ListRsp<ClassroomMonitorBo> classroomMonitorBoList = classroomService.selectSignList(page,
+				monitorReq.getClassroomId());
+		return new BaseRsp(classroomMonitorBoList);
+
 	}
 
 }

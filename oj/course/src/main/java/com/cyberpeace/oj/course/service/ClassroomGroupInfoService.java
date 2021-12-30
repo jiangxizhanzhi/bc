@@ -33,4 +33,44 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @return
 	 */
 	List<GroupInfoBo> updateGroupInfo(String classroomId, Integer groupCount);
+
+	/**
+	 * 课堂分组模板数据保存
+	 * @param classroomId
+	 * @param name
+	 * @param data
+	 * @return
+	 */
+	Integer saveGroupInfo(String classroomId, String name, List<GroupInfoBo> data);
+
+	/**
+	 * 课堂分组模板删除
+	 * @param classroomId
+	 * @param groupArchiveId
+	 * @return
+	 */
+	Integer deleteClassroomArchive(String classroomId, String groupArchiveId);
+
+	/**
+	 * 使用课堂分组模板
+	 * @param classroomId
+	 * @param groupArchiveId
+	 * @return
+	 */
+	List<GroupInfoBo> userGroupInfo(String classroomId, String groupArchiveId);
+
+	/**
+	 * 设置场景延时
+	 * @param classroomId
+	 * @param end
+	 * @return
+	 */
+	Boolean setGroupSceneDelay(String classroomId, Boolean end);
+
+	/**
+	 * 获取课堂场景延时状态 分组中存在课堂场景延时场景状态即为true
+	 * @param classroomId
+	 * @return
+	 */
+	Boolean getGroupSceneDelayStatus(String classroomId);
 }

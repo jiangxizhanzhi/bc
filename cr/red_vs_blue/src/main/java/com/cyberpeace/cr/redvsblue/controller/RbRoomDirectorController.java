@@ -24,6 +24,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
+import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.RoleMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -422,5 +423,37 @@ public class RbRoomDirectorController {
 		data.setEndTime(endTime);
 
 		return new BaseRsp(data);
+	}
+
+	@ApiOperation("停止演习")
+	@PostMapping("/stop")
+	public BaseRsp stop(@RequestBody SceneOpsReq opsReq) {
+		String roomId = opsReq.getRoomId();
+		if (roomId == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		RbRoom room = rbRoomService.getById(roomId);
+		if (room == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		// 需要导演权限
+		String userId = UserInfoContext.getUserContext().getUserId();
+		rbRoomService.checkDirectorPermission(roomId, userId);
+
+		RbTimeManagement management = rbTimeManagementService.getByRoomId(roomId);
+		if (management == null) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+		}
+		if (management.isStopped()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+		}
+		// 更改时间管理状态
+		rbTimeManagementService.updateTimeManagement(management,
+				RbTimeManagement.TimeManagementStatus.STOP.getCode(), userId);
+
+		// 推送ws
+		crTaskService.pushStatusWs(roomId, RbTimeManagement.TimeManagementStatus.STOP.getCode());
+
+		return new BaseRsp();
 	}
 }

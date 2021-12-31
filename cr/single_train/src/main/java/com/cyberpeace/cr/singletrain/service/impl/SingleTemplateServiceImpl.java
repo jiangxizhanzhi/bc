@@ -102,4 +102,9 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 
         return get(businessTemplateId);
     }
+
+    @Override
+    public SingleTemplate getByBusinessTemplateId(String resourceId) {
+        return singleTemplateMapper.getByBusinessId(resourceId);
+    }
 }

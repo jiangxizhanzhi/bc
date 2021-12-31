@@ -3,9 +3,12 @@ package com.cyberpeace.cr.singletrain.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReq;
@@ -17,6 +20,9 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
 	@Autowired
 	private SingleTemplateService singleTemplateService;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -42,5 +48,34 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		singleTemplateService.save(singleTemplate);
 
 		return singleTemplate.getBusinessTemplateId();
+	}
+
+	@Override
+	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
+		ResourceDumpContext<SingleTemplate> context = new ResourceDumpContext<>();
+		// 获取 teamTemplate
+		SingleTemplate singleTemplate = singleTemplateService
+				.getByBusinessTemplateId(template.getResourceId());
+		singleTemplate.setId(null);
+		context.setBusiness(singleTemplate);
+		// 获取任务
+		String missionScheme = singleTemplate.getMissionsScheme();
+		context.setMissions(missionService.batchGetByMissionSchemeJson(missionScheme));
+
+		return context;
+	}
+
+	@Override
+	public void realLoadBusinessResource(ResourceDumpContext resource) {
+		SingleTemplate singleTemplate = ((JSONObject) resource.getBusiness())
+				.toJavaObject(SingleTemplate.class);
+		singleTemplate.setId(null);
+		singleTemplate.setCreateTime(null);
+		singleTemplate.setUpdateTime(null);
+		if (null != singleTemplateService.getById(singleTemplate.getResourceId())) {
+			singleTemplateService.updateById(singleTemplate);
+		} else {
+			singleTemplateService.save(singleTemplate);
+		}
 	}
 }

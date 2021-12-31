@@ -13,4 +13,5 @@ public interface SingleTemplateService extends IService<SingleTemplate> {
 
     SingleTemplateBo update(String businessTemplateId, BaseInfo baseInfo, JSONObject missionsScheme);
 
+    SingleTemplate getByBusinessTemplateId(String resourceId);
 }

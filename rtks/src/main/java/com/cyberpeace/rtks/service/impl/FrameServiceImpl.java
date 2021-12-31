@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.rtks.service.LevelService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,8 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Autowired
 	LevelMapper levelMapper;
-
+	@Autowired
+	LevelService levelService;
 	@Override
 	public IPage<Level> listEntity(Page<Level> page, String keyword) {
 		return levelMapper.listFrame(page, keyword);
@@ -80,7 +82,7 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Override
 	public Level getOr404(String frameId) {
-		Level frame = getById(frameId);
+		Level frame = levelService.getLevelOrFrameOr404(frameId);
 		if (frame == null) {
 			throw new ResourceNotFoundException("找不到" + frameId + "对应的框架");
 		}

@@ -93,6 +93,16 @@ public class AdminClassroomGroupInfoController {
 		return new BaseRsp(archives);
 	}
 
+	@ApiOperation("分组用户移动")
+	@PatchMapping("move")
+	public BaseRsp<Boolean>
+			moveGroupInfo(@RequestBody @Validated MoveGroupUserReq moveGroupUserReq) {
+		Boolean result = classroomGroupInfoService.moveGroupUser(moveGroupUserReq.getClassroomId(),
+				moveGroupUserReq.getFromGroupId(), moveGroupUserReq.getToGroupId(),
+				moveGroupUserReq.getUserId());
+		return new BaseRsp<>(result);
+	}
+
 	@ApiOperation("设置场景延时")
 	@PatchMapping("/set_scene_destroy_delay")
 	public BaseRsp<Boolean> setDestroyDelay(@RequestBody GroupSceneDelayReq delayReq) {

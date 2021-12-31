@@ -82,4 +82,14 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @return
 	 */
 	List<ClassroomGroupArchiveBo> selectGroupArchive(String classroomId);
+
+	/**
+	 * 移动用户
+	 * @param classroomId
+	 * @param fromGroupId
+	 * @param toGroupId
+	 * @param userId
+	 * @return
+	 */
+	Boolean moveGroupUser(String classroomId, String fromGroupId, String toGroupId, String userId);
 }

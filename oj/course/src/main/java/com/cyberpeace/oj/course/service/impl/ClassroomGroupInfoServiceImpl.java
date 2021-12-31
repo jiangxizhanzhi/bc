@@ -382,6 +382,38 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	}
 
+	@Override
+	public Boolean moveGroupUser(String classroomId, String fromGroupId, String toGroupId,
+			String userId) {
+
+		// 基本数据校验
+		validateRoom(classroomId);
+		ClassroomGroupInfo fromGroup = validateGroup(fromGroupId);
+		ClassroomGroupInfo toGroup = validateGroup(toGroupId);
+
+		// 移动用户
+		List<String> fromUserIds = JsonUtil.toJsonObjectArray(fromGroup.getGroupUserIds(),
+				String.class);
+		fromUserIds.remove(userId);
+		fromGroup.setGroupUserIds(JsonUtil.arrayToString(fromUserIds));
+
+		List<String> toUserIds = JsonUtil.toJsonObjectArray(toGroup.getGroupUserIds(),
+				String.class);
+		toUserIds.add(userId);
+		toGroup.setGroupUserIds(JsonUtil.arrayToString(toUserIds));
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				classroomGroupInfoMapper.updateById(fromGroup);
+				classroomGroupInfoMapper.updateById(toGroup);
+			}
+		});
+
+		return true;
+	}
+
 	/**
 	 * 校验场景是否存在
 	 * @param groupInfos
@@ -541,5 +573,19 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		}
 
 		return courseLesson;
+	}
+
+	/**
+	 * 组数据
+	 * @param groupId
+	 * @return
+	 */
+	private ClassroomGroupInfo validateGroup(String groupId) {
+		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectById(groupId);
+		if (null == groupInfo) {
+			log.error("ClassroomGroupInfo not found! group_id=[{}]", groupId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return groupInfo;
 	}
 }

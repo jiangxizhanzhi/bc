@@ -5,6 +5,8 @@ import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
 
@@ -20,4 +22,12 @@ public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
 	 * @param noteEvaluate
 	 */
 	void updateByNote(NoteEvaluate noteEvaluate);
+
+	/**
+	 * 批量查询数据
+	 * @param noteIds
+	 * @return
+	 */
+	List<NoteEvaluate> selectBatchNoteIds(@Param("noteIds") List<String> noteIds,
+			@Param("isPublic") Boolean isPublic);
 }

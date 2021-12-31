@@ -51,4 +51,12 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	List<ClassroomReportBo> selectClassroomReport(String classroomId);
+
+	/**
+	 * 课堂学习统计
+	 * @param classroomId
+	 * @param authContext
+	 * @return
+	 */
+	ClassroomStatisticBo classroomStatistic(String classroomId, AuthContext authContext);
 }

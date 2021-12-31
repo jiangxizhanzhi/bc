@@ -25,7 +25,21 @@
             <if test="passed != null">
                 , passed = #{passed}
             </if>
+            <if test="evaluateTime != null">
+                , evaluate_time = #{evaluateTime}
+            </if>
         </set>
         where note_id = #{noteId}
     </update>
+
+    <select id="selectBatchNoteIds" resultMap="base">
+        select * from oj_note_evaluate
+        where note_id in
+        <foreach collection="noteIds" item="noteId" open="(" close=")" separator=",">
+            #{noteId}
+        </foreach>
+        <if test="isPublic != null and isPublic">
+            and `public` = #{isPublic}
+        </if>
+    </select>
 </mapper>

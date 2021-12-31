@@ -27,4 +27,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 	int updateNote(Note note);
 
 	List<String> selectByContext(@Param("context") NoteUniqueContext context);
+
+	List<Note> selectByListQuery(@Param("noteListQuery") NoteListQuery noteListQuery,
+								 @Param("isPublic") Boolean isPublic);
 }

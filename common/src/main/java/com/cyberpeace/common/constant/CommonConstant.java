@@ -31,6 +31,10 @@ public interface CommonConstant {
 
 	Integer SIXTY = 60;
 
+	Integer EIGHTY = 80;
+
+	Integer NINETY = 90;
+
 	Boolean TRUE = true;
 
 	Boolean FALSE = false;

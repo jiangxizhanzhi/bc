@@ -1,10 +1,14 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
@@ -12,6 +16,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
+import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,10 +41,6 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.bo.ClassroomBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomReportBo;
-import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +72,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
+
+	@Autowired
+	private NoteMapper noteMapper;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -150,8 +154,186 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				userInfo -> userToReportBo(userInfo, courseLesson, orgMap));
 	}
 
+	@Override
+	public ClassroomStatisticBo classroomStatistic(String classroomId, AuthContext authContext) {
+
+		// 基本数据校验
+		Classroom classroom = validateRoom(classroomId);
+		CourseLesson courseLesson = validateLesson(classroom);
+
+		// 查询组织用户
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
+		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
+
+		// 查询所有笔记
+		NoteListQuery listQuery = NoteListQuery.builder().noteType(Note.NoteType.REPORT.getCode())
+				.businessId(courseLesson.getResourceId())
+				.businessType(Note.NoteResourceType.LESSON.getCode()).userIds(orgUserIds).build();
+		List<Note> notes = noteMapper.selectByListQuery(listQuery, authContext.getIsWeb());
+
+		// 评估数据查询
+		List<String> noteIds = StreamApiUtils.map(notes, Note::getResourceId);
+		List<NoteEvaluate> evaluates = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(noteIds)) {
+			List<NoteEvaluate> evaluateList = noteEvaluateMapper.selectBatchNoteIds(noteIds,
+					authContext.getIsWeb());
+			evaluates.addAll(evaluateList);
+		}
+
+		// 签到信息统计
+		SignInfoBo signInfoBo = statisticSignInfo(classroom, orgUserIds, evaluates);
+
+		// 成绩数据统计
+		GradeDistributionBo distributionBo = statisticGrade(evaluates);
+
+		// 排名数据统计
+		List<UserNoteScoreBo> topNum = statisticTopNum(evaluates, notes, 20);
+		ClassroomStatisticBo statisticBo = ClassroomStatisticBo.builder().signInfo(signInfoBo)
+				.top20(topNum).gradeDistribution(distributionBo).build();
+		return statisticBo;
+	}
+
+	/**
+	 * 获取前n名的成绩
+	 *
+	 * @param evaluates
+	 * @return
+	 */
+	private List<UserNoteScoreBo> statisticTopNum(List<NoteEvaluate> evaluates, List<Note> notes,
+			int num) {
+
+		if (CollectionUtils.isEmpty(notes) || CollectionUtils.isEmpty(evaluates)) {
+			return Lists.newArrayList();
+		}
+
+		Map<String, String> noteUserMap = StreamApiUtils.toMap(notes, Note::getResourceId,
+				note -> note.getUserId());
+
+		// 用户数据查询
+		List<String> noteUserIds = StreamApiUtils.map(notes, Note::getUserId);
+		Map<String, UserInfo> nameMap = remoteUserService.getIdUserInfoMap(noteUserIds);
+
+		if (num > evaluates.size()) {
+			num = evaluates.size();
+		}
+		return evaluates.stream().sorted(Comparator.comparing(NoteEvaluate::getScore).reversed())
+				.limit(num).map(noteEvaluate -> {
+					UserNoteScoreBo noteScoreBo = new UserNoteScoreBo();
+					noteScoreBo.setScore(noteEvaluate.getScore());
+
+					String userId = noteUserMap.get(noteEvaluate.getNoteId());
+					UserInfo userInfo = nameMap.get(userId);
+					if (null != userInfo) {
+						noteScoreBo.setUserId(userInfo.getUserId());
+						noteScoreBo.setName(userInfo.getName());
+						noteScoreBo.setUserName(userInfo.getUserName());
+					}
+					return noteScoreBo;
+				}).collect(Collectors.toList());
+	}
+
+	/**
+	 * 统计签到数据
+	 *
+	 * @param classroom
+	 * @return
+	 */
+	private SignInfoBo statisticSignInfo(Classroom classroom, List<String> orgUserIds,
+			List<NoteEvaluate> evaluates) {
+
+		SignInfoBo signInfoBo = new SignInfoBo();
+
+		// 签到数量
+		List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroom.getResourceId());
+		List<ClassroomSign> signIns = StreamApiUtils.filter(signList, ClassroomSign::getSignIn);
+		signInfoBo.setIsSign(signIns.size());
+		signInfoBo.setNotSign(orgUserIds.size() - signIns.size());
+
+		// 完成数量
+		List<NoteEvaluate> passedList = StreamApiUtils.filter(evaluates, NoteEvaluate::getPassed);
+		signInfoBo.setFinishCount(passedList.size());
+
+		// 组织信息
+		String orgName = remoteOrganizationService.orgNameById(classroom.getOrganizationId());
+		signInfoBo.setOrganizationInfo(orgName);
+
+		return signInfoBo;
+	}
+
+	/**
+	 * 成绩分布数据
+	 *
+	 * @param evaluates
+	 * @return
+	 */
+	private GradeDistributionBo statisticGrade(List<NoteEvaluate> evaluates) {
+
+		// 空数据返回全为零的对象
+		if (CollectionUtils.isEmpty(evaluates)) {
+			return new GradeDistributionBo();
+		}
+		int total = evaluates.size();
+		int calculate = CommonConstant.ZERO;
+
+		GradeDistributionBo gradeDistribution = new GradeDistributionBo();
+
+		// 不及格
+		List<NoteEvaluate> notPassed = StreamApiUtils.filter(evaluates,
+				noteEvaluate -> !noteEvaluate.getPassed()
+						|| noteEvaluate.getScore() < new Double(CommonConstant.SIXTY));
+		gradeDistribution.setNotPass(notPassed.size());
+		if ((calculate += notPassed.size()) == total) {
+			return gradeDistribution;
+		}
+
+		// 及格
+		int passed = StreamApiUtils
+				.filter(evaluates,
+						noteEvaluate -> noteEvaluate.getPassed()
+								&& noteEvaluate.getScore() >= new Double(CommonConstant.SIXTY)
+								&& noteEvaluate.getScore() < new Double(CommonConstant.EIGHTY))
+				.size();
+		gradeDistribution.setPass(passed);
+		if ((calculate += passed) == total) {
+			return gradeDistribution;
+		}
+
+		// 良好
+		int good = StreamApiUtils
+				.filter(evaluates,
+						noteEvaluate -> noteEvaluate.getPassed()
+								&& noteEvaluate.getScore() >= new Double(CommonConstant.EIGHTY)
+								&& noteEvaluate.getScore() < new Double(CommonConstant.NINETY))
+				.size();
+		gradeDistribution.setGood(good);
+		if ((calculate += good) == total) {
+			return gradeDistribution;
+		}
+
+		// 优秀
+		int excellent = StreamApiUtils
+				.filter(evaluates,
+						noteEvaluate -> noteEvaluate.getPassed()
+								&& noteEvaluate.getScore() >= new Double(CommonConstant.NINETY)
+								&& noteEvaluate.getScore() < new Double(CommonConstant.HUNDRED))
+				.size();
+		gradeDistribution.setExcellent(excellent);
+		if ((calculate += excellent) == total) {
+			return gradeDistribution;
+		}
+
+		// 满分
+		int full = StreamApiUtils
+				.filter(evaluates, noteEvaluate -> noteEvaluate.getPassed()
+						&& noteEvaluate.getScore().equals(new Double(CommonConstant.HUNDRED)))
+				.size();
+		gradeDistribution.setFullScore(full);
+		return gradeDistribution;
+	}
+
 	/**
 	 * 用户数据转换
+	 *
 	 * @param userInfo
 	 * @param courseLesson
 	 * @param orgMap
@@ -199,6 +381,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 用户信息转换为监控信息
+	 *
 	 * @param userInfo
 	 * @return
 	 */
@@ -221,6 +404,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 实体类转换为bo
+	 *
 	 * @param classroom
 	 * @return
 	 */
@@ -254,6 +438,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 课堂数据校验
+	 *
 	 * @param classroomId
 	 * @return
 	 */
@@ -269,6 +454,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 课程数据校验
+	 *
 	 * @param classroom
 	 * @return
 	 */
@@ -285,6 +471,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 校验操作权限 课程课时
+	 *
 	 * @param classroom
 	 */
 	private void validateClassroomOperation(Classroom classroom, AuthContext authContext) {

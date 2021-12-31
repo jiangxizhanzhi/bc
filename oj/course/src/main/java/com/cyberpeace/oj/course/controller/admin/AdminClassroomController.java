@@ -23,10 +23,7 @@ import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.bo.ClassroomBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomReportBo;
-import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -139,6 +136,19 @@ public class AdminClassroomController {
 				.selectClassroomReport(reportReq.getClassroomId());
 		return new BaseRsp(
 				PageUtil.getListResult(classroomReportBos, page, classroomReportBos.size()));
+	}
+
+	@ApiOperation("课堂学习统计")
+	@GetMapping("/classroom_statistic")
+	public BaseRsp<ClassroomStatisticBo>
+			classroomStatistic(@RequestParam("classroom_id") String classroomId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		ClassroomStatisticBo statisticBo = classroomService.classroomStatistic(classroomId,
+				authContext);
+		return new BaseRsp<>(statisticBo);
 	}
 
 }

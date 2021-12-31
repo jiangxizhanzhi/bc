@@ -5,6 +5,8 @@ import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface ClassroomGroupArchiveMapper extends BaseMapper<ClassroomGroupArchive> {
 
@@ -17,4 +19,10 @@ public interface ClassroomGroupArchiveMapper extends BaseMapper<ClassroomGroupAr
 	ClassroomGroupArchive selectByRoomAndName(@Param("roomId") String classroomId,
 			@Param("name") String name);
 
+	/**
+	 * 查询分组模板数据
+	 * @param classroomId
+	 * @return
+	 */
+	List<ClassroomGroupArchive> selectByRoom(@Param("roomId") String classroomId);
 }

@@ -15,6 +15,7 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupArchiveMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.bo.ArchiveGroupBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomGroupArchiveBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.SimpleUserData;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -331,6 +332,20 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		}
 
 		return CommonConstant.FALSE;
+	}
+
+	@Override
+	public List<ClassroomGroupArchiveBo> selectGroupArchive(String classroomId) {
+
+		// 基本数据校验
+		Classroom classroom = validateRoom(classroomId);
+		validateLesson(classroom);
+
+		List<ClassroomGroupArchive> archiveList = classroomGroupArchiveMapper
+				.selectByRoom(classroomId);
+		return StreamApiUtils.map(archiveList,
+				archive -> BeanUtils.copy(archive, ClassroomGroupArchiveBo.class));
+
 	}
 
 	/**

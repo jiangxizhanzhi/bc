@@ -10,4 +10,9 @@
         where classroom_id = #{roomId}
         and name = #{name}
     </select>
+
+    <select id="selectByRoom" resultMap="base">
+        select * from oj_classroom_group_archive
+        where classroom_id = #{roomId}
+    </select>
 </mapper>

@@ -5,6 +5,7 @@ import java.util.List;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupArchiveMapper;
+import com.cyberpeace.oj.course.service.bo.ClassroomGroupArchiveBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -30,9 +31,6 @@ public class AdminClassroomGroupInfoController {
 
 	@Autowired
 	private ClassroomGroupInfoService classroomGroupInfoService;
-
-	@Autowired
-	private ClassroomGroupArchiveMapper classroomGroupArchiveMapper;
 
 	@ApiOperation("查询课堂信息/进入课堂")
 	@GetMapping("/get")
@@ -84,6 +82,15 @@ public class AdminClassroomGroupInfoController {
 		List<GroupInfoBo> groupInfoBos = classroomGroupInfoService
 				.userGroupInfo(archiveReq.getClassroomId(), archiveReq.getGroupArchiveId());
 		return new BaseRsp<>(groupInfoBos);
+	}
+
+	@ApiOperation("查询课堂分组模板列表")
+	@GetMapping("/archive")
+	public BaseRsp<List<ClassroomGroupArchiveBo>>
+			getGroupArchive(@RequestParam("classroom_id") String classroomId) {
+		List<ClassroomGroupArchiveBo> archives = classroomGroupInfoService
+				.selectGroupArchive(classroomId);
+		return new BaseRsp(archives);
 	}
 
 	@ApiOperation("设置场景延时")

@@ -3,7 +3,9 @@ package com.cyberpeace.oj.course.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.service.bo.ClassroomGroupArchiveBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 
 import java.util.List;
@@ -73,4 +75,11 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @return
 	 */
 	Boolean getGroupSceneDelayStatus(String classroomId);
+
+	/**
+	 *	查询分组模板列表
+	 * @param classroomId
+	 * @return
+	 */
+	List<ClassroomGroupArchiveBo> selectGroupArchive(String classroomId);
 }

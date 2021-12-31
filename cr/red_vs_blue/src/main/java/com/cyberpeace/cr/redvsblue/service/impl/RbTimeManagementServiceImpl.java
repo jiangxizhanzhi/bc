@@ -4,9 +4,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTimeManagementMapper;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 
@@ -18,6 +23,12 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 
 	@Autowired
 	RbTimeManagementMapper rbTimeManagementMapper;
+
+	@Autowired
+	TransactionTemplate transactionTemplate;
+
+	@Autowired
+	RbRoomMapper rbRoomMapper;
 
 	@Override
 	public RbTimeManagement getByRoomId(String roomId) {
@@ -49,16 +60,26 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	}
 
 	@Override
-	public void updateTimeManagement(RbTimeManagement timeManagement, Integer status,
+	public void updateTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
 			String userId) {
 		timeManagement.setStatus(status);
 		timeManagement.setUpdateUserId(userId);
+
+		room.setTrainingStatus(status);
 
 		// todo 逻辑待整理
 		// if (timeManagement.isRecovering()){
 		// Date currentCombatTime =
 		// timeManagement.setCombatTime(timeManagement.get);
 		// }
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				updateById(timeManagement);
+				rbRoomMapper.updateById(room);
+			}
+		});
 		updateById(timeManagement);
 	}
 

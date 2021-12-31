@@ -45,30 +45,22 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class RbSceneServiceImpl implements RbSceneService {
 
+	private static final Integer PAUSE_FLAG = 1;
+	private static final Integer UNPAUSE_FLAG = 2;
 	@Autowired
 	private RbRoomService rbRoomService;
-
 	@Autowired
 	private TransactionTemplate transactionTemplate;
-
 	@Autowired
 	private LocalSceneService localSceneService;
-
 	@Autowired
 	private CrRoleService crRoleService;
-
 	@Autowired
 	private SceneFilterService sceneFilterService;
-
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
-
 	@Autowired
 	private CrTaskService crTaskService;
-
-	private static final Integer PAUSE_FLAG = 1;
-
-	private static final Integer UNPAUSE_FLAG = 2;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -215,7 +207,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		}
 		// 3. 更新时间管理
 		RbTimeManagement timeManagement = rbTimeManagementService.getByRoomId(roomId);
-		rbTimeManagementService.updateTimeManagement(timeManagement,
+		rbTimeManagementService.updateTimeManagement(timeManagement, room,
 				RbTimeManagement.TimeManagementStatus.PAUSE.getCode(),
 				UserInfoContext.getUserContext().getUserId());
 
@@ -237,7 +229,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		}
 		// 3. 更新时间管理
 		RbTimeManagement timeManagement = rbTimeManagementService.getByRoomId(roomId);
-		rbTimeManagementService.updateTimeManagement(timeManagement,
+		rbTimeManagementService.updateTimeManagement(timeManagement, room,
 				RbTimeManagement.TimeManagementStatus.RECOVERY.getCode(),
 				UserInfoContext.getUserContext().getUserId());
 

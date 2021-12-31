@@ -102,5 +102,15 @@
             #{roomId}
         </foreach>
     </select>
+    <select id="selectUnfinishedByIds" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbRoom">
+        select *
+        from cr_rb_room
+        where training_status != #{endStatus}
+        and resource_id
+        in
+        <foreach collection="roomIds" item="roomId" separator="," close=")" open="(">
+            #{roomId}
+        </foreach>
+    </select>
 
 </mapper>

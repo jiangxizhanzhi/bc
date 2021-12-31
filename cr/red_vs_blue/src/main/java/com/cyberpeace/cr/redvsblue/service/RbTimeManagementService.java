@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 
 public interface RbTimeManagementService extends IService<RbTimeManagement> {
@@ -41,8 +42,10 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	/**
 	 * 更新时间管理器
 	 * @param timeManagement
+	 * @param room
 	 * @param status
 	 * @param userId
 	 */
-	void updateTimeManagement(RbTimeManagement timeManagement, Integer status, String userId);
+	void updateTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
+			String userId);
 }

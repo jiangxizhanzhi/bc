@@ -29,4 +29,7 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 
 	TrainingCount getTrainingCount(@Param("roomIds") List<String> roomIds,
 			@Param("completedStatus") Integer completedStatus);
+
+	List<TeamRoom> selectUnfinishedByIds(@Param("roomIds") List<String> roomIds,
+			@Param("endCode") Integer endCode);
 }

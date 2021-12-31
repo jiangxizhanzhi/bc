@@ -57,12 +57,10 @@ public class RbTrainingStatistics extends CrEventStatistics {
 			roleGroupMap.put(roomRoleContext.getRoomId(), roomRoleContext.getRoleGroup());
 		}
 		List<TrainingData> related = Lists.newArrayList();
-		List<RbRoom> rooms = rbRoomMapper.selectBatchIds(roomIds);
+		// 获取未结束的
+		List<RbRoom> rooms = rbRoomMapper.selectUnfinishedByIds(roomIds,
+				RbRoom.TrainingStatusCode.ENDED.getCode());
 		for (RbRoom room : rooms) {
-			// 过滤已结束的
-			if (room.isEnded()) {
-				continue;
-			}
 
 			TrainingData data = BeanUtils.copy(room, TrainingData.class);
 			data.setAppId(LocalScene.BusinessCode.RED_VS_BLUE.getCode());

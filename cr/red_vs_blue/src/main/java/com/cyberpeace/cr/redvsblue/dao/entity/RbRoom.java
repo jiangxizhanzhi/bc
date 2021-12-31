@@ -21,7 +21,7 @@ public class RbRoom extends BaseTable {
 
 	private String templateId;
 
-	private String TemplateName;
+	private String templateName;
 
 	private Integer trainingStatus;
 
@@ -65,9 +65,21 @@ public class RbRoom extends BaseTable {
 		this.localSceneId = localSceneId;
 	}
 
+	public boolean isUnopened() {
+		return trainingStatus.equals(RbRoom.TrainingStatusCode.UNOPENED.getCode());
+	}
+
+	public boolean isOpening() {
+		return trainingStatus.equals(RbRoom.TrainingStatusCode.RUNNING.getCode());
+	}
+
+	public boolean isEnded() {
+		return trainingStatus.equals(RbRoom.TrainingStatusCode.ENDED.getCode());
+	}
+
 	public enum TrainingStatusCode {
 
-		UNOPENED(4, "未开始"), OPENING(2, "已开始"), ENDED(0, "已结束"), PAUSE(1, "已开始"), RECOVERY(3, "已结束");
+		UNOPENED(4, "未开始"), RUNNING(2, "已开始"), ENDED(0, "已结束"), PAUSE(1, "已暂停"), RECOVERY(3, "恢复");
 
 		@Getter
 		private Integer code;
@@ -80,17 +92,5 @@ public class RbRoom extends BaseTable {
 			this.desc = desc;
 		}
 
-	}
-
-	public boolean isUnopened() {
-		return trainingStatus.equals(RbRoom.TrainingStatusCode.UNOPENED.getCode());
-	}
-
-	public boolean isOpening() {
-		return trainingStatus.equals(RbRoom.TrainingStatusCode.OPENING.getCode());
-	}
-
-	public boolean isEnded() {
-		return trainingStatus.equals(RbRoom.TrainingStatusCode.ENDED.getCode());
 	}
 }

@@ -58,13 +58,10 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			roleGroupMap.put(roomRoleContext.getRoomId(), roomRoleContext.getRoleGroup());
 		}
 		List<TrainingData> related = Lists.newArrayList();
-		List<TeamRoom> rooms = teamRoomMapper.selectBatchIds(roomIds);
+		// 过滤已结束的
+		List<TeamRoom> rooms = teamRoomMapper.selectUnfinishedByIds(roomIds,
+				TeamRoom.TrainingStatusCode.ENDED.getCode());
 		for (TeamRoom room : rooms) {
-			// 过滤已结束的
-			if (room.isEnded()) {
-				continue;
-			}
-
 			TrainingData data = BeanUtils.copy(room, TrainingData.class);
 			data.setAppId(LocalScene.BusinessCode.TEAM_TRAINING.getCode());
 			data.setAppName(LocalScene.BusinessCode.TEAM_TRAINING.getDesc());

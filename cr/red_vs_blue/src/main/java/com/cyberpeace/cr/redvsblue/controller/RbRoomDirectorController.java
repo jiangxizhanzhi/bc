@@ -468,7 +468,7 @@ public class RbRoomDirectorController {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
 		// 更改时间管理状态
-		rbTimeManagementService.updateTimeManagement(management,
+		rbTimeManagementService.updateTimeManagement(management, room,
 				RbTimeManagement.TimeManagementStatus.STOP.getCode(), userId);
 
 		// 推送ws

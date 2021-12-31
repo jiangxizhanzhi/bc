@@ -28,4 +28,7 @@ public interface RbRoomMapper extends BaseMapper<RbRoom> {
 
 	TrainingCount getTrainingCount(@Param("roomIds") List<String> roomIds,
 			@Param("completedStatus") Integer completedStatus);
+
+	List<RbRoom> selectUnfinishedByIds(@Param("roomIds") List<String> roomIds,
+			@Param("endStatus") Integer endStatus);
 }

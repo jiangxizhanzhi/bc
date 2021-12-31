@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
@@ -260,10 +260,10 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 		for (Level level1 : newlevelList) {
 			if (StringUtils.isBlank(level1.getParent())) {
-				//如果是英语环境，修改名称
-				if(level.getResourceId().equals("default")){
+				// 如果是英语环境，修改名称
+				if (level.getResourceId().equals("default")) {
 					if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-						level.setName("Cyber Security Framework");
+						level.setName(Level.DefaultName.ENGLISH.getDesc());
 					}
 				}
 				levelTreeOutput = getLevelTreeOutputFromLevel(level1);

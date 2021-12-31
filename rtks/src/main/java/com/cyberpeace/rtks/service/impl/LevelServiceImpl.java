@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.mapper.LevelMapper;
@@ -43,9 +43,9 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	private Level getInternationalById(String levelId) {
 		Level level = getById(levelId);
-		if(level.getResourceId().equals("default")){
+		if (level.getResourceId().equals("default")) {
 			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-				level.setName("Cyber Security Framework");
+				level.setName(Level.DefaultName.ENGLISH.getDesc());
 			}
 		}
 		return level;

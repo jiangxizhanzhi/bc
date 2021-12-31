@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import com.google.common.graph.Network;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 @TableName("rtks_level")
@@ -32,4 +34,19 @@ public class Level extends BaseTable {
 	 */
 	private String frame;
 
+	public enum DefaultName {
+
+		ENGLISH(0, "Network Security"), CHINESE(1, "网络安全框架");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		DefaultName(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 }

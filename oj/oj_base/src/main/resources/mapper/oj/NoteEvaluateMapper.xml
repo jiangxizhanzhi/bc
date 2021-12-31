@@ -9,4 +9,23 @@
         select * from oj_note_evaluate
         where note_id = #{noteId}
     </select>
+
+    <update id="updateByNote">
+        update oj_note_evaluate
+        <set>
+            <if test="score != null">
+                score = #{score}
+            </if>
+            <if test="evaluateComment != null and evaluateComment != ''">
+                , evaluate_comment = #{evaluateComment}
+            </if>
+            <if test="evaluatorId != null and evaluatorId != ''">
+                , evaluator_id = #{evaluatorId}
+            </if>
+            <if test="passed != null">
+                , passed = #{passed}
+            </if>
+        </set>
+        where note_id = #{noteId}
+    </update>
 </mapper>

@@ -8,11 +8,16 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
 
-    /**
-     * 根据实验报告编号查询评估结果
-     * @param noteId
-     * @return
-     */
-    NoteEvaluate selectByNote(@Param("noteId") String noteId);
+	/**
+	 * 根据实验报告编号查询评估结果
+	 * @param noteId
+	 * @return
+	 */
+	NoteEvaluate selectByNote(@Param("noteId") String noteId);
 
+	/**
+	 * 根据报告编号更新数据
+	 * @param noteEvaluate
+	 */
+	void updateByNote(NoteEvaluate noteEvaluate);
 }

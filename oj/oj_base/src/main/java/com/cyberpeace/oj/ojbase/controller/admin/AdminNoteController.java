@@ -3,9 +3,13 @@ package com.cyberpeace.oj.ojbase.controller.admin;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.oj.ojbase.controller.req.DeleteResourceReq;
+import com.cyberpeace.oj.ojbase.controller.req.EvaluateNoteReq;
+import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +28,8 @@ import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.Date;
+
 @Api(tags = "oj-后台笔记相关api")
 @RestController
 @RequestMapping("/oj/admin/note")
@@ -35,6 +41,9 @@ public class AdminNoteController {
 
 	@Autowired
 	private NoteMapper noteMapper;
+
+	@Autowired
+	private NoteEvaluateMapper noteEvaluateMapper;
 
 	@ApiOperation("分页查询实验报告")
 	@GetMapping("/list")
@@ -55,6 +64,24 @@ public class AdminNoteController {
 
 		int row = noteMapper.deleteBatchIds(deleteReq.getResourceIds());
 		return new BaseRsp<>(row > 0);
+	}
+
+	@ApiOperation("实验报告评估")
+	@PatchMapping("/evaluate")
+	public BaseRsp<Boolean>
+			evaluateReport(@RequestBody @Validated EvaluateNoteReq evaluateNoteReq) {
+
+		NoteEvaluate noteEvaluate = BeanUtils.copy(evaluateNoteReq, NoteEvaluate.class);
+		noteEvaluate.setEvaluateTime(new Date());
+		noteEvaluate.setEvaluatorId(UserInfoContext.getUserContext().getUserId());
+
+		try {
+			noteEvaluateMapper.insert(noteEvaluate);
+		} catch (DuplicateKeyException e) {
+			noteEvaluateMapper.updateByNote(noteEvaluate);
+		}
+
+		return new BaseRsp<>(true);
 	}
 
 }

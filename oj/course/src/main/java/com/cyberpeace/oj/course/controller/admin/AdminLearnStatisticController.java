@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -68,8 +69,7 @@ public class AdminLearnStatisticController {
   @GetMapping("/course_statistics_list")
   public BaseRsp<IPage<AdminCourseStatisticsRes>> courseStatisticsList(
       @ApiParam(name = "listReq", value = "查询条件") @Valid
-          CourseStatisticsListReq courseStatisticsListReq,
-      @ApiParam @Validated PageReqBase pageReq) {
+          CourseStatisticsListReq courseStatisticsListReq) {
 	  CourseContext context = BeanUtils.copy(courseStatisticsListReq, CourseContext.class);
     context.setPattern(courseStatisticsListReq.getPattern());
 
@@ -79,7 +79,7 @@ public class AdminLearnStatisticController {
               courseStatisticsListReq.getDirection(), CommonConstant.TRUE);
       context.setDirections(childrenIds);
     }
-    Page page = pageReq.toPageParam();
+    Page page = courseStatisticsListReq.toPageParam();
     AuthContext authContext =
         AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
     IPage<AdminCourseStatisticsRes> res =
@@ -91,21 +91,30 @@ public class AdminLearnStatisticController {
   @GetMapping("/lesson_statistics_list")
   public BaseRsp<IPage<AdminLessonStatisticsRes>> lessonStatisticsList(
       @ApiParam(name = "listReq", value = "查询条件") @Valid
-          LessonStatisticsListReq lessonStatisticsListReq,
+      @RequestParam("course_id")String courseId,
       @ApiParam @Validated PageReqBase pageReq) {
+    if (StringUtils.isEmpty(courseId)){
+        throw new InvalidParamException("courseId is empty");
+    }
     Page page = pageReq.toPageParam();
     IPage<AdminLessonStatisticsRes> res =
-        courseLearnStatisticsService.LessonStatisticsList(lessonStatisticsListReq, page);
+        courseLearnStatisticsService.LessonStatisticsList(courseId, page);
     return new BaseRsp<>(res);
   }
 
   @ApiOperation("课时报告统计detail")
   @GetMapping("/lesson_statistics_detail")
   public BaseRsp<IPage<AdminLessonStatisticsDetailRes>> lessonStatisticsDetail(
-          @RequestParam("resource_id") @NotBlank String resourceId, @ApiParam @Validated PageReqBase pageReq) {
+      @RequestParam("organization_id") String organizationId,
+      @RequestParam("lesson_id") @NotBlank String lessonId,
+      @ApiParam @Validated PageReqBase pageReq) {
+
+    if (StringUtils.isEmpty(lessonId)) {
+      throw new InvalidParamException("lessonId is empty");
+    }
     Page page = pageReq.toPageParam();
     IPage<AdminLessonStatisticsDetailRes> res =
-        courseLearnStatisticsService.LessonStatisticsDetail(resourceId, page, pageReq);
+        courseLearnStatisticsService.LessonStatisticsDetail(organizationId, lessonId, page);
     return new BaseRsp<>(res);
   }
 }

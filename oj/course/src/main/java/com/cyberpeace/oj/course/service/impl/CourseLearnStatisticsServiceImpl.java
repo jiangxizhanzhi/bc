@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.oj.course.controller.req.LessonStatisticsListReq;
 import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
 import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
 import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
@@ -15,6 +15,8 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLearnStatisticsMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,7 @@ import java.util.List;
 public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsService {
 
     @Autowired
-    private LessonRecordMapper lessonRecordMapper;
+    private RemoteUserService remoteUserService;
 
     @Autowired
     private CourseMapper courseMapper;
@@ -71,14 +73,18 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
     }
 
     @Override
-    public IPage<AdminLessonStatisticsRes> LessonStatisticsList(LessonStatisticsListReq lessonStatisticsListReq, Page page) {
-        return courseLearnStatisticsMapper.listLessonByPage(page, lessonStatisticsListReq, true);
+    public IPage<AdminLessonStatisticsRes> LessonStatisticsList(String courseId, Page page) {
+        return courseLearnStatisticsMapper.listLessonByPage(page, courseId, true);
     }
 
-    @Override
-    public IPage<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String lessonId, Page page, PageReqBase pageReq) {
-        List<String> userIds = new ArrayList<>();
-        courseLearnStatisticsMapper.detailLessonByPage(page,lessonId, userIds);
-        return null;
+  @Override
+  public IPage<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(
+      String organizationId, String lessonId, Page page) {
+    List<String> userIds = new ArrayList<>();
+    if (StringUtils.isNotEmpty(organizationId)){
+        JSONObject userJsons = remoteUserService.getList(0L, 0L, "", organizationId);
+    }
+    courseLearnStatisticsMapper.detailLessonByPage(page, lessonId, userIds);
+    return null;
     }
 }

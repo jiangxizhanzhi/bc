@@ -20,7 +20,7 @@
         <result property="name" column="name"/>
         <result property="resourceId" column="resource_id"/>
         <result property="difficulty" column="difficulty"/>
-        <result property="categoryName" column="category_name"/>
+        <result property="type" column="type"/>
         <result property="practiceCount" column="practice_count"/>
         <result property="heat" column="heat"/>
         <result property="finishReportCount" column="finish_report_count"/>
@@ -43,7 +43,7 @@
     </select>
 
     <select id="sumHeatByDirection" resultMap="baseResultMap">
-        select category_id as name,sum(heat) as heat from oj_course
+        select name,sum(heat) as heat from oj_course
         left join oj_course_category on oj_course.category_id = oj_course_category.resource_id
         ORDER BY oj_course.heat DESC  LIMIT 5
     </select>
@@ -116,7 +116,7 @@
     </select>
 
     <select id="listLessonByPage" resultMap="lessonListMap">
-    select distinct oj_course_lesson.resource_id,oj_course_lesson.name,oj_course_lesson.type,
+    select distinct oj_course_lesson.resource_id,oj_course_lesson.name,oj_course_lesson.type,oj_course_lesson.difficulty,
                     ifnull(learned_lessons.count,0) as learned_lesson_count,ifnull(practice_afterclass.count,0) as practice_count,ifnull(report.count,0) as report_count
     from oj_course_lesson
     left join (select count(oj_lesson_record.lesson_id) as count ,oj_lesson_record.lesson_id from oj_lesson_record group by oj_lesson_record.lesson_id )
@@ -130,10 +130,13 @@
 
     <select id="detailLessonByPage" resultMap="lessonDetailMap">
     select oj_lesson_paper_evaluate.submit_user_id as submit_user_id from oj_lesson_paper_evaluate
-    where oj_lesson_paper_evaluate.lesson_id = #{lessonId} and oj_lesson_paper_evaluate.submit_user_id in
-        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
-            #{userId}
-        </foreach>
+    where oj_lesson_paper_evaluate.lesson_id = #{lessonId}
+        <if test="userIds != null and userIds.size() != 0">
+            and oj_lesson_paper_evaluate.submit_user_id in
+            <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
     </select>
 
     <select id="detailExpLessonByPage" resultMap="lessonDetailMap">

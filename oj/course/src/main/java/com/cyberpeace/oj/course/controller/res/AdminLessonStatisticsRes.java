@@ -17,7 +17,7 @@ public class AdminLessonStatisticsRes implements Serializable {
 	private String name;
 
 	@ApiModelProperty("课时类型")
-	private String categoryName;
+	private String type;
 
 	@ApiModelProperty("课时难度")
 	private Integer difficulty;

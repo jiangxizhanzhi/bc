@@ -355,6 +355,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (null != noteBo) {
 			reportBo.setContent(noteBo.getContent());
 			reportBo.setSubmitTime(noteBo.getUpdateTime());
+			reportBo.setNoteId(noteBo.getResourceId());
 		}
 
 		// 实验报告评分数据

@@ -42,6 +42,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -451,7 +452,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			groupInfo.setResourceId(IDGeneratorUtil.getID());
 			groupInfo.setGroupNo(groupNo++);
 			groupInfo.setClassroomId(classroomId);
-			groupInfo.setGroupUserIds(userId);
+			groupInfo.setGroupUserIds(JsonUtil.arrayToString(Arrays.asList(userId)));
 			groupInfo.setDestroyDelay(courseLesson.getDestroyDelay());
 			groupInfo.setSceneShareMode(SceneShare.GROUP.getCode());
 			groupInfo.setLessonId(courseLesson.getResourceId());

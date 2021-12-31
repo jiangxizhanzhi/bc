@@ -15,7 +15,7 @@ import java.util.Date;
 @ApiModel
 public class ClassroomReq implements Serializable {
 
-	@ApiModelProperty
+	@ApiModelProperty("课程表编号")
 	@NotBlank(groups = { Update.class })
 	private String resourceId;
 

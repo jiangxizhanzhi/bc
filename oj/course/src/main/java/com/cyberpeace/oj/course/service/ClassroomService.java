@@ -6,10 +6,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.service.bo.ClassroomBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
-import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
-import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
+import com.cyberpeace.oj.course.service.bo.*;
 
 import java.util.Date;
 import java.util.List;
@@ -46,4 +43,11 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	ListRsp<ClassroomMonitorBo> selectSignList(Page page, String classroomId);
+
+	/**
+	 * 获取用户签到信息列表
+	 * @param classroomId
+	 * @return
+	 */
+	List<ClassroomReportBo> selectClassroomReport(String classroomId);
 }

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.course.controller.res.SimpleCourseRes;
+import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.cs.service.UtilService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -208,7 +208,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("查询全部课程信息")
 	@GetMapping("/all/course")
-	public BaseRsp<List<SimpleCourseRes>> allCourse() {
+	public BaseRsp<List<SimpleDataRes>> allCourse() {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
@@ -216,8 +216,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		List<Course> courses = courseMapper.selectBatchIds(courseIds);
 
-		List<SimpleCourseRes> courseRes = StreamApiUtils.map(courses,
-				course -> BeanUtils.copy(course, SimpleCourseRes.class));
+		List<SimpleDataRes> courseRes = StreamApiUtils.map(courses,
+				course -> BeanUtils.copy(course, SimpleDataRes.class));
 		return new BaseRsp<>(courseRes);
 	}
 

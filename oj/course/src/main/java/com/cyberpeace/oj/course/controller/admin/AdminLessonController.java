@@ -3,9 +3,12 @@ package com.cyberpeace.oj.course.controller.admin;
 import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
@@ -76,6 +79,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private LessonSceneService lessonSceneService;
+
+	@Autowired
+	private CourseMapper courseMapper;
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
@@ -384,6 +390,25 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		String refreshInterval = ConfigUtil.getContextProperty("oj.monitor.refresh.interval");
 		return new BaseRsp<>(Integer.parseInt(refreshInterval));
 
+	}
+
+	@ApiOperation("查询课程下课时简易数据")
+	@GetMapping("/simple/list")
+	public BaseRsp<List<SimpleDataRes>>
+			selectAllLesson(@RequestParam("course_id") String courseId) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		List<String> enableCourseIds = courseMapper.selectByAuth(authContext);
+		if (CollectionUtils.isEmpty(enableCourseIds) || !enableCourseIds.contains(courseId)) {
+			log.error("Course not permission! course_id=[{}]", courseId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId,
+				authContext.getIsWeb());
+		List<SimpleDataRes> simpleDataRes = StreamApiUtils.map(lessons,
+				courseLesson -> BeanUtils.copy(courseLesson, SimpleDataRes.class));
+		return new BaseRsp<>(simpleDataRes);
 	}
 
 }

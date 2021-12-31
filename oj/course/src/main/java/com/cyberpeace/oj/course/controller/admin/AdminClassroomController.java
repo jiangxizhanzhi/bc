@@ -25,6 +25,7 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.ClassroomBo;
 import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomReportBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.Api;
@@ -101,7 +102,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表信息修改")
 	@PatchMapping("")
-	public BaseRsp
+	public BaseRsp<Integer>
 			updateClassRoom(@RequestBody @Validated(Update.class) ClassroomReq classroomReq) {
 		// 组织数据获取
 		List<String> orgIds = remoteOrganizationService
@@ -124,6 +125,17 @@ public class AdminClassroomController {
 				monitorReq.getClassroomId());
 		return new BaseRsp(classroomMonitorBoList);
 
+	}
+
+	@ApiOperation("查询课堂实验报告列表")
+	@GetMapping("/classroom_report")
+	public BaseRsp<ListRsp<ClassroomReportBo>> classroomReport(ClassroomMonitorReq reportReq) {
+
+		Page page = reportReq.toPageParam();
+		List<ClassroomReportBo> classroomReportBos = classroomService
+				.selectClassroomReport(reportReq.getClassroomId());
+		return new BaseRsp(
+				PageUtil.getListResult(classroomReportBos, page, classroomReportBos.size()));
 	}
 
 }

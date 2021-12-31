@@ -17,10 +17,7 @@ import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.bo.ClassroomBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
-import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
-import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
+import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.google.common.collect.Lists;
@@ -119,6 +116,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	}
 
+	@Override
+	public List<ClassroomReportBo> selectClassroomReport(String classroomId) {
+		// 基本数据校验
+		Classroom classroom = validateRoom(classroomId);
+		CourseLesson courseLesson = validateLesson(classroom);
+
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
+
+		return null;
+	}
+
+	private ClassroomReportBo userToReportBo(UserInfo userInfo) {
+
+		return null;
+	}
+
 	/**
 	 * 用户信息转换为监控信息
 	 * @param userInfo
@@ -187,6 +200,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		return classroom;
+	}
+
+	/**
+	 * 课程数据校验
+	 * @param classroom
+	 * @return
+	 */
+	private CourseLesson validateLesson(Classroom classroom) {
+
+		CourseLesson courseLesson = courseLessonMapper.selectById(classroom.getLessonId());
+		if (null == courseLesson) {
+			log.error("CourseLesson not found! lesson_id=[{}]", classroom.getLessonId());
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		return courseLesson;
 	}
 
 }

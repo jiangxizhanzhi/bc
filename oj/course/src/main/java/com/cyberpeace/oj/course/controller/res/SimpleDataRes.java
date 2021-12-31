@@ -6,12 +6,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SimpleCourseRes implements Serializable {
+public class SimpleDataRes implements Serializable {
 
 	@ApiModelProperty("课程编号")
 	private String resourceId;
 
-	@ApiModelProperty("课程名称")
+	@ApiModelProperty("资源名称")
 	private String name;
 
 }

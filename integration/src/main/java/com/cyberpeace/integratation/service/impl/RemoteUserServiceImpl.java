@@ -186,7 +186,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				JSONArray.class);
 
 		List<UserInfo> userInfos = StreamApiUtils.map(userArray,
-				obj -> userToOrgUserInfo((JSONObject) obj));
+				obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
 		return userInfos;
 	}
 
@@ -195,7 +195,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * @param jsonObject
 	 * @return
 	 */
-	private UserInfo userToOrgUserInfo(JSONObject jsonObject) {
+	private UserInfo userToOrgUserInfo(JSONObject jsonObject, String orgId) {
 		if (null == jsonObject) {
 			return null;
 		}
@@ -205,6 +205,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setUserName(jsonObject.getString("username"));
 		userInfo.setName(jsonObject.getString("name"));
 		userInfo.setAvatarUrl(jsonObject.getString("avatar"));
+		userInfo.setOrganizationId(orgId);
 
 		return userInfo;
 	}

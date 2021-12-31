@@ -95,7 +95,10 @@ public class AdminClassroomController {
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 		classroom.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
-		Classroom insertResult = classroomService.create(classroom);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		Classroom insertResult = classroomService.create(classroom, authContext);
 
 		return new BaseRsp(insertResult);
 	}

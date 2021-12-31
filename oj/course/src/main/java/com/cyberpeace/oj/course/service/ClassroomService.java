@@ -16,9 +16,10 @@ public interface ClassroomService extends IService<Classroom> {
 	/**
 	 * 新建课堂表
 	 * @param classroom
+	 * @param authContext
 	 * @return
 	 */
-	Classroom create(Classroom classroom);
+	Classroom create(Classroom classroom, AuthContext authContext);
 
 	/**
 	 * 前台课程表数据查询

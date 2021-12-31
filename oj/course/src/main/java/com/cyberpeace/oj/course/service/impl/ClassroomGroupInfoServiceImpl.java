@@ -246,7 +246,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 		// 基本数据校验
 		Classroom classroom = validateRoom(classroomId);
-		validateLesson(classroom);
+		CourseLesson courseLesson = validateLesson(classroom);
 
 		// 场景数据校验
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
@@ -263,8 +263,41 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		List<ArchiveGroupBo> groupBos = JsonUtil.toJsonObjectArray(archive.getGroups(),
 				ArchiveGroupBo.class);
 
-		return StreamApiUtils.map(groupBos,
-				archiveGroupBo -> BeanUtils.copy(archiveGroupBo, GroupInfoBo.class));
+		List<ClassroomGroupInfo> groupInfoList = StreamApiUtils.map(groupBos,
+				archiveGroupBo -> BeanUtils.copy(archiveGroupBo, ClassroomGroupInfo.class));
+		resetEntity(groupInfoList, courseLesson, classroom);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				classroomGroupInfoMapper.deleteByRoom(classroomId);
+				if (CollectionUtils.isEmpty(groupInfoList)) {
+					saveBatch(groupInfoList);
+				}
+			}
+		});
+
+		return StreamApiUtils.map(groupInfoList, groupInfo -> entityTBo(groupInfo));
+	}
+
+	/**
+	 * 使用模板时重新设置分组数据
+	 * @param groupInfos
+	 * @param courseLesson
+	 * @return
+	 */
+	private void resetEntity(List<ClassroomGroupInfo> groupInfos, CourseLesson courseLesson,
+			Classroom classroom) {
+
+		for (ClassroomGroupInfo groupInfo : groupInfos) {
+			groupInfo.setDestroyDelay(courseLesson.getDestroyDelay());
+			groupInfo.setClassroomId(classroom.getResourceId());
+			groupInfo.setTopoId(courseLesson.getTopoId());
+			groupInfo.setLessonId(courseLesson.getResourceId());
+			groupInfo.setSceneShareMode(courseLesson.getSceneShareMode());
+		}
+
 	}
 
 	@Override

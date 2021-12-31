@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,10 +70,15 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	private NoteService noteService;
 
 	@Autowired
-	private NoteMapper noteMapper;
+	private NoteEvaluateMapper noteEvaluateMapper;
 
 	@Override
-	public Classroom create(Classroom classroom) {
+	public Classroom create(Classroom classroom, AuthContext authContext) {
+
+		// 数据校验
+		validateClassroomOperation(classroom, authContext);
+
+		// 数据新增
 		classroom.setResourceId(IDGeneratorUtil.getID());
 		classroomMapper.insert(classroom);
 		return classroom;
@@ -141,6 +150,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				userInfo -> userToReportBo(userInfo, courseLesson, orgMap));
 	}
 
+	/**
+	 * 用户数据转换
+	 * @param userInfo
+	 * @param courseLesson
+	 * @param orgMap
+	 * @return
+	 */
 	private ClassroomReportBo userToReportBo(UserInfo userInfo, CourseLesson courseLesson,
 			Map<String, String> orgMap) {
 
@@ -159,10 +175,26 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			reportBo.setSubmitTime(noteBo.getUpdateTime());
 		}
 
-
 		// 实验报告评分数据
+		if (null != noteBo) {
+			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(noteBo.getResourceId());
+			if (null != noteEvaluate) {
+				// 评估数据设置
+				reportBo.setEvaluateComment(noteEvaluate.getEvaluateComment());
+				reportBo.setEvaluateTime(noteEvaluate.getEvaluateTime());
+				reportBo.setScore(noteEvaluate.getScore());
+				reportBo.setPassed(noteEvaluate.getPassed());
 
-		return null;
+				// 评估人数据设置
+				UserInfo evaluator = remoteUserService.getById(noteEvaluate.getEvaluatorId());
+				if (null != evaluator) {
+					reportBo.setEvaluatorId(noteEvaluate.getEvaluatorId());
+					reportBo.setEvaluatorName(evaluator.getName());
+					reportBo.setEvaluatorUserName(evaluator.getUserName());
+				}
+			}
+		}
+		return reportBo;
 	}
 
 	/**
@@ -249,6 +281,24 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		return courseLesson;
+	}
+
+	/**
+	 * 校验操作权限 课程课时
+	 * @param classroom
+	 */
+	private void validateClassroomOperation(Classroom classroom, AuthContext authContext) {
+		// 课时数据校验
+		List<String> enableCourseIds = courseMapper.selectByAuth(authContext);
+
+		if (CollectionUtils.isEmpty(enableCourseIds)
+				|| !enableCourseIds.contains(classroom.getCourseId())) {
+			log.error("Course not permission! course_id=[{}]", classroom.getCourseId());
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		// 课时数据校验
+		validateLesson(classroom);
 	}
 
 }

@@ -58,6 +58,11 @@ public class PageUtil {
 		for (Object order : page.getOrders()) {
 			// 获取对应字段
 			String column = ((OrderItem) order).getColumn();
+			if (StringUtils.isBlank(column)) {
+				continue;
+			}
+
+			// 获取实体数据
 			K k = data.get(CommonConstant.ZERO);
 
 			// 判断是否存在该字段

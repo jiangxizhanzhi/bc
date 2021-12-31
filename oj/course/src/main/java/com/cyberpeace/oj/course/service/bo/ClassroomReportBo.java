@@ -30,7 +30,7 @@ public class ClassroomReportBo implements Serializable {
 	private String content;
 
 	@ApiModelProperty("实验报告得分")
-	private Integer score;
+	private Double score;
 
 	@ApiModelProperty("评分人编号")
 	private String evaluatorId;

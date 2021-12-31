@@ -164,7 +164,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		List<String> classroomUserIds = groupInfos.stream()
 				.map(classroomGroupInfo -> JsonUtil
 						.toJsonObjectArray(classroomGroupInfo.getGroupUserIds(), String.class))
-				.flatMap(Collection::stream).collect(Collectors.toList());
+				.flatMap(Collection::stream).distinct().collect(Collectors.toList());
 
 		// 无用户直接返回
 		if (CollectionUtils.isEmpty(classroomUserIds)) {
@@ -195,6 +195,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 				end = classroomUserIds.size();
 			}
 			groupInfo.setGroupUserIds(JsonUtil.arrayToString(classroomUserIds.subList(start, end)));
+			start = end;
 			end += groupCount;
 			groupInfoList.add(groupInfo);
 		}
@@ -272,7 +273,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				classroomGroupInfoMapper.deleteByRoom(classroomId);
-				if (CollectionUtils.isEmpty(groupInfoList)) {
+				if (CollectionUtils.isNotEmpty(groupInfoList)) {
 					saveBatch(groupInfoList);
 				}
 			}

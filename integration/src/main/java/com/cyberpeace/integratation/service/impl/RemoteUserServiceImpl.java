@@ -179,14 +179,34 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		}
 		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 	}
+
 	@Override
 	public List<UserInfo> ListByOrgId(String organizationId) {
 		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + organizationId,
 				JSONArray.class);
 
 		List<UserInfo> userInfos = StreamApiUtils.map(userArray,
-				obj -> userInfoFromJsonObject((JSONObject) obj));
+				obj -> userToOrgUserInfo((JSONObject) obj));
 		return userInfos;
+	}
+
+	/**
+	 * 组织用户数据转
+	 * @param jsonObject
+	 * @return
+	 */
+	private UserInfo userToOrgUserInfo(JSONObject jsonObject) {
+		if (null == jsonObject) {
+			return null;
+		}
+
+		UserInfo userInfo = new UserInfo();
+		userInfo.setUserId(jsonObject.getString("id"));
+		userInfo.setUserName(jsonObject.getString("username"));
+		userInfo.setName(jsonObject.getString("name"));
+		userInfo.setAvatarUrl(jsonObject.getString("avatar"));
+
+		return userInfo;
 	}
 
 	/**

@@ -118,14 +118,14 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 						.toJsonObjectArray(classroomGroupInfo.getGroupUserIds(), String.class))
 				.flatMap(Collection::stream).collect(Collectors.toList());
 		// 计算新用户 给新用户创建组
-		List<String> newUserIds = (List<String>) CollectionUtils.retainAll(orgUserIds,
+		List<String> newUserIds = (List<String>) CollectionUtils.removeAll(orgUserIds,
 				classroomUserIds);
 		Integer lastGroupNo = classroomGroupInfoMapper.selectLastGroupByRoom(classroomId);
 		List<ClassroomGroupInfo> groupInfoList = initClassroomGroupInfo(classroomId, courseLesson,
-				newUserIds, lastGroupNo);
+				newUserIds, null != lastGroupNo ? lastGroupNo : CommonConstant.ONE);
 
 		// 计算删除的用户 将用户从组中删除
-		List<String> deleteUserIds = (List<String>) CollectionUtils.retainAll(classroomUserIds,
+		List<String> deleteUserIds = (List<String>) CollectionUtils.removeAll(classroomUserIds,
 				orgUserIds);
 		List<ClassroomGroupInfo> updateGroups = getUpdateAndDeleteNoneGroup(classroomId,
 				deleteUserIds);

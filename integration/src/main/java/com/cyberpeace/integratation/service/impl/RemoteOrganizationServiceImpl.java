@@ -1,10 +1,13 @@
 package com.cyberpeace.integratation.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -50,7 +53,8 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 			return Lists.newArrayList();
 		}
 
-		List<String> childrenIds = getChildrenIds(realOrgTree);
+		List<JSONObject> children = getChildrenIds(realOrgTree);
+		List<String> childrenIds = StreamApiUtils.map(children, org -> org.getString("id"));
 		if (self) {
 			childrenIds.add(CommonConstant.ZERO, realOrgTree.getString("id"));
 		}
@@ -64,14 +68,41 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return null != orgInfo ? orgInfo.getString("name") : "";
 	}
 
+	@Override
+	public Map<String, String> childrenMap(String orgId, boolean self) {
+
+		JSONArray orgs = HttpClientUtil.rawGet(MP_ORG_TREE_URL + orgId, JSONArray.class);
+
+		// 空数组校验
+		if (CollectionUtils.isEmpty(orgs)) {
+			return Maps.newHashMap();
+		}
+
+		// 空对象校验
+		JSONObject realOrgTree = orgs.getJSONObject(CommonConstant.ZERO);
+		if (realOrgTree.isEmpty()) {
+			return Maps.newHashMap();
+		}
+
+		List<JSONObject> children = getChildrenIds(realOrgTree);
+
+		Map<String, String> orgMap = StreamApiUtils.toMap(children, org -> org.getString("id"),
+				org -> org.getString("name"));
+		if (self) {
+			orgMap.put(realOrgTree.getString("id"), realOrgTree.getString("name"));
+		}
+
+		return orgMap;
+	}
+
 	/**
 	 * 递归子类组织编号
 	 * @param orgTree
 	 * @return
 	 */
-	private List<String> getChildrenIds(JSONObject orgTree) {
+	private List<JSONObject> getChildrenIds(JSONObject orgTree) {
 
-		List<String> childIdList = Lists.newArrayList();
+		List<JSONObject> childIdList = Lists.newArrayList();
 
 		// 获取子类数据
 		JSONArray children = orgTree.getJSONArray("children");
@@ -82,9 +113,9 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		// 递归遍历
 		for (Object child : children) {
 			JSONObject childObj = (JSONObject) child;
-			List<String> childrenIds = getChildrenIds(childObj);
+			List<JSONObject> childrenIds = getChildrenIds(childObj);
 
-			childIdList.add(childObj.getString("id"));
+			childIdList.add(childObj);
 			childIdList.addAll(childrenIds);
 		}
 

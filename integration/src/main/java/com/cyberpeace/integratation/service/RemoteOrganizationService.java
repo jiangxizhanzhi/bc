@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RemoteOrganizationService {
 
@@ -18,5 +19,13 @@ public interface RemoteOrganizationService {
 	 * @return
 	 */
 	String orgNameById(String orgId);
+
+	/**
+	 * 获取子类组织信息 编号与名称映射关系
+	 * @param orgId
+	 * @param self
+	 * @return key=orgId value=org_name
+	 */
+	Map<String, String>  childrenMap(String orgId, boolean self);
 
 }

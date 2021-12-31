@@ -1,7 +1,17 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
+import com.cyberpeace.oj.ojbase.service.NoteService;
+import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -13,27 +23,22 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.dao.entity.*;
-import com.cyberpeace.oj.course.dao.mapper.*;
-import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.course.service.bo.ClassroomBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomReportBo;
+import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.tomcat.util.security.Escape;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -56,6 +61,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
+
+	@Autowired
+	private NoteService noteService;
+
+	@Autowired
+	private NoteMapper noteMapper;
 
 	@Override
 	public Classroom create(Classroom classroom) {
@@ -123,11 +134,33 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		CourseLesson courseLesson = validateLesson(classroom);
 
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
+		Map<String, String> orgMap = remoteOrganizationService
+				.childrenMap(classroom.getOrganizationId(), true);
 
-		return null;
+		return StreamApiUtils.map(userInfos,
+				userInfo -> userToReportBo(userInfo, courseLesson, orgMap));
 	}
 
-	private ClassroomReportBo userToReportBo(UserInfo userInfo) {
+	private ClassroomReportBo userToReportBo(UserInfo userInfo, CourseLesson courseLesson,
+			Map<String, String> orgMap) {
+
+		// 用户信息
+		ClassroomReportBo reportBo = BeanUtils.copy(userInfo, ClassroomReportBo.class);
+		reportBo.setOrganizationName(orgMap.get(userInfo.getOrganizationId()));
+
+		// 实验报告数据
+		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
+				.businessId(courseLesson.getResourceId())
+				.businessType(Note.NoteResourceType.LESSON.getCode())
+				.noteType(Note.NoteType.REPORT.getCode()).userId(userInfo.getUserId()).build();
+		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
+		if (null != noteBo) {
+			reportBo.setContent(noteBo.getContent());
+			reportBo.setSubmitTime(noteBo.getUpdateTime());
+		}
+
+
+		// 实验报告评分数据
 
 		return null;
 	}

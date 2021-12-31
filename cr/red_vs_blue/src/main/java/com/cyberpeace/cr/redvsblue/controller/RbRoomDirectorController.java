@@ -184,38 +184,59 @@ public class RbRoomDirectorController {
 
 				List<MissionStageScheme> missionStageSchemeList = JsonUtil
 						.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
-				int index = 0;
 
-				for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
-					List<String> missions = missionStageScheme.getMissions();
+				addDynamicMissionInfo(missionStageSchemeList,
+						rbRoomMissionReq.getMissionStage().intValue(), mission.getResourceId());
 
-					if (index++ == rbRoomMissionReq.getMissionStage().intValue()) {
-						missions.add(mission.getResourceId());
-						missionStageScheme.setDynamic(
-								getDynamicIds(missionStageScheme, mission.getResourceId()));
-						missionStageScheme.setMissions(missions);
-					}
-
-				}
 				crRole.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
 				crRoleService.updateById(crRole);
 			}
 
-			private List<String> getDynamicIds(MissionStageScheme missionStageScheme,
-					String resourceId) {
-
-				List<String> ids = missionStageScheme.getDynamic();
-				if (ids == null) {
-					ids = Lists.newArrayList();
-				}
-
-				ids.add(mission.getResourceId());
-
-				return ids;
-			}
 		});
 
 		return new BaseRsp<>();
+	}
+
+	private void addDynamicMissionInfo(List<MissionStageScheme> missionStageSchemeList,
+			Integer stage, String missionId) {
+
+		if (missionStageSchemeList.size() > 0) {
+			int index = 0;
+
+			for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
+				List<String> missions = missionStageScheme.getMissions();
+
+				if (index++ == stage) {
+					missions.add(missionId);
+					missionStageScheme.setDynamic(getDynamicIds(missionStageScheme, missionId));
+					missionStageScheme.setMissions(missions);
+				}
+
+			}
+		} else {
+			List<String> missions = Lists.newArrayList();
+			missions.add(missionId);
+
+			MissionStageScheme missionStageScheme = new MissionStageScheme();
+
+			missionStageScheme.setStage(stage.toString());
+			missionStageScheme.setDynamic(getDynamicIds(missionStageScheme, missionId));
+			missionStageScheme.setMissions(missions);
+
+			missionStageSchemeList.add(missionStageScheme);
+		}
+	}
+
+	private List<String> getDynamicIds(MissionStageScheme missionStageScheme, String resourceId) {
+
+		List<String> ids = missionStageScheme.getDynamic();
+		if (ids == null) {
+			ids = Lists.newArrayList();
+		}
+
+		ids.add(resourceId);
+
+		return ids;
 	}
 
 	@ApiOperation("任务删除")
@@ -373,8 +394,6 @@ public class RbRoomDirectorController {
 				missionCount += roleMissionRspList.size();
 			}
 
-			crRbRoleContext.setDynamic(dynamics);
-
 			GroupData groupData = new GroupData();
 
 			groupData.setGroup(roleGroupName);
@@ -388,6 +407,7 @@ public class RbRoomDirectorController {
 
 		}
 
+		crRbRoleContext.setDynamic(dynamics);
 		crRbRoleContext.setGroups(groups);
 
 		return new BaseRsp(crRbRoleContext);

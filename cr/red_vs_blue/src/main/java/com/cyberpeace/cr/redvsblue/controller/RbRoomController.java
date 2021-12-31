@@ -377,6 +377,10 @@ public class RbRoomController {
 			}
 		});
 
-		return new BaseRsp();
+		RbTimeManagementRsp rbTimeManagementRsp = BeanUtils.copy(timeManagement,
+				RbTimeManagementRsp.class);
+		rbTimeManagementRsp.setRedVsBlue(timeManagement.getRoomId());
+
+		return new BaseRsp(rbTimeManagementRsp);
 	}
 }

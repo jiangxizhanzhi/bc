@@ -3,10 +3,13 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
@@ -18,6 +21,9 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
 	@Autowired
 	private RbTemplateService rbTemplateService;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -42,5 +48,34 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		rbTemplateService.save(rbTemplate);
 
 		return rbTemplate.getBusinessTemplateId();
+	}
+
+	@Override
+	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
+		ResourceDumpContext<RbTemplate> context = new ResourceDumpContext<>();
+		// 获取 rbTemplate
+		RbTemplate rbTemplate = rbTemplateService
+				.getRbTemplateByBusinessId(template.getResourceId());
+		rbTemplate.setId(null);
+		context.setBusiness(rbTemplate);
+		// 获取任务
+		String missionScheme = rbTemplate.getRoleConfig();
+		context.setMissions(missionService.batchGetByMissionSchemeJson(missionScheme));
+
+		return context;
+	}
+
+	@Override
+	public void realLoadBusinessResource(ResourceDumpContext resource) {
+		RbTemplate rbTemplate = ((JSONObject) resource.getBusiness())
+				.toJavaObject(RbTemplate.class);
+		rbTemplate.setId(null);
+		rbTemplate.setCreateTime(null);
+		rbTemplate.setUpdateTime(null);
+		if (null != rbTemplateService.getById(rbTemplate.getResourceId())) {
+			rbTemplateService.updateById(rbTemplate);
+		} else {
+			rbTemplateService.save(rbTemplate);
+		}
 	}
 }

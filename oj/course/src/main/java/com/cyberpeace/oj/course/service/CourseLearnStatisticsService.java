@@ -1,9 +1,9 @@
 package com.cyberpeace.oj.course.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.oj.course.controller.req.LessonStatisticsListReq;
 import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
 import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
 import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
@@ -16,11 +16,11 @@ public interface CourseLearnStatisticsService{
 
     HistogramRes directionHistogram();
 
-    IPage<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page page, AuthContext authContext);
+	ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page page, AuthContext authContext);
 
-	IPage<AdminLessonStatisticsRes> LessonStatisticsList(String lessonStatisticsListReq, Page page);
+	ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String lessonStatisticsListReq, Page page, LessonStatisticsListReq pageReq);
 
-	IPage<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId, String lessonId, Page page);
+	ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId, String lessonId, Page page);
 
 	/**
 	 * 根据课程编号用户编号查询课程目录

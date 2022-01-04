@@ -31,9 +31,9 @@
         <result property="resourceId" column="resource_id"/>
         <result property="id" column="id"/>
         <result property="score" column="score"/>
-        <result property="practiceCount" column="practice_count"/>
-        <result property="heat" column="heat"/>
-        <result property="finishReportCount" column="finish_report_count"/>
+        <result property="reportUpdateTime" column="report_update_time"/>
+        <result property="lessonCount" column="lesson_count"/>
+        <result property="markingTime" column="marking_time"/>
     </resultMap>
 
 
@@ -43,34 +43,10 @@
     </select>
 
     <select id="sumHeatByDirection" resultMap="baseResultMap">
-        select name,sum(heat) as heat from oj_course
+        select oj_course_category.name,sum(oj_course.heat) as heat from oj_course
         left join oj_course_category on oj_course.category_id = oj_course_category.resource_id
         ORDER BY oj_course.heat DESC  LIMIT 5
     </select>
-
-<!--    <select id="selectByTime" resultMap="baseResultMap">-->
-<!--        select * from oj_lesson_record-->
-<!--        <where>-->
-<!--            <if test="null != userId and userId != ''">-->
-<!--                and user_id = #{userId}-->
-<!--            </if>-->
-<!--            <if test="null != start">-->
-<!--                and create_time &gt; #{start}-->
-<!--            </if>-->
-<!--            <if test="null != end">-->
-<!--                and create_time &lt; #{end}-->
-<!--            </if>-->
-<!--        </where>-->
-<!--        order by create_time asc-->
-<!--    </select>-->
-
-<!--    <select id="selectByLessonAndUser" resultMap="baseResultMap">-->
-<!--        select * from oj_lesson_record-->
-<!--        <where>-->
-<!--            `user_id` = #{userId}-->
-<!--            and lesson_id = #{lessonId}-->
-<!--        </where>-->
-<!--    </select>-->
 
     <select id="listCourseByPage" resultMap="courseListMap">
         select distinct oj_course.name,oj_course.resource_id,oj_course.difficulty,oj_course_category.name as category_name,
@@ -117,7 +93,7 @@
 
     <select id="listLessonByPage" resultMap="lessonListMap">
     select distinct oj_course_lesson.resource_id,oj_course_lesson.name,oj_course_lesson.type,oj_course_lesson.difficulty,
-                    ifnull(learned_lessons.count,0) as learned_lesson_count,ifnull(practice_afterclass.count,0) as practice_count,ifnull(report.count,0) as report_count
+                    ifnull(learned_lessons.count,0) as heat,ifnull(practice_afterclass.count,0) as practice_count,ifnull(report.count,0) as finish_report_count
     from oj_course_lesson
     left join (select count(oj_lesson_record.lesson_id) as count ,oj_lesson_record.lesson_id from oj_lesson_record group by oj_lesson_record.lesson_id )
         as learned_lessons on learned_lessons.lesson_id = oj_course_lesson.resource_id
@@ -126,6 +102,12 @@
     left join (select count(oj_note.business_id) as count ,oj_note.business_id from oj_note where business_type = 2 and note_type = 2 group by oj_note.business_id )
         as report on report.business_id = oj_course_lesson.resource_id
     where course_id = #{courseId}
+        <if test="null != type and type">
+            and oj_course_lesson.`type` = #{type}
+        </if>
+        <if test="null != search and search">
+            and oj_course_lesson.`name` like #{search}
+        </if>
     </select>
 
     <select id="detailLessonByPage" resultMap="lessonDetailMap">
@@ -140,10 +122,12 @@
     </select>
 
     <select id="detailExpLessonByPage" resultMap="lessonDetailMap">
-        select oj_note.user_id,oj_note.update_time.oj_note.create_time
+        select oj_note.user_id as submit_user_id,oj_note.update_time as report_update_time,
+               oj_note_evaluate.evaluate_time as marking_time,ifnull(oj_note_evaluate.score,0) as score
         from oj_note
+        left join oj_note_evaluate on oj_note_evaluate.note_id = oj_note.resource_id
         where oj_note.business_id = #{lessonId} and oj_note.business_type = 2 and oj_note.note_type = 2
-        and oj_lesson_record.userId in
+        and oj_note.user_id in
         <foreach collection="userIds" item="userId" separator="," open="(" close=")">
             #{userId}
         </foreach>

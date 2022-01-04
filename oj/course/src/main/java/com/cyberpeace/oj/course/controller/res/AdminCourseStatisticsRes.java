@@ -27,7 +27,7 @@ public class AdminCourseStatisticsRes implements Serializable {
 	private Integer lessonCount;
 
 	@ApiModelProperty("学习人数")
-	private Boolean heat;
+	private Integer heat;
 
 	@ApiModelProperty("提交报告数")
 	private String finishReportCount;

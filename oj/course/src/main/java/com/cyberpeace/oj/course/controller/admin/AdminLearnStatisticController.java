@@ -1,17 +1,15 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.req.CourseStatisticsListReq;
+import com.cyberpeace.oj.course.controller.req.LessonStatisticsDetailReq;
 import com.cyberpeace.oj.course.controller.req.LessonStatisticsListReq;
 import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
 import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
@@ -20,7 +18,6 @@ import com.cyberpeace.oj.course.controller.res.HistogramRes;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
-import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,11 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Api(tags = "oj-后台学习统计相关api")
@@ -58,7 +53,7 @@ public class AdminLearnStatisticController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("课程统计柱状图")
+	@ApiOperation("课程方向统计柱状图")
 	@GetMapping("/direction_histogram")
 	public BaseRsp<HistogramRes> directionHistogram() {
 		HistogramRes res = courseLearnStatisticsService.directionHistogram();
@@ -67,7 +62,7 @@ public class AdminLearnStatisticController {
 
   @ApiOperation("课程学习统计list")
   @GetMapping("/course_statistics_list")
-  public BaseRsp<IPage<AdminCourseStatisticsRes>> courseStatisticsList(
+  public BaseRsp<List<AdminCourseStatisticsRes>> courseStatisticsList(
       @ApiParam(name = "listReq", value = "查询条件") @Valid
           CourseStatisticsListReq courseStatisticsListReq) {
 	  CourseContext context = BeanUtils.copy(courseStatisticsListReq, CourseContext.class);
@@ -82,39 +77,27 @@ public class AdminLearnStatisticController {
     Page page = courseStatisticsListReq.toPageParam();
     AuthContext authContext =
         AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
-    IPage<AdminCourseStatisticsRes> res =
+      ListRsp<AdminCourseStatisticsRes> res =
         courseLearnStatisticsService.courseStatisticsList(context, page, authContext);
-    return new BaseRsp<>(res);
+    return new BaseRsp(res);
   }
 
-  @ApiOperation("课程学习统计detail")
+  @ApiOperation("课时学习统计list")
   @GetMapping("/lesson_statistics_list")
-  public BaseRsp<IPage<AdminLessonStatisticsRes>> lessonStatisticsList(
-      @ApiParam(name = "listReq", value = "查询条件") @Valid
-      @RequestParam("course_id")String courseId,
-      @ApiParam @Validated PageReqBase pageReq) {
-    if (StringUtils.isEmpty(courseId)){
-        throw new InvalidParamException("courseId is empty");
-    }
+  public BaseRsp<ListRsp<AdminLessonStatisticsRes>> lessonStatisticsList(
+    @ApiParam @Validated LessonStatisticsListReq pageReq) {
     Page page = pageReq.toPageParam();
-    IPage<AdminLessonStatisticsRes> res =
-        courseLearnStatisticsService.LessonStatisticsList(courseId, page);
-    return new BaseRsp<>(res);
+      ListRsp<AdminLessonStatisticsRes> res =
+        courseLearnStatisticsService.LessonStatisticsList(pageReq.getCourseId(), page, pageReq);
+    return new BaseRsp(res);
   }
 
   @ApiOperation("课时报告统计detail")
   @GetMapping("/lesson_statistics_detail")
-  public BaseRsp<IPage<AdminLessonStatisticsDetailRes>> lessonStatisticsDetail(
-      @RequestParam("organization_id") String organizationId,
-      @RequestParam("lesson_id") @NotBlank String lessonId,
-      @ApiParam @Validated PageReqBase pageReq) {
-
-    if (StringUtils.isEmpty(lessonId)) {
-      throw new InvalidParamException("lessonId is empty");
-    }
+  public BaseRsp<ListRsp<AdminLessonStatisticsDetailRes>> lessonStatisticsDetail(@ApiParam @Validated LessonStatisticsDetailReq pageReq) {
     Page page = pageReq.toPageParam();
-    IPage<AdminLessonStatisticsDetailRes> res =
-        courseLearnStatisticsService.LessonStatisticsDetail(organizationId, lessonId, page);
-    return new BaseRsp<>(res);
+    ListRsp<AdminLessonStatisticsDetailRes> res =
+        courseLearnStatisticsService.LessonStatisticsDetail(pageReq.getOrgId(), pageReq.getLessonId(), page);
+    return new BaseRsp(res);
   }
 }

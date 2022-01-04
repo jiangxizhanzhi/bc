@@ -21,15 +21,6 @@ public class AdminLessonStatisticsDetailRes implements Serializable {
     @ApiModelProperty("实验评分")
     private Integer score;
 
-    @ApiModelProperty("练习数")
-    private Integer practiceCount;
-
-    @ApiModelProperty("学习人数")
-    private Integer heat;
-
-    @ApiModelProperty("实验评分")
-    private Integer finishReportCount;
-
     @ApiModelProperty("报告更新时间")
     private Date reportUpdateTime;
 

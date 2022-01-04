@@ -26,7 +26,7 @@ public class AdminLessonStatisticsRes implements Serializable {
 	private Integer practiceCount;
 
 	@ApiModelProperty("学习人数")
-	private Boolean heat;
+	private Integer heat;
 
 	@ApiModelProperty("提交报告数")
 	private String finishReportCount;

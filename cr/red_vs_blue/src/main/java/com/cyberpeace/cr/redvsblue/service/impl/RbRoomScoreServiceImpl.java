@@ -408,20 +408,27 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		RoleQuery roleQuery = new RoleQuery(roomId, roleType);
 		List<CrRole> studentRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		Map<String, CrRole> rolesMap = StreamApiUtils.toMap(studentRoles, CrRole::getResourceId,
-				pc -> pc);
+		Map<String, UserCounter> userCounterHashMap = Maps.newHashMap();
 
 		// 获取角色组用户
 		List<String> userIds = Lists.newArrayList();
 		for (CrRole crRole : studentRoles) {
-			userIds.addAll(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+			List<String> users = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			userIds.addAll(users);
 
+			// 获取用户
+			for (String userId : users) {
+				UserCounter userCounter = userCounterHashMap.getOrDefault(userId,
+						new UserCounter());
+				userCounter.setRoleId(crRole.getResourceId());
+
+				userCounterHashMap.put(userId, userCounter);
+			}
 		}
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
 		// 获取所有用户的评估数据
 		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(roomId, userIds);
-		Map<String, UserCounter> userCounterHashMap = Maps.newHashMap();
 
 		for (CrTask crTask : finishedTasks) {
 
@@ -438,7 +445,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 			userCounterHashMap.put(submitUser, userCounter);
 
 		}
+
 		List<RankData> rankDataList = Lists.newArrayList();
+		Map<String, CrRole> rolesMap = StreamApiUtils.toMap(studentRoles, CrRole::getResourceId,
+				pc -> pc);
 
 		for (String key : userCounterHashMap.keySet()) {
 			UserCounter userCounter = userCounterHashMap.get(key);

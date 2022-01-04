@@ -9,6 +9,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 
+/**
+ * 训练记录，记录训练房间的创建和销毁
+ */
 @Data
 @TableName("cr_train_record")
 public class TrainRecord implements Serializable {
@@ -25,5 +28,8 @@ public class TrainRecord implements Serializable {
 	private Date startTime;
 
 	private Date endTime;
+
+	// private String roomId;
+	// private String roomName;
 
 }

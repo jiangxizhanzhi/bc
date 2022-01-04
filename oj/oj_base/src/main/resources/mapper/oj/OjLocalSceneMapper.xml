@@ -33,4 +33,12 @@
         where business_id = #{businessId}
         and from_web = #{fromWeb}
     </select>
+
+    <select id="selectByGroupIds" resultMap="ojScene">
+        select * from oj_local_scene
+        where business_id in
+        <foreach collection="groupIds" separator="," open="(" close=")" item="groupId">
+            #{groupId}
+        </foreach>
+    </select>
 </mapper>

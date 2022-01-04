@@ -84,9 +84,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
 	@Autowired
-	private ClassroomSceneService classroomSceneService;
-
-	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired

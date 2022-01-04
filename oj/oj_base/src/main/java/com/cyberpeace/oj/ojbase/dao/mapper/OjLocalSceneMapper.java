@@ -52,4 +52,11 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	 */
 	List<OjLocalScene> selectByBusiness(@Param("businessId") String businessId,
 			@Param("fromWeb") Boolean fromWeb);
+
+	/**
+	 * 查询课堂组场景
+	 * @param groupIds
+	 * @return
+	 */
+	List<OjLocalScene> selectByGroupIds(@Param("groupIds") List<String> groupIds);
 }

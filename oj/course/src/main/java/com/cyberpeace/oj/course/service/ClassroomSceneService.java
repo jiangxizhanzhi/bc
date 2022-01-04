@@ -2,6 +2,9 @@ package com.cyberpeace.oj.course.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+
+import java.util.List;
 
 public interface ClassroomSceneService {
 
@@ -20,4 +23,20 @@ public interface ClassroomSceneService {
 	 * @return
 	 */
 	Boolean deleteScene(String groupId, AuthContext authContext);
+
+	/**
+	 * 批量启动场景
+	 * @param classroomId
+	 * @param authContext
+	 * @return
+	 */
+	List<GroupInfoBo> batchStartScene(String classroomId, AuthContext authContext)
+			throws InterruptedException;
+
+	/**
+	 * 批量删除场景
+	 * @param classroomId
+	 * @param authContext
+	 */
+	void batchDeleteScene(String classroomId, AuthContext authContext);
 }

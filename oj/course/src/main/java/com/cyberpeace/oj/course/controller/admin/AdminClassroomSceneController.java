@@ -7,6 +7,7 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.controller.req.ClassroomSceneReq;
 import com.cyberpeace.oj.course.controller.req.GroupSceneReq;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
+import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +17,8 @@ import com.cyberpeace.common.model.BaseRsp;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.List;
 
 @Api(tags = "oj-后台课堂场景相关api")
 @RestController
@@ -50,17 +53,25 @@ public class AdminClassroomSceneController {
 
 	@ApiOperation("课堂课堂场景一键启动")
 	@PostMapping("/batch")
-	public BaseRsp<Boolean>
-			batchStartScene(@RequestBody @Validated ClassroomSceneReq classroomSceneReq) {
+	public BaseRsp<List<GroupInfoBo>>
+			batchStartScene(@RequestBody @Validated ClassroomSceneReq classroomSceneReq)
+					throws InterruptedException {
 
-		return new BaseRsp<>();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		List<GroupInfoBo> groupInfoBos = classroomSceneService
+				.batchStartScene(classroomSceneReq.getClassroomId(), authContext);
+		return new BaseRsp<>(groupInfoBos);
 	}
 
 	@ApiOperation("课堂场景一键清除")
 	@DeleteMapping("/batch")
-	public BaseRsp<Boolean>
+	public BaseRsp<Integer>
 			batchDeleteScene(@RequestBody @Validated ClassroomSceneReq classroomSceneReq) {
 
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		classroomSceneService.batchDeleteScene(classroomSceneReq.getClassroomId(), authContext);
 		return new BaseRsp<>();
 	}
 

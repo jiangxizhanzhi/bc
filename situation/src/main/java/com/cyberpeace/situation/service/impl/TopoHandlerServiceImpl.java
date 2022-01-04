@@ -2,9 +2,7 @@ package com.cyberpeace.situation.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.situation.constant.Color;
-import com.cyberpeace.situation.constant.LineEffect;
-import com.cyberpeace.situation.constant.LineType;
+import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
@@ -119,22 +117,39 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
     @Override
     public String getAreaShape(JSONObject area) {
-        return "rectangle";
+        return AreaShape.RECTANGLE.getCode();
     }
 
     @Override
     public String getAreaStatus(JSONObject area) {
-        return "normal";
+        return AreaStatus.NORMAL.getCode();
     }
 
     @Override
     public String getElementStatus(JSONObject element) {
-        return "running";
+
+        Integer event = (Integer) element.getOrDefault("event", Event.UNUSE.getCode());
+        Integer eventStatus = (Integer) element.getOrDefault("event_status", EventStatus.OVER.getCode());
+        Integer processStatus = (Integer) element.getOrDefault("process_status", ProcessStatus.OVER.getCode());
+
+        String elementStatus;
+        if (eventStatus.equals(EventStatus.ABNORMAL.getCode()) || processStatus.equals(ProcessStatus.ABNORMAL.getCode())) {
+            elementStatus = ElementStatus.ABNORMAL.getCode();
+        } else if (Event.getUnstartedCodeList().contains(event) && eventStatus.equals(EventStatus.OVER.getCode())) {
+            elementStatus = ElementStatus.UNSTARTED.getCode();
+        } else if (Event.getCreatingCodeList().contains(event) && eventStatus.equals(EventStatus.OVER.getCode())) {
+            elementStatus = ElementStatus.CREATING.getCode();
+        } else if (Event.getStartingCodeList().contains(event) && eventStatus.equals(EventStatus.IN_PROGRESS.getCode())) {
+            elementStatus = ElementStatus.STARTING.getCode();
+        } else {
+            elementStatus = ElementStatus.RUNNING.getCode();
+        }
+        return elementStatus;
     }
 
     @Override
     public String getElementActionStatus(JSONObject element) {
-        return "normal";
+        return ElementActionStatus.NORMAL.getCode();
     }
 
     @Override

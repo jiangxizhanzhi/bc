@@ -63,6 +63,7 @@ public class RbRoomRefereeController {
 		MissionEvaluationQuery missionEvaluationQuery = BeanUtils.copy(missionEvaluationListReq,
 				MissionEvaluationQuery.class);
 		missionEvaluationQuery.setPer_page(missionEvaluationListReq.getPerPage());
+		missionEvaluationQuery.setStudentHash(missionEvaluationListReq.getSubmitUser());
 
 		rbRoomService.checkRefereePermission(missionEvaluationListReq.getRoomId(),
 				UserInfoContext.getUserContext().getUserId());

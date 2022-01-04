@@ -55,7 +55,7 @@
                 and cr_task.user_id = #{listQuery.studentHash}
             </if>
 
-            <if test="listQuery.evaluateStatus != null and listQuery.evaluateStatus != ''">
+            <if test="listQuery.evaluateStatus != null ">
                 and cr_task_submit.evaluate_status = #{listQuery.evaluateStatus}
             </if>
         </where>

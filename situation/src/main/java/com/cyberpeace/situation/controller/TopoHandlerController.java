@@ -57,7 +57,7 @@ public class TopoHandlerController {
 
         // 提取有效数据
         if (StringUtils.isBlank(sceneId)) {
-            sceneTopo = remoteTopoService.getById(topoId);
+            sceneTopo = remoteTopoService.getTopoById(topoId);
             topology = sceneTopo.getJSONObject("scene_config").getJSONObject("topology");
             extendElementInfo = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins").
                     getJSONObject("cpcloud").getJSONObject("elements");

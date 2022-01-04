@@ -115,7 +115,6 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
         return sceneScope;
 
-
     }
 
     @Override
@@ -143,7 +142,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
         List<String> elementAreas = Lists.newArrayList();
 
-        for (AreaInfo areaInfo: areasInfo.values()) {
+        for (AreaInfo areaInfo : areasInfo.values()) {
 
             Float xMin = areaInfo.getScope().get(0).getX();
             Float yMin = areaInfo.getScope().get(0).getY();

@@ -119,9 +119,4 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		return jsonObject.getString("id");
 	}
 
-	@Override
-	public JSONObject getById(String topoId) {
-		String targetUrl = TOPO_RETRIEVE + "?id=" + topoId;
-		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
-	}
 }

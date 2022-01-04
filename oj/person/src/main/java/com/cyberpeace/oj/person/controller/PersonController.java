@@ -19,6 +19,7 @@ import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
@@ -112,7 +114,7 @@ public class PersonController {
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
-	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth() {
+	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam("user_id")String userId) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date(System.currentTimeMillis());
 		String endTime = format.format(date);
@@ -125,7 +127,9 @@ public class PersonController {
 		if (!startValidate || !endValidate) {
 			throw new InvalidParamException("时间格式不正确！");
 		}
-		String userId = UserInfoContext.getUserContext().getUserId();
+		if (StringUtils.isEmpty(userId)){
+			userId = UserInfoContext.getUserContext().getUserId();
+		}
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);

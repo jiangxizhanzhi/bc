@@ -454,8 +454,8 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 			UserCounter userCounter = userCounterHashMap.get(key);
 			Integer roleMissionCount = crRoleService
 					.getMissionCount(rolesMap.get(userCounter.getRoleId()));
-			Integer missionRatio = userCounter.getRemoteMissionIds().size() * 100
-					/ roleMissionCount;
+			Integer missionRatio = roleMissionCount == 0 ? 0
+					: userCounter.getRemoteMissionIds().size() * 100 / roleMissionCount;
 
 			RankData rankData = new RankData();
 

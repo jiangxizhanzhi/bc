@@ -52,6 +52,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String FLOW_START_URL;
 
+	private String FLOW_STOP_URL;
+
 	private String NODE_SESSION_URL;
 
 	@PostConstruct
@@ -81,6 +83,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		FLOW_START_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.flow.start");
+
+		FLOW_STOP_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.stop");
 
 		NODE_SESSION_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.session");
@@ -137,6 +142,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean startFlow(FlowOpsContext flowOpsContext) {
 		return HttpClientUtil.post(FLOW_START_URL, flowOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean stopFlow(FlowOpsContext context) {
+		return HttpClientUtil.post(FLOW_STOP_URL, context, Boolean.class);
 	}
 
 	private String startScene(SceneStartContext context, String url) {

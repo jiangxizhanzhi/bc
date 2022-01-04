@@ -53,6 +53,9 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.FAILED_TO_RESTART_NODE, "重启节点失败");
 			put(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE, "重建节点失败");
 
+			put(CrBusinessErrorCode.START_FLOW_FAILURE, "启动流量失败");
+			put(CrBusinessErrorCode.STOP_FLOW_FAILURE, "停止流量失败");
+
 			put(CrBusinessErrorCode.ALREADY_PAUSED, "已暂停状态不能执行暂停操作");
 			put(CrBusinessErrorCode.NOT_PAUSED, "非暂停状态不能执行恢复操作");
 
@@ -105,6 +108,9 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.FAILED_TO_RESTART_NODE, "Failed to restart node.");
 			put(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE, "Failed to recreate node.");
+
+			put(CrBusinessErrorCode.START_FLOW_FAILURE, "Failed to start flow");
+			put(CrBusinessErrorCode.STOP_FLOW_FAILURE, "Failed to stop flow");
 
 			put(CrBusinessErrorCode.ALREADY_PAUSED, "Scene is already paused.");
 			put(CrBusinessErrorCode.NOT_PAUSED, "Scene is not paused");

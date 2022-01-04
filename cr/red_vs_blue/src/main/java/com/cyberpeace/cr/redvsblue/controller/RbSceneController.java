@@ -110,7 +110,7 @@ public class RbSceneController {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 1、鉴权
-		rbRoomService.checkTeacherPermission(roomId, userId);
+		rbRoomService.checkDirectorPermission(roomId, userId);
 		// 2、确认场景已开启
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
 		if (!localSceneService.ensureSceneStarted(localScene)) {
@@ -120,6 +120,26 @@ public class RbSceneController {
 		Boolean result = localSceneService.startFlow(localScene, req.getNodeId(), req.getFlowId());
 		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
+		}
+		return new BaseRsp();
+	}
+
+	@ApiOperation("停止流量")
+	@PostMapping("/flow/stop")
+	public BaseRsp stopFlow(@RequestBody FlowOpsReq req) {
+		String roomId = req.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、鉴权
+		rbRoomService.checkDirectorPermission(roomId, userId);
+		// 2、确认场景已开启
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+		if (!localSceneService.ensureSceneStarted(localScene)) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		// 3、停止流量
+		Boolean result = localSceneService.stopFlow(localScene, req.getNodeId(), req.getFlowId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.STOP_FLOW_FAILURE);
 		}
 		return new BaseRsp();
 	}

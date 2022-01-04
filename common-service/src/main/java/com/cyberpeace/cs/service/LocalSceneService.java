@@ -62,6 +62,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	Boolean startFlow(LocalScene localScene, String nodeId, String flowId);
 
+	Boolean stopFlow(LocalScene localScene, String nodeId, String flowId);
+
 	/**
 	 * 关闭mp场景
 	 * @param scene

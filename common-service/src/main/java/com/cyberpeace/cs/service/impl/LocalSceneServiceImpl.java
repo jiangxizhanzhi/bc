@@ -176,6 +176,18 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public Boolean stopFlow(LocalScene localScene, String nodeId, String flowId) {
+		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
+		Boolean result = remoteSceneService.stopFlow(context);
+		if (!result) {
+			log.error("failed to stop flow [{}] of node [{}] in scene [{}]", flowId, nodeId,
+					localScene.getMpSceneId());
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public Boolean pauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		// 1. 场景已暂停，返回true

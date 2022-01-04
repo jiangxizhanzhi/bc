@@ -6,20 +6,21 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 @Api(tags = "态势拓扑接口")
@@ -27,9 +28,11 @@ import java.util.*;
 @RequestMapping("/situation")
 public class TopoHandlerController {
 
-
     @Autowired
     private RemoteSceneService remoteSceneService;
+
+    @Autowired
+    private RemoteTopoService remoteTopoService;
 
     @Autowired
     private RemoteTerminalService remoteTerminalService;
@@ -37,23 +40,39 @@ public class TopoHandlerController {
     @Autowired
     private TopoHandlerService topoHandlerService;
 
+    @ApiOperation("拓扑解析")
     @GetMapping("topology")
-    public BaseRsp<SituationTopo> topo3d(@ApiParam(name = "scene_id",
-            value = "场景编号") @RequestParam("scene_id") @Valid @NotBlank String sceneId) {
+    public BaseRsp<SituationTopo> topology(
+            @ApiParam(name = "scene_id", value = "场景编号")
+            @RequestParam(value = "scene_id", required = false) String sceneId,
 
-        // 获取中台场景数据
-        JSONObject sceneTopo = remoteSceneService.getById(sceneId, null);
+            @ApiParam(name = "topo_id", value = "拓扑编号")
+            @RequestParam(value = "topo_id", required = false) String topoId
+    ) {
+
+        // 获取中台场景数据，优先获取场景拓扑
+        JSONObject sceneTopo = new JSONObject();
+        JSONObject topology = new JSONObject();
+        JSONObject extendElementInfo = new JSONObject();
+
+        // 提取有效数据
+        if (StringUtils.isBlank(sceneId)) {
+            sceneTopo = remoteTopoService.getById(topoId);
+            topology = sceneTopo.getJSONObject("scene_config").getJSONObject("topology");
+            extendElementInfo = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins").
+                    getJSONObject("cpcloud").getJSONObject("elements");
+        } else {
+            sceneTopo = remoteSceneService.getById(sceneId, null);
+            topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
+            extendElementInfo = sceneTopo.getJSONObject("scene").getJSONObject("plugins").
+                    getJSONObject("cpcloud").getJSONObject("elements");
+        }
 
         // 获取中台靶标类型数据
         JSONObject deviceCategorie = remoteTerminalService.getAllCategorie();
 
         // 处理靶标类型数据
         CategorieMap categorieMap = topoHandlerService.getCategorieMap(deviceCategorie);
-
-        // 提取有效数据
-        JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
-        JSONObject extendElementInfo = sceneTopo.getJSONObject("scene").getJSONObject("plugins").
-                getJSONObject("cpcloud").getJSONObject("elements");
 
         SceneData sceneData = new SceneData();
         sceneData.setSceneId(sceneId);
@@ -169,8 +188,8 @@ public class TopoHandlerController {
 
             // 处理坐标数据
             JSONObject position2 = element.getJSONObject("position2");
-            Float x = position2.getFloat("x");
-            Float y = position2.getFloat("y");
+            Float x = (Float) position2.getFloat("x");
+            Float y = (Float) position2.getFloat("y");
             sceneData.getXList().add(x);
             sceneData.getYList().add(y);
 

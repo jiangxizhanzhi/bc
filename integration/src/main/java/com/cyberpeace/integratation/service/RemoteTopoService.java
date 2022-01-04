@@ -31,5 +31,5 @@ public interface RemoteTopoService {
 	 */
 	String save(JSONObject json);
 
-	SceneConfig getById(String topoId);
+	JSONObject getById(String topoId);
 }

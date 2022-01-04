@@ -120,7 +120,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 	@Override
-	public SceneConfig getById(String topoId) {
-		return null;
+	public JSONObject getById(String topoId) {
+		String targetUrl = TOPO_RETRIEVE + "?id=" + topoId;
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 }

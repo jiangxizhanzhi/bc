@@ -59,4 +59,12 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	ClassroomStatisticBo classroomStatistic(String classroomId, AuthContext authContext);
+
+	/**
+	 * 课堂数据删除 课堂数据 场景数据 分组数据
+	 * @param classroomId
+	 * @param authContext
+	 * @return
+	 */
+	Integer deleteClassroom(String classroomId, AuthContext authContext);
 }

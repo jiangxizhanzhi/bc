@@ -80,10 +80,14 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		if (shared.intValue() == SceneShare.SHARED.getCode().intValue()) {
 			return ojLocalSceneMapper.selectPublicScene(businessId, CommonConstant.TRUE,
 					authContext.getIsWeb());
-		} else {
+		} else if (shared.intValue() == SceneShare.PRIVATE.getCode().intValue()) {
 			return ojLocalSceneMapper.selectPrivateScene(authContext.getUserId(), businessId,
 					authContext.getIsWeb());
+		} else if (shared.intValue() == SceneShare.GROUP.getCode().intValue()) {
+			return ojLocalSceneMapper.selectGroupScene(businessId);
 		}
+
+		return null;
 
 	}
 

@@ -15,6 +15,8 @@ public interface CommonConstant {
 	/** 竖线分割符*/
 	String VERTICAL_LINE = "|";
 
+	String UNDER_LINE = "_";
+
 	String LEFT_OBLIQUE_LINE = "/";
 
 	Integer ZERO = 0;

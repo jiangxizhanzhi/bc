@@ -1,13 +1,14 @@
 package com.cyberpeace.oj.course.controller.req;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
 import com.cyberpeace.common.util.TimeUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
 
 @ApiModel
 @Data
@@ -37,10 +38,10 @@ public class ClassroomListReq implements Serializable {
 	}
 
 	public Date getStartTime() {
-		return TimeUtil.toDate1(startTime);
+		return TimeUtil.toDate2(startTime);
 	}
 
 	public Date getEndTime() {
-		return TimeUtil.toDate1(endTime);
+		return TimeUtil.toDate2(endTime);
 	}
 }

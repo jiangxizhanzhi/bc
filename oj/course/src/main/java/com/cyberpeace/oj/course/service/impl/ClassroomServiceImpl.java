@@ -6,14 +6,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.oj.course.dao.entity.*;
+import com.cyberpeace.oj.course.dao.mapper.*;
+import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
@@ -32,18 +40,14 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -75,6 +79,24 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private NoteMapper noteMapper;
+
+	@Autowired
+	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
+	@Autowired
+	private ClassroomSceneService classroomSceneService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -191,6 +213,54 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		ClassroomStatisticBo statisticBo = ClassroomStatisticBo.builder().signInfo(signInfoBo)
 				.top20(topNum).gradeDistribution(distributionBo).build();
 		return statisticBo;
+	}
+
+	@Override
+	public Integer deleteClassroom(String classroomId, AuthContext authContext) {
+
+		// 数据校验
+		validateRoom(classroomId);
+
+		// 分组数据查询
+		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper.selectByRoom(classroomId);
+		List<String> groupInfoIds = StreamApiUtils.map(groupInfoList,
+				ClassroomGroupInfo::getResourceId);
+
+		if (CollectionUtils.isEmpty(groupInfoIds)) {
+			return classroomMapper.deleteById(classroomId);
+		}
+
+		// 查询已启动已启动场景数据
+		List<OjLocalScene> ojLocalScenes = StreamApiUtils.map(groupInfoIds,
+				groupId -> ojLocalSceneMapper.selectGroupScene(groupId));
+		List<String> ojLocalSceneIds = StreamApiUtils.map(ojLocalScenes,
+				OjLocalScene::getResourceId);
+		List<String> localSceneIds = StreamApiUtils.map(ojLocalScenes,
+				OjLocalScene::getLocalSceneId);
+
+		// 远程场景数据删除
+		if (CollectionUtils.isNotEmpty(localSceneIds)) {
+			List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
+			localScenes.forEach(localScene -> localSceneService.deleteRemoteScene(localScene));
+		}
+
+		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+				// 场景数据删除
+				if (CollectionUtils.isNotEmpty(ojLocalSceneIds)) {
+					ojLocalSceneMapper.deleteBatchIds(ojLocalSceneIds);
+				}
+				if (CollectionUtils.isNotEmpty(localSceneIds)) {
+					localSceneMapper.deleteBatchIds(localSceneIds);
+				}
+
+				// 课堂数据删除
+				classroomGroupInfoMapper.deleteBatchIds(groupInfoIds);
+				return classroomMapper.deleteById(classroomId);
+			}
+		});
 	}
 
 	/**

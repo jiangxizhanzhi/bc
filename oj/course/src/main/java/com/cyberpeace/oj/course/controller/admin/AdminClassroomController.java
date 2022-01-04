@@ -7,15 +7,14 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.controller.req.ClassroomDeleteReq;
 import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
 import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
 import com.cyberpeace.oj.course.controller.req.ClassroomReq;
@@ -25,6 +24,7 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -114,6 +114,16 @@ public class AdminClassroomController {
 
 		int result = classroomMapper.updateById(classroom);
 		return new BaseRsp(result);
+	}
+
+	@ApiOperation("后台课程表信息删除")
+	@DeleteMapping("")
+	public BaseRsp<Integer> deleteClassroom(@RequestBody @Validated ClassroomDeleteReq delReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Integer result = classroomService.deleteClassroom(delReq.getResourceId(), authContext);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("课堂监控获取用户签到列表")

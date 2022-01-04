@@ -9,7 +9,7 @@ import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
-	 * 查询ojLocalScene数据
+	 * 查询ojLocalScene数据 不包含
 	 * @param businessId 资源编号 课程编号 课时编号 习题编号
 	 * @param shared 是否共享 1=私有 2=共享
 	 * @param authContext 前后台权限数据

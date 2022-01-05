@@ -101,6 +101,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		Course heatCourse = new Course();
 		heatCourse.setHeat(heat);
 		heatCourse.setResourceId(course.getResourceId());
+		courseMapper.updateById(heatCourse);
 		return courseInfoBo;
 	}
 

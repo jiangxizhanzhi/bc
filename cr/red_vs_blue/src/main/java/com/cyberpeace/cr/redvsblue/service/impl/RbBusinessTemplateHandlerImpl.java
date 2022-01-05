@@ -13,6 +13,7 @@ import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.RbTemplateContext;
 
@@ -21,6 +22,9 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
 	@Autowired
 	private RbTemplateService rbTemplateService;
+
+	@Autowired
+	private RbTemplateMapper rbTemplateMapper;
 
 	@Autowired
 	private MissionService missionService;
@@ -77,5 +81,10 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		} else {
 			rbTemplateService.save(rbTemplate);
 		}
+	}
+
+	@Override
+	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		return rbTemplateMapper.deleteByBusinessTemplateId(businessTemplate.getResourceId());
 	}
 }

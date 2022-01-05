@@ -53,10 +53,10 @@ public class TeamTrainTemplateController {
 	BusinessTemplateService businessTemplateService;
 
 	@Autowired
-	private RemoteTopoService remoteTopoService;
+	LocalSceneService localSceneService;
 
 	@Autowired
-	LocalSceneService localSceneService;
+	private RemoteTopoService remoteTopoService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -79,7 +79,7 @@ public class TeamTrainTemplateController {
 	public BaseRsp<TeamTrainTemplateRsp> update(
 			@RequestBody @Validated TeamTrainTemplateModifyReq<AddTemplateMission> teamTrainTemplateModifyReq) {
 		String resourceId = teamTrainTemplateModifyReq.getResourceId();
-		TeamTemplate template = teamTemplateService.getTeamTemplateByBusinessId(resourceId);
+		TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resourceId);
 
 		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils
 				.copy(teamTrainTemplateModifyReq, TeamTrainTemplateContext.class);
@@ -102,7 +102,7 @@ public class TeamTrainTemplateController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
-		TeamTemplate template = teamTemplateService.getTeamTemplateByBusinessId(resource_id);
+		TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resource_id);
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
@@ -139,10 +139,10 @@ public class TeamTrainTemplateController {
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		List<TeamTemplate> teamTemplates = teamTemplateService
 				.getTeamTemplateByBusinessIds(deleteReq.getIds());
-		List<String> roomIds = teamTemplates.stream().map(TeamTemplate::getResourceId).distinct()
-				.collect(Collectors.toList());
+		List<String> teamTemplateIds = teamTemplates.stream().map(TeamTemplate::getResourceId)
+				.distinct().collect(Collectors.toList());
 
-		teamTemplateService.batchDelete(deleteReq.getIds(), roomIds);
+		teamTemplateService.batchDelete(deleteReq.getIds(), teamTemplateIds);
 
 		return new BaseRsp<>();
 	}

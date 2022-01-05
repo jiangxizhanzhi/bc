@@ -22,9 +22,11 @@ public interface TeamTemplateService extends IService<TeamTemplate> {
 	TeamTemplate updateTeamTemplate(TeamTrainTemplateContext teamTrainTemplateContext,
 			BusinessTemplate businessTemplate);
 
-	TeamTemplate getTeamTemplateByBusinessId(String resourceId);
+	TeamTemplate getByTemplateBusinessId(String resourceId);
 
-	void batchDelete(List<String> businessIds, List<String> roomIds);
+	void batchDelete(List<String> businessIds, List<String> teamTemplateIds);
 
 	List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> businessIds);
+
+	Boolean removeByBusinessTemplateId(String businessTemplateId);
 }

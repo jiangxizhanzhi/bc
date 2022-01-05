@@ -13,6 +13,16 @@
             and end_time is null
         </where>
     </update>
+    <update id="batchEnd">
+        update cr_train_record
+        <set>
+            end_time = now()
+        </set>
+        <where>
+            business_template_id = #{businessTemplateId}
+            and end_time is null
+        </where>
+    </update>
     <select id="countFinishedByUserIdAndType" resultType="java.lang.Integer">
         select count(id)
         from cr_train_record

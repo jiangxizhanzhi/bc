@@ -16,4 +16,6 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 
 	Integer countFinishedByUserIdAndType(@Param("userId") String userId,
 			@Param("type") Integer type);
+
+	void batchEnd(@Param("businessTemplateId") String businessTemplateId);
 }

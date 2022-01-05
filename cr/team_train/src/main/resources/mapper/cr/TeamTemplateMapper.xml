@@ -3,6 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper">
+    <delete id="deleteByBusinessTemplateId">
+        delete
+        from cr_team_template
+        where business_template_id = #{businessTemplateId}
+    </delete>
 
     <select id="listTeamTemplate"
             resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData">

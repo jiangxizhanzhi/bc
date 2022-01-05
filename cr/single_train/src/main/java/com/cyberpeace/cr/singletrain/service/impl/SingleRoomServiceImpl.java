@@ -691,6 +691,11 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		});
 	}
 
+	@Override
+	public List<SingleRoom> getByBusinessTemplateId(String businessTemplateId) {
+		return singleRoomMapper.selectByTemplateId(businessTemplateId);
+	}
+
 	// todo 待迁移
 	private List<String> getMissionIdsByScheme(String missionScheme) {
 		JSONArray schemeData = JsonUtil.toJsonObject(missionScheme, JSONObject.class)

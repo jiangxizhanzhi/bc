@@ -272,8 +272,38 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public Integer batchDelete(List<String> business_template_ids) {
-		return businessTemplateMapper.deleteBatchIds(business_template_ids);
+	public Boolean batchDelete(List<String> businessTemplateIds) {
+
+		List<BusinessTemplate> businessTemplates = businessTemplateMapper
+				.selectBatchIds(businessTemplateIds);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				for (BusinessTemplate businessTemplate : businessTemplates) {
+					// 先删除测试场景
+					if (StringUtils.isNotBlank(businessTemplate.getLocalSceneId())) {
+						LocalScene localScene = localSceneService
+								.getById(businessTemplate.getLocalSceneId());
+
+						if (localScene != null
+								&& StringUtils.isNotBlank(localScene.getMpSceneId())) {
+							localSceneService.deleteRemoteScene(localScene);
+						}
+					}
+					// 删除中台拓扑
+					remoteTopoService.deleteById(businessTemplate.getTopoId());
+					// 删除模板相关其他
+					BusinessTemplateHandler handler = businessTemplateHandler
+							.getHandler(businessTemplate.getBusinessType());
+					handler.deleteTemplateRelated(businessTemplate);
+				}
+				// 删除模板
+				businessTemplateMapper.deleteBatchIds(businessTemplateIds);
+			}
+		});
+
+		return true;
 	}
 
 	@Override

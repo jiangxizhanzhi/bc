@@ -18,6 +18,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
@@ -36,10 +37,13 @@ import com.cyberpeace.cs.service.LocalSceneService;
 public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, TeamTemplate> implements TeamTemplateService {
 
 	@Autowired
-	private TeamTemplateMapper teamTemplateMapper;
+	BusinessTemplateService businessTemplateService;
 
 	@Autowired
-	BusinessTemplateService businessTemplateService;
+	BusinessTemplateMapper businessTemplateMapper;
+
+	@Autowired
+	private TeamTemplateMapper teamTemplateMapper;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -164,7 +168,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	}
 
 	@Override
-	public TeamTemplate getTeamTemplateByBusinessId(String resourceId) {
+	public TeamTemplate getByTemplateBusinessId(String resourceId) {
 		TeamTemplate template = teamTemplateMapper.getByBusinessId(resourceId);
 		if (template == null) {
 			throw new ResourceNotFoundException(resourceId);
@@ -174,14 +178,13 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	}
 
 	@Override
-	public void batchDelete(List<String> businessIds, List<String> roomIds) {
+	public void batchDelete(List<String> businessIds, List<String> teamTemplateIds) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				businessTemplateService.removeByIds(businessIds);
-				removeByIds(roomIds);
-
+				businessTemplateService.batchDelete(businessIds);
+				removeByIds(teamTemplateIds);
 			}
 		});
 	}
@@ -189,6 +192,11 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	@Override
 	public List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> businessIds) {
 		return teamTemplateMapper.getTeamTemplateByBusinessIds(businessIds);
+	}
+
+	@Override
+	public Boolean removeByBusinessTemplateId(String businessTemplateId) {
+		return teamTemplateMapper.deleteByBusinessTemplateId(businessTemplateId);
 	}
 
 }

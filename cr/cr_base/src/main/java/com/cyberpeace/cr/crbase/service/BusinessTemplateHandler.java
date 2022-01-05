@@ -107,4 +107,13 @@ public class BusinessTemplateHandler {
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
 		throw new NotImplementedException();
 	}
+
+	/**
+	 * 删除后台模板时删除相关训练模板
+	 * @param businessTemplate
+	 * @return
+	 */
+	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		throw new NotImplementedException();
+	}
 }

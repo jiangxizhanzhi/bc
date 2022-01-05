@@ -34,6 +34,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String TOPO_RETRIEVE;
 
+	private String TOPO_DELETE;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -45,6 +47,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		TOPO_SYNC = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.sync");
 		TOPO_RETRIEVE = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
+		TOPO_DELETE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
 	}
 
 	@Override
@@ -97,19 +100,22 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	public Map<String, TopoDigest> batchGetTopoDigest(List<String> topoIds) {
 		String targetUrl = TOPO_DIGEST_URL + "?ids=" + String.join("&ids=", topoIds);
 		String data = HttpClientUtil.rawGet(targetUrl, String.class);
-		List<MpTopoStatistic> mpTopoStatistics = JsonUtil.toJsonObjectArray(data, MpTopoStatistic.class);
+		List<MpTopoStatistic> mpTopoStatistics = JsonUtil.toJsonObjectArray(data,
+				MpTopoStatistic.class);
 
 		if (topoIds.size() != mpTopoStatistics.size()) {
-			log.error("batchGetTopoDigest expect {}, got {}. [{}]", topoIds.size(), mpTopoStatistics.size(), String.join(", ", topoIds));
+			log.error("batchGetTopoDigest expect {}, got {}. [{}]", topoIds.size(),
+					mpTopoStatistics.size(), String.join(", ", topoIds));
 			throw new RemoteServiceException();
 		}
 
-		return mpTopoStatistics.stream().collect(Collectors.toMap(MpTopoStatistic::getCsceneId, mpTopoStatistic -> {
-			TopoDigest topoDigest = new TopoDigest();
-			topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
-			topoDigest.setNodeCounts(mpTopoStatistic.getNodesCount());
-			return topoDigest;
-		}));
+		return mpTopoStatistics.stream()
+				.collect(Collectors.toMap(MpTopoStatistic::getCsceneId, mpTopoStatistic -> {
+					TopoDigest topoDigest = new TopoDigest();
+					topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
+					topoDigest.setNodeCounts(mpTopoStatistic.getNodesCount());
+					return topoDigest;
+				}));
 	}
 
 	@Override
@@ -117,6 +123,15 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		String targetUrl = TOPO_SYNC;
 		JSONObject jsonObject = HttpClientUtil.post(targetUrl, json, JSONObject.class);
 		return jsonObject.getString("id");
+	}
+
+	@Override
+	public Boolean deleteById(String topoId) {
+		String targetUrl = TOPO_DELETE;
+		JSONObject body = new JSONObject();
+		body.put("id", topoId);
+
+		return HttpClientUtil.delete(targetUrl, body, Boolean.class);
 	}
 
 }

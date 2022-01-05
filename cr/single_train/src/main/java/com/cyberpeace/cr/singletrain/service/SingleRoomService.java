@@ -52,4 +52,9 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	SingleRoom getByBusinessId(String businessId);
 
 	void clearLocal(SingleRoom room);
+
+	/**
+	 * 获取某模板关联的所有房间
+	 */
+	List<SingleRoom> getByBusinessTemplateId(String businessTemplateId);
 }

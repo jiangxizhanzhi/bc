@@ -33,4 +33,6 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	Integer countByUserId(@Param("userId") String userId);
 
 	List<SingleRoom> selectByUserId(@Param("userId") String userId);
+
+	List<SingleRoom> selectByTemplateId(@Param("businessTemplateId") String businessTemplateId);
 }

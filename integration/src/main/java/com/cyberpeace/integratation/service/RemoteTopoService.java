@@ -31,4 +31,10 @@ public interface RemoteTopoService {
 	 */
 	String save(JSONObject json);
 
+	/**
+	 * 删除中台拓扑
+	 * @param topoId
+	 * @return
+	 */
+	Boolean deleteById(String topoId);
 }

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.dao.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -24,4 +25,6 @@ public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 	TeamTemplate getByBusinessId(String resourceId);
 
 	List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> ids);
+
+	Boolean deleteByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
 }

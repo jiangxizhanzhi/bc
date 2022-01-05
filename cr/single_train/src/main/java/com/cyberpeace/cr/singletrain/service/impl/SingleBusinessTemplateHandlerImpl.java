@@ -1,28 +1,47 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReq;
+import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
+import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
+import com.cyberpeace.cs.service.LocalSceneService;
 
 @Service
 public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
+
+	@Autowired
+	TransactionTemplate transactionTemplate;
+
+	@Autowired
+	TrainRecordService trainRecordService;
 
 	@Autowired
 	private SingleTemplateService singleTemplateService;
 
 	@Autowired
 	private MissionService missionService;
+
+	@Autowired
+	private SingleRoomService singleRoomService;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -77,5 +96,28 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		} else {
 			singleTemplateService.save(singleTemplate);
 		}
+	}
+
+	@Override
+	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		SingleTemplate singleTemplate = singleTemplateService
+				.getByBusinessTemplateId(businessTemplate.getResourceId());
+		// todo
+		List<SingleRoom> roomList = singleRoomService
+				.getByBusinessTemplateId(businessTemplate.getResourceId());
+		for (SingleRoom singleRoom : roomList) {
+			// 关闭场景
+			localSceneService.stopScene(singleRoom.getLocalSceneId());
+
+			// 删除单兵训练房间, 记录结束时间
+			localSceneService.removeById(singleRoom.getLocalSceneId());
+			singleRoomService.removeById(singleRoom.getResourceId());
+			trainRecordService.updateEndDate(businessTemplate.getResourceId());
+
+		}
+		// 删除singleTemplate
+		singleTemplateService.removeById(singleTemplate.getResourceId());
+
+		return true;
 	}
 }

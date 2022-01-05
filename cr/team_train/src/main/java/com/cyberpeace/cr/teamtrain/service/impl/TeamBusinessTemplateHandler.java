@@ -105,7 +105,7 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		ResourceDumpContext<TeamTemplate> context = new ResourceDumpContext<>();
 		// 获取 teamTemplate
 		TeamTemplate teamTemplate = teamTemplateService
-				.getTeamTemplateByBusinessId(template.getResourceId());
+				.getByTemplateBusinessId(template.getResourceId());
 		teamTemplate.setId(null);
 		context.setBusiness(teamTemplate);
 		// 获取任务
@@ -127,6 +127,11 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		} else {
 			teamTemplateService.save(teamTemplate);
 		}
+	}
+
+	@Override
+	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		return teamTemplateService.removeByBusinessTemplateId(businessTemplate.getResourceId());
 	}
 
 	private void replaceMissions(LoadTemplateData loadTemplateData,

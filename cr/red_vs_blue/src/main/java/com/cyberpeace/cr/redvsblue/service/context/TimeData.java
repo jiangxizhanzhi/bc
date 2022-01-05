@@ -59,9 +59,10 @@ public class TimeData {
 			}
 			timeList.add(realEndTime);
 
-			this.xData = xDataList;
-			this.timeList = timeList;
 		}
+
+		this.xData = xDataList;
+		this.timeList = timeList;
 		running = 0;
 		if (this.status > 0) {
 			Long longRunning = (realEndTime.getTime() - startTime.getTime()) / 1000;

@@ -135,16 +135,17 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 		Date endtime = rbRoomData.getEndTime();
 
-		// 进行中
-		TimeData timeDate = new TimeData(1, rbTimeManagement.getCreateTime(), new Date(), endtime);
+		TimeData timeDate;
 		// 未开始
 		if (rbTimeManagement == null) {
 			timeDate = new TimeData(0, rbRoomData.getStartTime(), endtime, endtime);
-		}
-		// 已结束
-		if (rbTimeManagement.isStopped()) {
+		} else if (rbTimeManagement.isStopped()) {
+			// 已结束
 			timeDate = new TimeData(2, rbTimeManagement.getCreateTime(),
 					rbTimeManagement.getUpdateTime(), endtime);
+		} else {
+			// 进行中
+			timeDate = new TimeData(1, rbTimeManagement.getCreateTime(), new Date(), endtime);
 		}
 
 		return timeDate;

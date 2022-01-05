@@ -277,7 +277,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.intValue() != CourseLesson.HandoutType.MD.getCode().intValue()) {
 			lessonInfoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
 		}
-		lessonInfoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
+		lessonInfoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
 
 		// 知识点数据转换
 		lessonInfoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));

@@ -72,6 +72,11 @@ public class AdminClassroomController {
 			roomListQuery.setChildrenOrg(orgIds);
 		}
 
+		// 非超级管理员仅查看自己创建的课程表
+		if (!authContext.getSuperAdmin()) {
+			roomListQuery.setUserId(authContext.getUserId());
+		}
+
 		// 数据查询
 		List<ClassroomBo> classroomBos = classroomService.selectList(roomListQuery, authContext);
 
@@ -112,7 +117,9 @@ public class AdminClassroomController {
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
-		int result = classroomMapper.updateById(classroom);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Integer result = classroomService.updateClassroom(classroom, authContext);
 		return new BaseRsp(result);
 	}
 

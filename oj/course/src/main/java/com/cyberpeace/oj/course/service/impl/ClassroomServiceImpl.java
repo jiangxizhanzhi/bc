@@ -100,18 +100,37 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 数据校验
 		validateClassroomOperation(classroom, authContext);
+		// 组织下是否存在用户 todo
 
 		// 数据新增
 		classroom.setResourceId(IDGeneratorUtil.getID());
 		classroomMapper.insert(classroom);
+
+		// 生成分组数据 todo
+		// 公告发布 todo
 		return classroom;
+	}
+
+	@Override
+	public Integer updateClassroom(Classroom classroom, AuthContext authContext) {
+		int result = classroomMapper.updateById(classroom);
+
+		// 重新生成分组 课时改变 组织改变 理论课变为实验课 todo
+		return result;
 	}
 
 	@Override
 	public List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery,
 			AuthContext authContext) {
+
+		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
+		if (CollectionUtils.isEmpty(authCourseIds)) {
+			return Lists.newArrayList();
+		}
+
 		// 查询转换数据
-		List<Classroom> classrooms = classroomMapper.selectList(roomListQuery);
+		List<Classroom> classrooms = classroomMapper.selectListByCourse(authCourseIds,
+				roomListQuery);
 		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
 				classroom -> entityToBo(classroom));
 
@@ -539,7 +558,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 校验操作权限 课程课时
-	 *
 	 * @param classroom
 	 */
 	private void validateClassroomOperation(Classroom classroom, AuthContext authContext) {

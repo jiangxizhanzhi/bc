@@ -15,6 +15,8 @@ public class AuthContext implements Serializable {
 
 	private Boolean isSuperAdmin;
 
+	private Boolean isAdmin;
+
 	public Boolean getWeb() {
 		return null == isWeb ? false : isWeb;
 	}

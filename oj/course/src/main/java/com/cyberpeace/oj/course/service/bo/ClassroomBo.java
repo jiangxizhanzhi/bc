@@ -44,4 +44,7 @@ public class ClassroomBo implements Serializable {
 	@ApiModelProperty("组织名称")
 	private String organizationName;
 
+	@ApiModelProperty("创建人")
+	private String createUserId;
+
 }

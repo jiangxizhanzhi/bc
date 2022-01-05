@@ -20,6 +20,7 @@ public class AuthContextUtils {
 		authContext.setOrganization(userInfo.getOrganizationId());
 		authContext.setIsWeb(isWeb);
 		authContext.setIsSuperAdmin(userInfo.isSuperuser());
+		authContext.setIsAdmin(userInfo.isAdmin());
 
 		return authContext;
 	}

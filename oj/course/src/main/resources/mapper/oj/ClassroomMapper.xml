@@ -5,48 +5,6 @@
 
     <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.Classroom"/>
 
-    <sql id="baseFiled">
-        select resource_id,
-               `start_time`,
-               `end_time`,
-               course_id,
-               lesson_id,
-               organization_id,
-               organization_ids,
-               create_user_id
-        from oj_classroom
-    </sql>
-
-    <select id="listByTime" resultMap="base">
-        <include refid="baseFiled"/>
-        <where>
-            <if test="null != start">
-                and start_time &gt; #{start}
-            </if>
-            <if test="null != end">
-                and start_time &lt; #{end}
-            </if>
-        </where>
-        order by start_time asc
-    </select>
-
-    <select id="listByTimeAndOrg" resultMap="base">
-        select * from oj_classroom
-        <where>
-            start_time &gt;= #{start} and end_time &lt;= #{end}
-            <if test="null != org and org.size() != 0">
-                and organization in
-                <foreach collection="org" item="id" separator="," open="(" close=")">
-                    #{id}
-                </foreach>
-            </if>
-            <if test="null != user">
-                and createUser = #{user}
-            </if>
-        </where>
-        order by start_time asc
-    </select>
-
     <select id="selectByOrgAndLesson" resultMap="base">
         <bind name="org" value="'%' + orgId + '%'"/>
         select * from oj_classroom
@@ -58,11 +16,45 @@
         select * from oj_classroom
         <where>
             <if test="listQuery != null">
-                <if test="listQuery.startTime != null">
-                    and start_time &gt; #{listQuery.startTime}
+                <if test="listQuery.startTime != null and listQuery.endTime != null">
+                    (start_time &gt;= #{listQuery.startTime} and end_time &lt;= #{listQuery.endTime})
+                    or (start_time &lt; #{listQuery.endTime} and end_time &lt; #{listQuery.endTime})
+                    or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime})
                 </if>
-                <if test="listQuery.endTime != null">
-                    and end_time &lt; #{listQuery.endTime}
+                <if test="listQuery.userId != null and listQuery.userId != ''">
+                    and create_user_id = #{listQuery.userId}
+                </if>
+                <if test="listQuery.childrenOrg != null and listQuery.childrenOrg.size() != 0">
+                    and organization_id in
+                    <foreach collection="listQuery.childrenOrg" item="orgId" open="(" close=")" separator=",">
+                        #{orgId}
+                    </foreach>
+                </if>
+                <if test="listQuery.orgId != null and listQuery.orgId != ''">
+                    <bind name="likeOrg" value="'%' + listQuery.orgId + '%'"/>
+                    and organization_ids like #{likeOrg}
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectListByCourse" resultMap="base">
+        select * from oj_classroom
+        <where>
+            <if test="courseIds != null and courseIds.size() != 0">
+                course_id in
+                <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                    #{courseId}
+                </foreach>
+            </if>
+            <if test="listQuery != null">
+                <if test="listQuery.startTime != null and listQuery.endTime != null">
+                    and ((start_time &gt;= #{listQuery.startTime} and end_time &lt;= #{listQuery.endTime})
+                    or (start_time &lt; #{listQuery.endTime} and end_time &lt; #{listQuery.endTime})
+                    or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
+                </if>
+                <if test="listQuery.userId != null and listQuery.userId != ''">
+                    and create_user_id = #{listQuery.userId}
                 </if>
                 <if test="listQuery.childrenOrg != null and listQuery.childrenOrg.size() != 0">
                     and organization_id in

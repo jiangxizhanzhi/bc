@@ -67,4 +67,12 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	Integer deleteClassroom(String classroomId, AuthContext authContext);
+
+	/**
+	 * 课堂表更新
+	 * @param classroom
+	 * @param authContext
+	 * @return
+	 */
+	Integer updateClassroom(Classroom classroom, AuthContext authContext);
 }

@@ -15,6 +15,8 @@ public class ClassRoomListQuery implements Serializable {
 
 	private String orgId;
 
+	private String userId;
+
 	private List<String> childrenOrg;
 
 }

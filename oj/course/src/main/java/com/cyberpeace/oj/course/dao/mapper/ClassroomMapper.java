@@ -12,11 +12,6 @@ import java.util.List;
 @Mapper
 public interface ClassroomMapper extends BaseMapper<Classroom> {
 
-	List<Classroom> listByTime(@Param("start") Date startOfDay, @Param("end") Date endOfDay);
-
-	List<Classroom> listByTimeAndOrg(@Param("start") Date startOfDay, @Param("end") Date endOfDay,
-			@Param("org") List<String> organization, @Param("user") String createUser);
-
 	/**
 	 * 根据组织和课时查询课堂信息
 	 * @param orgId
@@ -32,4 +27,13 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @return
 	 */
 	List<Classroom> selectList(@Param("listQuery") ClassRoomListQuery listQuery);
+
+	/**
+	 * 课程表数据查询
+	 * @param courseIds
+	 * @param roomListQuery
+	 * @return
+	 */
+	List<Classroom> selectListByCourse(@Param("courseIds") List<String> courseIds,
+			@Param("listQuery") ClassRoomListQuery roomListQuery);
 }

@@ -22,9 +22,9 @@ public class WsPath {
 
 	public static final String OPERATION_SCENE = "/ws/oj/operation/scene";
 
-	public static final String LESSON_SCENE = "/ws/oj/course/lesson_scene";
+	public static final String LESSON_SCENE = "/ws/course/lesson_scene";
 
-	public static final String LESSON_PRACTICE_SCENE = "/ws/oj/course/lesson/operation/scene";
+	public static final String LESSON_PRACTICE_SCENE = "/ws/course/lesson/operation/scene";
 
 	public static final String CLASSROOM_SCENE = "/ws/oj/classroom/scene";
 

@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 public class HttpclientModel {
 
-	private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger("mp");
 
 	private static final String LOG_FORMATTER = "httpclientutil |{}|{}|{}";
 

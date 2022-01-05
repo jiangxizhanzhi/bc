@@ -18,6 +18,8 @@ public class WsPath {
 
 	public static final String CR_MISSION = "/ws/cr/ce_base/mission";
 
+	public static final String CR_CHAT = "/ws/cr/ce_base/chat";
+
 	public static final String OPERATION_SCENE = "/ws/oj/operation/scene";
 
 	public static final String LESSON_SCENE = "/ws/course/lesson_scene";
@@ -29,6 +31,7 @@ public class WsPath {
 	static {
 		cache.add(CR_SCENE);
 		cache.add(CR_MISSION);
+		cache.add(CR_CHAT);
 		cache.add(OPERATION_SCENE);
 		cache.add(LESSON_SCENE);
 		cache.add(LESSON_PRACTICE_SCENE);

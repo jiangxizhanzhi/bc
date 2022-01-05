@@ -14,7 +14,6 @@ import lombok.Data;
 public class NoteAddReq implements Serializable {
 
 	@ApiModelProperty("笔记内容")
-	@NotBlank
 	private String content;
 
 	@ApiModelProperty("笔记类型 1=笔记 2=实验报告")
@@ -28,4 +27,8 @@ public class NoteAddReq implements Serializable {
 	@ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习")
 	@NotNull
 	private Integer businessType;
+
+	public String getContent() {
+		return null == content ? "" : content;
+	}
 }

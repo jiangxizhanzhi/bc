@@ -255,6 +255,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
+		// 附件查询
 		AdminLessonBo lessonInfoBo = BeanUtils.copy(lesson, AdminLessonBo.class);
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(lesson.getAttachmentIds(),
 				false);
@@ -263,6 +264,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 习题数据查询
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
 		lessonInfoBo.setPracticeCount(paper.getPracticeCount());
+
+		// 场景数据查询
+		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
+				&& StringUtils.isNotBlank(lesson.getTopoId())) {
+			JSONObject topoData = remoteTopoService.getTopoById(lesson.getTopoId());
+			lessonInfoBo.setSceneConfig(topoData);
+		}
 
 		// 知识点数据转换
 		lessonInfoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));

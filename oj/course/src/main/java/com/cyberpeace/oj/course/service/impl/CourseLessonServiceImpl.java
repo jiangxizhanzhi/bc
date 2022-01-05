@@ -272,6 +272,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			lessonInfoBo.setSceneConfig(topoData);
 		}
 
+		// 视频和讲义数据处理
+		if (null != lesson.getHandoutType() && lesson.getHandoutType()
+				.intValue() != CourseLesson.HandoutType.MD.getCode().intValue()) {
+			lessonInfoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
+		}
+		lessonInfoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
+
 		// 知识点数据转换
 		lessonInfoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));
 

@@ -14,6 +14,7 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupArchiveMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.ArchiveGroupBo;
 import com.cyberpeace.oj.course.service.bo.ClassroomGroupArchiveBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
@@ -79,6 +80,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private ClassroomSceneService classroomSceneService;
 
 	@Override
 	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext) {
@@ -321,8 +325,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			// 需要更新的场景数据
 			if (null != ojLocalScene) {
 				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-				localScene.setEndTime(end ? TimeUtil.addHours(localScene.getStartTime(),
+				localScene.setEndTime(!end ? TimeUtil.addHours(localScene.getStartTime(),
 						courseLesson.getDestroyDelay()) : null);
+				localScene.setSceneTtl(
+						!end ? (courseLesson.getDestroyDelay() * CommonConstant.SIXTY) : null);
 				localScenes.add(localScene);
 			}
 
@@ -340,7 +346,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				if (CollectionUtils.isNotEmpty(localScenes)) {
-					localScenes.forEach(localScene -> localSceneMapper.updateById(localScene));
+					localScenes.forEach(localScene -> localSceneMapper.updateEndTime(localScene));
 				}
 				if (CollectionUtils.isNotEmpty(groupInfoList)) {
 					groupInfoList

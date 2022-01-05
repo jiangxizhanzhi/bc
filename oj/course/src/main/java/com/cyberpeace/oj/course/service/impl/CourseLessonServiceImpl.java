@@ -125,12 +125,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	@Autowired
-	private LocalSceneMapper localSceneMapper;
-
-	@Autowired
-	private RemoteSceneService remoteSceneService;
-
-	@Autowired
 	private NoteMapper noteMapper;
 
 	@Autowired
@@ -217,6 +211,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				if (null != groupInfo) {
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 					infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
+					infoBo.setGroupId(groupInfo.getResourceId());
 				} else {
 					ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 							lesson.getSceneShareMode(), authContext);

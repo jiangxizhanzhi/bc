@@ -103,6 +103,9 @@ public class LessonInfoBo implements Serializable {
 	@ApiModelProperty("场景配置名称")
 	private String sceneConfigName;
 
+	@ApiModelProperty("当前用户所属课堂组编号")
+	private String groupId;
+
 	/**
 	 * 设置上节和下节课程编号
 	 * @param sortList

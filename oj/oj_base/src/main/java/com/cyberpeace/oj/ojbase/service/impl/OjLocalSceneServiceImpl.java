@@ -223,24 +223,22 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				localScene.setStartTime(new Date());
 				localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 
-				// 更新localScene
-				if (localScene.getBusinessCode().intValue() != LocalScene.BusinessCode.CLASSROOM
-						.getCode().intValue()) {
+				// 场景存活时间为空则代表不设置场景结束时间 目前仅存在于课堂设置场景延时则无倒计时
+				if (null != localScene.getSceneTtl()) {
 					localScene.setEndTime(
 							TimeUtil.addMins(localScene.getStartTime(), localScene.getSceneTtl()));
-
-					// 设置倒计时
-					countDown.put(JsonKeyConstant.REMAIN_TIME,
-							localScene.getSceneTtl() * CommonConstant.SIXTY);
-					startMessage.put(JsonKeyConstant.DATA, countDown);
 				}
+
+				// 设置倒计时
+				countDown.put(JsonKeyConstant.REMAIN_TIME,
+						localScene.getSceneTtl() * CommonConstant.SIXTY);
+				startMessage.put(JsonKeyConstant.DATA, countDown);
 
 				localSceneMapper.updateById(localScene);
 			} else {
 
 				// 计算倒计时
-				if (localScene.getBusinessCode().intValue() != LocalScene.BusinessCode.CLASSROOM
-						.getCode().intValue()) {
+				if (null != localScene.getEndTime()) {
 					countDown.put(JsonKeyConstant.REMAIN_TIME,
 							TimeUtil.getIntervalSeconds(new Date(), localScene.getEndTime()));
 					startMessage.put(JsonKeyConstant.DATA, countDown);

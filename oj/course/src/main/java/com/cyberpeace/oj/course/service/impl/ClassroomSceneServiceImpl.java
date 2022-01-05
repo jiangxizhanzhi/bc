@@ -1,15 +1,18 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -183,21 +186,23 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 				groupInfoList.size() - ojLocalScenes.size());
 
 		// 获取线程池对象
-		ThreadPoolExecutor executor = SpringContextUtil.getBeanByClass(ThreadPoolExecutor.class);
+		ThreadPoolTaskExecutor executor = SpringContextUtil.getBean("taskExecutor");
 		CountDownLatch downLatch = new CountDownLatch(groupInfoList.size());
 
 		// 构建数据存储结构
-		List<String> execFailGroupIds = (List<String>) CollectionUtils
-				.synchronizedCollection(Lists.newArrayList());
+		List<String> execFailGroupIds = Collections.synchronizedList(Lists.newArrayList());
 		ConcurrentMap<String, JSONObject> execGroupMap = Maps.newConcurrentMap();
+
+		UserInfo userInfo = UserInfoContext.getUserContext();
 
 		// 场景启动
 		for (ClassroomGroupInfo groupInfo : groupInfoList) {
 			executor.execute(() -> {
 				try {
-
+					// 设置当前用户
+					UserInfoContext.setUserContext(userInfo);
 					// 有用户的组才可以启动场景
-					if (CollectionUtils.isEmpty(JsonUtil
+					if (CollectionUtils.isNotEmpty(JsonUtil
 							.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class))) {
 						JSONObject sceneData = startScene(groupInfo.getResourceId(), authContext);
 						execGroupMap.put(groupInfo.getResourceId(), sceneData);
@@ -218,11 +223,13 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		boolean result = downLatch.await(CommonConstant.SIXTY, TimeUnit.MINUTES);
 		if (!result) {
 			log.error("Classroom start scene time out! classroom_id=[{}]", classroomId);
+			throw new BusinessException(OjBusinessErrorCode.GROUP_SCENE_START_FAIL);
 		}
 
 		if (CollectionUtils.isNotEmpty(execFailGroupIds)) {
 			log.error("Classroom some group start scene failed! classroom_id=[{}], group_ids=[{}]",
 					classroomId, JsonUtil.arrayToString(execFailGroupIds));
+			throw new BusinessException(OjBusinessErrorCode.GROUP_SCENE_START_FAIL);
 		}
 
 		return listEntityToBo(groupInfoList, execGroupMap);
@@ -367,6 +374,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 			LessonWsMessageIdentifier messageIdentifier = LessonWsMessageIdentifier.builder()
 					.lessonId(lesson.getResourceId()).fromWeb(CommonConstant.TRUE)
 					.shared(lesson.getSceneShareMode()).build();
+			messageIdentifier.setPath(WsPath.LESSON_SCENE);
 
 			WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 					.builder().data(data).messageIdentifier(messageIdentifier).build();
@@ -380,6 +388,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 						.lessonId(lesson.getResourceId()).fromWeb(CommonConstant.TRUE)
 						.shared(lesson.getSceneShareMode()).build();
 				messageIdentifier.setUserId(userId);
+				messageIdentifier.setPath(WsPath.LESSON_SCENE);
 
 				WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 						.builder().data(data).messageIdentifier(messageIdentifier).build();

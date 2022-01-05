@@ -5,6 +5,9 @@ public interface JsonKeyConstant {
 	/** 倒计时*/
 	String REMAIN_TIME = "remaining_time";
 
+	/** 课堂分组编号*/
+	String GROUP_ID = "group_id";
+
 	/** 场景状态*/
 	String SCENE_STATUS = "status";
 

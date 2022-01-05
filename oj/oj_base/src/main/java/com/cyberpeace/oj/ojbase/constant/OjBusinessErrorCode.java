@@ -13,4 +13,7 @@ public interface OjBusinessErrorCode {
 	/** 课堂场景已启动*/
 	String GROUP_SCENE_IS_RUNNING = "102005";
 
+	/** 课堂场景启动失败*/
+	String GROUP_SCENE_START_FAIL = "102006";
+
 }

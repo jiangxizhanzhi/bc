@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
@@ -66,13 +67,13 @@ public class AdminClassroomSceneController {
 
 	@ApiOperation("课堂场景一键清除")
 	@DeleteMapping("/batch")
-	public BaseRsp<Integer>
+	public BaseRsp<Boolean>
 			batchDeleteScene(@RequestBody @Validated ClassroomSceneReq classroomSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		classroomSceneService.batchDeleteScene(classroomSceneReq.getClassroomId(), authContext);
-		return new BaseRsp<>();
+		return new BaseRsp<>(CommonConstant.TRUE);
 	}
 
 }

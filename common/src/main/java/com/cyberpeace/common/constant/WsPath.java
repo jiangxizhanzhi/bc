@@ -22,9 +22,13 @@ public class WsPath {
 
 	public static final String OPERATION_SCENE = "/ws/oj/operation/scene";
 
-	public static final String LESSON_SCENE = "/ws/course/lesson_scene";
+	public static final String LESSON_SCENE = "/ws/oj/course/lesson_scene";
 
-	public static final String LESSON_PRACTICE_SCENE = "/ws/course/lesson/operation/scene";
+	public static final String LESSON_PRACTICE_SCENE = "/ws/oj/course/lesson/operation/scene";
+
+	public static final String CLASSROOM_SCENE = "/ws/oj/classroom/scene";
+
+	public static final String CLASSROOM_GROUP_SCENE = "/ws/oj/classroom/group/scene";
 
 	private static Set<String> cache = Sets.newHashSet();
 
@@ -35,6 +39,8 @@ public class WsPath {
 		cache.add(OPERATION_SCENE);
 		cache.add(LESSON_SCENE);
 		cache.add(LESSON_PRACTICE_SCENE);
+		cache.add(CLASSROOM_SCENE);
+		cache.add(CLASSROOM_GROUP_SCENE);
 	}
 
 	public static boolean validPath(String path) {

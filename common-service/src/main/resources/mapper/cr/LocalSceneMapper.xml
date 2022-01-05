@@ -13,7 +13,8 @@
 
     <update id="updateEndTime">
         update local_scene
-        set destroy_time = #{destroyTime}
+        set destroy_time = #{destroyTime},
+        scene_ttl = #{sceneTtl}
         where resource_id = #{resourceId}
     </update>
 </mapper>

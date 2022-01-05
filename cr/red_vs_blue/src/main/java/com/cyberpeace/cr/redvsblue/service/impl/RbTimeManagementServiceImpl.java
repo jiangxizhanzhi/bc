@@ -80,7 +80,6 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 				rbRoomMapper.updateById(room);
 			}
 		});
-		updateById(timeManagement);
 	}
 
 }

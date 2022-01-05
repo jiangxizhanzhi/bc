@@ -47,4 +47,7 @@ public class WebCourseRes implements Serializable {
 	@ApiModelProperty("是否收藏")
 	private Boolean isCollection;
 
+	@ApiModelProperty("访问量")
+	private Integer heat;
+
 }

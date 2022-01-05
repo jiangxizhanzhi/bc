@@ -94,8 +94,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		courseInfoBo.setIsCollection(collection);
 
 		// 访问量计算
-		courseInfoBo.setHeat(null != course.getHeat() ? course.getHeat() + CommonConstant.ONE
-				: CommonConstant.ONE);
+		Integer heat = null != course.getHeat() ? course.getHeat() + CommonConstant.ONE
+				: CommonConstant.ONE;
+
+		// 更新访问量数据
+		Course heatCourse = new Course();
+		heatCourse.setHeat(heat);
+		heatCourse.setResourceId(course.getResourceId());
 		return courseInfoBo;
 	}
 

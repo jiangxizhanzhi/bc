@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@Primary
 public class MyWebSocketHandler implements WebSocketHandler {
 
 	/**

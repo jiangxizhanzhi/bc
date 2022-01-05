@@ -92,6 +92,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		Boolean collection = resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.COURSE.getCode(), courseId);
 		courseInfoBo.setIsCollection(collection);
+
+		// 访问量计算
+		courseInfoBo.setHeat(null != course.getHeat() ? course.getHeat() + CommonConstant.ONE
+				: CommonConstant.ONE);
 		return courseInfoBo;
 	}
 

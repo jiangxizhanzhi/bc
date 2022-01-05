@@ -130,7 +130,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 		SceneConfigData sceneConfig = input.getBaseInfo().getSceneConfigData();
 
-		businessTemplate.setTopoId("");
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());

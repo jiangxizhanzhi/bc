@@ -66,7 +66,6 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 
 		SceneConfigData sceneConfig = rbTemplateContext.getBaseInfo().getSceneConfigData();
 
-		businessTemplate.setTopoId("");
 		businessTemplate.setResourceId(businessTemplate.getResourceId());
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());

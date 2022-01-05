@@ -37,4 +37,7 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 */
 	List<RoomRoleContext> getRoomIdsAndRoleGroupByUserIdAndType(@Param("userId") String userId,
 			@Param("code") Integer code);
+
+	List<CrRole> getRolesByRoom(String roomId, Integer businessType);
+
 }

@@ -24,6 +24,14 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	CrRoleContext<MissionContext> getRoles(String roomId, Integer roleCode);
 
+	/**
+	 * 获取训练分组信息
+	 * @param roomId
+	 * @param businessType
+	 * @return
+	 */
+	List<CrRole> getRolesByRoom(String roomId, Integer businessType);
+
 	/**获取学员在团队训练的角色任务列表(目前只去掉了答案)
 	 * @param crRole 
 	 * @return

@@ -38,4 +38,7 @@ public interface ErrorCode {
 
 	/** 文件读取失败*/
 	String FILE_READ_FAIL = "10015";
+
+	/** 用户不在列表中 */
+	String USER_NOT_IN_LIST = "10016";
 }

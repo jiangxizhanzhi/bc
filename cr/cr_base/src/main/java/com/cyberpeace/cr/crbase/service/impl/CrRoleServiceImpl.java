@@ -116,6 +116,11 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
+	public List<CrRole> getRolesByRoom(String roomId, Integer businessType) {
+		return crRoleMapper.getRolesByRoom(roomId, businessType);
+	}
+
+	@Override
 	public List<MissionSchemeObject<MissionContext>> getBaseMissionByRole(CrRole crRole) {
 		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = Lists.newArrayList();
 		List<MissionStageScheme> missionStageSchemeList = JsonUtil

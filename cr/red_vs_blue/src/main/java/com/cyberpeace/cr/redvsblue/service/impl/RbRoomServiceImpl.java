@@ -253,9 +253,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroupCode.BLUE.getDesc());
 
 		redGroup.setMembers(redMembers);
-		redGroup.setId("red");
+		redGroup.setId(roomId + "_" + CrRole.RbRoleGroupCode.RED.getCode().toString());
 		blueGroup.setMembers(blueMembers);
-		blueGroup.setId("blue");
+		blueGroup.setId(roomId  + "_" + CrRole.RbRoleGroupCode.BLUE.getCode().toString());
 
 		// 自己不是红方，放入蓝方
 		if (!CrRole.RbRoleGroupCode.RED.getCode().equals(myRole.getRoleGroup())) {

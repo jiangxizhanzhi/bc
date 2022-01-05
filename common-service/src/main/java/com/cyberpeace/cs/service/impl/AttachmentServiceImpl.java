@@ -139,7 +139,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
         }
 
         try {
-            file.transferTo(new File(destFileName));
+            file.transferTo(new File(new String(destFileName.getBytes(), "UTF-8")));
         } catch (Exception e) {
             log.error("file upload failed! dest_file_name=[{}], origin_file_name=[{}]",
                     destFileName, file.getOriginalFilename(), e);

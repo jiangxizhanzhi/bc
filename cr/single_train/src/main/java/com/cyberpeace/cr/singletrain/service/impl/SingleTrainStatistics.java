@@ -60,7 +60,7 @@ public class SingleTrainStatistics extends CrEventStatistics {
 
 		for (SingleRoom room : rooms) {
 			BusinessTemplate businessTemplate = businessTemplateMapper
-					.selectById(room.getSingleTemplateId());
+					.selectById(room.getBusinessTemplateId());
 			TrainingData data = BeanUtils.copy(businessTemplate, TrainingData.class);
 			data.setAppId(LocalScene.BusinessCode.SINGLE_TRAINING.getCode());
 			data.setAppName(LocalScene.BusinessCode.SINGLE_TRAINING.getDesc());

@@ -109,7 +109,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// save single room data
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom room = new SingleRoom();
-		room.setSingleTemplateId(businessTemplateId);
+		room.setBusinessTemplateId(businessTemplateId);
 		room.setStartTime(new Date());
 		room.setUserId(userId);
 		room.setTrainingRecord("{}");
@@ -137,7 +137,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
 
-		return getRoomInfo(room.getSingleTemplateId());
+		return getRoomInfo(room.getBusinessTemplateId());
 	}
 
 	private LocalScene createLocalScene(BusinessTemplate template) {

@@ -19,7 +19,7 @@ public class SingleRoom extends BaseTable {
 	/**
 	 * 引用单兵训练模板id
 	 */
-	private String singleTemplateId;
+	private String businessTemplateId;
 
 	/**
 	 * 训练开始时间

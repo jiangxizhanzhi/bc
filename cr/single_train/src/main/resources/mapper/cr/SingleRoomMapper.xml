@@ -7,7 +7,7 @@
         from cr_single_room
         <where>
             <if test="business_template_id != null and business_template_id != ''">
-                single_template_id = #{business_template_id}
+                business_template_id = #{business_template_id}
             </if>
             and
             <if test="user_id != null and user_id != ''">
@@ -35,7 +35,7 @@
         select *
         from cr_business_template T1
         left join cr_single_template T2 on T1.resource_id = T2.business_template_id
-        left join cr_single_room R1 on T1.resource_id = R1.single_template_id and R1.user_id = #{user_id}
+        left join cr_single_room R1 on T1.resource_id = R1.business_template_id and R1.user_id = #{user_id}
         <where>
             T1.business_type = #{business_type}
             <if test="category != null and category">
@@ -78,6 +78,6 @@
     <select id="selectByTemplateId" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleRoom">
         select *
         from cr_single_room
-        where single_template_id = #{businessTemplateId}
+        where business_template_id = #{businessTemplateId}
     </select>
 </mapper>

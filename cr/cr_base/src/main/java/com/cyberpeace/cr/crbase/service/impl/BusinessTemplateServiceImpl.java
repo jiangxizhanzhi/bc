@@ -290,6 +290,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 								&& StringUtils.isNotBlank(localScene.getMpSceneId())) {
 							localSceneService.deleteRemoteScene(localScene);
 						}
+						// 删除测试场景的localScene
+						localSceneService.removeById(businessTemplate.getLocalSceneId());
 					}
 					// 删除中台拓扑
 					remoteTopoService.deleteById(businessTemplate.getTopoId());

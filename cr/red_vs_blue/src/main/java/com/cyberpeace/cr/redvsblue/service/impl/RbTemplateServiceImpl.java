@@ -76,9 +76,7 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 			SceneConfigData topoData = rbTemplateContext.getBaseInfo().getSceneConfigData();
 			JSONObject topoJson = new JSONObject();
 			topoJson.put("scene_config", topoData.getSceneConfig());
-			String topoId = localSceneService.saveTopo(topoJson,
-					rbTemplateContext.getBaseInfo().getType());
-			businessTemplate.setTopoId(topoId);
+			localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
 		}
 
 		// 更新团队训练模板

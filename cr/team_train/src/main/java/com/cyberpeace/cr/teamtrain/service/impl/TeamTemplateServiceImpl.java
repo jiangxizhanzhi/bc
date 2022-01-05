@@ -72,7 +72,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		topoJson.put("scene_config", topoData.getSceneConfig());
 		String topoId = localSceneService.saveTopo(topoJson,
 				LocalScene.BusinessCode.TEAM_TRAINING.getCode());
-		// "todo场景";
 
 		// 保存基础模板
 		businessTemplate.setTopoId(topoId);
@@ -137,8 +136,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 			SceneConfigData topoData = input.getBaseInfo().getSceneConfigData();
 			JSONObject topoJson = new JSONObject();
 			topoJson.put("scene_config", topoData.getSceneConfig());
-			String topoId = localSceneService.saveTopo(topoJson, input.getBaseInfo().getType());
-			businessTemplate.setTopoId(topoId);
+			localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
 		}
 
 		// 更新团队训练模板

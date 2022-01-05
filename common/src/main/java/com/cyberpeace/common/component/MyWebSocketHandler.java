@@ -47,6 +47,10 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		userSocketSessionMap.get(webSocketContext.getUserId()).add(webSocketSession);
 	}
 
+	public Map<String, Set<WebSocketSession>> getSocketSessionMap(String identifierId) {
+		return businessSocketSessionMap.get(identifierId);
+	}
+
 	@Override
 	public void handleMessage(WebSocketSession webSocketSession,
 			WebSocketMessage<?> webSocketMessage) throws Exception {

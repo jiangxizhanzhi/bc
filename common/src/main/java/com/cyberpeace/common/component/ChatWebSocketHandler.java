@@ -21,10 +21,7 @@ import java.util.Set;
 
 @Slf4j
 @Component
-public class ChatWebSocketHandler implements WebSocketHandler {
-
-	private static Map<String, Map<String, Set<WebSocketSession>>> businessSocketSessionMap = Maps
-			.newConcurrentMap();
+public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 
 	private static Map<Integer, ChatWebSocketHandler> register = Maps
@@ -43,12 +40,12 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		register.put(declareMessageType(), this);
 	}
 
-	public  List<String> getGroup(String roomId, String groupId){
-		return null;
+	public  List<String> getGroup(String businessId, String groupId){
+		throw new Error("Subclass implementation");
 	};
 
-	public  List<String> getFriends(String roomId, String userId){
-		return null;
+	public  List<String> getFriends(String businessId, String userId){
+		throw new Error("Subclass implementation");
 	};
 
 
@@ -59,17 +56,10 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		super.afterConnectionEstablished(session);
+
 		WebSocketConnectionContext webSocketContext = (WebSocketConnectionContext) session
 				.getAttributes().get("key");
-
-		businessSocketSessionMap.putIfAbsent(webSocketContext.getIdentifierId(),
-				Maps.newConcurrentMap());
-
-		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
-				.get(webSocketContext.getIdentifierId());
-
-		userSocketSessionMap.putIfAbsent(webSocketContext.getUserId(), Sets.newHashSet());
-		userSocketSessionMap.get(webSocketContext.getUserId()).add(session);
 		String businessType = webSocketContext.getOriginParams().get("business_id");
 		if (businessType == null) {
 			log.error("[wsChat]current link parameter business_id could not be found");
@@ -115,7 +105,10 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 			// 群聊
 			List<String> userIds = handler.getGroup(businessId, chatContent.getGroupId());
 			for (String userId: userIds) {
-				sendMessage(connectionContext.getIdentifierId(), userId, chatMessage);
+				// 不发送给自己
+				if (!userId.equals(chatContent.getMineId())){
+					sendMessage(connectionContext.getIdentifierId(), userId, chatMessage);
+				}
 			}
 		} else {
 			// 私聊， 在好友列表里面找到私聊对象
@@ -164,8 +157,8 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 	}
 
 	public Set<WebSocketSession> getUserSession(String identifierId, String userId) {
-		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
-				.get(identifierId);
+		Map<String, Set<WebSocketSession>> userSocketSessionMap = getSocketSessionMap(identifierId);
+
 		if (MapUtils.isEmpty(userSocketSessionMap)) {
 			log.warn("[wsChat]not find userSocketSessionMap by identifierId{}", identifierId);
 			return null;
@@ -177,70 +170,6 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 			return null;
 		}
 		return webSocketSessions;
-	}
-
-	@Override
-	public void handleTransportError(WebSocketSession session, Throwable exception)
-			throws Exception {
-		removeSession(session);
-	}
-
-	@Override
-	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus)
-			throws Exception {
-		removeSession(session);
-	}
-
-	@Override
-	public boolean supportsPartialMessages() {
-		return false;
-	}
-
-	private void removeSession(WebSocketSession webSocketSession) {
-		if (webSocketSession.isOpen()) {
-			try {
-				webSocketSession.close();
-			} catch (Exception e) {
-				log.error("remove webSocketSession error, e:", e);
-			}
-		}
-
-		WebSocketConnectionContext connectionContext = (WebSocketConnectionContext) webSocketSession
-				.getAttributes().get("key");
-
-		if (null == connectionContext || MapUtils.isEmpty(businessSocketSessionMap)) {
-			return;
-		}
-
-		String businessId = connectionContext.getIdentifierId();
-
-		Map<String, Set<WebSocketSession>> userSocketSessionMap = businessSocketSessionMap
-				.get(businessId);
-
-		if (MapUtils.isEmpty(userSocketSessionMap)) {
-			return;
-		}
-
-		Set<WebSocketSession> userSessions = userSocketSessionMap
-				.get(connectionContext.getUserId());
-		if (null == userSessions || userSessions.isEmpty()) {
-			return;
-		}
-
-		for (WebSocketSession userSession : userSessions) {
-			if (StringUtils.equals(userSession.getId(), webSocketSession.getId())) {
-				userSessions.remove(userSession);
-				break;
-			}
-		}
-
-		if (userSessions.isEmpty()) {
-			userSocketSessionMap.remove(connectionContext.getUserId());
-		}
-
-		log.info("businessId=[{}], userId=[{}] removed from socketSessionMap",
-				connectionContext.getIdentifierId(), connectionContext.getUserId());
-
 	}
 }
 

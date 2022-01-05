@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,10 @@ import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.Channel;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 public class MessageListener implements ChannelAwareMessageListener {
+
+	private static final Logger log = LoggerFactory.getLogger("mq");
 
 	private static Map<Integer, MessageListener> register = Maps.newHashMap();
 
@@ -46,14 +47,9 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
-		// if (message.getMessageProperties().getRedelivered()) {
-		// log.error("消息已重复处理,拒绝再次接收");
-		// channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
-		// }
-
 		String realMessage = new String(message.getBody(), WebConstant.ENCODING);
 
-		log.error("MessageListener: {}", realMessage);
+		log.info("MessageListener: {}", realMessage);
 
 		boolean result = dispatch(realMessage);
 

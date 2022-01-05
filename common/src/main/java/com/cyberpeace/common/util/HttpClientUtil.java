@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
 
 public class HttpClientUtil {
 
-	private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger("mp");
 
 	private HttpClientUtil() {}
 

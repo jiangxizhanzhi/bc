@@ -2,12 +2,10 @@ package com.cyberpeace.demo.controller;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -41,17 +39,25 @@ public class TestController {
 
 		return new BaseRsp(digest);
 	}
-//
-//	@GetMapping("/startScene")
-//	public BaseRsp<String> startScene() {
-//		String sceneId = remoteSceneService.startScene(, null);
-//		return new BaseRsp<>(sceneId);
-//	}
 
-//	@GetMapping("/stopScene")
-//	public BaseRsp<Boolean> stopScene() {
-//		Boolean result = remoteSceneService.stopScene("b3304280b0a14d5aa7cd4dcf03ddd8f", null);
-//
-//		return new BaseRsp<>(result);
-//	}
+	@PostMapping
+	public BaseRsp<Boolean> convertHtml(@RequestBody DemoReq1 demoReq) {
+		boolean result = HtmlToPdfUtil.convert(demoReq.getHtmlFilePath(), demoReq.getPdfFilePath());
+
+		return new BaseRsp(result);
+	}
+	//
+	// @GetMapping("/startScene")
+	// public BaseRsp<String> startScene() {
+	// String sceneId = remoteSceneService.startScene(, null);
+	// return new BaseRsp<>(sceneId);
+	// }
+
+	// @GetMapping("/stopScene")
+	// public BaseRsp<Boolean> stopScene() {
+	// Boolean result =
+	// remoteSceneService.stopScene("b3304280b0a14d5aa7cd4dcf03ddd8f", null);
+	//
+	// return new BaseRsp<>(result);
+	// }
 }

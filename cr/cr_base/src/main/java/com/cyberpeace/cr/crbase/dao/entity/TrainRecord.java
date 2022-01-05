@@ -29,7 +29,8 @@ public class TrainRecord implements Serializable {
 
 	private Date endTime;
 
-	// private String roomId;
-	// private String roomName;
+	private String roomId;
+
+	private String roomName;
 
 }

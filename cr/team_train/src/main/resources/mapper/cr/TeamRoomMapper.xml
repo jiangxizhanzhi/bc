@@ -41,12 +41,11 @@
                cr_team_room.copyed_topo_id,
                cr_team_room.training_status,
                cr_team_template.duration_time,
-               local_scene.start_time scene_start_time,
-               local_scene.end_time   scene_end_time,
-               local_scene.scene_status
+               cr_train_record.start_time scene_start_time,
+               cr_train_record.end_time   scene_end_time
         from cr_team_room
                  left join cr_team_template on cr_team_room.team_template_id = cr_team_template.resource_id
-                 left join local_scene on cr_team_room.resource_id = local_scene.business_instance_id
+                 left join cr_train_record on cr_team_room.resource_id = local_scene.room_id
         where cr_team_room.resource_id = #{resourceId}
 
     </select>

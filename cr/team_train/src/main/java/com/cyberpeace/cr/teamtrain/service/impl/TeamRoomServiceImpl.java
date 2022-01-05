@@ -31,10 +31,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
@@ -66,6 +63,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
+
+	@Autowired
+	private TrainRecordService trainRecordService;
 
 	@Autowired
 	private TeamTemplateService teamTemplateService;
@@ -296,9 +296,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		updateById(teamRoom);
 
 		if (teamRoom.isOpening()) {
-			// todo 审计日志
+			trainRecordService.saveRecord(teamRoom.getName(), roomId,
+					UserInfoContext.getUserContext().getUserId(),
+					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+
 		} else if (teamRoom.isEnded()) {
-			// todo 审计日志
+			trainRecordService.updateEndDate(roomId, UserInfoContext.getUserContext().getUserId(),
+					BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 		}
 		return teamRoom.getTrainingStatus();
 

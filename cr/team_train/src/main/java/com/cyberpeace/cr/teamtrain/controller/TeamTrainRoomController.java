@@ -377,8 +377,10 @@ public class TeamTrainRoomController {
 	@PostMapping("/start_end_team")
 	public BaseRsp<Map> changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
 		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
+
 		Map map = Maps.newHashMap();
 		map.put("training_status", status);
+
 		return new BaseRsp<>(map);
 	}
 
@@ -387,8 +389,10 @@ public class TeamTrainRoomController {
 	public BaseRsp<Map> getTrainingStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		Integer status = teamRoomService.getTrainingStatus(resource_id);
+
 		Map map = Maps.newHashMap();
 		map.put("training_status", status);
+
 		return new BaseRsp<>(map);
 	}
 

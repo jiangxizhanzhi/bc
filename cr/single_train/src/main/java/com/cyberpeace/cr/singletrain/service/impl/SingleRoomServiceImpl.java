@@ -127,7 +127,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					localSceneService.save(localScene);
 					room.setLocalSceneId(localScene.getResourceId());
 					save(room);
-					trainRecordService.saveRecord(businessTemplateId, userId,
+					trainRecordService.saveRecord(businessTemplate.getName(), businessTemplateId,
+							userId,
 							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 				}
 			});

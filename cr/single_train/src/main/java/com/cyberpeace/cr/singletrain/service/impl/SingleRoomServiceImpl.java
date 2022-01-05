@@ -535,6 +535,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(),
 				JSONObject.class);
 		JSONArray schemeData = missionScheme.getJSONArray("scheme_data");
+		List<MissionTemplate> missionTemplates = missionService
+				.batchGetByMissionSchemeJson(singleTemplate.getMissionsScheme());
+		Map<String, MissionTemplate> missionTemplateMap = Maps.newHashMap();
+		for (MissionTemplate missionTemplate : missionTemplates) {
+			missionTemplateMap.put(missionTemplate.getResourceId(), missionTemplate);
+		}
 
 		// 生成富文本训练手册
 		StringBuilder writeup = new StringBuilder();
@@ -544,11 +550,15 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			writeup.append("## ").append("阶段").append(i + 1).append(": ")
 					.append(item.getString("stage")).append("\n\n");
 			List<JSONObject> missions = item.getJSONArray("missions").toJavaList(JSONObject.class);
+			List<String> missionTemplateIds = Lists.newArrayList();
+			for (JSONObject mission : missions) {
+				missionTemplateIds.add(mission.getString("resource_id"));
+			}
 			for (int j = 0; j < missions.size(); j++) {
-				JSONObject _mission = missions.get(j);
+				MissionTemplate missionTemplate = missionTemplateMap.get(missionTemplateIds.get(j));
 				writeup.append("#### ").append("任务").append(j + 1).append(": ")
-						.append(_mission.getString("title")).append("\n\n");
-				writeup.append("题解: \n").append(_mission.getString("write_up")).append("\n\n");
+						.append(missionTemplate.getTitle()).append("\n\n");
+				writeup.append("题解: \n").append(missionTemplate.getWriteUp()).append("\n\n");
 			}
 		}
 

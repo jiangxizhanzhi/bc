@@ -28,6 +28,9 @@ public interface MissionService extends IService<Mission> {
 
 	Mission getById(String missionId);
 
+	/**
+	 * 保证顺序与查询时输入的id列表一致
+	 */
 	List<Mission> batchGet(List<String> resourceIds);
 
 	List<Mission> batchGetByRoom(String roomId);

@@ -8,4 +8,6 @@ public interface CacheConstant {
 	String REMOTE_USER = "remote_user";
 
 	String CR_TOOL_CATEGORY = "cr_tool_category";
+
+	String REMOTE_TOPO = "remote_topo";
 }

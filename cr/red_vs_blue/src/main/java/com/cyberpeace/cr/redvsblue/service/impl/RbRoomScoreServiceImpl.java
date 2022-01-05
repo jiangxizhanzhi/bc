@@ -460,8 +460,8 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 			RankData rankData = new RankData();
 
-			rankData.setName(userInfoMap.get(key).getName());
-			rankData.setLogo(userInfoMap.get(key).getAvatarUrl());
+			rankData.setName(userInfoMap.getOrDefault(key, new UserInfo()).getName());
+			rankData.setLogo(userInfoMap.getOrDefault(key, new UserInfo()).getAvatarUrl());
 			rankData.setScore(userCounter.getScore());
 			rankData.setCompletedMission(userCounter.getRemoteMissionIds().size());
 			rankData.setMissionRatio(missionRatio);

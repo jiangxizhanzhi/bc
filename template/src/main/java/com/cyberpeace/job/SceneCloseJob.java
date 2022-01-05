@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SceneCloseJob {
 
-	@Scheduled(fixedRate = 15000)
+//	@Scheduled(fixedRate = 15000)
 	public void invoke() {
 		log.info("SceneCloseJob start");
 

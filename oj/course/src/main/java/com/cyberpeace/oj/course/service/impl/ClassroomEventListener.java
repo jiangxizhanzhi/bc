@@ -1,25 +1,24 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.cyberpeace.common.component.MyWebSocketHandler;
-import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.course.service.bo.ClassroomWsMessageIdentifier;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.MqContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
+import com.cyberpeace.oj.course.service.bo.ClassroomWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.constant.Event;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
@@ -69,7 +68,9 @@ public class ClassroomEventListener extends MessageListener {
 		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC.getCode());
 
 		// 消息推送
-		return pushMessageToWeb(dataObj, ojLocalScene);
+		pushMessageToWeb(dataObj, ojLocalScene);
+
+		return CommonConstant.TRUE;
 	}
 
 	@Override
@@ -77,17 +78,18 @@ public class ClassroomEventListener extends MessageListener {
 
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(businessId);
 
-		// 场景启动完成更新数据库 重新设置code值
-		JSONObject startSceneMessage = ojLocalSceneService.getStartSceneMessage(data, ojLocalScene);
-		if (null != startSceneMessage) {
-			return pushMessageToWeb(startSceneMessage, ojLocalScene);
-		}
-
 		// 推送code更新
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
+		pushMessageToWeb(dataObj, ojLocalScene);
 
-		return pushMessageToWeb(dataObj, ojLocalScene);
+		// 场景启动完成更新数据库 重新设置code值
+		JSONObject startSceneMessage = ojLocalSceneService.getStartSceneMessage(data, ojLocalScene);
+		if (null != startSceneMessage) {
+			pushMessageToWeb(startSceneMessage, ojLocalScene);
+		}
+
+		return CommonConstant.TRUE;
 	}
 
 	@Override
@@ -103,7 +105,9 @@ public class ClassroomEventListener extends MessageListener {
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
 
-		return pushMessageToWeb(dataObj, ojLocalScene);
+		pushMessageToWeb(dataObj, ojLocalScene);
+
+		return CommonConstant.TRUE;
 	}
 
 	/**
@@ -112,12 +116,11 @@ public class ClassroomEventListener extends MessageListener {
 	 * @param ojLocalScene
 	 * @return
 	 */
-	private Boolean pushMessageToWeb(JSONObject data, OjLocalScene ojLocalScene) {
+	private void pushMessageToWeb(JSONObject data, OjLocalScene ojLocalScene) {
 		data.getJSONObject(JsonKeyConstant.DATA).put(JsonKeyConstant.GROUP_ID,
 				ojLocalScene.getResourceId());
 		pushMessageToClassroom(data, ojLocalScene);
 		pushMessageToUser(data, ojLocalScene);
-		return CommonConstant.TRUE;
 	}
 
 	/**

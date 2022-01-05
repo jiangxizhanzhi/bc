@@ -176,6 +176,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			}
 		}
 
+		if (authContext.getIsWeb()) {
+			courseIds = StreamApiUtils.filter(courseIds, courseId -> CollectionUtils.isNotEmpty(
+					courseLessonMapper.selectByCourse(courseId, authContext.getIsWeb())));
+		}
+
 		// 我的课程 系统课程 共享课程过滤
 		SpecialCourseContext specialContext = BeanUtils.copy(courseContext,
 				SpecialCourseContext.class);

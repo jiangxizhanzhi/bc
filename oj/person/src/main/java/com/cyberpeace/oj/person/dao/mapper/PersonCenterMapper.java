@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.dao.entity.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -115,6 +116,12 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
       @Param("endTime") Date endTime,
       @Param("lessonIds") List<String> lessonIds);
 
+  List<NoteEvaluate> selectReportAverageByTime(
+          @Param("userId") String userId,
+          @Param("startTime") Date startTime,
+          @Param("endTime") Date endTime,
+          @Param("lessonIds") List<String> lessonIds);
+
   List<String> selectLessonByAuth(@Param("courseIds") List<String> courseIds);
 
   List<String> selectExpLessonByAuth(@Param("courseIds") List<String> courseIds);
@@ -126,6 +133,4 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
   List<String> selectTheoryPracticeByAuth();
 
   List<ListSchedule> selectSchedules(String userId);
-
-  List<TrainInfo> selectTrainingCount(String userId);
 }

@@ -12,9 +12,12 @@ public class BrokenLine implements Serializable {
   @ApiModelProperty("x轴，统计项")
   private List<String> xNames;
 
-  @ApiModelProperty("y1轴，数值")
+  @ApiModelProperty("y1轴，课程数值")
   private List<Integer> yFirstValues;
 
-  @ApiModelProperty("y2轴，数值")
+  @ApiModelProperty("y2轴，实验报告数值")
   private List<Integer> ySecondValues;
+
+  @ApiModelProperty("y3轴，实验报告平均分数值")
+  private List<Integer> yThirdValues;
 }

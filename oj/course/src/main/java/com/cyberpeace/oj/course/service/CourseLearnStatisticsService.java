@@ -20,7 +20,7 @@ public interface CourseLearnStatisticsService{
 
 	ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String lessonStatisticsListReq, Page page, LessonStatisticsListReq pageReq);
 
-	ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId, String lessonId, Page page);
+	ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId, String lessonId,String usernameLike, Page page);
 
 	/**
 	 * 根据课程编号用户编号查询课程目录

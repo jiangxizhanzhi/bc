@@ -28,7 +28,7 @@ public class AdminLessonStatisticsDetailRes implements Serializable {
     private Date markingTime;
 
     @ApiModelProperty("完成练习")
-    private Integer lessonCount;
+    private Integer practiceCount;
 
     @ApiModelProperty("组织")
     private String organizationName;
@@ -38,5 +38,8 @@ public class AdminLessonStatisticsDetailRes implements Serializable {
 
     @ApiModelProperty("姓名")
     private String createUser;
+
+    @ApiModelProperty("答题记录")
+    private String record;
 
 }

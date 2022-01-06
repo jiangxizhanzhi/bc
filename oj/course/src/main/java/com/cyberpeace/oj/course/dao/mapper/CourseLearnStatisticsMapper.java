@@ -26,7 +26,11 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 
 	IPage<AdminLessonStatisticsRes> listLessonByPage(Page page, @Param("courseId") String courseId, @Param("isPublic") Boolean isPublic, Integer type, String search);
 
-	IPage<AdminLessonStatisticsDetailRes> detailLessonByPage(Page page, @Param("lessonId") String lessonId, @Param("userIds") List<String> userIds);
+	List<AdminLessonStatisticsRes> listLessonPractice(@Param("lessonIds") List<String> lessonIds);
 
-	IPage<AdminLessonStatisticsDetailRes> detailExpLessonByPage(Page page, @Param("lessonId") String lessonId, @Param("userIds") List<String> userIds);
+	IPage<AdminLessonStatisticsDetailRes> listLessonLearnedRecord(Page page, @Param("lessonId") String lessonId);
+
+	List<AdminLessonStatisticsDetailRes> detailLessonByPage(@Param("lessonId") String lessonId, @Param("userIds") List<String> userIds);
+
+	List<AdminLessonStatisticsDetailRes> detailExpLessonByPage(@Param("lessonId") String lessonId, @Param("userIds") List<String> userIds);
 }

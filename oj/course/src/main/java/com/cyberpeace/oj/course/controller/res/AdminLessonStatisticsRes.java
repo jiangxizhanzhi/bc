@@ -30,4 +30,7 @@ public class AdminLessonStatisticsRes implements Serializable {
 
 	@ApiModelProperty("提交报告数")
 	private String finishReportCount;
+
+	@ApiModelProperty("答题记录")
+	private String record;
 }

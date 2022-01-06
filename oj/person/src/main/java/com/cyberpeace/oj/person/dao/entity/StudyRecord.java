@@ -32,4 +32,6 @@ public class StudyRecord implements Serializable {
   private Integer practiceRanking;
 
   private String userId;
+
+  private String record;
 }

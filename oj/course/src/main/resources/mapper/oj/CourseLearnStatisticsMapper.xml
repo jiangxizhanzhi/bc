@@ -32,8 +32,8 @@
         <result property="id" column="id"/>
         <result property="score" column="score"/>
         <result property="reportUpdateTime" column="report_update_time"/>
-        <result property="lessonCount" column="lesson_count"/>
         <result property="markingTime" column="marking_time"/>
+        <result property="record" column="record"/>
     </resultMap>
 
 
@@ -110,8 +110,25 @@
         </if>
     </select>
 
+    <select id="listLessonPractice" resultMap="lessonListMap">
+        select  lesson_id as resource_id, group_concat(record separator '_') as record from oj_lesson_paper_evaluate
+        <if test="lessonIds != null and lessonIds.size() != 0">
+            where oj_lesson_paper_evaluate.lesson_id in
+            <foreach collection="lessonIds" item="lessonId" separator="," open="(" close=")">
+                #{lessonId}
+            </foreach>
+        </if>
+        group by lesson_id
+    </select>
+
+    <select id="listLessonLearnedRecord" resultMap="lessonDetailMap">
+        select user_id as submit_user_id
+        from oj_lesson_record
+        where lesson_id = #{lessonId}
+    </select>
+
     <select id="detailLessonByPage" resultMap="lessonDetailMap">
-    select oj_lesson_paper_evaluate.submit_user_id as submit_user_id from oj_lesson_paper_evaluate
+    select oj_lesson_paper_evaluate.submit_user_id as submit_user_id,record from oj_lesson_paper_evaluate
     where oj_lesson_paper_evaluate.lesson_id = #{lessonId}
         <if test="userIds != null and userIds.size() != 0">
             and oj_lesson_paper_evaluate.submit_user_id in

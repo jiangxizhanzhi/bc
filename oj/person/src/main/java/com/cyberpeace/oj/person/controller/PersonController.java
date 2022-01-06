@@ -114,7 +114,7 @@ public class PersonController {
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
-	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam("user_id")String userId) {
+	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam(value = "user_id", required = false)String userId) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date(System.currentTimeMillis());
 		String endTime = format.format(date);
@@ -149,13 +149,6 @@ public class PersonController {
 		List<ListSchedule> listSchedules = personCommentService.listSchedules(userId, type,
 				authContext);
 		return new BaseRsp<>(listSchedules);
-	}
-
-	@ApiOperation("当前用户训练任务")
-	@GetMapping("/train_statistics")
-	public BaseRsp<TrainInfo> trainingStatistics() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		return personCommentService.trainingStatistics(userId);
 	}
 
 	@ApiOperation("查询收藏习题列表")

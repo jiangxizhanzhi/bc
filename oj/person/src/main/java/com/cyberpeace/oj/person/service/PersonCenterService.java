@@ -62,8 +62,6 @@ public interface PersonCenterService {
 
 	List<ListSchedule> listSchedules(String userId, String type, AuthContext authContext);
 
-	BaseRsp<TrainInfo> trainingStatistics(String userId);
-
 	/**
 	 * 查询收藏的习题信息
 	 * @param userId

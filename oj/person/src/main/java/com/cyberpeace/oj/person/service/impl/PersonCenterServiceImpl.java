@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.person.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,6 +17,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
@@ -150,7 +152,8 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> users = personCenterMapper.selectDistinctUser();
 		if (users.contains(userId)) {
 			StudyRecord practiceRecord = personCenterMapper.selectPracticeByUser(userId, lessonIds);
-			studyRecord.setPracticeFinishCount(practiceRecord.getPracticeFinishCount());
+			int practiceCount = JSONArray.parseArray(practiceRecord.getRecord()).size();
+			studyRecord.setPracticeFinishCount(practiceCount);
 			Integer score = practiceRecord.getScore();
 			Integer practiceRanking = practiceRecord.getPracticeRanking();
 			studyRecord.setPracticeRanking(practiceRanking);
@@ -176,15 +179,19 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 				endTime, lessonIds);
 		List<Note> finishReports = personCenterMapper.selectReportByTime(userId, startTime, endTime,
 				expLessonIds);
+		List<NoteEvaluate> reportScores = personCenterMapper.selectReportAverageByTime(userId, startTime, endTime,
+				expLessonIds);
 		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
 				TimeUtil.getStartOfDay(endTime));
 		Map<String, List<LessonRecord>> courseRecordMap = lessonRecord.stream()
 				.collect(Collectors.groupingBy(course -> TimeUtil.format8(course.getCreateTime())));
 		Map<String, List<Note>> finishReportMap = finishReports.stream().collect(Collectors
 				.groupingBy(finishPractice -> TimeUtil.format8(finishPractice.getCreateTime())));
+		Map<String, List<NoteEvaluate>> reportAverageMap = reportScores.stream().collect(Collectors.groupingBy(score -> TimeUtil.format8(score.getEvaluateTime())));
 		List<String> dates = Lists.newArrayList();
 		List<Integer> courseRecords = Lists.newArrayList();
 		List<Integer> reportRecords = Lists.newArrayList();
+		List<Integer> reportAverageRecords = Lists.newArrayList();
 		for (int i = 0; i < daysBetween; i++) {
 			Date date = TimeUtil.addDates(startTime, i);
 			String currentDate = TimeUtil.format8(date);
@@ -201,12 +208,19 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 			} else {
 				reportRecords.add(finishReportLists.size());
 			}
+			List<NoteEvaluate> reportAverageLists = reportAverageMap.get(currentDate);
+			if (reportAverageLists == null || reportAverageLists.size() == 0) {
+				reportAverageRecords.add(0);
+			} else {
+				reportAverageRecords.add(reportAverageLists.size());
+			}
 		}
 		BaseRsp<BrokenLine> baseRsp = new BaseRsp<>();
 		BrokenLine res = new BrokenLine();
 		res.setXNames(dates);
 		res.setYFirstValues(courseRecords);
 		res.setYSecondValues(reportRecords);
+		res.setYThirdValues(reportAverageRecords);
 		baseRsp.setData(res);
 		return baseRsp;
 	}
@@ -221,16 +235,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<ListSchedule> res = personCenterMapper.selectSchedules(userId);
 		return res;
 
-	}
-
-	@Override
-	public BaseRsp<TrainInfo> trainingStatistics(String userId) {
-		List<TrainInfo> completedList = new ArrayList<>();
-		List<TrainInfo> incompletedList = new ArrayList<>();
-		List<TrainInfo> relationList = new ArrayList<>();
-		List<TrainInfo> trainCounts = personCenterMapper.selectTrainingCount(userId);
-
-		return null;
 	}
 
 	@Override

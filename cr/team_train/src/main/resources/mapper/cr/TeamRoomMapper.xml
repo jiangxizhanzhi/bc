@@ -74,12 +74,11 @@
         local_scene.scene_status,
         (
         CASE
-
-        WHEN cr_rb_room.training_status = 1 THEN
+        WHEN cr_team_room.training_status = 1 THEN
         0
-        WHEN cr_rb_room.training_status = 0 THEN
+        WHEN cr_team_room.training_status = 0 THEN
         1
-        WHEN cr_rb_room.training_status = 2 THEN
+        WHEN cr_team_room.training_status = 2 THEN
         2
         END
         ) order_status

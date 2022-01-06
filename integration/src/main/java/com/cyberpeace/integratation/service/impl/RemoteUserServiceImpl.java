@@ -131,6 +131,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
+	@Cacheable(cacheNames = "getLazyuser", key = "#userPageContext")
 	public List<UserInfo> getLazyUserList(UserPageContext userPageContext) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 

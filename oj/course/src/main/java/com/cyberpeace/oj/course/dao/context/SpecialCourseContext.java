@@ -20,7 +20,7 @@ public class SpecialCourseContext implements Serializable {
 	}
 
 	public Boolean getSystemCourse() {
-		return null == systemCourse ? true : myCourse;
+		return null == systemCourse ? true : systemCourse;
 	}
 
 	public Boolean getShareCourse() {

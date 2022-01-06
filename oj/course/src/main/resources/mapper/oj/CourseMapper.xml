@@ -83,45 +83,29 @@
     <select id="selectSpecial" resultType="java.lang.String">
         select resource_id from oj_course
         <where>
-            <if test="null != courseIds and courseIds.size() > 0">
-                resource_id in
+            <if test="specialContext.myCourse">
+                (resource_id in
                 <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
                     #{courseId}
                 </foreach>
+                and `create_user_id` = #{specialContext.userId})
             </if>
-            <choose>
-                <when test="specialContext.myCourse and specialContext.systemCourse and specialContext.shareCourse">
-                    # 不进行条件过滤
-                </when>
-                <otherwise>
-                    <if test="null != specialContext.myCourse">
-                        <choose>
-                            <when test="specialContext.myCourse">
-                                and `create_user_id` = #{specialContext.userId}
-                            </when>
-                            <otherwise>
-                                and `create_user_id` != #{specialContext.userId}
-                            </otherwise>
-                        </choose>
-                    </if>
-                    <if test="null != specialContext.systemCourse">
-                        and `builtin` = #{specialContext.systemCourse}
-                    </if>
-                    <if test="null != specialContext.shareCourse">
-                        <bind name="likeUser" value="'%' + specialContext.userId + '%'"/>
-                        <choose>
-                            <when test="specialContext.shareCourse">
-                                and (`operation_auth_type` = 1 or (`operation_auth_type` = 2 and `operation_auth_ids` like
-                                #{likeUser}))
-                            </when>
-                            <otherwise>
-                                and (`operation_auth_type` = 2 and `operation_auth_ids` not like
-                                #{likeUser})
-                            </otherwise>
-                        </choose>
-                    </if>
-                </otherwise>
-            </choose>
+            <if test="specialContext.systemCourse">
+                or (resource_id in
+                    <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                        #{courseId}
+                    </foreach>
+                    and `builtin` = #{specialContext.systemCourse})
+            </if>
+            <if test="specialContext.shareCourse">
+                <bind name="likeUser" value="'%' + specialContext.userId + '%'"/>
+                or (resource_id in
+                        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                            #{courseId}
+                        </foreach>
+                    and  (`operation_auth_type` = 1 or (`operation_auth_type` = 2 and `operation_auth_ids` like
+                    #{likeUser})))
+            </if>
         </where>
     </select>
 

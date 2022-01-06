@@ -71,7 +71,18 @@
         cr_team_template.duration_time,
         local_scene.start_time scene_start_time,
         local_scene.destroy_time scene_end_time,
-        local_scene.scene_status
+        local_scene.scene_status,
+        (
+        CASE
+
+        WHEN cr_rb_room.training_status = 1 THEN
+        0
+        WHEN cr_rb_room.training_status = 0 THEN
+        1
+        WHEN cr_rb_room.training_status = 2 THEN
+        2
+        END
+        ) order_status
         from cr_team_room
         left join cr_team_template on cr_team_room.team_template_id = cr_team_template.resource_id
         left join local_scene on cr_team_room.resource_id = local_scene.business_instance_id
@@ -100,12 +111,16 @@
                 and cr_team_room.sub_type = #{listQuery.category}
             </if>
         </where>
+        ORDER BY
+        order_status
     </select>
+
     <select id="selectByLocalSceneId" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">
         select *
         from cr_team_room
         where local_scene_id = #{localSceneId}
     </select>
+
     <select id="getTrainingCount" resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount">
         select
         sum(case when training_status = #{completedStatus} then 1 else 0 end) as completed,
@@ -117,6 +132,7 @@
             #{roomId}
         </foreach>
     </select>
+
     <select id="selectUnfinishedByIds" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">
         select *
         from cr_team_room

@@ -10,7 +10,7 @@
     </delete>
 
     <select id="selectCrRoleByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
-    select resource_id,
+        select resource_id,
         `name`,
         room_id,
         description,
@@ -87,21 +87,24 @@
     </select>
     <select id="selectCrRoleByRoomIdAndRoleId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
         select resource_id,
-               `name`,
-               room_id,
-               description,
-               role_group,
-               nodes,
-               user_ids,
-               exercise_paper,
-               parent_resource_id,
-               mission_scheme,
-               business_type
+        `name`,
+        room_id,
+        description,
+        role_group,
+        nodes,
+        user_ids,
+        exercise_paper,
+        parent_resource_id,
+        mission_scheme,
+        business_type
         from cr_role
         where room_id = #{roomId}
-          and (role_group = #{roleId}
-            or resource_id = #{roleId}
-            )
+        and (role_group = #{roleId}
+        or resource_id = #{roleId}
+        <if test="roleId == 4 or roleId == 5">
+            or role_group in (1,2,3)
+        </if>
+        )
     </select>
 
 

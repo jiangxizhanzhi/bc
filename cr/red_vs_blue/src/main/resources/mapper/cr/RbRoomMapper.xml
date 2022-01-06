@@ -60,7 +60,22 @@
         cr_rb_template.duration_time,
         local_scene.start_time scene_start_time,
         local_scene.end_time scene_end_time,
-        local_scene.scene_status
+        local_scene.scene_status,
+        (
+        CASE
+
+        WHEN cr_rb_room.training_status = 4 THEN
+        2
+        WHEN cr_rb_room.training_status = 2 THEN
+        1
+        WHEN cr_rb_room.training_status = 1 THEN
+        1
+        WHEN cr_rb_room.training_status = 3 THEN
+        1
+        WHEN cr_rb_room.training_status = 0 THEN
+        3
+        END
+        ) order_status
         from cr_rb_room
         left join cr_rb_template on cr_rb_room.template_id = cr_rb_template.resource_id
         left join local_scene on cr_rb_room.resource_id = local_scene.business_instance_id
@@ -89,7 +104,10 @@
                 and cr_rb_room.sub_type = #{listQuery.category}
             </if>
         </where>
+        ORDER BY
+        order_status
     </select>
+
     <select id="getTrainingCount"
             resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount">
         select

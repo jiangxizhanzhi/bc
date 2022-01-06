@@ -64,8 +64,8 @@
         count(if(T3.id, TRUE ,NULL )) as finish_practice_count
         from oj_paper T1
         left join oj_course_lesson T2 on T1.resource_id = T2.paper_id
-        left join oj_lesson_paper_evaluate T3 on T2.resource_id = T3.lesson_id
-        where T3.submit_user_id = #{user_id} and T1.type = #{paper_type} and T1.resource_id in (select paper_id from oj_course_lesson);
+        left join oj_lesson_paper_evaluate T3 on T2.resource_id = T3.lesson_id and T3.submit_user_id = #{user_id}
+        where T1.type = #{paper_type} and T1.practice_count > 0 and T1.resource_id in (select paper_id from oj_course_lesson);
     </select>
 
     <select id="learnCourseStats" resultType="com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CourseBo">

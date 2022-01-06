@@ -14,7 +14,7 @@ public class PersonalStatsDetail4CourseBo implements Serializable {
     private String name;
 
     @ApiModelProperty("难度")
-    private String difficulty;
+    private Integer difficulty;
 
     @ApiModelProperty("方向名称")
     private String directionName;

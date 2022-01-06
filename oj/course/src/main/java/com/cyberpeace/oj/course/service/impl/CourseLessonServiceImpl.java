@@ -209,9 +209,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				ClassroomGroupInfo groupInfo = classroomGroupInfoService
 						.selectByLessonAndUser(lessonId, authContext);
 				if (null != groupInfo) {
-					infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
 					// 存在课堂场景 则设置group_id用于前端简历websocket
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
+					if (null != ojLocalScene) {
+						infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
+						infoBo.setGroupId(groupInfo.getResourceId());
+					}
 				}
 			}
 

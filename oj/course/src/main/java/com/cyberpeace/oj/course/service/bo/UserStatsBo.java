@@ -25,7 +25,7 @@ public class UserStatsBo implements Serializable {
     private String organization_data;
 
     @ApiModelProperty("用户角色")
-    private List<String> role;
+    private List<JSONObject> roles;
 
     @ApiModelProperty("完成课时数量")
     private Integer lessonRecordCount = 0;

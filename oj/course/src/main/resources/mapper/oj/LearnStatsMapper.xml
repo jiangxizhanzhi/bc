@@ -61,11 +61,15 @@
 
     <select id="userStatsSelect" resultType="com.cyberpeace.oj.course.service.bo.UserStatsBo">
         select
-               L1.user_id as resource_id, count(L1.lesson_id) as lesson_record_count,
-               count(L2.id) as finish_report_count, avg(L3.score) as report_average
+               L1.user_id as resource_id,
+               count(L1.lesson_id) as lesson_record_count,
+               count(L2.id) as finish_report_count,
+               avg(L3.score) as report_average,
+               count(L4.id) as finish_practice_count
         from oj_lesson_record L1
-        left join oj_note L2 on L2.note_type = #{report_code} and L1.user_id = L2.user_id
+        left join oj_note L2 on L2.note_type = #{report_code} and L1.user_id = L2.user_id and L1.lesson_id = L2.business_id
         left join oj_note_evaluate L3 on L2.resource_id = L3.note_id
+        left join oj_lesson_paper_evaluate L4 on L1.lesson_id = L4.lesson_id and L1.user_id = L4.submit_user_id
         <where>
             L1.user_id in <foreach collection="user_ids" item="user_id" open="(" close=")" separator=",">#{user_id}</foreach>
         </where>

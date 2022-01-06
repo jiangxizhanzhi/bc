@@ -35,8 +35,8 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
 		UserInfo userInfo = UserInfoContext.getUserContext();
 
-		// 设置角色
-		simpleAuthorizationInfo.addRoles(userInfo.getRoles());
+		// 设置角色 todo roles非string
+		// simpleAuthorizationInfo.addRoles(userInfo.getRoles());
 
 		// 默认不设置权限
 		simpleAuthorizationInfo.addStringPermissions(Lists.newArrayList());

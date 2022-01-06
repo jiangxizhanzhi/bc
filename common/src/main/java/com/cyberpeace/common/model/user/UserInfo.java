@@ -3,6 +3,7 @@ package com.cyberpeace.common.model.user;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 
 import lombok.Data;
@@ -43,7 +44,7 @@ public class UserInfo implements Serializable {
     /**
      * 用户角色(用来做权限校验，和rtks的岗位角色不相关)
      */
-    private List<String> roles = Lists.newArrayList();
+    private List<JSONObject> roles = Lists.newArrayList();
 
     private String positionId;
 

@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -100,7 +98,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
             userStatsBo.setUsername(item.getUserName());
             userStatsBo.setName(item.getName());
             userStatsBo.setOrganization_data(item.getOrganizationData());
-            userStatsBo.setRole(item.getRoles());
+            userStatsBo.setRoles(item.getRoles());
 
             userStatsBos.add(userStatsBo);
         });

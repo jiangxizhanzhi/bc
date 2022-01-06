@@ -10,6 +10,8 @@
         select * from oj_classroom
         where lesson_id = #{lessonId}
         and organization_ids like #{org}
+        order by id desc
+        limit 0, 1
     </select>
 
     <select id="selectList" resultMap="base">

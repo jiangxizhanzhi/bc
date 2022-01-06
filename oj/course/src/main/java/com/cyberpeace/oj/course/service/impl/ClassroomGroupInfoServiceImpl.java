@@ -81,9 +81,6 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
-	@Autowired
-	private ClassroomSceneService classroomSceneService;
-
 	@Override
 	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext) {
 		if (authContext.getIsWeb()) {

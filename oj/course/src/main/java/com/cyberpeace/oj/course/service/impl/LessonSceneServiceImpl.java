@@ -83,6 +83,12 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private ClassroomMapper classroomMapper;
+
+	@Autowired
+	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
 
@@ -230,6 +236,17 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		if (null == courseLesson) {
 			log.error("Lesson not found! lesson_id=[{}]", lessonId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 优先查询组数据场景
+		ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId,
+				authContext);
+		if (groupInfo != null) {
+			OjLocalScene ojLocalScene = ojLocalSceneMapper
+					.selectGroupScene(groupInfo.getResourceId());
+			if (null != ojLocalScene) {
+				return ojLocalScene;
+			}
 		}
 
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,

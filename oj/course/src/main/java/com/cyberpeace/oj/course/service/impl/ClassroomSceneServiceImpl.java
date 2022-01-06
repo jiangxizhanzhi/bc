@@ -1,16 +1,13 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -23,9 +20,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.*;
@@ -43,14 +42,17 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+import com.cyberpeace.oj.course.service.bo.GroupWsMessageIdentifier;
 import com.cyberpeace.oj.course.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.course.service.bo.SimpleUserData;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -162,7 +164,28 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 		// 给前台课程websocket推送删除消息 重新加载课程场景
 		toLessonSocketMessage(groupInfo.getGroupUserIds(), courseLesson, OjEvent.SCENE_DELETE_SYNC);
+		toGroupSocketMessage(groupId, OjEvent.SCENE_DELETE_SYNC);
 		return CommonConstant.TRUE;
+	}
+
+	/**
+	 * 给课堂组用户推送消息
+	 * @param groupId
+	 * @param ojEvent
+	 */
+	private void toGroupSocketMessage(String groupId, OjEvent ojEvent) {
+
+		GroupWsMessageIdentifier identifier = new GroupWsMessageIdentifier();
+		identifier.setGroupId(groupId);
+		identifier.setPath(WsPath.CLASSROOM_GROUP_SCENE);
+
+		JSONObject data = new JSONObject();
+		data.put(JsonKeyConstant.CODE, ojEvent.getCode());
+		data.put(JsonKeyConstant.DATA, "");
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().data(data).messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
 	@Override

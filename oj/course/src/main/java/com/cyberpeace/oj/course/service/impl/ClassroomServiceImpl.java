@@ -11,6 +11,7 @@ import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
+import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -26,6 +27,7 @@ import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,28 +97,87 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	@Autowired
+	private ClassroomGroupInfoService classroomGroupInfoService;
+
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
 
 		// 数据校验
-		validateClassroomOperation(classroom, authContext);
-		// 组织下是否存在用户 todo
+		Course course = courseMapper.selectById(classroom.getCourseId());
+		if (null == course) {
+			log.error("Course not found! course=[{}]", classroom.getCourseId());
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		CourseLesson courseLesson = validateLesson(classroom.getLessonId());
 
-		// 数据新增
+		// 课堂基本数据获取
+		List<String> orgIds = remoteOrganizationService.childrenList(classroom.getOrganizationId(),
+				true);
+		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 		classroom.setResourceId(IDGeneratorUtil.getID());
-		classroomMapper.insert(classroom);
 
-		// 生成分组数据 todo
+		List<String> userIds = Lists.newArrayList();
+		for (String orgId : orgIds) {
+			List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId);
+			List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
+			userIds.addAll(orgUserIds);
+		}
+
+		// 分组数据
+		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
+				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
+
+		// 如果课程无访问权限 把组织数据加入
+		authContext.setIsWeb(CommonConstant.TRUE);
+		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
+		if (!authCourseIds.contains(classroom.getCourseId())) {
+			if (StringUtils.isNotBlank(course.getReadAuthIds())) {
+				List<String> authOrgIds = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
+						String.class);
+				orgIds.addAll(authOrgIds);
+				List<String> distinctList = StreamApiUtils.distinct(authOrgIds);
+				course.setReadAuthIds(JsonUtil.arrayToString(distinctList));
+			}
+		}
+
 		// 公告发布 todo
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				classroomMapper.insert(classroom);
+				classroomGroupInfoService.saveBatch(groupInfoList);
+				courseMapper.updateById(course);
+			}
+		});
 		return classroom;
 	}
 
 	@Override
 	public Integer updateClassroom(Classroom classroom, AuthContext authContext) {
+
+		boolean enableChange = CommonConstant.TRUE;
+
+		// 组织数据获取
+		List<String> orgIds = remoteOrganizationService.childrenList(classroom.getOrganizationId(),
+				true);
+		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 		int result = classroomMapper.updateById(classroom);
 
 		// 重新生成分组 课时改变 组织改变 理论课变为实验课 todo
 		return result;
+	}
+
+	/**
+	 * 校验数据课堂表数据是否可以改变
+	 * @param classroom
+	 * @return
+	 */
+	private Boolean validateChangeClassroom(Classroom classroom) {
+
+		return true;
 	}
 
 	@Override
@@ -182,7 +243,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public List<ClassroomReportBo> selectClassroomReport(String classroomId) {
 		// 基本数据校验
 		Classroom classroom = validateRoom(classroomId);
-		CourseLesson courseLesson = validateLesson(classroom);
+		CourseLesson courseLesson = validateLesson(classroom.getLessonId());
 
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
 		Map<String, String> orgMap = remoteOrganizationService
@@ -197,7 +258,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 基本数据校验
 		Classroom classroom = validateRoom(classroomId);
-		CourseLesson courseLesson = validateLesson(classroom);
+		CourseLesson courseLesson = validateLesson(classroom.getLessonId());
 
 		// 查询组织用户
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
@@ -541,15 +602,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 课程数据校验
-	 *
-	 * @param classroom
+	 * @param lessonId
 	 * @return
 	 */
-	private CourseLesson validateLesson(Classroom classroom) {
+	private CourseLesson validateLesson(String lessonId) {
 
-		CourseLesson courseLesson = courseLessonMapper.selectById(classroom.getLessonId());
+		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
-			log.error("CourseLesson not found! lesson_id=[{}]", classroom.getLessonId());
+			log.error("CourseLesson not found! lesson_id=[{}]", lessonId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -558,20 +618,24 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 校验操作权限 课程课时
-	 * @param classroom
+	 * @param courseId
 	 */
-	private void validateClassroomOperation(Classroom classroom, AuthContext authContext) {
+	private Course validateCourse(String courseId, AuthContext authContext) {
 		// 课时数据校验
 		List<String> enableCourseIds = courseMapper.selectByAuth(authContext);
 
-		if (CollectionUtils.isEmpty(enableCourseIds)
-				|| !enableCourseIds.contains(classroom.getCourseId())) {
-			log.error("Course not permission! course_id=[{}]", classroom.getCourseId());
+		if (CollectionUtils.isEmpty(enableCourseIds) || !enableCourseIds.contains(courseId)) {
+			log.error("Course not permission! course_id=[{}]", courseId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
-		// 课时数据校验
-		validateLesson(classroom);
+		Course course = courseMapper.selectById(courseId);
+		if (null == course) {
+			log.error("Course not found! course_id=[{}]", courseId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		return course;
 	}
 
 }

@@ -5,6 +5,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.service.bo.ClassroomGroupArchiveBo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 
@@ -92,4 +93,15 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @return
 	 */
 	Boolean moveGroupUser(String classroomId, String fromGroupId, String toGroupId, String userId);
+
+	/**
+	 * 初始化分组数据
+	 * @param classroomId
+	 * @param courseLesson
+	 * @param userIds
+	 * @param groupNo
+	 * @return
+	 */
+	List<ClassroomGroupInfo> initClassroomGroupInfo(String classroomId, CourseLesson courseLesson,
+			List<String> userIds, Integer groupNo);
 }

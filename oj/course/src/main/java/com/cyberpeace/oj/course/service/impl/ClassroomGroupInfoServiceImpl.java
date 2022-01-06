@@ -418,6 +418,37 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	}
 
 	/**
+	 * 初始化用户分组信息
+	 * @param classroomId
+	 * @param courseLesson
+	 * @param userIds
+	 * @param groupNo
+	 * @return
+	 */
+	@Override
+	public List<ClassroomGroupInfo> initClassroomGroupInfo(String classroomId,
+														   CourseLesson courseLesson, List<String> userIds, Integer groupNo) {
+
+		List<ClassroomGroupInfo> groupInfos = Lists.newArrayList();
+
+		// 数据初始化
+		for (String userId : userIds) {
+			ClassroomGroupInfo groupInfo = new ClassroomGroupInfo();
+			groupInfo.setResourceId(IDGeneratorUtil.getID());
+			groupInfo.setGroupNo(groupNo++);
+			groupInfo.setClassroomId(classroomId);
+			groupInfo.setGroupUserIds(JsonUtil.arrayToString(Arrays.asList(userId)));
+			groupInfo.setDestroyDelay(courseLesson.getDestroyDelay());
+			groupInfo.setSceneShareMode(SceneShare.GROUP.getCode());
+			groupInfo.setLessonId(courseLesson.getResourceId());
+			groupInfo.setTopoId(courseLesson.getTopoId());
+			groupInfos.add(groupInfo);
+		}
+
+		return groupInfos;
+	}
+
+	/**
 	 * 校验场景是否存在
 	 * @param groupInfos
 	 */
@@ -517,35 +548,6 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		return updateGroup;
 	}
 
-	/**
-	 * 初始化用户分组信息
-	 * @param classroomId
-	 * @param courseLesson
-	 * @param userIds
-	 * @param groupNo
-	 * @return
-	 */
-	private List<ClassroomGroupInfo> initClassroomGroupInfo(String classroomId,
-			CourseLesson courseLesson, List<String> userIds, Integer groupNo) {
-
-		List<ClassroomGroupInfo> groupInfos = Lists.newArrayList();
-
-		// 数据初始化
-		for (String userId : userIds) {
-			ClassroomGroupInfo groupInfo = new ClassroomGroupInfo();
-			groupInfo.setResourceId(IDGeneratorUtil.getID());
-			groupInfo.setGroupNo(groupNo++);
-			groupInfo.setClassroomId(classroomId);
-			groupInfo.setGroupUserIds(JsonUtil.arrayToString(Arrays.asList(userId)));
-			groupInfo.setDestroyDelay(courseLesson.getDestroyDelay());
-			groupInfo.setSceneShareMode(SceneShare.GROUP.getCode());
-			groupInfo.setLessonId(courseLesson.getResourceId());
-			groupInfo.setTopoId(courseLesson.getTopoId());
-			groupInfos.add(groupInfo);
-		}
-
-		return groupInfos;
-	}
 
 	/**
 	 * 课堂数据校验

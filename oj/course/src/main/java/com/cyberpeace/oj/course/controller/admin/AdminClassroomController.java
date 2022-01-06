@@ -47,9 +47,6 @@ public class AdminClassroomController {
 	private ClassroomService classroomService;
 
 	@Autowired
-	private ClassroomMapper classroomMapper;
-
-	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
 	@ApiOperation("后台课程表查询")
@@ -88,13 +85,8 @@ public class AdminClassroomController {
 	public BaseRsp
 			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
 
-		// 组织数据获取
-		List<String> orgIds = remoteOrganizationService
-				.childrenList(classroomReq.getOrganizationId(), true);
-
 		// 基本数据设置
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
-		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 		classroom.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -109,14 +101,9 @@ public class AdminClassroomController {
 	@PatchMapping("")
 	public BaseRsp<Integer>
 			updateClassRoom(@RequestBody @Validated(Update.class) ClassroomReq classroomReq) {
-		// 组织数据获取
-		List<String> orgIds = remoteOrganizationService
-				.childrenList(classroomReq.getOrganizationId(), true);
 
 		// 基本数据设置
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
-		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
-
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		Integer result = classroomService.updateClassroom(classroom, authContext);

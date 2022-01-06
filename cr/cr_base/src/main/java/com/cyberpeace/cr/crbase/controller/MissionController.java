@@ -127,8 +127,9 @@ public class MissionController {
 			return CommonConstant.EMPTY_LIST_JSON;
 		}
 		String imagePath = AttachmentPath.UPLOAD_IMAGE.getOriginDesc();
-		String regex = String.format("!\\[[^]]*]\\(.*%s([0-9a-z]{%d})\\.(?:jpg|jpeg|png|bmp|webp|gif)\\)",
-				imagePath, CrCommonConstants.GENERATED_UUID_LENGTH);
+		String regex = String.format(
+				"!\\[[^]]*]\\(.*%s([0-9a-z]{%d})\\.(?:jpg|jpeg|png|bmp|webp|gif)\\)", imagePath,
+				CrCommonConstants.GENERATED_UUID_LENGTH);
 		List<String> imageIds = LocalStringUtil.getMatchStr(writeup, regex, 1);
 
 		return JsonUtil.arrayToString(imageIds);
@@ -178,6 +179,7 @@ public class MissionController {
 	@PostMapping("/combat_techs")
 	public BaseRsp<?>
 			createSchemeTemplate(@RequestBody @Validated MissionSchemeTemplateReq templateReq) {
+		templateReq.validate();
 		MissionSchemeTemplate schemeTemplate = requestToSchemeTemplate(templateReq);
 		missionService.addSchemeTemplate(schemeTemplate);
 		return new BaseRsp<>();
@@ -206,6 +208,9 @@ public class MissionController {
 	@PutMapping("/combat_techs")
 	public BaseRsp<?> editSchemeTemplate(
 			@RequestBody @Validated MissionSchemeTemplateModifyReq templateModifyReq) {
+		if (templateModifyReq.getCombatConfig() != null) {
+			templateModifyReq.validate();
+		}
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
 

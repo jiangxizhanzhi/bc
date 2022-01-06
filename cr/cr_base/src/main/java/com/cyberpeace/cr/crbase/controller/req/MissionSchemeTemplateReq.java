@@ -5,7 +5,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
+import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -29,4 +32,14 @@ public class MissionSchemeTemplateReq implements Serializable {
 	@Valid
 	private List<MissionSchemeStage> combatConfig;
 
+	public void validate() {
+		List<String> stageNames = Lists.newArrayList();
+		for (MissionSchemeStage schemeStage : combatConfig) {
+			schemeStage.validate();
+			stageNames.add(schemeStage.getStage());
+		}
+		// 校验阶段重名
+		CrCommonValidator.checkStringListDuplicate(stageNames,
+				CrBusinessErrorCode.DUPLICATED_STAGE_NAME);
+	}
 }

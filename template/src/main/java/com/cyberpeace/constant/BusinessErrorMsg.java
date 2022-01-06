@@ -59,6 +59,11 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.ALREADY_PAUSED, "已暂停状态不能执行暂停操作");
 			put(CrBusinessErrorCode.NOT_PAUSED, "非暂停状态不能执行恢复操作");
 
+			put(CrBusinessErrorCode.INVALID_STAGE_NAME, "不合法的阶段名称长度");
+			put(CrBusinessErrorCode.INVALID_MISSION_NAME, "不合法的任务名称长度");
+			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "阶段名称重复");
+			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME, "阶段内任务重名");
+
 		}
 	};
 
@@ -114,6 +119,12 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.ALREADY_PAUSED, "Scene is already paused.");
 			put(CrBusinessErrorCode.NOT_PAUSED, "Scene is not paused");
+
+			put(CrBusinessErrorCode.INVALID_STAGE_NAME, "Invalid stage name.");
+			put(CrBusinessErrorCode.INVALID_MISSION_NAME, "Invalid mission name.");
+			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "Duplicated stage names.");
+			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME,
+					"Duplicated mission names in one stage.");
 
 		}
 	};

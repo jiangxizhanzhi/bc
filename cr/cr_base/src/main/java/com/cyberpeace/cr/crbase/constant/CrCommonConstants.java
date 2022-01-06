@@ -22,4 +22,12 @@ public interface CrCommonConstants {
 	String TOPO_DATA_KEY = "scene_config";
 
 	Integer STUDENT_ROLE = 1;
+
+	int MIN_STAGE_NAME_LEN = 4;
+
+	int MAX_STAGE_NAME_LEN = 20;
+
+	int MIN_MISSION_NAME_LEN = 1;
+
+	int MAX_MISSION_NAME_LEN = 255;
 }

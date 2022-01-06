@@ -117,4 +117,17 @@ public interface CrBusinessErrorCode {
 
 	// 停止流量失败
 	String STOP_FLOW_FAILURE = "101036";
+
+	// 非法的阶段名长度
+	String INVALID_STAGE_NAME = "101037";
+
+	// 非法的任务名称长度
+	String INVALID_MISSION_NAME = "101038";
+
+	// 任务方案阶段名称重复
+	String DUPLICATED_STAGE_NAME = "101039";
+
+	// 阶段内任务名称重复
+	String DUPLICATED_MISSION_NAME = "101040";
+
 }

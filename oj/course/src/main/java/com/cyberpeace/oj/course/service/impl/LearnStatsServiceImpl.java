@@ -40,6 +40,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
     public ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization) {
         JSONObject result = remoteUserService.getList(page.getCurrent(), page.getSize(), pattern, organization);
         List<UserInfo> userInfos = result.getJSONArray("list").toJavaList(UserInfo.class);
+        if (userInfos.isEmpty()) {
+            return new ListRsp<>();
+        }
 
         List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
         Map<String, UserStatsBo> userStatsMap = learnStatsMapper.userStatsSelect(
@@ -73,7 +76,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
     @Override
     public UserStatsRankBo getUserLearnRank() {
-        List<UserInfo> userInfos = remoteUserService.getList();
+        List<UserInfo> userInfos  = remoteUserService.getList(
+                null, 0L, null, null
+        ).getJSONArray("list").toJavaList(UserInfo.class);
+
         List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
         Map<String, String> usernameMap = userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getUserName));
 

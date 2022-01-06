@@ -282,28 +282,26 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		sceneData.put(JsonKeyConstant.REFERENCE_TYPE, localScene.getBusinessCode());
 		sceneData.put(JsonKeyConstant.SCENE_STATUS, localScene.getSceneStatus());
 
-		// 设置场景共享类型与倒计时
-		if (localScene.getBusinessCode().intValue() == LocalScene.BusinessCode.CLASSROOM
-				.getCode()) {
+		// 设置场景共享类型
+		Integer share = localScene.getBusinessCode().intValue() == LocalScene.BusinessCode.CLASSROOM
+				.getCode() ? SceneShare.GROUP.getCode()
+						: ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
+								: SceneShare.PRIVATE.getCode();
+		sceneData.put(JsonKeyConstant.SCENE_SHARE_MODE, share);
 
-			// 课堂不需要倒计时
-			sceneData.put(JsonKeyConstant.SCENE_SHARE_MODE, SceneShare.GROUP.getCode());
-		} else {
-			sceneData.put(JsonKeyConstant.SCENE_SHARE_MODE,
-					ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
-							: SceneShare.PRIVATE.getCode());
 
-			if (null == localScene.getStartTime() || null == localScene.getEndTime()) {
-				return sceneData;
-			}
-
-			long remain = localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE
-					.getCode().intValue() && null != localScene.getPauseTime()
-							? TimeUtil.getIntervalSeconds(localScene.getPauseTime(),
-									localScene.getEndTime())
-							: TimeUtil.getIntervalSeconds(new Date(), localScene.getEndTime());
-			sceneData.put(JsonKeyConstant.REMAIN_TIME, remain);
+		// 开始时间和结束时间
+		if (null == localScene.getStartTime() || null == localScene.getEndTime()
+				|| null == localScene.getSceneTtl()) {
+			return sceneData;
 		}
+
+		long remain = localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE
+				.getCode().intValue() && null != localScene.getPauseTime()
+						? TimeUtil.getIntervalSeconds(localScene.getPauseTime(),
+								localScene.getEndTime())
+						: TimeUtil.getIntervalSeconds(new Date(), localScene.getEndTime());
+		sceneData.put(JsonKeyConstant.REMAIN_TIME, remain);
 
 		return sceneData;
 	}

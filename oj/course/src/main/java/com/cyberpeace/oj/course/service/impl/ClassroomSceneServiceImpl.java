@@ -344,7 +344,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 			OjEvent ojEvent) {
 
 		List<String> userIds = JsonUtil.toJsonObjectArray(groupUserIds, String.class);
-		boolean shared = courseLesson.getSceneShareMode().intValue() == SceneShare.SHARED.getCode();
+		Boolean shared = courseLesson.getSceneShareMode().intValue() == SceneShare.SHARED.getCode();
 
 		List<WebSocketMessageContext> messageContexts = getMessageContext(userIds, courseLesson,
 				shared, ojEvent);
@@ -357,23 +357,23 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	 * 课堂场景操作同步
 	 * @param userIds
 	 * @param lesson
-	 * @param shared
+	 * @param sceneShare
 	 * @param ojEvent
 	 * @return
 	 */
 	private List<WebSocketMessageContext> getMessageContext(List<String> userIds,
-			CourseLesson lesson, boolean shared, OjEvent ojEvent) {
+			CourseLesson lesson, Boolean sceneShare, OjEvent ojEvent) {
 
 		// 推送数据组装
 		JSONObject data = new JSONObject();
 		data.put(JsonKeyConstant.CODE, ojEvent.getCode());
 		data.put(JsonKeyConstant.DATA, "");
 
-		if (shared) {
+		if (sceneShare) {
 			// 共享消息数据
 			LessonWsMessageIdentifier messageIdentifier = LessonWsMessageIdentifier.builder()
 					.lessonId(lesson.getResourceId()).fromWeb(CommonConstant.TRUE)
-					.shared(lesson.getSceneShareMode()).build();
+					.shared(sceneShare).build();
 			messageIdentifier.setPath(WsPath.LESSON_SCENE);
 
 			WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
@@ -386,7 +386,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 			return StreamApiUtils.map(userIds, userId -> {
 				LessonWsMessageIdentifier messageIdentifier = LessonWsMessageIdentifier.builder()
 						.lessonId(lesson.getResourceId()).fromWeb(CommonConstant.TRUE)
-						.shared(lesson.getSceneShareMode()).build();
+						.shared(sceneShare).build();
 				messageIdentifier.setUserId(userId);
 				messageIdentifier.setPath(WsPath.LESSON_SCENE);
 

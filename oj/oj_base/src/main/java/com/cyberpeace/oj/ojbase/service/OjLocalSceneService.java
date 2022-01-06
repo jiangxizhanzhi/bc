@@ -64,4 +64,6 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 * @return
 	 */
 	JSONObject getSceneData(OjLocalScene ojLocalScene);
+
+
 }

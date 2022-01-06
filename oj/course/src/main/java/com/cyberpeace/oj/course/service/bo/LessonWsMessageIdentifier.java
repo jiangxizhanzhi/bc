@@ -14,7 +14,7 @@ public class LessonWsMessageIdentifier extends WsMessageIdentifier {
 
 	private String lessonId;
 
-	private Integer shared;
+	private Boolean shared;
 
 	private Boolean fromWeb;
 

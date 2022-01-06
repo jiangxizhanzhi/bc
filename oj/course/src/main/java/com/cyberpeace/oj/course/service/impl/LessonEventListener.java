@@ -98,8 +98,7 @@ public class LessonEventListener extends MessageListener {
 
 		LessonWsMessageIdentifier identifier = new LessonWsMessageIdentifier();
 		identifier.setFromWeb(ojLocalScene.getFromWeb());
-		identifier.setShared(ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
-				: SceneShare.PRIVATE.getCode());
+		identifier.setShared(ojLocalScene.getShared());
 		identifier.setLessonId(ojLocalScene.getBusinessId());
 		identifier.setPath(WsPath.LESSON_SCENE);
 		identifier.setUserId(ojLocalScene.getUserId());

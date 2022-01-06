@@ -48,6 +48,7 @@ import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
+import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
@@ -244,6 +245,27 @@ public class RbRoomController {
 		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
 
 		DashboardInfo data = rbRoomService.getDashboardInfo(crRole, resource_id, userId);
+
+		return new BaseRsp(data);
+	}
+
+	/**
+	 * 查询团队训练学员用户列表
+	 * @return
+	 */
+	@ApiOperation("获取群组成员列表")
+	@GetMapping("/members_info")
+	public BaseRsp<DashboardInfo> getMembersInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "id", value = "角色id", required = true) String id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+
+		if (id.contains("_")) {
+			String[] strings = id.split("_");
+			id = strings[strings.length - 1];
+		}
+		List<DashboardUser> data = rbRoomService.getMembersInfo(id, resource_id);
 
 		return new BaseRsp(data);
 	}

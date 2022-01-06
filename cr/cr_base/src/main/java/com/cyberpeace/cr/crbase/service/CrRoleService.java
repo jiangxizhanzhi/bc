@@ -94,4 +94,6 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @return
 	 */
 	Boolean clearRoomRoles(String roomId);
+
+	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
 }

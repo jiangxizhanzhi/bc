@@ -310,4 +310,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	public Boolean clearRoomRoles(String roomId) {
 		return crRoleMapper.batchDeleteByRoomId(roomId);
 	}
+
+	@Override
+	public List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId) {
+		return crRoleMapper.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
+	}
 }

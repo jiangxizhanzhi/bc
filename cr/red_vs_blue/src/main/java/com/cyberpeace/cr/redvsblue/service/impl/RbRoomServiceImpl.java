@@ -191,6 +191,48 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
+	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
+		List<DashboardUser> friend = Lists.newArrayList();
+		List<String> userIds = Lists.newArrayList();
+
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
+
+		for (CrRole crRole : crRoles) {
+
+			// 获取所有用户
+			List<String> roleUserIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(),
+					String.class);
+			userIds.addAll(roleUserIds);
+
+			for (String userId : roleUserIds) {
+				DashboardUser dashboardUser = new DashboardUser();
+				dashboardUser.setId(userId);
+				dashboardUser.setStatus("online");
+				dashboardUser.setSign("");
+				dashboardUser.setUsername(getFullRoleName(crRole));
+
+				friend.add(dashboardUser);
+
+			}
+
+		}
+
+		// 获取全部用户
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
+		Map<String, UserInfo> userInfoMap = userInfoList.stream()
+				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
+
+		for (DashboardUser dashboardUser : friend) {
+			UserInfo userInfo = userInfoMap.getOrDefault(dashboardUser.getId(), new UserInfo());
+			dashboardUser.setRole(userInfo.getUserName());
+			dashboardUser.setAvatar(userInfo.getAvatarUrl());
+			dashboardUser.setUsername(userInfo.getUserName() + "/" + dashboardUser.getUsername());
+		}
+
+		return friend;
+	}
+
+	@Override
 	public DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId) {
 
 		DashboardInfo dashboardInfo = new DashboardInfo();
@@ -255,7 +297,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		redGroup.setMembers(redMembers);
 		redGroup.setId(roomId + "_" + CrRole.RbRoleGroupCode.RED.getCode().toString());
 		blueGroup.setMembers(blueMembers);
-		blueGroup.setId(roomId  + "_" + CrRole.RbRoleGroupCode.BLUE.getCode().toString());
+		blueGroup.setId(roomId + "_" + CrRole.RbRoleGroupCode.BLUE.getCode().toString());
 
 		// 自己不是红方，放入蓝方
 		if (!CrRole.RbRoleGroupCode.RED.getCode().equals(myRole.getRoleGroup())) {
@@ -275,6 +317,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			selfGroup.setId(myRole.getResourceId());
 			selfGroup.setMembers(JsonUtil.toJsonObjectArray(myRole.getUserIds(), String.class));
 
+			groups.add(selfGroup);
 		}
 		// 获取全部用户
 		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);

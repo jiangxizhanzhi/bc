@@ -12,6 +12,7 @@ import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
+import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
 
 public interface RbRoomService extends IService<RbRoom> {
 
@@ -70,4 +71,6 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @param userId
 	 */
 	void checkTeacherPermission(String roomId, String userId);
+
+	List<DashboardUser> getMembersInfo(String roleId, String roomId);
 }

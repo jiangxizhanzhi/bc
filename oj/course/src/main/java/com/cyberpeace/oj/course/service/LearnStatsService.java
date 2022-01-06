@@ -66,6 +66,6 @@ public interface LearnStatsService {
      * @param resourceId 用户resource_id
      * @return 统计信息
      */
-    ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(String resourceId);
+    ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page page, String resourceId);
 
 }

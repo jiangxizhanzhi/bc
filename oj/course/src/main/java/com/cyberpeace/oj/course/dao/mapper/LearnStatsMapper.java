@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.service.bo.CourseStatsBo;
 import com.cyberpeace.oj.course.service.bo.LessonStatsBo;
+import com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CourseBo;
 import com.cyberpeace.oj.course.service.bo.UserStatsBo;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
@@ -52,4 +53,12 @@ public interface LearnStatsMapper {
 
     @MapKey("date")
     Map<String, JSONObject> PersonalFinishReport4Mouth(@Param("user_id") String resourceId, @Param("date_range") List<String> dateRange, @Param("report_code") Integer reportCode);
+
+    JSONObject learnNumStats(@Param("user_id") String resourceId, @Param("theory_type") Integer theoryType, @Param("exp_type") Integer expType);
+
+    JSONObject courseNumStats(@Param("theory_type") Integer theoryType, @Param("exp_type") Integer expType);
+
+    JSONObject practiceNumStats(@Param("user_id") String resourceId, @Param("paper_type") Integer paperType);
+
+    IPage<PersonalStatsDetail4CourseBo> learnCourseStats(Page page, @Param("user_id") String resourceId, @Param("theory_type") Integer theoryType, @Param("exp_type") Integer expType, @Param("report_code") Integer reportCode);
 }

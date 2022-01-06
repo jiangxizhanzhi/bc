@@ -8,9 +8,9 @@ import java.io.Serializable;
 @Data
 public class PersonalStatsDetail4CourseBo implements Serializable {
     @ApiModelProperty("课程resource_id")
-    private String resource_id;
+    private String resourceId;
 
-    @ApiModelProperty("课程民成")
+    @ApiModelProperty("课程名称")
     private String name;
 
     @ApiModelProperty("难度")
@@ -23,14 +23,14 @@ public class PersonalStatsDetail4CourseBo implements Serializable {
     private Integer lessonCount;
 
     @ApiModelProperty("已学习理论课时")
-    private Integer learned_theory;
+    private Integer learnedTheory;
 
     @ApiModelProperty("已学习实验课时")
-    private Integer learned_exp;
+    private Integer learnedExp;
 
     @ApiModelProperty("已完成课后练习")
-    private Integer learned_after_class_practice;
+    private Integer learnedAfterClassPractice;
 
     @ApiModelProperty("已提交实验报告")
-    private Integer learned_exp_report;
+    private Integer learnedExpReport;
 }

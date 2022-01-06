@@ -12,6 +12,7 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -375,10 +376,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景监控")
 	@GetMapping("/lesson_monitor")
-	public BaseRsp<List<LessonMonitorBo>> lessonMonitor(@ApiParam(name = "resource_id",
+	public BaseRsp<List<SceneMonitorBo>> lessonMonitor(@ApiParam(name = "resource_id",
 			value = "课时编号") @RequestParam("resource_id") String lessonId) {
 
-		List<LessonMonitorBo> monitorBos = lessonSceneService.lessonMonitor(lessonId);
+		List<SceneMonitorBo> monitorBos = lessonSceneService.lessonMonitor(lessonId);
 		return new BaseRsp<>(monitorBos);
 
 	}

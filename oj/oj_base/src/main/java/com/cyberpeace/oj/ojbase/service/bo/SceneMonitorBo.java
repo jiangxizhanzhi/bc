@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.course.service.bo;
+package com.cyberpeace.oj.ojbase.service.bo;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class LessonMonitorBo implements Serializable {
+public class SceneMonitorBo implements Serializable {
 
 	@ApiModelProperty("用户编号")
 	private String userId;

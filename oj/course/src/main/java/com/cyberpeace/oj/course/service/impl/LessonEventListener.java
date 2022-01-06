@@ -1,8 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.constant.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +16,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.cyberpeace.oj.course.service.bo.LessonWsMessageIdentifier;
-import com.cyberpeace.oj.ojbase.constant.Event;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 
@@ -42,31 +39,37 @@ public class LessonEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 
+		OjLocalScene ojLocalScene = ojLocalSceneService.getById(businessId);
+		if (null == ojLocalScene) {
+			return true;
+		}
+
+		// 删除本地数据
 		ojLocalSceneService.deleteLocalScene(businessId);
+
+		// 推送删除数据
+		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
+		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC);
+		pushMessageToWeb(dataObj, ojLocalScene);
 		return true;
 	}
 
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
-		OjLocalScene ojLocalScene = ojLocalSceneService.getById(businessId);
-		if (null == ojLocalScene) {
-			log.error(
-					"LessonEventListener.onSceneStartProcess: OjLocalScene not found! oj_local_scene_id=[{}]",
-					businessId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+		// 数据校验
+		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
 
 		// 推送code更新
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
 
 		// 消息推送
-		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene);
+		pushMessageToWeb(dataObj, ojLocalScene);
 
 		// 场景启动完成更新数据库 重新设置code值
 		JSONObject startSceneMessage = ojLocalSceneService.getStartSceneMessage(data, ojLocalScene);
 		if (null != startSceneMessage) {
-			pushMessageToWeb(JsonUtil.toJsonString(startSceneMessage), ojLocalScene);
+			pushMessageToWeb(startSceneMessage, ojLocalScene);
 		}
 
 		return true;
@@ -74,19 +77,32 @@ public class LessonEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
-		OjLocalScene ojLocalScene = ojLocalSceneService.getById(businessId);
-		if (null == ojLocalScene) {
-			log.error(
-					"OperationEventListener onSceneElement: OjLocalScene not found! oj_local_scene_id=[{}]",
-					businessId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+
+		// 数据校验
+		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
 
 		// 推送code更新
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
-		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene);
+		pushMessageToWeb(dataObj, ojLocalScene);
 		return true;
+	}
+
+	/**
+	 * 数据存在性校验
+	 * @param ojLocalSceneId
+	 * @return
+	 */
+	private OjLocalScene validateOjLocalScene(String ojLocalSceneId) {
+		OjLocalScene ojLocalScene = ojLocalSceneService.getById(ojLocalSceneId);
+		if (null == ojLocalScene) {
+			log.error(
+					"OperationEventListener onSceneElement: OjLocalScene not found! oj_local_scene_id=[{}]",
+					ojLocalSceneId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		return ojLocalScene;
 	}
 
 	/**
@@ -94,7 +110,7 @@ public class LessonEventListener extends MessageListener {
 	 * @param data
 	 * @param ojLocalScene
 	 */
-	private void pushMessageToWeb(String data, OjLocalScene ojLocalScene) {
+	private void pushMessageToWeb(JSONObject data, OjLocalScene ojLocalScene) {
 
 		LessonWsMessageIdentifier identifier = new LessonWsMessageIdentifier();
 		identifier.setFromWeb(ojLocalScene.getFromWeb());

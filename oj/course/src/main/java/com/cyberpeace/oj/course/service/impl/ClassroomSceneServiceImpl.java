@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -244,6 +245,23 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
 		groupInfos.forEach(groupInfo -> deleteScene(groupInfo.getResourceId(), authContext));
 
+	}
+
+	@Override
+	public List<SceneMonitorBo> selectMonitorList(String classroomId) {
+		// 基本数据校验
+		validateClassroom(classroomId);
+
+		// 查询课堂场景信息
+		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper.selectByRoom(classroomId);
+		List<OjLocalScene> ojLocalSceneList = StreamApiUtils.map(groupInfoList,
+				groupInfo -> ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId()));
+
+		if (CollectionUtils.isEmpty(ojLocalSceneList)) {
+			return Lists.newArrayList();
+		}
+
+		return ojLocalSceneService.selectMonitorList(ojLocalSceneList);
 	}
 
 	/**

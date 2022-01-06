@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 
 import java.util.List;
 
@@ -39,4 +40,11 @@ public interface ClassroomSceneService {
 	 * @param authContext
 	 */
 	void batchDeleteScene(String classroomId, AuthContext authContext);
+
+	/**
+	 * 课堂监控列表
+	 * @param classroomId
+	 * @return
+	 */
+	List<SceneMonitorBo> selectMonitorList(String classroomId);
 }

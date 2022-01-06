@@ -9,9 +9,9 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
-import com.cyberpeace.oj.course.service.bo.LessonMonitorBo;
-import com.cyberpeace.oj.course.service.bo.MonitorInfoBo;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.service.bo.MonitorInfoBo;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,14 +28,10 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.LessonSceneService;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -173,51 +169,15 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	}
 
 	@Override
-	public List<LessonMonitorBo> lessonMonitor(String lessonId) {
+	public List<SceneMonitorBo> lessonMonitor(String lessonId) {
 
 		// 查询前台用户启动的场景
 		List<OjLocalScene> ojLocalScenes = ojLocalSceneMapper.selectByBusiness(lessonId, true);
 		if (CollectionUtils.isEmpty(ojLocalScenes)) {
 			return Lists.newArrayList();
 		}
-		List<String> localSceneIds = StreamApiUtils.map(ojLocalScenes,
-				OjLocalScene::getLocalSceneId);
 
-		// 查询具体场景信息
-		List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
-		List<String> sceneIds = StreamApiUtils.map(localScenes, LocalScene::getMpSceneId);
-
-		// 查询会话信息
-		JSONArray nodeSessions = remoteSceneService.getNodeSessions(sceneIds);
-
-		// 会话信息处理
-		List<LessonMonitorBo> lessonMonitorBos = Lists.newArrayList();
-
-		Map<String, List<Object>> userSessions = StreamApiUtils.groupBy(nodeSessions,
-				nodeSession -> ((JSONObject) nodeSession).getString(JsonKeyConstant.USER_KEY));
-		userSessions.forEach((user, sessions) -> {
-
-			// 用户信息查询与设置
-			UserInfo userInfo = remoteUserService.getById(user);
-			LessonMonitorBo monitorBo = new LessonMonitorBo();
-			monitorBo.setUserId(user);
-			monitorBo.setUserName(userInfo.getUserName());
-
-			// 会话信息设置
-			List<MonitorInfoBo> infoBoList = StreamApiUtils.map(sessions, session -> {
-				JSONObject sessionObj = (JSONObject) session;
-				MonitorInfoBo monitorInfoBo = new MonitorInfoBo();
-				monitorInfoBo.setMonitorSessions(sessionObj);
-				monitorInfoBo.setServer(sessionObj.getString(JsonKeyConstant.NODE_NAME));
-				monitorInfoBo.setUserName(userInfo.getUserName());
-				return monitorInfoBo;
-			});
-
-			monitorBo.setMonitorInfo(infoBoList);
-			lessonMonitorBos.add(monitorBo);
-		});
-
-		return lessonMonitorBos;
+		return ojLocalSceneService.selectMonitorList(ojLocalScenes);
 	}
 
 	/**

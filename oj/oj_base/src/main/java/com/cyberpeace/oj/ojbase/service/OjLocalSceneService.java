@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+
+import java.util.List;
 
 public interface OjLocalSceneService extends IService<OjLocalScene> {
 
@@ -65,5 +68,11 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 */
 	JSONObject getSceneData(OjLocalScene ojLocalScene);
 
+	/**
+	 * 获取监控信息列表
+	 * @param ojLocalScenes
+	 * @return
+	 */
+	List<SceneMonitorBo> selectMonitorList(List<OjLocalScene> ojLocalScenes);
 
 }

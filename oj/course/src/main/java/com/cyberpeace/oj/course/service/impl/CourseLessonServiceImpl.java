@@ -209,18 +209,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				ClassroomGroupInfo groupInfo = classroomGroupInfoService
 						.selectByLessonAndUser(lessonId, authContext);
 				if (null != groupInfo) {
-					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 					infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
-
 					// 存在课堂场景 则设置group_id用于前端简历websocket
-					if (null != ojLocalScene) {
-						infoBo.setGroupId(groupInfo.getResourceId());
-					}
-				} else {
-					ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
-							lesson.getSceneShareMode(), authContext);
+					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 				}
-			} else {
+			}
+
+			// 查询课时场景
+			if (null == ojLocalScene) {
 				ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 						lesson.getSceneShareMode(), authContext);
 			}
@@ -229,7 +225,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
 				infoBo.setSceneData(sceneData);
 			}
-
 		}
 
 		// 添加学习记录
@@ -677,12 +672,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			if (authContext.getIsWeb()) {
 				ClassroomGroupInfo groupInfo = classroomGroupInfoService
 						.selectByLessonAndUser(lessonId, authContext);
-				ojLocalScene = null != groupInfo
-						? ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId())
-						: ojLocalSceneService.selectOjLocalScene(lessonId,
-								courseLesson.getSceneShareMode(), authContext);
-			} else {
-				ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
+				if (null != groupInfo) {
+					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
+				}
+			}
+
+			// 查询课时场景
+			if (null == ojLocalScene) {
+				ojLocalScene = ojLocalSceneService.selectOjLocalScene(courseLesson.getResourceId(),
 						courseLesson.getSceneShareMode(), authContext);
 			}
 

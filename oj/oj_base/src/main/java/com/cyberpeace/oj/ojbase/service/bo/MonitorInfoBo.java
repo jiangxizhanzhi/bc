@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.course.service.bo;
+package com.cyberpeace.oj.ojbase.service.bo;
 
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;

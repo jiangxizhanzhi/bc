@@ -7,6 +7,7 @@ import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.SceneEvent;
 import com.cyberpeace.cs.constant.SceneEventStatus;
@@ -15,13 +16,17 @@ import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.SystemConfigService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.service.bo.MonitorInfoBo;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +46,7 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -72,6 +78,9 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Override
 	public OjLocalScene selectOjLocalScene(String businessId, Integer shared,
@@ -289,7 +298,6 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 								: SceneShare.PRIVATE.getCode();
 		sceneData.put(JsonKeyConstant.SCENE_SHARE_MODE, share);
 
-
 		// 开始时间和结束时间
 		if (null == localScene.getStartTime() || null == localScene.getEndTime()
 				|| null == localScene.getSceneTtl()) {
@@ -304,5 +312,48 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		sceneData.put(JsonKeyConstant.REMAIN_TIME, remain);
 
 		return sceneData;
+	}
+
+	@Override
+	public List<SceneMonitorBo> selectMonitorList(List<OjLocalScene> ojLocalScenes) {
+
+		List<String> localSceneIds = StreamApiUtils.map(ojLocalScenes,
+				OjLocalScene::getLocalSceneId);
+
+		// 查询具体场景信息
+		List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
+		List<String> sceneIds = StreamApiUtils.map(localScenes, LocalScene::getMpSceneId);
+
+		// 查询会话信息
+		JSONArray nodeSessions = remoteSceneService.getNodeSessions(sceneIds);
+
+		// 会话信息处理
+		List<SceneMonitorBo> lessonMonitorBos = Lists.newArrayList();
+
+		Map<String, List<Object>> userSessions = StreamApiUtils.groupBy(nodeSessions,
+				nodeSession -> ((JSONObject) nodeSession).getString(JsonKeyConstant.USER_KEY));
+		userSessions.forEach((user, sessions) -> {
+
+			// 用户信息查询与设置
+			UserInfo userInfo = remoteUserService.getById(user);
+			SceneMonitorBo monitorBo = new SceneMonitorBo();
+			monitorBo.setUserId(user);
+			monitorBo.setUserName(userInfo.getUserName());
+
+			// 会话信息设置
+			List<MonitorInfoBo> infoBoList = StreamApiUtils.map(sessions, session -> {
+				JSONObject sessionObj = (JSONObject) session;
+				MonitorInfoBo monitorInfoBo = new MonitorInfoBo();
+				monitorInfoBo.setMonitorSessions(sessionObj);
+				monitorInfoBo.setServer(sessionObj.getString(JsonKeyConstant.NODE_NAME));
+				monitorInfoBo.setUserName(userInfo.getUserName());
+				return monitorInfoBo;
+			});
+
+			monitorBo.setMonitorInfo(infoBoList);
+			lessonMonitorBos.add(monitorBo);
+		});
+
+		return lessonMonitorBos;
 	}
 }

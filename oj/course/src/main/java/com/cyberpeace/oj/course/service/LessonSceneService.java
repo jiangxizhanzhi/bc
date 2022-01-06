@@ -2,7 +2,7 @@ package com.cyberpeace.oj.course.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.course.service.bo.LessonMonitorBo;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 
 import java.util.List;
 
@@ -56,5 +56,5 @@ public interface LessonSceneService {
 	 * @param lessonId
 	 * @return
 	 */
-	List<LessonMonitorBo> lessonMonitor(String lessonId);
+	List<SceneMonitorBo> lessonMonitor(String lessonId);
 }

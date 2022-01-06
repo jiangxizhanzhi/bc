@@ -9,6 +9,8 @@ import com.cyberpeace.oj.course.controller.req.ClassroomSceneReq;
 import com.cyberpeace.oj.course.controller.req.GroupSceneReq;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -74,6 +76,15 @@ public class AdminClassroomSceneController {
 				false);
 		classroomSceneService.batchDeleteScene(classroomSceneReq.getClassroomId(), authContext);
 		return new BaseRsp<>(CommonConstant.TRUE);
+	}
+
+	@ApiOperation("课堂场景监控")
+	@GetMapping("/classroom_monitor")
+	public BaseRsp<List<SceneMonitorBo>> classroomMonitor(@ApiParam(name = "classroom_id",
+			value = "课堂编号") @RequestParam("classroom_id") String classroomId) {
+
+		List<SceneMonitorBo> sceneMonitorBos = classroomSceneService.selectMonitorList(classroomId);
+		return new BaseRsp<>(sceneMonitorBos);
 	}
 
 }

@@ -221,7 +221,7 @@ public class FileUtil {
 			response.reset();
 
 			// 设置返回
-			response.setContentType("application/x-msdownload;charset=UTF-8");
+			response.setContentType("application/octet-stream;charset=UTF-8");
 			String fileName = new String(file.getName().getBytes("gb2312"), "iso8859-1");
 			response.setHeader("Content-disposition", "attachment;filename=" + fileName);
 			outputStream = response.getOutputStream();

@@ -149,8 +149,8 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		}
 
 		if (StringUtils.isBlank(queryBo.getPracticeSetId())) {
-			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds,
-					authContext.getIsWeb());
+			// 仅查询公开习题
+			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds, true);
 			queryBo.setResourceIds(theoryIds);
 			return theoryConvert(queryBo, page, authContext);
 		}
@@ -160,9 +160,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 				.getCode()) {
 			return theoryConvert(queryBo, page, authContext);
 		} else {
+			// 仅查询公开习题
 			OperationListQuery listQuery = BeanUtils.copy(queryBo, OperationListQuery.class);
 			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
-					authContext.getIsWeb());
+					true);
 
 			IPage<LibPracticeListBo> convert = iPage
 					.convert(practiceOperation -> operationToListBo(practiceOperation));

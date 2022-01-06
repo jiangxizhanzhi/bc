@@ -711,8 +711,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 文件上传至服务器 原始文件地址存储
 			String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
 					courseLesson.getCourseId());
-			AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, handout,
-					true);
+			AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, handout);
 			courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
 
 			// 获取讲义文件存储地址
@@ -737,8 +736,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (suffix.equals(Attachment.FileType.PDF.getDesc())) {
 			String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
 					courseLesson.getCourseId());
-			AttachmentBo attachmentBo = attachmentService.uploadDest(handoutPath, false, handout,
-					true);
+			AttachmentBo attachmentBo = attachmentService.uploadDest(handoutPath, false, handout);
 			courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
 			courseLesson.setHandoutUrl(attachmentBo.getFilePath());
 		}
@@ -753,7 +751,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
 				courseLesson.getCourseId());
-		AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video, true);
+		AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video);
 		courseLesson.setVideoUrl(attachmentBo.getFilePath());
 	}
 

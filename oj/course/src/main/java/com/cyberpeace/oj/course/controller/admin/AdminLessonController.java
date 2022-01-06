@@ -313,7 +313,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
 
 		AttachmentBo attachmentBo = attachmentService
-				.uploadDest(AttachmentPath.ATTACHMENT.getDesc(), true, multipartFile, true);
+				.uploadDest(AttachmentPath.ATTACHMENT.getDesc(), true, multipartFile);
 		return new BaseRsp<>(attachmentBo.getResourceId());
 	}
 

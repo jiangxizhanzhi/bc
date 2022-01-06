@@ -44,14 +44,13 @@ public interface AttachmentService extends IService<Attachment> {
 	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file, Boolean renameFile);
 
 	/**
-	 * 文件上传到目的文件夹
+	 * 文件上传到目的文件夹 文件中文文件乱码 目前没时间解决 暂时上传的全部文件重命名
 	 * @param destDir 目的文件夹
 	 * @param insert 是否插入数据库
 	 * @param file 上传的源文件
-	 * @param renameFile 是否重命名 true=文件已存在则重命名 false=覆盖
 	 * @return
 	 */
-	AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file, boolean renameFile);
+	AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file);
 
 	/**
 	 * 从临时目录将文件拷贝到实际存储目录
@@ -62,21 +61,6 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @return
 	 */
 	AttachmentBo copyFile(String originPath, Integer type, Boolean insert, Boolean renameFile);
-
-	/**
-	 *
-	 * @param attachmentId
-	 */
-	void deleteAttachment(String attachmentId);
-
-	/**
-	 * 文件解压缩
-	 * @param filePath zip文件路径
-	 * @param distPath 解压文件夹
-	 * @param fileType 文件后缀名 不含. 不传则读取解压后文件列表 包含文件夹
-	 * @return
-	 */
-	List<String> unzipFile(String filePath, String distPath, String fileType);
 
 	/**
 	 * 文件目录插入数据库

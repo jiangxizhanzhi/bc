@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -289,7 +290,8 @@ public class TopoHandlerController {
         wsSingleNodeEffect.setSceneId(sceneId);
         wsSingleNodeEffect.setCode(MessageType.SingleNodeEffect.getDesc());
         wsSingleNodeEffect.setElementInfo(topoHandlerService.getRandomElements(elements, 1).get(0));
-        topoHandlerService.pushDataToRoom(wsSingleNodeEffect.toString(), sceneId);
+        JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsSingleNodeEffect), JSONObject.class);
+        topoHandlerService.pushDataToRoom(data, sceneId);
         return new BaseRsp<>(wsSingleNodeEffect);
     }
 
@@ -306,7 +308,8 @@ public class TopoHandlerController {
         List<ElementInfo> randomElements = topoHandlerService.getRandomElements(elements, 2);
         wsMultiNodeEffect.setSourceElementInfo(randomElements.get(0));
         wsMultiNodeEffect.setDestElementInfo(randomElements.get(1));
-        topoHandlerService.pushDataToRoom(wsMultiNodeEffect.toString(), sceneId);
+        JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMultiNodeEffect), JSONObject.class);
+        topoHandlerService.pushDataToRoom(data, sceneId);
         return new BaseRsp<>(wsMultiNodeEffect);
     }
 

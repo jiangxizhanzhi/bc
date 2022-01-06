@@ -42,5 +42,5 @@ public interface TopoHandlerService {
 
     List<ElementInfo> getRandomElements(JSONArray elements, Integer num);
 
-    void pushDataToRoom(String data, String sceneId);
+    void pushDataToRoom(JSONObject data, String sceneId);
 }

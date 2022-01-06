@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.*;
@@ -205,17 +204,16 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
     }
 
     @Override
-    public void pushDataToRoom(String data, String sceneId) {
+    public void pushDataToRoom(JSONObject data, String sceneId) {
 
         SituationWsMessageIdentifier identifier = new SituationWsMessageIdentifier();
         identifier.setPath(WsPath.SITUATION);
-        identifier.setUserId(UserInfoContext.getUserContext().getUserId());
         identifier.setSceneId(sceneId);
 
         WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
                 .messageIdentifier(identifier).build();
 
         myWebSocketHandler.pushMessage(messageContext, true);
-
     }
+
 }

@@ -50,7 +50,7 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param classroomId
 	 * @return
 	 */
-	List<ClassroomReportBo> selectClassroomReport(String classroomId);
+	List<ClassroomReportBo> selectClassroomReport(String classroomId, String userName);
 
 	/**
 	 * 课堂学习统计

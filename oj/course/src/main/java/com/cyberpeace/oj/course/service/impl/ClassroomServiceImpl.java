@@ -317,17 +317,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	@Override
-	public List<ClassroomReportBo> selectClassroomReport(String classroomId) {
+	public List<ClassroomReportBo> selectClassroomReport(String classroomId, String userName) {
+
 		// 基本数据校验
 		Classroom classroom = validateRoom(classroomId);
 		CourseLesson courseLesson = validateLesson(classroom.getLessonId());
 
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
 				true);
+
+		List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
+				userInfo -> userInfo.getUserName().contains(userName)
+						|| userInfo.getName().contains(userName));
 		Map<String, String> orgMap = remoteOrganizationService
 				.childrenMap(classroom.getOrganizationId(), true);
 
-		return StreamApiUtils.map(userInfos,
+		return StreamApiUtils.map(filterUsers,
 				userInfo -> userToReportBo(userInfo, courseLesson, orgMap));
 	}
 

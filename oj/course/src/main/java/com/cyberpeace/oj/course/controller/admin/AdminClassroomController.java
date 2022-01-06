@@ -137,7 +137,7 @@ public class AdminClassroomController {
 
 		Page page = reportReq.toPageParam();
 		List<ClassroomReportBo> classroomReportBos = classroomService
-				.selectClassroomReport(reportReq.getClassroomId());
+				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern());
 		return new BaseRsp(
 				PageUtil.getListResult(classroomReportBos, page, classroomReportBos.size()));
 	}

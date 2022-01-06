@@ -27,6 +27,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.BatchDumpReq;
 import com.cyberpeace.cr.crbase.controller.req.NameValidReq;
 import com.cyberpeace.cr.crbase.controller.req.ShareReq;
 import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
@@ -311,7 +312,9 @@ public class BusinessTemplateController {
 
 	@ApiOperation("批量导出场景模板")
 	@PostMapping("/batchDump")
-	public void batchDump(HttpServletResponse response, @RequestBody List<String> templateIds) {
+	public void batchDump(HttpServletResponse response, @RequestBody BatchDumpReq dumpReq) {
+
+		List<String> templateIds = dumpReq.getIds();
 		// 1. generate dump file
 		String tempDir = ZipUtil.generatePath();
 		try {

@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +13,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DataTransferUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
@@ -57,7 +56,8 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 			throw new InvalidParamException("未检索到相应岗位!");
 		}
 
-		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(), String.class);
+		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(),
+				String.class);
 
 		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
 				userId);
@@ -76,6 +76,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 					CourseStudyProcessBo bo = processBoMap.get(courseId);
 					CourseKnowledgeSkillBo knowledgeBo = BeanUtils
 							.deepCopy(infoMap.get(bo.getCourseId()), CourseKnowledgeSkillBo.class);
+
 					knowledgeBo.setKnowledges(courseMap.get(bo.getCourseId()));
 					knowledgeBo.setProcess(MathUtils.ceil(bo.getProcess()));
 					knowledgeBo.setCompleteTheory(bo.getCompleteTheory());

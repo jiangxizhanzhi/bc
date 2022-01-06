@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.mapper.LevelMapper;
@@ -29,13 +31,23 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	RoleMapper roleMapper;
 
 	@Override
-	public Level getOr404(String resourceId) {
-		Level level = getById(resourceId);
+	public Level getOr404(String levelId) {
+		Level level = getInternationalById(levelId);
 		if (level == null) {
-			throw new ResourceNotFoundException("层级" + resourceId + "未找到");
+			throw new ResourceNotFoundException("层级" + levelId + "未找到");
 		}
 
 		ensureNotFrame(level);
+		return level;
+	}
+
+	private Level getInternationalById(String levelId) {
+		Level level = getById(levelId);
+		if (level.getResourceId().equals("default")) {
+			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+				level.setName(Level.DefaultName.ENGLISH.getDesc());
+			}
+		}
 		return level;
 	}
 
@@ -91,17 +103,17 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 	@Override
-	public Level getLevelOrFrameOr404(String resourceId) {
-		Level level = getById(resourceId);
+	public Level getLevelOrFrameOr404(String levelId) {
+		Level level = getInternationalById(levelId);
 		if (level == null) {
-			throw new ResourceNotFoundException("框架/层级" + resourceId + "不存在");
+			throw new ResourceNotFoundException("框架/层级" + levelId + "不存在");
 		}
 		return level;
 	}
 
 	@Override
 	public String getFullPathById(String levelId) {
-		Level level = getById(levelId);
+		Level level = getInternationalById(levelId);
 		if (level == null) {
 			return null;
 		}

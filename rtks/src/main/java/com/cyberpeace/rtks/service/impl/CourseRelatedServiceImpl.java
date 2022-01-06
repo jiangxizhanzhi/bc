@@ -11,6 +11,7 @@ import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.mapper.CourseRelatedMapper;
+import com.cyberpeace.rtks.service.CourseNameService;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.google.common.collect.Lists;
 
@@ -23,6 +24,9 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 	@Autowired
 	CourseRelatedMapper courseRelatedMapper;
 
+	@Autowired
+	CourseNameService courseNameService;
+
 	@Override
 	public String saveCourseRelatedList(List<RelatedCourse> relatedCourseList, String resourceId,
 			Integer type) {
@@ -30,6 +34,7 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 
 		for (RelatedCourse relatedCourse : relatedCourseList) {
 			CourseRelated courseRelated = new CourseRelated();
+
 			courseRelated.setRelatedId(resourceId);
 			courseRelated.setResourceId(relatedCourse.getResourceId());
 			courseRelated.setWeight(relatedCourse.getWeight());
@@ -40,13 +45,13 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 
 			courseRelatedList.add(courseRelated);
 		}
-		// if (CourseRelated.RELATED_TYPE_KNOWLEDGE.equals(type)) { // 知识点要修改单独的课程关联数据库
 		List<String> ids = Lists.newArrayList();
 		ids.add(resourceId);
+
 		deleteCourseRelatedByRelatedIds(ids, type);
 
 		this.saveBatch(courseRelatedList);
-		// }
+		courseNameService.addCourseName(relatedCourseList);
 
 		return JsonUtil.toJsonString(courseRelatedList);
 	}

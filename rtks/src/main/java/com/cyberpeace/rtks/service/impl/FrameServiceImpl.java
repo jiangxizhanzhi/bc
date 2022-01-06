@@ -18,6 +18,7 @@ import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.rtks.service.FrameService;
+import com.cyberpeace.rtks.service.LevelService;
 
 @Service
 public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements FrameService {
@@ -25,6 +26,8 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	@Autowired
 	LevelMapper levelMapper;
 
+	@Autowired
+	LevelService levelService;
 	@Override
 	public IPage<Level> listEntity(Page<Level> page, String keyword) {
 		return levelMapper.listFrame(page, keyword);
@@ -80,7 +83,7 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Override
 	public Level getOr404(String frameId) {
-		Level frame = getById(frameId);
+		Level frame = levelService.getLevelOrFrameOr404(frameId);
 		if (frame == null) {
 			throw new ResourceNotFoundException("找不到" + frameId + "对应的框架");
 		}

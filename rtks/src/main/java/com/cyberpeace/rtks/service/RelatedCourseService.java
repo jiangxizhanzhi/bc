@@ -9,15 +9,20 @@ import com.cyberpeace.rtks.controller.res.RelatedCourse;
 public interface RelatedCourseService {
 
 	/**通过课程id字符串，获取所有课程名称和类型,如果课程存在删除情况，返回true
+	 * 12.28修改了逻辑：如果存在课程不在远程接口中，调用本地课程接口获取内容，权限都是无。逻辑如下：
+	 * 先查询已存在的课程id，
+	 * 再获取不存在的课程id，
+	 * 调用本地接口获取课程内容列表，
+	 * 增加远程接口的课程列表
 	 *
 	 * @param userInfo
 	 * @param courses 课程列表字符串,relatedCourseList 要返回的列表
 	 * @param processBos
-	 * @param related_course_type
+	 * @param relatedCourseType
 	 * @return 是否存在删除的课程
 	 */
 
 	boolean setCourseResult(UserInfo userInfo, String courses,
 			List<RelatedCourse> relatedCourseList, List<CourseStudyProcessBo> processBos,
-			String related_course_type);
+			String relatedCourseType);
 }

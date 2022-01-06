@@ -131,7 +131,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	public AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file) {
 
 		FileUtil.mkdirs(destDir);
-		String destFileName = reFileName(destDir + file.getOriginalFilename());
+		String reName = reFileName(file.getOriginalFilename());
+		String destFileName = destDir + reName;
 
 		try {
 			file.transferTo(new File(destFileName));

@@ -83,12 +83,6 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
-	@Autowired
-	private ClassroomMapper classroomMapper;
-
-	@Autowired
-	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
-
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
 
@@ -101,7 +95,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		if (null != groupInfo) {
 			OjLocalScene groupScene = ojLocalSceneMapper
 					.selectGroupScene(groupInfo.getResourceId());
-			return ojLocalSceneService.getSceneData(groupScene);
+			if (null != groupScene) {
+				return ojLocalSceneService.getSceneData(groupScene);
+			}
 		}
 
 		// 无课程表场景 查询课时场景

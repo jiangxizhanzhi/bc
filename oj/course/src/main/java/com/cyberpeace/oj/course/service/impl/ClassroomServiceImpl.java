@@ -327,7 +327,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				true);
 
 		List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
-				userInfo -> userInfo.getUserName().contains(userName)
+				userInfo -> StringUtils.isBlank(userName)
+						|| userInfo.getUserName().contains(userName)
 						|| userInfo.getName().contains(userName));
 		Map<String, String> orgMap = remoteOrganizationService
 				.childrenMap(classroom.getOrganizationId(), true);

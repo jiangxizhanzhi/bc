@@ -45,7 +45,7 @@
                cr_train_record.end_time   scene_end_time
         from cr_team_room
                  left join cr_team_template on cr_team_room.team_template_id = cr_team_template.resource_id
-                 left join cr_train_record on cr_team_room.resource_id = local_scene.room_id
+                 left join cr_train_record on cr_team_room.resource_id = cr_train_record.room_id
         where cr_team_room.resource_id = #{resourceId}
 
     </select>

@@ -55,6 +55,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public String startScene(LocalScene localScene) {
+		if (localScene.isRecord()) {
+			// todo
+			// 修改模板
+		}
+
 		SceneStartContext startContext = getSceneStartContext(localScene);
 
 		return remoteSceneService.startScene(startContext);

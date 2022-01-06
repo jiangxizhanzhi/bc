@@ -38,6 +38,6 @@ public interface RemoteUserService {
 	 * @param organizationId
 	 * @return
 	 */
-	List<UserInfo> ListByOrgId(String organizationId);
+	List<UserInfo> ListByOrgId(String organizationId, boolean children);
 
 }

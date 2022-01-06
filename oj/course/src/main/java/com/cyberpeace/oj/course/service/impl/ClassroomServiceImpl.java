@@ -117,14 +117,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 		classroom.setResourceId(IDGeneratorUtil.getID());
 
-		List<String> userIds = Lists.newArrayList();
-		for (String orgId : orgIds) {
-			List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId);
-			List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
-			userIds.addAll(orgUserIds);
-		}
-
 		// 分组数据
+		List<String> userIds = userIdsByOrgs(orgIds);
 		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
 				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
 
@@ -132,13 +126,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		authContext.setIsWeb(CommonConstant.TRUE);
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
 		if (!authCourseIds.contains(classroom.getCourseId())) {
-			if (StringUtils.isNotBlank(course.getReadAuthIds())) {
-				List<String> authOrgIds = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
-						String.class);
-				orgIds.addAll(authOrgIds);
-				List<String> distinctList = StreamApiUtils.distinct(authOrgIds);
-				course.setReadAuthIds(JsonUtil.arrayToString(distinctList));
-			}
+			changeCourseOrg(course, orgIds);
 		}
 
 		// 公告发布 todo
@@ -155,19 +143,97 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		return classroom;
 	}
 
-	@Override
-	public Integer updateClassroom(Classroom classroom, AuthContext authContext) {
+	/**
+	 * 获取用户编号列表
+	 * @param orgIds
+	 * @return
+	 */
+	private List<String> userIdsByOrgs(List<String> orgIds) {
 
-		boolean enableChange = CommonConstant.TRUE;
+		List<String> userIds = Lists.newArrayList();
+		for (String orgId : orgIds) {
+			List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, false);
+			List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
+			userIds.addAll(orgUserIds);
+		}
+
+		return userIds;
+	}
+
+	/**
+	 * 修改课程可访问组织数据
+	 * @param course
+	 * @param orgIds
+	 */
+	private void changeCourseOrg(Course course, List<String> orgIds) {
+
+		if (StringUtils.isNotBlank(course.getReadAuthIds())) {
+			List<String> authOrgIds = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
+					String.class);
+			orgIds.addAll(authOrgIds);
+			List<String> distinctList = StreamApiUtils.distinct(authOrgIds);
+			course.setReadAuthIds(JsonUtil.arrayToString(distinctList));
+		}
+	}
+
+	@Override
+	public Boolean updateClassroom(Classroom classroom, AuthContext authContext) {
+
+		// 数据校验
+		Classroom existRoom = validateRoom(classroom.getResourceId());
+		validateChangeClassroom(classroom);
+		Course course = courseMapper.selectById(classroom.getCourseId());
+		if (null == course) {
+			log.error("Course not found! course_id=[{}]", classroom.getCourseId());
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		CourseLesson courseLesson = validateLesson(classroom.getLessonId());
 
 		// 组织数据获取
 		List<String> orgIds = remoteOrganizationService.childrenList(classroom.getOrganizationId(),
 				true);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
-		int result = classroomMapper.updateById(classroom);
 
-		// 重新生成分组 课时改变 组织改变 理论课变为实验课 todo
-		return result;
+		boolean enableChange = !existRoom.getLessonId().equals(classroom.getLessonId());
+		enableChange |= !existRoom.getOrganizationId().equals(classroom.getOrganizationId());
+		enableChange &= courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
+				.getCode().intValue();
+
+		// 分组数据
+		List<ClassroomGroupInfo> groupInfos = null;
+		if (enableChange) {
+			List<String> userIdsByOrgs = userIdsByOrgs(orgIds);
+			groupInfos = classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
+					courseLesson, userIdsByOrgs, CommonConstant.ONE);
+		}
+
+		// 课程修改
+		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
+		if (!authCourseIds.contains(classroom.getCourseId())) {
+			changeCourseOrg(course, orgIds);
+		}
+
+		boolean finalEnableChange = enableChange;
+		List<ClassroomGroupInfo> finalGroupInfos = groupInfos;
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				if (!classroom.getResourceId().equals(existRoom.getResourceId())) {
+					courseMapper.updateById(course);
+				}
+				classroomMapper.updateById(classroom);
+				if (finalEnableChange) {
+					classroomGroupInfoMapper.deleteByRoom(classroom.getResourceId());
+					if (CollectionUtils.isNotEmpty(finalGroupInfos)) {
+						classroomGroupInfoService.saveBatch(finalGroupInfos);
+					}
+				}
+			}
+		});
+
+		return CommonConstant.TRUE;
+
 	}
 
 	/**
@@ -175,9 +241,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @param classroom
 	 * @return
 	 */
-	private Boolean validateChangeClassroom(Classroom classroom) {
+	private void validateChangeClassroom(Classroom classroom) {
 
-		return true;
+		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper
+				.selectByRoom(classroom.getResourceId());
+		List<String> groupIds = StreamApiUtils.map(groupInfos, ClassroomGroupInfo::getResourceId);
+		List<OjLocalScene> localScenes = ojLocalSceneMapper.selectByGroupIds(groupIds);
+
+		if (CollectionUtils.isNotEmpty(localScenes)) {
+			log.error("Classroom has scene is running! classroom_id=[{}]",
+					classroom.getResourceId());
+			throw new BusinessException(OjBusinessErrorCode.GROUP_SCENE_IS_RUNNING);
+		}
+
 	}
 
 	@Override
@@ -226,7 +302,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Classroom classroom = validateRoom(classroomId);
 
 		// 查询组织下用户
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
+				true);
 
 		List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroomId);
 		Map<String, ClassroomSign> signMap = StreamApiUtils.toMap(signList,
@@ -245,7 +322,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Classroom classroom = validateRoom(classroomId);
 		CourseLesson courseLesson = validateLesson(classroom.getLessonId());
 
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
+				true);
 		Map<String, String> orgMap = remoteOrganizationService
 				.childrenMap(classroom.getOrganizationId(), true);
 
@@ -261,7 +339,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		CourseLesson courseLesson = validateLesson(classroom.getLessonId());
 
 		// 查询组织用户
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
+				true);
 		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
 
 		// 查询所有笔记
@@ -296,45 +375,15 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public Integer deleteClassroom(String classroomId, AuthContext authContext) {
 
 		// 数据校验
-		validateRoom(classroomId);
-
-		// 分组数据查询
-		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper.selectByRoom(classroomId);
-		List<String> groupInfoIds = StreamApiUtils.map(groupInfoList,
-				ClassroomGroupInfo::getResourceId);
-
-		if (CollectionUtils.isEmpty(groupInfoIds)) {
-			return classroomMapper.deleteById(classroomId);
-		}
-
-		// 查询已启动已启动场景数据
-		List<OjLocalScene> ojLocalScenes = StreamApiUtils.map(groupInfoIds,
-				groupId -> ojLocalSceneMapper.selectGroupScene(groupId));
-		List<String> ojLocalSceneIds = StreamApiUtils.map(ojLocalScenes,
-				OjLocalScene::getResourceId);
-		List<String> localSceneIds = StreamApiUtils.map(ojLocalScenes,
-				OjLocalScene::getLocalSceneId);
-
-		// 远程场景数据删除
-		if (CollectionUtils.isNotEmpty(localSceneIds)) {
-			List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
-			localScenes.forEach(localScene -> localSceneService.deleteRemoteScene(localScene));
-		}
+		Classroom classroom = validateRoom(classroomId);
+		validateChangeClassroom(classroom);
 
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
-				// 场景数据删除
-				if (CollectionUtils.isNotEmpty(ojLocalSceneIds)) {
-					ojLocalSceneMapper.deleteBatchIds(ojLocalSceneIds);
-				}
-				if (CollectionUtils.isNotEmpty(localSceneIds)) {
-					localSceneMapper.deleteBatchIds(localSceneIds);
-				}
-
 				// 课堂数据删除
-				classroomGroupInfoMapper.deleteBatchIds(groupInfoIds);
+				classroomGroupInfoMapper.deleteByRoom(classroomId);
 				return classroomMapper.deleteById(classroomId);
 			}
 		});

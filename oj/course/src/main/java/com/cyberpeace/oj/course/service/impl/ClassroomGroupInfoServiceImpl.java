@@ -111,7 +111,8 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		Classroom classroom = validateRoom(classroomId);
 		CourseLesson courseLesson = validateLesson(classroom);
 
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId());
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
+				true);
 
 		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
@@ -427,7 +428,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	 */
 	@Override
 	public List<ClassroomGroupInfo> initClassroomGroupInfo(String classroomId,
-														   CourseLesson courseLesson, List<String> userIds, Integer groupNo) {
+			CourseLesson courseLesson, List<String> userIds, Integer groupNo) {
 
 		List<ClassroomGroupInfo> groupInfos = Lists.newArrayList();
 
@@ -547,7 +548,6 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 		return updateGroup;
 	}
-
 
 	/**
 	 * 课堂数据校验

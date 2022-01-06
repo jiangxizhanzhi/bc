@@ -10,6 +10,7 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -49,7 +50,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 				.userId(authContext.getUserId()).build();
 		try {
 			classroomSignMapper.insert(sign);
-		} catch (Exception e) {
+		} catch (DuplicateKeyException e) {
 			return true;
 		}
 

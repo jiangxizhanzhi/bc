@@ -99,14 +99,14 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表信息修改")
 	@PatchMapping("")
-	public BaseRsp<Integer>
+	public BaseRsp<Boolean>
 			updateClassRoom(@RequestBody @Validated(Update.class) ClassroomReq classroomReq) {
 
 		// 基本数据设置
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		Integer result = classroomService.updateClassroom(classroom, authContext);
+		Boolean result = classroomService.updateClassroom(classroom, authContext);
 		return new BaseRsp(result);
 	}
 

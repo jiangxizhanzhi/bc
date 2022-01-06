@@ -74,5 +74,5 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param authContext
 	 * @return
 	 */
-	Integer updateClassroom(Classroom classroom, AuthContext authContext);
+	Boolean updateClassroom(Classroom classroom, AuthContext authContext);
 }

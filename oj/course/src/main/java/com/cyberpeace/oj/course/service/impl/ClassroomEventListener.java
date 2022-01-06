@@ -77,6 +77,10 @@ public class ClassroomEventListener extends MessageListener {
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(businessId);
+		if (null == ojLocalScene) {
+			log.error("OjLocalScene not found! oj_local_scene_id=[{}]", businessId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 
 		// 推送code更新
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
@@ -118,7 +122,7 @@ public class ClassroomEventListener extends MessageListener {
 	 */
 	private void pushMessageToWeb(JSONObject data, OjLocalScene ojLocalScene) {
 		data.getJSONObject(JsonKeyConstant.DATA).put(JsonKeyConstant.GROUP_ID,
-				ojLocalScene.getResourceId());
+				ojLocalScene.getBusinessId());
 		pushMessageToClassroom(data, ojLocalScene);
 		pushMessageToUser(data, ojLocalScene);
 	}

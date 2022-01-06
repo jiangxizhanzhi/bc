@@ -14,6 +14,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -255,7 +256,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取群组成员列表")
 	@GetMapping("/members_info")
-	public BaseRsp<DashboardInfo> getMembersInfo(
+	public BaseRsp<JSONObject> getMembersInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "id", value = "角色id", required = true) String id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -266,8 +267,10 @@ public class RbRoomController {
 			id = strings[strings.length - 1];
 		}
 		List<DashboardUser> data = rbRoomService.getMembersInfo(id, resource_id);
+		JSONObject json = new JSONObject();
+		json.put("list", data);
 
-		return new BaseRsp(data);
+		return new BaseRsp(json);
 	}
 
 	@ApiOperation("修改")

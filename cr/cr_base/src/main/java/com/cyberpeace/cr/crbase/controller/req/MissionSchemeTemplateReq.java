@@ -3,6 +3,8 @@ package com.cyberpeace.cr.crbase.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -24,6 +26,7 @@ public class MissionSchemeTemplateReq implements Serializable {
 	private Integer color;
 
 	@ApiModelProperty(value = "任务编排", required = true)
+	@Valid
 	private List<MissionSchemeStage> combatConfig;
 
 }

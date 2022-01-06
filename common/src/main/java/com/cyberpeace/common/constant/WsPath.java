@@ -12,7 +12,7 @@ import com.google.common.collect.Sets;
 public class WsPath {
 
 	/**
-	 * 单兵、团队、红蓝的场景启动、节点状态变更，使用此path
+	 * 单兵、团队、红蓝的场景启动、节点状态变更、态势消息，使用此path
 	 */
 	public static final String CR_SCENE = "/ws/cr/ce_base/scene";
 
@@ -30,6 +30,8 @@ public class WsPath {
 
 	public static final String CLASSROOM_GROUP_SCENE = "/ws/oj/classroom/group/scene";
 
+	public static final String SITUATION = "/ws/situation/scene";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
@@ -41,6 +43,7 @@ public class WsPath {
 		cache.add(LESSON_PRACTICE_SCENE);
 		cache.add(CLASSROOM_SCENE);
 		cache.add(CLASSROOM_GROUP_SCENE);
+		cache.add(SITUATION);
 	}
 
 	public static boolean validPath(String path) {

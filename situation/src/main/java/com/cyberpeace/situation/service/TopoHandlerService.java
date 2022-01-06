@@ -1,9 +1,8 @@
 package com.cyberpeace.situation.service;
+
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.situation.model.AreaInfo;
-import com.cyberpeace.situation.model.CategorieMap;
-import com.cyberpeace.situation.model.LineStyle;
-import com.cyberpeace.situation.model.PlaneCoordinate;
+import com.cyberpeace.situation.model.*;
 
 import java.util.List;
 import java.util.Map;
@@ -40,4 +39,8 @@ public interface TopoHandlerService {
     String getElementActionStatus(JSONObject element);
 
     List<String> getElementAreas(Float x, Float y, Map<String, AreaInfo> areasInfo);
+
+    List<ElementInfo> getRandomElements(JSONArray elements, Integer num);
+
+    void pushDataToRoom(String data, String sceneId);
 }

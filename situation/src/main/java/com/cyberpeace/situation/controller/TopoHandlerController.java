@@ -7,6 +7,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.situation.constant.MessageType;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
@@ -49,9 +50,9 @@ public class TopoHandlerController {
     ) {
 
         // 获取中台场景数据，优先获取场景拓扑
-        JSONObject sceneTopo = new JSONObject();
-        JSONObject topology = new JSONObject();
-        JSONObject extendElementInfo = new JSONObject();
+        JSONObject sceneTopo;
+        JSONObject topology;
+        JSONObject extendElementInfo;
 
         // 提取有效数据
         if (StringUtils.isBlank(sceneId)) {
@@ -76,9 +77,12 @@ public class TopoHandlerController {
         sceneData.setSceneId(sceneId);
         sceneData.setSceneName(topology.getJSONObject("scene").getString("name"));
         sceneData.setSceneDesc(topology.getJSONObject("scene").getString("description"));
-        sceneData.setAreas((JSONArray) topology.getOrDefault("areas", Lists.newArrayList()));
-        sceneData.setElements((JSONArray) topology.getOrDefault("elements", Lists.newArrayList()));
-        sceneData.setConnections((JSONArray) topology.getOrDefault("connections", Lists.newArrayList()));
+        sceneData.setAreas((JSONArray) topology.getOrDefault("areas",
+                JSONArray.parseArray(Lists.newArrayList().toString())));
+        sceneData.setElements((JSONArray) topology.getOrDefault("elements",
+                JSONArray.parseArray(Lists.newArrayList().toString())));
+        sceneData.setConnections((JSONArray) topology.getOrDefault("connections",
+                JSONArray.parseArray(Lists.newArrayList().toString())));
         sceneData.setExtendElementInfo(extendElementInfo);
         sceneData.setXList(Lists.newArrayList());
         sceneData.setYList(Lists.newArrayList());
@@ -193,7 +197,8 @@ public class TopoHandlerController {
 
             // 处理端口数据
             Map<String, PortInfo> portsInfo = Maps.newHashMap();
-            JSONArray ports = (JSONArray) element.getOrDefault("ports", Lists.newArrayList());
+            JSONArray ports = (JSONArray) element.getOrDefault("ports",
+                    JSONArray.parseArray(Lists.newArrayList().toString()));
             for (int j = 0; j < ports.size(); j++) {
                 JSONObject port = ports.getJSONObject(j);
                 String portId = port.getString("id");
@@ -273,5 +278,41 @@ public class TopoHandlerController {
 
     }
 
+    @ApiOperation("随机推送单点动效信息")
+    @GetMapping("single_message")
+    public BaseRsp<WsSingleNodeEffect> sendSingleMessage(
+            @ApiParam(name = "scene_id", value = "场景编号")
+            @RequestParam(value = "scene_id", required = true) String sceneId) {
 
+        JSONArray elements = getElements(sceneId);
+        WsSingleNodeEffect wsSingleNodeEffect = new WsSingleNodeEffect();
+        wsSingleNodeEffect.setSceneId(sceneId);
+        wsSingleNodeEffect.setCode(MessageType.SingleNodeEffect.getDesc());
+        wsSingleNodeEffect.setElementInfo(topoHandlerService.getRandomElements(elements, 1).get(0));
+        topoHandlerService.pushDataToRoom(wsSingleNodeEffect.toString(), sceneId);
+        return new BaseRsp<>(wsSingleNodeEffect);
+    }
+
+    @ApiOperation("随机推送多点动效信息")
+    @GetMapping("multi_message")
+    public BaseRsp<WsMultiNodeEffect> sendMultiMessage(
+            @ApiParam(name = "scene_id", value = "场景编号")
+            @RequestParam(value = "scene_id", required = true) String sceneId) {
+
+        JSONArray elements = getElements(sceneId);
+        WsMultiNodeEffect wsMultiNodeEffect = new WsMultiNodeEffect();
+        wsMultiNodeEffect.setSceneId(sceneId);
+        wsMultiNodeEffect.setCode(MessageType.MultiNodeEffect.getDesc());
+        List<ElementInfo> randomElements = topoHandlerService.getRandomElements(elements, 2);
+        wsMultiNodeEffect.setSourceElementInfo(randomElements.get(0));
+        wsMultiNodeEffect.setDestElementInfo(randomElements.get(1));
+        topoHandlerService.pushDataToRoom(wsMultiNodeEffect.toString(), sceneId);
+        return new BaseRsp<>(wsMultiNodeEffect);
+    }
+
+    private JSONArray getElements(String sceneId) {
+        JSONObject sceneTopo = remoteSceneService.getById(sceneId, null);
+        JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
+        return (JSONArray) topology.getOrDefault("elements", JSONArray.parseArray(Lists.newArrayList().toString()));
+    }
 }

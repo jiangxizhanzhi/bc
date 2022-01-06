@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public enum Color {
     /**
-     *线型颜色
+     * 颜色
      */
 
     WHITE("#FFFFFF", "白色"),

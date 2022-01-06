@@ -1,12 +1,19 @@
 package com.cyberpeace.situation.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.model.SituationWsMessageIdentifier;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -15,6 +22,9 @@ import java.util.Map;
 
 @Service
 public class TopoHandlerServiceImpl implements TopoHandlerService {
+
+    @Autowired
+    private MyWebSocketHandler myWebSocketHandler;
 
     @Override
     public CategorieMap getCategorieMap(JSONObject deviceCategorie) {
@@ -170,5 +180,42 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
         }
 
         return elementAreas;
+    }
+
+    @Override
+    public List<ElementInfo> getRandomElements(JSONArray elements, Integer num) {
+        List<Integer> indexs = Lists.newArrayList();
+        List<ElementInfo> randomElements = Lists.newArrayList();
+
+        for (int i = 0; i < num; i++) {
+            while (true) {
+                Integer j = (int) (Math.random() * elements.size());
+                if (!indexs.contains(j)) {
+                    JSONObject element = elements.getJSONObject(j);
+                    ElementInfo elementInfo = new ElementInfo();
+                    elementInfo.setElementId(element.getString("id"));
+                    elementInfo.setActionStatus(ElementActionStatus.getRandomValue(ElementActionStatus.values()));
+                    randomElements.add(elementInfo);
+                    indexs.add(j);
+                    break;
+                }
+            }
+        }
+        return randomElements;
+    }
+
+    @Override
+    public void pushDataToRoom(String data, String sceneId) {
+
+        SituationWsMessageIdentifier identifier = new SituationWsMessageIdentifier();
+        identifier.setPath(WsPath.SITUATION);
+        identifier.setUserId(UserInfoContext.getUserContext().getUserId());
+        identifier.setSceneId(sceneId);
+
+        WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
+                .messageIdentifier(identifier).build();
+
+        myWebSocketHandler.pushMessage(messageContext, true);
+
     }
 }

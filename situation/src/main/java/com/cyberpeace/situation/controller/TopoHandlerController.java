@@ -182,6 +182,8 @@ public class TopoHandlerController {
             if ("外部网络".equals(role)) {
                 sceneData.getExternalNetwork().add(elementId);
                 hierarchy = 2;
+            } else if ("网络设备".equals(firstType) && !"防火墙".equals(secondType)) {
+                hierarchy = 1;
             } else {
                 hierarchy = 0;
             }
@@ -245,13 +247,13 @@ public class TopoHandlerController {
             String target = portElementMap.get(connection.getString("target"));
 
             // 二次处理层级数据
-            if (externalNetwork.contains(source) && !"终端节点".equals(elements.get(target).getRole())) {
-                elements.get(target).setHierarchy(1);
-            }
-
-            if (externalNetwork.contains(target) && !"终端节点".equals(elements.get(source).getRole())) {
-                elements.get(source).setHierarchy(1);
-            }
+//            if (externalNetwork.contains(source) && !"终端节点".equals(elements.get(target).getRole())) {
+//                elements.get(target).setHierarchy(1);
+//            }
+//
+//            if (externalNetwork.contains(target) && !"终端节点".equals(elements.get(source).getRole())) {
+//                elements.get(source).setHierarchy(1);
+//            }
 
             // 构造返回连线数据
             ConnectionInfo connectionInfo = new ConnectionInfo();

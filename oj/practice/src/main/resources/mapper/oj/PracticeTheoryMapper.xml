@@ -122,4 +122,9 @@
             and `public` = #{isPublic}
         </if>
     </select>
+
+    <select id="selectByContent" resultType="java.lang.String">
+        select resource_id from oj_practice_theory
+        where content = #{content}
+    </select>
 </mapper>

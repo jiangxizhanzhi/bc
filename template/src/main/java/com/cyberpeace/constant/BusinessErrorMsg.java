@@ -71,6 +71,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "选项重复");
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "习题数量不足");
+			put(OjBusinessErrorCode.GROUP_SCENE_IS_RUNNING, "课堂场景运行中");
 
 			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "设置录屏开关失败");
 
@@ -144,6 +145,7 @@ public interface BusinessErrorMsg {
 					"Duplicated mission names in one stage.");
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH,
 					"The number of practice sets is insufficient.");
+			put(OjBusinessErrorCode.GROUP_SCENE_IS_RUNNING, "Classroom scene is running.");
 			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");
 			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "Options cannot be blank.");

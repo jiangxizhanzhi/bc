@@ -78,4 +78,13 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	Integer batchDelete(List<String> resourceIds);
+
+	/**
+	 * 理论习题资源导入
+	 * @param practiceSetId
+	 * @param categoryId
+	 * @param realPath
+	 * @return
+	 */
+	Boolean importTheory(String practiceSetId, String categoryId, String realPath);
 }

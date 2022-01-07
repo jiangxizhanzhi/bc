@@ -2,12 +2,15 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
@@ -48,6 +51,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 @Slf4j
 public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper, PracticeTheory> implements PracticeTheoryService {
+
+	private Integer MAX_CONTENT_LENGTH;
+
+	@PostConstruct
+	private void init() {
+		MAX_CONTENT_LENGTH = Integer
+				.parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
+	}
 
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
@@ -326,7 +337,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		dataHandler.closeIO();
 		// 数据类型转换
 		List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData,
-				rowData -> excelDataToEntity(rowData, practiceSet));
+				rowData -> rmExcelDataToEntity(rowData, practiceSet));
 
 		return theoryList;
 	}
@@ -353,13 +364,145 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		});
 	}
 
+	@Override
+	public Boolean importTheory(String practiceSetId, String categoryId, String filePath) {
+		// 基本数据校验
+		PracticeSet practiceSet = practiceValidateHandler.validateSetType(practiceSetId,
+				PracticeSet.PracticeType.THEORY.getCode());
+		practiceValidateHandler.validateCategoryType(categoryId,
+				PracticeCategory.PracticeType.THEORY.getCode());
+
+		// 数据读取
+		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ONE);
+		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
+		List<PracticeTheory> theories = StreamApiUtils.map(sheetData,
+				data -> ojExcelDataToEntity(data, practiceSetId, categoryId));
+
+		if (CollectionUtils.isEmpty(theories)) {
+			return CommonConstant.TRUE;
+		}
+
+		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theories.size());
+
+		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				practiceSetMapper.updateById(practiceSet);
+				return saveBatch(theories);
+			}
+		});
+	}
+
+	/**
+	 * 实训理论习题资源导入excel数据转换
+	 * @param excelRowData
+	 * @param practiceSetId
+	 * @param categoryId
+	 * @return
+	 */
+	private PracticeTheory ojExcelDataToEntity(List<String> excelRowData, String practiceSetId,
+			String categoryId) {
+
+		// 字段数据长度限制
+		String content = excelRowData.get(0);
+		practiceValidateHandler.validateFieldLength(content, MAX_CONTENT_LENGTH);
+
+		// 该条数据存在也不插入
+		String practiceId = practiceTheoryMapper.selectByContent(content);
+		if (StringUtils.isNotBlank(practiceId)) {
+			return null;
+		}
+
+		// 理论习题内容
+		PracticeTheory practiceTheory = new PracticeTheory();
+		practiceTheory.setContent(content);
+		practiceTheory.setTitle(content);
+		practiceTheory.setCategoryId(categoryId);
+		practiceTheory.setPracticeSetId(practiceSetId);
+		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
+		practiceTheory.setBuiltin(CommonConstant.TRUE);
+		practiceTheory.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+		practiceTheory.setIsPublic(CommonConstant.TRUE);
+		practiceTheory.setResourceId(IDGeneratorUtil.getID());
+
+		// excel数据中题型=当前代码枚举值+1
+		practiceTheory.setTheoryType(new Double(excelRowData.get(1)).intValue() - 1);
+		// excel数据中难度=比当前代码枚举值+1
+		practiceTheory.setDifficulty(Difficulty.PRIMARY.getCode());
+
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
+				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
+						.getCode().intValue()) {
+			practiceTheory.setAnswer(excelRowData.get(2));
+			JSONObject option = new JSONObject();
+			option.put("A", excelRowData.get(3));
+			option.put("B", excelRowData.get(4));
+			option.put("C", excelRowData.get(5));
+			option.put("D", excelRowData.get(6));
+			practiceTheory.setOption(JsonUtil.toJsonString(option));
+		}
+
+		// 判断题
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
+				.getCode().intValue()) {
+			practiceTheory.setAnswer(excelRowData.get(2));
+			practiceTheory.setOption(JsonUtil.toJsonString(null));
+		}
+
+		// 填空题
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+				.getCode().intValue()) {
+			// 获取填空题答案
+			List<String> blanks = Lists.newArrayList();
+			for (int i = 3; i < excelRowData.size(); i++) {
+				String blank = excelRowData.get(i);
+				if (StringUtils.isBlank(blank)) {
+					break;
+				}
+				blanks.add(blank);
+			}
+
+			Integer weight = CommonConstant.HUNDRED / blanks.size();
+			Integer remainder = CommonConstant.HUNDRED % blanks.size();
+
+			// 填空题答案数据组装
+			List<BlankAnswer> blankAnswers = Lists.newArrayList();
+			for (int i = 0; i < blanks.size(); i++) {
+				BlankAnswer blankAnswer = new BlankAnswer();
+				blankAnswer.setValue(blanks.get(i));
+				if (i == (blanks.size() - CommonConstant.ONE)
+						&& remainder.intValue() == CommonConstant.ZERO) {
+					blankAnswer.setWeight(weight + remainder);
+				} else {
+					blankAnswer.setWeight(weight);
+				}
+			}
+
+			practiceTheory.setBlank(JsonUtil.arrayToString(blankAnswers));
+			practiceTheory.setAnswer(JsonUtil.arrayToString(blankAnswers));
+		}
+
+		// 简答题
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
+				.getCode().intValue()) {
+			String shortAnswer = excelRowData.get(2);
+			List<String> keywords = Lists
+					.newArrayList(shortAnswer.split(CommonConstant.VERTICAL_LINE));
+			practiceTheory.setAnswer(JsonUtil.arrayToString(keywords));
+			practiceTheory.setKeyword(JsonUtil.arrayToString(keywords));
+		}
+
+		return practiceTheory;
+	}
+
 	/**
 	 * excel数据转化为实体类
 	 *
 	 * @param excelRowData
 	 * @return
 	 */
-	private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet) {
+	private PracticeTheory rmExcelDataToEntity(List<String> excelRowData, PracticeSet practiceSet) {
 		PracticeTheory practiceTheory = new PracticeTheory();
 		practiceTheory.setContent(excelRowData.get(0));
 		practiceTheory.setTitle(excelRowData.get(0));

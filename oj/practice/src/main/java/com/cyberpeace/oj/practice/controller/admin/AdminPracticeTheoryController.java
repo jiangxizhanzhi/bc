@@ -2,7 +2,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -19,14 +19,14 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
-import com.cyberpeace.oj.practice.controller.req.AdminTheoryListReq;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import com.cyberpeace.oj.practice.controller.req.TheoryAddReq;
-import com.cyberpeace.oj.practice.controller.req.TheoryUpdateReq;
+import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
@@ -52,6 +52,12 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private AttachmentService attachmentService;
+
+	@Autowired
+	private UtilService utilService;
 
 	@ApiOperation("理论基础习题新增")
 	@PostMapping("")
@@ -132,6 +138,22 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 				authContext);
 
 		return new BaseRsp<>(PageUtil.getListResult(boIPage));
+
+	}
+
+	@ApiOperation("理论习题资源导入")
+	@PostMapping("/import")
+	public BaseRsp<Boolean> importTheory(@RequestBody @Validated TheoryImportReq theoryImportReq) {
+
+		// 文件先上传临时目录
+		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
+				false, theoryImportReq.getFile(), true);
+		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+
+		// 执行资源数据导入
+		Boolean result = practiceTheoryService.importTheory(theoryImportReq.getPracticeSetId(),
+				theoryImportReq.getCategoryId(), realPath);
+		return new BaseRsp<>(result);
 
 	}
 

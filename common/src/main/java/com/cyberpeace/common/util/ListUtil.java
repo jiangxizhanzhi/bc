@@ -41,7 +41,7 @@ public class ListUtil {
 	}
 
 	/**
-	 * 截取列表拼接成字符串
+	 * 截取列表拼接成字符串 空字符传略过
 	 * @param start
 	 * @param end
 	 * @return
@@ -53,6 +53,10 @@ public class ListUtil {
 
 		for (T obj : subList) {
 			if (obj instanceof String) {
+				String str = (String) obj;
+				if (StringUtils.isBlank(str)) {
+					continue;
+				}
 				builder.append(obj);
 			} else {
 				builder.append(JSONObject.toJSONString(obj));

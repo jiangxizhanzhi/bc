@@ -54,4 +54,6 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
 	List<String> selectByCategoryIds(@Param("categoryIds") List<String> categoryIds,
 			@Param("isPublic") Boolean isPublic);
+
+	String selectByContent(@Param("content") String content);
 }

@@ -32,6 +32,18 @@ public class PracticeValidateHandler {
 	private PracticeOperationMapper practiceOperationMapper;
 
 	/**
+	 * 字段数据长度校验
+	 * @param fieldContent
+	 * @param maxLength
+	 */
+	public void validateFieldLength(String fieldContent, Integer maxLength) {
+		if (fieldContent.length() > maxLength) {
+			log.error("field length too long!");
+			throw new BusinessException(OjBusinessErrorCode.FILED_DATA_TOO_LONG);
+		}
+	}
+
+	/**
 	 * 校验操作题是否存在
 	 * @param practiceOperationId
 	 * @return

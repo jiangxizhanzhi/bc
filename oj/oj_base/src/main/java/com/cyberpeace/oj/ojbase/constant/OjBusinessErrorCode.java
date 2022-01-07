@@ -25,4 +25,7 @@ public interface OjBusinessErrorCode {
 	/** 习题集数量不足*/
 	String PRACTICE_COUNT_NOT_ENOUGH = "102003";
 
+	/** 字段数据过长*/
+	String FILED_DATA_TOO_LONG = "102004";
+
 }

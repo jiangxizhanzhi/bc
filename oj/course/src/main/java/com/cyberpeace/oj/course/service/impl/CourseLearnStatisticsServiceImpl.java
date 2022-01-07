@@ -67,7 +67,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			direction.setHeat(heat);
 			return direction;
 		}).collect(Collectors.toList());
-		directions.stream().sorted(Comparator.comparing(Course::getHeat)).collect(Collectors.toList());
+		directions = directions.stream().sorted(Comparator.comparing(Course::getHeat).reversed()).limit(5).collect(Collectors.toList());
 		return getCourseHistogramRes(directions);
 	}
 
@@ -160,7 +160,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		if (StringUtils.isNotEmpty(usernameLike)) {
 			UserPageContext userPageContext = new UserPageContext();
 			userPageContext.setUsername(usernameLike);
-			List<UserInfo> lazyUserList = remoteUserService.getLazyUserList(userPageContext);
+			List<UserInfo> lazyUserList = remoteUserService.getFuzzyQueryUserList(userPageContext);
 			userIds = StreamApiUtils.map(lazyUserList, UserInfo::getUserId);
 		}
 		// 获取学习该课程的所有用户

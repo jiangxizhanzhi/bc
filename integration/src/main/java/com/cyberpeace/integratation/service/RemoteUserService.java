@@ -27,6 +27,8 @@ public interface RemoteUserService {
 
 	List<UserInfo> getLazyUserList(UserPageContext userPageContext);
 
+	List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext);
+
 	List<UserInfo> getByIdList(List<String> ids);
 
 	Map<String, String> getIdNameMap(List<String> ids);

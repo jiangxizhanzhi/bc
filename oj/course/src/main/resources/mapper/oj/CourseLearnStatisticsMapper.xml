@@ -45,7 +45,7 @@
     </select>
 
     <select id="sumHeatByDirection" resultMap="baseResultMap">
-        select oj_course_category.resource_id, oj_course_category.name as name,group_concat(oj_course.heat separator '_') as description
+        select oj_course_category.resource_id, oj_course_category.name as name,ifnull(group_concat(oj_course.heat separator '_'),0) as description
         from oj_course_category
                  left join oj_course on oj_course.category_id = oj_course_category.resource_id
         group by  oj_course_category.resource_id

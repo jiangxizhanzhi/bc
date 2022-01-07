@@ -1,10 +1,14 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -22,6 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,7 +43,14 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
     @Override
     public ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization) {
-        JSONObject result = remoteUserService.getList(page.getCurrent(), page.getSize(), pattern, organization);
+        JSONObject result;
+        OrderItem orderField = (OrderItem) page.getOrders().get(0);
+
+        if (orderField.getColumn() == null) {
+            result = remoteUserService.getList(page.getCurrent(), page.getSize(), pattern, organization);
+        } else {
+            result = remoteUserService.getList(null, 0L, pattern, organization);
+        }
         List<UserInfo> userInfos = result.getJSONArray("list").toJavaList(UserInfo.class);
         if (userInfos.isEmpty()) {
             return new ListRsp<>();
@@ -59,15 +71,31 @@ public class LearnStatsServiceImpl implements LearnStatsService {
             userStatsBo.setResourceId(item.getUserId());
             userStatsBo.setUsername(item.getUserName());
             userStatsBo.setName(item.getName());
-            userStatsBo.setOrganization_data(item.getOrganizationData());
+            userStatsBo.setOrganizationData(item.getOrganizationData());
             userStatsBo.setRoles(item.getRoles());
 
             userStatsBos.add(userStatsBo);
         });
 
         ListRsp<UserStatsBo> responseData = new ListRsp<>();
+        // 分页
+        if (orderField.getColumn() == null) {
+            responseData.setList(userStatsBos);
+        } else {
+            LocalStringUtil.getMatchStr(orderField.getColumn(), PatternConstant.UNDER_LINE_LOWERCASE).forEach(
+                    key -> orderField.setColumn(orderField.getColumn().replace(key, key.toUpperCase().substring(1)))
+            );
+
+            Comparator<UserStatsBo> userStatsBoComparator = Comparator.comparing(item -> (int) ObjUtil.getFieldValueByName(orderField.getColumn(), item));
+            if (!orderField.isAsc()) {
+                userStatsBoComparator = userStatsBoComparator.reversed();
+            }
+
+            userStatsBos.sort(userStatsBoComparator);
+            responseData.setList(userStatsBos.stream().skip((page.getCurrent() - 1) * page.getSize()).limit(page.getSize()).collect(Collectors.toList()));
+        }
+
         responseData.setTotal(result.getInteger("total"));
-        responseData.setList(userStatsBos);
         responseData.setCurrentPage(page.getCurrent());
         responseData.setLastPage(MathUtils.ceil(responseData.getTotal() * 1.0 / page.getSize()));
 

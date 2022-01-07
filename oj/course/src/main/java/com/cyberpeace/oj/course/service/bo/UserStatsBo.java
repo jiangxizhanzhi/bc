@@ -22,7 +22,7 @@ public class UserStatsBo implements Serializable {
     private String name;
 
     @ApiModelProperty("用户组织信息")
-    private String organization_data;
+    private String organizationData;
 
     @ApiModelProperty("用户角色")
     private List<JSONObject> roles;

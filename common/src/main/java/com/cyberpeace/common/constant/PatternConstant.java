@@ -23,4 +23,9 @@ public interface PatternConstant {
 	/** 横线*/
 	String UNDER_LINE = "_";
 
+	/**
+	 * 下划线 + 小写字母
+	 */
+	String UNDER_LINE_LOWERCASE = "_[a-z]";
+
 }

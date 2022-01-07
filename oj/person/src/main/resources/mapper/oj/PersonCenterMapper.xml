@@ -201,7 +201,6 @@
     <select id="selectDistinctUser" resultType="java.lang.String">
         select distinct submit_user_id
         from oj_lesson_paper_evaluate
-        where submit_user_id = #{userId}
     </select>
 
     <select id="selectPracticeByUser" resultMap="studyRecord">
@@ -209,10 +208,10 @@
         row_number() over (order by score desc) as practice_ranking,record
         from oj_lesson_paper_evaluate
         where submit_user_id = #{userId}
-        <if test="practiceIds != null and practiceIds.size() != 0">
-            and oj_lesson_paper_evaluate.practice_id in
-            <foreach collection="practiceIds" item="practiceId" open="(" close=")" separator=",">
-                #{practiceId}
+        <if test="lessonIds != null and lessonIds.size() != 0">
+            and oj_lesson_paper_evaluate.lesson_id in
+            <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
+                #{lessonId}
             </foreach>
         </if>
         group by submit_user_id

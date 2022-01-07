@@ -23,6 +23,8 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 					CrRole.RbRoleGroupCode.REFEREE.getCode(),
 					CrRole.RbRoleGroupCode.DIRECTOR.getCode()));
 
+	private final static String SIGN = "_";
+
 	@Autowired
 	private CrRoleService crRoleService;
 
@@ -34,9 +36,16 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 
 	@Override
 	public List<String> getGroup(String roomId, String groupId) {
-		// （红方组|或者蓝方组）+ 所有管理组下的用户
-		String replaceGroupId = groupId.replace(roomId + "_", "");
+		boolean contains = groupId.contains(SIGN);
+		if (contains) {
+			return getParentGroup(roomId, groupId.replace(roomId + SIGN, ""));
+		} else {
+			return getSubGroup(groupId);
+		}
+	}
 
+	public List<String> getParentGroup(String roomId, String parentGroupId) {
+		// （红方组|或者蓝方组）+ 所有管理组下的用户
 		List<CrRole> rolesByRoom = crRoleService.getRolesByRoom(roomId, declareMessageType());
 		List<String> userIds = Lists.newArrayList();
 
@@ -44,8 +53,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 			List<String> roleUserIds = JsonUtil.toJsonObjectArray(role.getUserIds(),
 					String.class);
 
-
-			if (!role.getRoleGroup().toString().equals(replaceGroupId)){
+			if (!role.getRoleGroup().toString().equals(parentGroupId)){
 				userIds.addAll(roleUserIds);
 				continue;
 			}
@@ -57,6 +65,17 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 
 		}
 		return userIds;
+	}
+
+	public List<String> getSubGroup(String roleId) {
+		// 红方或蓝方下子组，不包含管理员组
+		CrRole crRole = crRoleService.getById(roleId);
+		if (crRole == null) {
+			return Lists.newArrayList();
+		}
+
+		return JsonUtil.toJsonObjectArray(crRole.getUserIds(),
+				String.class);
 	}
 
 	@Override

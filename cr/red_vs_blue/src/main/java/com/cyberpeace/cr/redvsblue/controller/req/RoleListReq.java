@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.redvsblue.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
 
 import lombok.Data;
 

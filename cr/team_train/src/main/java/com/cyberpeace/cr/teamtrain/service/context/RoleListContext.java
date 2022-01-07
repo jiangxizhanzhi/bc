@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.service.context;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 
 import lombok.Data;

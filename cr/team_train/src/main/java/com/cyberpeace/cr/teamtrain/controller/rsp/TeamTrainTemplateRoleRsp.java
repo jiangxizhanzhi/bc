@@ -3,8 +3,8 @@ package com.cyberpeace.cr.teamtrain.controller.rsp;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.teamtrain.service.context.ColorMission;
 
 import lombok.Data;
 

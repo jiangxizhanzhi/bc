@@ -71,7 +71,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
     @Override
     public Integer getLineWidth() {
 
-        Integer lineWidth = 1;
+        Integer lineWidth = 5;
 
         return lineWidth;
 

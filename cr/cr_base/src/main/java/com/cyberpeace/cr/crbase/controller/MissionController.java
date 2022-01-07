@@ -77,6 +77,7 @@ public class MissionController {
 	@PostMapping("/missions")
 	public BaseRsp<MissionTemplate>
 			addMission(@RequestBody @Validated MissionTemplateReq missionTemplateReq) {
+		missionTemplateReq.validate();
 		MissionTemplate toAddMissionTemplate = requestToMissionTemplate(missionTemplateReq);
 
 		MissionTemplate missionTemplate = missionService.addMissionTemplate(toAddMissionTemplate);
@@ -91,7 +92,7 @@ public class MissionController {
 		if (StringUtils.isBlank(modifyReq.getResourceId())) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-
+		modifyReq.validate();
 		MissionTemplate toUpdateMissionTemplate = requestToMissionTemplate(modifyReq);
 		missionService.updateMissionTemplate(toUpdateMissionTemplate);
 		MissionTemplate ret = missionService

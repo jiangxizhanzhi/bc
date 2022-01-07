@@ -3,6 +3,18 @@ package com.cyberpeace.cr.crbase.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
+import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -35,4 +47,54 @@ public class MissionTemplateReq implements Serializable {
 
 	@ApiModelProperty(value = "题解", required = true)
 	private String writeUp;
+
+	public void validate() {
+		// 验证名称长度
+		CrCommonValidator.validateLength(title, CrCommonConstants.MIN_MISSION_NAME_LEN,
+				CrCommonConstants.MAX_MISSION_NAME_LEN, CrBusinessErrorCode.INVALID_MISSION_NAME);
+
+		// validate skill points
+		CrCommonValidator.validateSize(skillPoints, CrCommonConstants.SKILL_POINTS_SIZE,
+				"invalid skill points size");
+		for (Integer skillPoint : skillPoints) {
+			CrCommonValidator.validateScore(skillPoint, CrCommonConstants.SKILL_POINT_MIN_VALUE,
+					CrCommonConstants.SKILL_POINT_MAX_VALUE,
+					"illegal skill point value, 1~5 expected");
+		}
+
+		// validate score
+		CrCommonValidator.validateScore(score, CrCommonConstants.SCORE_MAX_VALUE,
+				CrBusinessErrorCode.SCORE_OUT_OF_RANGE);
+
+		// validate answer
+		if (MissionBase.MissionType.ANSWER_NULLABLE_TYPE_LIST.contains(type) && answer == null) {
+			throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+		}
+		// validate choice
+		if (MissionBase.MissionType.HAS_OPTION_TYPE_LIST.contains(type)) {
+			if (answer.equals(CommonConstant.EMPTY_LIST_JSON) || answer.isEmpty()) {
+				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+			}
+			if (option.equals(CommonConstant.EMPTY_LIST_JSON) || option.isEmpty()) {
+				throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
+			}
+			// validate option
+			List<JSONObject> options = JsonUtil.toJsonObjectArray(option, JSONObject.class);
+			List<String> realOptions = Lists.newArrayList();
+			for (JSONObject option : options) {
+				String optionValue = option.getString("optionValue");
+				if (optionValue == null) {
+					throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
+				}
+				String realOption = StringUtils.strip(optionValue);
+				if (realOption.isEmpty()) {
+					throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
+				}
+				realOptions.add(realOption);
+			}
+			CrCommonValidator.checkStringListDuplicate(realOptions,
+					CrBusinessErrorCode.OPTIONS_DUPLICATE);
+		}
+
+	}
 }

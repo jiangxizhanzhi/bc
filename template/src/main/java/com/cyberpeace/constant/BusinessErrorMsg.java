@@ -63,6 +63,10 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.INVALID_MISSION_NAME, "不合法的任务名称长度");
 			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "阶段名称重复");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME, "阶段内任务重名");
+			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "分数超出范围");
+			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "答案不可为空");
+			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "选项不可为空");
+			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "选项重复");
 
 		}
 	};
@@ -125,6 +129,10 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "Duplicated stage names.");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME,
 					"Duplicated mission names in one stage.");
+			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
+			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");
+			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "Options cannot be blank.");
+			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "Options duplicate.");
 
 		}
 	};

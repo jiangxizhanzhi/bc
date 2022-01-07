@@ -182,7 +182,7 @@ public class TopoHandlerController {
             if ("外部网络".equals(role)) {
                 sceneData.getExternalNetwork().add(elementId);
                 hierarchy = 2;
-            } else if ("网络设备".equals(firstType) && !"防火墙".equals(secondType)) {
+            } else if ("路由器".equals(secondType)) {
                 hierarchy = 1;
             } else {
                 hierarchy = 0;

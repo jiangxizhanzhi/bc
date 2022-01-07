@@ -14,4 +14,11 @@ public interface SingleTemplateService extends IService<SingleTemplate> {
     SingleTemplateBo update(String businessTemplateId, BaseInfo baseInfo, JSONObject missionsScheme);
 
     SingleTemplate getByBusinessTemplateId(String resourceId);
+
+    /**
+     * 检查任务方案是否有效
+     * @param missionsScheme 任务方案json对象
+     * @return bool
+     */
+    void missionsSchemeValidator(JSONObject missionsScheme);
 }

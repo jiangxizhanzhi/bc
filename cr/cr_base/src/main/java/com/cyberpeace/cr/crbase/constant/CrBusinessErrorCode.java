@@ -130,4 +130,10 @@ public interface CrBusinessErrorCode {
 	// 阶段内任务名称重复
 	String DUPLICATED_MISSION_NAME = "101040";
 
+	// 存在空任务模板
+	String EMPTY_MISSION_TEMPLATE = "101041";
+
+	// 无效任务模板
+	String MISSION_TEMPLATE_INVALID = "101042";
+
 }

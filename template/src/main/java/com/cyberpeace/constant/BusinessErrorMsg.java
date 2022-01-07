@@ -63,6 +63,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.INVALID_MISSION_NAME, "不合法的任务名称长度");
 			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "阶段名称重复");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME, "阶段内任务重名");
+			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "存在空任务模板");
+			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "无效任务模板");
 
 		}
 	};
@@ -125,6 +127,9 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "Duplicated stage names.");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME,
 					"Duplicated mission names in one stage.");
+
+			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "Mission Template is empty.");
+			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "Mission Template is invalid.");
 
 		}
 	};

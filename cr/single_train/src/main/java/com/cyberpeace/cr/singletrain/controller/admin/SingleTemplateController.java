@@ -42,6 +42,7 @@ public class SingleTemplateController {
         BaseInfo baseInfo = new BaseInfo();
         BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
         requestData.setBaseInfo(baseInfo);
+        singleTemplateService.missionsSchemeValidator(requestDataRel.getMissionsScheme());
         requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
 
         requestData.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
@@ -58,6 +59,7 @@ public class SingleTemplateController {
         BaseInfo baseInfo = new BaseInfo();
         BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
         requestData.setBaseInfo(baseInfo);
+        singleTemplateService.missionsSchemeValidator(requestDataRel.getMissionsScheme());
         requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
 
         return new BaseRsp<>(singleTemplateService.update(requestDataRel.getResourceId(), requestData.getBaseInfo(), requestData.getMissionsScheme()));

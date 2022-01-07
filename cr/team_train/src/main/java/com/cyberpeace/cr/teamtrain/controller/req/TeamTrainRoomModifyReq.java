@@ -30,4 +30,7 @@ public class TeamTrainRoomModifyReq {
 	private String description;
 
 	private String roleConfig;
+
+	@ApiModelProperty(value = "录屏开关")
+	private Boolean enableRecording;
 }

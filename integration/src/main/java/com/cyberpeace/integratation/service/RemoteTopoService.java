@@ -32,6 +32,11 @@ public interface RemoteTopoService {
 	String save(JSONObject json);
 
 	/**
+	 * 返回同步之后的拓扑数据
+	 */
+	JSONObject sync(JSONObject json);
+
+	/**
 	 * 删除中台拓扑
 	 * @param topoId
 	 * @return

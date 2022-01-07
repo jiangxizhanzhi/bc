@@ -142,4 +142,7 @@ public interface CrBusinessErrorCode {
 	// 选项重复
 	String OPTIONS_DUPLICATE = "101044";
 
+	// 录屏开关设置失败
+	String SWITCH_RECORDING_FAILURE = "101045";
+
 }

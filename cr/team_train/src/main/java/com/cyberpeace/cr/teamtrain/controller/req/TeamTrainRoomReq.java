@@ -53,4 +53,7 @@ public class TeamTrainRoomReq {
 	@ApiModelProperty(required = true)
 	@NotNull
 	private List<RoomRole> roleConfig;
+
+	@ApiModelProperty(value = "录屏开关")
+	private Boolean enableRecording;
 }

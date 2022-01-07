@@ -55,4 +55,6 @@ public class RbRoomContext {
 	@ApiModelProperty(required = true)
 	@NotNull
 	private List<RoomRole> roleConfig;
+
+	private Boolean enableRecording;
 }

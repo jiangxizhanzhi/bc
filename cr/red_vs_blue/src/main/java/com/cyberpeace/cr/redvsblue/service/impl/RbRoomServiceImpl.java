@@ -384,6 +384,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		if (rbRoomContext.getEndTime() != null) {
 			rbRoom.setEndTime(rbRoomContext.getEndTime());
 		}
+		if (rbRoomContext.getEnableRecording() != null) {
+			rbRoom.setEnableRecording(rbRoomContext.getEnableRecording());
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

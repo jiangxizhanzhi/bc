@@ -47,6 +47,8 @@ public class RbRoom extends BaseTable {
 
 	private String copyedTopoId;
 
+	private Boolean enableRecording;
+
 	public RbRoom() {
 
 	}
@@ -60,6 +62,7 @@ public class RbRoom extends BaseTable {
 		this.trainSkill = JsonUtil.toJsonString(input.getTrainSkill());
 		this.startTime = input.getStartTime();
 		this.endTime = input.getEndTime();
+		this.enableRecording = input.getEnableRecording();
 		this.difficulty = input.getDifficult();
 		this.createUserId = createUserId;
 		this.localSceneId = localSceneId;

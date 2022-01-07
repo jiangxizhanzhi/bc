@@ -381,11 +381,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public List<MissionTemplate> batchGetByBusinessTemplateId(String templateId) {
-		return missionTemplateMapper.selectByBusinessTemplateId(templateId);
-	}
-
-	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
 		String reg = String.format("\"([a-z0-9]{%d})\"", CrCommonConstants.GENERATED_UUID_LENGTH);
 		List<String> missionTemplateIds = LocalStringUtil.getMatchStr(schemeJson, reg, 1);

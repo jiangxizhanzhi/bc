@@ -21,16 +21,21 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 
 	List<Course> sumHeatByDirection();
 
-	IPage<AdminCourseStatisticsRes> listCourseByPage(Page page, @Param("courseContext") CourseContext courseContext,
-											   @Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic);
+	IPage<AdminCourseStatisticsRes> listCourseByPage(Page page,
+			@Param("courseContext") CourseContext courseContext,
+			@Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic);
 
-	IPage<AdminLessonStatisticsRes> listLessonByPage(Page page, @Param("courseId") String courseId, @Param("isPublic") Boolean isPublic, Integer type, String search);
+	IPage<AdminLessonStatisticsRes> listLessonByPage(Page page, @Param("courseId") String courseId,
+			@Param("isPublic") Boolean isPublic, Integer type, String search);
 
 	List<AdminLessonStatisticsRes> listLessonPractice(@Param("lessonIds") List<String> lessonIds);
 
-	IPage<AdminLessonStatisticsDetailRes> listLessonLearnedRecord(Page page, @Param("lessonId") String lessonId);
+	IPage<AdminLessonStatisticsDetailRes> listLessonLearnedRecord(Page page,
+			@Param("lessonId") String lessonId);
 
-	List<AdminLessonStatisticsDetailRes> detailLessonByPage(@Param("lessonId") String lessonId, @Param("userIds") List<String> userIds);
+	List<AdminLessonStatisticsDetailRes> detailLessonByPage(@Param("lessonId") String lessonId,
+			@Param("userIds") List<String> userIds);
 
-	List<AdminLessonStatisticsDetailRes> detailExpLessonByPage(@Param("lessonId") String lessonId, @Param("userIds") List<String> userIds);
+	List<AdminLessonStatisticsDetailRes> detailExpLessonByPage(@Param("lessonId") String lessonId,
+			@Param("userIds") List<String> userIds);
 }

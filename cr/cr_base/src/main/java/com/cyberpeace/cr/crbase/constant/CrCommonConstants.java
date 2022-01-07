@@ -38,4 +38,8 @@ public interface CrCommonConstants {
 	int SKILL_POINT_MIN_VALUE = 1;
 
 	int SKILL_POINT_MAX_VALUE = 5;
+
+	int MIN_TRAINING_NAME_LEN = 4;
+
+	int MAX_TRAINING_NAME_LEN = 40;
 }

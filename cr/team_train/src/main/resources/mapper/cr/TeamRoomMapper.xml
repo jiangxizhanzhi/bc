@@ -143,5 +143,10 @@
             #{roomId}
         </foreach>
     </select>
+    <select id="countByName" resultType="java.lang.Integer">
+        select count(id)
+        from cr_team_room
+        where `name` = #{name}
+    </select>
 
 </mapper>

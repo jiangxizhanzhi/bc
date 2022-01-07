@@ -151,4 +151,10 @@ public interface CrBusinessErrorCode {
 	// 无效任务模板
 	String MISSION_TEMPLATE_INVALID = "101047";
 
+	// 训练名称长度超出范围，应为4~40
+	String TRAINING_NAME_LEN_ERROR = "101048";
+
+	// 同名训练已存在
+	String TRAINING_NAME_DUPLICATE = "101049";
+
 }

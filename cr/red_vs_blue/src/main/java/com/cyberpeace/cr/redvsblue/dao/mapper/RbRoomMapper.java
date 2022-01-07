@@ -31,4 +31,6 @@ public interface RbRoomMapper extends BaseMapper<RbRoom> {
 
 	List<RbRoom> selectUnfinishedByIds(@Param("roomIds") List<String> roomIds,
 			@Param("endStatus") Integer endStatus);
+
+	Integer countByName(@Param("name") String name);
 }

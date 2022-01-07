@@ -26,6 +26,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -43,6 +44,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -135,6 +137,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Override
 	public RbRoom create(RbRoomContext rbRoomContext) {
 		String userId = UserInfoContext.getUserContext().getUserId();
+
+		validateName(rbRoomContext.getName());
 
 		RbTemplate template = rbTemplateService.getById(rbRoomContext.getTemplate());
 		if (template == null) {
@@ -363,7 +367,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Override
 	public void updateRbRoom(RbRoomContext rbRoomContext, RbRoom rbRoom) {
-		if (!StringUtils.isBlank(rbRoomContext.getName())) {
+		if (!StringUtils.isBlank(rbRoomContext.getName())
+				&& !rbRoom.getName().equals(rbRoomContext.getName())) {
+			validateName(rbRoomContext.getName());
 			rbRoom.setName(rbRoomContext.getName());
 		}
 		if (rbRoomContext.getCategory() != null) {
@@ -711,5 +717,17 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		return JsonUtil.toJsonString(missionStageSchemes);
 
+	}
+
+	private void validateName(String name) {
+		// validate length
+		CrCommonValidator.validateLength(name, CrCommonConstants.MIN_TRAINING_NAME_LEN,
+				CrCommonConstants.MAX_TRAINING_NAME_LEN,
+				CrBusinessErrorCode.TRAINING_NAME_LEN_ERROR);
+		// check if duplicate
+		Integer roomExist = rbRoomMapper.countByName(name);
+		if (roomExist > 0) {
+			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
+		}
 	}
 }

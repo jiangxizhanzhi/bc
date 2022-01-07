@@ -32,4 +32,11 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 
 	List<TeamRoom> selectUnfinishedByIds(@Param("roomIds") List<String> roomIds,
 			@Param("endCode") Integer endCode);
+
+	/**
+	 * 用于重名校验
+	 * @param name 
+	 * @return
+	 */
+	Integer countByName(@Param("name") String name);
 }

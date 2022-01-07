@@ -26,6 +26,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -39,6 +40,7 @@ import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -113,6 +115,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (template == null) {
 			throw new ResourceNotFoundException(teamTrainRoomContext.getTemplate());
 		}
+		validateName(teamTrainRoomContext.getName());
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
@@ -217,7 +220,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public void updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom) {
 
-		if (!StringUtils.isBlank(teamTrainRoomContext.getName())) {
+		if (!StringUtils.isBlank(teamTrainRoomContext.getName())
+				&& !teamRoom.getName().equals(teamTrainRoomContext.getName())) {
+			validateName(teamTrainRoomContext.getName());
 			teamRoom.setName(teamTrainRoomContext.getName());
 		}
 		if (teamTrainRoomContext.getCategory() != null) {
@@ -522,6 +527,18 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 
 		timeLineData.setEndTime(endTime);
+	}
+
+	private void validateName(String name) {
+		// validate length
+		CrCommonValidator.validateLength(name, CrCommonConstants.MIN_TRAINING_NAME_LEN,
+				CrCommonConstants.MAX_TRAINING_NAME_LEN,
+				CrBusinessErrorCode.TRAINING_NAME_LEN_ERROR);
+		// check if duplicate
+		Integer roomExist = teamRoomMapper.countByName(name);
+		if (roomExist > 0) {
+			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
+		}
 	}
 
 }

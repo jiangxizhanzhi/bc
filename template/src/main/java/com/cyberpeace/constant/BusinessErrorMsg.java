@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 
@@ -75,6 +76,11 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "存在空任务模板");
 			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "无效任务模板");
+			put(CrBusinessErrorCode.TRAINING_NAME_LEN_ERROR,
+					String.format("训练名称长度超出范围，应为 %d ~ %d ", CrCommonConstants.MIN_TRAINING_NAME_LEN,
+							CrCommonConstants.MAX_TRAINING_NAME_LEN));
+			put(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE, "已存在同名训练");
+
 		}
 	};
 
@@ -143,6 +149,11 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "Options cannot be blank.");
 			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "Options duplicate.");
 			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "Failed to switch recording.");
+			put(CrBusinessErrorCode.TRAINING_NAME_LEN_ERROR,
+					String.format("Name length out of range, supposed to be between %d and %d.",
+							CrCommonConstants.MIN_TRAINING_NAME_LEN,
+							CrCommonConstants.MAX_TRAINING_NAME_LEN));
+			put(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE, "Training name duplicate");
 
 			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "Mission Template is empty.");
 			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "Mission Template is invalid.");

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 
 public interface BusinessErrorMsg {
@@ -68,6 +69,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "选项不可为空");
 			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "选项重复");
 
+			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "习题数量不足");
+
 		}
 	};
 
@@ -129,6 +132,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "Duplicated stage names.");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME,
 					"Duplicated mission names in one stage.");
+			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "The number of practice sets is insufficient.");
 			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");
 			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "Options cannot be blank.");

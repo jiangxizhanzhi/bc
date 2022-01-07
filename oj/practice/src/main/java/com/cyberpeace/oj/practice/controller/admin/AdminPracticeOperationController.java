@@ -61,9 +61,6 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@Autowired
 	private AttachmentService attachmentService;
 
-	@Autowired
-	private RemoteTopoService remoteTopoService;
-
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
 	public BaseRsp<OperationBo> get(@ApiParam(name = "resource_id",
@@ -121,7 +118,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@DeleteMapping("")
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
-		int result = practiceOperationMapper.deleteBatchIds(delReq.getResourceIds());
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Integer result = practiceOperationService.batchDelete(delReq.getResourceIds(), authContext);
 		return new BaseRsp<>(result);
 	}
 

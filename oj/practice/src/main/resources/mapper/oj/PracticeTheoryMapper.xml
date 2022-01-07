@@ -66,9 +66,8 @@
                 <bind name="pattern" value="'%' + query.pattern + '%'"/>
                 and content like #{pattern}
             </if>
-            and id &gt;= (SELECT floor(RAND() * (SELECT MAX(id) FROM oj_practice_theory)))
         </where>
-        order by `id` limit #{limit}
+        order by rand() limit #{limit}
     </select>
 
     <select id="pageByQuery" resultMap="theory">

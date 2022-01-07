@@ -16,4 +16,13 @@ public interface OjBusinessErrorCode {
 	/** 课堂场景启动失败*/
 	String GROUP_SCENE_START_FAIL = "102006";
 
+	/** 习题集类型错误*/
+	String PRACTICE_SET_TYPE_ERROR = "102001";
+
+	/** 习题分类类型错误*/
+	String PRACTICE_CATEGORY_TYPE_ERROR = "102002";
+
+	/** 习题集数量不足*/
+	String PRACTICE_COUNT_NOT_ENOUGH = "102003";
+
 }

@@ -34,6 +34,9 @@ public class PracticeSet extends AuthTable {
 	/** 创建者*/
 	private String createUserId;
 
+	/** 习题集所含习题数量*/
+	private Integer practiceCount;
+
 	public enum PracticeType implements GenericEnum {
 
 		THEORY(0, "理论基础"), OPERATION(2, "CTF解题");

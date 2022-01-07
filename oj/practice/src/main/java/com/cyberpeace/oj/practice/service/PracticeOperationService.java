@@ -140,4 +140,11 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
 	TopoSceneDataBo getTopoScene(String operationId, AuthContext authContext);
+
+	/**
+	 * 数据批量删除
+	 * @param practiceIds
+	 * @return
+	 */
+	Integer batchDelete(List<String> practiceIds, AuthContext authContext);
 }

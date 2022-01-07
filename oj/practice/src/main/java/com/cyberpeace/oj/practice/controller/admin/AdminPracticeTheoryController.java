@@ -55,7 +55,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论基础习题新增")
 	@PostMapping("")
-	public BaseRsp<Boolean>
+	public BaseRsp<Integer>
 			add(@RequestBody @Validated({ Create.class }) TheoryAddReq theoryAddReq) {
 
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryAddReq, PracticeTheory.class);
@@ -67,7 +67,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 				CommonConstant.FALSE);
 		replaceAnswer(practiceTheory);
 
-		Boolean result = practiceTheoryService.create(practiceTheory, authContext);
+		Integer result = practiceTheoryService.create(practiceTheory, authContext);
 
 		return new BaseRsp(result);
 	}
@@ -111,7 +111,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	@DeleteMapping("")
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
-		int result = practiceTheoryMapper.deleteBatchIds(delReq.getResourceIds());
+		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());
 		return new BaseRsp<>(result);
 	}
 

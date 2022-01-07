@@ -3,6 +3,7 @@ package com.cyberpeace.cs.dao.entity;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
@@ -96,6 +97,7 @@ public class LocalScene extends BaseTable {
 	/**
 	 * 是否开启录屏功能，默认为false
 	 */
+	@TableField(exist = false)
 	private boolean record = false;
 
 	/**

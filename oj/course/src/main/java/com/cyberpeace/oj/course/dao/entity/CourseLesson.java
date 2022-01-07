@@ -58,6 +58,8 @@ public class CourseLesson extends BaseTable {
 
 	private Integer heat;
 
+	private Boolean paperPublic;
+
 	public enum HandoutType implements GenericEnum {
 
 		NEITHER(0, "都不是"), MD(1, "markdown"), PPT(2, "ppt文件"), PDF(4, "pdf文件");

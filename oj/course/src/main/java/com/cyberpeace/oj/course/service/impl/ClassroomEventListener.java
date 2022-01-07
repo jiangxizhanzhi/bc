@@ -76,15 +76,12 @@ public class ClassroomEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 
-		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(businessId);
-		if (null == ojLocalScene) {
-			log.error("OjLocalScene not found! oj_local_scene_id=[{}]", businessId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		// 推送code更新
+		// 数据组装
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
+
+		// 数据校验
+		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
 		pushMessageToWeb(dataObj, ojLocalScene);
 
 		// 场景启动完成更新数据库 重新设置code值
@@ -99,19 +96,30 @@ public class ClassroomEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 
-		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(businessId);
-		if (null == ojLocalScene) {
-			log.error("OjLocalScene not found! oj_local_scene_id=[{}]", businessId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
 
 		// 更新消息组装
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
 
 		pushMessageToWeb(dataObj, ojLocalScene);
-
 		return CommonConstant.TRUE;
+	}
+
+	/**
+	 * 数据校验
+	 * @param ojLocalSceneId
+	 * @return
+	 */
+	private OjLocalScene validateOjLocalScene(String ojLocalSceneId) {
+
+		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(ojLocalSceneId);
+		if (null == ojLocalScene) {
+			log.error("OjLocalScene not found! oj_local_scene_id=[{}]", ojLocalSceneId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		return ojLocalScene;
 	}
 
 	/**

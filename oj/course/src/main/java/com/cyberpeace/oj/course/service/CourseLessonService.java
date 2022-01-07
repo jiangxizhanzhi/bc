@@ -136,4 +136,12 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param video
 	 */
 	void uploadVideo(CourseLesson courseLesson, MultipartFile video);
+
+	/**
+	 * 课时批量删除
+	 * @param resourceIds
+	 * @param authContext
+	 * @return
+	 */
+	Integer batchDelete(List<String> resourceIds, AuthContext authContext);
 }

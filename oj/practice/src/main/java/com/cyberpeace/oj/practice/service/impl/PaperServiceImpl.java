@@ -184,23 +184,54 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		}
 
 		PracticeSet practiceSet = practiceSetMapper.selectById(practiceQuery.getPracticeSetId());
+
+		// 根据习题集类型不同查询不同的习题
 		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
 				.getCode()) {
-			TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
 
+			List<String> practiceIds = practiceTheoryMapper
+					.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
+			if (practiceIds.size() < practiceQuery.getCount()) {
+				log.error("Practice not enough! get_count=[{}], practice_count=[{}]",
+						practiceQuery.getCount(), practiceIds.size());
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
+			}
+
+			// 执行数据查询
+			TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
 			List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
 					practiceQuery.getCount());
+
 			theories.forEach(practiceTheory -> practiceTheory.setScore(score));
 			return StreamApiUtils.map(theories, practiceTheory -> theoryToListBo(practiceTheory));
 		} else {
+
+			// 习题集数量校验
+			List<String> practiceIds = practiceOperationMapper
+					.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
+			if (practiceIds.size() < practiceQuery.getCount()) {
+				log.error("Practice not enough! get_count=[{}], practice_count=[{}]",
+						practiceQuery.getCount(), practiceIds.size());
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
+			}
+
+			// 实操习题数据查询
 			OperationListQuery listQuery = BeanUtils.copy(practiceQuery, OperationListQuery.class);
 			List<PracticeOperation> operations = practiceOperationMapper.randomChoice(listQuery,
 					practiceQuery.getCount());
+
 			operations.forEach(operation -> operation.setScore(score));
 			return StreamApiUtils.map(operations, operation -> operationToListBo(operation));
 		}
 	}
 
+	/**
+	 * 理论习题数据转换
+	 * @param queryBo
+	 * @param page
+	 * @param authContext
+	 * @return
+	 */
 	private IPage<LibPracticeListBo> theoryConvert(LibPracticeQueryBo queryBo, Page page,
 			AuthContext authContext) {
 

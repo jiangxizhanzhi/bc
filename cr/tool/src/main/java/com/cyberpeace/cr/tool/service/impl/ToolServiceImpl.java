@@ -90,7 +90,7 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 
     private void setAboutFile(ToolRsp toolRsp, Tool tool) {
         List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
-        toolRsp.setFiles(fileList);
+        toolRsp.setFiles(tool.getFiles());
 
         List<ToolFile> toolFiles;
         if (null == fileList || fileList.isEmpty()) {

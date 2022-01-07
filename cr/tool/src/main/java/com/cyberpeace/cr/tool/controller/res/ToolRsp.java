@@ -51,7 +51,7 @@ public class ToolRsp implements Serializable {
 	private String coverUrl;
 
 	@ApiModelProperty("附件列表")
-	private List<Integer> files;
+	private String files;
 
 	@ApiModelProperty("附件详细列表")
 	private List<ToolFile> toolFiles;

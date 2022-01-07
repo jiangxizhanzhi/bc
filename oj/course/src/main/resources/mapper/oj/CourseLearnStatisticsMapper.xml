@@ -45,11 +45,10 @@
     </select>
 
     <select id="sumHeatByDirection" resultMap="baseResultMap">
-        select oj_course_category.name, sum(oj_course.heat) as heat
-        from oj_course
-                 left join oj_course_category on oj_course.category_id = oj_course_category.resource_id
-        ORDER BY oj_course.heat DESC
-        LIMIT 5
+        select oj_course_category.resource_id, oj_course_category.name as name,group_concat(oj_course.heat separator '_') as description
+        from oj_course_category
+                 left join oj_course on oj_course.category_id = oj_course_category.resource_id
+        group by  oj_course_category.resource_id
     </select>
 
     <select id="listCourseByPage" resultMap="courseListMap">
@@ -115,10 +114,11 @@
         and note_type = 2 group by oj_note.business_id )
         as report on report.business_id = oj_course_lesson.resource_id
         where course_id = #{courseId}
-        <if test="null != type and type">
+        <if test="null != type and type >= 0">
             and oj_course_lesson.`type` = #{type}
         </if>
         <if test="null != search and search">
+            <bind name="search" value="'%' + search + '%'"/>
             and oj_course_lesson.`name` like #{search}
         </if>
     </select>

@@ -1,11 +1,9 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,16 +50,28 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	@Override
 	public HistogramRes courseHistogram() {
 		List<Course> courses = courseLearnStatisticsMapper.selectByHeat();
-		return getHistogramRes(courses);
+		return getCourseHistogramRes(courses);
 	}
 
 	@Override
 	public HistogramRes directionHistogram() {
-		List<Course> courses = courseLearnStatisticsMapper.sumHeatByDirection();
-		return getHistogramRes(courses);
+		List<Course> directions = courseLearnStatisticsMapper.sumHeatByDirection();
+		directions = directions.stream().map(direction -> {
+			String directionHeats = direction.getDescription();
+			if (null == directionHeats) {
+				return direction;
+			}
+			String[] heatLists = directionHeats.split("_");
+			int[] heats = Arrays.stream(heatLists).mapToInt(Integer::valueOf).toArray();
+			int heat = Arrays.stream(heats).sum();
+			direction.setHeat(heat);
+			return direction;
+		}).collect(Collectors.toList());
+		directions.stream().sorted(Comparator.comparing(Course::getHeat)).collect(Collectors.toList());
+		return getCourseHistogramRes(directions);
 	}
 
-	private HistogramRes getHistogramRes(List<Course> courses) {
+	private HistogramRes getCourseHistogramRes(List<Course> courses) {
 		List<String> xNames = new ArrayList<>();
 		List<Integer> yValues = new ArrayList<>();
 		for (Course course : courses) {

@@ -126,6 +126,12 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 	@Override
+	public JSONObject sync(JSONObject json) {
+		String targetUrl = TOPO_SYNC;
+		return HttpClientUtil.post(targetUrl, json, JSONObject.class);
+	}
+
+	@Override
 	public Boolean deleteById(String topoId) {
 		String targetUrl = TOPO_DELETE;
 		JSONObject body = new JSONObject();

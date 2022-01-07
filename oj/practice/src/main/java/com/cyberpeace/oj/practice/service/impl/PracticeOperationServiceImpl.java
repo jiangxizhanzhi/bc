@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.impl;
 
 import java.io.File;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -121,22 +122,37 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private UtilService utilService;
 
+	@Autowired
+	private PracticeValidateHandler practiceValidateHandler;
+
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			JSONObject ojSceneConfig, AuthContext authContext) {
 
-		validatePracticeSet(practiceOperation.getPracticeSetId(), authContext);
+		// 数据校验
+		PracticeSet practiceSet = validatePracticeSet(practiceOperation.getPracticeSetId(),
+				authContext);
 		validateCategory(practiceOperation.getCategoryId());
 
+		// 数据设置
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
-
 		if (practiceOperation.getDynamicEnv() && null != ojSceneConfig) {
 			String topoId = localSceneService.saveTopo(ojSceneConfig,
 					LocalScene.BusinessCode.PRACTICE.getCode());
 			practiceOperation.setTopoId(topoId);
 		}
 
-		return practiceOperationMapper.insert(practiceOperation);
+		// 习题集习题 数量加一
+		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
+
+		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+				practiceSetMapper.updateById(practiceSet);
+				return practiceOperationMapper.insert(practiceOperation);
+			}
+		});
 	}
 
 	/**
@@ -343,36 +359,49 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,
 				operationListQuery, authContext.getIsWeb());
 
-		IPage<AdminOperationListBo> listBoIPage = iPage.convert(practiceOperation -> {
-			AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
-					AdminOperationListBo.class);
-			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
-					practiceOperation.getResourceId(), practiceOperation.getSceneShareMode(),
-					authContext);
-			operationListBo.setHasSceneData(null != ojLocalScene);
-
-			if (authContext.getIsWeb()) {
-				if (null != listQuery.getSolved()) {
-					operationListBo.setSolved(listQuery.getSolved());
-				} else {
-					PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
-							authContext.getUserId(),
-							PracticeCategory.PracticeType.OPERATION.getCode(),
-							practiceOperation.getResourceId());
-					operationListBo.setSolved(null != practiceSolved ? practiceSolved.getSolved()
-							: CommonConstant.FALSE);
-				}
-			}
-
-			PracticeSet practiceSet = practiceSetMapper
-					.selectById(practiceOperation.getPracticeSetId());
-			operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
-			UserInfo userInfo = remoteUserService.getById(practiceOperation.getCreateUserId());
-			operationListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
-			return operationListBo;
-		});
+		IPage<AdminOperationListBo> listBoIPage = iPage
+				.convert(practiceOperation -> entityToListBo(practiceOperation, authContext,
+						listQuery.getSolved()));
 
 		return listBoIPage;
+	}
+
+	/**
+	 * 数据转换
+	 * @param practiceOperation
+	 * @param authContext 
+	 * @param solved 
+	 * @return
+	 */
+	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
+			AuthContext authContext, Boolean solved) {
+
+		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
+				AdminOperationListBo.class);
+		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
+				practiceOperation.getResourceId(), practiceOperation.getSceneShareMode(),
+				authContext);
+		operationListBo.setHasSceneData(null != ojLocalScene);
+
+		if (authContext.getIsWeb()) {
+			if (null != solved) {
+				operationListBo.setSolved(solved);
+			} else {
+				PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
+						authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
+						practiceOperation.getResourceId());
+				operationListBo.setSolved(
+						null != practiceSolved ? practiceSolved.getSolved() : CommonConstant.FALSE);
+			}
+		}
+
+		PracticeSet practiceSet = practiceSetMapper
+				.selectById(practiceOperation.getPracticeSetId());
+		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
+		UserInfo userInfo = remoteUserService.getById(practiceOperation.getCreateUserId());
+		operationListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
+		return operationListBo;
+
 	}
 
 	@Override
@@ -543,6 +572,60 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		return topoSceneDataBo;
+	}
+
+	@Override
+	public Integer batchDelete(List<String> practiceIds, AuthContext authContext) {
+
+		// 查询前后台场景
+		List<OjLocalScene> adminOjScenes = StreamApiUtils.map(practiceIds, operationId -> {
+			PracticeOperation operation = practiceOperationMapper.selectById(operationId);
+			return ojLocalSceneService.selectOjLocalScene(operationId,
+					operation.getSceneShareMode(), authContext);
+		});
+
+		authContext.setIsWeb(true);
+		List<OjLocalScene> webOjScene = StreamApiUtils.map(practiceIds, operationId -> {
+			PracticeOperation operation = practiceOperationMapper.selectById(operationId);
+			return ojLocalSceneService.selectOjLocalScene(operationId,
+					operation.getSceneShareMode(), authContext);
+		});
+		adminOjScenes.addAll(webOjScene);
+
+		// 获取全部远程场景并删除
+		List<String> ojLocalSceneIds = StreamApiUtils.map(adminOjScenes,
+				OjLocalScene::getResourceId);
+		List<String> localSceneIds = StreamApiUtils.map(adminOjScenes,
+				OjLocalScene::getLocalSceneId);
+
+		if (CollectionUtils.isNotEmpty(localSceneIds)) {
+			List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
+			localScenes.forEach(localScene -> localSceneService.deleteRemoteScene(localScene));
+		}
+
+		String practiceId = practiceIds.get(CommonConstant.ZERO);
+		PracticeOperation operation = practiceValidateHandler.validateOperationExist(practiceId);
+		PracticeSet practiceSet = practiceValidateHandler
+				.validatePracticeSetExist(operation.getPracticeSetId());
+		practiceSet.setPracticeCount(
+				practiceSet.getPracticeCount() <= practiceIds.size() ? CommonConstant.ZERO
+						: practiceSet.getPracticeCount() - practiceIds.size());
+
+		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+				if (CollectionUtils.isNotEmpty(localSceneIds)) {
+					localSceneMapper.deleteBatchIds(localSceneIds);
+				}
+				if (CollectionUtils.isNotEmpty(ojLocalSceneIds)) {
+					ojLocalSceneMapper.deleteBatchIds(ojLocalSceneIds);
+				}
+
+				practiceSetMapper.updateById(practiceSet);
+				return practiceOperationMapper.deleteBatchIds(practiceIds);
+			}
+		});
 	}
 
 	@Override

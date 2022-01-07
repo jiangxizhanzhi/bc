@@ -41,6 +41,9 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -66,6 +69,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private PracticeValidateHandler practiceValidateHandler;
 
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
@@ -256,7 +265,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public Boolean create(PracticeTheory practiceTheory, AuthContext authContext) {
+	public Integer create(PracticeTheory practiceTheory, AuthContext authContext) {
 		if (null == practiceTheory.getBuiltin()) {
 			practiceTheory.setBuiltin(CommonConstant.FALSE);
 		}
@@ -264,14 +273,32 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
 		}
 
-		validatePracticeTheory(practiceTheory, authContext);
-		return practiceTheoryMapper.insert(practiceTheory) > 0;
+		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
+				PracticeCategory.PracticeType.THEORY.getCode());
+		PracticeSet practiceSet = practiceValidateHandler.validateSetType(
+				practiceTheory.getPracticeSetId(), PracticeSet.PracticeType.THEORY.getCode());
+		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
+
+		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+				practiceSetMapper.updateById(practiceSet);
+				return practiceTheoryMapper.insert(practiceTheory);
+			}
+		});
 	}
 
 	@Override
 	public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
 
-		validatePracticeTheory(practiceTheory, authContext);
+		// 数据校验
+		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
+				PracticeCategory.PracticeType.THEORY.getCode());
+		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
+				PracticeSet.PracticeType.THEORY.getCode());
+
+		// 数据更新
 		return practiceTheoryMapper.updateById(practiceTheory);
 	}
 
@@ -302,6 +329,28 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				rowData -> excelDataToEntity(rowData, practiceSet));
 
 		return theoryList;
+	}
+
+	@Override
+	public Integer batchDelete(List<String> resourceIds) {
+		String practiceId = resourceIds.get(CommonConstant.ZERO);
+		PracticeTheory theory = practiceTheoryMapper.selectById(practiceId);
+
+		// 习题集数据更新
+		PracticeSet practiceSet = practiceValidateHandler
+				.validatePracticeSetExist(theory.getPracticeSetId());
+		practiceSet.setPracticeCount(
+				practiceSet.getPracticeCount() <= resourceIds.size() ? CommonConstant.ZERO
+						: practiceSet.getPracticeCount() - resourceIds.size());
+
+		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+				practiceSetMapper.updateById(practiceSet);
+				return practiceTheoryMapper.deleteBatchIds(resourceIds);
+			}
+		});
 	}
 
 	/**
@@ -378,49 +427,4 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return practiceTheory;
 	}
 
-	/**
-	 * 数据校验
-	 *
-	 * @param practiceTheory
-	 * @param authContext
-	 */
-	private void validatePracticeTheory(PracticeTheory practiceTheory, AuthContext authContext) {
-
-		if (StringUtils.isNotBlank(practiceTheory.getPracticeSetId())) {
-			List<String> permissionSets = practiceSetMapper.selectByAuthContext(authContext);
-			if (CollectionUtils.isEmpty(permissionSets)
-					|| !permissionSets.contains(practiceTheory.getPracticeSetId())) {
-				log.error(
-						"When add theory practice, the practice set not permission! practice_id=[{}]",
-						practiceTheory.getPracticeSetId());
-				throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
-			}
-
-			PracticeSet practiceSet = practiceSetMapper
-					.selectById(practiceTheory.getPracticeSetId());
-			if (practiceSet.getPracticeType().intValue() != PracticeSet.PracticeType.THEORY
-					.getCode().intValue()) {
-				log.error(
-						"When add theory practice, the practice set type error! practice_set_id=[{}], practice_type=[{}], theory_type=[{}]",
-						practiceTheory.getPracticeSetId(), practiceSet.getPracticeType(),
-						PracticeSet.PracticeType.THEORY.getCode());
-				throw new InvalidParamException("习题类型与习题集类型不匹配！");
-			}
-		}
-
-		if (StringUtils.isNotBlank(practiceTheory.getCategoryId())) {
-			PracticeCategory category = practiceCategoryMapper
-					.selectById(practiceTheory.getCategoryId());
-			if (null == category) {
-				log.error("When add practice theory, the category not found! category_id=[{}]",
-						practiceTheory.getCategoryId());
-				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-			} else {
-				if (category.getPracticeType().intValue() != PracticeCategory.PracticeType.THEORY
-						.getCode().intValue()) {
-					throw new InvalidParamException("习题类型与分类类型不一致！");
-				}
-			}
-		}
-	}
 }

@@ -56,4 +56,6 @@ public class TeamTrainRoomContext implements Serializable {
 	@ApiModelProperty(required = true)
 	@NotNull
 	private List<RoomRole> roleConfig;
+
+	private Boolean enableRecording;
 }

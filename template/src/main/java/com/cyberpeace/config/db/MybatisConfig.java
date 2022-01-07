@@ -43,7 +43,6 @@ public class MybatisConfig {
 		MybatisConfiguration configuration = new MybatisConfiguration();
 		configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
-		configuration.setLogImpl(StdOutImpl.class);
 		// 自定义session，需要手动添加拦截器
 		configuration.addInterceptor(paginationInterceptor());
 		sqlSessionFactory.setConfiguration(configuration);

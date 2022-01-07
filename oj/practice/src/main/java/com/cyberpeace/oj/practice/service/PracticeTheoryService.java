@@ -48,7 +48,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param authContext
 	 * @return
 	 */
-	Boolean create(PracticeTheory practiceTheory, AuthContext authContext);
+	Integer create(PracticeTheory practiceTheory, AuthContext authContext);
 
 	/**
 	 * 理论基础习题修改
@@ -71,4 +71,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	List<PracticeTheory> parseRmTheory(String path, PracticeSet practiceSet);
+
+	/**
+	 * 习题批量删除
+	 * @param resourceIds
+	 * @return
+	 */
+	Integer batchDelete(List<String> resourceIds);
 }

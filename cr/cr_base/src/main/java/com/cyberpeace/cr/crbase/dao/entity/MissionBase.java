@@ -14,15 +14,11 @@ import lombok.Getter;
 @Data
 public class MissionBase extends BaseTable {
 
+	protected Integer score;
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
-
 	private String title;
-
 	private String description;
-
-	protected Integer score;
-
 	private String skillPoints;
 
 	private String answer;
@@ -42,9 +38,14 @@ public class MissionBase extends BaseTable {
 		JUDGE(0, "判断"), SINGLE_CHOICE(1, "单选"), MULTIPLE_CHOICE(2, "多选"), BLANK(3, "填空"), FAQ(4,
 				"问答"), ATTACK(5, "攻击"), DEFENCE(6, "防御"), FILE(7, "文件");
 
-		@Getter
-		private static final List<Integer> OBJECTIVE_TYPE_LIST = new ArrayList<>(
+		public static final List<Integer> OBJECTIVE_TYPE_LIST = new ArrayList<>(
 				Arrays.asList(JUDGE.code, SINGLE_CHOICE.code, MULTIPLE_CHOICE.code, FILE.code));
+
+		public static final List<Integer> ANSWER_NULLABLE_TYPE_LIST = new ArrayList<>(
+				Arrays.asList(FAQ.code, ATTACK.code, DEFENCE.code, FILE.code));
+
+		public static final List<Integer> HAS_OPTION_TYPE_LIST = new ArrayList<>(
+				Arrays.asList(SINGLE_CHOICE.code, MULTIPLE_CHOICE.code));
 
 		@Getter
 		private Integer code;

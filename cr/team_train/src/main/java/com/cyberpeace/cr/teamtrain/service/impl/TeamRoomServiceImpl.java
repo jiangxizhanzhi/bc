@@ -240,6 +240,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (teamTrainRoomContext.getEndTime() != null) {
 			teamRoom.setEndTime(teamTrainRoomContext.getEndTime());
 		}
+		if (teamTrainRoomContext.getEnableRecording() != null) {
+			teamRoom.setEnableRecording(teamTrainRoomContext.getEnableRecording());
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

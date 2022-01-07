@@ -130,10 +130,25 @@ public interface CrBusinessErrorCode {
 	// 阶段内任务名称重复
 	String DUPLICATED_MISSION_NAME = "101040";
 
+	// 分数超出范围
+	String SCORE_OUT_OF_RANGE = "101041";
+
+	// 答案不可为空
+	String ANSWER_NOT_NULLABLE = "101042";
+
+	// 选项不可为空
+	String OPTIONS_NOT_NULLABLE = "101043";
+
+	// 选项重复
+	String OPTIONS_DUPLICATE = "101044";
+
+	// 录屏开关设置失败
+	String SWITCH_RECORDING_FAILURE = "101045";
+
 	// 存在空任务模板
-	String EMPTY_MISSION_TEMPLATE = "101041";
+	String EMPTY_MISSION_TEMPLATE = "101046";
 
 	// 无效任务模板
-	String MISSION_TEMPLATE_INVALID = "101042";
+	String MISSION_TEMPLATE_INVALID = "101047";
 
 }

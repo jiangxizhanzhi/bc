@@ -47,4 +47,6 @@ public class TeamRoomData implements Serializable {
 
 	private Integer runtime;
 
+	private Boolean enableRecording;
+
 }

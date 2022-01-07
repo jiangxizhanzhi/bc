@@ -20,6 +20,7 @@ import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.RenameTopoContext;
+import com.cyberpeace.cs.service.context.TopoSwitchRecordingContext;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -263,9 +264,21 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public String renameTopo(String topoId, String name) {
+	public Boolean renameTopo(String topoId, String name) {
 		RenameTopoContext context = new RenameTopoContext(topoId, name);
-		return remoteTopoService.save((JSONObject) JSONObject.toJSON(context));
+		return name.equals(
+				remoteTopoService.sync((JSONObject) JSONObject.toJSON(context)).getString("name"));
+	}
+
+	@Override
+	public Boolean switchRecording(String topoId, Boolean enableRecording) {
+		if (enableRecording == null) {
+			return true;
+		}
+		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId,
+				enableRecording);
+		return !enableRecording ^ (remoteTopoService.sync((JSONObject) JSONObject.toJSON(context))
+				.getBoolean("enable_recording"));
 	}
 
 	@Override

@@ -46,19 +46,27 @@ import lombok.extern.slf4j.Slf4j;
 public class RbSceneServiceImpl implements RbSceneService {
 
 	private static final Integer PAUSE_FLAG = 1;
+
 	private static final Integer UNPAUSE_FLAG = 2;
+
 	@Autowired
 	private RbRoomService rbRoomService;
+
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
 	@Autowired
 	private LocalSceneService localSceneService;
+
 	@Autowired
 	private CrRoleService crRoleService;
+
 	@Autowired
 	private SceneFilterService sceneFilterService;
+
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
+
 	@Autowired
 	private CrTaskService crTaskService;
 
@@ -82,6 +90,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 3、构建本地scene对象
 		LocalScene localScene = createLocalScene(room, room.getCopyedTopoId());
 
+		// 4.0 设置录屏开关
+		if (!localSceneService.switchRecording(room.getCopyedTopoId(), room.getEnableRecording())) {
+			throw new BusinessException(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE);
+		}
 		// 4、启动mp场景
 		String sceneId = localSceneService.startScene(localScene);
 

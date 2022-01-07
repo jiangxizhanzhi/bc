@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
@@ -66,13 +67,15 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		String setId = practiceSetMapper.selectByName(setAddReq.getName());
 		if (StringUtils.isNotBlank(setId)) {
-			throw new InvalidParamException("习题集名称已存在！");
+			log.error("Practice is exist! practice_name=[{}]", setAddReq.getName());
+			throw new BusinessException(ErrorCode.DUPLICATE_KEY);
 		}
 
 		PracticeSet practiceSet = BeanUtils.copy(setAddReq, PracticeSet.class);
 		practiceSet.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setPracticeCount(CommonConstant.ZERO);
 
 		// 文件路径处理
 		practiceSet.setLogo(utilService.replaceFileUrl(setAddReq.getLogo()));

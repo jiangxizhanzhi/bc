@@ -152,6 +152,28 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfoList;
 	}
 
+  /**
+   * 姓名、用户名模糊查询
+   *
+   * @param userPageContext
+   * @return
+   */
+  @Override
+  @Cacheable(cacheNames = "getFuzzyQueryuser", key = "#userPageContext")
+  public List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext) {
+		List<UserInfo> userInfoList = new ArrayList<>();
+
+			List jsonArray = (List) HttpClientUtil
+					.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class)
+					.get("list");
+
+			for (Object object : jsonArray) {
+				userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+			}
+
+		return userInfoList;
+	}
+
 	@Override
 	public List<UserInfo> getByIdList(List<String> ids) {
 		UserPageContext userPageContext = new UserPageContext();

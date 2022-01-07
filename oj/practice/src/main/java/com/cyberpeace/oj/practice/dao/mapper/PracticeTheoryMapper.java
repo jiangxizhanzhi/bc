@@ -35,7 +35,8 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param count
 	 * @return
 	 */
-	List<PracticeTheory> randomChoice(@Param("query") TheoryListQuery theoryListQuery, @Param("limit") Integer count);
+	List<PracticeTheory> randomChoice(@Param("query") TheoryListQuery theoryListQuery,
+			@Param("limit") Integer count);
 
 	/**
 	 * 根据编号查询理论习题 #外部接口使用

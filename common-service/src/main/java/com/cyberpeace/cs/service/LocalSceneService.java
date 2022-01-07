@@ -36,8 +36,17 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 重命名中台场景模板
+	 * @return
 	 */
-	String renameTopo(String topoId, String name);
+	Boolean renameTopo(String topoId, String name);
+
+	/**
+	 * 开启场景之前，开关录屏
+	 * @param topoId
+	 * @param enableRecording
+	 * @return true: 成功。 false：失败
+	 */
+	Boolean switchRecording(String topoId, Boolean enableRecording);
 
 	Integer getNodeCount(LocalScene localScene);
 

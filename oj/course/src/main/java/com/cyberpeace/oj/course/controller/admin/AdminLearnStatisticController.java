@@ -60,44 +60,44 @@ public class AdminLearnStatisticController {
 		return new BaseRsp<>(res);
 	}
 
-  @ApiOperation("课程学习统计list")
-  @GetMapping("/course_statistics_list")
-  public BaseRsp<List<AdminCourseStatisticsRes>> courseStatisticsList(
-      @ApiParam(name = "listReq", value = "查询条件") @Valid
-          CourseStatisticsListReq courseStatisticsListReq) {
-	  CourseContext context = BeanUtils.copy(courseStatisticsListReq, CourseContext.class);
-    context.setPattern(courseStatisticsListReq.getPattern());
+	@ApiOperation("课程学习统计list")
+	@GetMapping("/course_statistics_list")
+	public BaseRsp<List<AdminCourseStatisticsRes>> courseStatisticsList(@ApiParam(name = "listReq",
+			value = "查询条件") @Valid CourseStatisticsListReq courseStatisticsListReq) {
+		CourseContext context = BeanUtils.copy(courseStatisticsListReq, CourseContext.class);
+		context.setPattern(courseStatisticsListReq.getPattern());
 
-    if (StringUtils.isNotBlank(courseStatisticsListReq.getDirection())) {
-      List<String> childrenIds =
-          courseCategoryService.getChildrenIds(
-              courseStatisticsListReq.getDirection(), CommonConstant.TRUE);
-      context.setDirections(childrenIds);
-    }
-    Page page = courseStatisticsListReq.toPageParam();
-    AuthContext authContext =
-        AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
-      ListRsp<AdminCourseStatisticsRes> res =
-        courseLearnStatisticsService.courseStatisticsList(context, page, authContext);
-    return new BaseRsp(res);
-  }
+		if (StringUtils.isNotBlank(courseStatisticsListReq.getDirection())) {
+			List<String> childrenIds = courseCategoryService
+					.getChildrenIds(courseStatisticsListReq.getDirection(), CommonConstant.TRUE);
+			context.setDirections(childrenIds);
+		}
+		Page page = courseStatisticsListReq.toPageParam();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		ListRsp<AdminCourseStatisticsRes> res = courseLearnStatisticsService
+				.courseStatisticsList(context, page, authContext);
+		return new BaseRsp(res);
+	}
 
-  @ApiOperation("课时学习统计list")
-  @GetMapping("/lesson_statistics_list")
-  public BaseRsp<ListRsp<AdminLessonStatisticsRes>> lessonStatisticsList(
-    @ApiParam @Validated LessonStatisticsListReq pageReq) {
-    Page page = pageReq.toPageParam();
-      ListRsp<AdminLessonStatisticsRes> res =
-        courseLearnStatisticsService.LessonStatisticsList(pageReq.getCourseId(), page, pageReq);
-    return new BaseRsp(res);
-  }
+	@ApiOperation("课时学习统计list")
+	@GetMapping("/lesson_statistics_list")
+	public BaseRsp<ListRsp<AdminLessonStatisticsRes>>
+			lessonStatisticsList(@ApiParam @Validated LessonStatisticsListReq pageReq) {
+		Page page = pageReq.toPageParam();
+		ListRsp<AdminLessonStatisticsRes> res = courseLearnStatisticsService
+				.LessonStatisticsList(pageReq.getCourseId(), page, pageReq);
+		return new BaseRsp(res);
+	}
 
-  @ApiOperation("课时报告统计detail")
-  @GetMapping("/lesson_statistics_detail")
-  public BaseRsp<ListRsp<AdminLessonStatisticsDetailRes>> lessonStatisticsDetail(@ApiParam @Validated LessonStatisticsDetailReq pageReq) {
-    Page page = pageReq.toPageParam();
-    ListRsp<AdminLessonStatisticsDetailRes> res =
-        courseLearnStatisticsService.LessonStatisticsDetail(pageReq.getOrgId(), pageReq.getLessonId(), pageReq.getSearch(),page);
-    return new BaseRsp(res);
-  }
+	@ApiOperation("课时报告统计detail")
+	@GetMapping("/lesson_statistics_detail")
+	public BaseRsp<ListRsp<AdminLessonStatisticsDetailRes>>
+			lessonStatisticsDetail(@ApiParam @Validated LessonStatisticsDetailReq pageReq) {
+		Page page = pageReq.toPageParam();
+		ListRsp<AdminLessonStatisticsDetailRes> res = courseLearnStatisticsService
+				.LessonStatisticsDetail(pageReq.getOrgId(), pageReq.getLessonId(),
+						pageReq.getSearch(), page);
+		return new BaseRsp(res);
+	}
 }

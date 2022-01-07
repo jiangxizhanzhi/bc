@@ -35,4 +35,22 @@ public class CrCommonValidator {
 		}
 	}
 
+	public static void validateScore(int target, int maxValue, String errorCode) {
+		if (target < 0 || target > maxValue) {
+			throw new BusinessException(errorCode);
+		}
+	}
+
+	public static <T> void validateSize(List<T> target, int size, String errorCode) {
+		if (target.size() != size) {
+			throw new BusinessException(errorCode);
+		}
+	}
+
+	public static void validateScore(int target, int minValue, int maxValue, String errorCode) {
+		if (target < minValue || target > maxValue) {
+			throw new BusinessException(errorCode);
+		}
+	}
+
 }

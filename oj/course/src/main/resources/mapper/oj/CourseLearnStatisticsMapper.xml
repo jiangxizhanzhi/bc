@@ -38,29 +38,36 @@
 
 
     <select id="selectByHeat" resultMap="baseResultMap">
-        select name,heat from oj_course
-        ORDER BY oj_course.heat DESC  LIMIT 5
+        select name, heat
+        from oj_course
+        ORDER BY oj_course.heat DESC
+        LIMIT 5
     </select>
 
     <select id="sumHeatByDirection" resultMap="baseResultMap">
-        select oj_course_category.name,sum(oj_course.heat) as heat from oj_course
-        left join oj_course_category on oj_course.category_id = oj_course_category.resource_id
-        ORDER BY oj_course.heat DESC  LIMIT 5
+        select oj_course_category.resource_id, oj_course_category.name as name,ifnull(group_concat(oj_course.heat separator '_'),0) as description
+        from oj_course_category
+                 left join oj_course on oj_course.category_id = oj_course_category.resource_id
+        group by  oj_course_category.resource_id
     </select>
 
     <select id="listCourseByPage" resultMap="courseListMap">
-        select distinct oj_course.name,oj_course.resource_id,oj_course.difficulty,oj_course_category.name as category_name,
-        oj_course.create_user_id as create_user,ifnull(lesson.count,0) as lesson_count,ifnull(learned_lessons.count,0) as heat,
+        select distinct oj_course.name,oj_course.resource_id,oj_course.difficulty,oj_course_category.name as
+        category_name,
+        oj_course.create_user_id as create_user,ifnull(lesson.count,0) as lesson_count,ifnull(learned_lessons.count,0)
+        as heat,
         ifnull(report.count,0) as finish_report_count
         from oj_course
         left join oj_course_category on oj_course.category_id = oj_course_category.resource_id
-        left join (select count(course_id) as count,course_id from oj_lesson_record group by course_id) learned_lessons on
+        left join (select count(course_id) as count,course_id from oj_lesson_record group by course_id) learned_lessons
+        on
         learned_lessons.course_id = oj_course.resource_id
         left join (select count(course_id) as count,course_id from oj_course_lesson group by course_id) lesson on
         lesson.course_id = oj_course.resource_id
         left join (select count(oj_course_lesson.course_id) as count, oj_course_lesson.course_id from oj_note
         left join oj_course_lesson on oj_course_lesson.resource_id = oj_note.business_id
-        where note_type =2 and business_type = 2 group by oj_course_lesson.course_id) report on report.course_id = oj_course.resource_id
+        where note_type =2 and business_type = 2 group by oj_course_lesson.course_id) report on report.course_id =
+        oj_course.resource_id
 
         <where>
             <if test="null != courseIds and courseIds.size() > 0">
@@ -92,26 +99,32 @@
     </select>
 
     <select id="listLessonByPage" resultMap="lessonListMap">
-    select distinct oj_course_lesson.resource_id,oj_course_lesson.name,oj_course_lesson.type,oj_course_lesson.difficulty,
-                    ifnull(learned_lessons.count,0) as heat,ifnull(practice_afterclass.count,0) as practice_count,ifnull(report.count,0) as finish_report_count
-    from oj_course_lesson
-    left join (select count(oj_lesson_record.lesson_id) as count ,oj_lesson_record.lesson_id from oj_lesson_record group by oj_lesson_record.lesson_id )
+        select distinct
+        oj_course_lesson.resource_id,oj_course_lesson.name,oj_course_lesson.type,oj_course_lesson.difficulty,
+        ifnull(learned_lessons.count,0) as heat,ifnull(practice_afterclass.count,0) as
+        practice_count,ifnull(report.count,0) as finish_report_count
+        from oj_course_lesson
+        left join (select count(oj_lesson_record.lesson_id) as count ,oj_lesson_record.lesson_id from oj_lesson_record
+        group by oj_lesson_record.lesson_id )
         as learned_lessons on learned_lessons.lesson_id = oj_course_lesson.resource_id
-    left join (select count(oj_lesson_paper_evaluate.lesson_id) as count ,oj_lesson_paper_evaluate.lesson_id from oj_lesson_paper_evaluate group by oj_lesson_paper_evaluate.lesson_id )
+        left join (select count(oj_lesson_paper_evaluate.lesson_id) as count ,oj_lesson_paper_evaluate.lesson_id from
+        oj_lesson_paper_evaluate group by oj_lesson_paper_evaluate.lesson_id )
         as practice_afterclass on practice_afterclass.lesson_id = oj_course_lesson.resource_id
-    left join (select count(oj_note.business_id) as count ,oj_note.business_id from oj_note where business_type = 2 and note_type = 2 group by oj_note.business_id )
+        left join (select count(oj_note.business_id) as count ,oj_note.business_id from oj_note where business_type = 2
+        and note_type = 2 group by oj_note.business_id )
         as report on report.business_id = oj_course_lesson.resource_id
-    where course_id = #{courseId}
-        <if test="null != type and type">
+        where course_id = #{courseId}
+        <if test="null != type and type >= 0">
             and oj_course_lesson.`type` = #{type}
         </if>
         <if test="null != search and search">
+            <bind name="search" value="'%' + search + '%'"/>
             and oj_course_lesson.`name` like #{search}
         </if>
     </select>
 
     <select id="listLessonPractice" resultMap="lessonListMap">
-        select  lesson_id as resource_id, group_concat(record separator '_') as record from oj_lesson_paper_evaluate
+        select lesson_id as resource_id, group_concat(record separator '_') as record from oj_lesson_paper_evaluate
         <if test="lessonIds != null and lessonIds.size() != 0">
             where oj_lesson_paper_evaluate.lesson_id in
             <foreach collection="lessonIds" item="lessonId" separator="," open="(" close=")">
@@ -128,8 +141,8 @@
     </select>
 
     <select id="detailLessonByPage" resultMap="lessonDetailMap">
-    select oj_lesson_paper_evaluate.submit_user_id as submit_user_id,record from oj_lesson_paper_evaluate
-    where oj_lesson_paper_evaluate.lesson_id = #{lessonId}
+        select oj_lesson_paper_evaluate.submit_user_id as submit_user_id,record from oj_lesson_paper_evaluate
+        where oj_lesson_paper_evaluate.lesson_id = #{lessonId}
         <if test="userIds != null and userIds.size() != 0">
             and oj_lesson_paper_evaluate.submit_user_id in
             <foreach collection="userIds" item="userId" separator="," open="(" close=")">
@@ -140,7 +153,7 @@
 
     <select id="detailExpLessonByPage" resultMap="lessonDetailMap">
         select oj_note.user_id as submit_user_id,oj_note.update_time as report_update_time,
-               oj_note_evaluate.evaluate_time as marking_time,ifnull(oj_note_evaluate.score,0) as score
+        oj_note_evaluate.evaluate_time as marking_time,ifnull(oj_note_evaluate.score,0) as score
         from oj_note
         left join oj_note_evaluate on oj_note_evaluate.note_id = oj_note.resource_id
         where oj_note.business_id = #{lessonId} and oj_note.business_type = 2 and oj_note.note_type = 2

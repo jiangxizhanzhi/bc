@@ -462,6 +462,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.filter(courseLesson -> StringUtils.isNotBlank(courseLesson.getResourceId()))
 				.map(CourseLesson::getPaperId).collect(Collectors.toList());
 
+		// 试卷数据公开
 		List<Paper> papers = StreamApiUtils.map(paperIds, paperId -> {
 			Paper paper = new Paper();
 			paper.setIsPublic(isPublic);
@@ -469,7 +470,22 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			return paper;
 		});
 
-		return paperService.updateBatchById(papers);
+		// 课时数据公开
+		List<CourseLesson> lessonList = StreamApiUtils.map(courseLessons, courseLesson -> {
+			CourseLesson lesson = new CourseLesson();
+			lesson.setResourceId(courseLesson.getResourceId());
+			lesson.setPaperPublic(isPublic);
+			return lesson;
+		});
+
+		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				updateBatchById(lessonList);
+				return paperService.updateBatchById(papers);
+			}
+		});
 	}
 
 	@Override
@@ -757,6 +773,21 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				courseLesson.getCourseId());
 		AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video);
 		courseLesson.setVideoUrl(attachmentBo.getFilePath());
+	}
+
+	@Override
+	public Integer batchDelete(List<String> resourceIds, AuthContext authContext) {
+
+		// 课时目录删除 todo
+		// 课程表删除
+		// 评论删除
+		// 留言删除
+		// 报告删除
+		// 笔记删除
+		// 运行场景
+		// 课后练习
+		// 课后练习运行场景
+		return null;
 	}
 
 	/**

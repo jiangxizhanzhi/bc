@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 
 public interface BusinessErrorMsg {
@@ -63,9 +64,17 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.INVALID_MISSION_NAME, "不合法的任务名称长度");
 			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "阶段名称重复");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME, "阶段内任务重名");
+			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "分数超出范围");
+			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "答案不可为空");
+			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "选项不可为空");
+			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "选项重复");
+
+			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "习题数量不足");
+
+			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "设置录屏开关失败");
+
 			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "存在空任务模板");
 			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "无效任务模板");
-
 		}
 	};
 
@@ -127,6 +136,13 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "Duplicated stage names.");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME,
 					"Duplicated mission names in one stage.");
+			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH,
+					"The number of practice sets is insufficient.");
+			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
+			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");
+			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "Options cannot be blank.");
+			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "Options duplicate.");
+			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "Failed to switch recording.");
 
 			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "Mission Template is empty.");
 			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "Mission Template is invalid.");

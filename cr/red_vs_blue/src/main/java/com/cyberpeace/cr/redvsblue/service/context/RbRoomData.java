@@ -46,4 +46,6 @@ public class RbRoomData implements Serializable {
 
 	private Integer runtime;
 
+	private Boolean enableRecording;
+
 }

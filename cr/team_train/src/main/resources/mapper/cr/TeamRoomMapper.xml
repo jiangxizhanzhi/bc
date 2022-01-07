@@ -34,6 +34,7 @@
                cr_team_room.start_time,
                cr_team_room.end_time,
                cr_team_room.difficulty,
+               cr_team_room.enable_recording,
                cr_team_room.time_line_config,
                cr_team_room.create_user_id,
                cr_team_room.modify_user_id,

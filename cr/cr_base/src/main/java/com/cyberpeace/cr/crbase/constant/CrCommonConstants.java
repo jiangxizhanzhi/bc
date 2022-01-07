@@ -30,4 +30,12 @@ public interface CrCommonConstants {
 	int MIN_MISSION_NAME_LEN = 1;
 
 	int MAX_MISSION_NAME_LEN = 255;
+
+	int SCORE_MAX_VALUE = 500;
+
+	int SKILL_POINTS_SIZE = 6;
+
+	int SKILL_POINT_MIN_VALUE = 1;
+
+	int SKILL_POINT_MAX_VALUE = 5;
 }

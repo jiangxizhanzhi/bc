@@ -51,6 +51,11 @@ public class TeamRoom extends BaseTable {
 
 	private String copyedTopoId;
 
+	/**
+	 * 是否开启录屏
+	 */
+	private Boolean enableRecording;
+
 	public TeamRoom() {}
 
 	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template) {
@@ -64,9 +69,22 @@ public class TeamRoom extends BaseTable {
 		this.endTime = input.getEndTime();
 		this.difficulty = input.getDifficult();
 		this.timeLineConfig = template.getTimeLineConfig();
+		this.enableRecording = input.getEnableRecording();
 		this.createUserId = createUserId;
 		this.modifyUserId = modifyUserId;
 		this.localSceneId = localSceneId;
+	}
+
+	public boolean isUnopened() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
+	}
+
+	public boolean isOpening() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.OPENING.getCode());
+	}
+
+	public boolean isEnded() {
+		return trainingStatus.equals(TeamRoom.TrainingStatusCode.ENDED.getCode());
 	}
 
 	public enum TrainingStatusCode {
@@ -84,17 +102,5 @@ public class TeamRoom extends BaseTable {
 			this.desc = desc;
 		}
 
-	}
-
-	public boolean isUnopened() {
-		return trainingStatus.equals(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
-	}
-
-	public boolean isOpening() {
-		return trainingStatus.equals(TeamRoom.TrainingStatusCode.OPENING.getCode());
-	}
-
-	public boolean isEnded() {
-		return trainingStatus.equals(TeamRoom.TrainingStatusCode.ENDED.getCode());
 	}
 }

@@ -92,6 +92,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
         singleTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
         singleTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
         singleTemplate.setMissionsScheme(JsonUtil.toJsonString(missionsScheme));
+        singleTemplate.setSubType(baseInfo.getCategory());
 
         // topology
         if (baseInfo.getSceneConfigData() != null) {

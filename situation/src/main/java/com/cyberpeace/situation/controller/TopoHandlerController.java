@@ -8,8 +8,12 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.situation.constant.MessageType;
+import com.cyberpeace.situation.constant.ws.ActionType;
+import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.WsEvent;
+import com.cyberpeace.situation.model.ws.WsMultiNodeEffect;
+import com.cyberpeace.situation.model.ws.WsSingleNodeEffect;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -313,6 +317,24 @@ public class TopoHandlerController {
         JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMultiNodeEffect), JSONObject.class);
         topoHandlerService.pushDataToRoom(data, sceneId);
         return new BaseRsp<>(wsMultiNodeEffect);
+    }
+
+    @ApiOperation("随机推送事件信息")
+    @GetMapping("event")
+    public BaseRsp<WsEvent> sendEventMessage(
+            @ApiParam(name = "scene_id", value = "场景编号")
+            @RequestParam(value = "scene_id", required = true) String sceneId) {
+
+        JSONArray elements = getElements(sceneId);
+        WsEvent wsEvent = new WsEvent();
+        wsEvent.setAttackType(ActionType.getRandomValue(ActionType.values()));
+        List<ElementInfo> randomElements = topoHandlerService.getRandomElements(elements, 2);
+        wsEvent.setSourceId(randomElements.get(0).getElementId());
+        wsEvent.setTargetId(randomElements.get(1).getElementId());
+        wsEvent.setLineStyle(topoHandlerService.getLineStyle());
+        JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
+        topoHandlerService.pushDataToRoom(data, sceneId);
+        return new BaseRsp<>(wsEvent);
     }
 
     private JSONArray getElements(String sceneId) {

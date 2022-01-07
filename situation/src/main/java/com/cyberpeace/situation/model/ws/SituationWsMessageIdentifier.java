@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.model;
+package com.cyberpeace.situation.model.ws;
 
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import lombok.Data;

@@ -131,7 +131,7 @@ public class JwtHandShake implements HandshakeInterceptor {
 
 	}
 
-	private Map<String, String> parseParameterMap(String queryString) {
+	public Map<String, String> parseParameterMap(String queryString) {
 		Map<String, String> parameterMap = Maps.newTreeMap();
 		String[] parameters = StringUtils.split(queryString, "&");
 

@@ -9,7 +9,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.TopoHandlerService;
-import com.cyberpeace.situation.model.SituationWsMessageIdentifier;
+import com.cyberpeace.situation.model.ws.SituationWsMessageIdentifier;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;

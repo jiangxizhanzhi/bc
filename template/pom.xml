@@ -118,11 +118,11 @@
             <artifactId>tool</artifactId>
             <version>${cr.tool.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.cyberpeace.situation</groupId>-->
-<!--            <artifactId>situation</artifactId>-->
-<!--            <version>${situation.version}</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.cyberpeace.situation</groupId>
+            <artifactId>situation</artifactId>
+            <version>${situation.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.cyberpeace.evaluate</groupId>
             <artifactId>evaluate</artifactId>

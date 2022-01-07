@@ -86,7 +86,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
                     key -> orderField.setColumn(orderField.getColumn().replace(key, key.toUpperCase().substring(1)))
             );
 
-            Comparator<UserStatsBo> userStatsBoComparator = Comparator.comparing(item -> (int) ObjUtil.getFieldValueByName(orderField.getColumn(), item));
+            Comparator<UserStatsBo> userStatsBoComparator = Comparator.comparing(
+                    item -> Float.valueOf(ObjUtil.getFieldValueByName(orderField.getColumn(), item).toString())
+            );
             if (!orderField.isAsc()) {
                 userStatsBoComparator = userStatsBoComparator.reversed();
             }

@@ -22,4 +22,11 @@ public class WebOperationListReq extends PageReqBase {
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	public void setCategory_id(String categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public void setPractice_set_id(String practiceSetId) {
+		this.practiceSetId = practiceSetId;
+	}
 }

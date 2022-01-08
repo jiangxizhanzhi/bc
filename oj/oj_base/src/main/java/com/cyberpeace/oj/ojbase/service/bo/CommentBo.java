@@ -41,6 +41,9 @@ public class CommentBo implements Serializable {
 	@ApiModelProperty("被回复评论编号")
 	private String replyId;
 
+	@ApiModelProperty("被回复人编号")
+	private String replyUsername;
+
 	@ApiModelProperty("是否被点赞")
 	private Boolean isLike;
 

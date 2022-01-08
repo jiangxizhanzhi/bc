@@ -47,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
 			boolean children) {
 		IPage<Comment> iPage = commentMapper.firstByResource(page, businessId, businessType);
 
-		IPage<CommentBo> convert = iPage.convert(comment -> commentToBo(comment));
+		IPage<CommentBo> convert = iPage.convert(comment -> commentToBo(comment, null));
 
 		// 是否查询评论下的回复
 		if (children) {
@@ -61,8 +61,8 @@ public class CommentServiceImpl implements CommentService {
 	public void setChildrenByFirst(List<CommentBo> commentBos) {
 		for (CommentBo commentBo : commentBos) {
 			List<Comment> comments = commentMapper.selectByParent(commentBo.getResourceId());
-			List<CommentBo> boList = comments.stream().map(comment -> commentToBo(comment))
-					.collect(Collectors.toList());
+			List<CommentBo> boList = comments.stream()
+					.map(comment -> commentToBo(comment, commentBo)).collect(Collectors.toList());
 			commentBo.setCommentReply(boList);
 		}
 	}
@@ -72,7 +72,7 @@ public class CommentServiceImpl implements CommentService {
 	 * @param comment
 	 * @return
 	 */
-	private CommentBo commentToBo(Comment comment) {
+	private CommentBo commentToBo(Comment comment, CommentBo replyComment) {
 		CommentBo commentBo = BeanUtils.copy(comment, CommentBo.class);
 
 		// 获取用户信息
@@ -86,6 +86,10 @@ public class CommentServiceImpl implements CommentService {
 		List<CommentLike> commentLikes = commentLikeMapper.listByComment(comment.getResourceId());
 		commentBo.setLikesCount(commentLikes.size());
 		commentBo.setIsLike(CollectionUtils.isNotEmpty(commentLikes));
+		if (null != replyComment) {
+			commentBo.setReplyUsername(replyComment.getUserName());
+			commentBo.setReplyId(replyComment.getResourceId());
+		}
 
 		return commentBo;
 	}

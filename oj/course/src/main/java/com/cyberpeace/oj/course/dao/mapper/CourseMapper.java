@@ -36,4 +36,11 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @return
 	 */
     String selectByName(@Param("name") String name);
+
+	/**
+	 * 根据课程编号查询
+	 * @param courseNum
+	 * @return
+	 */
+	Course selectByCourseNum(@Param("courseNum") String courseNum);
 }

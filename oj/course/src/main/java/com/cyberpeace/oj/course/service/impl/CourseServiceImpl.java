@@ -79,13 +79,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Autowired
 	private UtilService utilService;
 
+	@Autowired
+	private CourseValidateHandler courseValidateHandler;
+
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
-		Course course = courseMapper.selectById(courseId);
-		if (null == course) {
-			log.error("Course not found! course_id=[{}]", courseId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+		// 基本数据校验
+		Course course = courseValidateHandler.validateCourseExist(courseId);
+
 		CourseInfoBo courseInfoBo = courseToBo(course, true);
 		courseInfoBo.setLogo(utilService.handlerFileUrl(course.getLogo()));
 		// 设置是否收藏
@@ -259,10 +260,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	public Course addCourse(String userId, Course course) {
 
 		// 名称重复性查询
-		String resourceId = courseMapper.selectByName(course.getName());
-		if (StringUtils.isNotBlank(resourceId)) {
-			throw new InvalidParamException("课程名称重复！");
-		}
+		courseValidateHandler.validateCourseNameExist(course.getName());
+		courseValidateHandler.validateCourseNumExist(course.getCourseNum());
 
 		// 基本信息组装
 		course.setHeat(CommonConstant.ZERO);
@@ -293,12 +292,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Override
 	public Course updateCourse(String userId, Course course) {
 
-		Course existCourse = courseMapper.selectById(course.getResourceId());
-		if (null == existCourse) {
-			log.error("Course not found! course_id=[{}]", course.getResourceId());
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		// 数据存在性校验
+		Course courseExist = courseValidateHandler.validateCourseExist(course.getResourceId());
+		if (StringUtils.isNotBlank(course.getCourseNum())
+				&& StringUtils.isNotBlank(courseExist.getCourseNum())) {
+			course.setCourseNum(null);
 		}
 
+		// 数据更新
 		course.setModifyUserId(userId);
 		courseMapper.updateById(course);
 		return course;

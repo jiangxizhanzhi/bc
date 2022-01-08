@@ -71,8 +71,12 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "选项重复");
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "习题数量不足");
-			put(OjBusinessErrorCode.GROUP_SCENE_IS_RUNNING, "课堂场景运行中");
+			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "课堂场景运行中");
 			put(OjBusinessErrorCode.RESOURCE_PERMISSION, "权限不足");
+			put(OjBusinessErrorCode.COURSE_NUM_IS_EXIST, "课程编号已存在");
+			put(OjBusinessErrorCode.NAME_IS_EXIST, "名称已存在");
+			put(OjBusinessErrorCode.FILED_DATA_TOO_LONG, "某字段数据过长");
+			put(OjBusinessErrorCode.SCENE_START_FAIL, "场景启动失败");
 
 			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "设置录屏开关失败");
 
@@ -147,8 +151,12 @@ public interface BusinessErrorMsg {
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH,
 					"The number of practice sets is insufficient.");
-			put(OjBusinessErrorCode.GROUP_SCENE_IS_RUNNING, "Classroom scene is running.");
+			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "Scene is running.");
 			put(OjBusinessErrorCode.RESOURCE_PERMISSION, "Resource not permission.");
+			put(OjBusinessErrorCode.COURSE_NUM_IS_EXIST, "Course number already exists.");
+			put(OjBusinessErrorCode.NAME_IS_EXIST, "Name already exists.");
+			put(OjBusinessErrorCode.FILED_DATA_TOO_LONG, "The field data is too long.");
+			put(OjBusinessErrorCode.SCENE_START_FAIL, "Scene Startup Failure");
 
 			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");

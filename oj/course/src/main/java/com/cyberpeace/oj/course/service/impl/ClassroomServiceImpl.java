@@ -251,7 +251,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (CollectionUtils.isNotEmpty(localScenes)) {
 			log.error("Classroom has scene is running! classroom_id=[{}]",
 					classroom.getResourceId());
-			throw new BusinessException(OjBusinessErrorCode.GROUP_SCENE_IS_RUNNING);
+			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 
 	}

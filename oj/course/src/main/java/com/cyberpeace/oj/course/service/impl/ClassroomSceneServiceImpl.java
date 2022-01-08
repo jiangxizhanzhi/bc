@@ -247,13 +247,13 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		boolean result = downLatch.await(CommonConstant.SIXTY, TimeUnit.MINUTES);
 		if (!result) {
 			log.error("Classroom start scene time out! classroom_id=[{}]", classroomId);
-			throw new BusinessException(OjBusinessErrorCode.GROUP_SCENE_START_FAIL);
+			throw new BusinessException(OjBusinessErrorCode.SCENE_START_FAIL);
 		}
 
 		if (CollectionUtils.isNotEmpty(execFailGroupIds)) {
 			log.error("Classroom some group start scene failed! classroom_id=[{}], group_ids=[{}]",
 					classroomId, JsonUtil.arrayToString(execFailGroupIds));
-			throw new BusinessException(OjBusinessErrorCode.GROUP_SCENE_START_FAIL);
+			throw new BusinessException(OjBusinessErrorCode.SCENE_START_FAIL);
 		}
 
 		return listEntityToBo(groupInfoList, execGroupMap);

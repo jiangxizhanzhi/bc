@@ -260,8 +260,16 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery,
 			AuthContext authContext) {
 
+		// 权限过滤
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
 		if (CollectionUtils.isEmpty(authCourseIds)) {
+			return Lists.newArrayList();
+		}
+
+		// 公开过滤
+		List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
+				authContext.getIsWeb());
+		if (CollectionUtils.isEmpty(publicCourseIds)) {
 			return Lists.newArrayList();
 		}
 

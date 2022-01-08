@@ -60,13 +60,13 @@ public class WebClassroomController {
 		roomListQuery.setEndTime(endOfDay);
 
 		// 管理员查询自己创建和组织下的
-		if (authContext.getSuperAdmin() && !authContext.getSuperAdmin()) {
+		if (authContext.getIsAdmin() && !authContext.getSuperAdmin()) {
 			roomListQuery.setUserId(authContext.getUserId());
 			roomListQuery.setOrgId(authContext.getOrganization());
 		}
 
 		// 普通用户仅查询组织下的
-		if (!authContext.getSuperAdmin() && !authContext.getSuperAdmin()) {
+		if (!authContext.getIsAdmin() && !authContext.getSuperAdmin()) {
 			roomListQuery.setOrgId(authContext.getOrganization());
 		}
 

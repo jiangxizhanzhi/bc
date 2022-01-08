@@ -139,20 +139,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private UtilService utilService;
 
+	@Autowired
+	private CourseValidateHandler courseValidateHandler;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
 
+		// 课时数据校验
+		CourseLesson lesson = courseValidateHandler.validateLessonPermission(lessonId, authContext);
 		Course course = courseMapper.selectById(courseId);
-		if (null == course) {
-			log.error("getLessonDetail: Course not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
-		if (null == lesson) {
-			log.error("Lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
 
 		// 增加热度
 		lesson.setHeat(lesson.getHeat() + CommonConstant.ONE);
@@ -490,12 +485,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Override
 	public Boolean importLessons(String courseId, List<String> lessonIds) {
-		Course course = courseMapper.selectById(courseId);
-		if (null == course) {
-			log.error("Course not found! course_id=[{}]", courseId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
 
+		// 课程数据校验
+		Course course = courseValidateHandler.validateCourseExist(courseId);
+
+		// 目录数组组装
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
 		for (CourseLesson courseLesson : courseLessons) {
@@ -527,8 +521,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			List<PracticeAnswerContext> answers, AuthContext authContext) {
 
 		// 数据校验
-		validateCourse(answerContext.getCourseId(), authContext);
-		CourseLesson lesson = validateLesson(answerContext.getLessonId(), CommonConstant.TRUE);
+		courseValidateHandler.validateCoursePermission(answerContext.getCourseId(), authContext);
+		CourseLesson lesson = courseValidateHandler.validateLessonExist(answerContext.getLessonId(),
+				authContext.getIsWeb());
 		Paper paper = validatePaper(lesson, CommonConstant.TRUE);
 
 		// 课后练习评估数据查询
@@ -597,8 +592,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			AuthContext authContext) {
 
 		// 数据校验
-		Course course = validateCourse(courseId, authContext);
-		CourseLesson lesson = validateLesson(lessonId, authContext.getIsWeb());
+		courseValidateHandler.validateCoursePermission(courseId, authContext);
+		Course course = courseMapper.selectById(courseId);
+		CourseLesson lesson = courseValidateHandler.validateLessonExist(lessonId,
+				authContext.getIsWeb());
 		Paper paper = validatePaper(lesson, authContext.getIsWeb());
 
 		LessonPracticeBo lessonPracticeBo = new LessonPracticeBo();
@@ -632,8 +629,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId,
 			AuthContext authContext) {
 		// 数据校验
-		validateCourse(courseId, authContext);
-		CourseLesson courseLesson = validateLesson(lessonId, authContext.getIsWeb());
+		courseValidateHandler.validateCoursePermission(courseId, authContext);
+		courseMapper.selectById(courseId);
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId,
+				authContext.getIsWeb());
 
 		Paper paper = paperMapper.selectById(courseLesson.getPaperId());
 		List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService
@@ -856,39 +855,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		});
 
 		return listBoMap;
-	}
-
-	/**
-	 * 课程校验
-	 *
-	 * @param courseId
-	 * @param authContext
-	 */
-	private Course validateCourse(String courseId, AuthContext authContext) {
-
-		List<String> courseIds = courseMapper.selectByAuth(authContext);
-		if (!courseIds.contains(courseId)) {
-			log.error("Course No Permission！course_id=[{}]", courseId);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
-		}
-
-		return courseMapper.selectById(courseId);
-	}
-
-	/**
-	 * 校验课时
-	 *
-	 * @param lessonId
-	 * @param isWeb
-	 */
-	private CourseLesson validateLesson(String lessonId, Boolean isWeb) {
-		CourseLesson lesson = courseLessonMapper.selectByPublic(lessonId, isWeb);
-		if (null == lesson) {
-			log.error("Lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		return lesson;
 	}
 
 	/**

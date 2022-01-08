@@ -405,8 +405,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
-		List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId,
-				authContext.getIsWeb());
+		// 仅查询公开课
+		List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId, true);
 		List<SimpleDataRes> simpleDataRes = StreamApiUtils.map(lessons,
 				courseLesson -> BeanUtils.copy(courseLesson, SimpleDataRes.class));
 		return new BaseRsp<>(simpleDataRes);

@@ -37,13 +37,16 @@ public class PageReqBase implements Serializable {
 	private String pattern;
 
 	public Page toPageParam() {
+		Page page = new Page(this.page, this.perPage);
+
+		if (StringUtils.isBlank(sort)) {
+			return page;
+		}
 		boolean asc = true;
 		if (StringUtils.startsWith(sort, "-")) {
 			sort = StringUtils.substring(sort, 1);
 			asc = false;
 		}
-
-		Page page = new Page(this.page, this.perPage);
 
 		// 设置排序字段
 		OrderItem item = new OrderItem(sort, asc);

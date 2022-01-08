@@ -2,6 +2,9 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.util.PageUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +59,9 @@ public class WebCourseController {
 		}
 
 		Page page = listReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
 
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

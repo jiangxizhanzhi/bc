@@ -5,9 +5,10 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.cs.service.UtilService;
 import com.google.common.collect.Lists;
@@ -28,8 +29,6 @@ import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.controller.res.AdminCourseRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
@@ -122,6 +121,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		// 分页数据获取
 		Page page = listReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
 
 		// 获取权限
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

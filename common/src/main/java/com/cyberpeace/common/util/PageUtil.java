@@ -106,4 +106,14 @@ public class PageUtil {
 				.currentPage(CommonConstant.ONE).total(CommonConstant.ZERO).build();
 	}
 
+	public static void setPageOrder(Page page, String orderName, boolean asc) {
+		OrderItem orderItem = new OrderItem(orderName, asc);
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			page.setOrders(Lists.newArrayList(orderItem));
+		} else {
+			page.getOrders().add(orderItem);
+		}
+
+	}
+
 }

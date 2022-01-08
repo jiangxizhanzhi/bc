@@ -64,4 +64,10 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 * @param courseIds
 	 */
 	void batchDelete(@Param("courseIds") List<String> courseIds);
+
+	/**
+	 * 更新课时目录
+	 * @param lessonConfig
+	 */
+	void updateByCourseAndLesson(@Param("lessonConfig") LessonConfig lessonConfig);
 }

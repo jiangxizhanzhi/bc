@@ -67,4 +67,15 @@
             #{courseId}
         </foreach>
     </delete>
+
+    <update id="updateByCourseAndLesson">
+        update oj_lesson_config
+        <set>
+            <if test="lessonConfig.name != null and lessonConfig.name != ''">
+                name = #{lessonConfig.name}
+            </if>
+        </set>
+        where course_id = #{lessonConfig.courseId}
+        and lesson_id = #{lessonConfig.lessonId}
+    </update>
 </mapper>

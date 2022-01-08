@@ -139,12 +139,16 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PostMapping("")
 	public BaseRsp add(@Validated(Create.class) LessonAddReq lessonAddReq) {
 
+		// 数据转换
 		CourseLesson courseLesson = addReqToEntity(lessonAddReq);
+		JSONObject sceneConfig = JsonUtil.toJsonObject(lessonAddReq.getOjSceneConfig(),
+				JSONObject.class);
+		List<PaperPracticeContext> practiceContextList = JsonUtil
+				.toJsonObjectArray(lessonAddReq.getPracticeList(), PaperPracticeContext.class);
 
-		CourseLesson lesson = courseLessonService.addLesson(courseLesson,
-				JsonUtil.toJsonObject(lessonAddReq.getOjSceneConfig(), JSONObject.class),
-				JsonUtil.toJsonObjectArray(lessonAddReq.getPracticeList(),
-						PaperPracticeContext.class));
+		// 数据新增
+		CourseLesson lesson = courseLessonService.addLesson(courseLesson, sceneConfig,
+				practiceContextList);
 
 		return new BaseRsp(lesson);
 	}
@@ -162,46 +166,16 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseLesson.setPaperId(lesson.getPaperId());
 		}
 
+		JSONObject topoConfig = JsonUtil.toJsonObject(lessonUpdateReq.getOjSceneConfig(),
+				JSONObject.class);
+		List<PaperPracticeContext> contextList = JsonUtil
+				.toJsonObjectArray(lessonUpdateReq.getPracticeList(), PaperPracticeContext.class);
+
 		// 执行数据更新
-		CourseLesson lesson = courseLessonService.updateLesson(courseLesson,
-				JsonUtil.toJsonObject(lessonUpdateReq.getOjSceneConfig(), JSONObject.class),
-				JsonUtil.toJsonObjectArray(lessonUpdateReq.getPracticeList(),
-						PaperPracticeContext.class));
+		CourseLesson lesson = courseLessonService.updateLesson(courseLesson, topoConfig,
+				contextList);
 		return new BaseRsp(lesson);
 
-	}
-
-	/**
-	 * 更新请求转换为实体类
-	 * @param lessonUpdateReq
-	 * @return
-	 */
-	private CourseLesson updateReqToEntity(LessonUpdateReq lessonUpdateReq) {
-		CourseLesson courseLesson = BeanUtils.copy(lessonUpdateReq, CourseLesson.class);
-
-		// 有文件路径 并且文件不为空 则修改文件
-		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())
-				&& null != lessonUpdateReq.getVideo()) {
-			courseLessonService.uploadVideo(courseLesson, lessonUpdateReq.getVideo());
-
-		} else if (null == lessonUpdateReq.getVideo()
-				&& StringUtils.isBlank(lessonUpdateReq.getVideoUrl())) {
-			// 文件为空 url为空则置空
-			courseLesson.setVideoUrl("");
-		}
-
-		// 有讲义地址并且讲义不为空 则修改文件
-		if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
-				&& null != lessonUpdateReq.getHandout()) {
-			courseLessonService.uploadHandout(courseLesson, lessonUpdateReq.getHandout());
-
-			// 讲义为空 并且讲义地址为空 则置空
-		} else if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
-				&& null == lessonUpdateReq.getHandout()) {
-			courseLesson.setHandoutUrl("");
-		}
-
-		return courseLesson;
 	}
 
 	@ApiOperation("课时信息删除")
@@ -288,24 +262,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		Boolean result = courseLessonService.importLessons(importLessonReq.getCourseId(),
 				importLessonReq.getLessonIds());
 		return new BaseRsp(result);
-	}
-
-	/**
-	 * 请求体转换为实体类
-	 * @param lessonAddReq
-	 * @return
-	 */
-	private CourseLesson addReqToEntity(LessonAddReq lessonAddReq) {
-
-		// 知识点转换
-		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
-		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
-		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-
-		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());
-		courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());
-
-		return courseLesson;
 	}
 
 	@ApiOperation("课时新增附件上传")
@@ -410,6 +366,57 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		List<SimpleDataRes> simpleDataRes = StreamApiUtils.map(lessons,
 				courseLesson -> BeanUtils.copy(courseLesson, SimpleDataRes.class));
 		return new BaseRsp<>(simpleDataRes);
+	}
+
+	/**
+	 * 更新请求转换为实体类
+	 * @param lessonUpdateReq
+	 * @return
+	 */
+	private CourseLesson updateReqToEntity(LessonUpdateReq lessonUpdateReq) {
+		CourseLesson courseLesson = BeanUtils.copy(lessonUpdateReq, CourseLesson.class);
+
+		// 有文件路径 并且文件不为空 则修改文件
+		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())
+				&& null != lessonUpdateReq.getVideo()) {
+			courseLessonService.uploadVideo(courseLesson, lessonUpdateReq.getVideo());
+
+		} else if (null == lessonUpdateReq.getVideo()
+				&& StringUtils.isBlank(lessonUpdateReq.getVideoUrl())) {
+			// 文件为空 url为空则置空
+			courseLesson.setVideoUrl("");
+		}
+
+		// 有讲义地址并且讲义不为空 则修改文件
+		if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
+				&& null != lessonUpdateReq.getHandout()) {
+			courseLessonService.uploadHandout(courseLesson, lessonUpdateReq.getHandout());
+
+			// 讲义为空 并且讲义地址为空 则置空
+		} else if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
+				&& null == lessonUpdateReq.getHandout()) {
+			courseLesson.setHandoutUrl("");
+		}
+
+		return courseLesson;
+	}
+
+	/**
+	 * 请求体转换为实体类
+	 * @param lessonAddReq
+	 * @return
+	 */
+	private CourseLesson addReqToEntity(LessonAddReq lessonAddReq) {
+
+		// 知识点转换
+		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
+		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
+		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());
+		courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());
+
+		return courseLesson;
 	}
 
 }

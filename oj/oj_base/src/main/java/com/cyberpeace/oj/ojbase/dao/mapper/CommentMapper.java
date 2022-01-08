@@ -16,4 +16,6 @@ public interface CommentMapper extends BaseMapper<Comment> {
 			@Param("businessType") Integer businessType);
 
 	List<Comment> selectByParent(@Param("parent") String parent);
+
+	void updateComment(Comment comment);
 }

@@ -27,4 +27,27 @@
         where root_id = #{parent}
         <include refid="orderByTimeDesc"/>
     </select>
+
+    <update id="updateComment">
+        update oj_comment
+        <set>
+            <if test="themeName != null and themeName != ''">
+                theme_name = #{themeName},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+        </set>
+        <where>
+            <if test="businessId != null and businessId != ''">
+                business_id = #{businessId}
+            </if>
+            <if test="businessType != null">
+                and business_type = #{businessType}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </update>
 </mapper>

@@ -14,6 +14,8 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.*;
+import com.cyberpeace.oj.ojbase.dao.entity.Comment;
+import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import org.apache.commons.collections.CollectionUtils;
@@ -141,6 +143,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
+
+	@Autowired
+	private LessonConfigMapper lessonConfigMapper;
+
+	@Autowired
+	private CommentMapper commentMapper;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
@@ -329,26 +337,48 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public CourseLesson updateLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
 
+		CourseLesson lessonExist = courseValidateHandler
+				.validateLessonExist(courseLesson.getResourceId(), false);
+		Boolean updateFlag = !lessonExist.getName().equals(courseLesson.getName());
+
+		// 试卷数据
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 
+		// 拓扑数据修改
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
 			String topoId = localSceneService.saveTopo(ojSceneConfig, courseLesson.getTopoId());
 			courseLesson.setTopoId(topoId);
 		}
 
+		// 课时目录修改
+		LessonConfig lessonConfig = LessonConfig.builder().lessonId(courseLesson.getResourceId())
+				.courseId(courseLesson.getCourseId()).name(courseLesson.getName()).build();
+
+		// 课时留言theme_name修改
+		Comment comment = new Comment();
+		if (updateFlag) {
+			Course course = courseMapper.selectById(courseLesson.getCourseId());
+			String themeName = course.getName() + CommonConstant.LEFT_OBLIQUE_LINE
+					+ courseLesson.getName();
+			comment.setThemeName(themeName);
+			comment.setBusinessType(Comment.CommentType.LESSON.getCode());
+			comment.setBusinessId(courseLesson.getResourceId());
+		}
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-
-				// 试卷编号不为空 则进行实体更新操作
 				if (StringUtils.isBlank(courseLesson.getPaperId())) {
 					paperService.update(paperContext);
 				}
-
-				// 课时数据更新
+				if (updateFlag) {
+					lessonConfigMapper.updateByCourseAndLesson(lessonConfig);
+					commentMapper.updateComment(comment);
+				}
 				courseLessonMapper.updateById(courseLesson);
+
 			}
 		});
 

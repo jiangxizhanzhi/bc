@@ -19,9 +19,9 @@
         <where>
             <if test="listQuery != null">
                 <if test="listQuery.startTime != null and listQuery.endTime != null">
-                    (start_time &gt;= #{listQuery.startTime} and end_time &lt;= #{listQuery.endTime})
+                    ((start_time &gt;= #{listQuery.startTime} and end_time &lt;= #{listQuery.endTime})
                     or (start_time &lt; #{listQuery.endTime} and end_time &lt; #{listQuery.endTime})
-                    or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime})
+                    or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
                 </if>
                 <if test="listQuery.userId != null and listQuery.userId != ''">
                     and create_user_id = #{listQuery.userId}
@@ -31,10 +31,6 @@
                     <foreach collection="listQuery.childrenOrg" item="orgId" open="(" close=")" separator=",">
                         #{orgId}
                     </foreach>
-                </if>
-                <if test="listQuery.orgId != null and listQuery.orgId != ''">
-                    <bind name="likeOrg" value="'%' + listQuery.orgId + '%'"/>
-                    and organization_ids like #{likeOrg}
                 </if>
             </if>
         </where>

@@ -61,6 +61,7 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(
 				teamTrainTemplateContext.getRoleList(), TeamTrainTemplateRole.class);
 
+		// 校验角色的任务
 		teamTrainTemplateRoleList.forEach(teamTrainTemplateRole -> {
 			missionService.validateMission(teamTrainTemplateRole.getMissionsScheme());
 		});

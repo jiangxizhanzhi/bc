@@ -124,17 +124,20 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 		boolean result = true;
 		try {
-			WsSceneReportBO reportBO = new WsSceneReportBO("", type, object.getJSONObject("data"));
-			String content = JsonUtil.toJsonString(reportBO);
-
 			switch (type) {
 				case SCENE_DELETE:
 					realListener.onSceneDelete(object.getString("data"), businessId, context);
 					break;
 				case SCENE:
-					realListener.onSceneStartProcess(content, businessId, context);
+					WsSceneReportBO sceneReportBO = new WsSceneReportBO("", type,
+							object.getJSONObject("data"));
+					String sceneContent = JsonUtil.toJsonString(sceneReportBO);
+					realListener.onSceneStartProcess(sceneContent, businessId, context);
 					break;
 				case SCENE_ELEMENT:
+					WsSceneReportBO reportBO = new WsSceneReportBO("", type,
+							object.getJSONObject("data"));
+					String content = JsonUtil.toJsonString(reportBO);
 					realListener.onSceneElement(content, businessId, context);
 					break;
 				default:

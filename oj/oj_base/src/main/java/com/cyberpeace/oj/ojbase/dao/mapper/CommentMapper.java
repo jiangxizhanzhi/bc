@@ -18,4 +18,6 @@ public interface CommentMapper extends BaseMapper<Comment> {
 	List<Comment> selectByParent(@Param("parent") String parent);
 
 	void updateComment(Comment comment);
+
+	void deleteByBusinessId(@Param("businessId") String businessId);
 }

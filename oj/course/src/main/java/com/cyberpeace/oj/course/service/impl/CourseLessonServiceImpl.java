@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,6 +19,9 @@ import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,6 +122,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private PracticeTheoryRefService practiceTheoryRefService;
 
 	@Autowired
+	private PracticeTheoryRefMapper practiceTheoryRefMapper;
+
+	@Autowired
+	private PracticeOperationRefMapper practiceOperationRefMapper;
+
+	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
 	@Autowired
@@ -149,6 +159,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private CommentMapper commentMapper;
+
+	@Autowired
+	private ClassroomService classroomService;
+
+	@Autowired
+	private ClassroomMapper classroomMapper;
+
+	@Autowired
+	private LessonPracticeSceneService lessonPracticeSceneService;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
@@ -194,7 +213,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		infoBo.setIsCollection(collection);
 
 		// 文件地址处理
-		if (lesson.getType().intValue() != CourseLesson.HandoutType.MD.getCode().intValue()) {
+		if (lesson.getHandoutType().intValue() != CourseLesson.HandoutType.MD.getCode()
+				.intValue()) {
 			infoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
 		}
 		infoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
@@ -807,16 +827,64 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public Integer batchDelete(List<String> resourceIds, AuthContext authContext) {
 
-		// 课时目录删除 todo
-		// 课程表删除
-		// 评论删除
-		// 留言删除
-		// 报告删除
-		// 笔记删除
+		AuthContext webAuth = BeanUtils.copy(authContext, AuthContext.class);
+		webAuth.setIsWeb(true);
+		String lessonId = resourceIds.get(CommonConstant.ZERO);
+		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
+		Course course = courseMapper.selectById(lesson.getCourseId());
+
+		List<Classroom> classrooms = classroomMapper.selectByLesson(resourceIds);
+		List<String> classroomIds = StreamApiUtils.map(classrooms, Classroom::getResourceId);
+
 		// 运行场景
-		// 课后练习
-		// 课后练习运行场景
-		return null;
+		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(resourceIds);
+		List<OjLocalScene> adminOjLocalScenes = StreamApiUtils.map(lessonList,
+				lessonInfo -> ojLocalSceneService.selectOjLocalScene(lessonInfo.getResourceId(),
+						lessonInfo.getSceneShareMode(), authContext));
+		List<OjLocalScene> webOjLocalScenes = StreamApiUtils.map(lessonList,
+				lessonInfo -> ojLocalSceneService.selectOjLocalScene(lessonInfo.getResourceId(),
+						lessonInfo.getSceneShareMode(), webAuth));
+		adminOjLocalScenes.addAll(webOjLocalScenes);
+
+		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+
+				// 笔记和评论
+				resourceIds.forEach(lessonId -> commentMapper.deleteByBusinessId(lessonId));
+				resourceIds.forEach(lessonId -> noteMapper.deleteByBusiness(lessonId, null,
+						Note.NoteResourceType.LESSON.getCode()));
+				// 课堂相关
+				classroomIds.forEach(
+						classroomId -> classroomService.deleteClassroom(classroomId, authContext));
+
+				// 课后练习
+				lessonList.forEach(courseLesson -> {
+					List<String> practiceRefs = practiceOperationRefMapper
+							.selectByPaper(courseLesson.getPaperId());
+					practiceRefs.forEach(practiceId -> lessonPracticeSceneService
+							.deleteScene(courseLesson.getResourceId(), practiceId, authContext));
+					practiceOperationRefMapper.deleteByPaper(courseLesson.getPaperId());
+					practiceTheoryRefMapper.deleteByPaper(courseLesson.getPaperId());
+				});
+				// 目录和场景
+				lessonConfigMapper.deleteByLessonIds(resourceIds);
+				adminOjLocalScenes.forEach(ojLocalScene -> ojLocalSceneService
+						.deleteLocalAndRemoteScene(ojLocalScene));
+				int row = courseLessonMapper.deleteBatchIds(resourceIds);
+				Integer lessonCount = null != course.getLessonCount()
+						&& course.getLessonCount().intValue() >= resourceIds.size()
+								? course.getLessonCount() - resourceIds.size()
+								: CommonConstant.ZERO;
+
+				// 更新课程数量
+				course.setLessonCount(lessonCount);
+				courseMapper.updateById(course);
+
+				return row;
+			}
+		});
 	}
 
 	/**

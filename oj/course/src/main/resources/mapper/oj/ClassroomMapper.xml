@@ -61,4 +61,12 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByLesson" resultMap="base">
+        select * from oj_classroom
+        where lesson_id in
+        <foreach collection="lessonIds" separator="," open="(" close=")" item="lessonId">
+            #{lessonId}
+        </foreach>
+    </select>
 </mapper>

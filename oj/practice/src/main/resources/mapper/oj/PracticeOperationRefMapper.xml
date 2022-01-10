@@ -32,7 +32,7 @@
     </select>
 
     <select id="selectByPaper" resultType="java.lang.String">
-        select resource_id from oj_practice_operation_ref
+        select origin_id from oj_practice_operation_ref
         where paper_id = #{paperId}
     </select>
 </mapper>

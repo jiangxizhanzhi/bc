@@ -182,15 +182,11 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@DeleteMapping("/batch")
 	public BaseRsp<Boolean> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
-		Boolean result = transactionTemplate.execute(new TransactionCallback<Boolean>() {
-
-			@Override
-			public Boolean doInTransaction(TransactionStatus status) {
-				int result = courseLessonMapper.deleteBatchIds(batchDeleteReq.getResourceIds());
-				int row = lessonConfigMapper.deleteByLessonIds(batchDeleteReq.getResourceIds());
-				return result != 0 && row != 0;
-			}
-		});
+		// todo 新增课程编号传递
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Integer result = courseLessonService.batchDelete(batchDeleteReq.getResourceIds(),
+				authContext);
 
 		return new BaseRsp(result);
 	}

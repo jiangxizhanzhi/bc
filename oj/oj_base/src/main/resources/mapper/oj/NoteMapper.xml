@@ -123,4 +123,17 @@
             </if>
         </where>
     </select>
+
+    <delete id="deleteByBusiness">
+        delete from oj_note
+        <where>
+            business_id = #{businessId}
+            <if test="resourceType != null">
+                and business_type = #{resourceType}
+            </if>
+            <if test="noteType != null">
+                and note_type = #{noteType}
+            </if>
+        </where>
+    </delete>
 </mapper>

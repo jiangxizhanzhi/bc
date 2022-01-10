@@ -92,13 +92,17 @@ public class MdUtil {
 	 */
 	public static String parseMarkdown(String markdownPath) {
 
+		// 获取当前文件夹
 		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
 
+		// 获取markdown文件内容
 		String content = FileUtil.getContent(new File(markdownPath));
 
+		// 匹配文件路径
 		List<String> matchStrList = LocalStringUtil.getMatchStr(content,
 				PatternConstant.MARKDOWN_IMAGE);
 
+		// 文件路径替换
 		for (String matchStr : matchStrList) {
 			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
 					PatternConstant.MARKDOWN_IMAGE_URL);

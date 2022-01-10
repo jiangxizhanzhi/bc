@@ -52,6 +52,8 @@ public class Course extends AuthTable {
 
 	private String courseNum;
 
+	private Integer lessonCount;
+
 	public enum Difficulty implements GenericEnum {
 
 		PRIMARY(0, "初级"), MIDDLE(1, "中级"), HIGH(2, "高级");

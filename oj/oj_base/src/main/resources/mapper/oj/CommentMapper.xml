@@ -50,4 +50,9 @@
             </if>
         </where>
     </update>
+
+    <delete id="deleteByBusinessId">
+        delete from oj_comment
+        where business_id = #{businessId}
+    </delete>
 </mapper>

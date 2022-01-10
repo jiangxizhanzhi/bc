@@ -130,7 +130,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
                 trainMissions.add(missionId);
             });
         });
-        if (trainMissions.size() != missionTemplateMapper.selectBatchIds(trainMissions).size()) {
+        if (trainMissions.size() > 0 && trainMissions.size() != missionTemplateMapper.selectBatchIds(trainMissions).size()) {
             throw new BusinessException(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID);
         }
     }

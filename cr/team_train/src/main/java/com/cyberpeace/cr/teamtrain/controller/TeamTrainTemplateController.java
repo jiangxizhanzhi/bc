@@ -152,12 +152,15 @@ public class TeamTrainTemplateController {
 	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
+		// 默认时间排序
+		listQuery.setSort("-cr_business_template.create_time");
 
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
 		// 训练场景拓扑节点数量获取
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
 				data.getRecords().stream().map(teamTemplateData -> teamTemplateData.getTopoId())
 						.collect(Collectors.toList()));
+
 		data.convert(teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData,
 				topologyNodesStats));
 

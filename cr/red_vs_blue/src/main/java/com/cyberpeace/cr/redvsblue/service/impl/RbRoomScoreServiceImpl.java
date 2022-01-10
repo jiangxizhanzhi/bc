@@ -166,7 +166,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 				.collect(Collectors.toMap(MissionCategory::getResourceId, bo -> bo.getName()));
 		for (TaskContext taskContext : taskContexts) {
 			Mission mission = taskContext.getMission();
-			Integer count = missionsCategory.getOrDefault(mission.getCategoryId(), 0) + 1;
+			Integer count = missionsCategory.getOrDefault(missionCategoryMap.get(mission.getCategoryId()), 0) + 1;
 			missionsCategory.put(missionCategoryMap.get(mission.getCategoryId()), count);
 		}
 
@@ -179,6 +179,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		}
 
 		XYData xyData = new XYData(xData, yData);
+
 		return xyData;
 	}
 

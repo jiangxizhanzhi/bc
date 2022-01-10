@@ -465,6 +465,23 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
+	public void checkRoomUnclosed(String roomId) {
+		RbRoom rbRoom = getById(roomId);
+
+		if (rbRoom == null) {
+			log.error("failed to get RbRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		if (rbRoom.isEnded()) {
+			log.error("RedVsBlueTrain is over! roomId=[{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+
+		}
+	}
+
+
+	@Override
 	public void checkStudentPermission(String roomId, String userId) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {

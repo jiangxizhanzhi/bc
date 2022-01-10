@@ -50,6 +50,8 @@ public class RbTemplateController {
 	public BaseRsp<ListRsp<RbTemplateListRsp>> list(RbTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
+		// 默认时间排序
+		listQuery.setSort("-cr_business_template.create_time");
 
 		IPage<RbTemplateData> data = rbTemplateService.page(listQuery);
 

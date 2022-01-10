@@ -166,6 +166,8 @@ public class RbRoomDirectorController {
 	public BaseRsp<String>
 			addMissionInfo(@RequestBody @Validated RbRoomMissionReq rbRoomMissionReq) {
 
+		rbRoomService.checkRoomUnclosed(rbRoomMissionReq.getRoomId());
+
 		Mission mission = BeanUtils.copy(rbRoomMissionReq, Mission.class);
 		mission.setCategoryId(rbRoomMissionReq.getCategory());
 		mission.setSkillPoints(JsonUtil.toJsonString(rbRoomMissionReq.getSkillPoints()));

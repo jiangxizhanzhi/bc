@@ -44,4 +44,7 @@ public interface CommonConstant {
 	String EMPTY_LIST_JSON = "[]";
 
 	String RIGHT = "是";
+
+	String EMPTY_STRING = "";
+
 }

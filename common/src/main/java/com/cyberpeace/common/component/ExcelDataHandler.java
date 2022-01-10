@@ -4,7 +4,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -42,10 +44,10 @@ public class ExcelDataHandler {
 			fileInputStream = new FileInputStream(filePath);
 
 			String fileSuffix = FileUtil.getFileSuffix(filePath);
-			if (fileSuffix.equals("xls")) {
+			if (fileSuffix.equals(FileSunffixConstant.XLS.getDesc())) {
 				workbook = new HSSFWorkbook(fileInputStream);
 			}
-			if (fileSuffix.equals("xlsx")) {
+			if (fileSuffix.equals(FileSunffixConstant.XLSX.getDesc())) {
 				workbook = new XSSFWorkbook(fileInputStream);
 			}
 
@@ -130,7 +132,7 @@ public class ExcelDataHandler {
 			List<String> columnList = Lists.newArrayList();
 
 			Row sheetRow = sheet.getRow(rowIndex);
-			for (int cellIndex = 0; cellIndex < sheetRow.getPhysicalNumberOfCells(); cellIndex++) {
+			for (int cellIndex = 0; cellIndex < sheetRow.getLastCellNum(); cellIndex++) {
 				String cellData = getExcelDateByIndex(rowIndex, cellIndex);
 				columnList.add(cellData);
 			}
@@ -149,8 +151,11 @@ public class ExcelDataHandler {
 	 */
 	public String getExcelDateByIndex(int row, int column) {
 		Row sheetRow = sheet.getRow(row);
-		String cell = sheetRow.getCell(column).toString();
-		return cell;
+		Cell cell = sheetRow.getCell(column);
+		if (null == cell) {
+			return CommonConstant.EMPTY_STRING;
+		}
+		return cell.toString();
 	}
 
 	public void closeIO() {

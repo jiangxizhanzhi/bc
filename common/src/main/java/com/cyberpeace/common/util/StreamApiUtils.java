@@ -7,8 +7,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.checkerframework.checker.units.qual.K;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
@@ -90,8 +92,8 @@ public class StreamApiUtils {
 		if (CollectionUtils.isEmpty(collection)) {
 			return Lists.newArrayList();
 		}
-		return collection.stream().map(mapperValue)
-				.filter(e -> null != e).collect(Collectors.toList());
+		return collection.stream().map(mapperValue).filter(e -> null != e)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -119,6 +121,21 @@ public class StreamApiUtils {
 	 */
 	public static <E> List<E> distinct(Collection<E> collection) {
 		return collection.stream().distinct().collect(Collectors.toList());
+	}
+
+	/**
+	 * 根据某个字段去重
+	 * @param collection
+	 * @param mapper
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> List<E> distinctByColumn(Collection<E> collection,
+			Function<? super E, Object> mapper) {
+		Map<Object, Boolean> hashMap = new HashMap<>();
+		return collection.stream()
+				.filter(t -> hashMap.putIfAbsent(mapper.apply(t), CommonConstant.TRUE) == null)
+				.collect(Collectors.toList());
 	}
 
 }

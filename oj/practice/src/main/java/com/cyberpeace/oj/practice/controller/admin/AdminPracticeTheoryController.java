@@ -1,7 +1,9 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import java.io.File;
 import java.util.List;
 
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,7 +145,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论习题资源导入")
 	@PostMapping("/import")
-	public BaseRsp<Boolean> importTheory(@RequestBody @Validated TheoryImportReq theoryImportReq) {
+	public BaseRsp<Boolean> importTheory(@Validated TheoryImportReq theoryImportReq) {
 
 		// 文件先上传临时目录
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
@@ -153,6 +155,8 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		// 执行资源数据导入
 		Boolean result = practiceTheoryService.importTheory(theoryImportReq.getPracticeSetId(),
 				theoryImportReq.getCategoryId(), realPath);
+		// 文件删除
+		new File(realPath).deleteOnExit();
 		return new BaseRsp<>(result);
 
 	}

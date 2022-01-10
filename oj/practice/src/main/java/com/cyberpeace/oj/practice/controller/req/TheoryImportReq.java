@@ -13,11 +13,11 @@ import java.io.Serializable;
 @ApiModel
 public class TheoryImportReq implements Serializable {
 
-	@ApiModelProperty("习题集编号")
+	@ApiModelProperty(name = "practice_set_id", value = "习题集编号")
 	@NotBlank
 	private String practiceSetId;
 
-	@ApiModelProperty("分类编号")
+	@ApiModelProperty(name = "category_id", value = "分类编号")
 	@NotBlank
 	private String categoryId;
 
@@ -25,4 +25,11 @@ public class TheoryImportReq implements Serializable {
 	@NotNull
 	private MultipartFile file;
 
+	public void setPractice_set_id(String practiceSetId) {
+		this.practiceSetId = practiceSetId;
+	}
+
+	public void setCategory_id(String categoryId) {
+		this.categoryId = categoryId;
+	}
 }

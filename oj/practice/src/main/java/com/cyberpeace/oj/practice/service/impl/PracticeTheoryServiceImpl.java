@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
@@ -327,19 +328,22 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Override
 	public List<PracticeTheory> parseRmTheory(String path, PracticeSet practiceSet) {
 		// 获取excel数据
-		String oneFile = FileUtil.getOneFile(path, "xls");
+		String oneFile = FileUtil.getOneFile(path, FileSunffixConstant.XLS.getDesc());
 		if (StringUtils.isBlank(oneFile)) {
-			FileUtil.getOneFile(path, "xlsx");
+			FileUtil.getOneFile(path, FileSunffixConstant.XLSX.getDesc());
 		}
 		ExcelDataHandler dataHandler = new ExcelDataHandler(oneFile, CommonConstant.ZERO);
-		List<List<String>> sheetData = dataHandler.getSheetData(1);
+		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 
 		dataHandler.closeIO();
 		// 数据类型转换
 		List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData,
 				rowData -> rmExcelDataToEntity(rowData, practiceSet));
 
-		return theoryList;
+		// 数据去重
+		List<PracticeTheory> distinctList = StreamApiUtils.distinctByColumn(theoryList,
+				PracticeTheory::getContent);
+		return distinctList;
 	}
 
 	@Override
@@ -373,7 +377,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				PracticeCategory.PracticeType.THEORY.getCode());
 
 		// 数据读取
-		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ONE);
+		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 		List<PracticeTheory> theories = StreamApiUtils.map(sheetData,
 				data -> ojExcelDataToEntity(data, practiceSetId, categoryId));
@@ -382,6 +386,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			return CommonConstant.TRUE;
 		}
 
+		// 根据内容去重 防止数据多插入
+		List<PracticeTheory> theoryList = StreamApiUtils.distinctByColumn(theories,
+				PracticeTheory::getContent);
+
 		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theories.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -389,13 +397,14 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			@Override
 			public Boolean doInTransaction(TransactionStatus status) {
 				practiceSetMapper.updateById(practiceSet);
-				return saveBatch(theories);
+				return saveBatch(theoryList);
 			}
 		});
 	}
 
 	/**
 	 * 实训理论习题资源导入excel数据转换
+	 *
 	 * @param excelRowData
 	 * @param practiceSetId
 	 * @param categoryId
@@ -503,9 +512,20 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 * @return
 	 */
 	private PracticeTheory rmExcelDataToEntity(List<String> excelRowData, PracticeSet practiceSet) {
+
 		PracticeTheory practiceTheory = new PracticeTheory();
 		practiceTheory.setContent(excelRowData.get(0));
 		practiceTheory.setTitle(excelRowData.get(0));
+
+		String practiceId = practiceTheoryMapper.selectByContent(practiceTheory.getContent());
+		if (StringUtils.isNotBlank(practiceId)) {
+			return null;
+		}
+
+		// excel数据中难度=比当前代码枚举值+1
+		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
+		// excel数据中题型=当前代码枚举值+1
+		practiceTheory.setTheoryType(new Double(excelRowData.get(3)).intValue() - 1);
 
 		// 分类编号设置 不存在创建
 		String categoryId = practiceCategoryMapper
@@ -523,12 +543,6 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		} else {
 			practiceTheory.setCategoryId(categoryId);
 		}
-
-		// excel数据中难度=比当前代码枚举值+1
-		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
-
-		// excel数据中题型=当前代码枚举值+1
-		practiceTheory.setTheoryType(new Double(excelRowData.get(3)).intValue() - 1);
 
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE

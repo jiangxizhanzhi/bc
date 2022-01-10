@@ -166,8 +166,6 @@ public class RbRoomDirectorController {
 	public BaseRsp<String>
 			addMissionInfo(@RequestBody @Validated RbRoomMissionReq rbRoomMissionReq) {
 
-		rbRoomService.checkRoomUnclosed(rbRoomMissionReq.getRoomId());
-
 		Mission mission = BeanUtils.copy(rbRoomMissionReq, Mission.class);
 		mission.setCategoryId(rbRoomMissionReq.getCategory());
 		mission.setSkillPoints(JsonUtil.toJsonString(rbRoomMissionReq.getSkillPoints()));
@@ -243,6 +241,7 @@ public class RbRoomDirectorController {
 	@PostMapping("/mission_delete")
 	public BaseRsp<String>
 			addMissionInfo(@RequestBody @Validated RbMissionDeleteReq rbMissionDeleteReq) {
+		rbRoomService.checkRoomUnclosed(rbMissionDeleteReq.getRoomId());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

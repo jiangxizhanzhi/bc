@@ -86,6 +86,8 @@ public interface BusinessErrorMsg {
 					String.format("训练名称长度超出范围，应为 %d ~ %d ", CrCommonConstants.MIN_TRAINING_NAME_LEN,
 							CrCommonConstants.MAX_TRAINING_NAME_LEN));
 			put(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE, "已存在同名训练");
+			put(CrBusinessErrorCode.MISSION_NOT_BE_EMPTY, "阶段内任务不可为空");
+			put(CrBusinessErrorCode.MISSION_LESS, "任务id重复或者部分任务缺失");
 
 		}
 	};
@@ -171,7 +173,8 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "Mission Template is empty.");
 			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "Mission Template is invalid.");
-
+			put(CrBusinessErrorCode.MISSION_NOT_BE_EMPTY, "Mission cannot be empty during the stage");
+			put(CrBusinessErrorCode.MISSION_LESS, "Duplicate or not-found template_question id");
 		}
 	};
 

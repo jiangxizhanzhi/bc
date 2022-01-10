@@ -14,6 +14,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -29,9 +31,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.DynamicData;
-import com.cyberpeace.cr.crbase.service.context.LoadMission;
-import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.TrainingManualTeam;
@@ -409,5 +409,32 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void validateMission(String missionsScheme) {
+		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
+				new TypeReference<ColorMission<AddTemplateMission>>() {});
+		if (null == colorMission || null == colorMission.getSchemeData()) {
+			return;
+		}
+
+		List<MissionSchemeObject<AddTemplateMission>> schemeData = colorMission.getSchemeData();
+		for (MissionSchemeObject<AddTemplateMission> schemeDatum : schemeData) {
+			if (schemeDatum.getMissions().size() == 0) {
+				throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_BE_EMPTY);
+			}
+
+			List<String> missionIds = StreamApiUtils.map(schemeDatum.getMissions(),
+					AddTemplateMission::getResourceId);
+			List<MissionTemplate> missionTemplates = missionTemplateMapper
+					.selectBatchIds(missionIds);
+
+			if (missionTemplates.size() < missionIds.size()) {
+				throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
+			}
+
+		}
+
 	}
 }

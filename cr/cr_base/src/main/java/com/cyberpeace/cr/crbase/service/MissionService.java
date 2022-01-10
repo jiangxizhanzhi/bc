@@ -101,4 +101,6 @@ public interface MissionService extends IService<Mission> {
 	 * @return
 	 */
 	Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates);
+
+	void validateMission(String missionsScheme);
 }

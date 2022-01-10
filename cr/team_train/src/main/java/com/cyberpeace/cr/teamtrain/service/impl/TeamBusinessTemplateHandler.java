@@ -61,9 +61,9 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(
 				teamTrainTemplateContext.getRoleList(), TeamTrainTemplateRole.class);
 
-//		teamTrainTemplateRoleList.forEach(teamTrainTemplateRole -> {
-//			missionService.validateMission(teamTrainTemplateRole.getMissionsScheme());
-//		});
+		teamTrainTemplateRoleList.forEach(teamTrainTemplateRole -> {
+			missionService.validateMission(teamTrainTemplateRole.getMissionsScheme());
+		});
 
 		List<String> roleList = teamTrainTemplateRoleList.stream()
 				.map(TeamTrainTemplateRole::getName).distinct().collect(Collectors.toList());

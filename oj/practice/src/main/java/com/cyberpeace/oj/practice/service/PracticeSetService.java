@@ -7,6 +7,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -75,4 +76,11 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 */
 	boolean importRmCtfSet(String path, Map<String, String> envReqs);
 
+	/**
+	 * 导出习题集生成压缩文件
+	 * @param practiceSetIds 习题集编号
+	 * @param authContext
+	 * @return
+	 */
+	File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext);
 }

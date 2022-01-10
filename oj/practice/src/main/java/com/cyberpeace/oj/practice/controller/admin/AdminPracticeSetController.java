@@ -1,12 +1,17 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import java.io.File;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,10 +36,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
-import com.cyberpeace.oj.practice.controller.req.PracticeSetAddReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeSetPageReq;
-import com.cyberpeace.oj.practice.controller.req.PracticeSetUpdateReq;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
@@ -60,6 +61,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	@ApiOperation("习题集新增")
 	@PostMapping("")
@@ -151,4 +155,25 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		return new BaseRsp(setRes);
 
 	}
+
+	@ApiOperation("习题集资源数据导出")
+	@PostMapping("/batch_dumps")
+	public BaseRsp exportPracticeSet(@RequestBody @Validated DumpResourceReq dumpReq,
+			HttpServletResponse response) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		File dumpFile = practiceSetService.dumpPracticeSet(dumpReq.getResourceIds(), authContext);
+		FileUtil.setResponse(dumpFile, true, response);
+
+		return new BaseRsp();
+	}
+
+	@ApiOperation("习题集资源数据导入")
+	@PostMapping("/batch_loads")
+	public BaseRsp importPracticeSet(@Validated LoadResourceReq loadReq) {
+
+		return new BaseRsp();
+	}
+
 }

@@ -23,9 +23,10 @@ public interface PatternConstant {
 	/** 横线*/
 	String UNDER_LINE = "_";
 
-	/**
-	 * 下划线 + 小写字母
-	 */
+	/** 下划线 + 小写字母*/
 	String UNDER_LINE_LOWERCASE = "_[a-z]";
+
+	/** 匹配汉字及汉字字符*/
+	String CHINESE_CHARACTERS = "[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]";
 
 }

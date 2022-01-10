@@ -36,6 +36,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String TOPO_DELETE;
 
+	private String TOPO_EXPORT;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -48,6 +50,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		TOPO_RETRIEVE = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
 		TOPO_DELETE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
+		TOPO_EXPORT = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
 	}
 
 	@Override
@@ -140,4 +143,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		return HttpClientUtil.delete(targetUrl, body, Boolean.class);
 	}
 
+	@Override
+	public JSONObject exportTopo(String topoId) {
+		String targetUrl = TOPO_EXPORT + topoId;
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
 }

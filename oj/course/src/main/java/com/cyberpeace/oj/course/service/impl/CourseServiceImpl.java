@@ -324,6 +324,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Override
 	public Boolean batchDelete(List<String> courseIds) {
 
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

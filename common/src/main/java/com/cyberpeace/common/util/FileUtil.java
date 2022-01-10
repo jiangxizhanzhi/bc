@@ -200,6 +200,29 @@ public class FileUtil {
 	}
 
 	/**
+	 * 文件写到目的文件夹
+	 * @param data
+	 * @param destFilePath
+	 */
+	public static void writeToDestFile(String data, String destFilePath) {
+		BufferedWriter out = null;
+		try {
+			out = new BufferedWriter(new FileWriter(destFilePath));
+			out.write(data);
+		} catch (IOException e) {
+			log.error("File read failed! dest_file_path=[{}], catch error:", destFilePath, e);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+		} finally {
+			try {
+				out.close();
+			} catch (IOException e) {
+				// 关不掉算了
+			}
+
+		}
+	}
+
+	/**
 	 * @Author 陈卓
 	 * 生成文件响应
 	 * @param file 返回的文件
@@ -423,6 +446,29 @@ public class FileUtil {
 	}
 
 	/**
+	 * 获取新文件名且不重复 可传入文件路径和名称
+	 * @return
+	 */
+	public static String getNewName(String nameOrPath) {
+
+		// 文件名处理
+		int suffixIndex = nameOrPath.lastIndexOf(CommonConstant.PERIOD);
+		if (suffixIndex == CommonConstant.NEGATIVE_ONE) {
+			return nameOrPath;
+		}
+		String fileName = IDGeneratorUtil.getID() + nameOrPath.substring(suffixIndex);
+
+		// 文件路径处理
+		int dirIndex = nameOrPath.lastIndexOf(CommonConstant.LEFT_OBLIQUE_LINE);
+		if (dirIndex == CommonConstant.NEGATIVE_ONE) {
+			return fileName;
+		}
+		String filePath = nameOrPath.substring(0, dirIndex + 1);
+
+		return filePath + fileName;
+	}
+
+	/**
 	 * 校验文件后缀名
 	 * @param destFilePath 目标文件地址 文件名称和绝对路径均可以
 	 * @param fileTypeStr 文件后缀字符串 可参考FileTypeContant传入数据
@@ -466,4 +512,31 @@ public class FileUtil {
 		return filePath.substring(indexOf + 1);
 	}
 
+	/**
+	 * 文件夹目录删除
+	 * @param destDir
+	 * @param self
+	 */
+	public static void deleteDir(String destDir, boolean self) {
+		File file = new File(destDir);
+		if (!file.exists()) {
+			return;
+		}
+
+		// 文件直接删除
+		if (file.isFile()) {
+			file.deleteOnExit();
+		}
+
+		// 目录遍历删除
+		File[] files = file.listFiles();
+		for (File children : files) {
+			children.deleteOnExit();
+		}
+
+		// 是否删除自身
+		if (self) {
+			file.deleteOnExit();
+		}
+	}
 }

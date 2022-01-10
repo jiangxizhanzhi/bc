@@ -132,7 +132,7 @@ public class PracticeValidateHandler {
 	 * @param practiceSetId
 	 * @param authContext
 	 */
-	private void validatePermissionPractice(String practiceSetId, AuthContext authContext) {
+	public void validatePracticeSetPermission(String practiceSetId, AuthContext authContext) {
 
 		List<String> permissionSets = practiceSetMapper.selectByAuthContext(authContext);
 		if (CollectionUtils.isEmpty(permissionSets) || !permissionSets.contains(practiceSetId)) {

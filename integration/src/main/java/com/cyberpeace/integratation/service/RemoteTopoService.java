@@ -42,4 +42,11 @@ public interface RemoteTopoService {
 	 * @return
 	 */
 	Boolean deleteById(String topoId);
+
+	/**
+	 * topo配置数据导出 数据可直接请求中台保存接口生成新的topo
+	 * @param topoId
+	 * @return
+	 */
+	JSONObject exportTopo(String topoId);
 }

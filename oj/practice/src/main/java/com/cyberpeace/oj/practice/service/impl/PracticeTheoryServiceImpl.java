@@ -369,7 +369,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public Boolean importTheory(String practiceSetId, String categoryId, String filePath) {
+	public Boolean importTheory(String practiceSetId, String categoryId, String filePath,
+			String userId) {
 		// 基本数据校验
 		PracticeSet practiceSet = practiceValidateHandler.validateSetType(practiceSetId,
 				PracticeSet.PracticeType.THEORY.getCode());
@@ -380,7 +381,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 		List<PracticeTheory> theories = StreamApiUtils.map(sheetData,
-				data -> ojExcelDataToEntity(data, practiceSetId, categoryId));
+				data -> ojExcelDataToEntity(data, practiceSetId, categoryId, userId));
 
 		if (CollectionUtils.isEmpty(theories)) {
 			return CommonConstant.TRUE;
@@ -411,14 +412,14 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 * @return
 	 */
 	private PracticeTheory ojExcelDataToEntity(List<String> excelRowData, String practiceSetId,
-			String categoryId) {
+			String categoryId, String userId) {
 
 		// 字段数据长度限制
 		String content = excelRowData.get(0);
 		practiceValidateHandler.validateFieldLength(content, MAX_CONTENT_LENGTH);
 
 		// 该条数据存在也不插入
-		String practiceId = practiceTheoryMapper.selectByContent(content);
+		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId, content);
 		if (StringUtils.isNotBlank(practiceId)) {
 			return null;
 		}
@@ -431,7 +432,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setPracticeSetId(practiceSetId);
 		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
 		practiceTheory.setBuiltin(CommonConstant.TRUE);
-		practiceTheory.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+		practiceTheory.setCreateUserId(userId);
 		practiceTheory.setIsPublic(CommonConstant.TRUE);
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
 
@@ -517,7 +518,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setContent(excelRowData.get(0));
 		practiceTheory.setTitle(excelRowData.get(0));
 
-		String practiceId = practiceTheoryMapper.selectByContent(practiceTheory.getContent());
+		String practiceId = practiceTheoryMapper.selectByContent(practiceSet.getResourceId(),
+				practiceTheory.getContent());
 		if (StringUtils.isNotBlank(practiceId)) {
 			return null;
 		}

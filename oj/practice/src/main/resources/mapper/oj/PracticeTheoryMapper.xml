@@ -125,6 +125,8 @@
 
     <select id="selectByContent" resultType="java.lang.String">
         select resource_id from oj_practice_theory
-        where content = #{content}
+        where practice_set_id = #{practiceSetId}
+        and content = #{content}
+        limit 0,1
     </select>
 </mapper>

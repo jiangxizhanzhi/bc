@@ -86,5 +86,5 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param realPath
 	 * @return
 	 */
-	Boolean importTheory(String practiceSetId, String categoryId, String realPath);
+	Boolean importTheory(String practiceSetId, String categoryId, String realPath, String userId);
 }

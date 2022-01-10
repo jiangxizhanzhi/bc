@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
@@ -14,7 +15,11 @@ import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
+import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
@@ -23,20 +28,26 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
-import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
+import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.PatternMatchUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -69,7 +80,16 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	private PracticeOperationService practiceOperationService;
 
 	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
+
+	@Autowired
+	private AttachmentMapper attachmentMapper;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
@@ -208,7 +228,16 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 习题数据导入
 		List<PracticeTheory> theoryList = practiceTheoryService.parseRmTheory(path, practiceSet);
-		return practiceTheoryService.saveBatch(theoryList);
+		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theoryList.size());
+
+		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				practiceSetMapper.updateById(practiceSet);
+				return practiceTheoryService.saveBatch(theoryList);
+			}
+		});
 	}
 
 	@Override
@@ -242,6 +271,191 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 
 		return practiceOperationService.saveBatch(operationList);
+	}
+
+	@Override
+	public File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext) {
+
+		// 权限校验
+		practiceSetIds.forEach(practiceSetId -> practiceValidateHandler
+				.validatePracticeSetPermission(practiceSetId, authContext));
+
+		// 设置数据存储
+		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		String destFilePath = destDir + CommonConstant.LEFT_OBLIQUE_LINE
+				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
+
+		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
+		List<PracticeSetDumpLoadBo> setDumpLoadBos = StreamApiUtils.map(practiceSets,
+				practiceSet -> {
+					Map<String, String> pathMap = Maps.newHashMap();
+					// 习题集数据
+					PracticeSetDumpLoadBo setDumpLoadBo = dumpSet(practiceSet, destFilePath,
+							pathMap);
+
+					// 习题数据
+					List<? extends PracticeDumpLoadBo> dumpPractice = dumpPractice(practiceSet,
+							destFilePath, pathMap);
+					setDumpLoadBo.setPractice(dumpPractice);
+
+					// 文件映射路径设置
+					setDumpLoadBo.setFilePathMap(pathMap);
+					return setDumpLoadBo;
+				});
+
+		String dataPath = destDir + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.writeToDestFile(JsonUtil.arrayToString(setDumpLoadBos), dataPath);
+
+		// 压缩当前文件夹
+		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
+		FileUtil.deleteDir(destDir, true);
+		return new File(zipDest);
+	}
+
+	/**
+	 * 
+	 * @param practiceSet
+	 * @param fileStorePath
+	 * @return
+	 */
+	private PracticeSetDumpLoadBo dumpSet(PracticeSet practiceSet, String fileStorePath,
+			Map<String, String> filePathMap) {
+		PracticeSetDumpLoadBo setDumpLoadBo = BeanUtils.copy(practiceSet,
+				PracticeSetDumpLoadBo.class);
+		// logo文件copy
+		String realPath = utilService.getRealPath(practiceSet.getLogo());
+		String fileName = FileUtil.getFileName(realPath, true);
+		String newName = FileUtil.getNewName(fileName);
+		String destLogoPath = fileStorePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
+		FileUtil.copyFile(realPath, destLogoPath, false);
+
+		String logoRelativePath = destLogoPath.replace(fileStorePath, CommonConstant.EMPTY_STRING);
+		filePathMap.put(practiceSet.getLogo(), logoRelativePath);
+
+		return setDumpLoadBo;
+	}
+
+	/**
+	 * 根据习题集获取要dump的习题数据
+	 * @param practiceSet
+	 * @param fileStorePath 
+	 * @param pathMap
+	 * @return
+	 */
+	private List<? extends PracticeDumpLoadBo> dumpPractice(PracticeSet practiceSet,
+			String fileStorePath, Map<String, String> pathMap) {
+
+		// 理论题
+		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.THEORY.getCode()
+				.intValue()) {
+			return dumpTheory(practiceSet.getResourceId());
+		}
+		// 实操题
+		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION.getCode()
+				.intValue()) {
+			return dumpOperation(practiceSet.getResourceId(), fileStorePath, pathMap);
+		}
+
+		return Lists.newArrayList();
+	}
+
+	/**
+	 * 导出实操习题数据
+	 * @param practiceSetId
+	 * @return
+	 */
+	private List<PracticeOperationDumpLoadBo> dumpOperation(String practiceSetId,
+			String fileStorePath, Map<String, String> filePathMap) {
+		// 数据查询
+		List<String> operationIds = practiceOperationMapper
+				.selectBySetIds(Lists.newArrayList(practiceSetId), false);
+		List<PracticeOperation> operationList = practiceOperationMapper
+				.selectBatchIds(operationIds);
+
+		// 数据转换
+		return StreamApiUtils.map(operationList,
+				operation -> handlerDumpOperation(operation, fileStorePath, filePathMap));
+	}
+
+	/**
+	 * 处理实操习题导出数据
+	 * @param operation
+	 * @param fileStorePath
+	 * @param filePathMap
+	 * @return
+	 */
+	private PracticeOperationDumpLoadBo handlerDumpOperation(PracticeOperation operation,
+			String fileStorePath, Map<String, String> filePathMap) {
+		PracticeOperationDumpLoadBo dumpLoadBo = BeanUtils.copy(operation,
+				PracticeOperationDumpLoadBo.class);
+		// 分类
+		PracticeCategory category = practiceValidateHandler
+				.validateCategoryExist(operation.getCategoryId());
+		dumpLoadBo.setCategoryName(category.getName());
+
+		// 附件
+		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
+			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
+			if (null != attachment) {
+				// 重命名文件防止重复
+				String realPath = utilService.getRealPath(attachment.getFilePath());
+				String fileName = FileUtil.getFileName(realPath, true);
+				String destFilePath = fileStorePath + FileUtil.getNewName(fileName);
+				FileUtil.copyFile(realPath, destFilePath, false);
+
+				String relativePath = destFilePath.replace(fileStorePath,
+						CommonConstant.EMPTY_STRING);
+				dumpLoadBo.setAttachmentPath(relativePath);
+				filePathMap.put(attachment.getFilePath(), relativePath);
+			}
+		}
+
+		// 场景
+		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
+			JSONObject topoData = remoteTopoService.exportTopo(operation.getTopoId());
+			dumpLoadBo.setTopoConfig(topoData);
+		}
+
+		// 题解 题解文件拷贝
+		if (StringUtils.isNotBlank(operation.getWriteup())) {
+			List<String> matchList = LocalStringUtil.getMatchStr(operation.getWriteup(),
+					PatternConstant.MARKDOWN_IMAGE_URL, CommonConstant.ONE);
+			matchList.forEach(str -> {
+				// 文件拷贝
+				String realPath = utilService.getRealPath(str);
+				String fileName = FileUtil.getFileName(realPath, true);
+				String newName = FileUtil.getNewName(fileName);
+				String destFilePath = fileStorePath + File.separatorChar + newName;
+				FileUtil.copyFile(realPath, destFilePath, false);
+
+				String relativePath = destFilePath.replace(fileStorePath, "");
+				filePathMap.put(str, relativePath);
+			});
+		}
+
+		return dumpLoadBo;
+	}
+
+	/**
+	 * 导出理论习题数据
+	 * @param practiceSetId
+	 * @return
+	 */
+	private List<PracticeTheoryDumpLoadBo> dumpTheory(String practiceSetId) {
+		// 数据查询
+		List<String> theoryIds = practiceTheoryMapper
+				.selectBySetIds(Lists.newArrayList(practiceSetId), false);
+		List<PracticeTheory> practiceTheories = practiceTheoryMapper.selectBatchIds(theoryIds);
+
+		// 数据转换
+		return StreamApiUtils.map(practiceTheories, practiceTheory -> {
+			PracticeTheoryDumpLoadBo dumpLoadBo = BeanUtils.copy(practiceTheory,
+					PracticeTheoryDumpLoadBo.class);
+			PracticeCategory category = practiceValidateHandler
+					.validateCategoryExist(practiceTheory.getCategoryId());
+			dumpLoadBo.setCategoryName(category.getName());
+			return dumpLoadBo;
+		});
 	}
 
 	/**
@@ -285,6 +499,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 			practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 			practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+			practiceSet.setPracticeCount(CommonConstant.ZERO);
+			if (StringUtils.isBlank(practiceSet.getResourceId())) {
+				practiceSet.setResourceId(IDGeneratorUtil.getID());
+			}
 
 			practiceSetMapper.insert(practiceSet);
 			return practiceSet;

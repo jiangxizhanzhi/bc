@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.io.File;
 import java.util.List;
 
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -154,7 +155,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		// 执行资源数据导入
 		Boolean result = practiceTheoryService.importTheory(theoryImportReq.getPracticeSetId(),
-				theoryImportReq.getCategoryId(), realPath);
+				theoryImportReq.getCategoryId(), realPath, UserInfoContext.getUserContext().getUserId());
 		// 文件删除
 		new File(realPath).deleteOnExit();
 		return new BaseRsp<>(result);

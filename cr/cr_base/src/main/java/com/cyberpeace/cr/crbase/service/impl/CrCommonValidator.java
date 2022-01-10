@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Set;
 
@@ -10,9 +11,14 @@ public class CrCommonValidator {
 
 	public static void validateLength(String target, Integer minLen, Integer maxLen,
 			String errorCode) {
-		int len = target.length();
-		if (len < minLen || len > maxLen) {
-			throw new BusinessException(errorCode);
+		try {
+			String targetStr = new String(target.getBytes("GBK"), "iso-8859-1");
+			int len = targetStr.length();
+			if (len < minLen || len > maxLen) {
+				throw new BusinessException(errorCode);
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
 	}
 

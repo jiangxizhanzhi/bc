@@ -163,13 +163,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
   public List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 
-			List jsonArray = (List) HttpClientUtil
-					.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class)
-					.get("list");
+		List jsonArray = (List) HttpClientUtil
+				.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class).get("list");
 
-			for (Object object : jsonArray) {
-				userInfoList.add(userInfoFromJsonObject((JSONObject) object));
-			}
+		for (Object object : jsonArray) {
+			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+		}
 
 		return userInfoList;
 	}

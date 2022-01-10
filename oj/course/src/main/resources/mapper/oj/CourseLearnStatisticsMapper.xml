@@ -138,6 +138,12 @@
         select user_id as submit_user_id
         from oj_lesson_record
         where lesson_id = #{lessonId}
+        <if test="userIds != null and userIds.size() != 0">
+            and user_id in
+            <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
     </select>
 
     <select id="detailLessonByPage" resultMap="lessonDetailMap">
@@ -157,10 +163,12 @@
         from oj_note
         left join oj_note_evaluate on oj_note_evaluate.note_id = oj_note.resource_id
         where oj_note.business_id = #{lessonId} and oj_note.business_type = 2 and oj_note.note_type = 2
-        and oj_note.user_id in
-        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
-            #{userId}
-        </foreach>
+        <if test="userIds != null and userIds.size() != 0">
+            and oj_note.user_id in
+            <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
     </select>
 
 </mapper>

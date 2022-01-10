@@ -88,7 +88,7 @@
         from oj_note
         left join oj_course_lesson on oj_note.business_id = oj_course_lesson.resource_id
         left join oj_course on oj_note.business_id = oj_course.resource_id
-        left join oj_practice_operation on oj_note.business_id = oj_course_lesson.resource_id
+        left join oj_practice_operation on oj_note.business_id = oj_practice_operation.resource_id
         left join oj_paper on oj_note.business_id = oj_paper.resource_id
         where oj_note.`user_id` = #{userId}
         and oj_note.note_type = #{noteType}

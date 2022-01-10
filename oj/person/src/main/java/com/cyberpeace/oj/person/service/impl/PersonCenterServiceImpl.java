@@ -152,12 +152,14 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> users = personCenterMapper.selectDistinctUser();
 		if (users.contains(userId)) {
 			StudyRecord practiceRecord = personCenterMapper.selectPracticeByUser(userId, lessonIds);
-			int practiceCount = JSONArray.parseArray(practiceRecord.getRecord()).size();
-			studyRecord.setPracticeFinishCount(practiceCount);
-			Integer score = practiceRecord.getScore();
-			Integer practiceRanking = practiceRecord.getPracticeRanking();
-			studyRecord.setPracticeRanking(practiceRanking);
-			studyRecord.setScore(score);
+			if (null != practiceRecord) {
+				int practiceCount = JSONArray.parseArray(practiceRecord.getRecord()).size();
+				studyRecord.setPracticeFinishCount(practiceCount);
+				Integer score = practiceRecord.getScore();
+				Integer practiceRanking = practiceRecord.getPracticeRanking();
+				studyRecord.setPracticeRanking(practiceRanking);
+				studyRecord.setScore(score);
+			}
 		}
 		BaseRsp<StudyRecord> rsp = new BaseRsp<>();
 		rsp.setData(studyRecord);

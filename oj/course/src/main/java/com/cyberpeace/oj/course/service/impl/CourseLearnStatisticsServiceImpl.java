@@ -160,12 +160,16 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		if (StringUtils.isNotEmpty(usernameLike)) {
 			UserPageContext userPageContext = new UserPageContext();
 			userPageContext.setUsername(usernameLike);
-			List<UserInfo> lazyUserList = remoteUserService.getFuzzyQueryUserList(userPageContext);
+			userPageContext.setIds(String.join(",", userIds));
+			List<UserInfo> lazyUserList = remoteUserService.getLazyUserList(userPageContext);
 			userIds = StreamApiUtils.map(lazyUserList, UserInfo::getUserId);
+		}
+		if (userIds.size() == 0){
+			return PageUtil.getListResult(null);
 		}
 		// 获取学习该课程的所有用户
 		IPage<AdminLessonStatisticsDetailRes> learnedUsers = courseLearnStatisticsMapper
-				.listLessonLearnedRecord(page, lessonId);
+				.listLessonLearnedRecord(page, userIds, lessonId);
 
 		// 获取课后练习完成数据
 		List<AdminLessonStatisticsDetailRes> practices = courseLearnStatisticsMapper

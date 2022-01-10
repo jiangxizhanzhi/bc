@@ -53,7 +53,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 			List<String> roleUserIds = JsonUtil.toJsonObjectArray(role.getUserIds(),
 					String.class);
 
-			if (!role.getRoleGroup().toString().equals(parentGroupId)){
+			if (role.getRoleGroup().toString().equals(parentGroupId)){
 				userIds.addAll(roleUserIds);
 				continue;
 			}
@@ -80,15 +80,22 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 
 	@Override
 	public List<String> getFriends(String roomId, String userId) {
-		// 当前用户是管理员，获取所有用户信息
-		// 当前用户是普通用户，获取管理组所有人员+本组所有人员
 		List<CrRole> rolesByRoom = crRoleService.getRolesByRoom(roomId, declareMessageType());
 		List<String> userIds = Lists.newArrayList();
+		List<String> allUserIds = Lists.newArrayList();
+		boolean isRoleAdmin = Boolean.FALSE;
 
 		for (CrRole role: rolesByRoom) {
 			List<String> roleUserIds = JsonUtil.toJsonObjectArray(role.getUserIds(),
 					String.class);
-			// 包含就加入
+			allUserIds.addAll(roleUserIds);
+
+			// 当前用户是管理员，获取所有用户信息
+			if (roleAdminGroups.contains(role.getRoleGroup()) && role.getUserIds().contains(userId)) {
+				isRoleAdmin = Boolean.TRUE;
+			}
+
+			// 包含就加入，当前用户是普通用户，获取管理组所有人员+本组所有人员
 			if(role.getUserIds().contains(userId)) {
 				userIds.addAll(roleUserIds);
 				continue;
@@ -98,11 +105,9 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 			if (roleAdminGroups.contains(role.getRoleGroup())) {
 				userIds.addAll(roleUserIds);
 			}
-
-
 		}
 
-		return userIds;
+		return isRoleAdmin ? allUserIds: userIds;
 	}
 
 	@Override

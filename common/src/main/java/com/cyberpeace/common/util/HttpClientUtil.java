@@ -57,7 +57,8 @@ public class HttpClientUtil {
 		HttpPost post = new HttpPost(url);
 		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
-		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		post.setHeader(WebConstant.LANGUAGE,
+                CommonContext.getLanguage() == null ? WebConstant.LANGUAGE_ZH : CommonContext.getLanguage());
 		post.setEntity(entity);
 
 		// 3、执行实际调用、返回序列化后的结果

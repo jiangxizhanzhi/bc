@@ -415,12 +415,40 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public void validateMission(String missionsScheme) {
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
 				new TypeReference<ColorMission<AddTemplateMission>>() {});
+
+		validateMission(missionsScheme);
+	}
+
+	@Override
+	public void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData) {
+		List<String> missionIds = StreamApiUtils.map(schemeData.getMissions(),
+				AddTemplateMission::getResourceId);
+
+		List<MissionTemplate> missions = missionTemplateMapper.selectBatchIds(missionIds);
+
+		Map<String, MissionTemplate> missionMap = StreamApiUtils.toMap(missions,
+				MissionTemplate::getResourceId, pc -> pc);
+
+		for (AddTemplateMission mission : schemeData.getMissions()) {
+
+			mission.setTitle(missionMap.getOrDefault(mission.getResourceId(), new MissionTemplate())
+					.getTitle());
+			mission.setDescription(missionMap
+					.getOrDefault(mission.getResourceId(), new MissionTemplate()).getDescription());
+
+		}
+
+	}
+
+	@Override
+	public void validateMission(ColorMission<AddTemplateMission> colorMission) {
 		if (null == colorMission || null == colorMission.getSchemeData()) {
 			return;
 		}
 
 		List<MissionSchemeObject<AddTemplateMission>> schemeData = colorMission.getSchemeData();
 		for (MissionSchemeObject<AddTemplateMission> schemeDatum : schemeData) {
+
 			if (schemeDatum.getMissions().size() == 0) {
 				throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_BE_EMPTY);
 			}
@@ -435,6 +463,5 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			}
 
 		}
-
 	}
 }

@@ -11,9 +11,7 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
-import com.cyberpeace.cr.crbase.service.context.DynamicData;
-import com.cyberpeace.cr.crbase.service.context.LoadMission;
-import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
+import com.cyberpeace.cr.crbase.service.context.*;
 
 public interface MissionService extends IService<Mission> {
 
@@ -103,4 +101,8 @@ public interface MissionService extends IService<Mission> {
 	Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates);
 
 	void validateMission(String missionsScheme);
+
+	void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData);
+
+	void validateMission(ColorMission<AddTemplateMission> missionsScheme);
 }

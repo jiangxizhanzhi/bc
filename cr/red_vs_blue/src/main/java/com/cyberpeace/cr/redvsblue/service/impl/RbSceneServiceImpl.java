@@ -29,6 +29,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
@@ -69,6 +70,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	@Autowired
 	private CrTaskService crTaskService;
+
+	@Autowired
+	private RbDeviceService rbDeviceService;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -187,7 +191,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 		Boolean stopResult = localSceneService.stopScene(room.getLocalSceneId());
 		if (stopResult) {
+			// 清除localScene
 			clearLocal(room);
+			// 清理 device
+			rbDeviceService.removeByRoomId(roomId);
 		}
 
 		return stopResult;

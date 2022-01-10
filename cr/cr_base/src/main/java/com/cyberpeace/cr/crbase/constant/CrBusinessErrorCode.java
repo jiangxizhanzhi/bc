@@ -157,6 +157,12 @@ public interface CrBusinessErrorCode {
 	// 同名训练已存在
 	String TRAINING_NAME_DUPLICATE = "101049";
 
+	// 当前非训练时间
+	String TRAINING_NOT_RUNNING = "101050";
+
+	// 主机已被占用
+	String MACHINE_OCCUPIED = "101051";
+
 	// 阶段内任务不可为空
 	String MISSION_NOT_BE_EMPTY = "101050";
 

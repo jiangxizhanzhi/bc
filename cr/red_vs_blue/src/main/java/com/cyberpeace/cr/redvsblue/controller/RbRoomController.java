@@ -42,9 +42,11 @@ import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbTimeManagementRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
+import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
@@ -83,6 +85,9 @@ public class RbRoomController {
 
 	@Autowired
 	private RbSceneService rbSceneService;
+
+	@Autowired
+	private RbDeviceService rbDeviceService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -407,5 +412,18 @@ public class RbRoomController {
 		rbTimeManagementRsp.setRedVsBlue(timeManagement.getRoomId());
 
 		return new BaseRsp(rbTimeManagementRsp);
+	}
+
+	@ApiOperation("获取设备占用情况")
+	@GetMapping("/device")
+	public BaseRsp<List<RbDeviceContext>> getDevices(
+			@ApiParam(value = "room_id", name = "红蓝对抗id", required = true) String room_id,
+			@ApiParam(value = "standard_device", name = "主机",
+					required = false) String standard_device) {
+
+		List<RbDeviceContext> ret = rbDeviceService.getByRoomIdAndOptionalDevice(room_id,
+				standard_device);
+
+		return new BaseRsp<>(ret);
 	}
 }

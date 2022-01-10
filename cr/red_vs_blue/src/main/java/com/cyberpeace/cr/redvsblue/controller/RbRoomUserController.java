@@ -4,23 +4,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.redvsblue.controller.req.RbDeviceReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.CrTaskReject;
 import com.cyberpeace.cr.redvsblue.controller.rsp.MissionInfoRsp;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbDevice;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.mission.MissionsStatistic;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -44,6 +53,12 @@ public class RbRoomUserController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private RbDeviceService rbDeviceService;
+
+	@Autowired
+	private RbTimeManagementService rbTimeManagementService;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -173,6 +188,41 @@ public class RbRoomUserController {
 				MissionWsCode.RVB_MISSION_CODE);
 
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("新增占用主机")
+	@PostMapping("/device")
+	public BaseRsp<Boolean> createDevice(@RequestBody @Valid RbDeviceReq req) {
+		String roomId = req.getRoomId();
+		String deviceId = req.getDeviceId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		// check permission
+		rbRoomService.checkStudentPermission(roomId, userId);
+		// check training status
+		RbTimeManagement management = rbTimeManagementService.getByRoomId(roomId);
+		if (management == null || !management.isRunning()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAINING_NOT_RUNNING);
+		}
+		// check if machine occupied
+		RbDevice deviceExist = rbDeviceService.getByRoomIdAndDevice(roomId, deviceId);
+		if (deviceExist != null) {
+			throw new BusinessException(CrBusinessErrorCode.MACHINE_OCCUPIED);
+		}
+		// create rb_device
+		Boolean ret = rbDeviceService.create(roomId, deviceId, userId);
+
+		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("解除主机占用")
+	@DeleteMapping("/device")
+	public BaseRsp<Boolean> deleteDevice(@RequestBody @Valid RbDeviceReq req) {
+		String roomId = req.getRoomId();
+		String deviceId = req.getDeviceId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		Boolean ret = rbDeviceService.removeByRoomIdAndUserIdAndDeviceId(roomId, userId, deviceId);
+		return new BaseRsp<>(ret);
 	}
 
 }

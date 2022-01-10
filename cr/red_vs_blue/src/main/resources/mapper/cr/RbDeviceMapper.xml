@@ -11,4 +11,31 @@
         device_id,create_user_id,create_time,
         update_time
     </sql>
+    <delete id="deleteByRoomId">
+        delete
+        from cr_rb_device
+        where room_id = #{roomId}
+    </delete>
+    <delete id="deleteByRoomIdAndUserIdAndDeviceId">
+        delete
+        from cr_rb_device
+        where room_id = #{roomId}
+          and create_user_id = #{userId}
+          and device_id = #{deviceId}
+    </delete>
+    <select id="selectByRoomIdAndOptionalDevice" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbDevice">
+        select *
+        from cr_rb_device
+        where room_id = #{roomId}
+        <if test="device != null and device != ''">
+            and
+            device_id = #{device}
+        </if>
+    </select>
+    <select id="selectByRoomIdAndDeviceId" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbDevice">
+        select *
+        from cr_rb_device
+        where room_id = #{roomId}
+          and device_id = #{deviceId}
+    </select>
 </mapper>

@@ -44,7 +44,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
     @Override
     public ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization) {
         JSONObject result;
-        OrderItem orderField = (OrderItem) page.getOrders().get(0);
+        OrderItem orderField = page.getOrders().isEmpty() ? new OrderItem() : (OrderItem) page.getOrders().get(0);
 
         if (orderField.getColumn() == null) {
             result = remoteUserService.getList(page.getCurrent(), page.getSize(), pattern, organization);

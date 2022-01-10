@@ -157,8 +157,9 @@ public interface CrBusinessErrorCode {
 	// 同名训练已存在
 	String TRAINING_NAME_DUPLICATE = "101049";
 
-    String MISSION_NOT_BE_EMPTY = "101050";
+	// 阶段内任务不可为空
+	String MISSION_NOT_BE_EMPTY = "101050";
 
-	//任务id重复或者部分任务缺失
+	// 任务id重复或者部分任务缺失
 	String MISSION_LESS = "101050";
 }

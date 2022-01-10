@@ -416,7 +416,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
 				new TypeReference<ColorMission<AddTemplateMission>>() {});
 
-		validateMission(missionsScheme);
+		validateMission(colorMission);
 	}
 
 	@Override

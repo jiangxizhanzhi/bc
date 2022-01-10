@@ -449,7 +449,7 @@ public class TeamTrainRoomController {
 				UserInfoContext.getUserContext().getUserId());
 		teamRoomService.checkRoomOpening(writeUpReq.getRoomId());
 
-		missionService.updateShowWriteup(writeUpReq.getMissionResourceId(),
+		missionService.openOrCloseWriteup(writeUpReq.getMissionResourceId(),
 				writeUpReq.getWriteUpShow());
 
 		return new BaseRsp<>();

@@ -164,8 +164,11 @@ public interface CrBusinessErrorCode {
 	String MACHINE_OCCUPIED = "101051";
 
 	// 阶段内任务不可为空
-	String MISSION_NOT_BE_EMPTY = "101050";
+	String MISSION_NOT_BE_EMPTY = "101052";
 
 	// 任务id重复或者部分任务缺失
-	String MISSION_LESS = "101051";
+	String MISSION_LESS = "101053";
+
+	// 动态新增任务不可与角色既有任务重名
+	String DYNAMIC_MISSION_TITLE_DUPLICATE = "101054";
 }

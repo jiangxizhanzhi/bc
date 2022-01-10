@@ -16,6 +16,6 @@ public class RbTemplateContext extends BasicTemplate {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private String roleList;;
+	private String roleList;
 
 }

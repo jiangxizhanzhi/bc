@@ -15,6 +15,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -35,6 +36,7 @@ import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.TrainingManualTeam;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -132,13 +134,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public void updateShowWriteup(String missionId, Boolean showWriteup) {
-		Mission mission = missionMapper.selectById(missionId);
-		mission.setShowWriteup(showWriteup);
-		missionMapper.updateById(mission);
-	}
-
-	@Override
 	public void release(String missionId, String roleId, String currentUserId) {
 		Mission mission = missionMapper.selectById(missionId);
 		if (mission == null) {
@@ -187,6 +182,33 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				crTaskLogMapper.insert(taskLog);
 			}
 		});
+	}
+
+	@Override
+	public Boolean addDynamic(Mission mission, CrRole role, Integer stage) {
+		// 校验是否和角色既存任务重名
+		List<MissionStageScheme> missionStageSchemeList = JsonUtil
+				.toJsonObjectArray(role.getMissionScheme(), MissionStageScheme.class);
+		List<String> missionIds = Lists.newArrayList();
+		for (MissionStageScheme scheme : missionStageSchemeList) {
+			missionIds.addAll(scheme.getMissions());
+			missionIds.addAll(scheme.getDynamic());
+		}
+		if (checkNameDuplicate(mission.getTitle(), missionIds)) {
+			throw new BusinessException(CrBusinessErrorCode.DYNAMIC_MISSION_TITLE_DUPLICATE);
+		}
+		// 保存
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				save(mission);
+				addDynamicMissionInfo(missionStageSchemeList, stage, mission.getResourceId());
+				role.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
+				crRoleMapper.updateById(role);
+			}
+		});
+		return true;
 	}
 
 	@Override
@@ -409,6 +431,65 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			}
 		}
 		return true;
+	}
+
+	private void addDynamicMissionInfo(List<MissionStageScheme> missionStageSchemeList,
+			Integer stage, String missionId) {
+
+		if (stage == null) {
+			stage = 0;
+		}
+
+		if (missionStageSchemeList.size() > 0) {
+			int index = 0;
+
+			for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
+				List<String> missions = missionStageScheme.getMissions();
+
+				if (index++ == stage) {
+					missions.add(missionId);
+					missionStageScheme.setDynamic(getDynamicIds(missionStageScheme, missionId));
+					missionStageScheme.setMissions(missions);
+				}
+
+			}
+		} else {
+			List<String> missions = Lists.newArrayList();
+			missions.add(missionId);
+
+			MissionStageScheme missionStageScheme = new MissionStageScheme();
+
+			missionStageScheme.setStage(stage.toString());
+			missionStageScheme.setDynamic(getDynamicIds(missionStageScheme, missionId));
+			missionStageScheme.setMissions(missions);
+
+			missionStageSchemeList.add(missionStageScheme);
+		}
+	}
+
+	private List<String> getDynamicIds(MissionStageScheme missionStageScheme, String resourceId) {
+
+		List<String> ids = missionStageScheme.getDynamic();
+		if (ids == null) {
+			ids = Lists.newArrayList();
+		}
+
+		ids.add(resourceId);
+
+		return ids;
+	}
+
+	/**
+	 * 校验动态任务是否与角色既存任务重名
+	 * @param title
+	 * @param missionIds
+	 * @return true ：重名
+	 */
+	private Boolean checkNameDuplicate(String title, List<String> missionIds) {
+		if (missionIds.isEmpty()) {
+			return false;
+		}
+		return missionMapper.selectByTitleAndIds(title, missionIds) != null;
 	}
 
 	@Override

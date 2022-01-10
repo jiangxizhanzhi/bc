@@ -25,6 +25,15 @@
         from cr_mission
         where room_id = #{roomId}
     </select>
+    <select id="selectByTitleAndIds" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">
+        select *
+        from cr_mission
+        where title = #{title}
+        and resource_id in
+        <foreach collection="missionIds" item="missionId" separator="," open="(" close=")">
+            #{missionId}
+        </foreach>
+    </select>
 
     <insert id="batchInsertMissionTemplate">
         insert into cr_mission_template

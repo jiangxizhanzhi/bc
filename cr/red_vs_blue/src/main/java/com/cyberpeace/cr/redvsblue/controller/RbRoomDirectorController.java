@@ -126,7 +126,7 @@ public class RbRoomDirectorController {
 				UserInfoContext.getUserContext().getUserId());
 		rbRoomService.checkRoomOpening(writeUpReq.getRoomId());
 
-		missionService.updateShowWriteup(writeUpReq.getMissionResourceId(),
+		missionService.openOrCloseWriteup(writeUpReq.getMissionResourceId(),
 				writeUpReq.getWriteUpShow());
 
 		return new BaseRsp<>();
@@ -163,9 +163,10 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("动态任务新增")
 	@PostMapping("/mission_info_create")
-	public BaseRsp<String>
+	public BaseRsp<Boolean>
 			addMissionInfo(@RequestBody @Validated RbRoomMissionReq rbRoomMissionReq) {
-
+		// validate
+		rbRoomMissionReq.validate();
 		Mission mission = BeanUtils.copy(rbRoomMissionReq, Mission.class);
 		mission.setCategoryId(rbRoomMissionReq.getCategory());
 		mission.setSkillPoints(JsonUtil.toJsonString(rbRoomMissionReq.getSkillPoints()));
@@ -173,68 +174,8 @@ public class RbRoomDirectorController {
 		mission.setShowWriteup(false);
 
 		CrRole crRole = crRoleService.getById(rbRoomMissionReq.getRoleResourceId());
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				missionService.save(mission);
-
-				List<MissionStageScheme> missionStageSchemeList = JsonUtil
-						.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
-
-				addDynamicMissionInfo(missionStageSchemeList,
-						rbRoomMissionReq.getMissionStage().intValue(), mission.getResourceId());
-
-				crRole.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
-				crRoleService.updateById(crRole);
-			}
-
-		});
-
-		return new BaseRsp<>();
-	}
-
-	private void addDynamicMissionInfo(List<MissionStageScheme> missionStageSchemeList,
-			Integer stage, String missionId) {
-
-		if (missionStageSchemeList.size() > 0) {
-			int index = 0;
-
-			for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
-				List<String> missions = missionStageScheme.getMissions();
-
-				if (index++ == stage) {
-					missions.add(missionId);
-					missionStageScheme.setDynamic(getDynamicIds(missionStageScheme, missionId));
-					missionStageScheme.setMissions(missions);
-				}
-
-			}
-		} else {
-			List<String> missions = Lists.newArrayList();
-			missions.add(missionId);
-
-			MissionStageScheme missionStageScheme = new MissionStageScheme();
-
-			missionStageScheme.setStage(stage.toString());
-			missionStageScheme.setDynamic(getDynamicIds(missionStageScheme, missionId));
-			missionStageScheme.setMissions(missions);
-
-			missionStageSchemeList.add(missionStageScheme);
-		}
-	}
-
-	private List<String> getDynamicIds(MissionStageScheme missionStageScheme, String resourceId) {
-
-		List<String> ids = missionStageScheme.getDynamic();
-		if (ids == null) {
-			ids = Lists.newArrayList();
-		}
-
-		ids.add(resourceId);
-
-		return ids;
+		return new BaseRsp<>(
+				missionService.addDynamic(mission, crRole, rbRoomMissionReq.getMissionStage()));
 	}
 
 	@ApiOperation("任务删除")

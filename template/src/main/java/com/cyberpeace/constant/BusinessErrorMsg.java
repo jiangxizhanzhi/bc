@@ -90,6 +90,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.MACHINE_OCCUPIED, "机器已被占用");
 			put(CrBusinessErrorCode.MISSION_NOT_BE_EMPTY, "阶段内任务不可为空");
 			put(CrBusinessErrorCode.MISSION_LESS, "任务id重复或者部分任务缺失");
+			put(CrBusinessErrorCode.DYNAMIC_MISSION_TITLE_DUPLICATE, "动态新增任务不可与角色既有任务重名");
 
 		}
 	};
@@ -175,12 +176,14 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "Mission Template is empty.");
 			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "Mission Template is invalid.");
-			put(CrBusinessErrorCode.MISSION_NOT_BE_EMPTY, "Mission cannot be empty during the stage");
-			put(CrBusinessErrorCode.MISSION_LESS, "Duplicate or not-found template_question id");
+			put(CrBusinessErrorCode.MISSION_NOT_BE_EMPTY,
+					"Mission cannot be empty during the stage");
 			put(CrBusinessErrorCode.TRAINING_NOT_RUNNING, "Training is not running right now.");
 
 			put(CrBusinessErrorCode.MACHINE_OCCUPIED, "Machine occupied.");
-
+			put(CrBusinessErrorCode.DYNAMIC_MISSION_TITLE_DUPLICATE,
+					"Mission title duplicates with existed missions.");
+			put(CrBusinessErrorCode.MISSION_LESS, "Duplicate or not-found template_question id");
 		}
 	};
 

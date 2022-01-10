@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
-import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 
 public interface MissionService extends IService<Mission> {
@@ -33,12 +30,15 @@ public interface MissionService extends IService<Mission> {
 
 	List<Mission> batchGetByRoom(String roomId);
 
-	void updateShowWriteup(String missionId, Boolean showWriteup);
-
 	/**
 	 * 下发任务
 	 */
 	void release(String missionId, String roleId, String currentUserId);
+
+	/**
+	 * 导演新增动态任务
+	 */
+	Boolean addDynamic(Mission mission, CrRole role, Integer stage);
 
 	/**
 	 * mission category 列表

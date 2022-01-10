@@ -1,6 +1,12 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,5 +25,24 @@ public class MissionModifyReq implements Serializable {
 
 	@ApiModelProperty(value = "技能点", required = true)
 	private String skillPoints;
+
+	public void validate() {
+		// 验证名称长度
+		CrCommonValidator.validateLength(title, CrCommonConstants.MIN_MISSION_NAME_LEN,
+				CrCommonConstants.MAX_MISSION_NAME_LEN, CrBusinessErrorCode.INVALID_MISSION_NAME);
+
+		// validate skill points
+		List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
+		CrCommonValidator.validateSize(points, CrCommonConstants.SKILL_POINTS_SIZE,
+				"invalid skill points size");
+		for (Integer skillPoint : points) {
+			CrCommonValidator.validateScore(skillPoint, CrCommonConstants.SKILL_POINT_MIN_VALUE,
+					CrCommonConstants.SKILL_POINT_MAX_VALUE,
+					"illegal skill point value, 1~5 expected");
+		}
+		// validate score
+		CrCommonValidator.validateScore(score, CrCommonConstants.SCORE_MAX_VALUE,
+				CrBusinessErrorCode.SCORE_OUT_OF_RANGE);
+	}
 
 }

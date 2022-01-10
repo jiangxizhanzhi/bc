@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.cr.crbase.dao.entity.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 
 import lombok.Data;
 import lombok.Getter;
@@ -21,6 +21,14 @@ public class TrainingManualTeam {
 
 	private TemplateLocale locale;
 
+	public TrainingManualTeam(List<CrRoleMissionSchemeStage> stages,
+			Map<String, Mission> missionMap, String language) {
+		this.text = new StringBuffer();
+		this.stages = stages;
+		this.missionMap = missionMap;
+		this.locale = new TemplateLocale(language);
+	}
+
 	public void addStage(CrRoleMissionSchemeStage stage, Integer index) {
 		String head = String.format("\n\n## %s%d： %s\n\n\n", locale.getStage(), index,
 				stage.getStage());
@@ -35,17 +43,8 @@ public class TrainingManualTeam {
 	public void addMission(String missionId, Integer index) {
 		Mission mission = missionMap.get(missionId);
 		String missionText = String.format("#### %s%d： %s\n\n%s: \n%s\n\n\n", locale.getTask(),
-				index,
-				mission.getTitle(), locale.getWriteup(), mission.getWriteUp());
+				index, mission.getTitle(), locale.getWriteup(), mission.getWriteUp());
 		text.append(missionText);
-	}
-
-	public TrainingManualTeam(List<CrRoleMissionSchemeStage> stages,
-			Map<String, Mission> missionMap, String language) {
-		this.text = new StringBuffer();
-		this.stages = stages;
-		this.missionMap = missionMap;
-		this.locale = new TemplateLocale(language);
 	}
 
 	public String toMarkDown() {

@@ -86,7 +86,7 @@
         left join oj_lesson_paper_evaluate T4 on T2.resource_id = T4.lesson_id and T4.submit_user_id = #{user_id}
         where T2.resource_id
         in (select lesson_id from oj_lesson_record where user_id = #{user_id})
-        group by T1.name;
+        group by T1.name
     </select>
 
 </mapper>

@@ -64,8 +64,6 @@ public class ToolController {
             Date date = DateUtil.StringToDate(toolReq.getPublishTime(), DateUtil.SHOT_PATTERN);
             tool.setPublishTime(date);
         }
-        tool.setImageResourceId(
-                toolReq.getImageResourceId() == null ? toolReq.getImageResourceId() : "");
         toolService.save(tool);
         return new BaseRsp<>();
     }

@@ -164,7 +164,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 				for (CrRole crRole : crRoles) {
 					if (index >= users.size()) {
-						throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
 					}
 
 					if (users.get(index).getUsers().size() == 0) {
@@ -414,7 +414,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 					crRoleList.forEach(crRole -> {
 						List<String> users = roomRoleMap.get(crRole.getResourceId()).getUsers();
 						if (users.size() == 0) {
-							throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+							throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
 						}
 						crRole.setUserIds(JsonUtil.toJsonString(users));
 						crRoleService.updateById(crRole);

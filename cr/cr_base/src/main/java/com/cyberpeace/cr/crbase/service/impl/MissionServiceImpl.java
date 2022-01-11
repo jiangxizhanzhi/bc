@@ -536,12 +536,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<MissionSchemeObject<AddTemplateMission>> schemeData = colorMission.getSchemeData();
 		for (MissionSchemeObject<AddTemplateMission> schemeDatum : schemeData) {
 
-			if (schemeDatum.getMissions().size() == 0) {
-				throw new BusinessException(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE);
-			}
-
 			List<String> missionIds = StreamApiUtils.map(schemeDatum.getMissions(),
 					AddTemplateMission::getResourceId);
+
+			for (String missionId : missionIds) {
+				if (missionId == null || missionId.isEmpty()) {
+					throw new BusinessException(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE);
+				}
+			}
 			List<MissionTemplate> missionTemplates = missionTemplateMapper
 					.selectBatchIds(missionIds);
 

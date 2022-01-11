@@ -238,7 +238,7 @@ public class TeamTrainRoomController {
 		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
 
 		// 重命名mp场景模板为房间名称
-		localSceneService.renameTopo(teamRoom.getCopyedTopoId(), teamRoom.getName());
+		// localSceneService.renameTopo(teamRoom.getCopyedTopoId(), teamRoom.getName());
 
 		return getTeamRoom(teamRoom.getResourceId());
 	}

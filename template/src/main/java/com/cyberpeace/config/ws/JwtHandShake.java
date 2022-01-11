@@ -42,8 +42,8 @@ public class JwtHandShake implements HandshakeInterceptor {
 
 		// ws路径统一定义，方便后期维护
 		if (!WsPath.validPath(path)) {
-			log.error(
-					"websocket handshake fail, path invalid, should be declare in WsPath.java first");
+			log.error("websocket handshake fail, path is {} invalid,"
+					+ " should be declare in WsPath.java first", path);
 			return false;
 		}
 
@@ -54,7 +54,7 @@ public class JwtHandShake implements HandshakeInterceptor {
 		String jwtToken = parametersMap.get(TOKEN);
 
 		if (StringUtils.isBlank(jwtToken)) {
-			log.error("websocket handshake fail, token is null");
+			log.error("websocket handshake fail,path is {} token is null", path);
 			return false;
 		}
 
@@ -66,12 +66,12 @@ public class JwtHandShake implements HandshakeInterceptor {
 		try {
 			userInfo = remoteUserService.doAuthentication(jwtToken);
 		} catch (Exception e) {
-			log.error("websocket handshake fail, call remote exception, error:", e);
+			log.error("websocket handshake fail, path {} call remote exception, error:", path, e);
 			return false;
 		}
 
 		if (null == userInfo || StringUtils.isBlank(userInfo.getUserId())) {
-			log.error("websocket handshake fail, remote user is null");
+			log.error("websocket handshake fail,path {} remote user is null", path);
 			return false;
 		}
 

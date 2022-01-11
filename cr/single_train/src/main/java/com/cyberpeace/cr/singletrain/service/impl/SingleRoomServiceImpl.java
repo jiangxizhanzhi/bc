@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import static com.cyberpeace.cr.crbase.constant.CrCommonConstants.MP_SCENE_ID_KEY;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.TimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,6 +191,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		singleRoomInfoBo.setStartTime(singleRoom.getStartTime());
 		singleRoomInfoBo.setTrainingRecordData(
 				JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class));
+		singleRoomInfoBo.setRunningTime(TimeUtil.getIntervalSeconds(singleRoom.getStartTime(), new Date()));
 		singleRoomBo.setRoomInfo(singleRoomInfoBo);
 
 		return singleRoomBo;
@@ -295,12 +298,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			BeanUtils.copyProperties(item.getBusinessTemplate(), singleRoomListBo.getEventData());
 			if (item.getSingleRoom() != null) {
 				BeanUtils.copyProperties(item.getSingleRoom(), singleRoomListBo.getRoomInfo());
-				singleRoomListBo.setNodesCountData(topologyNodesStats
-						.get(item.getBusinessTemplate().getTopoId()).getNodeCounts());
+				singleRoomListBo.getRoomInfo().setRunningTime(TimeUtil.getIntervalSeconds(singleRoomListBo.getRoomInfo().getStartTime(), new Date()));
 			} else {
-				singleRoomListBo.setNodesCountData(topologyNodesStats
-						.get(item.getBusinessTemplate().getTopoId()).getNodeCounts());
+				singleRoomListBo.setRoomInfo(null);
 			}
+			singleRoomListBo.setNodesCountData(topologyNodesStats
+					.get(item.getBusinessTemplate().getTopoId()).getNodeCounts());
 
 			// todo db字段与数据库不同, 是否需要同步?
 			singleRoomListBo.getEventData()

@@ -21,4 +21,7 @@ public class SingleRoomInfoBo implements Serializable {
 
 	@ApiModelProperty("训练记录")
 	private JSONObject trainingRecordData;
+
+	@ApiModelProperty("运行时间, 单位/秒")
+	private Long runningTime;
 }

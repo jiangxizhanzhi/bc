@@ -169,7 +169,7 @@ public class RbRoomDirectorController {
 		rbRoomMissionReq.validate();
 		RbTimeManagement management = rbTimeManagementService
 				.getByRoomId(rbRoomMissionReq.getRoomId());
-		if (!management.isRunning()) {
+		if (management == null || !management.isRunning()) {
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NOT_RUNNING);
 		}
 		// new mission

@@ -175,7 +175,7 @@ public class RbRoomUserController {
 	@ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
 	public BaseRsp<String>
-			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+	submitMissions(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		rbRoomService.checkStudentPermission(submitMissionsReq.getResourceId(), userId);

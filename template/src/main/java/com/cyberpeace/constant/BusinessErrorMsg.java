@@ -60,7 +60,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.START_FLOW_FAILURE, "启动流量失败");
 			put(CrBusinessErrorCode.STOP_FLOW_FAILURE, "停止流量失败");
 
-			put(CrBusinessErrorCode.ALREADY_PAUSED, "已暂停状态不能执行暂停操作");
+			put(CrBusinessErrorCode.ALREADY_PAUSED, "已暂停状态不能执行操作");
 			put(CrBusinessErrorCode.NOT_PAUSED, "非暂停状态不能执行恢复操作");
 
 			put(CrBusinessErrorCode.INVALID_STAGE_NAME, "不合法的阶段名称长度");

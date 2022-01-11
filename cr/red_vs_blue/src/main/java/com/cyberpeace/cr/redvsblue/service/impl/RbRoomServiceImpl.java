@@ -163,12 +163,14 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				int index = 0;
 
 				for (CrRole crRole : crRoles) {
+					if (index >= users.size()) {
+						throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+					}
+
 					if (users.get(index).getUsers().size() == 0) {
 						index += 2;
 					}
-					if(index>=users.size()){
-						throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-					}
+
 					crRole.setUserIds(JsonUtil.toJsonString(users.get(index++).getUsers()));
 					crRole.setRoomId(rbRoom.getResourceId());
 					crRole.setBusinessType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
@@ -411,6 +413,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 					crRoleList.forEach(crRole -> {
 						List<String> users = roomRoleMap.get(crRole.getResourceId()).getUsers();
+						if (users.size() == 0) {
+							throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+						}
 						crRole.setUserIds(JsonUtil.toJsonString(users));
 						crRoleService.updateById(crRole);
 
@@ -458,6 +463,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		if (rbRoom.isUnopened()) {
 			log.error("RedVsBlueTrain not begin! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+
+		}
+
+		if (rbRoom.isPaused()) {
+			log.error("RedVsBlueTrain is paused! roomId=[{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
 
 		}
 		if (rbRoom.isEnded()) {

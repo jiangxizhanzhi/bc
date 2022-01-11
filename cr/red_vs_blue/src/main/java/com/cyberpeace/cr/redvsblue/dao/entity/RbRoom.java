@@ -72,6 +72,10 @@ public class RbRoom extends BaseTable {
 		return trainingStatus.equals(RbRoom.TrainingStatusCode.UNOPENED.getCode());
 	}
 
+	public boolean isPaused() {
+		return trainingStatus.equals(TrainingStatusCode.PAUSE.getCode());
+	}
+
 	public boolean isOpening() {
 		return trainingStatus.equals(RbRoom.TrainingStatusCode.RUNNING.getCode());
 	}

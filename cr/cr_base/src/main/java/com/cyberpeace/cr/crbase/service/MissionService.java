@@ -130,4 +130,8 @@ public interface MissionService extends IService<Mission> {
 	 * @param unZipPath
 	 */
 	void batchLoadScheme(String unZipPath);
+
+	List<RadarLabel> getRadarLabel();
+
+	void updateRadarLabel(List<RadarLabel> radarLabelList);
 }

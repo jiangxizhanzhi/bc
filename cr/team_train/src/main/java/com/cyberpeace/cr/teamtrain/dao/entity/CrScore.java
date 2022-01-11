@@ -10,11 +10,11 @@ import lombok.Getter;
 
 /**
  * 
- * @TableName cr_team_score
+ * @TableName cr_score
  */
-@TableName(value = "cr_team_score")
+@TableName(value = "cr_score")
 @Data
-public class TeamScore extends BaseTable {
+public class CrScore extends BaseTable {
 
 	/**
 	 * 
@@ -25,7 +25,7 @@ public class TeamScore extends BaseTable {
 	/**
 	 * 
 	 */
-	private String teamInstanceId;
+	private String roomId;
 
 	/**
 	 * 

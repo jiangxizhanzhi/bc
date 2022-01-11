@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.RadarLabelMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +33,6 @@ import com.cyberpeace.cr.crbase.controller.req.*;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionCategoryRes;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionTemplateRsp;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
-import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -58,6 +57,37 @@ public class MissionController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+	@ApiOperation("获取任务技能点")
+	@GetMapping("/missions/radar_labels")
+	public BaseRsp<JSONObject>
+	getRadarLabel( ) {
+		List<RadarLabel> radarLabels= missionService.getRadarLabel();
+
+		List<String> labels = StreamApiUtils.getColumn(radarLabels, RadarLabel::getLabel);
+
+		JSONObject jsonObject =new JSONObject();
+		jsonObject.put("labels",labels);
+		return new BaseRsp<>(jsonObject);
+	}
+
+
+	@ApiOperation("后台更新任务技能点")
+	@PutMapping("/missions/radar_labels")
+	public BaseRsp<MissionTemplate>
+	updateRadarLabel(List<String> labels) {
+		List<RadarLabel> radarLabelList=Lists.newArrayList();
+
+		for (int i=0;i<labels.size() ;i++) {
+			RadarLabel radarLabel = new RadarLabel();
+			radarLabel.setResourceId(i+1);
+			radarLabel.setLabel(labels.get(i));
+
+			radarLabelList.add(radarLabel);
+		}
+		missionService.updateRadarLabel(radarLabelList);
+
+		return new BaseRsp();
+	}
 
 	@ApiOperation("获取任务")
 	@GetMapping("/missions")

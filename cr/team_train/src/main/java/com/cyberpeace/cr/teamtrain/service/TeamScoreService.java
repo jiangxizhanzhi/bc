@@ -4,22 +4,23 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.teamtrain.dao.entity.CrScore;
 import com.cyberpeace.cr.teamtrain.service.context.MissionsStatistics;
 
 /**
  *
  */
-public interface TeamScoreService extends IService<TeamScore> {
+public interface TeamScoreService extends IService<CrScore> {
 
 	/** 获取学员的成绩
 	 * @param roomId
 	 * @param userId
 	 * @return
 	 */
-	TeamScore getByRoomIdAndUser(String roomId, String userId);
+	CrScore getByRoomIdAndUser(String roomId, String userId);
 
-	/**获取团队训练实战任务统计信息
+	/**获取训练实战任务统计信息
 	 * @param roomId
 	 * @param studentId
 	 * @return (已完成，未下发，已下发)
@@ -27,11 +28,12 @@ public interface TeamScoreService extends IService<TeamScore> {
 
 	/** 获取任务统计
 	 * @param roomId
+	 * @param crRoleList
 	 * @return
 	 */
-	MissionsStatistics getMissionsStatistics(String roomId);
+	MissionsStatistics getMissionsStatistics(String roomId, List<CrRole> crRoleList);
 
-	List<TeamScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
+	List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
 
 	Map<String, Integer> getMissionsCategory(String roomId);
 }

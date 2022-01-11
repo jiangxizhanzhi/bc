@@ -2,11 +2,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamScoreMapper">
+<mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.CrScoreMapper">
 
-    <select id="getByRoomIdAndUser" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamScore">
+    <select id="getByRoomIdAndUser" resultType="com.cyberpeace.cr.teamtrain.dao.entity.CrScore">
         select resource_id,
-               team_instance_id,
+               room_id,
                user_id,
                training_score,
                training_percentage,
@@ -14,15 +14,15 @@
                skill_score,
                comment,
                final_score
-        from cr_team_score
+        from cr_score
         where 1 = 1
           and team_instance_id = #{roomId}
           and user_id = #{userId}
     </select>
 
-    <select id="selectByRoomIdAndUserIds" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamScore">
+    <select id="selectByRoomIdAndUserIds" resultType="com.cyberpeace.cr.teamtrain.dao.entity.CrScore">
         select resource_id,
-        team_instance_id,
+        room_id,
         user_id,
         training_score,
         training_percentage,
@@ -30,7 +30,7 @@
         skill_score,
         comment,
         final_score
-        from cr_team_score
+        from cr_score
         where 1 = 1
         and team_instance_id = #{roomId}
         and user_id in

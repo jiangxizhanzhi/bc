@@ -71,6 +71,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	private MissionSchemeTemplateMapper missionSchemeTemplateMapper;
 
 	@Autowired
+	private RadarLabelMapper radarLabelMapper;
+
+	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
@@ -614,6 +617,19 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			template.setResourceId(IDGeneratorUtil.getID());
 		}
 		missionSchemeTemplateMapper.batchInsert(missionSchemeTemplates);
+	}
+
+	@Override
+	public List<RadarLabel> getRadarLabel() {
+		return radarLabelMapper.selectList();
+	}
+
+	@Override
+	public void updateRadarLabel(List<RadarLabel> radarLabelList) {
+		for (RadarLabel radarLabel : radarLabelList) {
+			radarLabelMapper.updateById(radarLabel);
+		}
+
 	}
 
 	private String dumpSchemeTemplates(List<String> templateIds) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.teamtrain.dao.entity.CrScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,6 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
 import com.cyberpeace.cr.teamtrain.service.TeamDynamicEventService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
@@ -120,13 +120,13 @@ public class TeamTrainScoreController {
 		trainingScore.setGetScoreSubjective(getScoreSubjective);
 		trainingScore.setGetScoreObjective(getScoreObjective);
 
-		TeamScore teamScore = teamScoreService.getByRoomIdAndUser(resource_id, user_hash);
+		CrScore crScore = teamScoreService.getByRoomIdAndUser(resource_id, user_hash);
 		StudentScoreRsp studentScoreRsp = new StudentScoreRsp();
-		if (teamScore != null) {
-			studentScoreRsp = BeanUtils.copy(teamScore, StudentScoreRsp.class);
+		if (crScore != null) {
+			studentScoreRsp = BeanUtils.copy(crScore, StudentScoreRsp.class);
 			studentScoreRsp.setAbilityScore(
-					JsonUtil.toJsonObjectArray(teamScore.getSkillScore(), Integer.class));
-			studentScoreRsp.setAbilityPercentage(teamScore.getSkillPercentage());
+					JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class));
+			studentScoreRsp.setAbilityPercentage(crScore.getSkillPercentage());
 		}
 		studentScoreRsp.setTrainingScore(trainingScore);
 
@@ -142,23 +142,23 @@ public class TeamTrainScoreController {
 
 		Integer trainingPercentage = Integer
 				.parseInt(studentScoreReq.getTrainingPercentage().replace("%", ""));
-		if (trainingPercentage < TeamScore.ScoreValue.MIN_PERCENTAGE.getCode()
-				|| trainingPercentage > TeamScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
+		if (trainingPercentage < CrScore.ScoreValue.MIN_PERCENTAGE.getCode()
+				|| trainingPercentage > CrScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
 			log.error("trainingPercentage out of range！value=[{}]", trainingPercentage);
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 		Integer abilityPercentage = Integer
 				.parseInt(studentScoreReq.getAbilityPercentage().replace("%", ""));
-		if (abilityPercentage < TeamScore.ScoreValue.MIN_PERCENTAGE.getCode()
-				|| abilityPercentage > TeamScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
+		if (abilityPercentage < CrScore.ScoreValue.MIN_PERCENTAGE.getCode()
+				|| abilityPercentage > CrScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
 			log.error("abilityPercentage out of range！value=[{}]", abilityPercentage);
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
-		if (abilityPercentage + trainingPercentage != TeamScore.ScoreValue.SUM_OF_PERCENTAGE_INT
+		if (abilityPercentage + trainingPercentage != CrScore.ScoreValue.SUM_OF_PERCENTAGE_INT
 				.getCode()) {
 			log.error("sumPercentage is wrong！value=[{}],sum=[{}]",
 					abilityPercentage + trainingPercentage,
-					TeamScore.ScoreValue.SUM_OF_PERCENTAGE_INT.getCode());
+					CrScore.ScoreValue.SUM_OF_PERCENTAGE_INT.getCode());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 
 		}
@@ -166,36 +166,36 @@ public class TeamTrainScoreController {
 		List<Integer> abilityScoreList = JsonUtil
 				.toJsonObjectArray(studentScoreReq.getAbilityScore(), Integer.class);
 
-		if (abilityScoreList.size() != TeamScore.ScoreValue.ABILITY_SCORE_NUM.getCode()) {
+		if (abilityScoreList.size() != CrScore.ScoreValue.ABILITY_SCORE_NUM.getCode()) {
 			log.error("abilityScoreListSize is wrong！value=[{}],size=[{}]", abilityScoreList.size(),
-					TeamScore.ScoreValue.ABILITY_SCORE_NUM.getCode());
+					CrScore.ScoreValue.ABILITY_SCORE_NUM.getCode());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 		IntSummaryStatistics stats = abilityScoreList.stream().mapToInt((x) -> x)
 				.summaryStatistics();
-		if (stats.getMax() > TeamScore.ScoreValue.MAX_ABILITY_SCORE_VALUE.getCode()
-				|| stats.getMin() < TeamScore.ScoreValue.MIN_ABILITY_SCORE_VALUE.getCode()) {
+		if (stats.getMax() > CrScore.ScoreValue.MAX_ABILITY_SCORE_VALUE.getCode()
+				|| stats.getMin() < CrScore.ScoreValue.MIN_ABILITY_SCORE_VALUE.getCode()) {
 			log.error("abilityScore out of range！maxValue=[{}],minValue=[{}]", stats.getMax(),
 					stats.getMin());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
-		if (studentScoreReq.getComment().length() > TeamScore.ScoreValue.MAX_COMMENT_LEN
+		if (studentScoreReq.getComment().length() > CrScore.ScoreValue.MAX_COMMENT_LEN
 				.getCode()) {
 			log.error("comment length out of range！comment length=[{}]",
 					studentScoreReq.getComment().length());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
-		TeamScore teamScore = teamScoreService.getByRoomIdAndUser(studentScoreReq.getTrainingTeam(),
+		CrScore crScore = teamScoreService.getByRoomIdAndUser(studentScoreReq.getTrainingTeam(),
 				studentScoreReq.getUser());
-		TeamScore newTeamScore = getTeamScoreFromReq(studentScoreReq);
+		CrScore newCrScore = getTeamScoreFromReq(studentScoreReq);
 
-		if (teamScore == null) {
-			teamScoreService.save(newTeamScore);
+		if (crScore == null) {
+			teamScoreService.save(newCrScore);
 		} else {
-			newTeamScore.setResourceId(teamScore.getResourceId());
-			teamScoreService.updateById(newTeamScore);
+			newCrScore.setResourceId(crScore.getResourceId());
+			teamScoreService.updateById(newCrScore);
 
 		}
 
@@ -278,16 +278,16 @@ public class TeamTrainScoreController {
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
-	private TeamScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
-		TeamScore teamScore = BeanUtils.copy(studentScoreReq, TeamScore.class);
+	private CrScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
+		CrScore crScore = BeanUtils.copy(studentScoreReq, CrScore.class);
 
-		teamScore.setTeamInstanceId(studentScoreReq.getTrainingTeam());
-		teamScore.setUserId(studentScoreReq.getUser());
-		teamScore.setSkillScore(studentScoreReq.getAbilityScore());
-		teamScore.setSkillPercentage(studentScoreReq.getAbilityPercentage());
-		teamScore.setTeamInstanceId(studentScoreReq.getTrainingTeam());
+		crScore.setRoomId(studentScoreReq.getTrainingTeam());
+		crScore.setUserId(studentScoreReq.getUser());
+		crScore.setSkillScore(studentScoreReq.getAbilityScore());
+		crScore.setSkillPercentage(studentScoreReq.getAbilityPercentage());
+		crScore.setRoomId(studentScoreReq.getTrainingTeam());
 
-		return teamScore;
+		return crScore;
 	}
 
 	/**
@@ -338,10 +338,14 @@ public class TeamTrainScoreController {
 	@GetMapping("/get_training_mission_report")
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroupCode.STUDENT.getCode());
+
+		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
+
 		MissionReport missionReport = new MissionReport();
 
 		missionReport.setMissionsCategory(teamScoreService.getMissionsCategory(resource_id));
-		missionReport.setMissionsStatistics(teamScoreService.getMissionsStatistics(resource_id));
+		missionReport.setMissionsStatistics(teamScoreService.getMissionsStatistics(resource_id,crRoleList));
 
 		return new BaseRsp<>(missionReport);
 	}
@@ -427,10 +431,10 @@ public class TeamTrainScoreController {
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 
 		// 获取每个学员的任务信息
-		List<TeamScore> studentScoreList = teamScoreService.selectByRoomIdAndUserIds(resource_id,
+		List<CrScore> studentScoreList = teamScoreService.selectByRoomIdAndUserIds(resource_id,
 				userIds);
-		Map<String, TeamScore> studentScoreMap = studentScoreList.stream()
-				.collect(Collectors.toMap(TeamScore::getUserId, bo -> bo));
+		Map<String, CrScore> studentScoreMap = studentScoreList.stream()
+				.collect(Collectors.toMap(CrScore::getUserId, bo -> bo));
 
 		// 获取每个学员已完成的任务数量
 		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(resource_id,
@@ -452,7 +456,7 @@ public class TeamTrainScoreController {
 			}
 			List<String> userList = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
 			for (String userId : userList) {
-				TeamScore teamScore = studentScoreMap.get(userId);
+				CrScore crScore = studentScoreMap.get(userId);
 				UserReport userReport = new UserReport();
 				userReport.setUserId(userId);
 				userReport.setUserName(userInfoMap.get(userId).getName());
@@ -461,8 +465,8 @@ public class TeamTrainScoreController {
 				list.add(studentTaskMap.getOrDefault(userId, 0));
 				list.add(missionCount);
 				userReport.setMissionCompleted(list);
-				userReport.setComment(teamScore == null ? "" : teamScore.getComment());
-				userReport.setScore(teamScore == null ? 0 : teamScore.getFinalScore());
+				userReport.setComment(crScore == null ? "" : crScore.getComment());
+				userReport.setScore(crScore == null ? 0 : crScore.getFinalScore());
 				userReportList.add(userReport);
 			}
 

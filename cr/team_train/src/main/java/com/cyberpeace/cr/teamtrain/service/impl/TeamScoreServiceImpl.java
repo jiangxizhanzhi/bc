@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.teamtrain.dao.entity.CrScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamScore;
-import com.cyberpeace.cr.teamtrain.dao.mapper.TeamScoreMapper;
+import com.cyberpeace.cr.teamtrain.dao.mapper.CrScoreMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
 import com.cyberpeace.cr.teamtrain.service.context.MissionsStatistics;
 import com.google.common.collect.Maps;
@@ -27,10 +27,10 @@ import com.google.common.collect.Maps;
  *
  */
 @Service
-public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore> implements TeamScoreService {
+public class TeamScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> implements TeamScoreService {
 
 	@Autowired
-	TeamScoreMapper teamScoreMapper;
+	CrScoreMapper crScoreMapper;
 
 	@Autowired
 	MissionCategoryMapper missionCategoryMapper;
@@ -45,17 +45,14 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 	CrTaskService crTaskService;
 
 	@Override
-	public TeamScore getByRoomIdAndUser(String roomId, String userId) {
-		return teamScoreMapper.getByRoomIdAndUser(roomId, userId);
+	public CrScore getByRoomIdAndUser(String roomId, String userId) {
+		return crScoreMapper.getByRoomIdAndUser(roomId, userId);
 	}
 
 	@Override
-	public MissionsStatistics getMissionsStatistics(String roomId) {
+	public MissionsStatistics getMissionsStatistics(String roomId,List<CrRole> crRoleList) {
 		MissionsStatistics missionsStatistics = new MissionsStatistics();
 
-		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.TeamRoleGroupCode.STUDENT.getCode());
-
-		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		Integer missionCount = 0;
 		for (CrRole crRole : crRoleList) {
@@ -73,8 +70,8 @@ public class TeamScoreServiceImpl extends ServiceImpl<TeamScoreMapper, TeamScore
 	}
 
 	@Override
-	public List<TeamScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds) {
-		return teamScoreMapper.selectByRoomIdAndUserIds(roomId, userIds);
+	public List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds) {
+		return crScoreMapper.selectByRoomIdAndUserIds(roomId, userIds);
 	}
 
 	@Override

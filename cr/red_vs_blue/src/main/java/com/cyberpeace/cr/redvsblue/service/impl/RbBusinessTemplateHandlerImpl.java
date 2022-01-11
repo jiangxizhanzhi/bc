@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,22 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 		RbTemplateContext rbTemplateContext = BeanUtils.copy(basicTemplate,
 				RbTemplateContext.class);
+
+		JSONObject roleObject = JsonUtil.toJsonObject(rbTemplateContext.getRoleList(),
+				JSONObject.class);
+
+		List<JSONObject> redRoleRsps = JsonUtil
+				.toJsonObjectArray(roleObject.get("redRoles").toString(), JSONObject.class);
+
+		List<JSONObject> blueRoleRsps = JsonUtil
+				.toJsonObjectArray(roleObject.get("blueRoles").toString(), JSONObject.class);
+
+		redRoleRsps.forEach(jsonObject -> {
+			missionService.validateRBMission(jsonObject);
+		});
+		blueRoleRsps.forEach(jsonObject -> {
+			missionService.validateRBMission(jsonObject);
+		});
 
 		RbTemplate rbTemplate = new RbTemplate();
 		BaseInfo baseInfo = basicTemplate.getBaseInfo();

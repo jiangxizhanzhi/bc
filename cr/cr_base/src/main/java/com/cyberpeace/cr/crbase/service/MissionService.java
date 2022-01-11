@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -105,4 +106,13 @@ public interface MissionService extends IService<Mission> {
 	void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData);
 
 	void validateMission(ColorMission<AddTemplateMission> missionsScheme);
+
+	void validateRBMission(JSONObject jsonObject);
+
+	/**
+	 * 检查任务方案是否有效
+	 * @param missionsScheme 任务方案json对象
+	 * @return bool
+	 */
+	void missionsSchemeValidator(JSONObject missionsScheme);
 }

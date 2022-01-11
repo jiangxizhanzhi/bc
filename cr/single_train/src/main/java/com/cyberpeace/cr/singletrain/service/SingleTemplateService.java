@@ -4,21 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
-import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 
 public interface SingleTemplateService extends IService<SingleTemplate> {
 
-    SingleTemplateBo get(String businessTemplateId);
+	SingleTemplateBo get(String businessTemplateId);
 
-    SingleTemplateBo update(String businessTemplateId, BaseInfo baseInfo, JSONObject missionsScheme);
+	SingleTemplateBo update(String businessTemplateId, BaseInfo baseInfo,
+			JSONObject missionsScheme);
 
-    SingleTemplate getByBusinessTemplateId(String resourceId);
+	SingleTemplate getByBusinessTemplateId(String resourceId);
 
-    /**
-     * 检查任务方案是否有效
-     * @param missionsScheme 任务方案json对象
-     * @return bool
-     */
-    void missionsSchemeValidator(JSONObject missionsScheme);
 }

@@ -1,5 +1,11 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
+import com.cyberpeace.cr.crbase.service.MissionService;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -9,59 +15,62 @@ import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReqRel;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateUpdateReqRel;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "单兵训练模板")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/admin/single_train/template")
 public class SingleTemplateController {
-    @Autowired
-    private SingleTemplateService singleTemplateService;
 
-    @Autowired
-    private BusinessTemplateService businessTemplateService;
+	@Autowired
+	private SingleTemplateService singleTemplateService;
 
-    @GetMapping
-    @ApiOperation("单兵训练模板获取")
-    public BaseRsp<SingleTemplateBo> get(@RequestParam("resource_id") String businessTemplateId) {
-        return new BaseRsp<>(singleTemplateService.get(businessTemplateId));
-    }
+	@Autowired
+	private MissionService missionService;
 
-    @PostMapping
-    @ApiOperation("单兵训练模板创建")
-    public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
-        // 入参`event_data` -> `base_info`
-        SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
+	@Autowired
+	private BusinessTemplateService businessTemplateService;
 
-        BaseInfo baseInfo = new BaseInfo();
-        BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
-        requestData.setBaseInfo(baseInfo);
-        singleTemplateService.missionsSchemeValidator(requestDataRel.getMissionsScheme());
-        requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
+	@GetMapping
+	@ApiOperation("单兵训练模板获取")
+	public BaseRsp<SingleTemplateBo> get(@RequestParam("resource_id") String businessTemplateId) {
+		return new BaseRsp<>(singleTemplateService.get(businessTemplateId));
+	}
 
-        requestData.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
-        // TODO 待addTemplate返回值 -> singleTemplateService.get(trainBusinessId)
-        String trainBusinessId = businessTemplateService.addTemplate(requestData);
-        return new BaseRsp<>();
-    }
+	@PostMapping
+	@ApiOperation("单兵训练模板创建")
+	public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
+		// 入参`event_data` -> `base_info`
+		SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
 
-    @PatchMapping
-    @ApiOperation("单兵训练模板更新")
-    public BaseRsp<SingleTemplateBo> update(@RequestBody SingleTrainTemplateUpdateReqRel requestDataRel) {
-        SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
+		BaseInfo baseInfo = new BaseInfo();
+		BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
+		requestData.setBaseInfo(baseInfo);
+		missionService.missionsSchemeValidator(requestDataRel.getMissionsScheme());
+		requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
 
-        BaseInfo baseInfo = new BaseInfo();
-        BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
-        requestData.setBaseInfo(baseInfo);
-        singleTemplateService.missionsSchemeValidator(requestDataRel.getMissionsScheme());
-        requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
+		requestData.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		// TODO 待addTemplate返回值 -> singleTemplateService.get(trainBusinessId)
+		String trainBusinessId = businessTemplateService.addTemplate(requestData);
+		return new BaseRsp<>();
+	}
 
-        return new BaseRsp<>(singleTemplateService.update(requestDataRel.getResourceId(), requestData.getBaseInfo(), requestData.getMissionsScheme()));
-    }
+	@PatchMapping
+	@ApiOperation("单兵训练模板更新")
+	public BaseRsp<SingleTemplateBo>
+			update(@RequestBody SingleTrainTemplateUpdateReqRel requestDataRel) {
+		SingleTrainTemplateReq requestData = new SingleTrainTemplateReq();
+
+		BaseInfo baseInfo = new BaseInfo();
+		BeanUtils.copyProperties(requestDataRel.getEventData(), baseInfo);
+		requestData.setBaseInfo(baseInfo);
+		missionService.missionsSchemeValidator(requestDataRel.getMissionsScheme());
+		requestData.setMissionsScheme(requestDataRel.getMissionsScheme());
+
+		return new BaseRsp<>(singleTemplateService.update(requestDataRel.getResourceId(),
+				requestData.getBaseInfo(), requestData.getMissionsScheme()));
+	}
 }

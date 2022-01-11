@@ -544,4 +544,30 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 		}
 	}
+
+	@Override
+	public void validateRBMission(JSONObject jsonObject) {
+		JSONObject missionsScheme = jsonObject.getJSONObject("missions_scheme");
+
+		missionsSchemeValidator(missionsScheme);
+
+	}
+
+	@Override
+	public void missionsSchemeValidator(JSONObject missionsScheme) {
+		List<String> trainMissions = org.apache.commons.compress.utils.Lists.newArrayList();
+		missionsScheme.getJSONArray("scheme_data").toJavaList(JSONObject.class).forEach(stage -> {
+			stage.getJSONArray("missions").toJavaList(JSONObject.class).forEach(mission -> {
+				String missionId = mission.getString("resource_id");
+				if (missionId == null || missionId.isEmpty()) {
+					throw new BusinessException(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE);
+				}
+				trainMissions.add(missionId);
+			});
+		});
+		if (trainMissions.size() > 0 && trainMissions.size() != missionTemplateMapper
+				.selectBatchIds(trainMissions).size()) {
+			throw new BusinessException(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID);
+		}
+	}
 }

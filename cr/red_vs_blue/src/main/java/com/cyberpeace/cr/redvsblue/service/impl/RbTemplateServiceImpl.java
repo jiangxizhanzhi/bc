@@ -78,7 +78,7 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 			localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
 		}
 
-		// 更新团队训练模板
+		// 更新红蓝对抗模板
 		rbTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
 		rbTemplate.setPreSkill(JsonUtil.toJsonString(baseInfo.getPreSkill()));
 		rbTemplate.setTrainSkill(JsonUtil.toJsonString(baseInfo.getTrainSkill()));

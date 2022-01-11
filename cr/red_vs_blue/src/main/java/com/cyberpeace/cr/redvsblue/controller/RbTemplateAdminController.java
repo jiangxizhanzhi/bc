@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.MissionService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -40,6 +41,9 @@ public class RbTemplateAdminController {
 
 	@Autowired
 	private RbTemplateService rbTemplateService;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -86,6 +90,13 @@ public class RbTemplateAdminController {
 		JSONObject roleJsonObject = new JSONObject();
 		roleJsonObject.put("redRoles", rbTemplateModifyReq.getRedRoles());
 		roleJsonObject.put("blueRoles", rbTemplateModifyReq.getBlueRoles());
+
+		rbTemplateModifyReq.getRedRoles().forEach(jsonObject -> {
+			missionService.validateRBMission(jsonObject);
+		});
+		rbTemplateModifyReq.getBlueRoles().forEach(jsonObject -> {
+			missionService.validateRBMission(jsonObject);
+		});
 
 		rbTemplateContext.setRoleList(JsonUtil.toJsonString(roleJsonObject));
 		rbTemplateContext.getBaseInfo()

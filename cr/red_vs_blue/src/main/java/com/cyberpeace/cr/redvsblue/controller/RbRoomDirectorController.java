@@ -167,6 +167,12 @@ public class RbRoomDirectorController {
 			addMissionInfo(@RequestBody @Validated RbRoomMissionReq rbRoomMissionReq) {
 		// validate
 		rbRoomMissionReq.validate();
+		RbTimeManagement management = rbTimeManagementService
+				.getByRoomId(rbRoomMissionReq.getRoomId());
+		if (!management.isRunning()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAINING_NOT_RUNNING);
+		}
+		// new mission
 		Mission mission = BeanUtils.copy(rbRoomMissionReq, Mission.class);
 		mission.setCategoryId(rbRoomMissionReq.getCategory());
 		mission.setSkillPoints(JsonUtil.toJsonString(rbRoomMissionReq.getSkillPoints()));

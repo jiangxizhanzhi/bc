@@ -488,7 +488,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		if (missionIds.isEmpty()) {
 			return false;
 		}
-		return missionMapper.selectByTitleAndIds(title, missionIds) != null;
+		return missionMapper.selectByTitleAndIds(title, missionIds) > 0;
 	}
 
 	@Override

@@ -26,7 +26,7 @@
         where room_id = #{roomId}
     </select>
     <select id="selectByTitleAndIds" resultType="java.lang.Integer">
-        select count (id)
+        select count(id)
         from cr_mission
         where title = #{title}
         and resource_id in

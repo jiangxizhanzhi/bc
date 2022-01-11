@@ -295,7 +295,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 设置数据存储
 		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
-		String destFilePath = destDir + CommonConstant.LEFT_OBLIQUE_LINE
+		String destFilePath = destDir + File.separatorChar
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
 
 		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
@@ -331,6 +331,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		ZipUtil.unzipToDest(realPath, destPath);
 
 		// 解析数据
+		String filePath = destPath + File.separatorChar
+				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
 		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
 		String data = FileUtil.getContent(new File(dataPath));
 
@@ -343,7 +345,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 数据解析文件上传
 		for (PracticeSetDumpLoadBo setDumpLoadBo : setDumpLoadBos) {
 			// 习题集
-			PracticeSet practiceSet = loadPracticeSet(setDumpLoadBo, userId, destPath);
+			PracticeSet practiceSet = loadPracticeSet(setDumpLoadBo, userId, filePath);
 			practiceSets.add(practiceSet);
 
 			// 理论习题
@@ -359,7 +361,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 					.getCode().intValue()) {
 				List<PracticeOperation> operations = loadPracticeOperation(
 						practiceSet.getResourceId(), setDumpLoadBo.getPractice(), userId,
-						setDumpLoadBo.getFilePathMap(), destPath);
+						setDumpLoadBo.getFilePathMap(), filePath);
 				operationList.addAll(operations);
 			}
 		}
@@ -384,7 +386,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 */
 	private List<PracticeOperation> loadPracticeOperation(String practiceSetId,
 			List<? extends PracticeDumpLoadBo> operationDumpLoadBos, String userId,
-			Map<String, String> filePathMap, String currentPath) {
+			Map<String, String> filePathMap, String filePath) {
 		return StreamApiUtils.map(operationDumpLoadBos, dumpBo -> {
 			PracticeOperationDumpLoadBo dumpLoadBo = BeanUtils.copy(dumpBo,
 					PracticeOperationDumpLoadBo.class);
@@ -402,7 +404,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			// 附件
 			if (StringUtils.isNotBlank(dumpLoadBo.getAttachmentPath())) {
 				String relativePath = filePathMap.get(dumpLoadBo.getAttachmentPath());
-				String attachmentPath = currentPath + File.separatorChar + relativePath;
+				String attachmentPath = filePath + File.separatorChar + relativePath;
 
 				String fileSuffix = FileUtil.getFileSuffix(attachmentPath);
 				String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
@@ -423,11 +425,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			// 题解
 			if (StringUtils.isNotBlank(dumpLoadBo.getWriteup())) {
 				List<String> matchList = LocalStringUtil.getMatchStr(dumpLoadBo.getWriteup(),
-						PatternConstant.MARKDOWN_IMAGE_URL, CommonConstant.ONE);
+						PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
 				List<String> urlList = StreamApiUtils.map(matchList, url -> {
 					// 获取文件路径
 					String relativePath = filePathMap.get(url);
-					String imagePath = currentPath + File.separatorChar + relativePath;
+					String imagePath = filePath + File.separatorChar + relativePath;
 
 					// copy文件
 					String fileSuffix = FileUtil.getFileSuffix(imagePath);
@@ -505,7 +507,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @return
 	 */
 	private PracticeSet loadPracticeSet(PracticeSetDumpLoadBo setDumpLoadBo, String userId,
-			String currentPath) {
+			String filePath) {
 		Map<String, String> filePathMap = setDumpLoadBo.getFilePathMap();
 
 		// 基本数据设置
@@ -522,12 +524,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		if (StringUtils.isNotBlank(setDumpLoadBo.getLogo())) {
 			// 获取文件路径
 			String relativePath = filePathMap.get(setDumpLoadBo.getLogo());
-			String logoPath = currentPath + File.separatorChar + relativePath;
+			String logoPath = filePath + relativePath;
 
 			// 获取将要存储的路径
 			String logoStorePath = AttachmentPath.LOGO.getDesc();
 			String fileSuffix = FileUtil.getFileSuffix(setDumpLoadBo.getLogo());
-			String destFilePath = logoStorePath + CommonConstant.PERIOD + fileSuffix;
+			String destFilePath = logoStorePath + IDGeneratorUtil.getID() + CommonConstant.PERIOD
+					+ fileSuffix;
 			// 拷贝文件
 			FileUtil.copyFile(logoPath, destFilePath, false);
 			String fileUrl = utilService.replaceFileUrl(destFilePath);
@@ -622,6 +625,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
 			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
 			if (null != attachment) {
+				dumpLoadBo.setAttachmentPath(attachment.getFilePath());
 				// 重命名文件防止重复
 				String realPath = utilService.getRealPath(attachment.getFilePath());
 				String fileName = FileUtil.getFileName(realPath, true);
@@ -630,7 +634,6 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 				String relativePath = destFilePath.replace(fileStorePath,
 						CommonConstant.EMPTY_STRING);
-				dumpLoadBo.setAttachmentPath(relativePath);
 				filePathMap.put(attachment.getFilePath(), relativePath);
 			}
 		}
@@ -644,7 +647,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 题解 题解文件拷贝
 		if (StringUtils.isNotBlank(operation.getWriteup())) {
 			List<String> matchList = LocalStringUtil.getMatchStr(operation.getWriteup(),
-					PatternConstant.MARKDOWN_IMAGE_URL, CommonConstant.ONE);
+					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ZERO);
 			matchList.forEach(str -> {
 				// 文件拷贝
 				String realPath = utilService.getRealPath(str);
@@ -653,7 +656,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				String destFilePath = fileStorePath + File.separatorChar + newName;
 				FileUtil.copyFile(realPath, destFilePath, false);
 
-				String relativePath = destFilePath.replace(fileStorePath, "");
+				String relativePath = destFilePath.replace(fileStorePath,
+						CommonConstant.EMPTY_STRING);
 				filePathMap.put(str, relativePath);
 			});
 		}

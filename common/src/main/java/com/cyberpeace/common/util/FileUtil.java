@@ -2,6 +2,7 @@ package com.cyberpeace.common.util;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -207,7 +208,8 @@ public class FileUtil {
 	public static void writeToDestFile(String data, String destFilePath) {
 		BufferedWriter out = null;
 		try {
-			out = new BufferedWriter(new FileWriter(destFilePath));
+			out = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(destFilePath), "UTF-8"));
 			out.write(data);
 		} catch (IOException e) {
 			log.error("File read failed! dest_file_path=[{}], catch error:", destFilePath, e);

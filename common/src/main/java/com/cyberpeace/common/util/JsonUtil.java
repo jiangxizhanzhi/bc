@@ -2,6 +2,7 @@ package com.cyberpeace.common.util;
 
 import java.util.List;
 
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,7 +54,7 @@ public class JsonUtil {
 		if (null == objArr) {
 			return "[]";
 		}
-		return JSONArray.toJSONString(objArr);
+		return JSONArray.toJSONString(objArr, SerializerFeature.WriteNullStringAsEmpty);
 	}
 
 	/**

@@ -629,7 +629,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				// 重命名文件防止重复
 				String realPath = utilService.getRealPath(attachment.getFilePath());
 				String fileName = FileUtil.getFileName(realPath, true);
-				String destFilePath = fileStorePath + FileUtil.getNewName(fileName);
+				String destFilePath = fileStorePath + File.separatorChar
+						+ FileUtil.getNewName(fileName);
 				FileUtil.copyFile(realPath, destFilePath, false);
 
 				String relativePath = destFilePath.replace(fileStorePath,

@@ -18,9 +18,6 @@ public class PracticeOperationDumpLoadBo extends PracticeDumpLoadBo {
 	/** 动态答题环境(使用场景)*/
 	private Boolean dynamicEnv;
 
-	/** 关联场景管理ID*/
-	private String topoId;
-
 	/** 共享模式 (拥有场景时使用)*/
 	private Integer sceneShareMode;
 

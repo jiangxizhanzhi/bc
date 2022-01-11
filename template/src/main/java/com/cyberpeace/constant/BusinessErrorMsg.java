@@ -94,6 +94,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.MISSION_LESS, "任务id重复或者部分任务缺失");
 			put(CrBusinessErrorCode.DYNAMIC_MISSION_TITLE_DUPLICATE, "动态新增任务不可与角色既有任务重名");
 
+			put(ErrorCode.FILE_COPY_FAIL, "文件复制失败");
+
 		}
 	};
 
@@ -188,6 +190,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.MISSION_LESS, "Duplicate or not-found template_question id");
 
 			put(CrBusinessErrorCode.EMPTY_RESOURCE_ID_LIST, "Resource id list is empty.");
+
+			put(ErrorCode.FILE_COPY_FAIL, "File copy failure.");
 		}
 	};
 

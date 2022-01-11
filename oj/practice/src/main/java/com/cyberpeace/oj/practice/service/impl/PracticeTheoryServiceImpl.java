@@ -482,7 +482,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				BlankAnswer blankAnswer = new BlankAnswer();
 				blankAnswer.setValue(blanks.get(i));
 				if (i == (blanks.size() - CommonConstant.ONE)
-						&& remainder.intValue() == CommonConstant.ZERO) {
+						&& remainder.intValue() != CommonConstant.ZERO) {
 					blankAnswer.setWeight(weight + remainder);
 				} else {
 					blankAnswer.setWeight(weight);

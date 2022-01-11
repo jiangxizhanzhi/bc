@@ -534,7 +534,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		for (MissionSchemeObject<AddTemplateMission> schemeDatum : schemeData) {
 
 			if (schemeDatum.getMissions().size() == 0) {
-				throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_BE_EMPTY);
+				throw new BusinessException(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE);
 			}
 
 			List<String> missionIds = StreamApiUtils.map(schemeDatum.getMissions(),
@@ -571,7 +571,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		});
 		if (trainMissions.size() > 0 && trainMissions.size() != missionTemplateMapper
 				.selectBatchIds(trainMissions).size()) {
-			throw new BusinessException(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
 		}
 	}
 

@@ -166,12 +166,9 @@ public class RbRoomDirectorController {
 	public BaseRsp<Boolean>
 			addMissionInfo(@RequestBody @Validated RbRoomMissionReq rbRoomMissionReq) {
 		// validate
+		rbRoomService.checkRoomUnclosed(rbRoomMissionReq.getRoomId());
 		rbRoomMissionReq.validate();
-		RbTimeManagement management = rbTimeManagementService
-				.getByRoomId(rbRoomMissionReq.getRoomId());
-		if (management == null || !management.isRunning()) {
-			throw new BusinessException(CrBusinessErrorCode.TRAINING_NOT_RUNNING);
-		}
+
 		// new mission
 		Mission mission = BeanUtils.copy(rbRoomMissionReq, Mission.class);
 		mission.setCategoryId(rbRoomMissionReq.getCategory());
@@ -188,7 +185,6 @@ public class RbRoomDirectorController {
 	@PostMapping("/mission_delete")
 	public BaseRsp<String>
 			addMissionInfo(@RequestBody @Validated RbMissionDeleteReq rbMissionDeleteReq) {
-		rbRoomService.checkRoomUnclosed(rbMissionDeleteReq.getRoomId());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

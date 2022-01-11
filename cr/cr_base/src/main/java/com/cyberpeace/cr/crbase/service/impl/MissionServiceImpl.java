@@ -601,6 +601,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				MissionSchemeTemplate.class);
 		String userId = UserInfoContext.getUserContext().getUserId();
 		for (MissionSchemeTemplate template : missionSchemeTemplates) {
+			// validate
+			if (template.getDescription() == null || template.getTitle() == null
+					|| template.getTemplateData() == null || template.getTemplateConfig() == null) {
+				throw new BusinessException(CrBusinessErrorCode.INVALID_RESOURCE_ZIP);
+			}
 			template.setId(null);
 			template.setCreateUserId(userId);
 			template.setCreateTime(null);

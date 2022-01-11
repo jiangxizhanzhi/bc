@@ -171,4 +171,7 @@ public interface CrBusinessErrorCode {
 
 	// 动态新增任务不可与角色既有任务重名
 	String DYNAMIC_MISSION_TITLE_DUPLICATE = "101054";
+
+	// 资源包错误
+	String INVALID_RESOURCE_ZIP = "101055";
 }

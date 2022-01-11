@@ -41,6 +41,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.FILE_FORMAT_ERROR, "文件格式错误");
 			put(CrBusinessErrorCode.SCENE_NOT_STARTED, "场景未开启");
 
+			put(CrBusinessErrorCode.EMPTY_RESOURCE_ID_LIST, "资源id列表为空");
+
 			put(RtksBusinessErrorCode.UNABLE_DELETE_FRAME, "当前层级下存在岗位，无法删除");
 			put(RtksBusinessErrorCode.UNABLE_ADD_FRAME, "已经绑定了岗位，无法新增层级");
 			put(RtksBusinessErrorCode.UNABLE_DELETE_KNOWLEDGE, "无法删除知识点");
@@ -184,6 +186,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DYNAMIC_MISSION_TITLE_DUPLICATE,
 					"Mission title duplicates with existed missions.");
 			put(CrBusinessErrorCode.MISSION_LESS, "Duplicate or not-found template_question id");
+
+			put(CrBusinessErrorCode.EMPTY_RESOURCE_ID_LIST, "Resource id list is empty.");
 		}
 	};
 

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -115,4 +116,18 @@ public interface MissionService extends IService<Mission> {
 	 * @return bool
 	 */
 	void missionsSchemeValidator(JSONObject missionsScheme);
+
+	/**
+	 * 生成任务方案导出文件
+	 * @param templateIds mission scheme template ids
+	 * @param tempDir
+	 * @return
+	 */
+	String makeDumpFile(List<String> templateIds, String tempDir) throws IOException;
+
+	/**
+	 * 导入任务方案
+	 * @param unZipPath
+	 */
+	void batchLoadScheme(String unZipPath);
 }

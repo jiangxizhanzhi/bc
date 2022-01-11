@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,6 +77,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	private MissionCategoryMapper missionCategoryMapper;
 
 	private Map<String, MissionCategory> categoryCache;
+
+	public MissionServiceImpl() throws FileNotFoundException {}
 
 	@PostConstruct
 	public void init() {
@@ -569,5 +573,47 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				.selectBatchIds(trainMissions).size()) {
 			throw new BusinessException(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID);
 		}
+	}
+
+	@Override
+	public String makeDumpFile(List<String> templateIds, String tempDir) throws IOException {
+		if (templateIds.isEmpty()) {
+			throw new BusinessException(CrBusinessErrorCode.EMPTY_RESOURCE_ID_LIST);
+		}
+		// 1. make temp dir
+		FileUtil.mkdirs(tempDir);
+		String data = dumpSchemeTemplates(templateIds);
+		// 4. generate data.json
+		String jsonPath = tempDir + File.separator + CrCommonConstants.RESOURCE_FILE_NAME;
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(jsonPath),
+				StandardCharsets.UTF_8);
+		FileUtil.writeString(data, osw);
+		// 5. generate zip file, return zip file path
+		return ZipUtil.toZip(tempDir);
+	}
+
+	@Override
+	public void batchLoadScheme(String unZipPath) {
+		// 1. read data.json
+		String dataJson = FileUtil.getContent(
+				new File(unZipPath + File.separator + CrCommonConstants.RESOURCE_FILE_NAME));
+		List<MissionSchemeTemplate> missionSchemeTemplates = JsonUtil.toJsonObjectArray(dataJson,
+				MissionSchemeTemplate.class);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		for (MissionSchemeTemplate template : missionSchemeTemplates) {
+			template.setId(null);
+			template.setCreateUserId(userId);
+			template.setCreateTime(null);
+			template.setUpdateTime(null);
+			// 暂不处理重名 todo
+			template.setResourceId(IDGeneratorUtil.getID());
+		}
+		missionSchemeTemplateMapper.batchInsert(missionSchemeTemplates);
+	}
+
+	private String dumpSchemeTemplates(List<String> templateIds) {
+		List<MissionSchemeTemplate> templateList = missionSchemeTemplateMapper
+				.selectBatchIds(templateIds);
+		return JsonUtil.arrayToString(templateList);
 	}
 }

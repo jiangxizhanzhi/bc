@@ -1,8 +1,11 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -11,6 +14,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -19,10 +23,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.*;
@@ -42,11 +43,14 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.exception.ZipException;
 
 @Api(tags = "任务相关接口")
 @RestController
 @RequestMapping("/cr/admin/mission")
 @RequiresAuthentication
+@Slf4j
 public class MissionController {
 
 	@Autowired
@@ -277,5 +281,45 @@ public class MissionController {
 		MissionSchemeTemplateRsp templateRsp = missionService.getSchemeTemplateRspById(resourceId);
 		templateRsp.setRepName(remoteUserService.getById(templateRsp.getCreateUser()).getName());
 		return new BaseRsp(templateRsp);
+	}
+
+	@ApiOperation("批量导出任务方案")
+	@PostMapping("/combat_techs/dump")
+	public void batchDump(HttpServletResponse response, @RequestBody BatchDumpReq dumpReq) {
+
+		List<String> templateIds = dumpReq.getIds();
+		// 1. generate dump file
+		String tempDir = ZipUtil.generatePath();
+		try {
+			String zipPath = missionService.makeDumpFile(templateIds, tempDir);
+			// 2. generate file response
+			File zip = new File(zipPath);
+			FileUtil.setResponse(zip, false, response);
+		} catch (Exception e) {
+			log.error("failed to dump combat techs");
+			throw new RuntimeException(e);
+		} finally {
+			// 3. delete temp dir
+			if (!FileUtil.deleteDir(new File(tempDir))) {
+				log.error("failed to remove temp dir :{}", tempDir);
+			}
+		}
+	}
+
+	@ApiOperation("批量导入任务方案")
+	@PutMapping("/combat_tech/load")
+	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
+			throws IOException, ZipException {
+		// 1. save file to temp dir
+		File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+		// 2. unzip file
+		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+		// 3. load resources
+		missionService.batchLoadScheme(unZipPath);
+		// 4. delete temp dir
+		if (!FileUtil.deleteDir(new File(unZipPath))) {
+			log.error("failed to delete temp dir");
+		}
+		return new BaseRsp();
 	}
 }

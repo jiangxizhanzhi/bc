@@ -163,8 +163,8 @@ public interface CrBusinessErrorCode {
 	// 主机已被占用
 	String MACHINE_OCCUPIED = "101051";
 
-	// 阶段内任务不可为空
-	String MISSION_NOT_BE_EMPTY = "101052";
+	// 角色成员不可为空
+	String ROLE_USERS_NOT_BE_EMPTY = "101052";
 
 	// 任务id重复或者部分任务缺失
 	String MISSION_LESS = "101053";

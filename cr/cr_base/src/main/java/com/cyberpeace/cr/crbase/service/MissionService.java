@@ -134,4 +134,5 @@ public interface MissionService extends IService<Mission> {
 	List<RadarLabel> getRadarLabel();
 
 	void updateRadarLabel(List<RadarLabel> radarLabelList);
-}
+
+ }

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +124,8 @@ public class RbTemplateAdminController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<RbTemplateRsp> getRbTemplate(String resource_id) {
+
+		businessTemplateService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
 		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resource_id);
 
 		BusinessTemplate businessTemplate = businessTemplateService

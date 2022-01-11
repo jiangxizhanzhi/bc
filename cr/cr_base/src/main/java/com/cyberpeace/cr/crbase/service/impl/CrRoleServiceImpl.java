@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -152,6 +154,62 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Override
 	public List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery) {
 		return crRoleMapper.selectCrRoleByRoomId(roleQuery);
+	}
+	@Override
+	public List<Integer> getRadar(String roomId, String userId) {
+
+		CrRole crRole =   getCrRoleByRoomIdAndUserId(roomId, userId);
+
+		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole(
+				crRole);
+		//获取当前学员的每项总分
+		List<Integer> allPoints = getPoints();
+
+		for (MissionSchemeObject<MissionContext> missionSchemeObject : missionSchemeObjectList) {
+			for (MissionContext mission : missionSchemeObject.getMissions()) {
+				String skillPoints = mission.getSkillPoints();
+				List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
+
+				for(int i=0;i<points.size();i++){
+					allPoints.set(i,allPoints.get(i)+points.get(i));
+				}
+			}
+		}
+
+		//获取当前学员成功的每项总分
+		List<Integer> successPoints = getPoints();
+
+		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserId(roomId, userId);
+		for (CrTask finishedTask : finishedTasks) {
+			if(CrTask.TaskStatus.SUCCESS.getCode().equals(finishedTask.getStatus())){
+				String skillPoints = missionService.getById(finishedTask.getMissionId()).getSkillPoints() ;
+				List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
+
+				for(int i=0;i<points.size();i++){
+					successPoints.set(i,successPoints.get(i)+points.get(i));
+				}
+			}
+		}
+		
+		List<Integer> raderPoints = getPoints();
+
+		for(int i=0;i<successPoints.size();i++){
+			int raderPoint = 0;
+			if(!allPoints.get(i).equals(0)){
+				raderPoint = successPoints.get(i) *100 / allPoints.get(i);
+			}
+			raderPoints.set(i,raderPoint);
+		}
+
+		return raderPoints;
+	}
+
+	private List<Integer> getPoints() {
+		List<Integer> points = Lists.newArrayList();
+		for (int i = 0; i < 7; i++) {
+			points.add(0);
+		}
+		 return points;
 	}
 
 	@Override

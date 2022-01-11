@@ -101,4 +101,6 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @return
 	 */
 	Boolean batchLoad(String unZipPath);
+
+	void checkPermission(String businessId, String userId);
 }

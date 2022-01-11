@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
@@ -120,6 +121,8 @@ public class TeamTrainTemplateController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
+		businessTemplateService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+
 		TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resource_id);
 
 		BusinessTemplate businessTemplate = businessTemplateService

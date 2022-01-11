@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.context.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +36,7 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -165,6 +165,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				for (CrRole crRole : crRoles) {
 					if (users.get(index).getUsers().size() == 0) {
 						index += 2;
+					}
+					if(index>=users.size()){
+						throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 					}
 					crRole.setUserIds(JsonUtil.toJsonString(users.get(index++).getUsers()));
 					crRole.setRoomId(rbRoom.getResourceId());
@@ -479,7 +482,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		}
 	}
-
 
 	@Override
 	public void checkStudentPermission(String roomId, String userId) {

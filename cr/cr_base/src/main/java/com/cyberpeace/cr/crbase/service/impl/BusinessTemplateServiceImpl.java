@@ -120,7 +120,14 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 		return null;
 	}
+	@Override
+	public void checkPermission(String businessId, String userId) {
+		List<String> businessIds = selectAuthIdsByUserId(userId);
 
+		if(!businessIds.contains(businessId)){
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+	}
 	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		return businessTemplateMapper.selectIdsByUserId(userId);
@@ -495,6 +502,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 		return true;
 	}
+
+
 
 	private Boolean loadImages(Map<String, String> files, String imageDir) {
 		if (files == null || files.size() == 0) {

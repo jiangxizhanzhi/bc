@@ -9,9 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.dao.mapper.RadarLabelMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -33,6 +31,8 @@ import com.cyberpeace.cr.crbase.controller.req.*;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionCategoryRes;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionTemplateRsp;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -56,30 +56,43 @@ public class MissionController {
 	private MissionService missionService;
 
 	@Autowired
+	private CrRoleService crRoleService;
+
+	@Autowired
 	private RemoteUserService remoteUserService;
-	@ApiOperation("获取任务技能点")
-	@GetMapping("/missions/radar_labels")
-	public BaseRsp<JSONObject>
-	getRadarLabel( ) {
-		List<RadarLabel> radarLabels= missionService.getRadarLabel();
 
-		List<String> labels = StreamApiUtils.getColumn(radarLabels, RadarLabel::getLabel);
+	@ApiOperation("获取学员技能点雷达图")
+	@GetMapping("/missions/radar")
+	public BaseRsp<JSONObject> getRadar(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+		List<Integer> radars = crRoleService.getRadar(resource_id, user_hash);
 
-		JSONObject jsonObject =new JSONObject();
-		jsonObject.put("labels",labels);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("labels", radars);
 		return new BaseRsp<>(jsonObject);
 	}
 
+	@ApiOperation("获取任务技能点")
+	@GetMapping("/missions/radar_labels")
+	public BaseRsp<JSONObject> getRadarLabel() {
+		List<RadarLabel> radarLabels = missionService.getRadarLabel();
+
+		List<String> labels = StreamApiUtils.getColumn(radarLabels, RadarLabel::getLabel);
+
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("labels", labels);
+		return new BaseRsp<>(jsonObject);
+	}
 
 	@ApiOperation("后台更新任务技能点")
 	@PutMapping("/missions/radar_labels")
-	public BaseRsp<MissionTemplate>
-	updateRadarLabel(List<String> labels) {
-		List<RadarLabel> radarLabelList=Lists.newArrayList();
+	public BaseRsp<MissionTemplate> updateRadarLabel(List<String> labels) {
+		List<RadarLabel> radarLabelList = Lists.newArrayList();
 
-		for (int i=0;i<labels.size() ;i++) {
+		for (int i = 0; i < labels.size(); i++) {
 			RadarLabel radarLabel = new RadarLabel();
-			radarLabel.setResourceId(i+1);
+			radarLabel.setResourceId(i + 1);
 			radarLabel.setLabel(labels.get(i));
 
 			radarLabelList.add(radarLabel);

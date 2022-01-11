@@ -192,7 +192,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<String> missionIds = Lists.newArrayList();
 		for (MissionStageScheme scheme : missionStageSchemeList) {
 			missionIds.addAll(scheme.getMissions());
-			missionIds.addAll(scheme.getDynamic());
 		}
 		if (checkNameDuplicate(mission.getTitle(), missionIds)) {
 			throw new BusinessException(CrBusinessErrorCode.DYNAMIC_MISSION_TITLE_DUPLICATE);

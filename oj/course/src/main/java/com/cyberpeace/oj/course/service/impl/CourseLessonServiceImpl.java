@@ -213,7 +213,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		infoBo.setIsCollection(collection);
 
 		// 文件地址处理
-		if (lesson.getHandoutType().intValue() != CourseLesson.HandoutType.MD.getCode()
+		if (null != lesson.getHandoutType() && lesson.getHandoutType().intValue() != CourseLesson.HandoutType.MD.getCode()
 				.intValue()) {
 			infoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
 		}

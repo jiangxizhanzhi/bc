@@ -487,6 +487,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				} else {
 					blankAnswer.setWeight(weight);
 				}
+				blankAnswers.add(blankAnswer);
 			}
 
 			practiceTheory.setBlank(JsonUtil.arrayToString(blankAnswers));

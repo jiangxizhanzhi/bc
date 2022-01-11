@@ -268,7 +268,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		course.setBuiltin(CommonConstant.FALSE);
 		course.setCreateUserId(userId);
 		course.setModifyUserId(userId);
-		course.setResourceId(IDGeneratorUtil.getID());
+		course.setResourceId(StringUtils.isNotBlank(course.getCourseNum()) ? course.getCourseNum()
+				: IDGeneratorUtil.getID());
 
 		// 组装课程目录
 		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
@@ -323,7 +324,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Override
 	public Boolean batchDelete(List<String> courseIds) {
-
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

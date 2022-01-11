@@ -9,8 +9,10 @@ import javax.validation.Valid;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import org.apache.commons.collections.CollectionUtils;
@@ -173,7 +175,15 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@PostMapping("/batch_loads")
 	public BaseRsp importPracticeSet(@Validated LoadResourceReq loadReq) {
 
-		return new BaseRsp();
+		// 文件上传
+		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
+				false, loadReq.getFile(), true);
+		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+
+		// 文件加载
+		Boolean result = practiceSetService.loadPracticeSet(realPath,
+				UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp(result);
 	}
 
 }

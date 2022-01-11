@@ -52,6 +52,7 @@ public class CourseAddReq implements Serializable {
 	private Integer score;
 
 	@ApiModelProperty("课程编号")
+	@NotBlank
 	private String courseNum;
 
 }

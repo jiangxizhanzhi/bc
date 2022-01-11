@@ -83,4 +83,11 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 * @return
 	 */
 	File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext);
+
+	/**
+	 * 习题集数据加载
+	 * @param realPath
+	 * @return
+	 */
+	Boolean loadPracticeSet(String realPath, String userId);
 }

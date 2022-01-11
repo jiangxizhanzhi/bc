@@ -354,8 +354,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 习题集数据更新
 		PracticeSet practiceSet = practiceValidateHandler
 				.validatePracticeSetExist(theory.getPracticeSetId());
-		practiceSet.setPracticeCount(
-				practiceSet.getPracticeCount() <= resourceIds.size() ? CommonConstant.ZERO
+		practiceSet.setPracticeCount(null == practiceSet.getPracticeCount()
+				|| practiceSet.getPracticeCount() <= resourceIds.size() ? CommonConstant.ZERO
 						: practiceSet.getPracticeCount() - resourceIds.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {

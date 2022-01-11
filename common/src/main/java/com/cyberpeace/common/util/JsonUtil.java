@@ -62,7 +62,7 @@ public class JsonUtil {
 	 * @param text
 	 * @return
 	 */
-	public static JSONArray StringToArray(String text) {
+	public static JSONArray stringToArray(String text) {
 		return JSONArray.parseArray(text);
 	}
 

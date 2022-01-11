@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,6 +25,7 @@ import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
@@ -40,6 +42,7 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -335,32 +338,42 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
 		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
 		String data = FileUtil.getContent(new File(dataPath));
-
-		List<PracticeSetDumpLoadBo> setDumpLoadBos = JsonUtil.toJsonObjectArray(data,
-				PracticeSetDumpLoadBo.class);
+		List<JSONObject> dumpLoadBos = JsonUtil.toJsonObjectArray(data, JSONObject.class);
 
 		List<PracticeSet> practiceSets = Lists.newArrayList();
 		List<PracticeTheory> theoryList = Lists.newArrayList();
 		List<PracticeOperation> operationList = Lists.newArrayList();
 		// 数据解析文件上传
-		for (PracticeSetDumpLoadBo setDumpLoadBo : setDumpLoadBos) {
+		for (JSONObject obj : dumpLoadBos) {
+			JSONArray practice = (JSONArray) obj.remove(JsonKeyConstant.PRACTICE_KEY);
 			// 习题集
+			PracticeSetDumpLoadBo setDumpLoadBo = obj.toJavaObject(PracticeSetDumpLoadBo.class);
 			PracticeSet practiceSet = loadPracticeSet(setDumpLoadBo, userId, filePath);
-			practiceSets.add(practiceSet);
+			// 根据resource_id判断是新增还是已存在习题集
+			if (StringUtils.isBlank(practiceSet.getResourceId())) {
+				practiceSets.add(practiceSet);
+				practiceSet.setResourceId(IDGeneratorUtil.getID());
+			}
 
 			// 理论习题
 			if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.THEORY
 					.getCode().intValue()) {
+				List<PracticeTheoryDumpLoadBo> theoryDumpLoadBos = practice
+						.toJavaList(PracticeTheoryDumpLoadBo.class);
+
 				List<PracticeTheory> theories = loadPracticeTheory(practiceSet.getResourceId(),
-						setDumpLoadBo.getPractice(), userId);
+						theoryDumpLoadBos, userId);
 				theoryList.addAll(theories);
 			}
 
 			// 实操习题
 			if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION
 					.getCode().intValue()) {
+				List<PracticeOperationDumpLoadBo> operationDumpLoadBos = practice
+						.toJavaList(PracticeOperationDumpLoadBo.class);
+
 				List<PracticeOperation> operations = loadPracticeOperation(
-						practiceSet.getResourceId(), setDumpLoadBo.getPractice(), userId,
+						practiceSet.getResourceId(), operationDumpLoadBos, userId,
 						setDumpLoadBo.getFilePathMap(), filePath);
 				operationList.addAll(operations);
 			}
@@ -370,9 +383,17 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 			@Override
 			public Boolean doInTransaction(TransactionStatus status) {
-				practiceTheoryService.saveBatch(theoryList);
-				practiceOperationService.saveBatch(operationList);
-				return saveBatch(practiceSets);
+				if (CollectionUtils.isNotEmpty(theoryList)) {
+					practiceTheoryService.saveBatch(theoryList);
+				}
+				if (CollectionUtils.isNotEmpty(operationList)) {
+					practiceOperationService.saveBatch(operationList);
+				}
+				if (CollectionUtils.isNotEmpty(practiceSets)) {
+					return saveBatch(practiceSets);
+				}
+
+				return CommonConstant.TRUE;
 			}
 		});
 	}
@@ -388,6 +409,16 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			List<? extends PracticeDumpLoadBo> operationDumpLoadBos, String userId,
 			Map<String, String> filePathMap, String filePath) {
 		return StreamApiUtils.map(operationDumpLoadBos, dumpBo -> {
+
+			// 数据重复性判断
+			String practiceId = practiceOperationMapper.selectByTitle(practiceSetId,
+					dumpBo.getTitle());
+			if (StringUtils.isNotBlank(practiceId)) {
+				log.error("Practice operation exist! practice_id=[{}], practice_name=[{}]", practiceId,
+						dumpBo.getTitle());
+				return null;
+			}
+
 			PracticeOperationDumpLoadBo dumpLoadBo = BeanUtils.copy(dumpBo,
 					PracticeOperationDumpLoadBo.class);
 			PracticeOperation operation = BeanUtils.copy(dumpBo, PracticeOperation.class);
@@ -460,6 +491,17 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	private List<PracticeTheory> loadPracticeTheory(String practiceSetId,
 			List<? extends PracticeDumpLoadBo> theoryDumpLoadBos, String userId) {
 		return StreamApiUtils.map(theoryDumpLoadBos, dumpBo -> {
+
+			// 重复则不导入
+			String practiceId = practiceTheoryMapper.selectByContent(practiceSetId,
+					dumpBo.getContent());
+			if (StringUtils.isNotBlank(practiceId)) {
+				log.error("Practice theory exist! practice_id=[{}], practice_name=[{}]", practiceId,
+						dumpBo.getContent());
+				return null;
+			}
+
+			//
 			PracticeTheory practiceTheory = BeanUtils.copy(dumpBo, PracticeTheory.class);
 			practiceTheory.setPracticeSetId(practiceSetId);
 			practiceTheory.setBuiltin(CommonConstant.TRUE);
@@ -510,14 +552,20 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			String filePath) {
 		Map<String, String> filePathMap = setDumpLoadBo.getFilePathMap();
 
-		// 基本数据设置
+		String practiceSetId = practiceSetMapper.selectByName(setDumpLoadBo.getName());
+		if (StringUtils.isNotBlank(practiceSetId)) {
+			log.error("Practice set exist! practice_set_name=[{}], practice_set_id=[{}]",
+					setDumpLoadBo.getName(), practiceSetId);
+			return practiceSetMapper.selectById(practiceSetId);
+		}
+
+		// 基本数据设置 先不设置resource_id 用来判断是新增还是已存在
 		PracticeSet practiceSet = BeanUtils.copy(setDumpLoadBo, PracticeSet.class);
 		practiceSet.setBuiltin(CommonConstant.TRUE);
 		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-		practiceSet.setResourceId(IDGeneratorUtil.getID());
 		practiceSet.setCreateUserId(userId);
 
 		// logo文件替换

@@ -34,4 +34,12 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	List<PracticeOperation> randomChoice(@Param("query") OperationListQuery listQuery,
 			@Param("limit") Integer count);
 
+	/**
+	 * 根据习题集和标题查询数据
+	 * @param practiceSetId
+	 * @param title
+	 * @return
+	 */
+	String selectByTitle(@Param("practiceSetId") String practiceSetId,
+			@Param("title") String title);
 }

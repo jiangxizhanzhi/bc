@@ -101,4 +101,9 @@
         order by rand() limit #{limit}
     </select>
 
+    <select id="selectByTitle" resultType="java.lang.String">
+        select resource_id from oj_practice_operation
+        where practice_set_id = #{practiceSetId}
+        and title = #{title}
+    </select>
 </mapper>

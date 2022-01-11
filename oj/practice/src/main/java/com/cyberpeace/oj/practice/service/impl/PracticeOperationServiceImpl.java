@@ -607,8 +607,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeOperation operation = practiceValidateHandler.validateOperationExist(practiceId);
 		PracticeSet practiceSet = practiceValidateHandler
 				.validatePracticeSetExist(operation.getPracticeSetId());
-		practiceSet.setPracticeCount(
-				practiceSet.getPracticeCount() <= practiceIds.size() ? CommonConstant.ZERO
+		practiceSet.setPracticeCount(null == practiceSet.getPracticeCount()
+				|| practiceSet.getPracticeCount() <= practiceIds.size() ? CommonConstant.ZERO
 						: practiceSet.getPracticeCount() - practiceIds.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {

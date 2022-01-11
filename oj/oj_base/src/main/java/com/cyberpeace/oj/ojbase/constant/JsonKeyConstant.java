@@ -50,4 +50,7 @@ public interface JsonKeyConstant {
 	/** 节点名称key*/
 	String NODE_NAME = "node_name";
 
+	/** 习题类型*/
+	String PRACTICE_KEY = "practice";
+
 }

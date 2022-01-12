@@ -33,8 +33,8 @@ public class MissionModifyReq implements Serializable {
 
 		// validate skill points
 		List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
-		CrCommonValidator.validateSize(points, CrCommonConstants.SKILL_POINTS_SIZE,
-				"invalid skill points size");
+//		CrCommonValidator.validateSize(points, CrCommonConstants.SKILL_POINTS_SIZE,
+//				"invalid skill points size");
 		for (Integer skillPoint : points) {
 			CrCommonValidator.validateScore(skillPoint, CrCommonConstants.SKILL_POINT_MIN_VALUE,
 					CrCommonConstants.SKILL_POINT_MAX_VALUE,

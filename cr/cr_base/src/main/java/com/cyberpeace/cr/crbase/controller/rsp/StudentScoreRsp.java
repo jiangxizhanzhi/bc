@@ -1,9 +1,9 @@
-package com.cyberpeace.cr.teamtrain.controller.rsp;
+package com.cyberpeace.cr.crbase.controller.rsp;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cyberpeace.cr.teamtrain.service.context.TrainingScore;
+import com.cyberpeace.cr.crbase.service.context.TrainingScore;
 
 import lombok.Data;
 

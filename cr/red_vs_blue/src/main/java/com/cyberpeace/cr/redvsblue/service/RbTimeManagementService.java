@@ -48,4 +48,12 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	 */
 	void updateTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
 			String userId);
+	/**
+	 * 创建时间管理器
+	 * @param timeManagement
+	 * @param room
+	 * @param status
+	 * @param userId
+	 */
+	void addTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status, String userId);
 }

@@ -68,7 +68,7 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 
 		room.setTrainingStatus(status);
 
-		// 暂停或者停止，更新时间
+		// 暂停或者停止，更新天文时间
 		if (timeManagement.isPaused() || timeManagement.isStopped()) {
 
 			long time = timeManagement.getCombatTime().getTime()
@@ -77,12 +77,32 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 			Date currentCombatTime = new Date(time);
 			timeManagement.setCombatTime(currentCombatTime);
 		}
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				updateById(timeManagement);
 				rbRoomMapper.updateById(room);
+			}
+		});
+	}
+
+	@Override
+	public void addTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
+			String userId) {
+		timeManagement.setStatus(status);
+		timeManagement.setCreateUserId(userId);
+
+		room.setTrainingStatus(timeManagement.getStatus());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				rbRoomMapper.updateById(room);
+				save(timeManagement);
+
 			}
 		});
 	}

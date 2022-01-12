@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

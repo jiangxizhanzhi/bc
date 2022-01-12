@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.controller.req;
+package com.cyberpeace.cr.crbase.controller.req;
 
 import lombok.Data;
 

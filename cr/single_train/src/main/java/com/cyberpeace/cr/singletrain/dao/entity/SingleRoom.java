@@ -56,13 +56,13 @@ public class SingleRoom extends BaseTable {
 		String SCORE = "score";
 
 		/**
-		 * 任务训练记录
+		 * 任务训练记录。 训练关闭时, {@link SingleRoom#trainingRecord} 内容记录到此字段
 		 */
 		String MISSIONS_RECORD = "missions_record";
 	}
 
 	/**
-	 * {@link CrTrainRecordFields#MISSIONS_RECORD} json字符串字段名
+	 * {@link SingleRoom#trainingRecord} json字符串字段名
 	 */
 	public interface MissionsRecordFields {
 		/**

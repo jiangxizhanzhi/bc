@@ -505,7 +505,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.toJsonObject(singleTemplate.getMissionsScheme(), JSONObject.class)
 				.getJSONArray("scheme_data");
 		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(),
-				JSONObject.class).getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
+				JSONObject.class);
 		StringBuilder trainRecordMd = new StringBuilder();
 		trainRecordMd.append("# <center> ").append(businessTemplate.getName())
 				.append(" </center> \n\n");

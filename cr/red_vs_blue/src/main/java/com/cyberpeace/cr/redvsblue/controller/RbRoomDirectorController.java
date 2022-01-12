@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -80,6 +83,9 @@ public class RbRoomDirectorController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
@@ -413,6 +419,9 @@ public class RbRoomDirectorController {
 
 		// 推送ws
 		crTaskService.pushStatusWs(roomId, RbTimeManagement.TimeManagementStatus.STOP.getCode());
+
+		// 记录远程操作日志
+		remoteLogService.addCrLog(OperationModule.RED_VS_BLUE, OperationType.STOP, room.getName());
 
 		return new BaseRsp();
 	}

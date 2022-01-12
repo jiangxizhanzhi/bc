@@ -1,8 +1,11 @@
 package com.cyberpeace.integratation.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.mp.MpLog;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,31 @@ public class RemoteLogServiceImpl implements RemoteLogService {
     @Async
     public void addLog(MpLog mpLog) {
         HttpClientUtil.post(LOG_ADD_URL, mpLog, JSONObject.class);
+    }
+
+    @Override
+    public void addCrLog(OperationModule operationModule, OperationType operationType, String operationTarget) {
+
+        try {
+            MpLog mpLog = new MpLog();
+
+            // 记录用户信息
+            String userName = UserInfoContext.getUserContext().getUserName();
+            mpLog.setUser_id(UserInfoContext.getUserContext().getUserId());
+            mpLog.setUser_name(userName);
+
+            // 记录操作对象信息
+            mpLog.setOp_target(operationTarget);
+            mpLog.setOp_module(operationModule.getCode());
+            mpLog.setOp_type(operationType.getCode());
+
+            // 拼接操作描述
+            mpLog.setContent(userName + operationType.getDesc() + "了" + operationModule.getDesc() +
+                    "[" + operationTarget + "]");
+            addLog(mpLog);
+        } catch (Exception e) {
+            log.error("Failed to create remote operation log.", e);
+        }
     }
 
 }

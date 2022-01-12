@@ -2,6 +2,9 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,9 @@ public class RbSceneController {
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@ApiOperation("启动场景")
 	@PostMapping("")
 	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
@@ -80,6 +86,10 @@ public class RbSceneController {
 		String roomId = sceneOpsReq.getRoomId();
 
 		rbSceneService.pauseScene(roomId);
+
+		// 记录远程操作日志
+		remoteLogService.addCrLog(OperationModule.RED_VS_BLUE, OperationType.PAUSE, rbRoomService.getById(roomId).getName());
+
 		return new BaseRsp();
 	}
 
@@ -89,6 +99,10 @@ public class RbSceneController {
 		String roomId = sceneOpsReq.getRoomId();
 
 		rbSceneService.unpauseScene(roomId);
+
+		// 记录远程操作日志
+		remoteLogService.addCrLog(OperationModule.RED_VS_BLUE, OperationType.UNPAUSE, rbRoomService.getById(roomId).getName());
+
 		return new BaseRsp();
 	}
 

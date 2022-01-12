@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +91,9 @@ public class RbRoomController {
 
 	@Autowired
 	private RbDeviceService rbDeviceService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -393,12 +399,12 @@ public class RbRoomController {
 		timeManagement.setStatus(RbTimeManagement.TimeManagementStatus.START.getCode());
 		timeManagement.setCreateUserId(userId);
 
+		RbRoom rbRoom = rbRoomService.getById(rbTimeManagementReq.getRoomId());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
-				RbRoom rbRoom = rbRoomService.getById(rbTimeManagementReq.getRoomId());
 				rbRoom.setTrainingStatus(timeManagement.getStatus());
 
 				rbRoomService.updateById(rbRoom);
@@ -410,6 +416,9 @@ public class RbRoomController {
 		RbTimeManagementRsp rbTimeManagementRsp = BeanUtils.copy(timeManagement,
 				RbTimeManagementRsp.class);
 		rbTimeManagementRsp.setRedVsBlue(timeManagement.getRoomId());
+
+		// 记录远程操作日志
+		remoteLogService.addCrLog(OperationModule.RED_VS_BLUE, OperationType.START, rbRoom.getName());
 
 		return new BaseRsp(rbTimeManagementRsp);
 	}

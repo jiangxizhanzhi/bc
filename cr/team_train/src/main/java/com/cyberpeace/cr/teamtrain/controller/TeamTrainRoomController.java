@@ -2,8 +2,12 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +100,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -376,11 +383,17 @@ public class TeamTrainRoomController {
 	@ApiOperation("修改团队训练状态")
 	@PostMapping("/start_end_team")
 	public BaseRsp<Map> changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
+
 		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
 
 		Map map = Maps.newHashMap();
 		map.put("training_status", status);
 
+		// 记录远程操作日志
+		OperationType operationType = Objects.equals(status, TeamRoom.TrainingStatusCode.ENDED.getCode()) ?
+				OperationType.STOP : OperationType.START;
+		remoteLogService.addCrLog(OperationModule.TEAM_TRAIN, operationType,
+				teamRoomService.getById(resourceIdReq.getResourceId()).getName());
 		return new BaseRsp<>(map);
 	}
 

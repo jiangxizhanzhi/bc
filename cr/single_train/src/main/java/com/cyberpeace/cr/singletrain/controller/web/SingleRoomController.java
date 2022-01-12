@@ -2,6 +2,9 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -38,10 +41,20 @@ public class SingleRoomController {
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@PostMapping
 	@ApiOperation("创建")
 	public BaseRsp<SingleRoomBo> create(@RequestBody @Validated SingleRoomOpsReq req) {
-		return new BaseRsp<>(singleRoomService.createRoom(req.getResourceId()));
+
+		SingleRoomBo singleRoomBo = singleRoomService.createRoom(req.getResourceId());
+
+		// 记录远程操作日志
+		remoteLogService.addCrLog(OperationModule.SINGLE_TRAIN, OperationType.START,
+				singleRoomBo.getEventData().getName());
+
+		return new BaseRsp<>(singleRoomBo);
 	}
 
 	@GetMapping
@@ -62,7 +75,14 @@ public class SingleRoomController {
 	@DeleteMapping
 	@ApiOperation("关闭")
 	public BaseRsp<Boolean> delete(@RequestBody @Validated SingleRoomOpsReq req) {
-		return new BaseRsp<>(singleRoomService.deleteRoom(req.getResourceId()));
+
+		Boolean deleteRoom = singleRoomService.deleteRoom(req.getResourceId());
+
+		// 记录远程操作日志
+		if (deleteRoom){
+		remoteLogService.addCrLog(OperationModule.SINGLE_TRAIN, OperationType.STOP,
+                singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName());}
+		return new BaseRsp<>(deleteRoom);
 	}
 
 	@GetMapping("/list")

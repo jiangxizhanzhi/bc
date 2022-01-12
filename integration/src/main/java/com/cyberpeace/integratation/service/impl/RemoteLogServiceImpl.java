@@ -53,8 +53,8 @@ public class RemoteLogServiceImpl implements RemoteLogService {
             mpLog.setOp_type(operationType.getCode());
 
             // 拼接操作描述
-            mpLog.setContent(userName + operationType.getDesc() + "了" + operationModule.getDesc() +
-                    "[" + operationTarget + "]");
+            mpLog.setContent(String.format("%s%s了%s[%s]", userName, operationType.getDesc(), operationModule.getDesc(),
+                    operationTarget));
             addLog(mpLog);
         } catch (Exception e) {
             log.error("Failed to create remote operation log.", e);

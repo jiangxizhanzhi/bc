@@ -844,10 +844,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 运行场景
 		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(resourceIds);
-		List<OjLocalScene> adminOjLocalScenes = StreamApiUtils.map(lessonList,
+		List<CourseLesson> experimentList = StreamApiUtils.filter(lessonList,
+				lessonInfo -> lessonInfo.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
+						.getCode().intValue() && StringUtils.isNotBlank(lessonInfo.getTopoId()));
+
+		List<OjLocalScene> adminOjLocalScenes = StreamApiUtils.map(experimentList,
 				lessonInfo -> ojLocalSceneService.selectOjLocalScene(lessonInfo.getResourceId(),
 						lessonInfo.getSceneShareMode(), authContext));
-		List<OjLocalScene> webOjLocalScenes = StreamApiUtils.map(lessonList,
+
+		List<OjLocalScene> webOjLocalScenes = StreamApiUtils.map(experimentList,
 				lessonInfo -> ojLocalSceneService.selectOjLocalScene(lessonInfo.getResourceId(),
 						lessonInfo.getSceneShareMode(), webAuth));
 		adminOjLocalScenes.addAll(webOjLocalScenes);

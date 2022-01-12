@@ -228,7 +228,10 @@ public class MissionController {
 	@PostMapping("/combat_techs")
 	public BaseRsp<?>
 			createSchemeTemplate(@RequestBody @Validated MissionSchemeTemplateReq templateReq) {
+		// validate
 		templateReq.validate();
+		missionService.checkSchemeTemplateTitleDuplicate(templateReq.getTitle());
+
 		MissionSchemeTemplate schemeTemplate = requestToSchemeTemplate(templateReq);
 		missionService.addSchemeTemplate(schemeTemplate);
 		return new BaseRsp<>();
@@ -274,7 +277,9 @@ public class MissionController {
 
 		MissionSchemeTemplate schemeTemplate = missionService
 				.getSchemeTemplateById(templateModifyReq.getResourceId());
-		if (StringUtils.isNotBlank(templateModifyReq.getTitle())) {
+		if (StringUtils.isNotBlank(templateModifyReq.getTitle())
+				&& !templateModifyReq.getTitle().equals(schemeTemplate.getTitle())) {
+			missionService.checkSchemeTemplateTitleDuplicate(templateModifyReq.getTitle());
 			schemeTemplate.setTitle(templateModifyReq.getTitle());
 		}
 		if (StringUtils.isNotBlank(templateModifyReq.getDescription())) {

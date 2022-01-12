@@ -131,4 +131,9 @@ public interface MissionService extends IService<Mission> {
 
 	void updateRadarLabel(List<RadarLabel> radarLabelList);
 
+	/**
+	 * 校验任务方案名称重名
+	 * @param title 任务方案名称
+	 */
+	void checkSchemeTemplateTitleDuplicate(String title);
 }

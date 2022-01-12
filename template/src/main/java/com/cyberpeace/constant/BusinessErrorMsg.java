@@ -73,6 +73,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "答案不可为空");
 			put(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE, "选项不可为空");
 			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "选项重复");
+			put(CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE, "任务方案名称重复");
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "习题数量不足");
 			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "课堂场景运行中");
@@ -144,8 +145,10 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE,
 					"unable to delete category, category in use");
-			put(CrBusinessErrorCode.DUPLICATED_TOOL_NAME, "duplicated tool name in system, re-enter");
-			put(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_NAME, "duplicated tool category name in system, re-enter");
+			put(CrBusinessErrorCode.DUPLICATED_TOOL_NAME,
+					"duplicated tool name in system, re-enter");
+			put(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_NAME,
+					"duplicated tool category name in system, re-enter");
 
 			put(CrBusinessErrorCode.FAILED_TO_RESTART_NODE, "Failed to restart node.");
 			put(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE, "Failed to recreate node.");
@@ -161,6 +164,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DUPLICATED_STAGE_NAME, "Duplicated stage names.");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME,
 					"Duplicated mission names in one stage.");
+			put(CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE, "Duplicated title.");
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH,
 					"The number of practice sets is insufficient.");
@@ -184,8 +188,7 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE, "Mission Template is empty.");
 			put(CrBusinessErrorCode.MISSION_TEMPLATE_INVALID, "Mission Template is invalid.");
-			put(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY,
-					"role users cannot be empty");
+			put(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY, "role users cannot be empty");
 			put(CrBusinessErrorCode.TRAINING_NOT_RUNNING, "Training is not running right now.");
 
 			put(CrBusinessErrorCode.MACHINE_OCCUPIED, "Machine occupied.");

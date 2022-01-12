@@ -180,4 +180,7 @@ public interface CrBusinessErrorCode {
 
 	// 工具分类名称与系统内已有名称重复
 	String DUPLICATED_TOOL_CATEGORY_NAME = "101057";
+
+	// 任务方案名称已存在
+	String DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE = "101058";
 }

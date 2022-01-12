@@ -610,9 +610,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			template.setCreateTime(null);
 			template.setUpdateTime(null);
 			// 暂不处理重名 todo
-			template.setResourceId(IDGeneratorUtil.getID());
+			if (missionSchemeTemplateMapper.selectById(template.getResourceId()) != null) {
+				missionSchemeTemplateMapper.updateById(template);
+			} else {
+				missionSchemeTemplateMapper.insert(template);
+			}
 		}
-		missionSchemeTemplateMapper.batchInsert(missionSchemeTemplates);
 	}
 
 	@Override
@@ -626,6 +629,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			radarLabelMapper.updateById(radarLabel);
 		}
 
+	}
+
+	@Override
+	public void checkSchemeTemplateTitleDuplicate(String title) {
+		if (missionSchemeTemplateMapper.countByTitle(title) > 0) {
+			throw new BusinessException(
+					CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE);
+		}
 	}
 
 	private String dumpSchemeTemplates(List<String> templateIds) {

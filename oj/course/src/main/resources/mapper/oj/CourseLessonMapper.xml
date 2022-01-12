@@ -67,4 +67,13 @@
             #{courseId}
         </foreach>
     </delete>
+
+    <select id="selectIdsByCourse" resultType="String">
+        select resource_id from oj_course_lesson
+        where course_id in
+        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+            #{courseId}
+        </foreach>
+    </select>
+
 </mapper>

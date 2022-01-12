@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.service.CourseLessonService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
+
+	@Autowired
+	private CourseLessonService courseLessonService;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -325,12 +329,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Override
 	public Boolean batchDelete(List<String> courseIds) {
 
+		List<String> courseLessonIds = courseLessonMapper.selectIdsByCourse(courseIds);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				// 课时数据删除
-				courseLessonMapper.deleteByCourse(courseIds);
+				courseLessonService.batchDelete(courseLessonIds, authContext);
 				// 章节数据删除
 				lessonConfigMapper.batchDelete(courseIds);
 				// 课程数据删除

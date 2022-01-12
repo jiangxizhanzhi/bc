@@ -504,17 +504,21 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<String> missionIds = StreamApiUtils.map(schemeData.getMissions(),
 				AddTemplateMission::getResourceId);
 
-		List<MissionTemplate> missions = missionTemplateMapper.selectBatchIds(missionIds);
+		if (missionIds.size() > 0) {
+			List<MissionTemplate> missions = missionTemplateMapper.selectBatchIds(missionIds);
 
-		Map<String, MissionTemplate> missionMap = StreamApiUtils.toMap(missions,
-				MissionTemplate::getResourceId, pc -> pc);
+			Map<String, MissionTemplate> missionMap = StreamApiUtils.toMap(missions,
+					MissionTemplate::getResourceId, pc -> pc);
 
-		for (AddTemplateMission mission : schemeData.getMissions()) {
+			for (AddTemplateMission mission : schemeData.getMissions()) {
 
-			mission.setTitle(missionMap.getOrDefault(mission.getResourceId(), new MissionTemplate())
-					.getTitle());
-			mission.setDescription(missionMap
-					.getOrDefault(mission.getResourceId(), new MissionTemplate()).getDescription());
+				mission.setTitle(missionMap
+						.getOrDefault(mission.getResourceId(), new MissionTemplate()).getTitle());
+				mission.setDescription(
+						missionMap.getOrDefault(mission.getResourceId(), new MissionTemplate())
+								.getDescription());
+
+			}
 
 		}
 

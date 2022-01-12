@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,11 +68,15 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 
 		room.setTrainingStatus(status);
 
-		// todo 逻辑待整理
-		// if (timeManagement.isRecovering()){
-		// Date currentCombatTime =
-		// timeManagement.setCombatTime(timeManagement.get);
-		// }
+		// 暂停或者停止，更新时间
+		if (timeManagement.isPaused() || timeManagement.isStopped()) {
+
+			long time = timeManagement.getCombatTime().getTime()
+					+ (System.currentTimeMillis() - timeManagement.getUpdateTime().getTime())
+							* timeManagement.getRate();
+			Date currentCombatTime = new Date(time);
+			timeManagement.setCombatTime(currentCombatTime);
+		}
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

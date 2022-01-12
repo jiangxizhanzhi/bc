@@ -83,7 +83,12 @@ public class SingleRoom extends BaseTable {
 		/**
 		 * 用户提交答案
 		 */
-		String ANSWER = "record";
+		String ANSWER = "answer";
+
+		/**
+		 * 用户答题记录
+		 */
+		String RECORD = "record";
 	}
 
 }

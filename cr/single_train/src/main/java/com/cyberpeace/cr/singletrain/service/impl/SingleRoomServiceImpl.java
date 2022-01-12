@@ -413,7 +413,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 		JSONObject record = new JSONObject();
 		record.put(SingleRoom.MissionsRecordFields.TIME, new Date());
-		record.put(SingleRoom.MissionsRecordFields.ANSWER, requestData.getTrainingRecord());
+		record.put(SingleRoom.MissionsRecordFields.ANSWER, requestData.getAnswer());
+		record.put(SingleRoom.MissionsRecordFields.RECORD, requestData.getTrainingRecord());
 		record.put(SingleRoom.MissionsRecordFields.RESULT, isCorrect);
 		record.put(SingleRoom.MissionsRecordFields.SCORE, isCorrect ? missionTemplate.getScore() : 0);
 
@@ -533,7 +534,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				JSONObject singleMissionRecord = trainRecord
 						.getJSONObject(mission.getString("resource_id"));
 				if (singleMissionRecord != null) {
-					trainRecordMd.append(singleMissionRecord.getString(SingleRoom.MissionsRecordFields.ANSWER)).append("\n");
+					trainRecordMd.append(singleMissionRecord.getString(SingleRoom.MissionsRecordFields.RECORD)).append("\n");
 				}
 			}
 			trainRecordMd.append("\n");

@@ -209,6 +209,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		if (singleRoom == null) {
 			return false;
 		}
+		JSONObject extraRecord = new JSONObject();
+		// todo 待记录得分等信息
+		extraRecord.put(SingleRoom.CrTrainRecordFields.MISSION_RECORD, singleRoom.getTrainingRecord());
+
 		// 关闭场景
 		localSceneService.stopScene(singleRoom.getLocalSceneId());
 
@@ -220,7 +224,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				localSceneService.removeById(singleRoom.getLocalSceneId());
 				singleRoomMapper.deleteById(singleRoom);
 				trainRecordService.updateEndDate(businessTemplateId, userId,
-						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), JsonUtil.toJsonString(extraRecord));
 			}
 		});
 		return true;

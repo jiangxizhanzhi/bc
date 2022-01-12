@@ -7,6 +7,9 @@
         update cr_train_record
         <set>
             end_time = now()
+            <if test="extra != null || extra != ''">
+                , extra = #{extra}
+            </if>
         </set>
         <where>
             business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}

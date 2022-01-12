@@ -46,4 +46,19 @@ public class SingleRoom extends BaseTable {
 	 */
 	private String userId;
 
+	/**
+	 * 单兵训练在{@link com.cyberpeace.cr.crbase.dao.entity.TrainRecord#extra}中记录的json字符串使用字段名
+	 */
+	public interface CrTrainRecordFields {
+		/**
+		 * 训练得分
+		 */
+		String SCORE = "score";
+
+		/**
+		 * 任务训练记录
+		 */
+		String MISSION_RECORD = "train_record";
+	}
+
 }

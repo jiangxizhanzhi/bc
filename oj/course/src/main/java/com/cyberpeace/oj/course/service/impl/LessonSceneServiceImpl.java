@@ -6,6 +6,7 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
@@ -251,6 +252,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		localScene.setTopoId(courseLesson.getTopoId());
 		localScene.setSceneTtl(courseLesson.getDestroyDelay() * CommonConstant.SIXTY);
 		localScene.setUserId(authContext.getUserId());
+		localScene.setSceneAttr(courseLesson.getSceneShareMode().intValue() == SceneShare.SHARED
+				.getCode().intValue() ? SceneStartContext.SceneAttrEnum.NULL.getCode()
+						: SceneStartContext.SceneAttrEnum.SINGLE.getCode());
 
 		// 设置初始化信息
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());

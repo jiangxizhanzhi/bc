@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -337,6 +338,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 				lesson.getName() + CommonConstant.UNDER_LINE + groupInfo.getGroupNo().toString());
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
 		localScene.setSceneTtl(groupInfo.getDestroyDelay() * CommonConstant.SIXTY);
+		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.TEAM.getCode());
 
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(groupInfo.getTopoId());

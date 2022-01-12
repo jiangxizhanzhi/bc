@@ -4,9 +4,11 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -268,6 +270,10 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		localScene.setSceneTtl(operation.getDestroyDelay() * 60);
 		localScene.setSceneName(operation.getTitle());
 		localScene.setTopoId(operation.getTopoId());
+		localScene.setSceneAttr(
+				operation.getSceneShareMode().intValue() == SceneShare.SHARED.getCode()
+						? SceneStartContext.SceneAttrEnum.NULL.getCode()
+						: SceneStartContext.SceneAttrEnum.SINGLE.getCode());
 
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());

@@ -16,6 +16,7 @@ import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
@@ -822,6 +823,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		localScene.setUserId(authContext.getUserId());
 		localScene.setSceneTtl(operation.getDestroyDelay() * 60);
 		localScene.setSceneName(operation.getTitle());
+		localScene.setSceneAttr(
+				operation.getSceneShareMode() == SceneShare.SHARED.getCode().intValue()
+						? SceneStartContext.SceneAttrEnum.NULL.getCode()
+						: SceneStartContext.SceneAttrEnum.SINGLE.getCode());
 
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(operation.getResourceId())
 				.build();

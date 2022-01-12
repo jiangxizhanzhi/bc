@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -71,12 +72,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private CourseService courseService;
-
-	@Autowired
-	private LessonConfigMapper lessonConfigMapper;
-
-	@Autowired
-	private TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private LessonSceneService lessonSceneService;
@@ -183,10 +178,14 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	public BaseRsp<Boolean> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
 		// todo 新增课程编号传递
+		String lessonId = batchDeleteReq.getResourceIds().get(CommonConstant.ZERO);
+		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
+
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		Integer result = courseLessonService.batchDelete(batchDeleteReq.getResourceIds(),
-				authContext);
+
+		Integer result = courseLessonService.batchDelete(lesson.getCourseId(),
+				batchDeleteReq.getResourceIds(), authContext);
 
 		return new BaseRsp(result);
 	}

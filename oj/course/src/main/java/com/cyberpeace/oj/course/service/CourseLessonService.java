@@ -143,5 +143,5 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param authContext
 	 * @return
 	 */
-	Integer batchDelete(List<String> resourceIds, AuthContext authContext);
+	Integer batchDelete(String courseId, List<String> resourceIds, AuthContext authContext);
 }

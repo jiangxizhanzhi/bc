@@ -3,6 +3,7 @@ package com.cyberpeace.oj.ojbase.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -190,7 +191,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@DeleteMapping("/batch")
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
 
-		Boolean result = courseService.batchDelete(batchDeleteReq.getResourceIds());
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Boolean result = courseService.batchDelete(batchDeleteReq.getResourceIds(), authContext);
 		return new BaseRsp<>(result);
 	}
 
@@ -221,6 +224,13 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		List<SimpleDataRes> courseRes = StreamApiUtils.map(courses,
 				course -> BeanUtils.copy(course, SimpleDataRes.class));
 		return new BaseRsp<>(courseRes);
+	}
+
+	@ApiOperation("后台课程数据导出")
+	@GetMapping("/batch_dumps")
+	public BaseRsp exportCourse(@ApiParam("课程编号") @NotEmpty List<String> ids) {
+
+		return new BaseRsp();
 	}
 
 }

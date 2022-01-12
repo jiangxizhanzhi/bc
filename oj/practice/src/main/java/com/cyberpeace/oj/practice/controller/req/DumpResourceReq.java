@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,8 +11,7 @@ import java.util.List;
 @ApiModel
 public class DumpResourceReq implements Serializable {
 
-	@ApiModelProperty("资源编号")
-	@NotEmpty
+	@ApiModelProperty("习题集编号")
 	private List<String> resourceIds;
 
 }

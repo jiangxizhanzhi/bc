@@ -5,7 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
@@ -43,6 +48,9 @@ public class AdminCourseImportController {
 	@Autowired
 	private CourseImportService courseImportService;
 
+	@Autowired
+	private RemoteUserService remoteUserService;
+
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
@@ -54,8 +62,12 @@ public class AdminCourseImportController {
 			throw new InvalidParamException("路径不存在！");
 		}
 
+		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+
 		// 执行课程数据导入
-		Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(), courseImportReq.getEnvReqs());
+		Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),
+				courseImportReq.getEnvReqs(), authContext);
 
 		return new BaseRsp<>(result);
 	}

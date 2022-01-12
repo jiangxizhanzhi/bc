@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service;
 
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
@@ -40,5 +41,5 @@ public interface CourseImportService {
 	 * @param envReqs topo与课时绑定数据 key=课时文件夹名称 value=topo编号
 	 * @return
 	 */
-	Boolean rMCourseImport(String path, Map<String, String> envReqs);
+	Boolean rMCourseImport(String path, Map<String, String> envReqs, AuthContext authContext);
 }

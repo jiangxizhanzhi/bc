@@ -73,5 +73,5 @@ public interface CourseService extends IService<Course> {
 	 * @param courseIds
 	 * @return
 	 */
-	Boolean batchDelete(List<String> courseIds);
+	Boolean batchDelete(List<String> courseIds, AuthContext authContext);
 }

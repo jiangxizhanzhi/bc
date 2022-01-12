@@ -23,4 +23,19 @@
         where user_id = #{userId}
         and business_type = #{businessType}
     </select>
+
+    <select id="selectByBusiness" resultType="java.lang.String">
+        select resource_id from oj_resource_collection
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="businessType != null">
+                and business_type = #{businessType}
+            </if>
+            <if test="businessId != null and businessId != ''">
+                and business_id = #{businessId}
+            </if>
+        </where>
+    </select>
 </mapper>

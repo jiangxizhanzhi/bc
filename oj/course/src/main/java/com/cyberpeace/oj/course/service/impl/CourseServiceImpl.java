@@ -1,9 +1,15 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
+import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +72,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private ResourceCollectionService resourceCollectionService;
 
 	@Autowired
+	private ResourceCollectionMapper resourceCollectionMapper;
+
+	@Autowired
 	private CourseCategoryService courseCategoryService;
 
 	@Autowired
@@ -85,6 +94,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseLessonService courseLessonService;
+
+	@Autowired
+	private NoteMapper noteMapper;
+
+	@Autowired
+	private CommentMapper commentMapper;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -327,18 +342,46 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public Boolean batchDelete(List<String> courseIds) {
+	public Boolean batchDelete(List<String> courseIds, AuthContext authContext) {
 
-		List<String> courseLessonIds = courseLessonMapper.selectIdsByCourse(courseIds);
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				false);
+		// 课时数据查询
+		Map<String, List<String>> courseLessonMap = StreamApiUtils.toMap(courseIds,
+				courseId -> courseId, courseId -> {
+					List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId, false);
+					return StreamApiUtils.map(lessons, CourseLesson::getResourceId);
+				});
+
+		// 收藏数据
+		List<String> collectionIds = courseIds.stream()
+				.map(courseId -> resourceCollectionMapper.selectByBusiness(null, courseId,
+						ResourceCollection.BusinessType.COURSE.getCode()))
+				.flatMap(Collection::stream).collect(Collectors.toList());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
+
+				// 留言笔记数据删除
+				courseIds.forEach(courseId -> {
+					noteMapper.deleteByBusiness(courseId, Note.NoteType.NOTE.getCode(),
+							Note.NoteResourceType.COURSE.getCode());
+					commentMapper.deleteByBusinessId(courseId);
+				});
+
+				// 收藏数据删除
+				if (CollectionUtils.isNotEmpty(collectionIds)) {
+					resourceCollectionMapper.deleteBatchIds(collectionIds);
+				}
+
 				// 课时数据删除
-				courseLessonService.batchDelete(courseLessonIds, authContext);
+				courseIds.forEach(courseId -> {
+					List<String> lessonIds = courseLessonMap.get(courseId);
+					if (CollectionUtils.isNotEmpty(lessonIds)) {
+						courseLessonService.batchDelete(courseId, lessonIds, authContext);
+					}
+				});
+
 				// 章节数据删除
 				lessonConfigMapper.batchDelete(courseIds);
 				// 课程数据删除

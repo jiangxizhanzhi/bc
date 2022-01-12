@@ -33,4 +33,13 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	 */
 	List<ResourceCollection> selectByType(@Param("userId") String userId,
 			@Param("businessType") Integer businessType);
+
+	/**
+	 * 根据业务数据查询收藏
+	 * @param businessId
+	 * @param businessType
+	 * @return
+	 */
+	List<String> selectByBusiness(@Param("userId") String userId,
+								  @Param("businessId") String businessId, @Param("businessType") Integer businessType);
 }

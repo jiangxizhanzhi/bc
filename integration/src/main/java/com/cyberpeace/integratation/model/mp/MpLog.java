@@ -1,46 +1,162 @@
 package com.cyberpeace.integratation.model.mp;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 
-@Data
 public class MpLog implements Serializable {
 
-	@ApiModelProperty("内容")
+	/**
+	 * 内容
+	 */
 	private String content;
 
-	@ApiModelProperty("描述")
+	/**
+	 * 描述
+	 */
 	private String description;
 
-	@ApiModelProperty("日志来源")
+	/**
+	 * 日志来源
+	 */
 	private String from;
 
-	@ApiModelProperty("日志类型")
+	/**
+	 * 日志类型
+	 */
 	private Integer log_type;
 
-	@ApiModelProperty("操作人IP")
+	/**
+	 * 操作人IP
+	 */
 	private String op_ip;
 
-	@ApiModelProperty("模块")
+	/**
+	 * 模块
+	 */
 	private Integer op_module;
 
-	@ApiModelProperty("操作对象")
+	/**
+	 * 操作对象
+	 */
 	private String op_target;
 
-	@ApiModelProperty("操作类型")
+	/**
+	 * 操作类型
+	 */
 	private Integer op_type;
 
-	@ApiModelProperty("操作主题")
+	/**
+	 * 操作主题
+	 */
 	private String title;
 
-	@ApiModelProperty("用户ID")
+	/**
+	 * 用户ID
+	 */
 	private String user_id;
 
-	@ApiModelProperty("用户名称")
+	/**
+	 * 用户名称
+	 */
 	private String user_name;
 
-	@ApiModelProperty("用户类型（用户，客户端）")
+	/**
+	 * 用户类型（用户，客户端）
+	 */
 	private String user_type;
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public Integer getLogType() {
+		return log_type;
+	}
+
+	public void setLogType(Integer logType) {
+		this.log_type = logType;
+	}
+
+	public String getOpIp() {
+		return op_ip;
+	}
+
+	public void setOpIp(String opIp) {
+		this.op_ip = opIp;
+	}
+
+	public Integer getOpModule() {
+		return op_module;
+	}
+
+	public void setOpModule(Integer opModule) {
+		this.op_module = opModule;
+	}
+
+	public String getOpTarget() {
+		return op_target;
+	}
+
+	public void setOpTarget(String opTarget) {
+		this.op_target = opTarget;
+	}
+
+	public Integer getOpType() {
+		return op_type;
+	}
+
+	public void setOpType(Integer opType) {
+		this.op_type = opType;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getUserId() {
+		return user_id;
+	}
+
+	public void setUserId(String userId) {
+		this.user_id = userId;
+	}
+
+	public String getUserName() {
+		return user_name;
+	}
+
+	public void setUserName(String userName) {
+		this.user_name = userName;
+	}
+
+	public String getUserType() {
+		return user_type;
+	}
+
+	public void setUserType(String userType) {
+		this.user_type = userType;
+	}
 }

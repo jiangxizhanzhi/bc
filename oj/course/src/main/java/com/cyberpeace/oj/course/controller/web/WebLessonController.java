@@ -63,7 +63,8 @@ public class WebLessonController {
 		// 记录远程操作日志
 		String operationTarget = infoBo.getCourseName() + "-" + infoBo.getName();
 		String content = "课程名：" + infoBo.getCourseName() + "，" + "课时名：" + infoBo.getName() + "。";
-		remoteLogService.addOjLog(OperationModule.COURSE, OperationType.STUDY, operationTarget, content);
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.STUDY, operationTarget, content);
 
 		return new BaseRsp<>(infoBo);
 	}
@@ -114,7 +115,8 @@ public class WebLessonController {
 
 	@ApiOperation("前台课程场景启动")
 	@PostMapping("/start_scene")
-	public BaseRsp<JSONObject> startScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
+	public BaseRsp<JSONObject>
+			startScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);

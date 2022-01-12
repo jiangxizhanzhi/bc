@@ -1,21 +1,37 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.controller.CrScoreController;
+import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
+import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
+import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
-import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
+import com.cyberpeace.cr.crbase.service.context.TrainingReport;
+import com.cyberpeace.cr.crbase.service.context.UserReport;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
+import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -24,11 +40,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "红蓝对抗实例")
+@Api(tags = "红蓝对抗评分")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomScoreController {
+
+	@Autowired
+	private RbRoomService rbRoomService;
 
 	@Autowired
 	private RbRoomScoreService rbRoomScoreService;
@@ -38,6 +57,156 @@ public class RbRoomScoreController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private CrScoreController crScoreController;
+
+	@ApiOperation("查询学员评分")
+	@GetMapping("/student_score")
+	public BaseRsp<StudentScoreRsp> getStudentScore(
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
+			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+		rbRoomService.checkRefereePermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+
+		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
+
+		return new BaseRsp<>(studentScoreRsp);
+	}
+
+	@ApiOperation("提交学员评分")
+	@PostMapping("/student_score")
+	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
+			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
+		rbRoomService.checkRefereePermission(studentScoreReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		rbRoomService.checkRoomOpening(studentScoreReq.getRoomId());
+
+		crScoreController.updateStudentScore(studentScoreReq);
+
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("提交任务的人工评估")
+	@PostMapping("/submit_evaluation")
+	public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
+			value = "学员评分") @RequestBody SubmitEvaluationReq submitEvaluationReq) {
+		rbRoomService.checkRefereePermission(submitEvaluationReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+
+		rbRoomService.checkRoomOpening(submitEvaluationReq.getRoomId());
+
+		crScoreController.updateSubmitEvaluation(submitEvaluationReq);
+
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("获取学员的评估提交记录")
+	@GetMapping("/scene_mission_evaluations")
+	public BaseRsp<List<MissionEvaluationRsp>>
+			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
+
+		rbRoomService.checkRefereePermission(missionEvaluationListReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+
+		return crScoreController.getMissionEvaluations(missionEvaluationListReq);
+	}
+
+	/**
+	 * 获取动态事件
+	 *
+	 * @return
+	 */
+	@ApiOperation("获取学员动态事件")
+	@GetMapping("/get_user_mission_dynamic")
+	public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
+			@ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
+		rbRoomService.checkRefereePermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+
+		MissionDynamicRsp missionDynamicRsp = crScoreController.getUserMissionDynamic(resource_id,
+				student_id);
+
+		return new BaseRsp<>(missionDynamicRsp);
+	}
+
+	/**
+	 * 获取训练报告 - 任务信息统计
+	 *
+	 * @return
+	 */
+	@ApiOperation("获取任务信息统计")
+	@GetMapping("/get_training_mission_report")
+	public BaseRsp<MissionReport> getTrainingMissionReport(
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
+		rbRoomService.checkRefereePermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+
+		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomId(resource_id);
+
+		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
+				crRoleList);
+
+		return new BaseRsp<>(missionReport);
+	}
+
+	/**
+	 * 获取训练报告 - 任务信息统计
+	 *
+	 * @return
+	 */
+	@ApiOperation("获取用户训练记录")
+	@GetMapping("/get_training_record")
+	public BaseRsp<List<MissionSchemeObject<TrainingRecordMissionRsp>>> getTrainingRecord(
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
+			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+		rbRoomService.checkRefereePermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+
+		List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList = crScoreController
+				.getTrainingRecord(resource_id, user_hash);
+
+		return new BaseRsp(missionSchemeList);
+	}
+
+	/**
+	 * 获取训练报告 - 任务信息统计
+	 *
+	 * @return
+	 */
+	@ApiOperation("获取用户训练报告")
+	@GetMapping("/get_training_report")
+	public BaseRsp<TrainingReport> getTrainingReport(
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
+		rbRoomService.checkRefereePermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+
+		RbRoomData rbRoomdata = rbRoomService.getRbRoomDataByRoomId(resource_id);
+
+		if (RbRoom.TrainingStatusCode.UNOPENED.getCode().equals(rbRoomdata.getTrainingStatus())) {
+			return new BaseRsp<>(new TrainingReport());
+		}
+		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomId(resource_id);
+
+		List<UserReport> userReportList = crScoreController.getTrainingReport(resource_id,
+				crRoleList);
+
+		Date endTime = rbRoomdata.getSceneEndTime() == null ? new Date()
+				: rbRoomdata.getSceneEndTime();
+		Date startTime = rbRoomdata.getSceneStartTime() == null ? rbRoomdata.getStartTime()
+				: rbRoomdata.getSceneStartTime();
+		Integer timeSeconds = Math.toIntExact((endTime.getTime() - startTime.getTime()) / 1000);
+
+		TrainingReport trainingReport = new TrainingReport();
+
+		trainingReport.setSceneStartTime(startTime);
+		trainingReport.setTeacherName(UserInfoContext.getUserContext().getUserName());
+		trainingReport.setTrainingTime(timeSeconds);
+		trainingReport.setUsers(userReportList);
+
+		return new BaseRsp<>(trainingReport);
+	}
 
 	/**
 	 * 查询训练角色得分信息
@@ -61,6 +230,9 @@ public class RbRoomScoreController {
 	@GetMapping("/missions_statistics")
 	public BaseRsp<List<MissionsStatistic>> getMissionsStatistics(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		rbRoomService.checkDirectorPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+
 		List<MissionsStatistic> missionsStatistics = Lists.newArrayList();
 		List<String> allUserIds = Lists.newArrayList();
 

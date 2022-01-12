@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "红蓝对抗实例")
+@Api(tags = "红蓝对抗场景")
 @Slf4j
 @RestController
 @RequiresAuthentication

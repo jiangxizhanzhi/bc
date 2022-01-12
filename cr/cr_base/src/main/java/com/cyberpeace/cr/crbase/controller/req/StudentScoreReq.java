@@ -15,7 +15,7 @@ public class StudentScoreReq {
 
 	private String trainingPercentage;
 
-	private String trainingTeam;
+	private String roomId;
 
 	private String user;
 }

@@ -1,18 +1,16 @@
-package com.cyberpeace.cr.crbase.controller;
+package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
 import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
@@ -21,14 +19,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrScore;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.crbase.service.context.UserReport;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
@@ -36,10 +27,6 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
-import com.cyberpeace.integratation.model.UserPageContext;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,25 +40,13 @@ import lombok.extern.slf4j.Slf4j;
 public class TeamTrainScoreController {
 
 	@Autowired
-	private CrRoleService crRoleService;
-
-	@Autowired
 	TeamRoomService teamRoomService;
 
 	@Autowired
+	private CrRoleService crRoleService;
+
+	@Autowired
 	private CrScoreController crScoreController;
-
-	@Autowired
-	private CrTaskService crTaskService;
-
-	@Autowired
-	private CrScoreService crScoreService;
-
-	@Autowired
-	private RemoteUserService remoteUserService;
-
-	@Autowired
-	private MissionService missionService;
 
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
@@ -89,7 +64,7 @@ public class TeamTrainScoreController {
 	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
 			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
 
-		teamRoomService.checkRoomOpening(studentScoreReq.getTrainingTeam());
+		teamRoomService.checkRoomOpening(studentScoreReq.getRoomId());
 
 		crScoreController.updateStudentScore(studentScoreReq);
 
@@ -144,8 +119,11 @@ public class TeamTrainScoreController {
 	@GetMapping("/get_training_mission_report")
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		RoleQuery roleQuery = new RoleQuery(resource_id,
+				CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id);
+		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,crRoleList);
 
 		return new BaseRsp<>(missionReport);
 	}
@@ -183,9 +161,11 @@ public class TeamTrainScoreController {
 			return new BaseRsp<>(new TrainingReport());
 		}
 
+		RoleQuery roleQuery = new RoleQuery(resource_id,
+				CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		List<UserReport> userReportList =  crScoreController.getTrainingReport(resource_id);
-
+		List<UserReport> userReportList = crScoreController.getTrainingReport(resource_id,crRoleList);
 
 		Date endTime = teamRoomdata.getSceneEndTime() == null ? new Date()
 				: teamRoomdata.getSceneEndTime();

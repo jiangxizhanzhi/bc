@@ -33,14 +33,12 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "团队训练评分")
@@ -158,7 +156,7 @@ public class CrScoreController {
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
-		CrScore crScore = crScoreService.getByRoomIdAndUser(studentScoreReq.getTrainingTeam(),
+		CrScore crScore = crScoreService.getByRoomIdAndUser(studentScoreReq.getRoomId(),
 				studentScoreReq.getUser());
 		CrScore newCrScore = getTeamScoreFromReq(studentScoreReq);
 
@@ -243,11 +241,11 @@ public class CrScoreController {
 	private CrScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
 		CrScore crScore = BeanUtils.copy(studentScoreReq, CrScore.class);
 
-		crScore.setRoomId(studentScoreReq.getTrainingTeam());
+		crScore.setRoomId(studentScoreReq.getRoomId());
 		crScore.setUserId(studentScoreReq.getUser());
 		crScore.setSkillScore(studentScoreReq.getAbilityScore());
 		crScore.setSkillPercentage(studentScoreReq.getAbilityPercentage());
-		crScore.setRoomId(studentScoreReq.getTrainingTeam());
+		crScore.setRoomId(studentScoreReq.getRoomId());
 
 		return crScore;
 	}
@@ -283,12 +281,7 @@ public class CrScoreController {
 		return missionDynamicRsp;
 	}
 
-	public MissionReport getTrainingMissionReport(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id,
-				CrRole.TeamRoleGroupCode.STUDENT.getCode());
-
-		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
+	public MissionReport getTrainingMissionReport(String resource_id, List<CrRole> crRoleList) {
 
 		MissionReport missionReport = new MissionReport();
 
@@ -299,9 +292,8 @@ public class CrScoreController {
 		return missionReport;
 	}
 
-	public List<MissionSchemeObject<TrainingRecordMissionRsp>> getTrainingRecord(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
-			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+	public List<MissionSchemeObject<TrainingRecordMissionRsp>> getTrainingRecord(String resource_id,
+			String user_hash) {
 
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_hash);
 
@@ -339,14 +331,10 @@ public class CrScoreController {
 		return missionSchemeList;
 	}
 
-	public List<UserReport> getTrainingReport(String resource_id) {
-
-		RoleQuery roleQuery = new RoleQuery(resource_id,
-				CrRole.TeamRoleGroupCode.STUDENT.getCode());
-
-		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
+	public List<UserReport> getTrainingReport(String resource_id, List<CrRole> crRoleList) {
 
 		List<String> userIds = Lists.newArrayList();
+
 		for (CrRole crRole : crRoleList) {
 			userIds.addAll(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
 		}

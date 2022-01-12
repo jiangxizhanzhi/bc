@@ -558,7 +558,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		List<String> userList = Lists.newArrayList();
 
 		// 构造角色分组map
-		List<CrRole> crRoles = crRoleService.selectRbStudentsRoleByRoomId(roomId);
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(roomId);
+
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		Map<String, Integer> crRoleMap = crRoles.stream()
 				.collect(Collectors.toMap(CrRole::getResourceId, bo -> bo.getRoleGroup()));
@@ -575,7 +578,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				userList.add(crTask.getUserId());
 
 				TimeLineEvent timeLineEvent = new TimeLineEvent();
-				timeLineEvent.setRoleGroup(crRoleMap.get(crTask.getResourceId()));
+				timeLineEvent.setRoleGroup(crRoleMap.get(crTask.getRoleId()));
 				timeLineEvent.setTitle(crTask.getMission().getTitle());
 				timeLineEvent.setUserName(crTask.getUserId());
 

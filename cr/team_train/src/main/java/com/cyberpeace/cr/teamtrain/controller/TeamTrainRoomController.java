@@ -390,10 +390,11 @@ public class TeamTrainRoomController {
 		map.put("training_status", status);
 
 		// 记录远程操作日志
-		OperationType operationType = Objects.equals(status, TeamRoom.TrainingStatusCode.ENDED.getCode()) ?
-				OperationType.STOP : OperationType.START;
-		remoteLogService.addCrLog(OperationModule.TEAM_TRAIN, operationType,
-				teamRoomService.getById(resourceIdReq.getResourceId()).getName());
+		OperationType operationType = Objects.equals(status,
+				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
+						: OperationType.START;
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName());
 		return new BaseRsp<>(map);
 	}
 

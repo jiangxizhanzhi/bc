@@ -1,5 +1,10 @@
 package com.cyberpeace.demo.controller;
 
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +28,9 @@ public class TestController {
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	String testTopoId = "1dd035784f5b44869c4e96aa07c31fd5";
 
@@ -60,4 +68,15 @@ public class TestController {
 	//
 	// return new BaseRsp<>(result);
 	// }
+
+	@PostMapping("/add_mp_log")
+	public BaseRsp addMpLog() {
+
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		remoteLogService.addCrLog(userInfo, OperationModule.SINGLE_TRAIN, OperationType.STOP,
+				"测试对象");
+
+		return new BaseRsp();
+	}
+
 }

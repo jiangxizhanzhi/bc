@@ -88,7 +88,8 @@ public class RbSceneController {
 		rbSceneService.pauseScene(roomId);
 
 		// 记录远程操作日志
-		remoteLogService.addCrLog(OperationModule.RED_VS_BLUE, OperationType.PAUSE, rbRoomService.getById(roomId).getName());
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.PAUSE, rbRoomService.getById(roomId).getName());
 
 		return new BaseRsp();
 	}
@@ -101,7 +102,8 @@ public class RbSceneController {
 		rbSceneService.unpauseScene(roomId);
 
 		// 记录远程操作日志
-		remoteLogService.addCrLog(OperationModule.RED_VS_BLUE, OperationType.UNPAUSE, rbRoomService.getById(roomId).getName());
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.UNPAUSE, rbRoomService.getById(roomId).getName());
 
 		return new BaseRsp();
 	}

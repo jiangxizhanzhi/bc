@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -96,7 +95,8 @@ public class PracticeTheoryController {
 
 		// 记录远程操作日志
 		String content = "资源编号为" + answerReq.getResourceId() + "。";
-		remoteLogService.addOjLog(OperationModule.THEORY, OperationType.EXERCISE, OperationModule.THEORY.getDesc(), content);
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
+				OperationType.EXERCISE, OperationModule.THEORY.getDesc(), content);
 
 		return new BaseRsp<>(evaluateResult);
 	}

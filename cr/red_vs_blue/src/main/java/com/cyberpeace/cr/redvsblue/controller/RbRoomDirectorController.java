@@ -421,7 +421,9 @@ public class RbRoomDirectorController {
 		crTaskService.pushStatusWs(roomId, RbTimeManagement.TimeManagementStatus.STOP.getCode());
 
 		// 记录远程操作日志
-		remoteLogService.addCrLog(OperationModule.RED_VS_BLUE, OperationType.STOP, room.getName());
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.STOP, room.getName());
 
 		return new BaseRsp();
 	}

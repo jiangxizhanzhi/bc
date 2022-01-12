@@ -51,8 +51,8 @@ public class SingleRoomController {
 		SingleRoomBo singleRoomBo = singleRoomService.createRoom(req.getResourceId());
 
 		// 记录远程操作日志
-		remoteLogService.addCrLog(OperationModule.SINGLE_TRAIN, OperationType.START,
-				singleRoomBo.getEventData().getName());
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.START, singleRoomBo.getEventData().getName());
 
 		return new BaseRsp<>(singleRoomBo);
 	}
@@ -79,9 +79,11 @@ public class SingleRoomController {
 		Boolean deleteRoom = singleRoomService.deleteRoom(req.getResourceId());
 
 		// 记录远程操作日志
-		if (deleteRoom){
-		remoteLogService.addCrLog(OperationModule.SINGLE_TRAIN, OperationType.STOP,
-                singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName());}
+		if (deleteRoom) {
+			remoteLogService.addCrLog(UserInfoContext.getUserContext(),
+					OperationModule.SINGLE_TRAIN, OperationType.STOP,
+					singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName());
+		}
 		return new BaseRsp<>(deleteRoom);
 	}
 

@@ -483,4 +483,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
 			CrTaskLog.ActionCode.MAN_REJECT.getCode());
 
+	@Override
+	public Boolean isCorrectByObjective(String userAnswer, String missionAnswer, Integer missionType) {
+		return isCorrect(userAnswer, missionAnswer, missionType);
+	}
 }

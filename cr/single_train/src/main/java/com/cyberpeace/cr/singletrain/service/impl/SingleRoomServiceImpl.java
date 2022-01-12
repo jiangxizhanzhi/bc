@@ -2,7 +2,6 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import static com.cyberpeace.cr.crbase.constant.CrCommonConstants.MP_SCENE_ID_KEY;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +91,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 	@Autowired
 	private MissionTemplateMapper missionTemplateMapper;
+
+	@Autowired
+	private CrTaskService crTaskService;
 
 	/**
 	 * 创建单兵训练
@@ -211,7 +214,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		}
 		JSONObject extraRecord = new JSONObject();
 		// todo 待记录得分等信息
-		extraRecord.put(SingleRoom.CrTrainRecordFields.MISSION_RECORD, singleRoom.getTrainingRecord());
+		extraRecord.put(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD, singleRoom.getTrainingRecord());
 
 		// 关闭场景
 		localSceneService.stopScene(singleRoom.getLocalSceneId());
@@ -395,16 +398,25 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
 		if (roomObject == null) {
-			return false;
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		MissionTemplate missionTemplate = missionTemplateMapper.selectById(requestData.getMissionResourceId());
+		if (missionTemplate == null) {
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
 		// 写入任务记录
 		JSONObject missionsRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(),
 				JSONObject.class);
 
+		Boolean isCorrect = crTaskService.isCorrectByObjective(requestData.getTrainingRecord(), missionTemplate.getAnswer(), missionTemplate.getType());
+
 		JSONObject record = new JSONObject();
-		record.put("time", new Date());
-		record.put("record", requestData.getTrainingRecord());
+		record.put(SingleRoom.MissionsRecordFields.TIME, new Date());
+		record.put(SingleRoom.MissionsRecordFields.ANSWER, requestData.getTrainingRecord());
+		record.put(SingleRoom.MissionsRecordFields.RESULT, isCorrect);
+		record.put(SingleRoom.MissionsRecordFields.SCORE, isCorrect ? missionTemplate.getScore() : 0);
+
 		missionsRecord.put(requestData.getMissionResourceId(), record);
 
 		roomObject.setTrainingRecord(JsonUtil.toJsonString(missionsRecord));
@@ -479,7 +491,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 */
 	@Override
 	public String getTrainRecordMarkdown(String businessTemplateId) {
-		// 无运行中房间, 返回null
+		// 无运行中房间, 返回null todo 文本国际化
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
 		if (singleRoom == null) {
@@ -493,7 +505,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.toJsonObject(singleTemplate.getMissionsScheme(), JSONObject.class)
 				.getJSONArray("scheme_data");
 		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(),
-				JSONObject.class);
+				JSONObject.class).getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
 		StringBuilder trainRecordMd = new StringBuilder();
 		trainRecordMd.append("# <center> ").append(businessTemplate.getName())
 				.append(" </center> \n\n");
@@ -521,7 +533,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				JSONObject singleMissionRecord = trainRecord
 						.getJSONObject(mission.getString("resource_id"));
 				if (singleMissionRecord != null) {
-					trainRecordMd.append(singleMissionRecord.getString("record")).append("\n");
+					trainRecordMd.append(singleMissionRecord.getString(SingleRoom.MissionsRecordFields.ANSWER)).append("\n");
 				}
 			}
 			trainRecordMd.append("\n");

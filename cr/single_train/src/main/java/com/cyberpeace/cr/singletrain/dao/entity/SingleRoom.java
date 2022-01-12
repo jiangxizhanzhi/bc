@@ -51,14 +51,39 @@ public class SingleRoom extends BaseTable {
 	 */
 	public interface CrTrainRecordFields {
 		/**
-		 * 训练得分
+		 * 训练总分
 		 */
 		String SCORE = "score";
 
 		/**
 		 * 任务训练记录
 		 */
-		String MISSION_RECORD = "train_record";
+		String MISSIONS_RECORD = "missions_record";
+	}
+
+	/**
+	 * {@link CrTrainRecordFields#MISSIONS_RECORD} json字符串字段名
+	 */
+	public interface MissionsRecordFields {
+		/**
+		 * 提交时间
+		 */
+		String TIME = "time";
+
+		/**
+		 * 任务得分
+		 */
+		String SCORE = "score";
+
+		/**
+		 * 任务结果(得分)
+		 */
+		String RESULT = "result";
+
+		/**
+		 * 用户提交答案
+		 */
+		String ANSWER = "answer";
 	}
 
 }

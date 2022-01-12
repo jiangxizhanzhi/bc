@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.oj.ojbase.constant.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,17 +40,13 @@ public class LessonEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 
-		OjLocalScene ojLocalScene = ojLocalSceneService.getById(businessId);
-		if (null == ojLocalScene) {
-			return true;
-		}
-
 		// 删除本地数据
-		ojLocalSceneService.deleteLocalScene(businessId);
+		OjLocalScene ojLocalScene = ojLocalSceneService.deleteLocalScene(businessId);
 
 		// 推送删除数据
-		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
+		JSONObject dataObj = new JSONObject();
 		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC);
+		dataObj.put(JsonKeyConstant.DATA, CommonConstant.EMPTY_STRING);
 		pushMessageToWeb(dataObj, ojLocalScene);
 		return true;
 	}

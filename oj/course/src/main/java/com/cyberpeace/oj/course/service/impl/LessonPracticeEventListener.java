@@ -15,6 +15,7 @@ import com.cyberpeace.cs.service.impl.MessageListener;
 import com.cyberpeace.oj.course.service.bo.LessonPracticeWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.constant.Event;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
@@ -39,7 +40,18 @@ public class LessonPracticeEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
-		ojLocalSceneService.deleteLocalScene(businessId);
+
+		// 删除本地数据
+		OjLocalScene ojLocalScene = ojLocalSceneService.deleteLocalScene(businessId);
+		if (null == ojLocalScene) {
+			return true;
+		}
+
+		// 推送删除数据
+		JSONObject dataObj = new JSONObject();
+		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC);
+		dataObj.put(JsonKeyConstant.DATA, CommonConstant.EMPTY_STRING);
+		pushMessageToWeb(dataObj, ojLocalScene, context);
 		return true;
 	}
 

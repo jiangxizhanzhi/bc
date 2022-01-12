@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +42,17 @@ public class OperationEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
-		ojLocalSceneService.deleteLocalScene(businessId);
+		// 本地数据删除
+		OjLocalScene ojLocalScene = ojLocalSceneService.deleteLocalScene(businessId);
+		if (null == ojLocalScene) {
+			return CommonConstant.TRUE;
+		}
+
+		// 推送删除数据
+		JSONObject dataObj = new JSONObject();
+		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC);
+		dataObj.put(JsonKeyConstant.DATA, CommonConstant.EMPTY_STRING);
+		pushMessageToWeb(dataObj, ojLocalScene, context);
 		return true;
 	}
 
@@ -57,12 +69,12 @@ public class OperationEventListener extends MessageListener {
 		// 场景启动code值
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
-		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene, context);
+		pushMessageToWeb(dataObj, ojLocalScene, context);
 
 		// 场景启动完成更新数据库 消息推送
 		JSONObject startSceneMessage = ojLocalSceneService.getStartSceneMessage(data, ojLocalScene);
 		if (null != startSceneMessage) {
-			pushMessageToWeb(JsonUtil.toJsonString(startSceneMessage), ojLocalScene, context);
+			pushMessageToWeb(startSceneMessage, ojLocalScene, context);
 		}
 
 		return true;
@@ -80,11 +92,11 @@ public class OperationEventListener extends MessageListener {
 
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		dataObj.put(JsonKeyConstant.CODE, Event.SCENE_UPDATE.getCode());
-		pushMessageToWeb(JsonUtil.toJsonString(dataObj), ojLocalScene, context);
+		pushMessageToWeb(dataObj, ojLocalScene, context);
 		return true;
 	}
 
-	private void pushMessageToWeb(String data, OjLocalScene ojLocalScene, MqContext mqContext) {
+	private void pushMessageToWeb(JSONObject data, OjLocalScene ojLocalScene, MqContext mqContext) {
 		OperationWsMessageIdentifier identifier = new OperationWsMessageIdentifier();
 		identifier.setFromWeb(ojLocalScene.getFromWeb());
 		identifier.setShared(ojLocalScene.getShared() ? SceneShare.SHARED.getCode()

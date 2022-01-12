@@ -38,7 +38,7 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 * 删除本地场景
 	 * @param 
 	 */
-	Boolean deleteLocalScene(String ojLocalSceneId);
+	OjLocalScene deleteLocalScene(String ojLocalSceneId);
 
 	/**
 	 * 删除本地和中台场景

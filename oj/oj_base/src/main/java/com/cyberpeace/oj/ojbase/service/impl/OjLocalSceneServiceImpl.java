@@ -164,10 +164,10 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	}
 
 	@Override
-	public Boolean deleteLocalScene(String ojLocalSceneId) {
+	public OjLocalScene deleteLocalScene(String ojLocalSceneId) {
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(ojLocalSceneId);
 		if (ojLocalScene == null) {
-			return true;
+			return null;
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -179,7 +179,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			}
 		});
 
-		return true;
+		return ojLocalScene;
 	}
 
 	@Override

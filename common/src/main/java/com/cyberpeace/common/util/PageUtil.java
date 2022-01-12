@@ -66,20 +66,23 @@ public class PageUtil {
 			K k = data.get(CommonConstant.ZERO);
 
 			// 判断是否存在该字段
-			String fieldValue = ObjUtil.getCertainFieldValue(k, column);
-			if (StringUtils.isBlank(fieldValue)) {
+			try{
+			    ObjUtil.getCertainFieldValue(k, column);
+			} catch (RuntimeException e) {
 				continue;
 			}
 
 			// 对数据排序
 			if (((OrderItem) order).isAsc()) {
-				data.sort(Comparator.comparing(classroomMonitorBo -> ObjUtil
-						.getFieldValueByName(column, classroomMonitorBo).toString()));
+				data.sort(Comparator.comparing(classroomMonitorBo -> (ObjUtil
+						.getFieldValueByName(column, classroomMonitorBo) != null ? ObjUtil
+                        .getFieldValueByName(column, classroomMonitorBo) : "").toString()));
 
 			} else {
 				data.sort(Comparator
-						.comparing(classroomMonitorBo -> ObjUtil
-								.getFieldValueByName(column, classroomMonitorBo).toString())
+						.comparing(classroomMonitorBo -> (ObjUtil
+                                .getFieldValueByName(column, classroomMonitorBo) != null ? ObjUtil
+                                .getFieldValueByName(column, classroomMonitorBo) : "").toString())
 						.reversed());
 			}
 		}

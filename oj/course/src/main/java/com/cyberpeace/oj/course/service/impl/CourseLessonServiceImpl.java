@@ -493,7 +493,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 用户相关
 			UserInfo userInfo = remoteUserService.getById(courseLesson.getCreateUserId());
-			adminLessonListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
+			adminLessonListBo.setCreateUserName(null != userInfo ? userInfo.getName() : "");
 
 			// 是否具有实验报告
 			NoteUniqueContext uniqueContext = NoteUniqueContext.builder()

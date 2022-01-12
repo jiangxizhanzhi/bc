@@ -255,7 +255,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			}
 
 			UserInfo userInfo = remoteUserService.getById(course.getCreateUserId());
-			courseAdminBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
+			courseAdminBo.setCreateUserName(null != userInfo ? userInfo.getName() : "");
 			return courseAdminBo;
 
 		} else {

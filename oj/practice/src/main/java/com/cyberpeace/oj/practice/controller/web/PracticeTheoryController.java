@@ -3,7 +3,6 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -11,19 +10,17 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
-import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
-import com.cyberpeace.oj.practice.service.impl.TheoryEvaluateHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -48,6 +44,9 @@ public class PracticeTheoryController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
@@ -85,6 +84,10 @@ public class PracticeTheoryController {
 		EvaluateResult evaluateResult = practiceTheoryService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
 				answerReq.getSubmitAnswer());
+
+		// 记录远程操作日志
+		String content = "资源编号为" + answerReq.getResourceId() + "。";
+		remoteLogService.addOjLog(OperationModule.THEORY, OperationType.EXERCISE, OperationModule.THEORY.getDesc(), content);
 
 		return new BaseRsp<>(evaluateResult);
 	}

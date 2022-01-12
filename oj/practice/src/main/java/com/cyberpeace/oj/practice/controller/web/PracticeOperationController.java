@@ -3,27 +3,16 @@ package com.cyberpeace.oj.practice.controller.web;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.component.MyWebSocketHandler;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
-import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
-import com.cyberpeace.oj.practice.controller.req.SceneShareModeReq;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.bo.*;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -59,6 +48,9 @@ public class PracticeOperationController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
@@ -97,6 +89,10 @@ public class PracticeOperationController {
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
 				answerReq.getSubmitAnswer());
+
+		// 记录远程操作日志
+		String content = "资源编号为" + answerReq.getResourceId() + "。";
+		remoteLogService.addOjLog(OperationModule.CAPTURE_FLAG, OperationType.EXERCISE, "实操练习", content);
 
 		return new BaseRsp<>(evaluateResult);
 	}

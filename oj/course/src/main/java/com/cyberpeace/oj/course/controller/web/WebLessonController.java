@@ -3,6 +3,9 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.course.service.LessonSceneService;
@@ -43,6 +46,9 @@ public class WebLessonController {
 	@Autowired
 	private LessonSceneService lessonSceneService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@ApiOperation("课时详情查询")
 	@GetMapping("")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号"),
@@ -53,6 +59,12 @@ public class WebLessonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
 		LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, authContext);
+
+		// 记录远程操作日志
+		String operationTarget = infoBo.getCourseName() + "-" + infoBo.getName();
+		String content = "课程名：" + infoBo.getCourseName() + "，" + "课时名：" + infoBo.getName() + "。";
+		remoteLogService.addOjLog(OperationModule.COURSE, OperationType.STUDY, operationTarget, content);
+
 		return new BaseRsp<>(infoBo);
 	}
 

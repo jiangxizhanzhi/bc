@@ -318,6 +318,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public CourseLesson addLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
 
+		// 数据重复性校验
+		courseValidateHandler.validateLessonNameExist(courseLesson.getCourseId(),
+				courseLesson.getName());
+
 		courseLesson.setHeat(CommonConstant.ZERO);
 		courseLesson.setBuiltin(CommonConstant.FALSE);
 

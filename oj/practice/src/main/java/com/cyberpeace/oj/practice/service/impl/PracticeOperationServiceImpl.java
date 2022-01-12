@@ -133,6 +133,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeSet practiceSet = validatePracticeSet(practiceOperation.getPracticeSetId(),
 				authContext);
 		validateCategory(practiceOperation.getCategoryId());
+		practiceValidateHandler.validateOperationTitleExist(practiceOperation.getPracticeSetId(),
+				practiceOperation.getTitle());
 
 		// 数据设置
 		practiceOperation.setBuiltin(CommonConstant.FALSE);

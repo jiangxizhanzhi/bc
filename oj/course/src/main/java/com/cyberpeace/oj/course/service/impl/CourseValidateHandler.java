@@ -113,4 +113,17 @@ public class CourseValidateHandler {
 			throw new BusinessException(OjBusinessErrorCode.COURSE_NUM_IS_EXIST);
 		}
 	}
+
+	/**
+	 * 课时名称重复性校验
+	 * @param courseId
+	 * @param name
+	 */
+	public void validateLessonNameExist(String courseId, String name) {
+		String lessonId = courseLessonMapper.selectByCourseAndName(courseId, name);
+		if (StringUtils.isNotBlank(lessonId)) {
+			log.error("Lesson is exist! course_id=[{}], lesson_name=[{}]", lessonId, name);
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+	}
 }

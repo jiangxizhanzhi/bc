@@ -11,8 +11,10 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,9 @@ public class PracticeValidateHandler {
 
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
+
+	@Autowired
+	private PracticeTheoryMapper practiceTheoryMapper;
 
 	/**
 	 * 字段数据长度校验
@@ -141,4 +146,32 @@ public class PracticeValidateHandler {
 		}
 	}
 
+	/**
+	 * 校验习题名称
+	 * @param practiceSetId
+	 * @param title
+	 */
+	public void validateOperationTitleExist(String practiceSetId, String title) {
+		String practiceId = practiceOperationMapper.selectByTitle(practiceSetId, title);
+		if (StringUtils.isNotBlank(practiceId)) {
+			log.error(
+					"Practice operation title exist! practice_set_id=[{}], practice_id=[{}], title=[{}]",
+					practiceSetId, practiceId, title);
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+	}
+
+	/**
+	 * 校验习题内容是否存在
+	 * @param practiceSetId
+	 * @param content
+	 */
+	public void validateTheoryContentExist(String practiceSetId, String content) {
+		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId, content);
+		if (StringUtils.isNotBlank(practiceId)) {
+			log.error("Practice theory content exist! practice_set_id=[{}], practice_id=[{}]",
+					practiceSetId, practiceId);
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+	}
 }

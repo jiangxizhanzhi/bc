@@ -76,4 +76,9 @@
         </foreach>
     </select>
 
+    <select id="selectByCourseAndName" resultType="java.lang.String">
+        select resource_id from oj_course_lesson
+        where course_id = #{courseId}
+        and name = #{name}
+    </select>
 </mapper>

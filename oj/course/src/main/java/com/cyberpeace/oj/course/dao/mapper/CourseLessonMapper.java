@@ -37,4 +37,6 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	void deleteByCourse(@Param("courseIds") List<String> courseIds);
 
 	List<String> selectIdsByCourse(@Param("courseIds") List<String> courseIds);
+
+	String selectByCourseAndName(@Param("courseId") String courseId, @Param("name") String name);
 }

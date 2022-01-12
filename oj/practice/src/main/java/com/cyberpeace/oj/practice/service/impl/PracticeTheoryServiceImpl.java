@@ -278,17 +278,18 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	@Override
 	public Integer create(PracticeTheory practiceTheory, AuthContext authContext) {
-		if (null == practiceTheory.getBuiltin()) {
-			practiceTheory.setBuiltin(CommonConstant.FALSE);
-		}
-		if (null == practiceTheory.getScore()) {
-			practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
-		}
 
+		// 数据校验
+		practiceValidateHandler.validateTheoryContentExist(practiceTheory.getPracticeSetId(),
+				practiceTheory.getContent());
 		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
 				PracticeCategory.PracticeType.THEORY.getCode());
 		PracticeSet practiceSet = practiceValidateHandler.validateSetType(
 				practiceTheory.getPracticeSetId(), PracticeSet.PracticeType.THEORY.getCode());
+
+		// 基本数据设置
+		practiceTheory.setBuiltin(CommonConstant.FALSE);
+		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
 		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
 
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {

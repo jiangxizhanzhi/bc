@@ -535,9 +535,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public void missionsSchemeValidator(JSONObject missionsScheme) {
-		List<String> trainMissions = Lists.newArrayList();
 
 		missionsScheme.getJSONArray("scheme_data").toJavaList(JSONObject.class).forEach(stage -> {
+
+			List<String> trainMissions = Lists.newArrayList();
+
 			stage.getJSONArray("missions").toJavaList(JSONObject.class).forEach(mission -> {
 				String missionId = mission.getString("resource_id");
 				if (missionId == null || missionId.isEmpty()) {
@@ -545,28 +547,30 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				}
 				trainMissions.add(missionId);
 			});
+
+			if (trainMissions.size() > 0) {
+				List<MissionTemplate> missions = missionTemplateMapper.selectBatchIds(trainMissions);
+
+				List<String> titles = Lists.newArrayList();
+				for (MissionTemplate template : missions) {
+					titles.add(template.getTitle());
+					// 校验任务名称长度
+					CrCommonValidator.validateLength(template.getTitle(),
+							CrCommonConstants.MIN_MISSION_NAME_LEN,
+							CrCommonConstants.MAX_MISSION_NAME_LEN,
+							CrBusinessErrorCode.INVALID_MISSION_NAME);
+				}
+				// 校验阶段内任务重名
+				CrCommonValidator.checkStringListDuplicate(titles,
+						CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
+
+				if (trainMissions.size() != missions.size()) {
+					throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
+				}
+			}
 		});
 
-		if (trainMissions.size() > 0) {
-			List<MissionTemplate> missions = missionTemplateMapper.selectBatchIds(trainMissions);
 
-			List<String> titles = Lists.newArrayList();
-			for (MissionTemplate template : missions) {
-				titles.add(template.getTitle());
-				// 校验任务名称长度
-				CrCommonValidator.validateLength(template.getTitle(),
-						CrCommonConstants.MIN_MISSION_NAME_LEN,
-						CrCommonConstants.MAX_MISSION_NAME_LEN,
-						CrBusinessErrorCode.INVALID_MISSION_NAME);
-			}
-			// 校验阶段内任务重名
-			CrCommonValidator.checkStringListDuplicate(titles,
-					CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
-
-			if (trainMissions.size() != missions.size()) {
-				throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
-			}
-		}
 
 	}
 

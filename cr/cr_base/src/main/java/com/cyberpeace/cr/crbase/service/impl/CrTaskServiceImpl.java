@@ -150,12 +150,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	public CrTask getByUserIdAndMissionId(String userId, String missionId) {
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 
-		if (null == task) {
-			log.error("user‘s mission does not release！userId=[{}] missionId=[{}]", userId,
-					missionId);
-			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
-		}
-
 		return task;
 	}
 

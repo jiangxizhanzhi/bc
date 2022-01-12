@@ -22,6 +22,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.redvsblue.controller.req.RbDeviceReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.CrTaskReject;
 import com.cyberpeace.cr.redvsblue.controller.rsp.MissionInfoRsp;
@@ -30,7 +31,6 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -38,9 +38,11 @@ import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "红蓝对抗学员")
 @RestController
+@Slf4j
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/user/")
 public class RbRoomUserController {
@@ -167,6 +169,12 @@ public class RbRoomUserController {
 		CrTask task = crTaskService.getByUserIdAndMissionId(userId,
 				submitMissionsReq.getMissionHash());
 
+		if (null == task) {
+			log.error("user‘s mission does not release！userId=[{}] missionId=[{}]", userId,
+					submitMissionsReq.getMissionHash());
+			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
+		}
+
 		crTaskService.startTask(task);
 
 		return new BaseRsp<>();
@@ -175,7 +183,7 @@ public class RbRoomUserController {
 	@ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
 	public BaseRsp<String>
-	submitMissions(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+			submitMissions(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		rbRoomService.checkStudentPermission(submitMissionsReq.getResourceId(), userId);

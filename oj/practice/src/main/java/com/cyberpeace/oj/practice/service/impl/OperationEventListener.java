@@ -50,7 +50,7 @@ public class OperationEventListener extends MessageListener {
 
 		// 推送删除数据
 		JSONObject dataObj = new JSONObject();
-		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC);
+		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC.getCode());
 		dataObj.put(JsonKeyConstant.DATA, CommonConstant.EMPTY_STRING);
 		pushMessageToWeb(dataObj, ojLocalScene, context);
 		return true;

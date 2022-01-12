@@ -15,7 +15,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
-import com.cyberpeace.cr.redvsblue.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;

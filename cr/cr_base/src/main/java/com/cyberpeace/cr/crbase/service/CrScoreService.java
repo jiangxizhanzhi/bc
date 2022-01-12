@@ -1,17 +1,17 @@
-package com.cyberpeace.cr.teamtrain.service;
+package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.teamtrain.dao.entity.CrScore;
-import com.cyberpeace.cr.teamtrain.service.context.MissionsStatistics;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 
 /**
  *
  */
-public interface TeamScoreService extends IService<CrScore> {
+public interface CrScoreService extends IService<CrScore> {
 
 	/** 获取学员的成绩
 	 * @param roomId

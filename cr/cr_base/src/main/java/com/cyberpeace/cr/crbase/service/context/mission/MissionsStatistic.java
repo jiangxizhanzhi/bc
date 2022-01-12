@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.service.context.mission;
+package com.cyberpeace.cr.crbase.service.context.mission;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;

@@ -1,12 +1,12 @@
-package com.cyberpeace.cr.teamtrain.dao.mapper;
+package com.cyberpeace.cr.crbase.dao.mapper;
 
 import java.util.List;
 
-import com.cyberpeace.cr.teamtrain.dao.entity.CrScore;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 
 /**
  * @Entity com.cyberpeace.cr.teamtrain.dao.entity.CrScore

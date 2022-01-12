@@ -1,33 +1,32 @@
-package com.cyberpeace.cr.teamtrain.service.impl;
+package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.teamtrain.dao.entity.CrScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
+import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionCategoryMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.teamtrain.dao.mapper.CrScoreMapper;
-import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
-import com.cyberpeace.cr.teamtrain.service.context.MissionsStatistics;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 import com.google.common.collect.Maps;
 
 /**
  *
  */
 @Service
-public class TeamScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> implements TeamScoreService {
+public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> implements CrScoreService {
 
 	@Autowired
 	CrScoreMapper crScoreMapper;
@@ -50,9 +49,8 @@ public class TeamScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> im
 	}
 
 	@Override
-	public MissionsStatistics getMissionsStatistics(String roomId,List<CrRole> crRoleList) {
+	public MissionsStatistics getMissionsStatistics(String roomId, List<CrRole> crRoleList) {
 		MissionsStatistics missionsStatistics = new MissionsStatistics();
-
 
 		Integer missionCount = 0;
 		for (CrRole crRole : crRoleList) {

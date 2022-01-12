@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.teamtrain.dao.entity.CrScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,25 +24,24 @@ import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.teamtrain.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.service.TeamDynamicEventService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
-import com.cyberpeace.cr.teamtrain.service.TeamScoreService;
-import com.cyberpeace.cr.teamtrain.service.context.*;
+import com.cyberpeace.cr.teamtrain.service.context.StatisticalInfo;
+import com.cyberpeace.cr.teamtrain.service.context.TrainingReport;
+import com.cyberpeace.cr.teamtrain.service.context.TrainingScore;
+import com.cyberpeace.cr.teamtrain.service.context.UserReport;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -70,13 +68,7 @@ public class TeamTrainScoreController {
 	private CrTaskService crTaskService;
 
 	@Autowired
-	private BusinessTemplateService businessTemplateService;
-
-	@Autowired
-	private TeamScoreService teamScoreService;
-
-	@Autowired
-	private TeamDynamicEventService teamDynamicEventService;
+	private CrScoreService crScoreService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -120,7 +112,7 @@ public class TeamTrainScoreController {
 		trainingScore.setGetScoreSubjective(getScoreSubjective);
 		trainingScore.setGetScoreObjective(getScoreObjective);
 
-		CrScore crScore = teamScoreService.getByRoomIdAndUser(resource_id, user_hash);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_hash);
 		StudentScoreRsp studentScoreRsp = new StudentScoreRsp();
 		if (crScore != null) {
 			studentScoreRsp = BeanUtils.copy(crScore, StudentScoreRsp.class);
@@ -128,6 +120,7 @@ public class TeamTrainScoreController {
 					JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class));
 			studentScoreRsp.setAbilityPercentage(crScore.getSkillPercentage());
 		}
+
 		studentScoreRsp.setTrainingScore(trainingScore);
 
 		return new BaseRsp<>(studentScoreRsp);
@@ -180,22 +173,21 @@ public class TeamTrainScoreController {
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
-		if (studentScoreReq.getComment().length() > CrScore.ScoreValue.MAX_COMMENT_LEN
-				.getCode()) {
+		if (studentScoreReq.getComment().length() > CrScore.ScoreValue.MAX_COMMENT_LEN.getCode()) {
 			log.error("comment length out of range！comment length=[{}]",
 					studentScoreReq.getComment().length());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
-		CrScore crScore = teamScoreService.getByRoomIdAndUser(studentScoreReq.getTrainingTeam(),
+		CrScore crScore = crScoreService.getByRoomIdAndUser(studentScoreReq.getTrainingTeam(),
 				studentScoreReq.getUser());
 		CrScore newCrScore = getTeamScoreFromReq(studentScoreReq);
 
 		if (crScore == null) {
-			teamScoreService.save(newCrScore);
+			crScoreService.save(newCrScore);
 		} else {
 			newCrScore.setResourceId(crScore.getResourceId());
-			teamScoreService.updateById(newCrScore);
+			crScoreService.updateById(newCrScore);
 
 		}
 
@@ -338,14 +330,16 @@ public class TeamTrainScoreController {
 	@GetMapping("/get_training_mission_report")
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		RoleQuery roleQuery = new RoleQuery(resource_id,
+				CrRole.TeamRoleGroupCode.STUDENT.getCode());
 
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		MissionReport missionReport = new MissionReport();
 
-		missionReport.setMissionsCategory(teamScoreService.getMissionsCategory(resource_id));
-		missionReport.setMissionsStatistics(teamScoreService.getMissionsStatistics(resource_id,crRoleList));
+		missionReport.setMissionsCategory(crScoreService.getMissionsCategory(resource_id));
+		missionReport.setMissionsStatistics(
+				crScoreService.getMissionsStatistics(resource_id, crRoleList));
 
 		return new BaseRsp<>(missionReport);
 	}
@@ -431,7 +425,7 @@ public class TeamTrainScoreController {
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 
 		// 获取每个学员的任务信息
-		List<CrScore> studentScoreList = teamScoreService.selectByRoomIdAndUserIds(resource_id,
+		List<CrScore> studentScoreList = crScoreService.selectByRoomIdAndUserIds(resource_id,
 				userIds);
 		Map<String, CrScore> studentScoreMap = studentScoreList.stream()
 				.collect(Collectors.toMap(CrScore::getUserId, bo -> bo));

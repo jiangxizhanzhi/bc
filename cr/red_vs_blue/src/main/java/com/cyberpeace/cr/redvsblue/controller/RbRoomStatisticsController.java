@@ -22,7 +22,7 @@ import com.cyberpeace.cr.redvsblue.controller.rsp.TimeDataRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
-import com.cyberpeace.cr.redvsblue.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 

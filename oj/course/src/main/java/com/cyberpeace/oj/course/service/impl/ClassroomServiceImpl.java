@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -356,12 +357,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
 				true);
 		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
-
+		List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroom.getResourceId());
+		List<ClassroomSign> signIns = StreamApiUtils.filter(signList, ClassroomSign::getSignIn);
+		List<String> signUsers = StreamApiUtils.map(signIns,ClassroomSign::getUserId);
 		// 查询所有笔记
-		NoteListQuery listQuery = NoteListQuery.builder().noteType(Note.NoteType.REPORT.getCode())
-				.businessId(courseLesson.getResourceId())
-				.businessType(Note.NoteResourceType.LESSON.getCode()).userIds(orgUserIds).build();
-		List<Note> notes = noteMapper.selectByListQuery(listQuery, authContext.getIsWeb());
+		List<Note> notes = new ArrayList<>();
+		// 仅统计签到过的用户
+		if (signUsers.size() != 0) {
+			NoteListQuery listQuery = NoteListQuery.builder()
+					.noteType(Note.NoteType.REPORT.getCode())
+					.businessId(courseLesson.getResourceId())
+					.businessType(Note.NoteResourceType.LESSON.getCode()).userIds(signUsers).build();
+			notes = noteMapper.selectByListQuery(listQuery, authContext.getIsWeb());
+		}
 
 		// 评估数据查询
 		List<String> noteIds = StreamApiUtils.map(notes, Note::getResourceId);
@@ -373,7 +381,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		// 签到信息统计
-		SignInfoBo signInfoBo = statisticSignInfo(classroom, orgUserIds, evaluates);
+		SignInfoBo signInfoBo = statisticSignInfo(classroom, orgUserIds, evaluates, signIns);
 
 		// 成绩数据统计
 		GradeDistributionBo distributionBo = statisticGrade(evaluates);
@@ -449,13 +457,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @return
 	 */
 	private SignInfoBo statisticSignInfo(Classroom classroom, List<String> orgUserIds,
-			List<NoteEvaluate> evaluates) {
+			List<NoteEvaluate> evaluates,List<ClassroomSign> signIns) {
 
 		SignInfoBo signInfoBo = new SignInfoBo();
 
 		// 签到数量
-		List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroom.getResourceId());
-		List<ClassroomSign> signIns = StreamApiUtils.filter(signList, ClassroomSign::getSignIn);
 		signInfoBo.setIsSign(signIns.size());
 		signInfoBo.setNotSign(orgUserIds.size() - signIns.size());
 

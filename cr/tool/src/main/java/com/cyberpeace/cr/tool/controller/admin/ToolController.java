@@ -64,6 +64,7 @@ public class ToolController {
             Date date = DateUtil.StringToDate(toolReq.getPublishTime(), DateUtil.SHOT_PATTERN);
             tool.setPublishTime(date);
         }
+        toolService.validateToolNameExist(tool);
         toolService.save(tool);
         return new BaseRsp<>();
     }

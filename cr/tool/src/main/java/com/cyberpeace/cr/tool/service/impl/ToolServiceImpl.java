@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,5 +137,14 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
     @Override
     public Tool getByName(String name) {
         return toolMapper.selectByName(name);
+    }
+
+    @Override
+    public void validateToolNameExist(Tool tool) {
+        // 名称重复性校验
+        Tool toolObject = toolMapper.selectByName(tool.getName());
+        if (toolObject != null) {
+            throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
+        }
     }
 }

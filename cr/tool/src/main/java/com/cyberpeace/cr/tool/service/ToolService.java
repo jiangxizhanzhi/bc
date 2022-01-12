@@ -15,4 +15,6 @@ public interface ToolService extends IService<Tool> {
     ToolRsp selectById(@Param("resourceId") String resourceId);
 
     Tool getByName(String name);
+
+    void validateToolNameExist(Tool tool);
 }

@@ -51,6 +51,7 @@ public class ToolCategoryController {
 	@ApiOperation("工具分类创建")
 	public BaseRsp<String> create(@RequestBody @Validated CategoryAddReq categoryAddReq) {
 		ToolCategory toolCategory = BeanUtils.copy(categoryAddReq, ToolCategory.class);
+		toolCategoryService.validateToolCategoryNameExist(toolCategory);
 		toolCategoryService.save(toolCategory);
 		return new BaseRsp<>();
 	}

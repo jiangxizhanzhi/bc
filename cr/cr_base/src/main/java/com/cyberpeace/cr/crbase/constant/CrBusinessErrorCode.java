@@ -174,4 +174,10 @@ public interface CrBusinessErrorCode {
 
 	// 资源包错误
 	String INVALID_RESOURCE_ZIP = "101055";
+
+	// 工具名称与系统内已有名称重复
+	String DUPLICATED_TOOL_NAME = "101056";
+
+	// 工具分类名称与系统内已有名称重复
+	String DUPLICATED_TOOL_CATEGORY_NAME = "101057";
 }

@@ -18,4 +18,6 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	ToolCategory saveCategory(String name);
 
 	void batchDelete(List<String> resourceIds);
+
+	void validateToolCategoryNameExist(ToolCategory toolCategory);
 }

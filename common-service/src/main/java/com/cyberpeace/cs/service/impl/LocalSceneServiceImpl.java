@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -43,10 +42,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
-	@Autowired
-	@Qualifier("BasicSceneHandler")
-	private SceneHandler sceneHandler;
-
 	@Override
 	public LocalScene getByBusinessInstanceId(String businessInstanceId) {
 		LocalScene localScene = getBaseMapper().getByBusinessInstanceId(businessInstanceId);
@@ -56,9 +51,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public String startScene(LocalScene localScene) {
-		if (localScene.isRecord()) {
-			// todo
-			// 修改模板
+		if (localScene.getRecord() != null) {
+			switchRecording(localScene.getTopoId(), localScene.getRecord());
 		}
 
 		SceneStartContext startContext = getSceneStartContext(localScene);
@@ -201,9 +195,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return true;
 		}
 		// 2. 发送mp请求
-		// SceneHandler handler =
-		// sceneHandler.getSceneHandler(localScene.getBusinessCode());
-		// handler.checkPauseScene(localScene);
 		Boolean result = remoteSceneService.pauseScene(getSceneOpsContext(localScene));
 
 		if (!result) {
@@ -268,17 +259,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		RenameTopoContext context = new RenameTopoContext(topoId, name);
 		return name.equals(
 				remoteTopoService.sync((JSONObject) JSONObject.toJSON(context)).getString("name"));
-	}
-
-	@Override
-	public Boolean switchRecording(String topoId, Boolean enableRecording) {
-		if (enableRecording == null) {
-			return true;
-		}
-		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId,
-				enableRecording);
-		return !enableRecording ^ (remoteTopoService.sync((JSONObject) JSONObject.toJSON(context))
-				.getBoolean("enable_recording"));
 	}
 
 	@Override
@@ -386,5 +366,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 				localScene.getBusinessInstanceId());
 
 		return flowOpsContext;
+	}
+
+	/** 
+	 * 启动场景之前，开关录屏
+	 * @param topoId 
+	 * @param enableRecording
+	 */
+	private void switchRecording(String topoId, Boolean enableRecording) {
+		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId,
+				enableRecording);
+		remoteTopoService.sync((JSONObject) JSONObject.toJSON(context));
 	}
 }

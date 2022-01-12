@@ -94,10 +94,6 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 3、构建本地scene对象
 		LocalScene localScene = createLocalScene(room, room.getCopyedTopoId());
 
-		// 4.0 设置录屏开关
-		if (!localSceneService.switchRecording(room.getCopyedTopoId(), room.getEnableRecording())) {
-			throw new BusinessException(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE);
-		}
 		// 4、启动mp场景
 		String sceneId = localSceneService.startScene(localScene);
 
@@ -143,6 +139,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		localScene.setSceneName(room.getName());
 		localScene.setMeta(JSON.toJSONString(
 				LocalSceneMeta.builder().appResourceId(room.getResourceId()).build()));
+		localScene.setRecord(room.getEnableRecording());
 
 		return localScene;
 	}

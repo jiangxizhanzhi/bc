@@ -78,11 +78,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		LocalScene localScene = createLocalScene(LocalScene.BusinessCode.TEAM_TRAINING.getCode(),
 				room, room.getCopyedTopoId());
 
-		// 4.0 设置录屏开关
-		if (!localSceneService.switchRecording(room.getCopyedTopoId(), room.getEnableRecording())) {
-			throw new BusinessException(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE);
-		}
-		// 4.1、启动mp场景
+		// 4、启动mp场景
 		String sceneId = localSceneService.startScene(localScene);
 
 		try {
@@ -332,6 +328,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		localScene.setSceneName(teamRoom.getName());
 		localScene.setMeta(JSON.toJSONString(
 				LocalSceneMeta.builder().appResourceId(teamRoom.getResourceId()).build()));
+		localScene.setRecord(teamRoom.getEnableRecording());
 
 		return localScene;
 	}

@@ -95,10 +95,10 @@ public class LocalScene extends BaseTable {
 	private Integer sceneAttr;
 
 	/**
-	 * 是否开启录屏功能，默认为false
+	 * 是否开启录屏功能，默认为 null
 	 */
 	@TableField(exist = false)
-	private boolean record = false;
+	private Boolean record = null;
 
 	/**
 	 * json格式。

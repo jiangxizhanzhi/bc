@@ -47,7 +47,6 @@
                 and `public` = #{isPublic}
             </if>
         </where>
-        order by create_time desc
     </select>
 
     <select id="selectBySetIds" resultType="java.lang.String">

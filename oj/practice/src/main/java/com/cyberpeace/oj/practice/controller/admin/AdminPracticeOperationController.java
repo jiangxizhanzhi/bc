@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -10,6 +11,7 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.checkerframework.checker.units.qual.A;
@@ -139,6 +141,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		}
 
 		Page page = listReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
 
 		IPage<AdminOperationListBo> iPage = practiceOperationService.pageByQuery(page, listQuery,
 				authContext);

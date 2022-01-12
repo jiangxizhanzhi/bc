@@ -3,6 +3,8 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -24,6 +26,7 @@ import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -62,7 +65,13 @@ public class PracticeTheoryController {
 	@ApiOperation("分页查询理论基础习题")
 	public BaseRsp<ListRsp<PracticeTheoryListBo>> getList(WebTheoryListReq listReq) {
 
+		// 设置默认排序字段
 		Page page = listReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
+
+		// 查询子分类信息
 		List<String> categoryIds = practiceCategoryService
 				.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

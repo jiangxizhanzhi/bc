@@ -3,9 +3,11 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.io.File;
 import java.util.List;
 
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -129,6 +131,10 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	public BaseRsp<ListRsp<PracticeTheoryListBo>> list(AdminTheoryListReq listReq) {
 
 		Page page = listReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
+
 		List<String> categoryIds = practiceCategoryService
 				.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
 
@@ -155,7 +161,8 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		// 执行资源数据导入
 		Boolean result = practiceTheoryService.importTheory(theoryImportReq.getPracticeSetId(),
-				theoryImportReq.getCategoryId(), realPath, UserInfoContext.getUserContext().getUserId());
+				theoryImportReq.getCategoryId(), realPath,
+				UserInfoContext.getUserContext().getUserId());
 		// 文件删除
 		new File(realPath).deleteOnExit();
 		return new BaseRsp<>(result);

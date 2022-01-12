@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -136,7 +137,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<AdminPracticeSetBo>> list(PracticeSetPageReq setPageReq) {
 
+		// 设置默认排序
 		Page page = setPageReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
+
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 		IPage<AdminPracticeSetBo> iPage = practiceSetService.selectByTypeAndName(page,

@@ -3,6 +3,13 @@ package com.cyberpeace.oj.practice.controller.web;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -13,6 +20,8 @@ import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.*;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -67,6 +76,10 @@ public class PracticeOperationController {
 	public BaseRsp<ListRsp<AdminOperationListBo>> list(WebOperationListReq listReq) {
 
 		Page page = listReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
+
 		OperationListQueryBo listQueryBo = BeanUtils.copy(listReq, OperationListQueryBo.class);
 
 		List<String> categoryIds = practiceCategoryService

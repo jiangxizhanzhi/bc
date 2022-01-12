@@ -102,13 +102,9 @@ public interface MissionService extends IService<Mission> {
 	 */
 	Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates);
 
-	void validateMission(String missionsScheme);
-
 	void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData);
 
 	void validateMission(ColorMission<AddTemplateMission> missionsScheme);
-
-	void validateRBMission(JSONObject jsonObject);
 
 	/**
 	 * 检查任务方案是否有效
@@ -135,4 +131,4 @@ public interface MissionService extends IService<Mission> {
 
 	void updateRadarLabel(List<RadarLabel> radarLabelList);
 
- }
+}

@@ -93,10 +93,10 @@ public class RbTemplateAdminController {
 		roleJsonObject.put("blueRoles", rbTemplateModifyReq.getBlueRoles());
 
 		rbTemplateModifyReq.getRedRoles().forEach(jsonObject -> {
-			missionService.validateRBMission(jsonObject);
+			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
 		});
 		rbTemplateModifyReq.getBlueRoles().forEach(jsonObject -> {
-			missionService.validateRBMission(jsonObject);
+			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
 		});
 
 		rbTemplateContext.setRoleList(JsonUtil.toJsonString(roleJsonObject));

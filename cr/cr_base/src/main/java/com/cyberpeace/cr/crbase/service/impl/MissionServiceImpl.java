@@ -18,7 +18,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -499,14 +500,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public void validateMission(String missionsScheme) {
-		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
-				new TypeReference<ColorMission<AddTemplateMission>>() {});
-
-		validateMission(colorMission);
-	}
-
-	@Override
 	public void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData) {
 		List<String> missionIds = StreamApiUtils.map(schemeData.getMissions(),
 				AddTemplateMission::getResourceId);
@@ -529,42 +522,17 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public void validateMission(ColorMission<AddTemplateMission> colorMission) {
-		if (null == colorMission || null == colorMission.getSchemeData()) {
-			return;
-		}
+		SerializeConfig config = new SerializeConfig();
+		config.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+		String json = JSON.toJSONString(colorMission, config);
 
-		List<MissionSchemeObject<AddTemplateMission>> schemeData = colorMission.getSchemeData();
-		for (MissionSchemeObject<AddTemplateMission> schemeDatum : schemeData) {
-
-			List<String> missionIds = StreamApiUtils.map(schemeDatum.getMissions(),
-					AddTemplateMission::getResourceId);
-
-			for (String missionId : missionIds) {
-				if (missionId == null || missionId.isEmpty()) {
-					throw new BusinessException(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE);
-				}
-			}
-			List<MissionTemplate> missionTemplates = missionTemplateMapper
-					.selectBatchIds(missionIds);
-
-			if (missionTemplates.size() < missionIds.size()) {
-				throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
-			}
-
-		}
-	}
-
-	@Override
-	public void validateRBMission(JSONObject jsonObject) {
-		JSONObject missionsScheme = jsonObject.getJSONObject("missions_scheme");
-
-		missionsSchemeValidator(missionsScheme);
-
+		missionsSchemeValidator(JSON.parseObject(json));
 	}
 
 	@Override
 	public void missionsSchemeValidator(JSONObject missionsScheme) {
-		List<String> trainMissions = org.apache.commons.compress.utils.Lists.newArrayList();
+		List<String> trainMissions = Lists.newArrayList();
+
 		missionsScheme.getJSONArray("scheme_data").toJavaList(JSONObject.class).forEach(stage -> {
 			stage.getJSONArray("missions").toJavaList(JSONObject.class).forEach(mission -> {
 				String missionId = mission.getString("resource_id");
@@ -574,8 +542,22 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				trainMissions.add(missionId);
 			});
 		});
-		if (trainMissions.size() > 0 && trainMissions.size() != missionTemplateMapper
-				.selectBatchIds(trainMissions).size()) {
+
+		List<MissionTemplate> missions = missionTemplateMapper.selectBatchIds(trainMissions);
+
+		List<String> titles = Lists.newArrayList();
+		for (MissionTemplate template : missions) {
+			titles.add(template.getTitle());
+			// 校验任务名称长度
+			CrCommonValidator.validateLength(template.getTitle(),
+					CrCommonConstants.MIN_MISSION_NAME_LEN, CrCommonConstants.MAX_MISSION_NAME_LEN,
+					CrBusinessErrorCode.INVALID_MISSION_NAME);
+		}
+		// 校验阶段内任务重名
+		CrCommonValidator.checkStringListDuplicate(titles,
+				CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
+
+		if (trainMissions.size() > 0 && trainMissions.size() != missions.size()) {
 			throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
 		}
 	}

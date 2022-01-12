@@ -51,10 +51,10 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 				.toJsonObjectArray(roleObject.get("blueRoles").toString(), JSONObject.class);
 
 		redRoleRsps.forEach(jsonObject -> {
-			missionService.validateRBMission(jsonObject);
+			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
 		});
 		blueRoleRsps.forEach(jsonObject -> {
-			missionService.validateRBMission(jsonObject);
+			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
 		});
 
 		RbTemplate rbTemplate = new RbTemplate();

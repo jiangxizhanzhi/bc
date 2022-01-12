@@ -3,6 +3,8 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.TypeReference;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +65,10 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 		// 校验角色的任务
 		teamTrainTemplateRoleList.forEach(teamTrainTemplateRole -> {
-			missionService.validateMission(teamTrainTemplateRole.getMissionsScheme());
+			ColorMission<AddTemplateMission> colorMission = JSON.parseObject(teamTrainTemplateRole.getMissionsScheme(),
+					new TypeReference<ColorMission<AddTemplateMission>>() {});
+
+			missionService.validateMission(colorMission);
 		});
 
 		List<String> roleList = teamTrainTemplateRoleList.stream()

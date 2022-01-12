@@ -88,7 +88,7 @@ public class MpLog implements Serializable {
 		this.from = from;
 	}
 
-	public Integer getLogType() {
+	public Integer getLog_type() {
 		return log_type;
 	}
 
@@ -96,7 +96,7 @@ public class MpLog implements Serializable {
 		this.log_type = logType;
 	}
 
-	public String getOpIp() {
+	public String getOp_ip() {
 		return op_ip;
 	}
 
@@ -104,7 +104,7 @@ public class MpLog implements Serializable {
 		this.op_ip = opIp;
 	}
 
-	public Integer getOpModule() {
+	public Integer getOp_module() {
 		return op_module;
 	}
 
@@ -112,7 +112,7 @@ public class MpLog implements Serializable {
 		this.op_module = opModule;
 	}
 
-	public String getOpTarget() {
+	public String getOp_target() {
 		return op_target;
 	}
 
@@ -120,7 +120,7 @@ public class MpLog implements Serializable {
 		this.op_target = opTarget;
 	}
 
-	public Integer getOpType() {
+	public Integer getOp_type() {
 		return op_type;
 	}
 
@@ -136,7 +136,7 @@ public class MpLog implements Serializable {
 		this.title = title;
 	}
 
-	public String getUserId() {
+	public String getUser_id() {
 		return user_id;
 	}
 
@@ -144,7 +144,7 @@ public class MpLog implements Serializable {
 		this.user_id = userId;
 	}
 
-	public String getUserName() {
+	public String getUser_name() {
 		return user_name;
 	}
 
@@ -152,7 +152,7 @@ public class MpLog implements Serializable {
 		this.user_name = userName;
 	}
 
-	public String getUserType() {
+	public String getUser_type() {
 		return user_type;
 	}
 

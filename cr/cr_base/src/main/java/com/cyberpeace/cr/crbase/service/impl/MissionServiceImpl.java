@@ -1,14 +1,15 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,20 +81,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Autowired
 	private MissionCategoryMapper missionCategoryMapper;
 
-	private Map<String, MissionCategory> categoryCache;
+	private volatile Map<String, MissionCategory> categoryCache;
 
-	public MissionServiceImpl() throws FileNotFoundException {}
-
-	@PostConstruct
-	public void init() {
-		List<MissionCategory> categories = missionCategoryMapper.selectAll();
-
-		categoryCache = Maps.newHashMap();
-
-		for (MissionCategory item : categories) {
-			categoryCache.put(item.getResourceId(), item);
-		}
-	}
+	private Object lock = new Object();
 
 	@Override
 	public MissionTemplate addMissionTemplate(MissionTemplate missionTemplate) {
@@ -220,6 +210,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<MissionCategory> listCategories() {
+		ensureCache();
 		return new ArrayList<>(categoryCache.values());
 	}
 
@@ -244,6 +235,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public MissionCategory getCategoryById(String categoryId) {
+		ensureCache();
 		return categoryCache.get(categoryId);
 	}
 
@@ -549,7 +541,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			});
 
 			if (trainMissions.size() > 0) {
-				List<MissionTemplate> missions = missionTemplateMapper.selectBatchIds(trainMissions);
+				List<MissionTemplate> missions = missionTemplateMapper
+						.selectBatchIds(trainMissions);
 
 				List<String> titles = Lists.newArrayList();
 				for (MissionTemplate template : missions) {
@@ -569,8 +562,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				}
 			}
 		});
-
-
 
 	}
 
@@ -643,5 +634,25 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<MissionSchemeTemplate> templateList = missionSchemeTemplateMapper
 				.selectBatchIds(templateIds);
 		return JsonUtil.arrayToString(templateList);
+	}
+
+	private void doInit() {
+		List<MissionCategory> categories = missionCategoryMapper.selectAll();
+
+		categoryCache = Maps.newHashMap();
+
+		for (MissionCategory item : categories) {
+			categoryCache.put(item.getResourceId(), item);
+		}
+	}
+
+	private void ensureCache() {
+		if (null == categoryCache) {
+			synchronized (lock) {
+				if (null == categoryCache) {
+					doInit();
+				}
+			}
+		}
 	}
 }

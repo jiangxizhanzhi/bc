@@ -147,4 +147,14 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
 	Integer batchDelete(List<String> practiceIds, AuthContext authContext);
+
+	/**
+	 * 处理实操习题dump文件
+	 * @param operation
+	 * @param fileStorePath
+	 * @param filePathMap
+	 * @return
+	 */
+	PracticeOperationDumpLoadBo handlerDumpOperation(PracticeOperation operation,
+			String fileStorePath, Map<String, String> filePathMap);
 }

@@ -13,6 +13,7 @@ import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
@@ -87,6 +88,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
+
+	@Autowired
+	private PracticeCategoryService practiceCategoryService;
 
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
@@ -402,6 +406,33 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				return saveBatch(theoryList);
 			}
 		});
+	}
+
+	@Override
+	public PracticeTheory loadPracticeTheory(String practiceSetId, PracticeTheoryDumpLoadBo dumpBo,
+			String userId) {
+		// 重复则不导入
+		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId,
+				dumpBo.getContent());
+		if (StringUtils.isNotBlank(practiceId)) {
+			log.error("Practice theory exist! practice_id=[{}], practice_name=[{}]", practiceId,
+					dumpBo.getContent());
+			return null;
+		}
+
+		//
+		PracticeTheory practiceTheory = BeanUtils.copy(dumpBo, PracticeTheory.class);
+		practiceTheory.setPracticeSetId(practiceSetId);
+		practiceTheory.setBuiltin(CommonConstant.TRUE);
+		practiceTheory.setResourceId(IDGeneratorUtil.getID());
+		practiceTheory.setCreateUserId(userId);
+
+		// 分类数据
+		String categoryId = practiceCategoryService.selectCategoryOrCreate(dumpBo.getCategoryName(),
+				PracticeCategory.PracticeType.THEORY.getCode(), userId);
+		practiceTheory.setCategoryId(categoryId);
+
+		return practiceTheory;
 	}
 
 	/**

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.OrderNameConstant;
@@ -166,12 +167,11 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("习题集资源数据导出")
 	@PostMapping("/batch_dumps")
-	public BaseRsp exportPracticeSet(@RequestBody @Validated DumpResourceReq dumpReq,
-			HttpServletResponse response) {
+	public BaseRsp exportPracticeSet(@NotEmpty List<String> ids, HttpServletResponse response) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		File dumpFile = practiceSetService.dumpPracticeSet(dumpReq.getResourceIds(), authContext);
+		File dumpFile = practiceSetService.dumpPracticeSet(ids, authContext);
 		FileUtil.setResponse(dumpFile, true, response);
 
 		return new BaseRsp();

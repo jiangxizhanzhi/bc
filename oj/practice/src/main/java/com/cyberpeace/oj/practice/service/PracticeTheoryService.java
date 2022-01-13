@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
-import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
-import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
-import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+import com.cyberpeace.oj.practice.service.bo.*;
 
 import java.util.List;
 
@@ -87,4 +84,14 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	Boolean importTheory(String practiceSetId, String categoryId, String realPath, String userId);
+
+	/**
+	 * 加载理论习题数据
+	 * @param practiceSetId
+	 * @param dumpBo
+	 * @param userId
+	 * @return
+	 */
+	PracticeTheory loadPracticeTheory(String practiceSetId, PracticeTheoryDumpLoadBo dumpBo,
+			String userId);
 }

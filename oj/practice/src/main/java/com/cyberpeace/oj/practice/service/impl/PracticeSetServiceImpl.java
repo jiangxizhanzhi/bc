@@ -93,19 +93,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	private PracticeValidateHandler practiceValidateHandler;
 
 	@Autowired
-	private AttachmentMapper attachmentMapper;
-
-	@Autowired
-	private RemoteTopoService remoteTopoService;
-
-	@Autowired
-	private PracticeCategoryMapper practiceCategoryMapper;
-
-	@Autowired
 	private LocalSceneService localSceneService;
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private PracticeCategoryService practiceCategoryService;
 
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
@@ -406,7 +400,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @return
 	 */
 	private List<PracticeOperation> loadPracticeOperation(String practiceSetId,
-			List<? extends PracticeDumpLoadBo> operationDumpLoadBos, String userId,
+			List<PracticeOperationDumpLoadBo> operationDumpLoadBos, String userId,
 			Map<String, String> filePathMap, String filePath) {
 		return StreamApiUtils.map(operationDumpLoadBos, dumpBo -> {
 
@@ -414,8 +408,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			String practiceId = practiceOperationMapper.selectByTitle(practiceSetId,
 					dumpBo.getTitle());
 			if (StringUtils.isNotBlank(practiceId)) {
-				log.error("Practice operation exist! practice_id=[{}], practice_name=[{}]", practiceId,
-						dumpBo.getTitle());
+				log.error("Practice operation exist! practice_id=[{}], practice_name=[{}]",
+						practiceId, dumpBo.getTitle());
 				return null;
 			}
 
@@ -428,8 +422,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			operation.setResourceId(IDGeneratorUtil.getID());
 
 			// 分类
-			String categoryId = selectCategoryOrCreate(dumpBo.getCategoryName(),
-					PracticeCategory.PracticeType.OPERATION.getCode(), userId);
+			String categoryId = practiceCategoryService.selectCategoryOrCreate(
+					dumpBo.getCategoryName(), PracticeCategory.PracticeType.OPERATION.getCode(),
+					userId);
 			operation.setCategoryId(categoryId);
 
 			// 附件
@@ -489,57 +484,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @return
 	 */
 	private List<PracticeTheory> loadPracticeTheory(String practiceSetId,
-			List<? extends PracticeDumpLoadBo> theoryDumpLoadBos, String userId) {
-		return StreamApiUtils.map(theoryDumpLoadBos, dumpBo -> {
-
-			// 重复则不导入
-			String practiceId = practiceTheoryMapper.selectByContent(practiceSetId,
-					dumpBo.getContent());
-			if (StringUtils.isNotBlank(practiceId)) {
-				log.error("Practice theory exist! practice_id=[{}], practice_name=[{}]", practiceId,
-						dumpBo.getContent());
-				return null;
-			}
-
-			//
-			PracticeTheory practiceTheory = BeanUtils.copy(dumpBo, PracticeTheory.class);
-			practiceTheory.setPracticeSetId(practiceSetId);
-			practiceTheory.setBuiltin(CommonConstant.TRUE);
-			practiceTheory.setResourceId(IDGeneratorUtil.getID());
-			practiceTheory.setCreateUserId(userId);
-
-			// 分类数据
-			String categoryId = selectCategoryOrCreate(dumpBo.getCategoryName(),
-					PracticeCategory.PracticeType.THEORY.getCode(), userId);
-			practiceTheory.setCategoryId(categoryId);
-
-			return practiceTheory;
-		});
-	}
-
-	/**
-	 * 根据名称查询或创建习题分类 有则查询返回，无则创建
-	 * @param categoryName
-	 * @param practiceType
-	 * @return
-	 */
-	private String selectCategoryOrCreate(String categoryName, Integer practiceType,
-			String userId) {
-		String categoryId = practiceCategoryMapper.selectByName(practiceType, categoryName);
-		if (StringUtils.isNotBlank(categoryId)) {
-			return categoryId;
-		}
-
-		PracticeCategory practiceCategory = new PracticeCategory();
-		practiceCategory.setCreateUserId(userId);
-		String resourceId = IDGeneratorUtil.getID();
-		practiceCategory.setCode(resourceId);
-		practiceCategory.setResourceId(resourceId);
-		practiceCategory.setName(categoryName);
-		practiceCategory.setPracticeType(practiceType);
-
-		practiceCategoryMapper.insert(practiceCategory);
-		return resourceId;
+			List<PracticeTheoryDumpLoadBo> theoryDumpLoadBos, String userId) {
+		return StreamApiUtils.map(theoryDumpLoadBos,
+				dumpBo -> practiceTheoryService.loadPracticeTheory(practiceSetId, dumpBo, userId));
 	}
 
 	/**
@@ -649,69 +596,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				.selectBatchIds(operationIds);
 
 		// 数据转换
-		return StreamApiUtils.map(operationList,
-				operation -> handlerDumpOperation(operation, fileStorePath, filePathMap));
-	}
-
-	/**
-	 * 处理实操习题导出数据
-	 * @param operation
-	 * @param fileStorePath
-	 * @param filePathMap
-	 * @return
-	 */
-	private PracticeOperationDumpLoadBo handlerDumpOperation(PracticeOperation operation,
-			String fileStorePath, Map<String, String> filePathMap) {
-		PracticeOperationDumpLoadBo dumpLoadBo = BeanUtils.copy(operation,
-				PracticeOperationDumpLoadBo.class);
-		// 分类
-		PracticeCategory category = practiceValidateHandler
-				.validateCategoryExist(operation.getCategoryId());
-		dumpLoadBo.setCategoryName(category.getName());
-
-		// 附件
-		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
-			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
-			if (null != attachment) {
-				dumpLoadBo.setAttachmentPath(attachment.getFilePath());
-				// 重命名文件防止重复
-				String realPath = utilService.getRealPath(attachment.getFilePath());
-				String fileName = FileUtil.getFileName(realPath, true);
-				String destFilePath = fileStorePath + File.separatorChar
-						+ FileUtil.getNewName(fileName);
-				FileUtil.copyFile(realPath, destFilePath, false);
-
-				String relativePath = destFilePath.replace(fileStorePath,
-						CommonConstant.EMPTY_STRING);
-				filePathMap.put(attachment.getFilePath(), relativePath);
-			}
-		}
-
-		// 场景
-		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
-			JSONObject topoData = remoteTopoService.exportTopo(operation.getTopoId());
-			dumpLoadBo.setTopoConfig(topoData);
-		}
-
-		// 题解 题解文件拷贝
-		if (StringUtils.isNotBlank(operation.getWriteup())) {
-			List<String> matchList = LocalStringUtil.getMatchStr(operation.getWriteup(),
-					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ZERO);
-			matchList.forEach(str -> {
-				// 文件拷贝
-				String realPath = utilService.getRealPath(str);
-				String fileName = FileUtil.getFileName(realPath, true);
-				String newName = FileUtil.getNewName(fileName);
-				String destFilePath = fileStorePath + File.separatorChar + newName;
-				FileUtil.copyFile(realPath, destFilePath, false);
-
-				String relativePath = destFilePath.replace(fileStorePath,
-						CommonConstant.EMPTY_STRING);
-				filePathMap.put(str, relativePath);
-			});
-		}
-
-		return dumpLoadBo;
+		return StreamApiUtils.map(operationList, operation -> practiceOperationService
+				.handlerDumpOperation(operation, fileStorePath, filePathMap));
 	}
 
 	/**

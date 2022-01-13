@@ -200,6 +200,25 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		return practiceCategoryMapper.deleteBatchIds(allDeleteIds);
 	}
 
+	@Override
+	public String selectCategoryOrCreate(String categoryName, Integer practiceType, String userId) {
+		String categoryId = practiceCategoryMapper.selectByName(practiceType, categoryName);
+		if (StringUtils.isNotBlank(categoryId)) {
+			return categoryId;
+		}
+
+		PracticeCategory practiceCategory = new PracticeCategory();
+		practiceCategory.setCreateUserId(userId);
+		String resourceId = IDGeneratorUtil.getID();
+		practiceCategory.setCode(resourceId);
+		practiceCategory.setResourceId(resourceId);
+		practiceCategory.setName(categoryName);
+		practiceCategory.setPracticeType(practiceType);
+
+		practiceCategoryMapper.insert(practiceCategory);
+		return resourceId;
+	}
+
 	/**
 	 * 实体类转listBo
 	 * @param practiceCategory 习题分类实体类

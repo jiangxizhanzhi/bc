@@ -87,6 +87,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	/**
 	 * 习题集数据加载
 	 * @param realPath
+	 * @param userId
 	 * @return
 	 */
 	Boolean loadPracticeSet(String realPath, String userId);

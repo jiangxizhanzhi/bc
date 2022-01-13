@@ -74,4 +74,12 @@ public interface CourseService extends IService<Course> {
 	 * @return
 	 */
 	Boolean batchDelete(List<String> courseIds, AuthContext authContext);
+
+	/**
+	 * 课程数据导出
+	 * @param courseIds
+	 * @param authContext
+	 * @return 文件路径
+	 */
+	String dumpCourse(List<String> courseIds, AuthContext authContext);
 }

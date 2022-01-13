@@ -665,6 +665,61 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return operation;
 	}
 
+	@Override
+	public PracticeOperationDumpLoadBo handlerDumpOperation(PracticeOperation operation,
+			String fileStorePath, Map<String, String> filePathMap) {
+		PracticeOperationDumpLoadBo dumpLoadBo = BeanUtils.copy(operation,
+				PracticeOperationDumpLoadBo.class);
+		// 分类
+		PracticeCategory category = practiceValidateHandler
+				.validateCategoryExist(operation.getCategoryId());
+		dumpLoadBo.setCategoryName(category.getName());
+
+		// 附件
+		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
+			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
+			if (null != attachment) {
+				dumpLoadBo.setAttachmentPath(attachment.getFilePath());
+				// 重命名文件防止重复
+				String realPath = utilService.getRealPath(attachment.getFilePath());
+				String fileName = FileUtil.getFileName(realPath, true);
+				String destFilePath = fileStorePath + File.separatorChar
+						+ FileUtil.getNewName(fileName);
+				FileUtil.copyFile(realPath, destFilePath, false);
+
+				String relativePath = destFilePath.replace(fileStorePath,
+						CommonConstant.EMPTY_STRING);
+				filePathMap.put(attachment.getFilePath(), relativePath);
+			}
+		}
+
+		// 场景
+		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
+			JSONObject topoData = remoteTopoService.exportTopo(operation.getTopoId());
+			dumpLoadBo.setTopoConfig(topoData);
+		}
+
+		// 题解 题解文件拷贝
+		if (StringUtils.isNotBlank(operation.getWriteup())) {
+			List<String> matchList = LocalStringUtil.getMatchStr(operation.getWriteup(),
+					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ZERO);
+			matchList.forEach(str -> {
+				// 文件拷贝
+				String realPath = utilService.getRealPath(str);
+				String fileName = FileUtil.getFileName(realPath, true);
+				String newName = FileUtil.getNewName(fileName);
+				String destFilePath = fileStorePath + File.separatorChar + newName;
+				FileUtil.copyFile(realPath, destFilePath, false);
+
+				String relativePath = destFilePath.replace(fileStorePath,
+						CommonConstant.EMPTY_STRING);
+				filePathMap.put(str, relativePath);
+			});
+		}
+
+		return dumpLoadBo;
+	}
+
 	/**
 	 * 格式化实操习题
 	 *

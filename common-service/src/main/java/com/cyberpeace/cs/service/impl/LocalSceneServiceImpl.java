@@ -199,7 +199,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 		if (!result) {
 			log.error("failed to pause scene [{}]", localScene.getMpSceneId());
-			throw new BusinessException("failed to pause scene [{}]");
+			return false;
 		}
 		// 3. 修改本地数据
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.PAUSE.getCode());
@@ -219,7 +219,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 		if (!result) {
 			log.error("failed to unpause scene [{}]", localScene.getMpSceneId());
-			throw new BusinessException("failed to unpause scene [{}]");
+			return false;
 		}
 		// 3、修改本地数据
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());

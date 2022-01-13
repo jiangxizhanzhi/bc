@@ -217,9 +217,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, PAUSE_FLAG);
 
-		// 2、 发送mp暂停请求
-		if (!localSceneService.pauseScene(room.getLocalSceneId())) {
-			return false;
+		// 2、 场景开启的状态下发送mp暂停请求
+		if (localSceneService.ensureSceneStarted(room.getLocalSceneId())
+				&& !localSceneService.pauseScene(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE);
 		}
 		// 3. 更新时间管理
 		RbTimeManagement timeManagement = rbTimeManagementService.getByRoomId(roomId);
@@ -239,9 +240,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, UNPAUSE_FLAG);
 
-		// 2、 发送mp解除暂停请求
-		if (!localSceneService.unpauseScene(room.getLocalSceneId())) {
-			return false;
+		// 2、 如果mp场景存在，发送mp解除暂停请求
+		if (localSceneService.pauseScene(room.getLocalSceneId())
+				&& !localSceneService.unpauseScene(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE);
 		}
 		// 3. 更新时间管理
 		RbTimeManagement timeManagement = rbTimeManagementService.getByRoomId(roomId);
@@ -260,9 +262,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		if (room == null) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
-		if (!localSceneService.ensureSceneStarted(room.getLocalSceneId())) {
-			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
-		}
+
 		// 只有导演可以暂停、恢复
 		String userId = UserInfoContext.getUserContext().getUserId();
 		rbRoomService.checkDirectorPermission(room.getResourceId(), userId);

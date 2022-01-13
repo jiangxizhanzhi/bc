@@ -183,4 +183,10 @@ public interface CrBusinessErrorCode {
 
 	// 任务方案名称已存在
 	String DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE = "101058";
+
+	// 暂停场景失败
+	String FAILED_TO_PAUSE_SCENE = "101059";
+
+	// 恢复场景失败
+	String FAILED_TO_UNPAUSE_SCENE = "101060";
 }

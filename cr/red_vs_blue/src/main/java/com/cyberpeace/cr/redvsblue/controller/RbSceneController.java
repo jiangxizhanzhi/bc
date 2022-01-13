@@ -2,9 +2,6 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,9 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -82,30 +82,30 @@ public class RbSceneController {
 
 	@ApiOperation("暂停场景")
 	@PostMapping("/pause")
-	public BaseRsp pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+	public BaseRsp<Boolean> pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
-		rbSceneService.pauseScene(roomId);
+		Boolean ret = rbSceneService.pauseScene(roomId);
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.PAUSE, rbRoomService.getById(roomId).getName());
 
-		return new BaseRsp();
+		return new BaseRsp<>(ret);
 	}
 
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/unpause")
-	public BaseRsp unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+	public BaseRsp<Boolean> unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
-		rbSceneService.unpauseScene(roomId);
+		Boolean ret = rbSceneService.unpauseScene(roomId);
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.UNPAUSE, rbRoomService.getById(roomId).getName());
 
-		return new BaseRsp();
+		return new BaseRsp<>(ret);
 	}
 
 	@ApiOperation("查询流量")

@@ -244,7 +244,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		checkBeforePauseOps(room, UNPAUSE_FLAG);
 
 		// 2、 如果mp场景存在，发送mp解除暂停请求
-		if (localSceneService.pauseScene(room.getLocalSceneId())
+		if (localSceneService.ensureSceneStarted(room.getLocalSceneId())
 				&& !localSceneService.unpauseScene(room.getLocalSceneId())) {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE);
 		}

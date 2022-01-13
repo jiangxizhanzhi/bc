@@ -1,10 +1,12 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
@@ -192,7 +194,6 @@ public class RoleController {
 
 		List<String> courseIds = getCourseIdsFromDb(role, field);
 
-		int courseCount = courseIds.size();
 		List<CourseConfigOutput> outputList = getCourseConfigOutputList(courseIds);
 
 		return new BaseRsp<>(outputList);

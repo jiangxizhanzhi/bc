@@ -1,18 +1,16 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DataTransferUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
@@ -45,9 +43,6 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 
 	@Autowired
 	private CourseService courseService;
-
-	@Autowired
-	private CourseLessonMapper courseLessonMapper;
 
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledge(String userId, String roleId) {
@@ -150,15 +145,18 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 			throw new InvalidParamException("未检索到相应岗位!");
 		}
 
-		String coursesStr = role.getKnowledgeCourses();
-		List<String> courseIds = JsonUtil.toJsonObjectArray(coursesStr, String.class);
+		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(),
+				String.class);
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return Lists.newArrayList();
 		}
 
 		List<CourseInfoBo> infoBos = courseService.selectByIds(courseIds);
-		List<RoleCourseBo> courseBos = infoBos.stream()
-				.map(courseInfoBo -> BeanUtils.copy(courseInfoBo, RoleCourseBo.class))
+		Map<String, CourseInfoBo> infoBoMap = StreamApiUtils.toMap(infoBos,
+				CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo);
+
+		List<RoleCourseBo> courseBos = courseIds.stream()
+				.map(courseId -> BeanUtils.copy(infoBoMap.get(courseId), RoleCourseBo.class))
 				.collect(Collectors.toList());
 		return courseBos;
 	}

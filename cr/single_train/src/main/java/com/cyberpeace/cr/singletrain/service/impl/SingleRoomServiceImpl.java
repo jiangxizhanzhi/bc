@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -213,9 +214,17 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			return false;
 		}
 		JSONObject extraRecord = new JSONObject();
-		// todo 待记录得分等信息
-		if (!JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class).isEmpty()) {
+
+		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
+		if (!trainRecord.isEmpty()) {
+			// 用户训练记录
 			extraRecord.put(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD, singleRoom.getTrainingRecord());
+
+			// 用户训练得分
+			extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, trainRecord.values().stream().map(item -> {
+				JSONObject missionResult = (JSONObject) item;
+				return missionResult.getDouble(SingleRoom.MissionsRecordFields.SCORE);
+			}).mapToDouble(value -> value).sum());
 		}
 
 		// 关闭场景
@@ -329,8 +338,6 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					.toJsonObjectArray(item.getSingleTemplate().getPreSkills(), String.class));
 			singleRoomListBo.getEventData().setTrainSkill(JsonUtil
 					.toJsonObjectArray(item.getSingleTemplate().getTrainSkills(), String.class));
-			singleRoomListBo.setMissionsScheme(
-					JsonUtil.toJsonObject(item.getMissionsScheme(), JSONObject.class));
 
 			singleRoomListBo.setLastSevenDays(dateRangeForMonth);
 			singleRoomListBo.setTemplateUseCount(trainStats.getOrDefault(
@@ -732,6 +739,26 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Override
 	public List<SingleRoom> getByBusinessTemplateId(String businessTemplateId) {
 		return singleRoomMapper.selectByTemplateId(businessTemplateId);
+	}
+
+	@Override
+	public List<TrainHistoryBo> getTrainHistory(String businessTemplateId) {
+		List<TrainRecord> trainHistory = trainRecordService.lambdaQuery()
+				.eq(TrainRecord::getUserId, UserInfoContext.getUserContext().getUserId())
+				.eq(TrainRecord::getBusinessTemplateId, businessTemplateId)
+				.ne(TrainRecord::getExtra, null)
+				.orderByDesc(TrainRecord::getStartTime).list();
+
+		List<TrainHistoryBo> result = Lists.newArrayList();
+		for (TrainRecord item: trainHistory) {
+			TrainHistoryBo trainHistoryBo = new TrainHistoryBo();
+			trainHistoryBo.setBusinessTemplateId(item.getBusinessTemplateId());
+			trainHistoryBo.setTrainTime(item.getStartTime());
+			trainHistoryBo.setScore(item.getExtra().getDouble(SingleRoom.CrTrainRecordFields.SCORE));
+
+			result.add(trainHistoryBo);
+		}
+		return result;
 	}
 
 	// todo 待迁移

@@ -27,7 +27,6 @@
         <result column="duration_time" property="singleTemplate.durationTime"/>
         <result column="start_time" property="singleRoom.startTime"/>
         <result column="training_record" property="singleRoom.trainingRecord"/>
-        <result column="missions_scheme" property="missionsScheme"/>
         <result column="topo_id" property="businessTemplate.topoId"/>
     </resultMap>
 

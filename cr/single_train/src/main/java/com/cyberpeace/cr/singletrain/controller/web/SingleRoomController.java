@@ -1,15 +1,5 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
-import java.util.List;
-
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -24,10 +14,18 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
 import com.cyberpeace.cs.service.LocalSceneService;
-
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "单兵训练")
 @RestController
@@ -166,4 +164,11 @@ public class SingleRoomController {
 		}
 		return new BaseRsp();
 	}
+
+	@ApiOperation("训练历史")
+	@GetMapping("/train_history")
+	public BaseRsp<List<TrainHistoryBo>> trainHistory(@RequestParam("resource_id") String businessTemplateId) {
+		return new BaseRsp<>(singleRoomService.getTrainHistory(businessTemplateId));
+	}
+
 }

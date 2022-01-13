@@ -57,4 +57,11 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * 获取某模板关联的所有房间
 	 */
 	List<SingleRoom> getByBusinessTemplateId(String businessTemplateId);
+
+	/**
+	 * 获取用户训练历史记录
+	 * @param businessTemplateId 业务模板id
+	 * @return TrainHistoryBo
+	 */
+	List<TrainHistoryBo> getTrainHistory(String businessTemplateId);
 }

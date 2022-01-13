@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.dao.mapper;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

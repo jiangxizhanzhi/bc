@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 
@@ -33,6 +35,7 @@ public class CourseDumpLoadBo implements Serializable {
 
 	private String courseNum;
 
+	private List<LessonDumpLoadBo> lesson;
 
-
+	private Map<String, String> filePathMap;
 }

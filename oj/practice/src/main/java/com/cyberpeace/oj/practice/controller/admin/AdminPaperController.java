@@ -6,10 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -109,15 +106,16 @@ public class AdminPaperController {
 	}
 
 	@ApiOperation("获取随机数量题目")
-	@GetMapping("/random/practice")
+	@PostMapping("/random/practice")
 	public BaseRsp<List<LibPracticeListBo>>
-			getRandomPractice(@Validated RandomPracticeReq randomPracticeReq) {
+			getRandomPractice(@RequestBody @Validated RandomPracticeReq randomPracticeReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 
 		RandomPracticeQuery practiceQuery = BeanUtils.copy(randomPracticeReq,
 				RandomPracticeQuery.class);
+		practiceQuery.setSelectIds(randomPracticeReq.getResourceIds());
 
 		// 分类数据组装
 		if (StringUtils.isNotBlank(randomPracticeReq.getCategoryId())) {

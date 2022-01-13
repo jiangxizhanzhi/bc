@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ApiModel
@@ -33,15 +34,7 @@ public class RandomPracticeReq implements Serializable {
 	@NotNull
 	private Double score;
 
-	public void setPractice_set_id(String practiceSetId) {
-		this.practiceSetId = practiceSetId;
-	}
+	@ApiModelProperty("已选择的习题编号")
+	private List<String> resourceIds;
 
-	public void setCategory_id(String categoryId) {
-		this.categoryId = categoryId;
-	}
-
-	public void setQuestion_type(Integer questionType) {
-		this.questionType = questionType;
-	}
 }

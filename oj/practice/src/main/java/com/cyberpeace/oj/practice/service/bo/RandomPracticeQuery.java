@@ -24,4 +24,6 @@ public class RandomPracticeQuery implements Serializable {
 	@ApiModelProperty("习题数量")
 	private Integer count;
 
+	@ApiModelProperty("已选择的习题集编号")
+	private List<String> selectIds;
 }

@@ -71,6 +71,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
+	@Autowired
+	private PracticeValidateHandler practiceValidateHandler;
+
 	@Override
 	public Paper create(PaperContext paperContext) {
 
@@ -176,12 +179,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	public List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery,
 			Double score, AuthContext authContext) {
 
-		List<String> permissionIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(permissionIds)
-				|| (StringUtils.isNotBlank(practiceQuery.getPracticeSetId())
-						&& !permissionIds.contains(practiceQuery.getPracticeSetId()))) {
-			return null;
-		}
+		// 数据校验
+		practiceValidateHandler.validatePracticeSetPermission(practiceQuery.getPracticeSetId(),
+				authContext);
 
 		PracticeSet practiceSet = practiceSetMapper.selectById(practiceQuery.getPracticeSetId());
 
@@ -191,6 +191,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			List<String> practiceIds = practiceTheoryMapper
 					.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
+			practiceIds.removeAll(practiceQuery.getSelectIds());
+
+			// 数据量判断
 			if (practiceIds.size() < practiceQuery.getCount()) {
 				log.error("Practice not enough! get_count=[{}], practice_count=[{}]",
 						practiceQuery.getCount(), practiceIds.size());
@@ -199,6 +202,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			// 执行数据查询
 			TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
+			theoryListQuery.setResourceIds(practiceIds);
 			List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
 					practiceQuery.getCount());
 
@@ -209,6 +213,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			// 习题集数量校验
 			List<String> practiceIds = practiceOperationMapper
 					.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
+			practiceIds.removeAll(practiceQuery.getSelectIds());
+
+			// 数据量判断
 			if (practiceIds.size() < practiceQuery.getCount()) {
 				log.error("Practice not enough! get_count=[{}], practice_count=[{}]",
 						practiceQuery.getCount(), practiceIds.size());
@@ -217,6 +224,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			// 实操习题数据查询
 			OperationListQuery listQuery = BeanUtils.copy(practiceQuery, OperationListQuery.class);
+			listQuery.setResourceIds(practiceIds);
 			List<PracticeOperation> operations = practiceOperationMapper.randomChoice(listQuery,
 					practiceQuery.getCount());
 

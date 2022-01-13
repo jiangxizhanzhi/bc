@@ -157,4 +157,17 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 */
 	PracticeOperationDumpLoadBo handlerDumpOperation(PracticeOperation operation,
 			String fileStorePath, Map<String, String> filePathMap);
+
+	/**
+	 * 习题集数据加载
+	 * @param practiceSetId
+	 * @param dumpBo
+	 * @param filePathMap
+	 * @param filePath
+	 * @return
+	 */
+	PracticeOperation
+			loadPracticeOperation(String practiceSetId,
+			PracticeOperationDumpLoadBo dumpBo, Map<String, String> filePathMap, String filePath,
+			String userId);
 }

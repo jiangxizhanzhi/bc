@@ -1,15 +1,19 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -401,7 +405,45 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<Course> courseList = StreamApiUtils.map(courseIds,
 				courseId -> courseValidateHandler.validateCourseExist(courseId));
 
+		// 创建文件夹
+		String destPath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		String destFilePath = destPath + File.separatorChar
+				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
+
+		StreamApiUtils.map(courseList, course -> {
+			Map<String, String> filePathMap = Maps.newHashMap();
+			CourseDumpLoadBo courseDumpLoadBo = dumCourse(course, filePathMap, destFilePath);
+
+			return courseDumpLoadBo;
+		});
 
 		return null;
+	}
+
+	/**
+	 * 组织导出的课程数据
+	 * @param course
+	 * @param filePathMap
+	 * @return
+	 */
+	private CourseDumpLoadBo dumCourse(Course course, Map<String, String> filePathMap,
+			String fileStorePath) {
+		// 元数据拷贝
+		CourseDumpLoadBo courseDumpLoadBo = BeanUtils.copy(course, CourseDumpLoadBo.class);
+
+		// logo文件copy到临时文件夹
+		if (StringUtils.isNotBlank(course.getLogo())) {
+			String realPath = utilService.getRealPath(course.getLogo());
+			String fileSuffix = FileUtil.getFileSuffix(realPath);
+			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+			String destLogoPath = fileStorePath + File.separatorChar + fileName;
+
+			FileUtil.copyFile(realPath, destLogoPath, false);
+			filePathMap.put(course.getLogo(), fileName);
+		}
+
+		// 大纲文件处理 todo
+
+		return courseDumpLoadBo;
 	}
 }

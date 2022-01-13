@@ -21,6 +21,7 @@ import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +126,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
+
+	@Autowired
+	private PracticeCategoryService practiceCategoryService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -718,6 +722,79 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		return dumpLoadBo;
+	}
+
+	@Override
+	public PracticeOperation loadPracticeOperation(String practiceSetId,
+			PracticeOperationDumpLoadBo dumpBo, Map<String, String> filePathMap, String filePath,
+			String userId) {
+		// 数据重复性判断
+		String practiceId = practiceOperationMapper.selectByTitle(practiceSetId, dumpBo.getTitle());
+		if (StringUtils.isNotBlank(practiceId)) {
+			log.error("Practice operation exist! practice_id=[{}], practice_name=[{}]", practiceId,
+					dumpBo.getTitle());
+			return null;
+		}
+
+		PracticeOperationDumpLoadBo dumpLoadBo = BeanUtils.copy(dumpBo,
+				PracticeOperationDumpLoadBo.class);
+		PracticeOperation operation = BeanUtils.copy(dumpBo, PracticeOperation.class);
+		operation.setPracticeSetId(practiceSetId);
+		operation.setBuiltin(CommonConstant.TRUE);
+		operation.setCreateUserId(userId);
+		operation.setResourceId(IDGeneratorUtil.getID());
+
+		// 分类
+		String categoryId = practiceCategoryService.selectCategoryOrCreate(dumpBo.getCategoryName(),
+				PracticeCategory.PracticeType.OPERATION.getCode(), userId);
+		operation.setCategoryId(categoryId);
+
+		// 附件
+		if (StringUtils.isNotBlank(dumpLoadBo.getAttachmentPath())) {
+			String relativePath = filePathMap.get(dumpLoadBo.getAttachmentPath());
+			String attachmentPath = filePath + File.separatorChar + relativePath;
+
+			String fileSuffix = FileUtil.getFileSuffix(attachmentPath);
+			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+			String destFilePath = AttachmentPath.PRACTICE_ATTACHMENT.getDesc() + fileName;
+			FileUtil.copyFile(attachmentPath, destFilePath, false);
+			String fileUrl = utilService.replaceFileUrl(destFilePath);
+
+			AttachmentBo attachmentBo = attachmentService.create(fileName, fileUrl);
+			operation.setAttachmentId(attachmentBo.getResourceId());
+		}
+		// 场景
+		if (dumpLoadBo.getDynamicEnv()) {
+			String topoId = localSceneService.saveTopo(dumpLoadBo.getTopoConfig(),
+					LocalScene.BusinessCode.PRACTICE.getCode());
+			operation.setTopoId(topoId);
+		}
+
+		// 题解
+		if (StringUtils.isNotBlank(dumpLoadBo.getWriteup())) {
+			List<String> matchList = LocalStringUtil.getMatchStr(dumpLoadBo.getWriteup(),
+					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
+			List<String> urlList = StreamApiUtils.map(matchList, url -> {
+				// 获取文件路径
+				String relativePath = filePathMap.get(url);
+				String imagePath = filePath + File.separatorChar + relativePath;
+
+				// copy文件
+				String fileSuffix = FileUtil.getFileSuffix(imagePath);
+				String destFilePath = AttachmentPath.NOTE.getDesc() + IDGeneratorUtil.getID()
+						+ CommonConstant.PERIOD + fileSuffix;
+				FileUtil.copyFile(imagePath, destFilePath, false);
+				// 替换文件路径为数据库可存储
+				String storePath = utilService.replaceFileUrl(destFilePath);
+				// 获取页面可访问
+				String fileUrl = utilService.handlerFileUrl(storePath);
+				return fileUrl;
+			});
+			String content = LocalStringUtil.replaceAll(dumpLoadBo.getWriteup(), matchList,
+					urlList);
+			operation.setWriteup(content);
+		}
+		return operation;
 	}
 
 	/**

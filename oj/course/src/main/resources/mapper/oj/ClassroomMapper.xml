@@ -56,7 +56,7 @@
                 </if>
                 <if test="listQuery.orgId != null and listQuery.orgId != ''">
                     <bind name="likeOrg" value="'%' + listQuery.orgId + '%'"/>
-                    and organization_ids like #{likeOrg}
+                    or organization_ids like #{likeOrg}
                 </if>
             </if>
         </where>

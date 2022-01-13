@@ -32,6 +32,9 @@
         where user_id = #{userId}
           and business_type = #{type}
           and end_time is not null
+          <if test="type == @com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate$BusinessType@TRAINING_SINGLE.code">
+              and extra is not null
+          </if>
     </select>
 
 </mapper>

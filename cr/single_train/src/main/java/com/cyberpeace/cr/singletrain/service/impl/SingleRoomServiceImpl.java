@@ -214,7 +214,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		}
 		JSONObject extraRecord = new JSONObject();
 		// todo 待记录得分等信息
-		extraRecord.put(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD, singleRoom.getTrainingRecord());
+		if (!JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), String.class).isEmpty()) {
+			extraRecord.put(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD, singleRoom.getTrainingRecord());
+		}
 
 		// 关闭场景
 		localSceneService.stopScene(singleRoom.getLocalSceneId());
@@ -226,8 +228,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				localSceneService.removeById(singleRoom.getLocalSceneId());
 				singleRoomMapper.deleteById(singleRoom);
-				trainRecordService.updateEndDate(businessTemplateId, userId,
-						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), JsonUtil.toJsonString(extraRecord));
+				if (extraRecord.isEmpty()) {
+					trainRecordService.updateEndDate(businessTemplateId, userId,
+							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null);
+				} else {
+					trainRecordService.updateEndDate(businessTemplateId, userId,
+							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), JsonUtil.toJsonString(extraRecord));
+				}
 			}
 		});
 		return true;

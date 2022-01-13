@@ -80,7 +80,11 @@ public class RbSceneServiceImpl implements RbSceneService {
 		rbRoomService.checkTeacherPermission(roomId, userId);
 
 		RbRoom room = rbRoomService.getById(roomId);
-
+		// 训练暂停状态不能启动场景
+		RbTimeManagement management = rbTimeManagementService.getByRoomId(roomId);
+		if (management != null && management.isPaused()) {
+			throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
+		}
 		// 2、如果已经有启动的场景，不能重复启动; 如果有脏数据，清除脏数据
 		LocalScene localSceneExisted = localSceneService.getByBusinessInstanceId(roomId);
 		if (localSceneExisted != null) {
@@ -90,7 +94,6 @@ public class RbSceneServiceImpl implements RbSceneService {
 				throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
 			}
 		}
-
 		// 3、构建本地scene对象
 		LocalScene localScene = createLocalScene(room, room.getCopyedTopoId());
 

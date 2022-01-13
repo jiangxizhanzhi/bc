@@ -52,6 +52,7 @@ public class Course extends AuthTable {
 
 	private String courseNum;
 
+	@TableField(exist = false)
 	private Integer lessonCount;
 
 	public enum Difficulty implements GenericEnum {

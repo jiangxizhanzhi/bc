@@ -837,7 +837,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		AuthContext webAuth = BeanUtils.copy(authContext, AuthContext.class);
 		webAuth.setIsWeb(true);
-		Course course = courseValidateHandler.validateCourseExist(courseId);
+
+		courseValidateHandler.validateCourseExist(courseId);
 
 		List<Classroom> classrooms = classroomMapper.selectByLesson(resourceIds);
 		List<String> classroomIds = StreamApiUtils.map(classrooms, Classroom::getResourceId);
@@ -896,17 +897,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				lessonConfigMapper.deleteByLessonIds(resourceIds);
 				adminOjLocalScenes.forEach(ojLocalScene -> ojLocalSceneService
 						.deleteLocalAndRemoteScene(ojLocalScene));
-				int row = courseLessonMapper.deleteBatchIds(resourceIds);
-				Integer lessonCount = null != course.getLessonCount()
-						&& course.getLessonCount().intValue() >= resourceIds.size()
-								? course.getLessonCount() - resourceIds.size()
-								: CommonConstant.ZERO;
 
-				// 更新课程数量
-				course.setLessonCount(lessonCount);
-				courseMapper.updateById(course);
-
-				return row;
+				return courseLessonMapper.deleteBatchIds(resourceIds);
 			}
 		});
 	}

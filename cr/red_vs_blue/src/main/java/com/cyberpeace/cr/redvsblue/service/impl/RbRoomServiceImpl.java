@@ -37,6 +37,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -48,7 +49,6 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardFriend;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardGroup;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
@@ -164,8 +164,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 				for (CrRole crRole : crRoles) {
 					if (index >= users.size()) {
-						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
-					}
+						log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
+						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);					}
 
 					if (users.get(index).getUsers().size() == 0) {
 						index += 2;
@@ -414,7 +414,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 					crRoleList.forEach(crRole -> {
 						List<String> users = roomRoleMap.get(crRole.getResourceId()).getUsers();
 						if (users.size() == 0) {
-							throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
+							log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
+							throw new BusinessException(
+									CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);						
 						}
 						crRole.setUserIds(JsonUtil.toJsonString(users));
 						crRoleService.updateById(crRole);

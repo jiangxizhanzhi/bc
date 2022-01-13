@@ -128,9 +128,11 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
 
   List<String> selectOperationPracticeByAuth();
 
-  List<String> selectAfterclassPracticeByAuth();
+  List<String> selectAfterclassPracticeByAuth(@Param("lessonIds") List<String> lessonIds);
 
   List<String> selectTheoryPracticeByAuth();
+
+  List<String> selectPublicCourse(@Param("courseIds") List<String> courseIds);
 
   List<ListSchedule> selectSchedules(String userId);
 }

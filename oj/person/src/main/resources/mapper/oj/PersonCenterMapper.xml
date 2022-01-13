@@ -101,21 +101,25 @@
     </select>
 
     <select id="selectLessonByAuth" resultType="java.lang.String">
-        select resource_id from oj_course_lesson
-        where course_id in
-        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
-            #{courseId}
-        </foreach>
-        and public = True
+        select resource_id from oj_course_lesson where public = True
+        <if test="courseIds != null and courseIds.size() != 0">
+            and course_id in
+            <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                #{courseId}
+            </foreach>
+        </if>
     </select>
 
     <select id="selectExpLessonByAuth" resultType="java.lang.String">
         select resource_id from oj_course_lesson
-        where resource_id in
-        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
-            #{courseId}
-        </foreach>
-        and public = True and type = 1
+        where  public = True and type = 1
+        <if test="courseIds != null and courseIds.size() != 0">
+            and resource_id in
+            <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                #{courseId}
+            </foreach>
+        </if>
+
     </select>
 
     <select id="selectOperationPracticeByAuth" resultType="java.lang.String">
@@ -128,9 +132,26 @@
         <include refid="filterByPublic"/>
     </select>
 
+    <select id="selectPublicCourse" resultType="java.lang.String">
+        select resource_id from oj_course where
+        <include refid="filterByPublic"/>
+        <if test="courseIds != null and courseIds.size() != 0">
+            and resource_id in
+            <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                #{courseId}
+            </foreach>
+        </if>
+    </select>
+
     <select id="selectAfterclassPracticeByAuth" resultType="java.lang.String">
         select resource_id from oj_paper where type = 3 and
         <include refid="filterByPublic"/>
+        <if test="lessonIds != null and lessonIds.size() != 0">
+            and resource_id in
+            <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
+                #{lessonId}
+            </foreach>
+        </if>
     </select>
 
 

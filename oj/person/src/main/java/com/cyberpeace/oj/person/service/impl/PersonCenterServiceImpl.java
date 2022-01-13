@@ -91,8 +91,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> resourceIds = new ArrayList<>();
 		if (null != authContext) {
 			List<String> courseIds = courseMapper.selectByAuth(authContext);
-			resourceIds.addAll(courseIds);
-			resourceIds.addAll(personCenterMapper.selectLessonByAuth(courseIds));
+			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
+			resourceIds.addAll(publicCourses);
+			resourceIds.addAll(personCenterMapper.selectLessonByAuth(publicCourses));
 			resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
 		}
 		IPage<PersonComment> iPage = personCenterMapper.selectCommentByUser(page, userId, parent,
@@ -106,10 +107,12 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> resourceIds = new ArrayList<>();
 		if (null != authContext) {
 			List<String> courseIds = courseMapper.selectByAuth(authContext);
-			resourceIds.addAll(courseIds);
-			resourceIds.addAll(personCenterMapper.selectLessonByAuth(courseIds));
+			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
+			resourceIds.addAll(publicCourses);
+			List<String> lessons = personCenterMapper.selectLessonByAuth(publicCourses);
+			resourceIds.addAll(lessons);
 			resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
-			resourceIds.addAll(personCenterMapper.selectAfterclassPracticeByAuth());
+			resourceIds.addAll(personCenterMapper.selectAfterclassPracticeByAuth(lessons));
 		}
 		IPage<PersonNote> iPage = personCenterMapper.selectNoteByUser(page, userId, noteType,
 				resourceIds);
@@ -127,8 +130,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> resourceIds = new ArrayList<>();
 		if (null != authContext) {
 			List<String> courseIds = courseMapper.selectByAuth(authContext);
-			resourceIds.addAll(courseIds);
-			resourceIds.addAll(personCenterMapper.selectLessonByAuth(courseIds));
+			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
+			resourceIds.addAll(publicCourses);
+			resourceIds.addAll(personCenterMapper.selectLessonByAuth(publicCourses));
 			resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
 			resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
 		}
@@ -141,7 +145,8 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> expLessonIds = new ArrayList<>();
 		if (null != authContext) {
 			List<String> courseIds = courseMapper.selectByAuth(authContext);
-			lessonIds = personCenterMapper.selectLessonByAuth(courseIds);
+			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
+			lessonIds = personCenterMapper.selectLessonByAuth(publicCourses);
 		}
 		// 获取用户课程学习数据
 		StudyRecord studyRecord = personCenterMapper.selectRecordByUser(userId, lessonIds);
@@ -174,8 +179,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> expLessonIds = new ArrayList<>();
 		if (null != authContext) {
 			List<String> courseIds = courseMapper.selectByAuth(authContext);
-			lessonIds = personCenterMapper.selectLessonByAuth(courseIds);
-			expLessonIds = personCenterMapper.selectExpLessonByAuth(courseIds);
+			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
+			lessonIds = personCenterMapper.selectLessonByAuth(publicCourses);
+			expLessonIds = personCenterMapper.selectExpLessonByAuth(publicCourses);
 		}
 		List<LessonRecord> lessonRecord = personCenterMapper.selectLessonByTime(userId, startTime,
 				endTime, lessonIds);

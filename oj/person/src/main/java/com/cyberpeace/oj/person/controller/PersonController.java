@@ -125,7 +125,7 @@ public class PersonController {
 		boolean startValidate = TimeUtil.isValidDate(startTime);
 		boolean endValidate = TimeUtil.isValidDate(endTime);
 		if (!startValidate || !endValidate) {
-			throw new InvalidParamException("时间格式不正确！");
+			throw new InvalidParamException("incorrect time format！");
 		}
 		if (StringUtils.isEmpty(userId)){
 			userId = UserInfoContext.getUserContext().getUserId();

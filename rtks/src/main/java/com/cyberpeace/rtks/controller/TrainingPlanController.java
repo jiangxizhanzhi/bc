@@ -86,7 +86,8 @@ public class TrainingPlanController {
 					}
 
 				} catch (Exception e) {
-					LOG.info("未检索到相应岗位");
+					// 未检索到相应岗位
+					LOG.info("[TRKS]: No corresponding jobs found");
 				}
 
 			}

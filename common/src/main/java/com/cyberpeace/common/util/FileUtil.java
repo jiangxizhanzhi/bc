@@ -91,7 +91,8 @@ public class FileUtil {
 
 			return builder.toString();
 		} catch (Exception e) {
-			log.error("文件读取失败！ filePath={} error:", file.getAbsolutePath(), e);
+			// 文件读取失败
+			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
 			throw new RuntimeException();
 		} finally {
 			try {
@@ -121,7 +122,8 @@ public class FileUtil {
 
 			return contentList;
 		} catch (Exception e) {
-			log.error("文件读取失败！ filePath={} error:", file.getAbsolutePath(), e);
+			// 文件读取失败
+			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
 			throw new RuntimeException();
 		} finally {
 			try {

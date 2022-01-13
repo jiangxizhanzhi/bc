@@ -58,7 +58,8 @@ public class InitChecker {
 
 		Integer mpSecretLength = 2;
 		if (null == mpSecretSplit || mpSecretSplit.length != mpSecretLength) {
-			log.error("[MP_SECRET]格式错误, 读到的值=[{}]", mpSecret);
+			// 格式错误
+			log.error("[MP_SECRET]wrong format, read value=[{}]", mpSecret);
 			throw new Error();
 		}
 	}
@@ -67,7 +68,7 @@ public class InitChecker {
 		String value = SystemPropUtil.getProp(field);
 
 		if (StringUtils.isBlank(value)) {
-			log.error("[{}]未设置！", field);
+			log.error("[{}]not set!", field);
 			throw new Error();
 		} else {
 			log.info("prop=[{}], value=[{}]", field, value);

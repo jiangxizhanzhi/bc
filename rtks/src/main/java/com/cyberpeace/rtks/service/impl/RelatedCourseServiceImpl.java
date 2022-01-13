@@ -47,7 +47,8 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 		try {
 			relatedCourseList.addAll(JsonUtil.toJsonObjectArray(courses, RelatedCourse.class));
 		} catch (Exception e) {
-			log.info("json转换错误：" + courses);
+			// json转换错误
+			log.info("[RTKS] json parse error:" + courses);
 		}
 
 		List ids = Lists.newArrayList();

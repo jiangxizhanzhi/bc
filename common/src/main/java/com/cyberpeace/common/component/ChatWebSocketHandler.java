@@ -115,7 +115,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 			List<String> friends = handler.getFriends(businessId, chatContent.getMineId());
 			String reverseId = chatContent.getReceiverId();
 			if (!friends.contains(reverseId)){
-				log.error("[wsChat]recipient {} is not in the user’s friend list {}", reverseId, friends);
+				log.error("[wsChat]recipient {} is not in the user friend list {}", reverseId, friends);
 				throw new Error(ErrorCode.USER_NOT_IN_LIST);
 			}
 			sendMessage(connectionContext.getIdentifierId(), reverseId, chatMessage);

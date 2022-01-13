@@ -58,13 +58,15 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 				path = ZipUtil.unZipToTmpPath(path);
 			}
 		} catch (ZipException e) {
-			log.error("解压失败：{}", path);
+			// 解压失败
+			log.error("[TOOL] decompression failed：{}", path);
 			throw new BusinessException(CrBusinessErrorCode.ZIP_PATH_NOT_EXTRA);
 		}
 		File file = new File(path);
 		File[] files = file.listFiles();
 		if (files == null) {
-			log.error("没有找到文件目录{}", path);
+			// 没有找到文件目录
+			log.error("[TOOL] file directory not found{}", path);
 			throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
 		}
 
@@ -94,7 +96,8 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	private Tool importTool(File toolDir) {
 		File mdFile = getMdFile(toolDir);
 		if (mdFile == null) {
-			log.error("没有找到md文件在目录下{}", toolDir.getPath());
+			//目录下没有找到md文件在
+			log.error("md file not found in directory{}", toolDir.getPath());
 			throw new BusinessException(CrBusinessErrorCode.NOT_MD_PATH);
 		}
 

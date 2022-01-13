@@ -107,7 +107,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			}
 			Files.copy(origin, dest);
 		} catch (IOException e) {
-			log.error("复制文件失败: " + origin.getAbsolutePath() + " ,to:" + dest.getAbsolutePath());
+			// 复制文件失败
+			log.error("copy file error: " + origin.getAbsolutePath() + " ,to:" + dest.getAbsolutePath());
 			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 
@@ -220,7 +221,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			}
 			file.transferTo(dest);
 		} catch (IOException e) {
-			log.error("复制文件失败: " + fileName + " ,to:" + dest.getAbsolutePath(), e);
+			// 复制文件失败
+			log.error("copy file error: " + fileName + " ,to:" + dest.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 

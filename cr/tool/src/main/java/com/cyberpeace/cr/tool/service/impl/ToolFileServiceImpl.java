@@ -72,7 +72,8 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		try {
 			newFile = FileUtil.saveFile(multipartFile, uploadPath);
 		} catch (IOException e) {
-			log.error("保存文件{} -> {} 路径失败: {}", multipartFile.getOriginalFilename(), uploadPath,
+			// 保存文件
+			log.error("[TOOL]save file{} to {} path error: {}", multipartFile.getOriginalFilename(), uploadPath,
 					e.getMessage());
 			throw new BusinessException("保存文件失败");
 		}

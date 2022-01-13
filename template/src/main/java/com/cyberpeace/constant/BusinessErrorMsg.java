@@ -82,6 +82,9 @@ public interface BusinessErrorMsg {
 			put(OjBusinessErrorCode.NAME_IS_EXIST, "名称已存在");
 			put(OjBusinessErrorCode.FILED_DATA_TOO_LONG, "某字段数据过长");
 			put(OjBusinessErrorCode.SCENE_START_FAIL, "场景启动失败");
+			put(OjBusinessErrorCode.END_GT_START_TIME, "结束时间必须大于开始时间");
+			put(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR, "课程表时间范围为上午8点-晚上21点");
+			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS, "选择组织下无用户");
 
 			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "设置录屏开关失败");
 
@@ -173,7 +176,12 @@ public interface BusinessErrorMsg {
 			put(OjBusinessErrorCode.COURSE_NUM_IS_EXIST, "Course number already exists.");
 			put(OjBusinessErrorCode.NAME_IS_EXIST, "Name already exists.");
 			put(OjBusinessErrorCode.FILED_DATA_TOO_LONG, "The field data is too long.");
-			put(OjBusinessErrorCode.SCENE_START_FAIL, "Scene Startup Failure");
+			put(OjBusinessErrorCode.SCENE_START_FAIL, "Scene startup failure");
+			put(OjBusinessErrorCode.END_GT_START_TIME,
+					"The end time must be greater than the start time");
+			put(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR,
+					"Time is out of range, only 8 to 21");
+			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS, "Select No users in the organization");
 
 			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");

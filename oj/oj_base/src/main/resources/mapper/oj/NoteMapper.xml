@@ -127,7 +127,9 @@
     <delete id="deleteByBusiness">
         delete from oj_note
         <where>
-            business_id = #{businessId}
+            <if test="businessId != null and businessId != ''">
+                business_id = #{businessId}
+            </if>
             <if test="resourceType != null">
                 and business_type = #{resourceType}
             </if>

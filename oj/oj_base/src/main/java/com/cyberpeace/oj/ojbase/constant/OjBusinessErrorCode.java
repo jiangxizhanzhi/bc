@@ -34,4 +34,13 @@ public interface OjBusinessErrorCode {
 	/** 课程编号已存在*/
 	String COURSE_NUM_IS_EXIST = "102009";
 
+	/** 结束时间必须大于开始时间*/
+	String END_GT_START_TIME = "102010";
+
+	/** 课程表时间范围为上午八点-晚上21点*/
+	String CLASSROOM_TIME_RANGE_ERROR = "102011";
+
+	/** 选择组织下无用户*/
+	String ORGANIZATION_IS_NO_USERS = "102012";
+
 }

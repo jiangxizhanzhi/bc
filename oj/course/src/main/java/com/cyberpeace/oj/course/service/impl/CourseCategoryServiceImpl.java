@@ -37,6 +37,9 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
+	@Autowired
+	private CourseValidateHandler courseValidateHandler;
+
 	@Override
 	public List<String> getChildrenIds(String directionId, Boolean self) {
 		CourseCategory courseCategory = courseCategoryMapper.selectById(directionId);
@@ -109,6 +112,10 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 
 	@Override
 	public Integer batchDeleteByIds(List<String> resourceIds) {
+		// 数据校验
+		resourceIds.forEach(
+				categoryId -> courseValidateHandler.validateEnableDeleteCategory(categoryId));
+
 		List<CourseCategory> categories = courseCategoryMapper.selectBatchIds(resourceIds);
 		List<String> codeList = StreamApiUtils.getColumn(categories, CourseCategory::getCode);
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
@@ -410,14 +411,34 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		String destFilePath = destPath + File.separatorChar
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
 
-		StreamApiUtils.map(courseList, course -> {
+		// 数据导出
+		List<CourseDumpLoadBo> courseData = StreamApiUtils.map(courseList, course -> {
+			// 课程数据
 			Map<String, String> filePathMap = Maps.newHashMap();
 			CourseDumpLoadBo courseDumpLoadBo = dumCourse(course, filePathMap, destFilePath);
+
+			// 课时数据
+			List<CourseLesson> courseLessonList = courseLessonMapper
+					.selectByCourse(course.getResourceId(), authContext.getIsWeb());
+			List<LessonDumpLoadBo> lessonDumpLoadBos = StreamApiUtils.map(courseLessonList,
+					courseLesson -> courseLessonService.handlerLessonDump(courseLesson, filePathMap,
+							destFilePath));
+
+			// 设置数据
+			courseDumpLoadBo.setLesson(lessonDumpLoadBos);
+			courseDumpLoadBo.setFilePathMap(filePathMap);
 
 			return courseDumpLoadBo;
 		});
 
-		return null;
+		// 数据写入
+		String dataPath = destPath + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.writeToDestFile(JsonUtil.arrayToString(courseData), dataPath);
+
+		// 文件压缩
+		String zipPath = ZipUtil.toZipDest(destPath, AttachmentPath.OTHER.getDesc());
+		FileUtil.deleteDir(destPath, true);
+		return zipPath;
 	}
 
 	/**
@@ -442,7 +463,21 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			filePathMap.put(course.getLogo(), fileName);
 		}
 
-		// 大纲文件处理 todo
+		// 大纲文件处理
+		if (StringUtils.isNotBlank(course.getOutline())) {
+			List<String> matchList = LocalStringUtil.getMatchStr(course.getOutline(),
+					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ZERO);
+			matchList.forEach(str -> {
+				// 文件拷贝
+				String realPath = utilService.getRealPath(str);
+				String fileSuffix = FileUtil.getFileSuffix(realPath);
+				String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+				String destFilePath = fileStorePath + File.separatorChar + fileName;
+				FileUtil.copyFile(realPath, destFilePath, false);
+
+				filePathMap.put(str, fileName);
+			});
+		}
 
 		return courseDumpLoadBo;
 	}

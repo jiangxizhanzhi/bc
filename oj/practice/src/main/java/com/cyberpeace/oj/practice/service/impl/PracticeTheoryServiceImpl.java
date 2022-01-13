@@ -435,6 +435,18 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return practiceTheory;
 	}
 
+	@Override
+	public PracticeTheoryDumpLoadBo dumpTheory(PracticeTheory practiceTheory) {
+		PracticeTheoryDumpLoadBo dumpLoadBo = BeanUtils.copy(practiceTheory,
+				PracticeTheoryDumpLoadBo.class);
+
+		// 分类数据处理
+		PracticeCategory category = practiceValidateHandler
+				.validateCategoryExist(practiceTheory.getCategoryId());
+		dumpLoadBo.setCategoryName(category.getName());
+		return dumpLoadBo;
+	}
+
 	/**
 	 * 实训理论习题资源导入excel数据转换
 	 *

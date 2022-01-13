@@ -3,12 +3,16 @@ package com.cyberpeace.oj.course.service.impl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,9 @@ public class CourseValidateHandler {
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
+
+	@Autowired
+	private CourseCategoryMapper courseCategoryMapper;
 
 	/**
 	 * 校验课程权限
@@ -125,5 +132,24 @@ public class CourseValidateHandler {
 			log.error("Lesson is exist! course_id=[{}], lesson_name=[{}]", lessonId, name);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
+	}
+
+	/**
+	 * 分类数据能否删除校验
+	 * @param categoryId
+	 */
+	public void validateEnableDeleteCategory(String categoryId) {
+		CourseCategory courseCategory = courseCategoryMapper.selectById(categoryId);
+		List<CourseCategory> children = courseCategoryMapper
+				.selectChildrenByCode(courseCategory.getCode());
+
+		List<String> categoryIds = StreamApiUtils.map(children, CourseCategory::getResourceId);
+		categoryIds.add(categoryId);
+
+		List<String> courseIds = courseMapper.selectIdsByCategory(null, categoryIds, false);
+		if (CollectionUtils.isNotEmpty(courseIds)) {
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
+		}
+
 	}
 }

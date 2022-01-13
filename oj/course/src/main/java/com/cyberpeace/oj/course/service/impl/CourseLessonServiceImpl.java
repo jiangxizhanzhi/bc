@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +22,11 @@ import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,15 +64,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
-import com.cyberpeace.oj.practice.service.PaperService;
-import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
-import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
-import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -172,6 +168,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private LessonPracticeSceneService lessonPracticeSceneService;
+
+	@Autowired
+	private PracticeTheoryService practiceTheoryService;
+
+	@Autowired
+	private PracticeOperationService practiceOperationService;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
@@ -688,7 +690,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			AuthContext authContext) {
 		// 数据校验
 		courseValidateHandler.validateCoursePermission(courseId, authContext);
-		courseMapper.selectById(courseId);
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId,
 				authContext.getIsWeb());
 
@@ -901,6 +902,97 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				return courseLessonMapper.deleteBatchIds(resourceIds);
 			}
 		});
+	}
+
+	@Override
+	public LessonDumpLoadBo handlerLessonDump(CourseLesson courseLesson,
+			Map<String, String> filePathMap, String destFilePath) {
+		LessonDumpLoadBo dumpLoadBo = BeanUtils.copy(courseLesson, LessonDumpLoadBo.class);
+
+		// markdown源文件copy
+		if (StringUtils.isNotBlank(courseLesson.getOriginMarkdownFile())) {
+			String fileName = copyFile(courseLesson.getOriginMarkdownFile(), destFilePath);
+			filePathMap.put(courseLesson.getOriginMarkdownFile(), fileName);
+		}
+
+		// 视频文件copy
+		if (StringUtils.isNotBlank(courseLesson.getVideoUrl())) {
+			String fileName = copyFile(courseLesson.getVideoUrl(), destFilePath);
+			filePathMap.put(courseLesson.getOriginMarkdownFile(), fileName);
+		}
+
+		// 课时附件
+		if (StringUtils.isNotBlank(courseLesson.getAttachmentIds())) {
+			List<AttachmentBo> attachmentBoList = attachmentService
+					.selectByIds(courseLesson.getAttachmentIds(), false);
+			List<String> filePathList = StreamApiUtils.map(attachmentBoList,
+					AttachmentBo::getFilePath);
+			dumpLoadBo.setFilePathList(filePathList);
+
+			// 文件拷贝
+			attachmentBoList.forEach(attachmentBo -> {
+				String fileName = copyFile(attachmentBo.getFilePath(), destFilePath);
+				filePathMap.put(attachmentBo.getFilePath(), fileName);
+			});
+		}
+
+		// 讲义文件
+		if (courseLesson.getHandoutType().intValue() != CourseLesson.HandoutType.MD.getCode()
+				.intValue() && StringUtils.isNotBlank(courseLesson.getHandoutUrl())) {
+			String fileName = copyFile(courseLesson.getHandoutUrl(), destFilePath);
+			filePathMap.put(courseLesson.getVideoUrl(), fileName);
+		}
+
+		// 理论课后练习习题数据导出
+		List<String> theoryRefIds = practiceTheoryRefMapper
+				.selectByPaper(courseLesson.getPaperId());
+		if (CollectionUtils.isNotEmpty(theoryRefIds)) {
+			List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper
+					.selectBatchIds(theoryRefIds);
+
+			List<PracticeTheoryDumpLoadBo> theoryDumpLoadBos = StreamApiUtils.map(theoryRefList,
+					practiceTheoryRef -> {
+						PracticeTheory practiceTheory = JsonUtil.toJsonObject(
+								practiceTheoryRef.getSnapshot(), PracticeTheory.class);
+						return practiceTheoryService.dumpTheory(practiceTheory);
+					});
+			dumpLoadBo.setTheoryPractice(theoryDumpLoadBos);
+		}
+
+		// 实操课后练习题数据导出
+		List<String> operationRefIds = practiceOperationRefMapper
+				.selectByPaper(courseLesson.getPaperId());
+		if (CollectionUtils.isNotEmpty(operationRefIds)) {
+			List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
+					.selectBatchIds(operationRefIds);
+			List<PracticeOperationDumpLoadBo> dumpLoadBos = StreamApiUtils.map(operationRefs,
+					practiceOperationRef -> {
+						PracticeOperation practiceOperation = JsonUtil.toJsonObject(
+								practiceOperationRef.getSnapshot(), PracticeOperation.class);
+						return practiceOperationService.handlerDumpOperation(practiceOperation,
+								destFilePath, filePathMap);
+					});
+			dumpLoadBo.setOperationPractice(dumpLoadBos);
+		}
+
+		return dumpLoadBo;
+	}
+
+	/**
+	 * 文件拷贝 返回文件名称
+	 * @param storeDbPath
+	 * @param destFilePath
+	 * @return
+	 */
+	private String copyFile(String storeDbPath, String destFilePath) {
+		String realPath = utilService.getRealPath(storeDbPath);
+		String fileSuffix = FileUtil.getFileSuffix(realPath);
+		String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+		String markdownFilePath = destFilePath + File.separatorChar + fileName;
+
+		FileUtil.copyFile(realPath, markdownFilePath, false);
+
+		return fileName;
 	}
 
 	/**

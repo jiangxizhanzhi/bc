@@ -94,4 +94,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 */
 	PracticeTheory loadPracticeTheory(String practiceSetId, PracticeTheoryDumpLoadBo dumpBo,
 			String userId);
+
+	/**
+	 * 导出习题数据
+	 * @param practiceTheory
+	 * @return
+	 */
+	PracticeTheoryDumpLoadBo dumpTheory(PracticeTheory practiceTheory);
 }

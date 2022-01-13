@@ -43,4 +43,7 @@ public interface OjBusinessErrorCode {
 	/** 选择组织下无用户*/
 	String ORGANIZATION_IS_NO_USERS = "102012";
 
+	/** 资源正在被使用*/
+	String RESOURCE_USED_NOT_DELETED = "102013";
+
 }

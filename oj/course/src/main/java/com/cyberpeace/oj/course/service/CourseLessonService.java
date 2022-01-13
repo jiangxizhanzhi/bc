@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -144,4 +145,14 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @return
 	 */
 	Integer batchDelete(String courseId, List<String> resourceIds, AuthContext authContext);
+
+	/**
+	 * 导出课时数据
+	 * @param courseLesson
+	 * @param filePathMap
+	 * @param destFilePath
+	 * @return
+	 */
+	LessonDumpLoadBo handlerLessonDump(CourseLesson courseLesson, Map<String, String> filePathMap,
+			String destFilePath);
 }

@@ -85,6 +85,7 @@ public interface BusinessErrorMsg {
 			put(OjBusinessErrorCode.END_GT_START_TIME, "结束时间必须大于开始时间");
 			put(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR, "课程表时间范围为上午8点-晚上21点");
 			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS, "选择组织下无用户");
+			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "资源正在被使用");
 
 			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "设置录屏开关失败");
 
@@ -181,7 +182,9 @@ public interface BusinessErrorMsg {
 					"The end time must be greater than the start time");
 			put(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR,
 					"Time is out of range, only 8 to 21");
-			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS, "Select No users in the organization");
+			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS,
+					"Select No users in the organization");
+			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "Resource is being used");
 
 			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");

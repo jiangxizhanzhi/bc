@@ -542,14 +542,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		List<PracticeTheory> practiceTheories = practiceTheoryMapper.selectBatchIds(theoryIds);
 
 		// 数据转换
-		return StreamApiUtils.map(practiceTheories, practiceTheory -> {
-			PracticeTheoryDumpLoadBo dumpLoadBo = BeanUtils.copy(practiceTheory,
-					PracticeTheoryDumpLoadBo.class);
-			PracticeCategory category = practiceValidateHandler
-					.validateCategoryExist(practiceTheory.getCategoryId());
-			dumpLoadBo.setCategoryName(category.getName());
-			return dumpLoadBo;
-		});
+		return StreamApiUtils.map(practiceTheories,
+				practiceTheory -> practiceTheoryService.dumpTheory(practiceTheory));
 	}
 
 	/**

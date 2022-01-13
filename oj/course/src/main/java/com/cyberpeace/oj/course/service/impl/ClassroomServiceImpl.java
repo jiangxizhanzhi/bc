@@ -181,14 +181,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public Boolean updateClassroom(Classroom classroom, AuthContext authContext) {
 
 		// 数据校验
+		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
+				classroom.getEndTime());
+		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
+		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
 		Classroom existRoom = classroomValidateHandler
 				.validateClassroomExist(classroom.getResourceId());
 		validateChangeClassroom(classroom);
-		Course course = courseMapper.selectById(classroom.getCourseId());
-		if (null == course) {
-			log.error("Course not found! course_id=[{}]", classroom.getCourseId());
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
 

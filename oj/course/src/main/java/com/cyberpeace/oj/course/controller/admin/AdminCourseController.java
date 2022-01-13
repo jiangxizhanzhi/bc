@@ -218,6 +218,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		List<String> courseIds = courseMapper.selectByAuth(authContext);
+		if (CollectionUtils.isEmpty(courseIds)) {
+			return new BaseRsp<>(Lists.newArrayList());
+		}
 
 		List<Course> courses = courseMapper.selectBatchIds(courseIds);
 
@@ -229,8 +232,21 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
 	public BaseRsp exportCourse(@ApiParam("课程编号") @NotEmpty List<String> ids) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		String zipPath = courseService.dumpCourse(ids, authContext);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("后台课程数据导入")
+	@PostMapping("/batch_loads")
+	public BaseRsp importCourse(@Validated LoadCourseReq loadCourseReq) {
+		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
+				false, loadCourseReq.getFile(), true);
+		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
 
 		return new BaseRsp();
+
 	}
 
 }

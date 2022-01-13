@@ -214,7 +214,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		}
 		JSONObject extraRecord = new JSONObject();
 		// todo 待记录得分等信息
-		if (!JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), String.class).isEmpty()) {
+		if (!JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class).isEmpty()) {
 			extraRecord.put(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD, singleRoom.getTrainingRecord());
 		}
 

@@ -19,13 +19,13 @@
             </if>
             <if test="null != courseContext">
                 <if test="null != courseContext.eBook">
-                    and `course_type` = #{courseContext.eBook}
+                    and L1.course_type = #{courseContext.eBook}
                 </if>
                 <if test="null != courseContext.difficulty">
-                    and `difficulty` = #{courseContext.difficulty}
+                    and L1.difficulty = #{courseContext.difficulty}
                 </if>
                 <if test="null != courseContext.directions and courseContext.directions.size() > 0">
-                    and `category_id` in
+                    and L1.category_id in
                     <foreach collection="courseContext.directions" index="index" separator=","
                              item="direction" open="(" close=")">
                         #{direction}
@@ -33,11 +33,11 @@
                 </if>
                 <if test="null != courseContext.pattern and courseContext.pattern != ''">
                     <bind name="pattern" value="'%' + courseContext.pattern + '%'"/>
-                    and `name` like #{pattern}
+                    and L1.name like #{pattern}
                 </if>
             </if>
             <if test="null != isPublic and isPublic">
-                and `public` = #{isPublic}
+                and L1.public = #{isPublic}
             </if>
         </where>
         group by L2.course_id

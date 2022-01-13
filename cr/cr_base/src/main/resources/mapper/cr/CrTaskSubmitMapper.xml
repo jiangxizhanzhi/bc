@@ -46,7 +46,7 @@
             resultType="com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext">
 
         select cr_task_submit.*, cr_task.mission_id mission_hash
-        ,cr_task.user_id submit_user,cr_role.`name` submit_user_role
+        ,cr_task.user_id submit_user,cr_role.`name` submit_user_role,cr_task.role_id submit_user_role_id
         from cr_task_submit,cr_task,cr_role
         <where>
             cr_task_submit.task_id=cr_task.resource_id and cr_task.role_id=cr_role.resource_id

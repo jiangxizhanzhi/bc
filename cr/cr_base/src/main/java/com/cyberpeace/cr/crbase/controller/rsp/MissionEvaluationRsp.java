@@ -22,6 +22,8 @@ public class MissionEvaluationRsp {
 
 	private String submitUserRole;
 
+	private String submitUserRoleResourceId;
+
 	private String submitUser;
 
 	private String evaluatorName;

@@ -22,6 +22,8 @@ public class MissionEvaluationContext {
 
 	private String submitUserRole;
 
+	private String submitUserRoleId;
+
 	/**
 	 * evaluator
 	 */

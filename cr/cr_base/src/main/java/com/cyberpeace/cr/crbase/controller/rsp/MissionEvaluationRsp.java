@@ -20,6 +20,8 @@ public class MissionEvaluationRsp {
 
 	private String submitUserName;
 
+	private String submitUserRole;
+
 	private String submitUser;
 
 	private String evaluatorName;

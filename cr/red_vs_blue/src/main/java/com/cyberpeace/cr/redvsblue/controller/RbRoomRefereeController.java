@@ -91,6 +91,7 @@ public class RbRoomRefereeController {
 			missionEvaluationRsp
 					.setEvaluatorName(userInfoMap.get(missionEvaluationContext.getEvaluatorId()));
 			missionEvaluationRsp.setEvaluator(missionEvaluationContext.getEvaluatorId());
+			missionEvaluationRsp.setSubmitUserRole(missionEvaluationContext.getSubmitUserRole());
 			missionEvaluationRsp
 					.setSubmitUserName(userInfoMap.get(missionEvaluationContext.getSubmitUser()));
 			missionEvaluationRsp.setSubmitLogHash(missionEvaluationContext.getMissionHash());

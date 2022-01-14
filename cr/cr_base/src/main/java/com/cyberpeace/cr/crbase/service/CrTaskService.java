@@ -29,7 +29,7 @@ public interface CrTaskService {
 	 */
 	void submitMissions(String roomId, String missionId, String answer);
 
-	void batchSubmitMissions(String roomId, List<String> missionIds, Map<String, String> answer);
+	Integer batchSubmitMissions(String roomId, List<String> missionIds, Map<String, String> answer);
 
 	/**
 	 * 根据roomId和user获取task

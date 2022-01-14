@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -93,13 +93,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public void batchSubmitMissions(String roomId, List<String> missionIds, Map<String, String> answer) {
+	public Integer batchSubmitMissions(String roomId, List<String> missionIds, Map<String, String> answer) {
 		Map<String, Mission> missionMap = StreamApiUtils.toMap(missionMapper.selectBatchIds(missionIds), MissionBase::getResourceId, mission -> mission);
 		Map<String, CrTask> crTaskMap = StreamApiUtils.toMap(lambdaQuery().in(CrTask::getMissionId, missionIds).list(), CrTask::getMissionId, crTask -> crTask);
 
 		Date currentDate = new Date();
 		List<CrTaskSubmit> pendingSaveSubmit = Lists.newArrayList();
 		List<CrTask> pendingUpdateTask = Lists.newArrayList();
+		List<Integer> missionScore = Lists.newArrayList();
+
 		answer.forEach((key, val) -> {
 			Mission mission = missionMap.get(key);
 			CrTask crTask = crTaskMap.get(key);
@@ -137,6 +139,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			crTaskSubmit.setScore(crTask.getScore());
 			crTaskSubmit.setEvaluateStatus(crTask.getStatus());
 
+			missionScore.add(crTask.getScore());
+
 			pendingUpdateTask.add(crTask);
 			pendingSaveSubmit.add(crTaskSubmit);
 		});
@@ -149,6 +153,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				pendingSaveSubmit.forEach(obj -> crTaskSubmitMapper.insert(obj));
 			}
 		});
+
+		return missionScore.stream().mapToInt(item -> item).sum();
 
 	}
 

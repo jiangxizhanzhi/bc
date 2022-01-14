@@ -808,16 +808,18 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// 任务提交, 评分
+				Integer score = crTaskService.batchSubmitMissions(singleRoom.getResourceId(), getMissionIdsByScheme(crRole.getMissionScheme()), userAnswer);
+
 				// 写入训练记录
 				if (extraRecord.isEmpty()) {
 					trainRecordService.updateEndDate(businessTemplateId, userId,
 							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null);
 				} else {
+					extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, score);
 					trainRecordService.updateEndDate(businessTemplateId, userId,
 							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), JsonUtil.toJsonString(extraRecord));
 				}
-				// 任务提交, 评分
-				crTaskService.batchSubmitMissions(singleRoom.getResourceId(), getMissionIdsByScheme(crRole.getMissionScheme()), userAnswer);
 
 				// 设置当前训练已完成
 				singleRoom.setIsFinish(true);

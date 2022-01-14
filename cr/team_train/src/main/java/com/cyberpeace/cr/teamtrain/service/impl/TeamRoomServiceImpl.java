@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
+
+	@Autowired
+	private TeamTemplateMapper teamTemplateMapper;
 
 	@Autowired
 	private TrainRecordService trainRecordService;
@@ -172,7 +176,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	/** 根据模板的任务id，复制任务并获取新的id，返回新的json字符串
-	 * @param missionsScheme 
+	 * @param missionsScheme
 	 * @return
 	 */
 	private String getNewRoomScheme(String missionsScheme, String roomId) {
@@ -311,15 +315,15 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		updateById(teamRoom);
 
-		if (teamRoom.isOpening()) {
-			trainRecordService.saveRecord(teamRoom.getName(), teamRoom.getTeamTemplateId(), roomId,
-					UserInfoContext.getUserContext().getUserId(),
-					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		// 获取团队训练业务模板id
+		String businessTemplateId = teamTemplateMapper.selectById(teamRoom.getTeamTemplateId()).getBusinessTemplateId();
 
-		} else if (teamRoom.isEnded()) {
-			trainRecordService.updateEndDate(roomId, UserInfoContext.getUserContext().getUserId(),
-					BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		if (teamRoom.isOpening()) {
+			trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
+					teamRoom.getCreateUserId(),
+					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		}
+
 		return teamRoom.getTrainingStatus();
 
 	}

@@ -18,6 +18,8 @@ public interface SingleRoomService extends IService<SingleRoom> {
 
 	Boolean deleteRoom(String businessTemplateId);
 
+	Boolean deleteRoom(SingleRoom singleRoom);
+
 	ListRsp<SingleRoomListBo> getSingleTrainPageList(SingleTrainListReq queryParams);
 
 	SingleMissionBo getMission(String businessTemplateId, String missionId);

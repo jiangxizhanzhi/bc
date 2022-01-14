@@ -222,6 +222,17 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	public Boolean deleteRoom(String businessTemplateId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
+		return deleteRoom(singleRoom);
+	}
+
+	/**
+	 * 关闭单兵训练房间
+	 *
+	 * @param singleRoom 训练房间对象
+	 */
+	@Override
+	public Boolean deleteRoom(SingleRoom singleRoom) {
+
 		if (singleRoom == null) {
 			return false;
 		}
@@ -243,6 +254,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		localSceneService.stopScene(singleRoom.getLocalSceneId());
 
 		// 删除单兵训练房间, 记录结束时间
+		String userId = singleRoom.getUserId();
+		String businessTemplateId = singleRoom.getBusinessTemplateId();
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

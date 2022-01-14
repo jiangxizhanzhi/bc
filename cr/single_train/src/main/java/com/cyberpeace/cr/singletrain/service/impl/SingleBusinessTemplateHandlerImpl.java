@@ -106,14 +106,7 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		List<SingleRoom> roomList = singleRoomService
 				.getByBusinessTemplateId(businessTemplate.getResourceId());
 		for (SingleRoom singleRoom : roomList) {
-			// 关闭场景
-			localSceneService.stopScene(singleRoom.getLocalSceneId());
-
-			// 删除单兵训练房间, 记录结束时间
-			localSceneService.removeById(singleRoom.getLocalSceneId());
-			singleRoomService.removeById(singleRoom.getResourceId());
-			trainRecordService.updateEndDate(businessTemplate.getResourceId());
-
+			singleRoomService.deleteRoom(singleRoom);
 		}
 		// 删除singleTemplate
 		singleTemplateService.removeById(singleTemplate.getResourceId());

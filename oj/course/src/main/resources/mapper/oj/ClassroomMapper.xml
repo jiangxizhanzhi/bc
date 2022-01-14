@@ -56,7 +56,20 @@
                 </if>
                 <if test="listQuery.orgId != null and listQuery.orgId != ''">
                     <bind name="likeOrg" value="'%' + listQuery.orgId + '%'"/>
-                    or organization_ids like #{likeOrg}
+                    or (organization_ids like #{likeOrg}
+                    <if test="courseIds != null and courseIds.size() != 0">
+                        and course_id in
+                        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                            #{courseId}
+                        </foreach>
+                    </if>
+                    <if test="listQuery.startTime != null and listQuery.endTime != null">
+                        and ((start_time &gt;= #{listQuery.startTime} and end_time &lt;= #{listQuery.endTime})
+                        or (start_time &lt; #{listQuery.endTime} and end_time &lt; #{listQuery.endTime})
+                        or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
+                    </if>
+                    and 1=1)
+
                 </if>
             </if>
         </where>

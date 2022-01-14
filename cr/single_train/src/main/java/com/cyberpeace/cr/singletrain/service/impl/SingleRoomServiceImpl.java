@@ -422,7 +422,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		if (missionRecord != null) {
 			missionRecord.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 					.format(new Date(missionRecord.getLong("time"))));
+
+			// 去除多余字段
+			missionRecord.remove(SingleRoom.MissionsRecordFields.SCORE);
+			missionRecord.remove(SingleRoom.MissionsRecordFields.RESULT);
 		}
+
 		singleMissionBo.setTrainingRecord(missionRecord);
 
 		return singleMissionBo;
@@ -451,7 +456,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject missionsRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(),
 				JSONObject.class);
 
-		Boolean isCorrect = crTaskService.isCorrectByObjective(requestData.getTrainingRecord(), mission.getAnswer(), mission.getType());
+		Boolean isCorrect = crTaskService.isCorrectByObjective(requestData.getAnswer(), mission.getAnswer(), mission.getType());
 
 		JSONObject record = new JSONObject();
 		record.put(SingleRoom.MissionsRecordFields.TIME, new Date());
@@ -800,8 +805,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		List<String> missionIds = Lists.newArrayList();
 
 		JsonUtil.stringToArray(missionScheme).toJavaList(JSONObject.class).forEach(stage -> missionIds.addAll(stage
-				.getJSONArray("missions").toJavaList(JSONObject.class).stream()
-				.map(mission -> mission.getString("resource_id")).collect(Collectors.toList())));
+				.getJSONArray("missions").toJavaList(String.class)));
 		return missionIds;
 	}
 

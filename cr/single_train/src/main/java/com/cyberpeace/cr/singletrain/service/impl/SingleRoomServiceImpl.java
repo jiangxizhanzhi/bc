@@ -9,9 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,9 +89,6 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	private MissionService missionService;
 
 	@Autowired
-	private MissionTemplateMapper missionTemplateMapper;
-
-	@Autowired
 	private CrTaskService crTaskService;
 
 	@Autowired
@@ -138,6 +139,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					singleRole.setRoomId(room.getResourceId());
 					singleRole.setMissionScheme(crRoleService.getNewRoomScheme(JsonUtil.toJsonString(singleRoomBo.getMissionsScheme()), room.getResourceId()));
 					crRoleService.save(singleRole);
+					missionService.roleRelease(room.getResourceId(), singleRole.getResourceId(), userId);
 
 					trainRecordService.saveRecord(businessTemplate.getName(), businessTemplateId, room.getResourceId(),
 							userId,
@@ -190,17 +192,18 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		BeanUtils.copyProperties(singleTemplateBo, singleRoomBo);
 
 		// 当前用户已创建房间, 为null直接返回
-		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId,
-				UserInfoContext.getUserContext().getUserId());
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		if (singleRoom == null) {
 			return singleRoomBo;
 		}
 
 		// 获取房间任务方案
-		singleRoomBo.getResourceId();
-		missionService.lambdaQuery().eq(Mission::getRoomId, singleRoomBo.getResourceId());
-//		singleRoomBo.getMissionsScheme().toJavaObject(List.class)
-
+		SerializeConfig serializeConfig = new SerializeConfig();
+		serializeConfig.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
+		singleTemplateBo.getMissionsScheme().put(
+				"scheme_data", JSONArray.toJSON(crRoleService.getCrRoleMissionByRoomIdAndUserId(singleRoom.getResourceId(), userId), serializeConfig)
+		);
 
 		// 生成数据
 		SingleRoomInfoBo singleRoomInfoBo = new SingleRoomInfoBo();
@@ -391,18 +394,18 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Override
 	public SingleMissionBo getMission(String businessTemplateId, String missionId) {
 		// 获取任务基础信息 todo -> Mission entity
-		MissionTemplate missionObject = missionTemplateMapper.selectById(missionId);
-		if (missionObject == null) {
+		Mission mission = missionService.getById(missionId);
+		if (mission == null) {
 			return null;
 		}
 
 		SingleMissionBo singleMissionBo = new SingleMissionBo();
-		BeanUtils.copyProperties(missionObject, singleMissionBo);
+		BeanUtils.copyProperties(mission, singleMissionBo);
 		singleMissionBo.setCategory(
-				missionService.getCategoryById(missionObject.getCategoryId()).getName());
-		if (missionObject.getOption() != null) {
+				missionService.getCategoryById(mission.getCategoryId()).getName());
+		if (mission.getOption() != null) {
 			singleMissionBo.setOption(
-					JsonUtil.toJsonObjectArray(missionObject.getOption(), JSONObject.class));
+					JsonUtil.toJsonObjectArray(mission.getOption(), JSONObject.class));
 		}
 
 		// 训练是否运行中
@@ -439,8 +442,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		if (roomObject == null) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
-		MissionTemplate missionTemplate = missionTemplateMapper.selectById(requestData.getMissionResourceId());
-		if (missionTemplate == null) {
+		Mission mission = missionService.getById(requestData.getMissionResourceId());
+		if (mission == null) {
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
@@ -448,14 +451,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject missionsRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(),
 				JSONObject.class);
 
-		Boolean isCorrect = crTaskService.isCorrectByObjective(requestData.getTrainingRecord(), missionTemplate.getAnswer(), missionTemplate.getType());
+		Boolean isCorrect = crTaskService.isCorrectByObjective(requestData.getTrainingRecord(), mission.getAnswer(), mission.getType());
 
 		JSONObject record = new JSONObject();
 		record.put(SingleRoom.MissionsRecordFields.TIME, new Date());
 		record.put(SingleRoom.MissionsRecordFields.ANSWER, requestData.getAnswer());
 		record.put(SingleRoom.MissionsRecordFields.RECORD, requestData.getTrainingRecord());
 		record.put(SingleRoom.MissionsRecordFields.RESULT, isCorrect);
-		record.put(SingleRoom.MissionsRecordFields.SCORE, isCorrect ? missionTemplate.getScore() : 0);
+		record.put(SingleRoom.MissionsRecordFields.SCORE, isCorrect ? mission.getScore() : 0);
 
 		missionsRecord.put(requestData.getMissionResourceId(), record);
 
@@ -633,8 +636,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 */
 	@Override
 	public TrainTimeLineBo getTimeLineData(String businessTemplateId) {
-		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId,
-				UserInfoContext.getUserContext().getUserId());
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		if (singleRoom == null) {
 			return null;
 		}
@@ -654,8 +657,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 任务完成时间点
 		List<JSONObject> missionRecord = Lists.newArrayList();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Map<String, MissionTemplate> missionMap = getMissionMapByScheme(
-				singleTemplate.getMissionsScheme());
+
+		// 获取用户任务
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(), userId);
+		if (crRole == null) {
+			throw new BusinessException(null);
+		}
+		Map<String, Mission> missionMap = getMissionMapByScheme(crRole.getMissionScheme());
 
 		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(),
 				JSONObject.class);
@@ -789,23 +797,22 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 	// todo 待迁移
 	private List<String> getMissionIdsByScheme(String missionScheme) {
-		JSONArray schemeData = JsonUtil.toJsonObject(missionScheme, JSONObject.class)
-				.getJSONArray("scheme_data");
 		List<String> missionIds = Lists.newArrayList();
-		schemeData.toJavaList(JSONObject.class).forEach(stage -> missionIds.addAll(stage
+
+		JsonUtil.stringToArray(missionScheme).toJavaList(JSONObject.class).forEach(stage -> missionIds.addAll(stage
 				.getJSONArray("missions").toJavaList(JSONObject.class).stream()
 				.map(mission -> mission.getString("resource_id")).collect(Collectors.toList())));
 		return missionIds;
 	}
 
-	private Map<String, MissionTemplate> getMissionMapByScheme(String missionScheme) {
+	private Map<String, Mission> getMissionMapByScheme(String missionScheme) {
 		List<String> missionIds = getMissionIdsByScheme(missionScheme);
 
 		if (missionIds.isEmpty()) {
 			return Maps.newHashMap();
 		}
 
-		return missionTemplateMapper.selectBatchIds(missionIds).stream()
+		return missionService.batchGet(missionIds).stream()
 				.collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
 	}
 

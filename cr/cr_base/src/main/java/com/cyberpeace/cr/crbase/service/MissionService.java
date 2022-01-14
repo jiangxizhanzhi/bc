@@ -38,6 +38,14 @@ public interface MissionService extends IService<Mission> {
 	void release(String missionId, String roleId, String currentUserId);
 
 	/**
+	 * 下方房间某个角色所有任务
+	 * @param roomId 房间id
+	 * @param roleId 角色id
+	 * @param currentUserId 下方用户
+	 */
+	void roleRelease(String roomId, String roleId, String currentUserId);
+
+	/**
 	 * 导演新增动态任务
 	 */
 	Boolean addDynamic(Mission mission, CrRole role, Integer stage);

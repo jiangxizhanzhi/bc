@@ -183,6 +183,34 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
+	public void roleRelease(String roomId, String roleId, String currentUserId) {
+		List<Mission> missions = lambdaQuery().eq(Mission::getRoomId, roomId).list();
+
+		CrRole role = crRoleMapper.selectById(roleId);
+		if (role == null) {
+			log.error("role does not exist！roleId=[{}]", roleId);
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+
+		List<CrTask> pendingReleaseTasks = new ArrayList<>();
+
+		missions.forEach(mission -> {
+			CrTask task = new CrTask();
+
+			task.setMissionId(mission.getResourceId());
+			task.setUserId(currentUserId);
+			task.setStatus(CrTask.TaskStatus.RELEASED.getCode());
+			task.setReleaseTime(new Date());
+			task.setRoomId(mission.getRoomId());
+			task.setRoleId(role.getResourceId());
+			task.setBusinessType(role.getBusinessType());
+
+			pendingReleaseTasks.add(task);
+		});
+		crTaskMapper.batchInsert(pendingReleaseTasks);
+	}
+
+	@Override
 	public Boolean addDynamic(Mission mission, CrRole role, Integer stage) {
 		// 校验是否和角色既存任务重名
 		List<MissionStageScheme> missionStageSchemeList = JsonUtil

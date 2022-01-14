@@ -66,8 +66,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 
 		singleTemplateBo.setResourceId(businessTemplate.getResourceId());
 		singleTemplateBo.setEventData(eventData);
-		singleTemplateBo.setMissionsScheme(
-				JsonUtil.toJsonObject(trainObject.getMissionsScheme(), JSONObject.class));
+		singleTemplateBo.setMissionsScheme(JsonUtil.toJsonObject(trainObject.getMissionsScheme(), JSONObject.class));
 
 		return singleTemplateBo;
 	}

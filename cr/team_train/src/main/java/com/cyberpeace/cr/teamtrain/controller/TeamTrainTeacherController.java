@@ -2,15 +2,14 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.CommonService;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -26,20 +25,19 @@ import io.swagger.annotations.ApiParam;
 public class TeamTrainTeacherController {
 
 	@Autowired
-	private TeamRoomService teamRoomService;
-
-	@Autowired
 	CommonService commonService;
+	@Autowired
+	private TeamRoomService teamRoomService;
 
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
-	BaseRsp<List<MonitorSession>> getSessions(
+	public BaseRsp<List<MonitorSession>> getSessions(
 			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id,
 			@ApiParam(name = "student_id", value = "学员id", required = false) String student_id) {
 		TeamRoom room = teamRoomService.getById(room_id);
 		// 1. 确认场景已开启
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
-			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+			return new BaseRsp<>(Lists.newArrayList());
 		}
 		return new BaseRsp<>(commonService.getMonitorSessions(room.getLocalSceneId(), student_id));
 	}

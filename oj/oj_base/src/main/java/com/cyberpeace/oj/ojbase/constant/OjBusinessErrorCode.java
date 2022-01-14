@@ -46,4 +46,7 @@ public interface OjBusinessErrorCode {
 	/** 资源正在被使用*/
 	String RESOURCE_USED_NOT_DELETED = "102013";
 
+	/** 该班级在该时间段内已有课程安排*/
+	String CLASS_IN_SCHEDULES = "102014";
+
 }

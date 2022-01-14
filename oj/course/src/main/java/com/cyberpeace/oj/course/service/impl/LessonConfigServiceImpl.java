@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -8,9 +10,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
+import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
+import com.google.common.collect.Lists;
+import com.mysql.cj.exceptions.CJCommunicationsException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -150,6 +156,94 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		lessonConfig.setParentId(firstNode.getResourceId());
 
 		return lessonConfig;
+	}
+
+	@Override
+	public LessonConfigDumpBo dumpLessonConfig(String courseId, AuthContext authContext) {
+		LessonConfigBo lessonConfig = getLessonConfig(courseId, authContext);
+		return configToDumpBo(lessonConfig);
+	}
+
+	@Override
+	public List<LessonConfig> loadLessonConfig(LessonConfigDumpBo configDumpBo, String courseId,
+			List<CourseLesson> courseLessons) {
+
+		Map<String, String> lessonNameMap = StreamApiUtils.toMap(courseLessons,
+				CourseLesson::getName, CourseLesson::getResourceId);
+
+		// 基本数据拷贝
+		LessonConfig lessonConfig = BeanUtils.copy(configDumpBo, LessonConfig.class);
+		String configId = lessonConfigMapper.selectByCourseAndLessonName(courseId,
+				lessonConfig.getName());
+		lessonConfig.setResourceId(
+				StringUtils.isNotBlank(configId) ? configId : IDGeneratorUtil.getID());
+		lessonConfig.setCourseId(courseId);
+
+		List<LessonConfig> lessonConfigs = dumpBoToEntity(configDumpBo.getChildren(), courseId,
+				lessonNameMap, lessonConfig.getResourceId());
+		lessonConfigs.add(CommonConstant.ZERO, lessonConfig);
+
+		return lessonConfigs;
+	}
+
+	/**
+	 * 数据转换
+	 * @param configDumpBos
+	 * @param courseId
+	 * @param lessonNameMap
+	 * @return
+	 */
+	private List<LessonConfig> dumpBoToEntity(List<LessonConfigDumpBo> configDumpBos,
+			String courseId, Map<String, String> lessonNameMap, String parentId) {
+
+		// 空数据则返回空列表
+		if (CollectionUtils.isEmpty(configDumpBos)) {
+			return Lists.newArrayList();
+		}
+
+		// 组装数据
+		List<LessonConfig> configList = Lists.newArrayList();
+		configDumpBos.forEach(configDumpBo -> {
+			LessonConfig lessonConfig = BeanUtils.copy(configDumpBo, LessonConfig.class);
+			lessonConfig.setCourseId(courseId);
+			lessonConfig.setParentId(parentId);
+
+			// 课时数据设置
+			if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON.getCode()
+					.intValue()) {
+				lessonConfig.setLessonId(lessonNameMap.get(lessonConfig.getName()));
+			}
+			configList.add(lessonConfig);
+
+			// 子类数据
+			List<LessonConfig> childrenList = dumpBoToEntity(configDumpBo.getChildren(), courseId,
+					lessonNameMap, lessonConfig.getResourceId());
+			childrenList.addAll(childrenList);
+		});
+
+		return configList;
+	}
+
+	/**
+	 * 类型转换
+	 * @param lessonConfigBo
+	 * @return
+	 */
+	private LessonConfigDumpBo configToDumpBo(LessonConfigBo lessonConfigBo) {
+
+		// 基本数据copy
+		LessonConfigDumpBo configDumpBo = BeanUtils.copy(lessonConfigBo, LessonConfigDumpBo.class);
+
+		// 子类数据处理
+		List<LessonConfigBo> children = lessonConfigBo.getChildren();
+		if (CollectionUtils.isNotEmpty(children)) {
+			List<LessonConfigDumpBo> configDumpBos = StreamApiUtils.map(children,
+					configBo -> configToDumpBo(configBo));
+			configDumpBo.setChildren(configDumpBos);
+		}
+
+		return configDumpBo;
+
 	}
 
 	/**

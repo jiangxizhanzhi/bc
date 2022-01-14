@@ -111,6 +111,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
 		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
 				classroom.getEndTime());
+		classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
+				classroom.getStartTime(), classroom.getEndTime());
 
 		// 课堂基本数据获取
 		List<String> orgIds = classroomValidateHandler
@@ -183,6 +185,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 数据校验
 		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
 				classroom.getEndTime());
+		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
+				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
 		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
 		Classroom existRoom = classroomValidateHandler

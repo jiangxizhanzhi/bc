@@ -12,6 +12,7 @@ import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import org.apache.commons.collections.CollectionUtils;
+import org.omg.CORBA.ORB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -99,4 +100,46 @@ public class ClassroomValidateHandler {
 		return classroom;
 	}
 
+	/**
+	 * 时间时间段是否已存在该组织的课程表
+	 * @param organizationId
+	 * @param startTime
+	 * @param endTime
+	 */
+	public void validateClassroomTimeOverlap(String organizationId, Date startTime, Date endTime) {
+
+		List<Classroom> classrooms = classroomMapper.selectByOrgId(organizationId);
+		classrooms.forEach(classroom -> {
+			if ((startTime.getTime() >= classroom.getStartTime().getTime()
+					&& startTime.getTime() <= classroom.getEndTime().getTime())
+					|| (endTime.getTime() >= classroom.getStartTime().getTime()
+							&& endTime.getTime() <= classroom.getEndTime().getTime())) {
+				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
+			}
+		});
+	}
+
+	/**
+	 * 校验更新时是否已存在课程表
+	 * @param classroomId
+	 * @param organizationId
+	 * @param startTime
+	 * @param endTime
+	 */
+	public void validateUpdateClassroomTimeOverlap(String classroomId, String organizationId,
+			Date startTime, Date endTime) {
+
+		List<Classroom> classrooms = classroomMapper.selectByOrgId(organizationId);
+		for (Classroom classroom : classrooms) {
+			if (classroom.getResourceId().equals(classroomId)) {
+				continue;
+			}
+			if ((startTime.getTime() >= classroom.getStartTime().getTime()
+					&& startTime.getTime() <= classroom.getEndTime().getTime())
+					|| (endTime.getTime() >= classroom.getStartTime().getTime()
+							&& endTime.getTime() <= classroom.getEndTime().getTime())) {
+				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
+			}
+		}
+	}
 }

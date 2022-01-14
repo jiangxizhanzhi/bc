@@ -78,4 +78,10 @@
         where course_id = #{lessonConfig.courseId}
         and lesson_id = #{lessonConfig.lessonId}
     </update>
+
+    <select id="selectByCourseAndLessonName" resultType="java.lang.String">
+        select resource_id from oj_lesson_config
+        where course_id = #{courseId}
+        and name = #{name}
+    </select>
 </mapper>

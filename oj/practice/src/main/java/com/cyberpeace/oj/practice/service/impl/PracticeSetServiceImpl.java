@@ -53,6 +53,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.PatternMatchUtils;
 
@@ -238,49 +239,67 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 习题数据导入
 		List<PracticeTheory> theoryList = practiceTheoryService.parseRmTheory(path, practiceSet);
-		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theoryList.size());
+		practiceSet.setPracticeCount(theoryList.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
 
 			@Override
 			public Boolean doInTransaction(TransactionStatus status) {
-				practiceSetMapper.updateById(practiceSet);
+				practiceSetMapper.insert(practiceSet);
 				return practiceTheoryService.saveBatch(theoryList);
 			}
 		});
 	}
 
 	@Override
-	public boolean importRmCtfSet(String path, Map<String, String> envReqs) {
+	public List<String> importRmCtfSet(String path, Map<String, String> envReqs) {
 		// 习题集数据处理
 		PracticeSet practiceSet = handlerPracticeSet(path, false);
 
 		// 遍历习题数据处理
 		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
 
+		// 构建数据存储
 		List<String> failOperations = Lists.newArrayList();
 		List<PracticeOperation> operationList = Lists.newArrayList();
 
+		// 执行数据导入
 		for (String ctfPracticeDir : ctfPracticeDirs) {
 			try {
 				PracticeOperation operation = practiceOperationService.parseRmCtf(ctfPracticeDir,
 						envReqs, practiceSet);
 				operationList.add(operation);
-			} catch (Exception e) {
-				failOperations.add(ctfPracticeDir);
+			} catch (BusinessException e) {
 				log.error("Parse ctf practice fail! ctf_practice_path=[{}], catch error:",
 						ctfPracticeDir, e);
-				continue;
+
+				if (e.getMessage().equals(OjBusinessErrorCode.NAME_IS_EXIST)) {
+					failOperations.add(ctfPracticeDir);
+					continue;
+				}
+
+				throw new BusinessException(e.getMessage());
+
 			}
 		}
 
-		if (CollectionUtils.isNotEmpty(failOperations)) {
-			String failOperation = String.join(",", failOperations);
-			log.error("Import fail ctf practices is [{}]", failOperation);
-			return false;
-		}
+		// 数据去重
+		List<PracticeOperation> operations = StreamApiUtils.distinctByColumn(operationList,
+				PracticeOperation::getTitle);
 
-		return practiceOperationService.saveBatch(operationList);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				practiceSet.setPracticeCount(practiceSet.getPracticeCount() + operations.size());
+				saveOrUpdate(practiceSet);
+				if (CollectionUtils.isEmpty(operations)) {
+					practiceOperationService.saveBatch(operationList);
+				}
+			}
+		});
+
+		return failOperations;
 	}
 
 	@Override
@@ -588,11 +607,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 			practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 			practiceSet.setPracticeCount(CommonConstant.ZERO);
-			if (StringUtils.isBlank(practiceSet.getResourceId())) {
-				practiceSet.setResourceId(IDGeneratorUtil.getID());
-			}
+			practiceSet.setResourceId(IDGeneratorUtil.getID());
 
-			practiceSetMapper.insert(practiceSet);
 			return practiceSet;
 		}
 

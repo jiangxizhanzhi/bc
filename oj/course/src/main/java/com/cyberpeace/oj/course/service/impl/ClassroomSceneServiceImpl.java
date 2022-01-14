@@ -240,6 +240,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 							classroomId, groupInfo.getResourceId(), e);
 				} finally {
 					downLatch.countDown();
+					UserInfoContext.removeUserContext();
 				}
 
 			});

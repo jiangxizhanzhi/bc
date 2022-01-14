@@ -647,6 +647,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		String topoId = envReqs.get(envKey);
 		PracticeOperation operation = JsonParseOperation(convertData, practiceSet, topoId);
 
+		// 校验实操习题标题
+		practiceValidateHandler.validateOperationTitleExist(practiceSet.getResourceId(),
+				operation.getTitle());
+
 		// 附件处理
 		String attachmentFilePath = FileUtil.getOneFile(
 				new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT).getAbsolutePath(), null);

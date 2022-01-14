@@ -82,4 +82,9 @@
             #{lessonId}
         </foreach>
     </select>
+
+    <select id="selectByOrgId" resultMap="base">
+        select * from oj_classroom
+        where organization_id = #{orgId}
+    </select>
 </mapper>

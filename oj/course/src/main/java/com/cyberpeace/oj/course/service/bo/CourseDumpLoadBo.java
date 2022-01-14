@@ -37,5 +37,7 @@ public class CourseDumpLoadBo implements Serializable {
 
 	private List<LessonDumpLoadBo> lesson;
 
+	private LessonConfigDumpBo lessonConfig;
+
 	private Map<String, String> filePathMap;
 }

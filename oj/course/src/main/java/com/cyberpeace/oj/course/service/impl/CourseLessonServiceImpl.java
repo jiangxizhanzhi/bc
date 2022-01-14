@@ -985,9 +985,18 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public CourseLesson loadLesson(String courseId, LessonDumpLoadBo lessonDumpLoadBo,
 			String filePath, Map<String, String> fileMap) {
+
 		CourseLesson lesson = BeanUtils.copy(lessonDumpLoadBo, CourseLesson.class);
 		lesson.setBuiltin(CommonConstant.TRUE);
-		lesson.setResourceId(IDGeneratorUtil.getID());
+		String lessonId = courseLessonMapper.selectByCourseAndName(courseId,
+				lessonDumpLoadBo.getName());
+
+		// 已存在该课时 则更新
+		if (StringUtils.isNotBlank(lessonId)) {
+			lesson.setResourceId(lessonId);
+			CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
+			lesson.setPaperId(courseLesson.getPaperId());
+		}
 
 		// 附件处理
 		if (CollectionUtils.isNotEmpty(lessonDumpLoadBo.getFilePathList())) {

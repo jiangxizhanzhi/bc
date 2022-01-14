@@ -2,10 +2,14 @@ package com.cyberpeace.oj.course.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
 import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
+import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
+
+import java.util.List;
 
 public interface LessonConfigService extends IService<LessonConfig> {
 
@@ -30,4 +34,22 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 * @return
 	 */
 	LessonConfig packageLessonConfig(AddLessonConfigContext configContext);
+
+	/**
+	 * 导出课程数据目录
+	 * @param courseId
+	 * @param authContext
+	 * @return
+	 */
+	LessonConfigDumpBo dumpLessonConfig(String courseId, AuthContext authContext);
+
+	/**
+	 * 章节数据
+	 * @param lessonConfig
+	 * @param courseId
+	 * @param courseLessons
+	 * @return
+	 */
+	List<LessonConfig> loadLessonConfig(LessonConfigDumpBo lessonConfig, String courseId,
+			List<CourseLesson> courseLessons);
 }

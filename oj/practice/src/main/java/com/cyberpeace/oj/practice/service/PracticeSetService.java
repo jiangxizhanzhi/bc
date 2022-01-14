@@ -74,7 +74,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 * @param envReqs
 	 * @return
 	 */
-	boolean importRmCtfSet(String path, Map<String, String> envReqs);
+	List<String> importRmCtfSet(String path, Map<String, String> envReqs);
 
 	/**
 	 * 导出习题集生成压缩文件

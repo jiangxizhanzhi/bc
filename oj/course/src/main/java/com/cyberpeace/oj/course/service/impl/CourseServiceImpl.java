@@ -14,6 +14,14 @@ import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
+import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.PracticeTheoryDumpLoadBo;
 import com.google.common.collect.Maps;
 import nonapi.io.github.classgraph.json.Id;
 import org.apache.commons.collections.CollectionUtils;
@@ -107,6 +115,24 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CommentMapper commentMapper;
+
+	@Autowired
+	private PracticeTheoryService practiceTheoryService;
+
+	@Autowired
+	private PracticeOperationService practiceOperationService;
+
+	@Autowired
+	private PaperMapper paperMapper;
+
+	@Autowired
+	private PaperService paperService;
+
+	@Autowired
+	private PracticeTheoryRefMapper practiceTheoryRefMapper;
+
+	@Autowired
+	private PracticeOperationRefMapper practiceOperationRefMapper;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -426,6 +452,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 					courseLesson -> courseLessonService.handlerLessonDump(courseLesson, filePathMap,
 							destFilePath));
 
+			// 目录数据导出
+			LessonConfigDumpBo lessonConfig = lessonConfigService
+					.dumpLessonConfig(course.getResourceId(), authContext);
+			courseDumpLoadBo.setLessonConfig(lessonConfig);
+
 			// 设置数据
 			courseDumpLoadBo.setLesson(lessonDumpLoadBos);
 			courseDumpLoadBo.setFilePathMap(filePathMap);
@@ -461,6 +492,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 数据解析
 		List<Course> courseList = Lists.newArrayList();
 		List<CourseLesson> lessonList = Lists.newArrayList();
+		List<LessonConfig> configList = Lists.newArrayList();
+		List<Paper> paperList = Lists.newArrayList();
+		List<PracticeTheoryRef> theoryRefList = Lists.newArrayList();
+		List<PracticeOperationRef> operationRefList = Lists.newArrayList();
 
 		courseDumpLoadBos.forEach(dumpBo -> {
 			// 课程数据处理
@@ -469,12 +504,42 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 			// 课时数据处理
 			List<CourseLesson> courseLessons = StreamApiUtils.map(dumpBo.getLesson(),
-					lessonDumpLoadBo -> courseLessonService.loadLesson(course.getResourceId(),
-							lessonDumpLoadBo, filePath, dumpBo.getFilePathMap()));
+					lessonDumpLoadBo -> {
+						CourseLesson lesson = courseLessonService.loadLesson(course.getResourceId(),
+								lessonDumpLoadBo, filePath, dumpBo.getFilePathMap());
+
+						List<PracticeTheory> practiceTheories = StreamApiUtils.map(
+								lessonDumpLoadBo.getTheoryPractice(),
+								practiceTheoryDumpLoadBo -> practiceTheoryService
+										.loadPracticeTheory(IDGeneratorUtil.getID(),
+												practiceTheoryDumpLoadBo, authContext.getUserId()));
+
+						List<PracticeOperation> operationList = StreamApiUtils.map(
+								lessonDumpLoadBo.getOperationPractice(),
+								practiceDumpLoadBo -> practiceOperationService
+										.loadPracticeOperation(IDGeneratorUtil.getID(),
+												practiceDumpLoadBo, dumpBo.getFilePathMap(),
+												filePath, authContext.getUserId()));
+						// 课后练习试卷
+						Paper paper = initPaper(lesson, practiceTheories, operationList);
+						paperList.add(paper);
+
+						// 课后练习习题数据
+						List<PracticeTheoryRef> theoryRefs = theoryEntityToRef(
+								paper.getResourceId(), practiceTheories);
+						theoryRefList.addAll(theoryRefs);
+						List<PracticeOperationRef> operationRefs = operationEntityToRef(
+								paper.getResourceId(), operationList);
+						operationRefList.addAll(operationRefs);
+
+						return lesson;
+					});
 			lessonList.addAll(courseLessons);
 
 			// 章节数据
-			// 课后练习数据
+			List<LessonConfig> lessonConfigList = lessonConfigService.loadLessonConfig(
+					dumpBo.getLessonConfig(), course.getResourceId(), courseLessons);
+			configList.addAll(lessonConfigList);
 
 		});
 
@@ -483,10 +548,84 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			@Override
 			public Boolean doInTransaction(TransactionStatus status) {
 				courseLessonService.saveOrUpdateBatch(lessonList);
+				lessonConfigService.saveOrUpdateBatch(configList);
 
-				return null;
+				// 试卷数据更新
+				for (Paper paper : paperList) {
+					practiceOperationRefMapper.deleteByPaper(paper.getResourceId());
+					practiceTheoryRefMapper.deleteByPaper(paper.getResourceId());
+				}
+
+				return saveOrUpdateBatch(courseList);
 			}
 		});
+	}
+
+	/**
+	 * 数据类型转换
+	 * @param paperId
+	 * @param practiceTheoryList
+	 * @return
+	 */
+	private List<PracticeTheoryRef> theoryEntityToRef(String paperId,
+			List<PracticeTheory> practiceTheoryList) {
+
+		return StreamApiUtils.map(practiceTheoryList, theory -> {
+			String practiceData = JsonUtil.toJsonString(theory);
+			PracticeTheoryRef theoryRef = new PracticeTheoryRef();
+			theoryRef.setResourceId(IDGeneratorUtil.getID());
+			theoryRef.setPaperId(paperId);
+			theoryRef.setOriginId(theory.getResourceId());
+			theoryRef.setSnapshot(practiceData);
+			theoryRef.setOptionRandom(CommonConstant.FALSE);
+			return theoryRef;
+		});
+	}
+
+	/**
+	 * 数据类型转换
+	 * @param paperId
+	 * @param practiceOperationList
+	 * @return
+	 */
+	private List<PracticeOperationRef> operationEntityToRef(String paperId,
+			List<PracticeOperation> practiceOperationList) {
+
+		return StreamApiUtils.map(practiceOperationList, operation -> {
+			String practiceData = JsonUtil.toJsonString(operation);
+			PracticeOperationRef operationRef = new PracticeOperationRef();
+			operationRef.setResourceId(IDGeneratorUtil.getID());
+			operationRef.setPaperId(paperId);
+			operationRef.setOriginId(operation.getResourceId());
+			operationRef.setSnapshot(practiceData);
+
+			return operationRef;
+		});
+	}
+
+	/**
+	 * 有则返回，无则初始化
+	 * @param lesson
+	 * @return
+	 */
+	private Paper initPaper(CourseLesson lesson, List<PracticeTheory> practiceTheorys,
+			List<PracticeOperation> practiceOperations) {
+
+		Double operationScore = StreamApiUtils.mapToDouble(practiceOperations,
+				PracticeOperation::getScore);
+		Double theoryScore = StreamApiUtils.mapToDouble(practiceTheorys, PracticeTheory::getScore);
+
+		Paper paper = StringUtils.isNotBlank(lesson.getPaperId())
+				? paperMapper.selectById(lesson.getPaperId())
+				: new Paper();
+		paper.setTotalScore(operationScore + theoryScore);
+		paper.setPracticeCount(practiceTheorys.size() + practiceOperations.size());
+		paper.setType(Paper.PaperType.LESSON.getCode());
+		paper.setName(lesson.getName());
+		paper.setIsPublic(CommonConstant.TRUE);
+
+		return paper;
+
 	}
 
 	/**

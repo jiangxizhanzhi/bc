@@ -70,4 +70,13 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 * @param lessonConfig
 	 */
 	void updateByCourseAndLesson(@Param("lessonConfig") LessonConfig lessonConfig);
+
+	/**
+	 * 根据课程和名称查询配置数据
+	 * @param courseId
+	 * @param name
+	 * @return
+	 */
+	String selectByCourseAndLessonName(@Param("courseId") String courseId,
+			@Param("name") String name);
 }

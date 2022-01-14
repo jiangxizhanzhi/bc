@@ -42,4 +42,11 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @param lessonIds
 	 */
 	List<Classroom> selectByLesson(@Param("lessonIds") List<String> lessonIds);
+
+	/**
+	 * 查询该组织的课堂表
+	 * @param orgId
+	 * @return
+	 */
+	List<Classroom> selectByOrgId(@Param("orgId") String orgId);
 }

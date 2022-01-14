@@ -19,6 +19,7 @@ public class PageReqBase implements Serializable {
 
 	@ApiModelProperty(name = "per_page", value = "每页大小")
 	@Getter
+	@Setter
 	private Integer perPage = 10;
 
 	@ApiModelProperty(value = "页号，从1开始")

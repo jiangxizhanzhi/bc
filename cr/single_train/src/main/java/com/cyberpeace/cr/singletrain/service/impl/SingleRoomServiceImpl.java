@@ -796,13 +796,4 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
 	}
 
-	private String replaceMissionScheme(JSONObject missionsScheme, Map<String, String> missionIdsMap) {
-		JSONArray schemeData = missionsScheme.getJSONArray("scheme_data");
-		schemeData.toJavaList(JSONObject.class).forEach(
-				stage -> stage.getJSONArray("missions").toJavaList(JSONObject.class).forEach(
-					mission -> mission.put("resource_id", missionIdsMap.get(mission.getString("resource_id")))
-			)
-		);
-		return JsonUtil.toJsonString(schemeData);
-	}
 }

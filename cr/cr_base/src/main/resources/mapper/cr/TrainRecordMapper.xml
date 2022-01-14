@@ -13,12 +13,20 @@
         </set>
         <where>
             end_time is null
-            <if test="business_template_id != null and user_id != null">
-                and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}
+            and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}
+        </where>
+    </update>
+    <update id="setEndTimeByRoomId">
+        update cr_train_record
+        <set>
+            end_time = now()
+            <if test="extra != null || extra != ''">
+                , extra = #{extra}
             </if>
-            <if test="room_id != null">
-                and room_id = #{room_id}
-            </if>
+        </set>
+        <where>
+            end_time is null
+            and room_id = #{room_id} and business_type = #{business_type}
         </where>
     </update>
     <update id="batchEnd">

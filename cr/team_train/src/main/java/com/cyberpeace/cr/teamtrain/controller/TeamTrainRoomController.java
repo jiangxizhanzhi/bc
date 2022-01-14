@@ -328,7 +328,7 @@ public class TeamTrainRoomController {
 				crRoleService.clearRoomRoles(roomId);
 				teamRoomService.removeById(roomId);
 				// 记录房间删除时间
-				trainRecordService.updateEndDate(roomId, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				trainRecordService.updateEndDate(roomId, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 			}
 		});
 

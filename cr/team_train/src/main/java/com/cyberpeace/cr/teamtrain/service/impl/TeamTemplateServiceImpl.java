@@ -183,7 +183,6 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.batchDelete(businessIds);
-				removeByIds(teamTemplateIds);
 			}
 		});
 	}

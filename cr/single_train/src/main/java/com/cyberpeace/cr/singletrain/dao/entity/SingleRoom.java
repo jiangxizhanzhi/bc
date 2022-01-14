@@ -37,6 +37,11 @@ public class SingleRoom extends BaseTable {
 	private String trainingRecord;
 
 	/**
+	 * 是否已提交训练(训练已提交标识, 禁止用户重复提交)
+	 */
+	private Boolean isFinish;
+
+	/**
 	 * 引用场景id
 	 */
 	private String localSceneId;

@@ -19,10 +19,15 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	@Override
 	public void saveRecord(String name, String businessTemplateId, String userId,
 			Integer businessType) {
+		saveRecord(name, businessTemplateId, null, userId, businessType);
+	}
+
+	@Override
+	public void saveRecord(String name, String businessTemplateId, String roomId, String userId, Integer businessType) {
 
 		TrainRecord trainRecord = new TrainRecord();
 		trainRecord.setBusinessTemplateId(businessTemplateId);
-		trainRecord.setRoomId(businessTemplateId);
+		trainRecord.setRoomId(roomId);
 		trainRecord.setRoomName(name);
 		trainRecord.setUserId(userId);
 		trainRecord.setBusinessType(businessType);

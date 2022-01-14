@@ -312,7 +312,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		updateById(teamRoom);
 
 		if (teamRoom.isOpening()) {
-			trainRecordService.saveRecord(teamRoom.getName(), roomId,
+			trainRecordService.saveRecord(teamRoom.getName(), teamRoom.getTeamTemplateId(), roomId,
 					UserInfoContext.getUserContext().getUserId(),
 					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 

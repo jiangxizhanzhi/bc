@@ -14,6 +14,8 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 */
 	void saveRecord(String name, String businessTemplateId, String userId, Integer businessType);
 
+	void saveRecord(String name, String businessTemplateId, String roomId, String userId, Integer businessType);
+
 	/**
 	 * 更新结束时间
 	 */

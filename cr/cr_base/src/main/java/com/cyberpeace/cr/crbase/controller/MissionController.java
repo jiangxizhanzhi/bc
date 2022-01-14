@@ -63,14 +63,12 @@ public class MissionController {
 
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
-	public BaseRsp<JSONObject> getRadar(
+	public BaseRsp<List<Integer>> getRadar(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
 		List<Integer> radars = crRoleService.getRadar(resource_id, user_hash);
 
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("labels", radars);
-		return new BaseRsp<>(jsonObject);
+		return new BaseRsp<>(radars);
 	}
 
 	@ApiOperation("获取任务技能点")
@@ -82,6 +80,7 @@ public class MissionController {
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("labels", labels);
+
 		return new BaseRsp<>(jsonObject);
 	}
 

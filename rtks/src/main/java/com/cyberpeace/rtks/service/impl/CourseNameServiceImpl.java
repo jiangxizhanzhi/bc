@@ -24,7 +24,7 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 
 		List<CourseName> courseNameList = relatedCourseList.stream().map(relatedCourse -> {
 			CourseName courseName = BeanUtils.copy(relatedCourse, CourseName.class);
-
+			courseName.setInterview(false);
 			return courseName;
 		}).collect(Collectors.toList());
 

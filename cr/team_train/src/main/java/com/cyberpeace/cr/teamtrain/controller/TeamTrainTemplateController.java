@@ -8,6 +8,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -135,7 +137,8 @@ public class TeamTrainTemplateController {
 				.toJsonObjectArray(roleString, TeamTrainTemplateRoleRsp.class);
 
 		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
-			for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp.getMissionsScheme().getSchemeData()) {
+			teamTrainTemplateRoleRsp.setId(teamTrainTemplateRoleRsp.getId());
+ 			for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp.getMissionsScheme().getSchemeData()) {
 				missionService.getMissionContent(schemeData);
 			}
 		}
@@ -157,7 +160,15 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
 
-		return new BaseRsp<>(teamTrainTemplateRsp);
+
+		try {
+			String json = new ObjectMapper().writeValueAsString(teamTrainTemplateRsp);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+
+		return new BaseRsp(teamTrainTemplateRsp);
 	}
 
 	@ApiOperation("删除")

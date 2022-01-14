@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
@@ -9,11 +10,13 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import lombok.Data;
 
 @Data
-public class TeamTrainTemplateRoleRsp {
+public class TeamTrainTemplateRoleRsp implements Serializable {
 
 	private String resourceId;
 
 	private String name;
+
+	private String id;
 
 	private String description;
 

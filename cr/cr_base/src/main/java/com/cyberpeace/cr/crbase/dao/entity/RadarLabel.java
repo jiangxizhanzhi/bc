@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("radar_label")
+@TableName("cr_radar_label")
 public class RadarLabel implements Serializable {
 
 	@TableId(type = IdType.AUTO, value = "resource_id")

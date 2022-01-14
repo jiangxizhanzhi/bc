@@ -746,13 +746,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		List<TrainRecord> trainHistory = trainRecordService.lambdaQuery()
 				.eq(TrainRecord::getUserId, UserInfoContext.getUserContext().getUserId())
 				.eq(TrainRecord::getBusinessTemplateId, businessTemplateId)
+				.ne(TrainRecord::getEndTime, null)
 				.ne(TrainRecord::getExtra, null)
-				.orderByDesc(TrainRecord::getStartTime).list();
+				.orderByDesc(TrainRecord::getEndTime).list();
 
 		List<TrainHistoryBo> result = Lists.newArrayList();
 		for (TrainRecord item: trainHistory) {
 			TrainHistoryBo trainHistoryBo = new TrainHistoryBo();
-			trainHistoryBo.setBusinessTemplateId(item.getBusinessTemplateId());
+			trainHistoryBo.setRoomId(item.getRoomId());
 			trainHistoryBo.setTrainTime(item.getStartTime());
 			trainHistoryBo.setScore(item.getExtra().getDouble(SingleRoom.CrTrainRecordFields.SCORE));
 

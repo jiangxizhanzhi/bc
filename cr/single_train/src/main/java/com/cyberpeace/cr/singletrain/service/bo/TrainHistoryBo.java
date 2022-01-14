@@ -9,8 +9,8 @@ import java.util.Date;
 @Data
 @ApiModel("训练历史")
 public class TrainHistoryBo {
-    @ApiModelProperty("训练模板id")
-    private String businessTemplateId;
+    @ApiModelProperty("训练房间id")
+    private String roomId;
 
     @ApiModelProperty("训练时间")
     private Date trainTime;

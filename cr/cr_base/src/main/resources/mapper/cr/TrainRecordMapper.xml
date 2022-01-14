@@ -12,8 +12,13 @@
             </if>
         </set>
         <where>
-            business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}
-            and end_time is null
+            end_time is null
+            <if test="business_template_id != null and user_id != null">
+                and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}
+            </if>
+            <if test="room_id != null">
+                and room_id = #{room_id}
+            </if>
         </where>
     </update>
     <update id="batchEnd">

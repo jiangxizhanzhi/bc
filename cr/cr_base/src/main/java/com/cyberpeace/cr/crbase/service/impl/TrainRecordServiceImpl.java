@@ -47,6 +47,11 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	}
 
 	@Override
+	public void updateEndDate(String roomId, Integer businessType) {
+		trainRecordMapper.setEndTime(roomId, businessType, null);
+	}
+
+	@Override
 	public void updateEndDate(String businessTemplateId) {
 		trainRecordMapper.batchEnd(businessTemplateId);
 	}

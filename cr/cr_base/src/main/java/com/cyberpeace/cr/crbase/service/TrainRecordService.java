@@ -27,6 +27,11 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	void updateEndDate(String businessTemplateId, String userId, Integer businessType, String extra);
 
 	/**
+	 * 通过房间id更新结束时间
+	 */
+	void updateEndDate(String roomId, Integer businessType);
+
+	/**
 	 * 用于删除单兵训练模板时，批量更新训练记录
 	 * @param businessTemplateId
 	 */

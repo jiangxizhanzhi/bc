@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
-import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -106,9 +105,6 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
-
-	@Autowired
-	private TeamTemplateMapper teamTemplateMapper;
 
 	@Autowired
 	private TrainRecordService trainRecordService;
@@ -324,9 +320,6 @@ public class TeamTrainRoomController {
 
 		String roomId = opsReq.getRoomId();
 
-		TeamRoom teamRoom = teamRoomService.getById(roomId);
-		String businessTemplateId = teamTemplateMapper.selectById(teamRoom.getTeamTemplateId()).getBusinessTemplateId();
-
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -335,8 +328,7 @@ public class TeamTrainRoomController {
 				crRoleService.clearRoomRoles(roomId);
 				teamRoomService.removeById(roomId);
 				// 记录房间删除时间
-				trainRecordService.updateEndDate(businessTemplateId, teamRoom.getCreateUserId(),
-						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				trainRecordService.updateEndDate(roomId, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 			}
 		});
 

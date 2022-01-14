@@ -58,8 +58,8 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 
 	/**
 	 * 无则创建 有则返回
-	 * @param categoryId
+	 * @param categoryName
 	 * @return
 	 */
-    CourseCategory getOrCreate(String categoryId);
+	CourseCategory getOrCreate(String categoryName);
 }

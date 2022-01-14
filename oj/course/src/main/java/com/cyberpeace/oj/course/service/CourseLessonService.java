@@ -155,4 +155,15 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 */
 	LessonDumpLoadBo handlerLessonDump(CourseLesson courseLesson, Map<String, String> filePathMap,
 			String destFilePath);
+
+	/**
+	 * 加载课时数据
+	 * @param courseId 课程编号
+	 * @param lessonDumpLoadBo 课时信息数据
+	 * @param filePath 解压后文件存储路径
+	 * @param filePathMap 文件映射关系
+	 * @return
+	 */
+	CourseLesson loadLesson(String courseId, LessonDumpLoadBo lessonDumpLoadBo, String filePath,
+			Map<String, String> filePathMap);
 }

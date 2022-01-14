@@ -773,7 +773,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 题解
 		if (StringUtils.isNotBlank(dumpLoadBo.getWriteup())) {
 			List<String> matchList = LocalStringUtil.getMatchStr(dumpLoadBo.getWriteup(),
-					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
+					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ZERO);
 			List<String> urlList = StreamApiUtils.map(matchList, url -> {
 				// 获取文件路径
 				String relativePath = filePathMap.get(url);

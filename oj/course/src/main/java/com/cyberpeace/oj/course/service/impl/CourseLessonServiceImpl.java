@@ -716,11 +716,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Override
 	public Boolean addLessonPractice(String resourceId, List<PaperPracticeContext> practiceList) {
-		CourseLesson courseLesson = courseLessonMapper.selectById(resourceId);
-		if (null == courseLesson) {
-			log.error("addLessonPractice: lesson not found! lesson_id=[{}]", resourceId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(resourceId, false);
 
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 		Paper paper = paperService.update(paperContext);
@@ -975,7 +971,72 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			dumpLoadBo.setOperationPractice(dumpLoadBos);
 		}
 
+		// 场景数据导出
+		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+				.intValue() && StringUtils.isNotBlank(courseLesson.getTopoId())) {
+			JSONObject topoData = remoteTopoService.exportTopo(courseLesson.getTopoId());
+			dumpLoadBo.setTopoConfig(topoData);
+		}
+
 		return dumpLoadBo;
+	}
+
+	@Override
+	public CourseLesson loadLesson(String courseId, LessonDumpLoadBo lessonDumpLoadBo,
+			String filePath, Map<String, String> fileMap) {
+		CourseLesson lesson = BeanUtils.copy(lessonDumpLoadBo, CourseLesson.class);
+		lesson.setBuiltin(CommonConstant.TRUE);
+		lesson.setResourceId(IDGeneratorUtil.getID());
+
+		// 附件处理
+		if (CollectionUtils.isNotEmpty(lessonDumpLoadBo.getFilePathList())) {
+			List<String> attachmentIds = StreamApiUtils.map(lessonDumpLoadBo.getFilePathList(),
+					attachmentPath -> {
+						String relative = fileMap.get(attachmentPath);
+						String realPath = filePath + File.separatorChar + relative;
+
+						String fileSuffix = FileUtil.getFileSuffix(relative);
+						String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD
+								+ fileSuffix;
+						String destFilePath = AttachmentPath.ATTACHMENT.getDesc()
+								+ File.separatorChar + fileName;
+						FileUtil.copyFile(realPath, destFilePath, false);
+
+						String fileUrl = utilService.replaceFileUrl(destFilePath);
+						AttachmentBo attachmentBo = attachmentService.create(fileName, fileUrl);
+						return attachmentBo.getResourceId();
+					});
+			lesson.setAttachmentIds(String.join(CommonConstant.CODE_COMMA, attachmentIds));
+		}
+
+		// 视频
+		if (StringUtils.isNotBlank(lessonDumpLoadBo.getVideoUrl())) {
+			String videoStorePath = String.format(AttachmentPath.VIDEO.getDesc(), courseId);
+			String fileUrl = loadLessonCopyFile(lessonDumpLoadBo.getVideoUrl(), videoStorePath,
+					fileMap, filePath);
+			lesson.setVideoUrl(fileUrl);
+		}
+
+		return null;
+	}
+
+	/**
+	 * 加载课时练习拷贝文件
+	 * @param dataPath
+	 * @param storePath
+	 * @return
+	 */
+	private String loadLessonCopyFile(String dataPath, String storePath,
+			Map<String, String> filePathMap, String filePath) {
+		String relative = filePathMap.get(dataPath);
+		String realPath = filePath + File.separatorChar + relative;
+
+		String fileSuffix = FileUtil.getFileSuffix(realPath);
+		String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+		String destFile = storePath + fileName;
+
+		FileUtil.copyFile(realPath, destFile, false);
+		return utilService.replaceFileUrl(destFile);
 	}
 
 	/**

@@ -166,8 +166,10 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	}
 
 	@ApiOperation("习题集资源数据导出")
-	@PostMapping("/batch_dumps")
-	public BaseRsp exportPracticeSet(@NotEmpty List<String> ids, HttpServletResponse response) {
+	@GetMapping("/batch_dumps")
+	public BaseRsp exportPracticeSet(
+			@ApiParam(name = "ids", value = "习题集编号") @NotEmpty List<String> ids,
+			HttpServletResponse response) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

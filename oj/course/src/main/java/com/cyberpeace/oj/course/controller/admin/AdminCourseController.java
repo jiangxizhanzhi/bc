@@ -1,7 +1,9 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.io.File;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -231,10 +233,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
-	public BaseRsp exportCourse(@ApiParam("课程编号") @NotEmpty List<String> ids) {
+	public BaseRsp exportCourse(@ApiParam("课程编号") @NotEmpty List<String> ids,
+			HttpServletResponse response) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		String zipPath = courseService.dumpCourse(ids, authContext);
+		FileUtil.setResponse(new File(zipPath), true, response);
 		return new BaseRsp();
 	}
 
@@ -245,7 +249,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 				false, loadCourseReq.getFile(), true);
 		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
 
-		return new BaseRsp();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		Boolean result = courseService.loadCourse(realPath, authContext);
+		return new BaseRsp(result);
 
 	}
 

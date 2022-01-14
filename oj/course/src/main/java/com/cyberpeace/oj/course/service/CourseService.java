@@ -82,4 +82,12 @@ public interface CourseService extends IService<Course> {
 	 * @return 文件路径
 	 */
 	String dumpCourse(List<String> courseIds, AuthContext authContext);
+
+	/**
+	 * 课程数据导入
+	 * @param realPath
+	 * @param authContext
+	 * @return
+	 */
+	Boolean loadCourse(String realPath, AuthContext authContext);
 }

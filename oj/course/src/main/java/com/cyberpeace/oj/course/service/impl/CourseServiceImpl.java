@@ -15,6 +15,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.google.common.collect.Maps;
+import nonapi.io.github.classgraph.json.Id;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -441,6 +442,100 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		return zipPath;
 	}
 
+	@Override
+	public Boolean loadCourse(String realPath, AuthContext authContext) {
+
+		// 文件解压
+		String destFilePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		ZipUtil.unzipToDest(realPath, destFilePath);
+		String filePath = destFilePath + File.separatorChar
+				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
+
+		// 文件数据读取
+		String dataPath = destFilePath + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		String content = FileUtil.getContent(new File(dataPath));
+		List<CourseDumpLoadBo> courseDumpLoadBos = JsonUtil.toJsonObjectArray(content,
+				CourseDumpLoadBo.class);
+
+		// 数据解析
+		List<Course> courseList = Lists.newArrayList();
+		List<CourseLesson> lessonList = Lists.newArrayList();
+
+		courseDumpLoadBos.forEach(dumpBo -> {
+			// 课程数据处理
+			Course course = loadCourse(dumpBo, authContext.getUserId(), destFilePath);
+			courseList.add(course);
+
+			// 课时数据处理
+			List<CourseLesson> courseLessons = StreamApiUtils.map(dumpBo.getLesson(),
+					lessonDumpLoadBo -> courseLessonService.loadLesson(course.getResourceId(),
+							lessonDumpLoadBo, filePath, dumpBo.getFilePathMap()));
+			lessonList.addAll(courseLessons);
+
+		});
+
+		return null;
+	}
+
+	/**
+	 * 课程数据加载
+	 * @param courseDumpLoadBo
+	 * @return
+	 */
+	private Course loadCourse(CourseDumpLoadBo courseDumpLoadBo, String userId, String filePath) {
+
+		// 基本数据设置
+		Course course = BeanUtils.copy(courseDumpLoadBo, Course.class);
+		String courseId = courseMapper.selectByName(course.getName());
+		course.setResourceId(
+				StringUtils.isNotBlank(courseId) ? courseId : courseDumpLoadBo.getCourseNum());
+		course.setCreateUserId(userId);
+		course.setModifyUserId(userId);
+
+		// 分类数据
+		CourseCategory category = courseCategoryService
+				.getOrCreate(courseDumpLoadBo.getCategoryName());
+		course.setCategoryId(category.getResourceId());
+
+		Map<String, String> filePathMap = courseDumpLoadBo.getFilePathMap();
+
+		// logo数据处理
+		if (StringUtils.isNotBlank(courseDumpLoadBo.getLogo())) {
+			String relativePath = filePathMap.get(courseDumpLoadBo.getLogo());
+			String fileSuffix = FileUtil.getFileSuffix(relativePath);
+			String logoPath = AttachmentPath.LOGO.getDesc() + IDGeneratorUtil.getID()
+					+ CommonConstant.PERIOD + fileSuffix;
+			String realPath = filePath + File.separatorChar + relativePath;
+
+			FileUtil.copyFile(realPath, logoPath, false);
+			String fileUrl = utilService.replaceFileUrl(logoPath);
+			course.setLogo(fileUrl);
+		}
+
+		// 课程大纲数据
+		if (StringUtils.isNotBlank(courseDumpLoadBo.getOutline())) {
+			List<String> matchList = LocalStringUtil.getMatchStr(courseDumpLoadBo.getOutline(),
+					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
+			List<String> fileList = StreamApiUtils.map(matchList, match -> {
+				String relativePath = filePathMap.get(match);
+				String fileSuffix = FileUtil.getFileSuffix(relativePath);
+				String realPath = filePath + File.separatorChar + relativePath;
+
+				String outlinePath = AttachmentPath.OUTLINE.getDesc() + IDGeneratorUtil.getID()
+						+ CommonConstant.PERIOD + fileSuffix;
+				FileUtil.copyFile(realPath, outlinePath, false);
+				String fileUrl = utilService.replaceFileUrl(outlinePath);
+				return utilService.handlerFileUrl(fileUrl);
+			});
+
+			String content = LocalStringUtil.replaceAll(courseDumpLoadBo.getOutline(), matchList,
+					fileList);
+			course.setOutline(content);
+		}
+
+		return course;
+	}
+
 	/**
 	 * 组织导出的课程数据
 	 * @param course
@@ -466,7 +561,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 大纲文件处理
 		if (StringUtils.isNotBlank(course.getOutline())) {
 			List<String> matchList = LocalStringUtil.getMatchStr(course.getOutline(),
-					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ZERO);
+					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
 			matchList.forEach(str -> {
 				// 文件拷贝
 				String realPath = utilService.getRealPath(str);

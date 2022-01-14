@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -472,9 +473,20 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 							lessonDumpLoadBo, filePath, dumpBo.getFilePathMap()));
 			lessonList.addAll(courseLessons);
 
+			// 章节数据
+			// 课后练习数据
+
 		});
 
-		return null;
+		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				courseLessonService.saveOrUpdateBatch(lessonList);
+
+				return null;
+			}
+		});
 	}
 
 	/**

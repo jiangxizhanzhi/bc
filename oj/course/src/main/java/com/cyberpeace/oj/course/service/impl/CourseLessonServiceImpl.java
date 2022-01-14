@@ -1032,15 +1032,34 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				&& StringUtils.isNotBlank(lessonDumpLoadBo.getHandoutUrl())) {
 			List<String> matchList = LocalStringUtil.getMatchStr(lessonDumpLoadBo.getHandoutUrl(),
 					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
-			StreamApiUtils.map(matchList, match -> {
-				String relative = fileMap.get(match);
-				return relative;
+			List<String> urlList = StreamApiUtils.map(matchList, match -> {
+				String fileUrl = loadLessonCopyFile(match, AttachmentPath.ATTACHMENT.getDesc(),
+						fileMap, filePath);
+				return utilService.handlerFileUrl(fileUrl);
 			});
+
+			String content = LocalStringUtil.replaceAll(lessonDumpLoadBo.getHandoutUrl(), matchList,
+					urlList);
+			lesson.setHandoutUrl(content);
 		}
 
 		// markdown源文件
+		if (StringUtils.isNotBlank(lessonDumpLoadBo.getOriginMarkdownFile())) {
+			String format = String.format(AttachmentPath.MARKDOWN.getDesc(), courseId);
+			String fileUrl = loadLessonCopyFile(lessonDumpLoadBo.getOriginMarkdownFile(), format,
+					fileMap, filePath);
+			lesson.setOriginMarkdownFile(fileUrl);
+		}
 
-		return null;
+		// 场景数据
+		if (lessonDumpLoadBo.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+				.intValue() && null != lessonDumpLoadBo.getTopoConfig()) {
+			String topoId = localSceneService.saveTopo(lessonDumpLoadBo.getTopoConfig(),
+					LocalScene.BusinessCode.LESSON.getCode());
+			lesson.setTopoId(topoId);
+		}
+
+		return lesson;
 	}
 
 	/**

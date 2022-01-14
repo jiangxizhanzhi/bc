@@ -60,18 +60,11 @@ public class ClassroomValidateHandler {
 
 		if (startTime.getHours() < MIN_START_TIME || endTime.getHours() > END_MAX_TIME) {
 			throw new BusinessException(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR);
-		} else {
-			if (startTime.getHours() == MIN_START_TIME
-					&& (startTime.getMinutes() != CommonConstant.ZERO
-							|| startTime.getSeconds() == CommonConstant.ZERO)) {
-				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR);
-			}
-			if (endTime.getHours() == END_MAX_TIME && (endTime.getMinutes() != CommonConstant.ZERO
-					|| endTime.getSeconds() == CommonConstant.ZERO)) {
-				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR);
-			}
+		} else if (endTime.getHours() == END_MAX_TIME
+				&& (endTime.getMinutes() != CommonConstant.ZERO
+						|| endTime.getSeconds() == CommonConstant.ZERO)) {
+			throw new BusinessException(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR);
 		}
-
 	}
 
 	/**

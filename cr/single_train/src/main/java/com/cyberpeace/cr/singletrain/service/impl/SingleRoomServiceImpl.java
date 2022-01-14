@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +32,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
-import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
@@ -96,6 +90,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Autowired
 	private CrTaskService crTaskService;
 
+	@Autowired
+	private CrRoleService crRoleService;
+
 	/**
 	 * 创建单兵训练
 	 *
@@ -112,13 +109,18 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 		BusinessTemplate businessTemplate = businessTemplateService.getById(businessTemplateId);
 
-		// save single room data
+		// setup single room data
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom room = new SingleRoom();
 		room.setBusinessTemplateId(businessTemplateId);
 		room.setStartTime(new Date());
 		room.setUserId(userId);
 		room.setTrainingRecord("{}");
+
+		// setup single role
+		CrRole singleRole = new CrRole(CrRole.SingleRoleGroupCode.name, CrRole.SingleRoleGroupCode.roleGroup);
+		singleRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		singleRole.setUserIds(userId);
 
 		// 开启场景
 		LocalScene localScene = createLocalScene(businessTemplate);
@@ -133,7 +135,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					localSceneService.save(localScene);
 					room.setLocalSceneId(localScene.getResourceId());
 					save(room);
-					missionService.copyScheme(getMissionIdsByScheme(JsonUtil.toJsonString(singleRoomBo.getMissionsScheme())), userId, room.getResourceId());
+					singleRole.setRoomId(room.getResourceId());
+					singleRole.setMissionScheme(crRoleService.getNewRoomScheme(JsonUtil.toJsonString(singleRoomBo.getMissionsScheme()), room.getResourceId()));
+					crRoleService.save(singleRole);
+
 					trainRecordService.saveRecord(businessTemplate.getName(), businessTemplateId, room.getResourceId(),
 							userId,
 							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
@@ -190,6 +195,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		if (singleRoom == null) {
 			return singleRoomBo;
 		}
+
+		// 获取房间任务方案
+		singleRoomBo.getResourceId();
+		missionService.lambdaQuery().eq(Mission::getRoomId, singleRoomBo.getResourceId());
+//		singleRoomBo.getMissionsScheme().toJavaObject(List.class)
+
 
 		// 生成数据
 		SingleRoomInfoBo singleRoomInfoBo = new SingleRoomInfoBo();
@@ -366,7 +377,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 */
 	@Override
 	public SingleMissionBo getMission(String businessTemplateId, String missionId) {
-		// 获取任务基础信息
+		// 获取任务基础信息 todo -> Mission entity
 		MissionTemplate missionObject = missionTemplateMapper.selectById(missionId);
 		if (missionObject == null) {
 			return null;
@@ -783,5 +794,15 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 		return missionTemplateMapper.selectBatchIds(missionIds).stream()
 				.collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
+	}
+
+	private String replaceMissionScheme(JSONObject missionsScheme, Map<String, String> missionIdsMap) {
+		JSONArray schemeData = missionsScheme.getJSONArray("scheme_data");
+		schemeData.toJavaList(JSONObject.class).forEach(
+				stage -> stage.getJSONArray("missions").toJavaList(JSONObject.class).forEach(
+					mission -> mission.put("resource_id", missionIdsMap.get(mission.getString("resource_id")))
+			)
+		);
+		return JsonUtil.toJsonString(schemeData);
 	}
 }

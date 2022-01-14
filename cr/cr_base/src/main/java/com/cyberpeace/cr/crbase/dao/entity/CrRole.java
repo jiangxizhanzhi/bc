@@ -119,6 +119,15 @@ public class CrRole extends BaseTable {
 		}
 	}
 
+	public interface SingleRoleGroupCode {
+
+		String name = "单兵训练角色";
+
+		Integer role = 1;
+
+		Integer roleGroup = 1;
+	}
+
 	public Boolean isStudent() {
 		boolean result = false;
 		if (BusinessTemplate.BusinessType.RED_VS_BLUE.getCode().equals(this.businessType)) {

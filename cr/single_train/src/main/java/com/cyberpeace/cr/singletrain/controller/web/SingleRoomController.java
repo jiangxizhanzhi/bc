@@ -94,6 +94,7 @@ public class SingleRoomController {
 	@PostMapping("/mission_submit")
 	@ApiOperation("任务提交")
 	public BaseRsp<Boolean> submitMission(@RequestBody @Validated SubmitMissionReq requestData) {
+		// todo mission refactor
 		return new BaseRsp<>(
 				singleRoomService.submitMission(requestData.getBusinessTemplateId(), requestData));
 	}
@@ -102,11 +103,13 @@ public class SingleRoomController {
 	@ApiOperation("任务获取")
 	public BaseRsp<SingleMissionBo> mission(@RequestParam("resource_id") String businessTemplateId,
 			@RequestParam("mission_id") String missionId) {
+		// todo mission refactor
 		return new BaseRsp<>(singleRoomService.getMission(businessTemplateId, missionId));
 	}
 
 	@GetMapping("/train_manual")
 	@ApiOperation("训练手册")
+	// todo mission refactor
 	public BaseRsp<String> trainManual(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainManual(businessTemplateId));
 	}
@@ -121,6 +124,7 @@ public class SingleRoomController {
 	@GetMapping("/train_record_markdown")
 	@ApiOperation("训练记录-markdown")
 	public BaseRsp<String> trainRecordMd(@RequestParam("resource_id") String businessTemplateId) {
+		// todo mission refactor
 		return new BaseRsp<>(singleRoomService.getTrainRecordMarkdown(businessTemplateId));
 	}
 
@@ -128,6 +132,7 @@ public class SingleRoomController {
 	@ApiOperation("训练时间线")
 	public BaseRsp<TrainTimeLineBo>
 			trainTimeLine(@RequestParam("resource_id") String businessTemplateId) {
+		// todo mission refactor
 		return new BaseRsp<>(singleRoomService.getTimeLineData(businessTemplateId));
 	}
 

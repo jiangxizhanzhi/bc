@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -373,4 +375,49 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	public List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId) {
 		return crRoleMapper.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
 	}
+
+	public String getNewRoomScheme(String missionsScheme, String roomId) {
+		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
+				new TypeReference<ColorMission<AddTemplateMission>>() {});
+		if (null == colorMission || null == colorMission.getSchemeData()) {
+			return "[]";
+		}
+
+		List<MissionStageScheme> missionStageSchemes = Lists.newArrayList();
+		List<String> originMissionIds = Lists.newArrayList();
+		// 遍历每个阶段
+		for (MissionSchemeObject<AddTemplateMission> schemeDatum : colorMission.getSchemeData()) {
+
+			List<AddTemplateMission> missions = schemeDatum.getMissions();
+			// 遍历每个任务
+			for (AddTemplateMission mission : missions) {
+				originMissionIds.add(mission.getResourceId());
+			}
+		}
+
+		Map<String, String> originMissionMaps = missionService.copyScheme(originMissionIds,
+				UserInfoContext.getUserContext().getUserId(), roomId);
+
+		// 遍历每个阶段设置新的任务id
+		for (MissionSchemeObject<AddTemplateMission> schemeDatum : colorMission.getSchemeData()) {
+			MissionStageScheme missionStageScheme = new MissionStageScheme();
+
+			List<String> targetMissionIds = Lists.newArrayList();
+
+			// 遍历每个任务设置新的任务id
+			for (AddTemplateMission mission : schemeDatum.getMissions()) {
+				targetMissionIds.add(originMissionMaps.getOrDefault(mission.getResourceId(),
+						mission.getResourceId()));
+			}
+			missionStageScheme.setStage(schemeDatum.getStage());
+			missionStageScheme.setDynamic(schemeDatum.getDynamic());
+			missionStageScheme.setMissions(targetMissionIds);
+
+			missionStageSchemes.add(missionStageScheme);
+		}
+
+		return JsonUtil.toJsonString(missionStageSchemes);
+
+	}
+
 }

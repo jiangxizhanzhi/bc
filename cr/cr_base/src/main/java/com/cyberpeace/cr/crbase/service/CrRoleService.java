@@ -98,4 +98,11 @@ public interface CrRoleService extends IService<CrRole> {
 	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
 
 	List<Integer> getRadar(String roomId, String userId);
+
+	/** 根据模板的任务id，复制任务并获取新的id，返回新的json字符串
+	 * @param missionsScheme
+	 * @return
+	 */
+	String getNewRoomScheme(String missionsScheme, String roomId);
+
 }

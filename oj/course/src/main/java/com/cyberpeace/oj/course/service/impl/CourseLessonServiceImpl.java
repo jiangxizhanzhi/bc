@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
@@ -1016,6 +1017,28 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					fileMap, filePath);
 			lesson.setVideoUrl(fileUrl);
 		}
+
+		// 讲义
+		if (lessonDumpLoadBo.getHandoutType() != CourseLesson.HandoutType.MD.getCode().intValue()
+				&& StringUtils.isNotBlank(lessonDumpLoadBo.getHandoutUrl())) {
+			String handoutStorePath = String.format(AttachmentPath.HANDOUT.getDesc(), courseId);
+			String fileUrl = loadLessonCopyFile(lessonDumpLoadBo.getHandoutUrl(), handoutStorePath,
+					fileMap, filePath);
+			lesson.setHandoutUrl(fileUrl);
+		}
+
+		// 讲义修改
+		if (lessonDumpLoadBo.getHandoutType() != CourseLesson.HandoutType.MD.getCode().intValue()
+				&& StringUtils.isNotBlank(lessonDumpLoadBo.getHandoutUrl())) {
+			List<String> matchList = LocalStringUtil.getMatchStr(lessonDumpLoadBo.getHandoutUrl(),
+					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
+			StreamApiUtils.map(matchList, match -> {
+				String relative = fileMap.get(match);
+				return relative;
+			});
+		}
+
+		// markdown源文件
 
 		return null;
 	}

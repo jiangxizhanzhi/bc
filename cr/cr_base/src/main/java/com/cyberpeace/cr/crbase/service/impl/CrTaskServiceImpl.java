@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -89,6 +90,66 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public void submitMissions(String roomId, String missionId, String answer) {
 		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "");
+	}
+
+	@Override
+	public void batchSubmitMissions(String roomId, List<String> missionIds, Map<String, String> answer) {
+		Map<String, Mission> missionMap = StreamApiUtils.toMap(missionMapper.selectBatchIds(missionIds), MissionBase::getResourceId, mission -> mission);
+		Map<String, CrTask> crTaskMap = StreamApiUtils.toMap(lambdaQuery().in(CrTask::getMissionId, missionIds).list(), CrTask::getMissionId, crTask -> crTask);
+
+		Date currentDate = new Date();
+		List<CrTaskSubmit> pendingSaveSubmit = Lists.newArrayList();
+		List<CrTask> pendingUpdateTask = Lists.newArrayList();
+		answer.forEach((key, val) -> {
+			Mission mission = missionMap.get(key);
+			CrTask crTask = crTaskMap.get(key);
+			if (mission == null || crTask == null) {
+				throw new BusinessException(null);
+			}
+
+			CrTaskSubmit crTaskSubmit = new CrTaskSubmit();
+			crTaskSubmit.setTaskId(crTask.getResourceId());
+			crTaskSubmit.setRoomId(crTask.getRoomId());
+			crTaskSubmit.setMissionScore(mission.getScore());
+			crTaskSubmit.setAnswer(val);
+			crTaskSubmit.setEvaluateTime(currentDate);
+			crTaskSubmit.setAnswerExtension("");
+			crTaskSubmit.setResourceId(IDGeneratorUtil.getID());
+
+			if (mission.isObjective()) {
+				// 客观题，可机评
+				if (isCorrect(val, mission.getAnswer(), mission.getType())) {
+					crTask.setScore(mission.getScore());
+					crTask.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+				} else {
+					crTask.setScore(0);
+					crTask.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
+				}
+			} else {
+				// 主观题
+				crTask.setScore(0);
+				crTask.setStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
+			}
+
+			crTask.setUserAnswer(val);
+			crTask.setLastSubmitTime(currentDate);
+
+			crTaskSubmit.setScore(crTask.getScore());
+			crTaskSubmit.setEvaluateStatus(crTask.getStatus());
+
+			pendingUpdateTask.add(crTask);
+			pendingSaveSubmit.add(crTaskSubmit);
+		});
+
+		// 数据写入
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				updateBatchById(pendingUpdateTask);
+				pendingSaveSubmit.forEach(obj -> crTaskSubmitMapper.insert(obj));
+			}
+		});
+
 	}
 
 	@Override

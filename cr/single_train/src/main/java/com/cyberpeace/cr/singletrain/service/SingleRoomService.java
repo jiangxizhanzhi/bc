@@ -66,4 +66,10 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @return TrainHistoryBo
 	 */
 	List<TrainHistoryBo> getTrainHistory(String businessTemplateId);
+
+	/**
+	 * 训练提交
+	 * @param businessTemplateId 业务模板id
+	 */
+	void submitTrain(String businessTemplateId);
 }

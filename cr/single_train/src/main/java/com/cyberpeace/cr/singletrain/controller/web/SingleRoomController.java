@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomOpsReq;
+import com.cyberpeace.cr.singletrain.controller.req.SingleRoomTrainSubmitReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
@@ -174,6 +175,13 @@ public class SingleRoomController {
 	@GetMapping("/train_history")
 	public BaseRsp<List<TrainHistoryBo>> trainHistory(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainHistory(businessTemplateId));
+	}
+
+	@ApiOperation("训练提交")
+	@PostMapping("/train_submit")
+	public BaseRsp<Boolean> submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
+		singleRoomService.submitTrain(requestBody.getResourceId());
+		return new BaseRsp<>(true);
 	}
 
 }

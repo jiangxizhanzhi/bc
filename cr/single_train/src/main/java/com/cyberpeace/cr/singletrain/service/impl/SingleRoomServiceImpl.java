@@ -1,32 +1,10 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
-import static com.cyberpeace.cr.crbase.constant.CrCommonConstants.MP_SCENE_ID_KEY;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.MissionContext;
-import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
@@ -34,9 +12,11 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
@@ -57,6 +37,22 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.cyberpeace.cr.crbase.constant.CrCommonConstants.MP_SCENE_ID_KEY;
 
 @Service
 public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleRoom> implements SingleRoomService {
@@ -117,6 +113,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		room.setStartTime(new Date());
 		room.setUserId(userId);
 		room.setTrainingRecord("{}");
+		room.setIsFinish(false);
 
 		// setup single role
 		CrRole singleRole = new CrRole(CrRole.SingleRoleGroupCode.name, CrRole.SingleRoleGroupCode.roleGroup);
@@ -239,39 +236,17 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		if (singleRoom == null) {
 			return false;
 		}
-		JSONObject extraRecord = new JSONObject();
-
-		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
-		if (!trainRecord.isEmpty()) {
-			// 用户训练记录
-			extraRecord.put(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD, singleRoom.getTrainingRecord());
-
-			// 用户训练得分
-			extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, trainRecord.values().stream().map(item -> {
-				JSONObject missionResult = (JSONObject) item;
-				return missionResult.getDouble(SingleRoom.MissionsRecordFields.SCORE);
-			}).mapToDouble(value -> value).sum());
-		}
 
 		// 关闭场景
 		localSceneService.stopScene(singleRoom.getLocalSceneId());
 
 		// 删除单兵训练房间, 记录结束时间
-		String userId = singleRoom.getUserId();
-		String businessTemplateId = singleRoom.getBusinessTemplateId();
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				localSceneService.removeById(singleRoom.getLocalSceneId());
 				singleRoomMapper.deleteById(singleRoom);
-				if (extraRecord.isEmpty()) {
-					trainRecordService.updateEndDate(businessTemplateId, userId,
-							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null);
-				} else {
-					trainRecordService.updateEndDate(businessTemplateId, userId,
-							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), JsonUtil.toJsonString(extraRecord));
-				}
 			}
 		});
 		return true;
@@ -456,14 +431,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject missionsRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(),
 				JSONObject.class);
 
-		Boolean isCorrect = crTaskService.isCorrectByObjective(requestData.getAnswer(), mission.getAnswer(), mission.getType());
-
 		JSONObject record = new JSONObject();
 		record.put(SingleRoom.MissionsRecordFields.TIME, new Date());
 		record.put(SingleRoom.MissionsRecordFields.ANSWER, requestData.getAnswer());
 		record.put(SingleRoom.MissionsRecordFields.RECORD, requestData.getTrainingRecord());
-		record.put(SingleRoom.MissionsRecordFields.RESULT, isCorrect);
-		record.put(SingleRoom.MissionsRecordFields.SCORE, isCorrect ? mission.getScore() : 0);
+
+		// todo 待删除字段
+//		record.put(SingleRoom.MissionsRecordFields.RESULT, isCorrect);
+//		record.put(SingleRoom.MissionsRecordFields.SCORE, isCorrect ? mission.getScore() : 0);
 
 		missionsRecord.put(requestData.getMissionResourceId(), record);
 
@@ -798,6 +773,58 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			result.add(trainHistoryBo);
 		}
 		return result;
+	}
+
+	@Override
+	public void submitTrain(String businessTemplateId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
+		// 无运行中训练、训练已完成
+		if (singleRoom == null || singleRoom.getIsFinish()) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		JSONObject extraRecord = new JSONObject();
+
+		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
+		Map<String, String> userAnswer = Maps.newHashMap();
+		if (!trainRecord.isEmpty()) {
+			// 用户训练记录
+			extraRecord.put(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD, singleRoom.getTrainingRecord());
+
+			trainRecord.forEach((key, val) -> {
+				JSONObject missionResult = (JSONObject) val;
+				userAnswer.put(key, missionResult.getString(SingleRoom.MissionsRecordFields.ANSWER));
+			});
+		}
+
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(), userId);
+		if (crRole == null) {
+			throw new BusinessException(null);
+		}
+
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// 写入训练记录
+				if (extraRecord.isEmpty()) {
+					trainRecordService.updateEndDate(businessTemplateId, userId,
+							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null);
+				} else {
+					trainRecordService.updateEndDate(businessTemplateId, userId,
+							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), JsonUtil.toJsonString(extraRecord));
+				}
+				// 任务提交, 评分
+				crTaskService.batchSubmitMissions(singleRoom.getResourceId(), getMissionIdsByScheme(crRole.getMissionScheme()), userAnswer);
+
+				// 设置当前训练已完成
+				singleRoom.setIsFinish(true);
+				singleRoomMapper.updateById(singleRoom);
+			}
+		});
+
 	}
 
 	// todo 待迁移

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -27,6 +28,8 @@ public interface CrTaskService {
 	 * @param answer
 	 */
 	void submitMissions(String roomId, String missionId, String answer);
+
+	void batchSubmitMissions(String roomId, List<String> missionIds, Map<String, String> answer);
 
 	/**
 	 * 根据roomId和user获取task

@@ -34,6 +34,6 @@ public class TrainRecord implements Serializable {
 
 	private String roomName;
 
-	private JSONObject extra;
+	private String extra;
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
@@ -92,7 +91,8 @@ public class RbRoomRefereeController {
 					.setEvaluatorName(userInfoMap.get(missionEvaluationContext.getEvaluatorId()));
 			missionEvaluationRsp.setEvaluator(missionEvaluationContext.getEvaluatorId());
 			missionEvaluationRsp.setSubmitUserRole(missionEvaluationContext.getSubmitUserRole());
-			missionEvaluationRsp.setSubmitUserRoleResourceId(missionEvaluationContext.getSubmitUserRoleId());
+			missionEvaluationRsp
+					.setSubmitUserRoleResourceId(missionEvaluationContext.getSubmitUserRoleId());
 			missionEvaluationRsp
 					.setSubmitUserName(userInfoMap.get(missionEvaluationContext.getSubmitUser()));
 			missionEvaluationRsp.setSubmitLogHash(missionEvaluationContext.getMissionHash());
@@ -193,7 +193,7 @@ public class RbRoomRefereeController {
 			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id) {
 		RbRoom room = rbRoomService.getById(room_id);
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
-			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+			return new BaseRsp<>(Lists.newArrayList());
 		}
 		return new BaseRsp<>(commonService.getMonitorSessions(room.getLocalSceneId(), null));
 	}

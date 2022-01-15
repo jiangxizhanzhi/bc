@@ -1,8 +1,10 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,14 +81,16 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NAME_DUPLICATE);
 		}
-		// 保存团队训练模板
+
+
+ 		// 保存团队训练模板
 		teamTemplate.setBusinessTemplateId(businessId);
 		teamTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
 		teamTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
 		teamTemplate.setSubType(baseInfo.getCategory());
 		teamTemplate.setPeopleNumber(basicTemplate.getBaseInfo().getPeopleNumber());
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
-		teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateRoleList));
+		teamTemplate.setRoleConfig(JsonUtil.arrayToString(teamTrainTemplateRoleList));
 
 		teamTemplate.setTimeLineConfig(
 				JsonUtil.toJsonString(teamTrainTemplateContext.getTimeLineConfig()));

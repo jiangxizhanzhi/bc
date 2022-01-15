@@ -105,6 +105,7 @@ public interface BusinessErrorMsg {
 			put(ErrorCode.FILE_COPY_FAIL, "文件复制失败");
 			put(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE, "暂停场景失败");
 			put(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE, "恢复场景失败");
+			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE, "单兵训练模板正在使用，删除失败");
 
 		}
 	};
@@ -217,6 +218,7 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE, "Failed to unpause scene.");
 			put(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE, "Failed to pause scene.");
+			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE, "Failed to delete single training template in use.");
 		}
 	};
 

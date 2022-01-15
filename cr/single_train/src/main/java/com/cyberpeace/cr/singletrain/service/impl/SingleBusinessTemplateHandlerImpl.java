@@ -2,6 +2,9 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -22,6 +25,7 @@ import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cs.service.LocalSceneService;
 
+@Slf4j
 @Service
 public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
@@ -105,8 +109,12 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		// todo
 		List<SingleRoom> roomList = singleRoomService
 				.getByBusinessTemplateId(businessTemplate.getResourceId());
-		for (SingleRoom singleRoom : roomList) {
-			singleRoomService.deleteRoom(singleRoom);
+
+		if (!roomList.isEmpty()){
+			String errorMsg = String.format("Failed to delete single training template in use, template's name is [%s]."
+					, businessTemplate.getName());
+			log.error(errorMsg);
+			throw new BusinessException(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE);
 		}
 		// 删除singleTemplate
 		singleTemplateService.removeById(singleTemplate.getResourceId());

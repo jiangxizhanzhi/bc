@@ -189,4 +189,7 @@ public interface CrBusinessErrorCode {
 
 	// 恢复场景失败
 	String FAILED_TO_UNPAUSE_SCENE = "101060";
+
+	// 单兵训练模板正在使用，删除失败
+	String SINGLE_TRAIN_TEMPLATE_IN_USE = "101061";
 }

@@ -934,8 +934,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// 讲义文件
-		if (courseLesson.getHandoutType().intValue() != CourseLesson.HandoutType.MD.getCode()
-				.intValue() && StringUtils.isNotBlank(courseLesson.getHandoutUrl())) {
+		if (null != courseLesson.getHandoutType() && courseLesson.getHandoutType()
+				.intValue() != CourseLesson.HandoutType.MD.getCode().intValue()
+				&& StringUtils.isNotBlank(courseLesson.getHandoutUrl())) {
 			String fileName = copyFile(courseLesson.getHandoutUrl(), destFilePath);
 			filePathMap.put(courseLesson.getVideoUrl(), fileName);
 		}
@@ -1028,7 +1029,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// 讲义
-		if (lessonDumpLoadBo.getHandoutType() != CourseLesson.HandoutType.MD.getCode().intValue()
+		if (null != lessonDumpLoadBo.getHandoutType() && lessonDumpLoadBo
+				.getHandoutType() != CourseLesson.HandoutType.MD.getCode().intValue()
 				&& StringUtils.isNotBlank(lessonDumpLoadBo.getHandoutUrl())) {
 			String handoutStorePath = String.format(AttachmentPath.HANDOUT.getDesc(), courseId);
 			String fileUrl = loadLessonCopyFile(lessonDumpLoadBo.getHandoutUrl(), handoutStorePath,
@@ -1037,7 +1039,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// markdown讲义修改
-		if (lessonDumpLoadBo.getHandoutType() == CourseLesson.HandoutType.MD.getCode().intValue()
+		if (null != lessonDumpLoadBo.getHandoutType() && lessonDumpLoadBo
+				.getHandoutType() == CourseLesson.HandoutType.MD.getCode().intValue()
 				&& StringUtils.isNotBlank(lessonDumpLoadBo.getHandoutUrl())) {
 
 			List<String> matchList = LocalStringUtil.getMatchStr(lessonDumpLoadBo.getHandoutUrl(),

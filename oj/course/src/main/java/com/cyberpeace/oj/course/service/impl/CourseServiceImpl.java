@@ -499,7 +499,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		courseDumpLoadBos.forEach(dumpBo -> {
 			// 课程数据处理
-			Course course = loadCourse(dumpBo, authContext.getUserId(), destFilePath);
+			Course course = loadCourse(dumpBo, authContext.getUserId(), filePath);
 			courseList.add(course);
 
 			// 课时数据处理

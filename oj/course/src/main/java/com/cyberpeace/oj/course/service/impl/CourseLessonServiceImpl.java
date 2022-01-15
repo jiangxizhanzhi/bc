@@ -938,7 +938,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.intValue() != CourseLesson.HandoutType.MD.getCode().intValue()
 				&& StringUtils.isNotBlank(courseLesson.getHandoutUrl())) {
 			String fileName = copyFile(courseLesson.getHandoutUrl(), destFilePath);
-			filePathMap.put(courseLesson.getVideoUrl(), fileName);
+			filePathMap.put(courseLesson.getHandoutUrl(), fileName);
 		}
 
 		// 理论课后练习习题数据导出

@@ -16,4 +16,5 @@ public interface AttachmentMapper extends BaseMapper<Attachment> {
 
 	Attachment selectByPath(@Param("filePath") String filePath);
 
+	void batchInsert(@Param("attachments") List<Attachment> attachments);
 }

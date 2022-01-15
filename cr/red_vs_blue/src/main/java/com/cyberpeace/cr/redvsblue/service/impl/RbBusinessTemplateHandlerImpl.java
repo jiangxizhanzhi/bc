@@ -12,6 +12,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
+import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
@@ -104,5 +105,14 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	@Override
 	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		return rbTemplateMapper.deleteByBusinessTemplateId(businessTemplate.getResourceId());
+	}
+
+	@Override
+	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
+		RbTemplate template = BeanUtils.copy(templateContext, RbTemplate.class);
+		// skill字段名不统一， todo
+		template.setPreSkill(templateContext.getPreSkills());
+		template.setTrainSkill(templateContext.getTrainSkills());
+		rbTemplateMapper.insert(template);
 	}
 }

@@ -5,6 +5,16 @@
     <resultMap id="base" type="com.cyberpeace.cs.dao.entity.Attachment">
         <result property="isPublic" column="public"/>
     </resultMap>
+    <insert id="batchInsert">
+        insert into attachment
+        (resource_id, file_name, file_path, create_time,
+        update_time, public)
+        values
+        <foreach collection="attachments" item="attachment" separator=",">
+            (#{attachment.resourceId}, #{attachment.fileName}, #{attachment.filePath}, now(),
+            now(), #{attachment.isPublic})
+        </foreach>
+    </insert>
 
     <select id="selectBatchIds" resultMap="base">
         select * from attachment
@@ -22,7 +32,8 @@
     </select>
 
     <select id="selectByPath" resultMap="base">
-        select * from attachment
+        select *
+        from attachment
         where file_path = #{filePath}
     </select>
 </mapper>

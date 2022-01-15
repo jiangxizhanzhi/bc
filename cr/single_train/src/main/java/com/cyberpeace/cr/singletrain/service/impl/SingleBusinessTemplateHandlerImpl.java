@@ -2,20 +2,21 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
+import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateReq;
@@ -24,6 +25,8 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cs.service.LocalSceneService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -110,9 +113,10 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		List<SingleRoom> roomList = singleRoomService
 				.getByBusinessTemplateId(businessTemplate.getResourceId());
 
-		if (!roomList.isEmpty()){
-			String errorMsg = String.format("Failed to delete single training template in use, template's name is [%s]."
-					, businessTemplate.getName());
+		if (!roomList.isEmpty()) {
+			String errorMsg = String.format(
+					"Failed to delete single training template in use, template's name is [%s].",
+					businessTemplate.getName());
 			log.error(errorMsg);
 			throw new BusinessException(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE);
 		}
@@ -120,5 +124,11 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		singleTemplateService.removeById(singleTemplate.getResourceId());
 
 		return true;
+	}
+
+	@Override
+	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
+		SingleTemplate template = BeanUtils.copy(templateContext, SingleTemplate.class);
+		singleTemplateService.save(template);
 	}
 }

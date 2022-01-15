@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.controller.req;
+package com.cyberpeace.cr.crbase.controller.req.resource;
 
 import java.io.Serializable;
 import java.util.List;

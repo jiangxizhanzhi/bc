@@ -25,6 +25,7 @@ import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
+import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -148,6 +149,12 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	@Override
 	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		return teamTemplateService.removeByBusinessTemplateId(businessTemplate.getResourceId());
+	}
+
+	@Override
+	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
+		TeamTemplate teamTemplate = BeanUtils.copy(templateContext, TeamTemplate.class);
+		teamTemplateService.save(teamTemplate);
 	}
 
 	private void replaceMissions(LoadTemplateData loadTemplateData,

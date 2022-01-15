@@ -1,6 +1,7 @@
 package com.cyberpeace.cs.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,4 +74,9 @@ public interface AttachmentService extends IService<Attachment> {
 	 * 导入场景模板时，将图片存入统一文件夹，插入或更新数据库条目
 	 */
 	Boolean loadImage(String imageId, String fileName, String imageDir);
+
+	/**
+	 * 资管平台导入时，图片附件插入数据库
+	 */
+	void loadImagesZiguan(Map<String, String> images);
 }

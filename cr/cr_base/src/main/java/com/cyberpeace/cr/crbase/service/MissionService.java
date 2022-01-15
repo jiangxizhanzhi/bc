@@ -97,6 +97,12 @@ public interface MissionService extends IService<Mission> {
 	List<MissionTemplate> batchInsertMissionTemplate(List<LoadMission> templateQuestions);
 
 	/**
+	 * 批量插入 模板任务
+	 * @param missionTemplates
+	 */
+	void batchInsertMissionTemplates(List<MissionTemplate> missionTemplates);
+
+	/**
 	 * 从 roleConfig, missionScheme 中解析出 id，再获取任务模板列表
 	 * @param schemeJson
 	 * @return

@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -28,6 +29,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.*;
+import com.cyberpeace.cr.crbase.controller.req.resource.BatchDumpReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionCategoryRes;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionTemplateRsp;
@@ -174,8 +176,7 @@ public class MissionController {
 			return CommonConstant.EMPTY_LIST_JSON;
 		}
 		String imagePath = AttachmentPath.UPLOAD_IMAGE.getOriginDesc();
-		String regex = String.format(
-				"!\\[[^]]*]\\(.*%s([0-9a-z]{%d})\\.(?:jpg|jpeg|png|bmp|webp|gif)\\)", imagePath,
+		String regex = String.format(PatternConstant.WRITEUP_IMG, imagePath,
 				CrCommonConstants.GENERATED_UUID_LENGTH);
 		List<String> imageIds = LocalStringUtil.getMatchStr(writeup, regex, 1);
 

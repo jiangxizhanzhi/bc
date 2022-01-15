@@ -29,4 +29,18 @@ public interface PatternConstant {
 	/** 匹配汉字及汉字字符*/
 	String CHINESE_CHARACTERS = "[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]";
 
+	/**
+	 * 匹配 writeup 中的图片
+	 */
+	String WRITEUP_IMG = "!\\[[^]]*]\\(.*%s([0-9a-z]{%d})\\.(?:jpg|jpeg|png|bmp|webp|gif)\\)";
+
+	/**
+	 * 匹配生成的 uuid
+	 */
+	String RESOURCE_ID = "\"([a-z0-9]{%d})\"";
+
+	/**
+	 * 资管资源题解的图片
+	 */
+	String WRITEUP_IMG_MD = "!\\[[^]]*]\\((\\./%s/[0-9]+\\.(?:jpg|jpeg|png|bmp|webp|gif))\\)";
 }

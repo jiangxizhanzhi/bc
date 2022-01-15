@@ -137,6 +137,23 @@ public class LocalStringUtil {
 	}
 
 	/**
+	 * 根据正则表达是获取内容中的匹配数据 仅匹配一个
+	 * @param content
+	 * @param regex
+	 * @param index 子匹配序号
+	 * @return
+	 */
+	public static String getFirstMatchStr(String content, String regex, Integer index) {
+
+		List<String> matchStr = getMatchStr(content, regex, index);
+
+		if (CollectionUtils.isEmpty(matchStr)) {
+			return CommonConstant.EMPTY_STRING;
+		}
+		return matchStr.get(CommonConstant.ZERO);
+	}
+
+	/**
 	 * 数据替换
 	 * @param content
 	 * @param old

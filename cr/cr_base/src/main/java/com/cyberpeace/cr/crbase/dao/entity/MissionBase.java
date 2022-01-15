@@ -15,10 +15,14 @@ import lombok.Getter;
 public class MissionBase extends BaseTable {
 
 	protected Integer score;
+
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
+
 	private String title;
+
 	private String description;
+
 	private String skillPoints;
 
 	private String answer;

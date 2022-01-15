@@ -2,11 +2,9 @@ package com.cyberpeace.cs.service.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,7 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -108,7 +107,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			Files.copy(origin, dest);
 		} catch (IOException e) {
 			// 复制文件失败
-			log.error("copy file error: " + origin.getAbsolutePath() + " ,to:" + dest.getAbsolutePath());
+			log.error("copy file error: " + origin.getAbsolutePath() + " ,to:"
+					+ dest.getAbsolutePath());
 			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 
@@ -195,6 +195,22 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		// 插入数据库
 		create(fileName, AttachmentPath.UPLOAD_IMAGE.getDesc() + fileName, true);
 		return true;
+	}
+
+	@Override
+	public void loadImagesZiguan(Map<String, String> images) {
+		if (images.isEmpty()) {
+			return;
+		}
+		// 插入数据库
+		List<Attachment> attachments = Lists.newArrayList();
+		for (Map.Entry<String, String> entry : images.entrySet()) {
+			attachments.add(Attachment.builder().resourceId(entry.getKey())
+					.fileName(entry.getValue())
+					.filePath(AttachmentPath.UPLOAD_IMAGE.getOriginDesc() + entry.getValue())
+					.isPublic(CommonConstant.TRUE).build());
+		}
+		attachmentMapper.batchInsert(attachments);
 	}
 
 	private AttachmentBo uploadFile(MultipartFile file, Integer type, Boolean insertDb,

@@ -14,6 +14,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
+import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
@@ -114,6 +115,14 @@ public class BusinessTemplateHandler {
 	 * @return
 	 */
 	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		throw new NotImplementedException();
+	}
+
+	/**
+	 * 用于资管导入不同类型的训练模板
+	 * @param templateContext
+	 */
+	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		throw new NotImplementedException();
 	}
 }

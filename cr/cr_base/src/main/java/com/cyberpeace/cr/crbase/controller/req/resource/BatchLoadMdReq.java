@@ -1,0 +1,29 @@
+package com.cyberpeace.cr.crbase.controller.req.resource;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.Map;
+
+import javax.validation.constraints.NotEmpty;
+
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+@Data
+@Slf4j
+public class BatchLoadMdReq implements Serializable {
+
+	@NotEmpty
+	private Map<String, String> envReqs;
+
+	@NotEmpty
+	private String path;
+
+	public void validate() {
+		File file = new File(path);
+		if (!file.exists() || !file.isDirectory()) {
+			log.error(String.format("invalid path [%s]", path));
+			throw new RuntimeException("Invalid path.");
+		}
+	}
+}

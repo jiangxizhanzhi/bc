@@ -138,9 +138,10 @@ public class TeamTrainTemplateController {
 		String roleString = template.getRoleConfig();
 		List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonUtil
 				.toJsonObjectArray(roleString, TeamTrainTemplateRoleRsp.class);
-
+		int index = 1;
 		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
-			teamTrainTemplateRoleRsp.setId(teamTrainTemplateRoleRsp.getId());
+			teamTrainTemplateRoleRsp
+					.setId(teamTrainTemplateRoleRsp.getResourceId() + "_" + index++);
 			for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp
 					.getMissionsScheme().getSchemeData()) {
 				missionService.getMissionContent(schemeData);

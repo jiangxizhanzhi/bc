@@ -111,22 +111,21 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		if (CollectionUtils.isNotEmpty(configBo.getChildren())) {
 			// 设置初始数据
-			int chapterIndex = 0;
-			int lessonIndex = 0;
+			int index = 0;
 
 			for (LessonConfigBo lessonConfig : configBo.getChildren()) {
 				// 重置章节数据
 				if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_CHAPTER
 						.getCode()) {
-					lessonConfig.setIndex(chapterIndex);
-					chapterIndex++;
+					lessonConfig.setIndex(index);
+					index++;
 				}
 
 				// 重置课时数据
 				if (lessonConfig.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON
 						.getCode()) {
-					lessonConfig.setIndex(lessonIndex);
-					lessonIndex++;
+					lessonConfig.setIndex(index);
+					index++;
 				}
 
 				// 递归编排数据

@@ -24,7 +24,7 @@ public class StageQuestion {
 	private String record;
 
 	@ApiModelProperty("训练结果")
-	private String taskEvaluateStatus;
+	private Integer taskEvaluateStatus;
 
 	@ApiModelProperty("训练结果名称")
 	private String taskEvaluateStatusName;

@@ -4,12 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.cr.crbase.service.context.ColorMission;
-import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
-import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +14,7 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
@@ -28,6 +23,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
@@ -39,11 +35,15 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
+import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -100,8 +100,9 @@ public class TeamTrainTemplateController {
 		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(
 				teamTrainTemplateContext.getRoleList(), TeamTrainTemplateRole.class);
 
-		//校验任务id是否满足要求
-		for (RoleListContext<AddTemplateMission> roleListContext : teamTrainTemplateModifyReq.getRoleList()) {
+		// 校验任务id是否满足要求
+		for (RoleListContext<AddTemplateMission> roleListContext : teamTrainTemplateModifyReq
+				.getRoleList()) {
 			ColorMission<AddTemplateMission> missionsScheme = roleListContext.getMissionsScheme();
 			missionService.validateMission(missionsScheme);
 		}
@@ -123,7 +124,8 @@ public class TeamTrainTemplateController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
-		businessTemplateService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+		businessTemplateService.checkPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
 
 		TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resource_id);
 
@@ -138,7 +140,8 @@ public class TeamTrainTemplateController {
 
 		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
 			teamTrainTemplateRoleRsp.setId(teamTrainTemplateRoleRsp.getId());
- 			for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp.getMissionsScheme().getSchemeData()) {
+			for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp
+					.getMissionsScheme().getSchemeData()) {
 				missionService.getMissionContent(schemeData);
 			}
 		}
@@ -160,13 +163,11 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
 
-
 		try {
 			String json = new ObjectMapper().writeValueAsString(teamTrainTemplateRsp);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-
 
 		return new BaseRsp(teamTrainTemplateRsp);
 	}

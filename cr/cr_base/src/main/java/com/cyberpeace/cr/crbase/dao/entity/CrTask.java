@@ -8,6 +8,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
@@ -41,6 +42,26 @@ public class CrTask extends BaseTable {
 	private String roleId;
 
 	private Integer businessType;
+
+	/**
+	 * task 单兵状态枚举
+	 */
+	public enum SingleTaskStatus implements GenericEnum {
+
+		RELEASED(11, "未提交"), SUCCESS(1, "成功"), FAIL(2, "失败");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		SingleTaskStatus(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
 
 	/**
 	 * task 状态枚举

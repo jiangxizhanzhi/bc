@@ -320,6 +320,7 @@ public class CrScoreController {
 							trainingRecord.setTime(crTask.getLastSubmitTime());
 						}
 						trainingRecordMissionRsp.setTrainingRecord(trainingRecord);
+						trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
 
 					});
 

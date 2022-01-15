@@ -8,11 +8,7 @@ import lombok.Getter;
 @Data
 public class TeamTrainTemplateRole {
 
-	private String resourceId;
-
 	private String name;
-
-	private String description;
 
 	private Integer roleGroup;
 
@@ -20,13 +16,7 @@ public class TeamTrainTemplateRole {
 
 	private List<String> assetNodes;
 
-	private List<String> children;
-
 	private List<String> visibleNodes;
-
-	private String key;
-
-	private String users;
 
 	private String type;
 

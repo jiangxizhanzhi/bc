@@ -2,11 +2,14 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
+
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 
 import lombok.Data;
-import org.apache.commons.compress.utils.Lists;
 
 @Data
 public class StageRsp {
@@ -20,14 +23,16 @@ public class StageRsp {
 		List<StageQuestion> questionList = Lists.newArrayList();
 		for (TrainingRecordMissionRsp mission : missionScheme.getMissions()) {
 
-
- 			StageQuestion stageQuestion= new StageQuestion();
+			StageQuestion stageQuestion = new StageQuestion();
 
 			stageQuestion.setTitle(mission.getTitle());
 			stageQuestion.setRecord(mission.getTrainingRecord().getRecord());
 			stageQuestion.setTime(mission.getTrainingRecord().getTime());
 			stageQuestion.setDescription(mission.getDescription());
 			stageQuestion.setRemoteMissionId(mission.getResourceId());
+			stageQuestion.setTaskEvaluateStatus(mission.getTraininStatus());
+			stageQuestion.setTaskEvaluateStatusName(EnumUtils
+					.getEnumDescByCode(mission.getTraininStatus(), CrTask.SingleTaskStatus.class));
 
 			questionList.add(stageQuestion);
 		}

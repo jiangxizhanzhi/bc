@@ -3,14 +3,13 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.TypeReference;
-import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -21,6 +20,7 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
@@ -65,7 +65,8 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 		// 校验角色的任务
 		teamTrainTemplateRoleList.forEach(teamTrainTemplateRole -> {
-			ColorMission<AddTemplateMission> colorMission = JSON.parseObject(teamTrainTemplateRole.getMissionsScheme(),
+			ColorMission<AddTemplateMission> colorMission = JSON.parseObject(
+					teamTrainTemplateRole.getMissionsScheme(),
 					new TypeReference<ColorMission<AddTemplateMission>>() {});
 
 			missionService.validateMission(colorMission);

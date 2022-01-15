@@ -74,7 +74,7 @@ public class SingleRoomScoreController {
 		List<Integer> taskCount = Lists.newArrayList();
 
 		taskCount.add(missionReport.getMissionsStatistics().getFinishProportion());
-		taskCount.add(missionReport.getMissionsStatistics().getNotFinishProportion());
+		taskCount.add(missionReport.getMissionsStatistics().getNotSubmitProportion());
 		taskCount.add(0);
 
 		return taskCount;

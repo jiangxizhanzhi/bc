@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.admin;
 import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -105,6 +106,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		}
 
 		Page page = lessonReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
 
 		LessonContext context = BeanUtils.copy(lessonReq, LessonContext.class);
 		if (CollectionUtils.isEmpty(courseIds)) {

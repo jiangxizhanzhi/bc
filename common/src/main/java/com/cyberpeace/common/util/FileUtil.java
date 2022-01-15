@@ -3,6 +3,8 @@ package com.cyberpeace.common.util;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -543,4 +545,26 @@ public class FileUtil {
 			file.deleteOnExit();
 		}
 	}
+
+	public static String getHash256(File file) throws IOException, NoSuchAlgorithmException {
+		String value = "";
+		try (InputStream fis = new FileInputStream(file)) {
+			byte[] buffer = new byte[1024];
+			int numRead;
+			// 返回实现指定摘要算法的 MessageDigest 对象
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			do {
+				numRead = fis.read(buffer);
+				if (numRead > 0) {
+					// 更新摘要
+					digest.update(buffer, 0, numRead);
+				}
+			} while (numRead != -1);
+			value = new
+					String(org.apache.tomcat.util.codec.binary.Base64.encodeBase64(digest.digest()))
+			;
+		}
+        return value;
+	}
+
 }

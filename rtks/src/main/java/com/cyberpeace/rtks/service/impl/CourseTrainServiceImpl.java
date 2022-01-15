@@ -1,17 +1,15 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
@@ -156,6 +154,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 				CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo);
 
 		List<RoleCourseBo> courseBos = courseIds.stream()
+				.filter(courseId -> null != infoBoMap.get(courseId))
 				.map(courseId -> BeanUtils.copy(infoBoMap.get(courseId), RoleCourseBo.class))
 				.collect(Collectors.toList());
 		return courseBos;

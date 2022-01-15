@@ -760,7 +760,6 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.eq(TrainRecord::getUserId, UserInfoContext.getUserContext().getUserId())
 				.eq(TrainRecord::getBusinessTemplateId, businessTemplateId)
 				.isNotNull(TrainRecord::getEndTime)
-				.isNotNull(TrainRecord::getExtra)
 				.orderByDesc(TrainRecord::getEndTime).list();
 
 		List<TrainHistoryBo> result = Lists.newArrayList();
@@ -768,7 +767,11 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			TrainHistoryBo trainHistoryBo = new TrainHistoryBo();
 			trainHistoryBo.setRoomId(item.getRoomId());
 			trainHistoryBo.setTrainTime(item.getStartTime());
-			trainHistoryBo.setScore(JsonUtil.toJsonObject(item.getExtra(), JSONObject.class).getDouble(SingleRoom.CrTrainRecordFields.SCORE));
+			if (item.getExtra() == null) {
+				trainHistoryBo.setScore(0d);
+			} else {
+				trainHistoryBo.setScore(JsonUtil.toJsonObject(item.getExtra(), JSONObject.class).getDouble(SingleRoom.CrTrainRecordFields.SCORE));
+			}
 
 			result.add(trainHistoryBo);
 		}

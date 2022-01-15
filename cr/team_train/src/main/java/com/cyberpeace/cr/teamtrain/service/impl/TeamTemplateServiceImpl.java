@@ -150,7 +150,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(input.getTimeLineConfig()));
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
 		teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
-		teamTemplate.setRoleConfig(JsonUtil.toJsonString(input.getRoleList()));
+		teamTemplate.setRoleConfig(input.getRoleList());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

@@ -86,7 +86,7 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		teamTemplate.setSubType(baseInfo.getCategory());
 		teamTemplate.setPeopleNumber(basicTemplate.getBaseInfo().getPeopleNumber());
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
-		teamTemplate.setRoleConfig(teamTrainTemplateContext.getRoleList());
+		teamTemplate.setRoleConfig(JsonUtil.toJsonString(teamTrainTemplateRoleList));
 
 		teamTemplate.setTimeLineConfig(
 				JsonUtil.toJsonString(teamTrainTemplateContext.getTimeLineConfig()));

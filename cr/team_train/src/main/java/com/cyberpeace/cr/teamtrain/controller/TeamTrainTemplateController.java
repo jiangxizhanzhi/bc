@@ -110,6 +110,7 @@ public class TeamTrainTemplateController {
 		if (template == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
+		teamTrainTemplateContext.setRoleList(JsonUtil.toJsonString(teamTrainTemplateRoleList));
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());

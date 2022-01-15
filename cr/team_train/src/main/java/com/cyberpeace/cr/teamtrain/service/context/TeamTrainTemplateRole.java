@@ -18,8 +18,6 @@ public class TeamTrainTemplateRole {
 
 	private List<String> visibleNodes;
 
-	private String type;
-
 	public enum RoleName {
 
 		TEACHER(1, "授权所有"), STUDENT(2, "自定义");

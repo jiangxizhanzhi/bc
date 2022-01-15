@@ -115,6 +115,8 @@ public class TeamTrainRoomController {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
+		teamRoomService.checkTeacherPermission(roomId, userId);
+
 		String sceneId = teamSceneService.startScene(roomId, userId);
 		return new BaseRsp(new StartSceneRsp(sceneId));
 	}
@@ -123,6 +125,9 @@ public class TeamTrainRoomController {
 	@DeleteMapping("/scene")
 	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
 		String roomId = sceneStopReq.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		teamRoomService.checkTeacherPermission(roomId, userId);
 
 		Boolean result = teamSceneService.stopScene(roomId);
 		return new BaseRsp(result);

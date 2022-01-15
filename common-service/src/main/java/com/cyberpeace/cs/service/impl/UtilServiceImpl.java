@@ -107,7 +107,7 @@ public class UtilServiceImpl implements UtilService {
 			String destPath = destFilePath + File.separatorChar + fileName;
 
 			FileUtil.copyFile(realPath, destPath, false);
-			String fileUrl = replaceFileUrl(destFilePath);
+			String fileUrl = replaceFileUrl(destPath);
 			return handlerFileUrl(fileUrl);
 		});
 

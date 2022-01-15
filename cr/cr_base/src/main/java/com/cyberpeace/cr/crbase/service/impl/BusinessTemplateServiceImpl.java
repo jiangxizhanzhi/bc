@@ -120,14 +120,16 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 		return null;
 	}
+
 	@Override
 	public void checkPermission(String businessId, String userId) {
 		List<String> businessIds = selectAuthIdsByUserId(userId);
 
-		if(!businessIds.contains(businessId)){
+		if (!businessIds.contains(businessId)) {
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
+
 	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		return businessTemplateMapper.selectIdsByUserId(userId);
@@ -295,13 +297,28 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 						if (localScene != null
 								&& StringUtils.isNotBlank(localScene.getMpSceneId())) {
-							localSceneService.deleteRemoteScene(localScene);
+							try {
+								localSceneService.deleteRemoteScene(localScene);
+							} catch (Exception e) {
+								log.error(String.format(
+										"failed to delete test scene [%s] of business template [%s]",
+										localScene.getMpSceneId(),
+										businessTemplate.getResourceId()));
+								// do nothing
+							}
 						}
 						// 删除测试场景的localScene
 						localSceneService.removeById(businessTemplate.getLocalSceneId());
 					}
 					// 删除中台拓扑
-					remoteTopoService.deleteById(businessTemplate.getTopoId());
+					try {
+						localSceneService.deleteTopo(businessTemplate.getTopoId());
+					} catch (Exception e) {
+						log.error(String.format(
+								"failed to delete topo [%s] of business template [%s]",
+								businessTemplate.getTopoId(), businessTemplate.getResourceId()));
+						// do nothing
+					}
 					// 删除模板相关其他
 					BusinessTemplateHandler handler = businessTemplateHandler
 							.getHandler(businessTemplate.getBusinessType());
@@ -502,8 +519,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 		return true;
 	}
-
-
 
 	private Boolean loadImages(Map<String, String> files, String imageDir) {
 		if (files == null || files.size() == 0) {

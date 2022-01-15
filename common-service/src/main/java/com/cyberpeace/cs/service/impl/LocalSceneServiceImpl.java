@@ -255,6 +255,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public void deleteTopo(String topoId) {
+		remoteTopoService.deleteById(topoId);
+	}
+
+	@Override
 	public Boolean renameTopo(String topoId, String name) {
 		RenameTopoContext context = new RenameTopoContext(topoId, name);
 		return name.equals(

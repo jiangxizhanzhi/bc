@@ -35,6 +35,13 @@ public interface LocalSceneService extends IService<LocalScene> {
 	String saveTopo(JSONObject topoData, String topoId);
 
 	/**
+	 * delete mp topo
+	 * @param topoId 
+	 * @return
+	 */
+	void deleteTopo(String topoId);
+
+	/**
 	 * 重命名中台场景模板
 	 * @return
 	 */

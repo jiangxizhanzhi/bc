@@ -233,11 +233,13 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
-	public BaseRsp exportCourse(@ApiParam("课程编号") @NotEmpty List<String> ids,
+	public BaseRsp exportCourse(
+			@ApiParam(name = "ids",
+					value = "课程编号") @RequestParam("ids") @NotEmpty List<String> courseIds,
 			HttpServletResponse response) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		String zipPath = courseService.dumpCourse(ids, authContext);
+		String zipPath = courseService.dumpCourse(courseIds, authContext);
 		FileUtil.setResponse(new File(zipPath), true, response);
 		return new BaseRsp();
 	}

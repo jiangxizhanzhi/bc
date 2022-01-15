@@ -2,6 +2,7 @@ package com.cyberpeace.config.ws;
 
 import java.util.Map;
 
+import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -40,6 +41,8 @@ public class JwtHandShake implements HandshakeInterceptor {
 		String path = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest()
 				.getServletPath();
 
+		String clientIp = CommonContext.getIp();
+		log.info("ws queryString is {}, ws path is {}, client ip is {}", queryString, path, clientIp);
 		// ws路径统一定义，方便后期维护
 		if (!WsPath.validPath(path)) {
 			log.error("websocket handshake fail, path is {} invalid,"

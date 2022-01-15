@@ -64,6 +64,7 @@ public class ExceptionFilter implements Filter {
 			TraceIdContext.removeTraceId();
 
 			CommonContext.removeLanguage();
+			CommonContext.removeIp();
 		}
 	}
 

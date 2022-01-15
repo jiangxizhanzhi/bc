@@ -49,8 +49,29 @@ public class MyFilter implements Filter {
 		}
 
 		CommonContext.setLanguage(language);
+		CommonContext.setIp(getIpAddr(request));
 
 		TraceIdContext.setTraceId(traceId);
+	}
+
+	public String getIpAddr(ServletRequest servletRequest) {
+		HttpServletRequest request = (HttpServletRequest) servletRequest;
+
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+
+		if (StringUtils.isBlank(ip)) {
+			ip = "127.0.0.1";
+		}
+		return ip;
 	}
 
 }

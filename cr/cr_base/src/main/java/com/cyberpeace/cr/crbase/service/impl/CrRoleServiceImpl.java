@@ -376,6 +376,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoleMapper.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
 	}
 
+	@Override
 	public String getNewRoomScheme(String missionsScheme, String roomId) {
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
 				new TypeReference<ColorMission<AddTemplateMission>>() {});

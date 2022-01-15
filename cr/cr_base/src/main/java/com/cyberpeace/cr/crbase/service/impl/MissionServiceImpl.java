@@ -207,7 +207,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 			pendingReleaseTasks.add(task);
 		});
-		crTaskMapper.batchInsert(pendingReleaseTasks);
+
+		if (!pendingReleaseTasks.isEmpty()) {
+			crTaskMapper.batchInsert(pendingReleaseTasks);
+		}
 	}
 
 	@Override

@@ -1,12 +1,15 @@
 package com.cyberpeace.cs.service.impl;
 
-import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.List;
 
 @Service
 public class UtilServiceImpl implements UtilService {
@@ -88,5 +91,41 @@ public class UtilServiceImpl implements UtilService {
 		}
 
 		return fileUrl;
+	}
+
+	@Override
+	public String handlerMarkdownFile(String content, String destFilePath) {
+		List<String> matchList = LocalStringUtil.getMatchStr(content,
+				PatternConstant.MARKDOWN_IMAGE);
+		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
+				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
+
+		// 文件拷贝到nginx可转发目录 同时生成nginx转发地址
+		List<String> nginxUrlList = StreamApiUtils.map(realPathList, realPath -> {
+			String fileSuffix = FileUtil.getFileSuffix(realPath);
+			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+			String destPath = destFilePath + File.separatorChar + fileName;
+
+			FileUtil.copyFile(realPath, destPath, false);
+			String fileUrl = replaceFileUrl(destFilePath);
+			return handlerFileUrl(fileUrl);
+		});
+
+		return LocalStringUtil.replaceAll(content, realPathList, nginxUrlList);
+	}
+
+	@Override
+	public String replaceMarkdownFile(String content) {
+
+		// 将文件中的绝对路径替换为nginx可访问路径
+		List<String> matchList = LocalStringUtil.getMatchStr(content,
+				PatternConstant.MARKDOWN_IMAGE);
+		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
+				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
+		List<String> nginxUrlList = StreamApiUtils.map(realPathList, realPath -> {
+			String fileUrl = replaceFileUrl(realPath);
+			return handlerFileUrl(fileUrl);
+		});
+		return LocalStringUtil.replaceAll(content, realPathList, nginxUrlList);
 	}
 }

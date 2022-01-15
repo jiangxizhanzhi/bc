@@ -86,7 +86,7 @@ public class MdUtil {
 	}
 
 	/**
-	 * 解读mark文件内容 替换文件路径
+	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
 	 * @param markdownPath
 	 * @return
 	 */
@@ -106,7 +106,13 @@ public class MdUtil {
 		for (String matchStr : matchStrList) {
 			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
 					PatternConstant.MARKDOWN_IMAGE_URL);
-			File replaceFile = new File(currentDir, imagePath);
+			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
+			String relativePath = imagePath;
+			if (imagePath.startsWith(CommonConstant.PERIOD)) {
+				relativePath = imagePath.replaceFirst(CommonConstant.PERIOD,
+						CommonConstant.EMPTY_STRING);
+			}
+			File replaceFile = new File(currentDir, relativePath);
 			if (replaceFile.exists()) {
 				content = content.replace(imagePath, replaceFile.getAbsolutePath());
 			}

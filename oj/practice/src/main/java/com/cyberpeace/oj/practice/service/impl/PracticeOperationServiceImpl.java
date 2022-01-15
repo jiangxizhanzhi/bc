@@ -666,6 +666,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				Attachment.FileType.MD.getDesc());
 		if (StringUtils.isNotBlank(writeFilePath)) {
 			String writeup = MdUtil.parseMarkdown(writeFilePath);
+			writeup = utilService.handlerMarkdownFile(writeup,
+					AttachmentPath.PRACTICE_ATTACHMENT.getDesc());
 			operation.setWriteup(writeup);
 		}
 		operation.setWriteupPublic(CommonConstant.TRUE);
@@ -710,8 +712,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 题解 题解文件拷贝
 		if (StringUtils.isNotBlank(operation.getWriteup())) {
 			List<String> matchList = LocalStringUtil.getMatchStr(operation.getWriteup(),
-					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ZERO);
-			matchList.forEach(str -> {
+					PatternConstant.MARKDOWN_IMAGE);
+			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
+					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
+
+			matchPathList.forEach(str -> {
 				// 文件拷贝
 				String realPath = utilService.getRealPath(str);
 				String fileName = FileUtil.getFileName(realPath, true);
@@ -777,8 +782,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 题解
 		if (StringUtils.isNotBlank(dumpLoadBo.getWriteup())) {
 			List<String> matchList = LocalStringUtil.getMatchStr(dumpLoadBo.getWriteup(),
-					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ZERO);
-			List<String> urlList = StreamApiUtils.map(matchList, url -> {
+					PatternConstant.MARKDOWN_IMAGE);
+			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
+					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
+
+			List<String> urlList = StreamApiUtils.map(matchPathList, url -> {
 				// 获取文件路径
 				String relativePath = filePathMap.get(url);
 				String imagePath = filePath + File.separatorChar + relativePath;

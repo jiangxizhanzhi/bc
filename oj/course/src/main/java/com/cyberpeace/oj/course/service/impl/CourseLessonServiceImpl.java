@@ -804,7 +804,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// md文件内容作为url
 			String content = MdUtil.parseMarkdown(mdFilePath);
-			courseLesson.setHandoutUrl(content);
+			courseLesson.setHandoutUrl(utilService.replaceMarkdownFile(content));
 		}
 
 		// pdf讲义文件上传
@@ -1036,12 +1036,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			lesson.setHandoutUrl(fileUrl);
 		}
 
-		// 讲义修改
-		if (lessonDumpLoadBo.getHandoutType() != CourseLesson.HandoutType.MD.getCode().intValue()
+		// markdown讲义修改
+		if (lessonDumpLoadBo.getHandoutType() == CourseLesson.HandoutType.MD.getCode().intValue()
 				&& StringUtils.isNotBlank(lessonDumpLoadBo.getHandoutUrl())) {
+
 			List<String> matchList = LocalStringUtil.getMatchStr(lessonDumpLoadBo.getHandoutUrl(),
-					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
-			List<String> urlList = StreamApiUtils.map(matchList, match -> {
+					PatternConstant.MARKDOWN_IMAGE);
+			List<String> matchPathList = StreamApiUtils.map(matchList, matchPath -> LocalStringUtil
+					.getFirstMatchStr(matchPath, PatternConstant.MARKDOWN_IMAGE_URL));
+			List<String> urlList = StreamApiUtils.map(matchPathList, match -> {
 				String fileUrl = loadLessonCopyFile(match, AttachmentPath.ATTACHMENT.getDesc(),
 						fileMap, filePath);
 				return utilService.handlerFileUrl(fileUrl);

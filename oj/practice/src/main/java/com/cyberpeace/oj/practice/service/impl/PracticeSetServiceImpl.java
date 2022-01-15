@@ -293,7 +293,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				practiceSet.setPracticeCount(practiceSet.getPracticeCount() + operations.size());
 				saveOrUpdate(practiceSet);
-				if (CollectionUtils.isEmpty(operations)) {
+				if (CollectionUtils.isNotEmpty(operations)) {
 					practiceOperationService.saveBatch(operationList);
 				}
 			}

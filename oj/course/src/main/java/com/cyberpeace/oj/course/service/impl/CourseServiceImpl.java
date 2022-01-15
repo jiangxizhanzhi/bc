@@ -665,9 +665,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 课程大纲数据
 		if (StringUtils.isNotBlank(courseDumpLoadBo.getOutline())) {
+			// 匹配文件路径
 			List<String> matchList = LocalStringUtil.getMatchStr(courseDumpLoadBo.getOutline(),
-					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
-			List<String> fileList = StreamApiUtils.map(matchList, match -> {
+					PatternConstant.MARKDOWN_IMAGE);
+			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
+					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
+
+			List<String> fileList = StreamApiUtils.map(matchPathList, match -> {
 				String relativePath = filePathMap.get(match);
 				String fileSuffix = FileUtil.getFileSuffix(relativePath);
 				String realPath = filePath + File.separatorChar + relativePath;
@@ -712,8 +716,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 大纲文件处理
 		if (StringUtils.isNotBlank(course.getOutline())) {
 			List<String> matchList = LocalStringUtil.getMatchStr(course.getOutline(),
-					PatternConstant.MARKDOWN_IMAGE, CommonConstant.ONE);
-			matchList.forEach(str -> {
+					PatternConstant.MARKDOWN_IMAGE);
+			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
+					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
+
+			matchPathList.forEach(str -> {
 				// 文件拷贝
 				String realPath = utilService.getRealPath(str);
 				String fileSuffix = FileUtil.getFileSuffix(realPath);

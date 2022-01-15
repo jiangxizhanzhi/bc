@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.*;
@@ -70,8 +73,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 	@Autowired
 	private CourseService courseService;
 
+	@Autowired
+	private UtilService utilService;
+
 	@Value("${import.resource.cover}")
 	private Boolean resourceCover;
+
+	@Autowired
+	private CourseValidateHandler courseValidateHandler;
 
 	@Override
 	public Course parseRmCourse(String path) {
@@ -79,10 +88,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 解析md文件 获取对应数据
 		File markdownFile = new File(path, ResourceImportConstant.README_NAME);
 		if (!markdownFile.exists() || markdownFile.isDirectory()) {
-			log.error(
-					"parseRmCourse: Markdown file not found or is directory under path! path=[{}]",
-					path);
-			throw new InvalidParamException("文件路径不正确！");
+			log.error("Markdown file not found! path=[{}]", markdownFile.getAbsolutePath());
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		}
 		JSONObject markdownValue = MdUtil.parseJsonMarkdown(markdownFile);
 
@@ -90,6 +97,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 		JSONObject convertValue = JsonUtil.filedConvert(markdownValue,
 				ResourceImportConstant.COURSE_DATA_MAPPING);
 		Course course = jsonParseCourse(convertValue);
+
+		// 课程存在性校验
+		courseValidateHandler.validateCourseNameExist(course.getName());
+		courseValidateHandler.validateCourseNumExist(course.getCourseNum());
 
 		// 用户修改
 		course.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
@@ -236,7 +247,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 目录拷贝
 		String destHandoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
 				course.getResourceId());
-		String dest = new File(destHandoutPath, courseLesson.getName()).getAbsolutePath();
+		String dest = new File(destHandoutPath, IDGeneratorUtil.getID()).getAbsolutePath();
 		FileUtil.copyDirectory(handoutPath, dest, false);
 
 		// 目录压缩设置原始markdown文件地址
@@ -251,6 +262,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 						? new File(dest, ResourceImportConstant.HANDOUT_FILE_NAME).getAbsolutePath()
 						: new File(dest, ResourceImportConstant.DOC_FILE_NAME).getAbsolutePath();
 		String markdown = MdUtil.parseMarkdown(handoutFilePath);
+		markdown = utilService.replaceMarkdownFile(markdown);
 		courseLesson.setHandoutUrl(markdown);
 
 		// 解析附件
@@ -259,7 +271,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 		List<String> attachmentPaths = StreamApiUtils.map(attachmentList, attachmentPath -> {
 			File attachmentFile = new File(attachmentPath);
 			File destFile = new File(AttachmentPath.ATTACHMENT.getDesc(), attachmentFile.getName());
-			return FileUtil.copyFile(attachmentPath, destFile.getAbsolutePath(), true);
+			String filePath = FileUtil.copyFile(attachmentPath, destFile.getAbsolutePath(), true);
+			return utilService.replaceFileUrl(filePath);
 		});
 
 		List<String> attachmentIds = attachmentService.batchInsert(attachmentPaths);

@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -663,7 +664,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 题解数据处理
 		String writeFilePath = FileUtil.getOneFile(
 				new File(path, ResourceImportConstant.WRITEUP).getAbsolutePath(),
-				Attachment.FileType.MD.getDesc());
+				FileSunffixConstant.MD.getDesc());
 		if (StringUtils.isNotBlank(writeFilePath)) {
 			String writeup = MdUtil.parseMarkdown(writeFilePath);
 			writeup = utilService.handlerMarkdownFile(writeup,

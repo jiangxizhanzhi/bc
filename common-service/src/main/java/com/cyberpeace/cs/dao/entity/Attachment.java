@@ -29,20 +29,4 @@ public class Attachment extends BaseTable {
 	@TableField("public")
 	private Boolean isPublic;
 
-	public enum FileType implements GenericEnum {
-
-		MD(0, "md"), PDF(1, "pdf"), HTML(2, "html"), ZIP(3, "zip");
-
-		@Getter
-		private Integer code;
-
-		@Getter
-		private String desc;
-
-		FileType(Integer code, String desc) {
-			this.code = code;
-			this.desc = desc;
-		}
-	}
-
 }

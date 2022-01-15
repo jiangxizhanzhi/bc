@@ -11,7 +11,9 @@ public enum FileSunffixConstant implements GenericEnum {
 	 */
 	MD(0, "md"), PDF(1, "pdf"),
 	HTML(2, "html"), ZIP(3, "zip"),
-	XLS(4, "xls"), XLSX(5, "xlsx");
+	XLS(4, "xls"), XLSX(5, "xlsx"),
+	PPTX(6, "pptx"), PPT(7, "ppt"),
+	DOCX(8, "docx"), DOC(9,"doc");
 
 	@Getter
 	private Integer code;

@@ -8,7 +8,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>com.cyberpeace.oj</groupId>
+    <groupId>com.cyberpeace.gateway</groupId>
     <artifactId>gateway</artifactId>
     <version>${gateway.version}</version>
     <packaging>jar</packaging>
@@ -20,6 +20,16 @@
             <artifactId>common</artifactId>
             <version>${common.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace</groupId>
+            <artifactId>common-service</artifactId>
+            <version>${common.service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.oj</groupId>
+            <artifactId>course</artifactId>
+            <version>${oj.course.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -36,7 +46,11 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -58,6 +72,7 @@
             <artifactId>spring-rabbit-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>

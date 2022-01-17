@@ -62,13 +62,15 @@ public class CrNoAuthController {
 		String basePath = req.getPath();
 		// 依次导入，
 		for (Map.Entry<String, String> entry : envReqs.entrySet()) {
-			String templateName = entry.getKey();
+			String templateDirName = entry.getKey();
 			String topoId = entry.getValue();
-			String dir = basePath + File.separator + templateName;
+			String dir = basePath + File.separator + templateDirName;
 			// 读取
 			MDParser mdParser = new MDParser(dir, topoId);
 			// 跳过已存在
-			if (businessTemplateService.existByName(mdParser.getName())) {
+			String templateName = mdParser.getName();
+			if (businessTemplateService.existByName(templateName)) {
+				log.info(String.format("template [%s] already exists.", templateName));
 				continue;
 			}
 			mdParser.load();

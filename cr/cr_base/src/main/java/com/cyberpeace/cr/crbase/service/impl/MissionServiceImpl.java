@@ -65,9 +65,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	private CrTaskMapper crTaskMapper;
 
 	@Autowired
-	private CrRoleService crRoleService;
-
-	@Autowired
 	private CrRoleMapper crRoleMapper;
 
 	@Autowired

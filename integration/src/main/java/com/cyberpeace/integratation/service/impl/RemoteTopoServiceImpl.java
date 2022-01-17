@@ -106,11 +106,11 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		List<MpTopoStatistic> mpTopoStatistics = JsonUtil.toJsonObjectArray(data,
 				MpTopoStatistic.class);
 
-		if (topoIds.size() != mpTopoStatistics.size()) {
-			log.error("batchGetTopoDigest expect {}, got {}. [{}]", topoIds.size(),
-					mpTopoStatistics.size(), String.join(", ", topoIds));
-			throw new RemoteServiceException();
-		}
+//		if (topoIds.size() != mpTopoStatistics.size()) {
+//			log.error("batchGetTopoDigest expect {}, got {}. [{}]", topoIds.size(),
+//					mpTopoStatistics.size(), String.join(", ", topoIds));
+//			throw new RemoteServiceException();
+//		}
 
 		return mpTopoStatistics.stream()
 				.collect(Collectors.toMap(MpTopoStatistic::getCsceneId, mpTopoStatistic -> {

@@ -139,11 +139,13 @@ public class RbRoomScoreController {
 	@ApiOperation("获取任务信息统计")
 	@GetMapping("/get_training_mission_report")
 	public BaseRsp<MissionReport> getTrainingMissionReport(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
+			@ApiParam(name = "role_group", value = "角色id", required = true) Integer role_group) {
 		rbRoomService.checkRefereePermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());
 
-		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomId(resource_id);
+		List<CrRole> crRoleList = crRoleService
+				.selectRbStudentsRoleByRoomIdAndRoleGroup(resource_id, role_group);
 
 		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
 				crRoleList);
@@ -178,7 +180,9 @@ public class RbRoomScoreController {
 	@ApiOperation("获取用户训练报告")
 	@GetMapping("/get_training_report")
 	public BaseRsp<TrainingReport> getTrainingReport(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
+			@ApiParam(name = "role_group", value = "角色id", required = true) Integer role_group) {
+
 		rbRoomService.checkRefereePermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());
 
@@ -187,7 +191,9 @@ public class RbRoomScoreController {
 		if (RbRoom.TrainingStatusCode.UNOPENED.getCode().equals(rbRoomdata.getTrainingStatus())) {
 			return new BaseRsp<>(new TrainingReport());
 		}
-		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomId(resource_id);
+
+		List<CrRole> crRoleList = crRoleService
+				.selectRbStudentsRoleByRoomIdAndRoleGroup(resource_id, role_group);
 
 		List<UserReport> userReportList = crScoreController.getTrainingReport(resource_id,
 				crRoleList);

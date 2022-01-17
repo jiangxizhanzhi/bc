@@ -314,8 +314,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 视频和讲义数据处理
 		if (null != lesson.getHandoutType() && lesson.getHandoutType()
-				.intValue() != CourseLesson.HandoutType.MD.getCode().intValue()) {
+				.intValue() == CourseLesson.HandoutType.PDF.getCode().intValue()) {
 			lessonInfoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
+		}
+		if (null != lesson.getHandoutType() && (lesson.getHandoutType()
+				.intValue() == CourseLesson.HandoutType.DOC.getCode().intValue()
+				|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT.getCode()
+						.intValue())) {
+			lessonInfoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
 		}
 		lessonInfoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
 

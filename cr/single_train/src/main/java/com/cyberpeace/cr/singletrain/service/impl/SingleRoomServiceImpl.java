@@ -48,10 +48,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.cyberpeace.cr.crbase.constant.CrCommonConstants.MP_SCENE_ID_KEY;
@@ -770,7 +767,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.eq(TrainRecord::getUserId, UserInfoContext.getUserContext().getUserId())
 				.eq(TrainRecord::getBusinessTemplateId, businessTemplateId)
 				.isNotNull(TrainRecord::getEndTime)
-				.orderByDesc(TrainRecord::getEndTime).list();
+				.orderByAsc(TrainRecord::getEndTime).list();
 
 		List<TrainHistoryBo> result = Lists.newArrayList();
 		for (int i = 0; i < trainHistory.size(); i++) {
@@ -787,6 +784,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 			result.add(trainHistoryBo);
 		}
+		Collections.reverse(result);
 		return result;
 	}
 

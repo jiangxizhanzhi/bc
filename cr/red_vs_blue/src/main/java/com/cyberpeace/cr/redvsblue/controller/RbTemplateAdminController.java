@@ -1,23 +1,31 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.cr.crbase.service.MissionService;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspBO;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateAddReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
@@ -45,6 +53,9 @@ public class RbTemplateAdminController {
 
 	@Autowired
 	private MissionService missionService;
+
+	@Autowired
+	private MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -125,7 +136,8 @@ public class RbTemplateAdminController {
 	@GetMapping()
 	public BaseRsp<RbTemplateRsp> getRbTemplate(String resource_id) {
 
-		businessTemplateService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+		businessTemplateService.checkPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
 		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resource_id);
 
 		BusinessTemplate businessTemplate = businessTemplateService
@@ -135,10 +147,10 @@ public class RbTemplateAdminController {
 		String roleString = template.getRoleConfig();
 		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 
-		List<JSONObject> redRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("redRoles").toString(), JSONObject.class);
-		List<JSONObject> blueRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("blueRoles").toString(), JSONObject.class);
+		Map<String, MissionTemplate> mapping = missionTemplateService
+				.getMappingBySchemeJson(roleString);
+		List<JSONObject> redRoleRsps = getRoles(roleObject.getJSONArray("redRoles"), mapping);
+		List<JSONObject> blueRoleRsps = getRoles(roleObject.getJSONArray("blueRoles"), mapping);
 
 		// 获取基本信息
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
@@ -161,6 +173,24 @@ public class RbTemplateAdminController {
 		teamTrainTemplateRsp.setBlueRoles(blueRoleRsps);
 
 		return new BaseRsp<>(teamTrainTemplateRsp);
+	}
+
+	private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
+		List<JSONObject> result = Lists.newArrayList();
+		// 逐角色逐阶段读取任务信息
+		roleArray.forEach(role -> {
+			CrRoleRspBO roleRsp = ((JSONObject) role).toJavaObject(CrRoleRspBO.class);
+			roleRsp.setId(IDGeneratorUtil.getID());
+			roleRsp.getMissionsScheme().getSchemeData()
+					.forEach(datum -> datum.getMissions().forEach(mission -> {
+						MissionTemplate template = mapping.get(mission.getResourceId());
+						mission.setTitle(template.getTitle());
+						mission.setDescription(template.getDescription());
+					}));
+			// 转为蛇形
+			result.add(JsonUtil.java2JsonObject(roleRsp, PropertyNamingStrategy.SnakeCase));
+		});
+		return result;
 	}
 
 }

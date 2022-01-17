@@ -41,11 +41,11 @@ public class OfficeViewController {
 
 	@ApiOperation("获取课时文件信息")
 	@GetMapping("/oj/lesson/handout/info")
-	public BaseRsp<OfficeFileInfoBo> getFileInfo(
+	public OfficeFileInfoBo getFileInfo(
 			@ApiParam(name = "fileId", value = "课时编号") @RequestParam("fileId") String lessonId) {
 
 		OfficeFileInfoBo officeFileInfoBo = officeViewService.lessonHandoutInfo(lessonId);
-		return new BaseRsp<>(officeFileInfoBo);
+		return officeFileInfoBo;
 	}
 
 	@ApiOperation("获取课时文件流")

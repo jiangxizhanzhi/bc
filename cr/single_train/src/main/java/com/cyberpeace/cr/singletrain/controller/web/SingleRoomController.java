@@ -179,9 +179,8 @@ public class SingleRoomController {
 
 	@ApiOperation("训练提交")
 	@PostMapping("/train_submit")
-	public BaseRsp<Boolean> submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
-		singleRoomService.submitTrain(requestBody.getResourceId());
-		return new BaseRsp<>(true);
+	public BaseRsp<String> submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
+		return new BaseRsp<>(singleRoomService.submitTrain(requestBody.getResourceId()));
 	}
 
 }

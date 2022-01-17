@@ -70,6 +70,7 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	/**
 	 * 训练提交
 	 * @param businessTemplateId 业务模板id
+	 * @return 当前房间id
 	 */
-	void submitTrain(String businessTemplateId);
+	String submitTrain(String businessTemplateId);
 }

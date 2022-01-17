@@ -791,7 +791,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	}
 
 	@Override
-	public void submitTrain(String businessTemplateId) {
+	public String submitTrain(String businessTemplateId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		// 无运行中训练、训练已完成
@@ -842,6 +842,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			}
 		});
 
+		return singleRoom.getResourceId();
 	}
 
 	// todo 待迁移

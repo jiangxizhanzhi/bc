@@ -78,5 +78,5 @@ public interface AttachmentService extends IService<Attachment> {
 	/**
 	 * 资管平台导入时，图片附件插入数据库
 	 */
-	void loadImagesZiguan(Map<String, String> images);
+	void loadZiguanImages(Map<String, String> images);
 }

@@ -198,7 +198,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	}
 
 	@Override
-	public void loadImagesZiguan(Map<String, String> images) {
+	public void loadZiguanImages(Map<String, String> images) {
 		if (images.isEmpty()) {
 			return;
 		}

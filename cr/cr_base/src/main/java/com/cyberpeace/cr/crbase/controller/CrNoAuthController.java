@@ -64,6 +64,10 @@ public class CrNoAuthController {
 		for (Map.Entry<String, String> entry : envReqs.entrySet()) {
 			String templateName = entry.getKey();
 			String topoId = entry.getValue();
+			// 跳过已存在
+			if (businessTemplateService.existByName(templateName)) {
+				continue;
+			}
 			String dir = basePath + File.separator + templateName;
 			// 读取
 			MDParser mdParser = new MDParser(dir, topoId);
@@ -83,7 +87,7 @@ public class CrNoAuthController {
 					businessTemplateService.save(template);
 					missionService.batchInsertMissionTemplates(missionTemplateList);
 					handler.loadTrainTemplate(mdParser.getTemplateContext());
-//					attachmentService.loadImagesZiguan(attachments);
+					attachmentService.loadZiguanImages(attachments);
 				}
 			});
 		}

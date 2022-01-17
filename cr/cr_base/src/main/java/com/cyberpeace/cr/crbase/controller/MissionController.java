@@ -87,14 +87,14 @@ public class MissionController {
 	}
 
 	@ApiOperation("后台更新任务技能点")
-	@PutMapping("/missions/radar_labels")
-	public BaseRsp<MissionTemplate> updateRadarLabel(List<String> labels) {
+	@PostMapping("/missions/radar_labels")
+	public BaseRsp<MissionTemplate> updateRadarLabel(@RequestBody @Validated LabelReq labels) {
 		List<RadarLabel> radarLabelList = Lists.newArrayList();
 
-		for (int i = 0; i < labels.size(); i++) {
+		for (int i = 0; i < labels.getLabels().size(); i++) {
 			RadarLabel radarLabel = new RadarLabel();
 			radarLabel.setResourceId(i + 1);
-			radarLabel.setLabel(labels.get(i));
+			radarLabel.setLabel(labels.getLabels().get(i));
 
 			radarLabelList.add(radarLabel);
 		}

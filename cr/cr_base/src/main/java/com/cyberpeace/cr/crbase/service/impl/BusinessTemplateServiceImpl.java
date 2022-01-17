@@ -131,6 +131,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
+	public Boolean existByName(String templateName) {
+		return businessTemplateMapper.existByName(templateName);
+	}
+
+	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		return businessTemplateMapper.selectIdsByUserId(userId);
 	}

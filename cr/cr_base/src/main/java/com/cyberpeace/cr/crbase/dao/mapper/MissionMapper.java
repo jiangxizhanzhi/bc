@@ -22,6 +22,6 @@ public interface MissionMapper extends BaseMapper<Mission> {
 
 	void batchInsertMissionTemplate(List<MissionTemplate> missionTemplates);
 
-	Integer selectByTitleAndIds(@Param("title") String title,
+	Boolean existByTitleAndIds(@Param("title") String title,
 			@Param("missionIds") List<String> missionIds);
 }

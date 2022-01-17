@@ -38,5 +38,5 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 * @param name 
 	 * @return
 	 */
-	Integer countByName(@Param("name") String name);
+	Boolean existByName(@Param("name") String name);
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +42,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.*;
@@ -316,7 +316,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		updateById(teamRoom);
 
 		// 获取团队训练业务模板id
-		String businessTemplateId = teamTemplateMapper.selectById(teamRoom.getTeamTemplateId()).getBusinessTemplateId();
+		String businessTemplateId = teamTemplateMapper.selectById(teamRoom.getTeamTemplateId())
+				.getBusinessTemplateId();
 
 		if (teamRoom.isOpening()) {
 			trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
@@ -547,8 +548,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				CrCommonConstants.MAX_TRAINING_NAME_LEN,
 				CrBusinessErrorCode.TRAINING_NAME_LEN_ERROR);
 		// check if duplicate
-		Integer roomExist = teamRoomMapper.countByName(name);
-		if (roomExist > 0) {
+		if (teamRoomMapper.existByName(name)) {
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}
 	}

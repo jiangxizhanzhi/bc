@@ -24,5 +24,7 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 	BusinessTemplate selectByNameAndType(String name, Integer type, String id);
 
-    BusinessTemplate selectByLocalSceneId(String localSceneId);
+	BusinessTemplate selectByLocalSceneId(String localSceneId);
+
+	Boolean existByName(@Param("templateName") String templateName);
 }

@@ -103,4 +103,11 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	Boolean batchLoad(String unZipPath);
 
 	void checkPermission(String businessId, String userId);
+
+	/**
+	 * 查询以该名称命名的模板是否存在
+	 * @param templateName
+	 * @return
+	 */
+	Boolean existByName(String templateName);
 }

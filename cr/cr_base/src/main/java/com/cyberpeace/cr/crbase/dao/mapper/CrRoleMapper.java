@@ -39,6 +39,11 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 			@Param("code") Integer code);
 
 	List<CrRole> getRolesByRoom(String roomId, Integer businessType);
-
+	/**
+	 * 根据红方或蓝方自己的角色已经管理组角色
+	 * @param roomId
+	 * @param roleId
+	 * @return
+	 */
 	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
 }

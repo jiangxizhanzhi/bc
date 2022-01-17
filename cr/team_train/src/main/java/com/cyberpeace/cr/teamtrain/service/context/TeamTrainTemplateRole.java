@@ -5,6 +5,7 @@ import java.util.List;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.TemplateMissionId;
 
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import lombok.Data;
 import lombok.Getter;
 
@@ -17,9 +18,9 @@ public class TeamTrainTemplateRole {
 
 	private ColorMission<TemplateMissionId> missionsScheme;
 
-	private List<String> assetNodes;
+	private List<CrRoleNode> assetNodes;
 
-	private List<String> visibleNodes;
+	private List<CrRoleNode> visibleNodes;
 
 	public enum RoleName {
 

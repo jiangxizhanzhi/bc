@@ -161,6 +161,7 @@
             #{status}
         </foreach>
     </select>
+
     <select id="selectByRoomIdAndUserIds" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
         select *
         from cr_task
@@ -168,6 +169,29 @@
         and user_id in
         <foreach collection="userIds" item="userId" separator="," open="(" close=")">
             #{userId}
+        </foreach>
+    </select>
+
+    <select id="countByRoomIdAndRoleIdsAndStatusList" resultType="java.lang.Integer">
+        select count(*)
+        from cr_task
+        where room_id = #{roomId}
+        and role_id in
+        <foreach collection="crRoleIds" item="role" separator="," open="(" close=")">
+            #{role}
+        </foreach>
+        and status in
+        <foreach collection="statusList" item="status" separator="," open="(" close=")">
+            #{status}
+        </foreach>
+    </select>
+    <select id="countByRoomIdAndRoleIds" resultType="java.lang.Integer">
+        select count(*)
+        from cr_task
+        where room_id = #{roomId}
+        and role_id in
+        <foreach collection="crRoleIds" item="role" separator="," open="(" close=")">
+            #{role}
         </foreach>
     </select>
 

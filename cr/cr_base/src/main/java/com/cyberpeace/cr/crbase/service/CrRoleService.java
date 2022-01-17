@@ -106,4 +106,6 @@ public interface CrRoleService extends IService<CrRole> {
 	String getNewRoomScheme(String missionsScheme, String roomId);
 
 	List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup);
+
+	List<String> getMissionIdsByScheme(String missionScheme);
 }

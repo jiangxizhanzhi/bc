@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
@@ -434,6 +435,17 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		List<CrRole> crRoles = selectCrRoleByRoomId(roleQuery);
 
 		return crRoles;
+	}
+
+	@Override
+	public List<String> getMissionIdsByScheme(String missionScheme) {
+		List<String> missionIds = Lists.newArrayList();
+
+		JsonUtil.stringToArray(missionScheme).toJavaList(JSONObject.class)
+				.forEach(stage -> missionIds
+						.addAll(stage.getJSONArray("missions").toJavaList(String.class)));
+
+		return missionIds;
 	}
 
 }

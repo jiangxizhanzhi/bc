@@ -247,4 +247,11 @@ public interface CrTaskService {
 	 */
 	Boolean isCorrectByObjective(String userAnswer, String missionAnswer, Integer missionType);
 
+	Integer countUnfinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
+
+	Integer countUnsubmittedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
+
+	Integer countFinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
+
+	Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 }

@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,9 +92,14 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public Integer batchSubmitMissions(String roomId, List<String> missionIds, Map<String, String> answer) {
-		Map<String, Mission> missionMap = StreamApiUtils.toMap(missionMapper.selectBatchIds(missionIds), MissionBase::getResourceId, mission -> mission);
-		Map<String, CrTask> crTaskMap = StreamApiUtils.toMap(lambdaQuery().in(CrTask::getMissionId, missionIds).list(), CrTask::getMissionId, crTask -> crTask);
+	public Integer batchSubmitMissions(String roomId, List<String> missionIds,
+			Map<String, String> answer) {
+		Map<String, Mission> missionMap = StreamApiUtils.toMap(
+				missionMapper.selectBatchIds(missionIds), MissionBase::getResourceId,
+				mission -> mission);
+		Map<String, CrTask> crTaskMap = StreamApiUtils.toMap(
+				lambdaQuery().in(CrTask::getMissionId, missionIds).list(), CrTask::getMissionId,
+				crTask -> crTask);
 
 		Date currentDate = new Date();
 		List<CrTaskSubmit> pendingSaveSubmit = Lists.newArrayList();
@@ -147,6 +151,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		// 数据写入
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
 			@Override
 			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				updateBatchById(pendingUpdateTask);
@@ -545,7 +550,32 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			CrTaskLog.ActionCode.MAN_REJECT.getCode());
 
 	@Override
-	public Boolean isCorrectByObjective(String userAnswer, String missionAnswer, Integer missionType) {
+	public Boolean isCorrectByObjective(String userAnswer, String missionAnswer,
+			Integer missionType) {
 		return isCorrect(userAnswer, missionAnswer, missionType);
 	}
+
+	@Override
+	public Integer countUnfinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
+		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
+				CrTask.TaskStatus.UNFINISHED_STATUS_LIST);
+	}
+
+	@Override
+	public Integer countUnsubmittedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
+		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
+				CrTask.TaskStatus.UNSUBMITTED_STATUS_LIST);
+	}
+
+	@Override
+	public Integer countFinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
+		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
+				CrTask.TaskStatus.FINISHED_STATUS_LIST);
+	}
+
+	@Override
+	public Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
+		return crTaskMapper.countByRoomIdAndRoleIds(roomId, crRoleIds);
+	}
+
 }

@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.TemplateMissionId;
-
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+
 import lombok.Data;
 import lombok.Getter;
 

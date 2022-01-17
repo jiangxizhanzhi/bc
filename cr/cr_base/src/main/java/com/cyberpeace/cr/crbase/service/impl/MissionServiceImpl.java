@@ -35,6 +35,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
@@ -62,6 +63,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Autowired
 	private CrTaskMapper crTaskMapper;
+
+	@Autowired
+	private CrRoleService crRoleService;
 
 	@Autowired
 	private CrRoleMapper crRoleMapper;
@@ -656,6 +660,17 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			throw new BusinessException(
 					CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE);
 		}
+	}
+
+	@Override
+	public List<Mission> batchGetByRoomAndCrRoles(String roomId, List<CrRole> crRoleList) {
+		List<String> missionIds = Lists.newArrayList();
+
+		for (CrRole crRole : crRoleList) {
+			missionIds.addAll(crRoleService.getMissionIdsByScheme(crRole.getMissionScheme()));
+		}
+
+		return batchGet(missionIds);
 	}
 
 	private String dumpSchemeTemplates(List<String> templateIds) {

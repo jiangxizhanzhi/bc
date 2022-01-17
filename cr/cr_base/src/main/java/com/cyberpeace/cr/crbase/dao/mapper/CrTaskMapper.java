@@ -53,4 +53,9 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	List<String> selectIdsByRoomIdAndUserId(String roomId, String userId);
 
 	void batchInsert(List<CrTask> tasks);
+
+	Integer countByRoomIdAndRoleIdsAndStatusList(String roomId, List<String> crRoleIds,
+			List<Integer> statusList);
+
+	Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 }

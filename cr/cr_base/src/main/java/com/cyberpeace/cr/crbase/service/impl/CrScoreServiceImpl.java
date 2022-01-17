@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
@@ -58,12 +59,16 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			List<String> userList = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
 			missionCount += roleMissionCount * userList.size();
 		}
+		List<String> crRoleIds = StreamApiUtils.map(crRoleList, CrRole::getResourceId);
 
-		missionsStatistics
-				.setUnpublishedProportion(missionCount - crTaskService.getByRoomId(roomId).size());
-		missionsStatistics.setNotSubmitProportion(crTaskService.countUnsubmitted(roomId));
-		missionsStatistics.setNotFinishProportion(crTaskService.countUnfinished(roomId));
-		missionsStatistics.setFinishProportion(crTaskService.countFinished(roomId));
+		missionsStatistics.setUnpublishedProportion(
+				missionCount - crTaskService.countByRoomIdAndRoleIds(roomId, crRoleIds));
+		missionsStatistics.setNotSubmitProportion(
+				crTaskService.countUnsubmittedByRoomIdAndRoleIds(roomId, crRoleIds));
+		missionsStatistics.setNotFinishProportion(
+				crTaskService.countUnfinishedByRoomIdAndRoleIds(roomId, crRoleIds));
+		missionsStatistics.setFinishProportion(
+				crTaskService.countFinishedByRoomIdAndRoleIds(roomId, crRoleIds));
 		return missionsStatistics;
 	}
 
@@ -73,10 +78,10 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	}
 
 	@Override
-	public Map<String, Integer> getMissionsCategory(String roomId) {
+	public Map<String, Integer> getMissionsCategory(String roomId, List<CrRole> crRoleList) {
 		Map<String, Integer> missionsCategory = Maps.newHashMap();
 
-		List<Mission> missionList = missionService.batchGetByRoom(roomId);
+		List<Mission> missionList = missionService.batchGetByRoomAndCrRoles(roomId, crRoleList);
 
 		List<MissionCategory> missionCategories = missionService.listCategories();
 

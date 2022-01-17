@@ -85,9 +85,6 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	private MissionService missionService;
 
 	@Autowired
-	private MissionTemplateService missionTemplateService;
-
-	@Autowired
 	private CrTaskService crTaskService;
 
 	@Autowired
@@ -604,8 +601,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(),
 				JSONObject.class);
 		JSONArray schemeData = missionScheme.getJSONArray("scheme_data");
-		Map<String, MissionTemplate> missionTemplateMap = missionTemplateService
-				.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
+		List<MissionTemplate> missionTemplates = missionService
+				.batchGetByMissionSchemeJson(singleTemplate.getMissionsScheme());
+		Map<String, MissionTemplate> missionTemplateMap = Maps.newHashMap();
+		for (MissionTemplate missionTemplate : missionTemplates) {
+			missionTemplateMap.put(missionTemplate.getResourceId(), missionTemplate);
+		}
 
 		// 生成富文本训练手册
 		StringBuilder writeup = new StringBuilder();
@@ -841,7 +842,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				// 任务提交, 评分
 				Integer score = crTaskService.batchSubmitMissions(singleRoom.getResourceId(),
-						getMissionIdsByScheme(crRole.getMissionScheme()), userAnswer);
+						crRoleService.getMissionIdsByScheme(crRole.getMissionScheme()), userAnswer);
 
 				// 写入训练记录
 				if (extraRecord.isEmpty()) {
@@ -863,18 +864,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return singleRoom.getResourceId();
 	}
 
-	// todo 待迁移
-	private List<String> getMissionIdsByScheme(String missionScheme) {
-		List<String> missionIds = Lists.newArrayList();
-
-		JsonUtil.stringToArray(missionScheme).toJavaList(JSONObject.class)
-				.forEach(stage -> missionIds
-						.addAll(stage.getJSONArray("missions").toJavaList(String.class)));
-		return missionIds;
-	}
-
 	private Map<String, Mission> getMissionMapByScheme(String missionScheme) {
-		List<String> missionIds = getMissionIdsByScheme(missionScheme);
+		List<String> missionIds = crRoleService.getMissionIdsByScheme(missionScheme);
 
 		if (missionIds.isEmpty()) {
 			return Maps.newHashMap();

@@ -35,5 +35,5 @@ public interface CrScoreService extends IService<CrScore> {
 
 	List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
 
-	Map<String, Integer> getMissionsCategory(String roomId);
+	Map<String, Integer> getMissionsCategory(String roomId, List<CrRole> crRoleList);
 }

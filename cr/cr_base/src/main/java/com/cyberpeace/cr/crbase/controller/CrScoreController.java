@@ -285,7 +285,8 @@ public class CrScoreController {
 
 		MissionReport missionReport = new MissionReport();
 
-		missionReport.setMissionsCategory(crScoreService.getMissionsCategory(resource_id));
+		missionReport
+				.setMissionsCategory(crScoreService.getMissionsCategory(resource_id, crRoleList));
 		missionReport.setMissionsStatistics(
 				crScoreService.getMissionsStatistics(resource_id, crRoleList));
 

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
@@ -66,6 +67,11 @@ public class SingleRoomScoreController {
 		data.put("task_count", gettaskCount(missionReport));
 		data.put("radar", radars);
 		data.put("stages", stageRsps);
+		data.put("total_score", 5);
+
+		data.put("create_time", new Date());
+		data.put("resource_id", resource_id);
+		data.put("score", 3);
 
 		return new BaseRsp(data);
 	}

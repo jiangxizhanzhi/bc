@@ -2,9 +2,11 @@ package com.cyberpeace.gateway.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.util.ObjUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,11 +43,12 @@ public class OfficeViewController {
 
 	@ApiOperation("获取课时文件信息")
 	@GetMapping("/oj/lesson/handout/info")
-	public OfficeFileInfoBo getFileInfo(
+	public Map<String, Object> getFileInfo(
 			@ApiParam(name = "fileId", value = "课时编号") @RequestParam("fileId") String lessonId) {
 
 		OfficeFileInfoBo officeFileInfoBo = officeViewService.lessonHandoutInfo(lessonId);
-		return officeFileInfoBo;
+		Map<String, Object> dataMap = ObjUtil.obj2map(officeFileInfoBo);
+		return dataMap;
 	}
 
 	@ApiOperation("获取课时文件流")

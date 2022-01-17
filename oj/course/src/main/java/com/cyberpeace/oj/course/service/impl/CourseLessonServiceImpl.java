@@ -313,17 +313,32 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// 视频和讲义数据处理
+		lessonInfoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
 		if (null != lesson.getHandoutType() && lesson.getHandoutType()
 				.intValue() == CourseLesson.HandoutType.PDF.getCode().intValue()) {
 			lessonInfoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
+			lessonInfoBo.setHandoutName(StringUtils.substring(lesson.getHandoutUrl(),
+					lesson.getHandoutUrl().lastIndexOf(File.separatorChar) + CommonConstant.ONE));
 		}
+
+		// word或者ppt讲义处理
 		if (null != lesson.getHandoutType() && (lesson.getHandoutType()
 				.intValue() == CourseLesson.HandoutType.DOC.getCode().intValue()
 				|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT.getCode()
 						.intValue())) {
 			lessonInfoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
+			lessonInfoBo.setHandoutName(StringUtils.substring(lesson.getHandoutUrl(),
+					lesson.getHandoutUrl().lastIndexOf(File.separatorChar) + CommonConstant.ONE));
 		}
-		lessonInfoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
+
+		// md讲义文件名称处理
+		if (null != lesson.getHandoutType() && lesson.getHandoutType()
+				.intValue() == CourseLesson.HandoutType.MD.getCode().intValue()
+				&& StringUtils.isNotBlank(lesson.getOriginMarkdownFile())) {
+			lessonInfoBo.setHandoutName(StringUtils.substring(lesson.getOriginMarkdownFile(),
+					lesson.getOriginMarkdownFile().lastIndexOf(File.separatorChar)
+							+ CommonConstant.ONE));
+		}
 
 		// 知识点数据转换
 		lessonInfoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));

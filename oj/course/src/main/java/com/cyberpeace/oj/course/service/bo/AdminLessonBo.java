@@ -29,6 +29,9 @@ public class AdminLessonBo implements Serializable {
 	@ApiModelProperty("讲义地址")
 	private String handoutUrl;
 
+	@ApiModelProperty("讲义名称")
+	private String handoutName;
+
 	@ApiModelProperty("讲义原文件地址")
 	private String originMarkdownFile;
 

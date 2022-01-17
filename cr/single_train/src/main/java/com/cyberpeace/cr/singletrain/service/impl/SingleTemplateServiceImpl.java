@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
+import java.util.Map;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +13,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMissionsScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspSchemeStage;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
@@ -40,7 +46,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	private MissionTemplateMapper missionTemplateMapper;
+	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 单兵训练模板获取
@@ -66,7 +72,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 
 		singleTemplateBo.setResourceId(businessTemplate.getResourceId());
 		singleTemplateBo.setEventData(eventData);
-		singleTemplateBo.setMissionsScheme(JsonUtil.toJsonObject(trainObject.getMissionsScheme(), JSONObject.class));
+		singleTemplateBo.setMissionsScheme(getMissionTemplates(trainObject.getMissionsScheme()));
 
 		return singleTemplateBo;
 	}
@@ -117,4 +123,20 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		return singleTemplateMapper.getByBusinessId(resourceId);
 	}
 
+	private JSONObject getMissionTemplates(String missionsScheme) {
+		// get missionTemplates mapping
+		Map<String, MissionTemplate> mapping = missionTemplateService
+				.getMappingBySchemeJson(missionsScheme);
+		// 循环获取 title 和 desc
+		CrRoleRspMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(missionsScheme,
+				CrRoleRspMissionsScheme.class);
+		for (CrRoleRspSchemeStage stage : rspMissionsScheme.getSchemeData()) {
+			for (CrRoleRspMission mission : stage.getMissions()) {
+				MissionTemplate missionTemplate = mapping.get(mission.getResource_id());
+				mission.setTitle(missionTemplate.getTitle());
+				mission.setDescription(missionTemplate.getDescription());
+			}
+		}
+		return JsonUtil.java2JsonObject(rspMissionsScheme);
+	}
 }

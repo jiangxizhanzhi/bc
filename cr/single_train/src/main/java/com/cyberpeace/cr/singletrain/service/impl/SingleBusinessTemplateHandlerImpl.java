@@ -14,6 +14,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
@@ -46,6 +47,9 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
 	@Autowired
 	private SingleRoomService singleRoomService;
+
+	@Autowired
+	private MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -86,7 +90,7 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		context.setBusiness(singleTemplate);
 		// 获取任务
 		String missionScheme = singleTemplate.getMissionsScheme();
-		context.setMissions(missionService.batchGetByMissionSchemeJson(missionScheme));
+		context.setMissions(missionTemplateService.batchGetByMissionSchemeJson(missionScheme));
 
 		return context;
 	}

@@ -440,16 +440,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
-		String reg = String.format("\"([a-z0-9]{%d})\"", CrCommonConstants.GENERATED_UUID_LENGTH);
-		List<String> missionTemplateIds = LocalStringUtil.getMatchStr(schemeJson, reg, 1);
-		if (missionTemplateIds.size() == 0) {
-			return new ArrayList<>();
-		}
-		return missionTemplateMapper.selectBatchIds(missionTemplateIds);
-	}
-
-	@Override
 	public Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates) {
 		if (missionTemplates == null || missionTemplates.size() == 0) {
 			return false;

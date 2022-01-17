@@ -11,6 +11,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
@@ -31,6 +32,9 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
 	@Autowired
 	private MissionService missionService;
+
+	@Autowired
+	private MissionTemplateService missionTemplateService;
 
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -83,7 +87,7 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		context.setBusiness(rbTemplate);
 		// 获取任务
 		String missionScheme = rbTemplate.getRoleConfig();
-		context.setMissions(missionService.batchGetByMissionSchemeJson(missionScheme));
+		context.setMissions(missionTemplateService.batchGetByMissionSchemeJson(missionScheme));
 
 		return context;
 	}

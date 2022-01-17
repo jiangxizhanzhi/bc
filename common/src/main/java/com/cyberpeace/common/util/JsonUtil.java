@@ -2,8 +2,6 @@ package com.cyberpeace.common.util;
 
 import java.util.List;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -11,6 +9,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.google.common.collect.Lists;
 
 /**
@@ -96,6 +96,16 @@ public class JsonUtil {
 		}
 
 		return convertValue;
+	}
+
+	/**
+	 * 将 java 对象转为 JSONObject
+	 * @param source
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> JSONObject java2JsonObject(T source) {
+		return (JSONObject) JSONObject.toJSON(source);
 	}
 
 }

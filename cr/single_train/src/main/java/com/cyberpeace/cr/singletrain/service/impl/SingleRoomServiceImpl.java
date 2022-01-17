@@ -373,26 +373,31 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 */
 	@Override
 	public SingleMissionBo getMission(String businessTemplateId, String missionId) {
-		// 获取任务基础信息 todo -> Mission entity
-		Mission mission = missionService.getById(missionId);
-		if (mission == null) {
-			return null;
-		}
-
-		SingleMissionBo singleMissionBo = new SingleMissionBo();
-		BeanUtils.copyProperties(mission, singleMissionBo);
-		singleMissionBo.setCategory(
-				missionService.getCategoryById(mission.getCategoryId()).getName());
-		if (mission.getOption() != null) {
-			singleMissionBo.setOption(
-					JsonUtil.toJsonObjectArray(mission.getOption(), JSONObject.class));
-		}
-
-		// 训练是否运行中
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
+
+		SingleMissionBo singleMissionBo = new SingleMissionBo();
+
+		// 获取任务基础信息。 单兵训练未运行, 获取模板任务信息, 并直接返回
 		if (singleRoom == null) {
+			MissionTemplate missionTemplate = missionService.getByMissionTemplateId(missionId);
+			BeanUtils.copyProperties(missionTemplate, singleMissionBo);
+			singleMissionBo.setCategory(
+					missionService.getCategoryById(missionTemplate.getCategoryId()).getName());
+			if (missionTemplate.getOption() != null) {
+				singleMissionBo.setOption(
+						JsonUtil.toJsonObjectArray(missionTemplate.getOption(), JSONObject.class));
+			}
 			return singleMissionBo;
+		} else {
+			Mission mission = missionService.getById(missionId);
+			BeanUtils.copyProperties(mission, singleMissionBo);
+			singleMissionBo.setCategory(
+					missionService.getCategoryById(mission.getCategoryId()).getName());
+			if (mission.getOption() != null) {
+				singleMissionBo.setOption(
+						JsonUtil.toJsonObjectArray(mission.getOption(), JSONObject.class));
+			}
 		}
 
 		// 训练运行中, 尝试获取此任务训练记录

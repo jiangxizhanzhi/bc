@@ -263,7 +263,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean renameTopo(String topoId, String name) {
 		RenameTopoContext context = new RenameTopoContext(topoId, name);
 		return name.equals(
-				remoteTopoService.sync((JSONObject) JSONObject.toJSON(context)).getString("name"));
+				remoteTopoService.sync(JsonUtil.java2JsonObject(context)).getString("name"));
 	}
 
 	@Override
@@ -381,6 +381,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	private void switchRecording(String topoId, Boolean enableRecording) {
 		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId,
 				enableRecording);
-		remoteTopoService.sync((JSONObject) JSONObject.toJSON(context));
+		remoteTopoService.sync(JsonUtil.java2JsonObject(context));
 	}
 }

@@ -10,6 +10,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -130,13 +131,13 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		// 循环获取 title 和 desc
 		CrRoleRspMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(missionsScheme,
 				CrRoleRspMissionsScheme.class);
-		for (CrRoleRspSchemeStage stage : rspMissionsScheme.getScheme_data()) {
+		for (CrRoleRspSchemeStage stage : rspMissionsScheme.getSchemeData()) {
 			for (CrRoleRspMission mission : stage.getMissions()) {
-				MissionTemplate missionTemplate = mapping.get(mission.getResource_id());
+				MissionTemplate missionTemplate = mapping.get(mission.getResourceId());
 				mission.setTitle(missionTemplate.getTitle());
 				mission.setDescription(missionTemplate.getDescription());
 			}
 		}
-		return JsonUtil.java2JsonObject(rspMissionsScheme);
+		return JsonUtil.java2JsonObject(rspMissionsScheme, PropertyNamingStrategy.SnakeCase);
 	}
 }

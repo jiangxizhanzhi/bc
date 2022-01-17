@@ -12,7 +12,7 @@ public class CrRoleRspMission implements Serializable {
 
 	private String title;
 
-	private String resource_id;
+	private String resourceId;
 
 	private String description;
 }

@@ -15,5 +15,5 @@ public class CrRoleRspMissionsScheme implements Serializable {
 
 	private Integer template;
 
-	private List<CrRoleRspSchemeStage> scheme_data;
+	private List<CrRoleRspSchemeStage> schemeData;
 }

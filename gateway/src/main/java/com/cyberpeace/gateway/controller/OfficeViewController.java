@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+@Slf4j
 @Api(tags = "外部接口-office文件展示相关api")
 @RestController
 @RequestMapping("/gateway/office/")
@@ -53,10 +55,11 @@ public class OfficeViewController {
 			HttpServletResponse response) throws FileNotFoundException {
 
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
-		String realPath = utilService.getRealPath(courseLesson.getVideoUrl());
+		String realPath = utilService.getRealPath(courseLesson.getHandoutUrl());
 
 		File file = new File(realPath);
 		if (!file.exists()) {
+			log.error("File not found! real_path=[{}]", realPath);
 			throw new FileNotFoundException(realPath);
 		}
 

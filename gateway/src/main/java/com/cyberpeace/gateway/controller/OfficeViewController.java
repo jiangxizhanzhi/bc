@@ -1,26 +1,27 @@
 package com.cyberpeace.gateway.controller;
 
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.gateway.service.OfficeViewService;
-import com.cyberpeace.gateway.service.bo.OfficeFileInfoBo;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.gateway.service.OfficeViewService;
+import com.cyberpeace.gateway.service.bo.OfficeFileInfoBo;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "外部接口-office文件展示相关api")
 @RestController
@@ -39,7 +40,7 @@ public class OfficeViewController {
 	@ApiOperation("获取课时文件信息")
 	@GetMapping("/oj/lesson/handout/info")
 	public BaseRsp<OfficeFileInfoBo> getFileInfo(
-			@ApiParam(name = "fileId", value = "文件编号") @RequestParam("fileId") String lessonId) {
+			@ApiParam(name = "fileId", value = "课时编号") @RequestParam("fileId") String lessonId) {
 
 		OfficeFileInfoBo officeFileInfoBo = officeViewService.lessonHandoutInfo(lessonId);
 		return new BaseRsp<>(officeFileInfoBo);
@@ -48,7 +49,7 @@ public class OfficeViewController {
 	@ApiOperation("获取课时文件流")
 	@GetMapping("/oj/lesson/handout")
 	public BaseRsp getFileStream(
-			@ApiParam(name = "fileId", value = "文件编号") @RequestParam("fileId") String lessonId,
+			@ApiParam(name = "fileId", value = "课时编号") @RequestParam("fileId") String lessonId,
 			HttpServletResponse response) throws FileNotFoundException {
 
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);

@@ -223,8 +223,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 文件地址处理
 		if (null != lesson.getHandoutType() && lesson.getHandoutType()
-				.intValue() != CourseLesson.HandoutType.MD.getCode().intValue()) {
+				.intValue() == CourseLesson.HandoutType.PDF.getCode().intValue()) {
 			infoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
+		}
+		if (null != lesson.getHandoutType() && (lesson.getHandoutType()
+				.intValue() == CourseLesson.HandoutType.DOC.getCode().intValue()
+				|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT.getCode()
+						.intValue())) {
+			infoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
 		}
 		infoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
 
@@ -1208,7 +1214,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		return paper;
 	}
-
 
 	/**
 	 * 讲义文件上传

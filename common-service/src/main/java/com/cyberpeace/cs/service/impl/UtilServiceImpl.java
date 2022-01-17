@@ -4,7 +4,9 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -22,12 +24,21 @@ public class UtilServiceImpl implements UtilService {
 
 	private String LOCAL_PARENT_PATH;
 
+	private String HANDOUT_INFO_URL;
+
+	private String HANDOUT_CONTENT_URL;
+
+	@Autowired
+	private RemoteServerEnvService remoteServerEnvService;
+
 	@PostConstruct
 	public void init() {
 		FDFS_PREFIX = ConfigUtil.getContextProperty("common.fastdfs.url.prefix");
 		FDFS_START_STR = ConfigUtil.getContextProperty("common.fastdfs.url.start.str");
 		LOCAL_PREFIX = ConfigUtil.getContextProperty("cr.local.file.prefix");
 		LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
+		HANDOUT_INFO_URL = ConfigUtil.getContextProperty("office.handout.info");
+		HANDOUT_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
 	}
 
 	@Override
@@ -44,6 +55,23 @@ public class UtilServiceImpl implements UtilService {
 		}
 
 		return fileUrl;
+	}
+
+	@Override
+	public String officeUrl(String fileUrl, String fileId) {
+
+		String fileName = fileUrl;
+		int lastIndexOf = fileUrl.lastIndexOf(File.separator);
+		if (lastIndexOf != CommonConstant.NEGATIVE_ONE) {
+			fileName = fileUrl.substring(lastIndexOf + CommonConstant.ONE);
+		}
+
+		String officeViewUrl = remoteServerEnvService.getOfficeHost() + "/view/?host="
+				+ remoteServerEnvService.getFileServerHost() + "&getFileInfo=" + HANDOUT_INFO_URL
+				+ "&downloadFile=" + HANDOUT_CONTENT_URL + "&fileId=" + fileId + "&fileName="
+				+ fileName;
+
+		return officeViewUrl;
 	}
 
 	@Override

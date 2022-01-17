@@ -663,11 +663,22 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
+	public List<String> getMissionIdsByScheme(String missionScheme) {
+		List<String> missionIds = Lists.newArrayList();
+
+		JsonUtil.stringToArray(missionScheme).toJavaList(JSONObject.class)
+				.forEach(stage -> missionIds
+						.addAll(stage.getJSONArray("missions").toJavaList(String.class)));
+
+		return missionIds;
+	}
+
+	@Override
 	public List<Mission> batchGetByRoomAndCrRoles(String roomId, List<CrRole> crRoleList) {
 		List<String> missionIds = Lists.newArrayList();
 
 		for (CrRole crRole : crRoleList) {
-			missionIds.addAll(crRoleService.getMissionIdsByScheme(crRole.getMissionScheme()));
+			missionIds.addAll(getMissionIdsByScheme(crRole.getMissionScheme()));
 		}
 
 		return batchGet(missionIds);

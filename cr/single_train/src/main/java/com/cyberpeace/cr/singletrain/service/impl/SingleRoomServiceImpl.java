@@ -841,7 +841,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				// 任务提交, 评分
 				Integer score = crTaskService.batchSubmitMissions(singleRoom.getResourceId(),
-						crRoleService.getMissionIdsByScheme(crRole.getMissionScheme()), userAnswer);
+						missionService.getMissionIdsByScheme(crRole.getMissionScheme()), userAnswer);
 
 				// 写入训练记录
 				if (extraRecord.isEmpty()) {
@@ -864,7 +864,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	}
 
 	private Map<String, Mission> getMissionMapByScheme(String missionScheme) {
-		List<String> missionIds = crRoleService.getMissionIdsByScheme(missionScheme);
+		List<String> missionIds = missionService.getMissionIdsByScheme(missionScheme);
 
 		if (missionIds.isEmpty()) {
 			return Maps.newHashMap();

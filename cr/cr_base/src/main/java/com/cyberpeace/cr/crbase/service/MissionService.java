@@ -145,4 +145,6 @@ public interface MissionService extends IService<Mission> {
 	void checkSchemeTemplateTitleDuplicate(String title);
 
 	List<Mission> batchGetByRoomAndCrRoles(String roomId, List<CrRole> crRoleList);
+
+	List<String> getMissionIdsByScheme(String missionScheme);
 }

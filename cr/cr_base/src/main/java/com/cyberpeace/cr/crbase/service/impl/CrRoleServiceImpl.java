@@ -437,15 +437,5 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoles;
 	}
 
-	@Override
-	public List<String> getMissionIdsByScheme(String missionScheme) {
-		List<String> missionIds = Lists.newArrayList();
-
-		JsonUtil.stringToArray(missionScheme).toJavaList(JSONObject.class)
-				.forEach(stage -> missionIds
-						.addAll(stage.getJSONArray("missions").toJavaList(String.class)));
-
-		return missionIds;
-	}
 
 }

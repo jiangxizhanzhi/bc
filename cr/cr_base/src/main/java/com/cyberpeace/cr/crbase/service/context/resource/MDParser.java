@@ -299,7 +299,8 @@ public class MDParser {
 		businessTemplate.setResourceId(IDGeneratorUtil.getID());
 		templateContext.setBusinessTemplateId(businessTemplate.getResourceId());
 		businessTemplate.setCreateUserId(ADMIN_ID);
-		businessTemplate.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		// 设为全部可见
+		businessTemplate.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		businessTemplate.setOperationAuthIds("[]");
 
 		// single training

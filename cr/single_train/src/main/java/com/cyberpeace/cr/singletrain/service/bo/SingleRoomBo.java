@@ -19,4 +19,7 @@ public class SingleRoomBo extends SingleTemplateBo implements Serializable {
 	@ApiModelProperty("本地场景id")
 	private String localSceneId;
 
+	@ApiModelProperty("训练是否可提交")
+	private Boolean showSubmitBtn;
+
 }

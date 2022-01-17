@@ -188,11 +188,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		SingleRoomBo singleRoomBo = new SingleRoomBo();
 		BeanUtils.copyProperties(singleTemplateBo, singleRoomBo);
 
-		// 当前用户已创建房间, 为null直接返回
+		// 当前用户是否创建房间, 如果为null直接返回
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		if (singleRoom == null) {
+			singleRoomBo.setShowSubmitBtn(false);
 			return singleRoomBo;
+		} else {
+			singleRoomBo.setShowSubmitBtn(!singleRoom.getIsFinish());
 		}
 
 		// 获取房间任务方案

@@ -253,6 +253,17 @@ public class MDParser {
 	}
 
 	/**
+	 * 用于验证是否已存在
+	 */
+	public String getName(){
+		String mdPath = dirPath + SEP + BASE_MD_FILE;
+		String baseText = stripMd(mdPath);
+		Map<String, String> data = parseText(baseText, LINE_SEP + H3,
+				ZiguanConstants.TEMPLATE_BASE_INFO_FIELDS);
+		return data.get(ZiguanConstants.TEMPLATE_NAME);
+	}
+
+	/**
 	 * 解析入口
 	 */
 	public void load() {

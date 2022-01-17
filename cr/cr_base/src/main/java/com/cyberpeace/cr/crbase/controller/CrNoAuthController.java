@@ -64,13 +64,13 @@ public class CrNoAuthController {
 		for (Map.Entry<String, String> entry : envReqs.entrySet()) {
 			String templateName = entry.getKey();
 			String topoId = entry.getValue();
-			// 跳过已存在
-			if (businessTemplateService.existByName(templateName)) {
-				continue;
-			}
 			String dir = basePath + File.separator + templateName;
 			// 读取
 			MDParser mdParser = new MDParser(dir, topoId);
+			// 跳过已存在
+			if (businessTemplateService.existByName(mdParser.getName())) {
+				continue;
+			}
 			mdParser.load();
 			BusinessTemplate template = mdParser.getBusinessTemplate();
 			List<MissionTemplate> missionTemplateList = mdParser.getMissionTemplates();

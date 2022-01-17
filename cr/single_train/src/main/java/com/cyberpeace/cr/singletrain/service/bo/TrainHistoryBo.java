@@ -17,4 +17,7 @@ public class TrainHistoryBo {
 
     @ApiModelProperty("训练分值")
     private Double score;
+
+    @ApiModelProperty("训练时间倒序索引")
+    private Integer trainTimes;
 }

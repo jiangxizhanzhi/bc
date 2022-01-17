@@ -17,6 +17,8 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
@@ -201,15 +203,18 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 获取房间任务方案
 		SerializeConfig serializeConfig = new SerializeConfig();
 		serializeConfig.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
-		singleTemplateBo.getMissionsScheme().put(
-				"scheme_data", JSONArray.toJSON(crRoleService.getCrRoleMissionByRoomIdAndUserId(singleRoom.getResourceId(), userId), serializeConfig)
+		JSONObject missionsRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class);
+		// 设置任务完成状态
+		List<MissionSchemeObject<MissionContext>> schemeData = crRoleService.getCrRoleMissionByRoomIdAndUserId(singleRoom.getResourceId(), userId);
+		schemeData.forEach(
+				missionStage -> missionStage.getMissions().forEach(mission -> mission.setFinished(missionsRecord.getString(mission.getResourceId()) != null))
 		);
+		singleTemplateBo.getMissionsScheme().put("scheme_data", JSONArray.toJSON(schemeData, serializeConfig));
 
 		// 生成数据
 		SingleRoomInfoBo singleRoomInfoBo = new SingleRoomInfoBo();
 		singleRoomInfoBo.setStartTime(singleRoom.getStartTime());
-		singleRoomInfoBo.setTrainingRecordData(
-				JsonUtil.toJsonObject(singleRoom.getTrainingRecord(), JSONObject.class));
+		singleRoomInfoBo.setTrainingRecordData(missionsRecord);
 		singleRoomInfoBo.setRunningTime(TimeUtil.getIntervalSeconds(singleRoom.getStartTime(), new Date()));
 		singleRoomBo.setRoomInfo(singleRoomInfoBo);
 
@@ -768,10 +773,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.orderByDesc(TrainRecord::getEndTime).list();
 
 		List<TrainHistoryBo> result = Lists.newArrayList();
-		for (TrainRecord item: trainHistory) {
+		for (int i = 0; i < trainHistory.size(); i++) {
+			TrainRecord item = trainHistory.get(i);
 			TrainHistoryBo trainHistoryBo = new TrainHistoryBo();
 			trainHistoryBo.setRoomId(item.getRoomId());
 			trainHistoryBo.setTrainTime(item.getEndTime());
+			trainHistoryBo.setTrainTimes(i + 1);
 			if (item.getExtra() == null) {
 				trainHistoryBo.setScore(0d);
 			} else {

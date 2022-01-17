@@ -130,7 +130,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		// 循环获取 title 和 desc
 		CrRoleRspMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(missionsScheme,
 				CrRoleRspMissionsScheme.class);
-		for (CrRoleRspSchemeStage stage : rspMissionsScheme.getSchemeData()) {
+		for (CrRoleRspSchemeStage stage : rspMissionsScheme.getScheme_data()) {
 			for (CrRoleRspMission mission : stage.getMissions()) {
 				MissionTemplate missionTemplate = mapping.get(mission.getResource_id());
 				mission.setTitle(missionTemplate.getTitle());

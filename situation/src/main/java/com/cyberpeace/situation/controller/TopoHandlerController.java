@@ -193,12 +193,12 @@ public class TopoHandlerController {
             }
 
             // 处理区域数据
-            List<String> areas = Lists.newArrayList();
+            //List<String> areas = Lists.newArrayList();
 
             // 处理坐标数据
             JSONObject position2 = element.getJSONObject("position2");
-            Float x = (Float) position2.getFloat("x");
-            Float y = (Float) position2.getFloat("y");
+            Float x = position2.getFloat("x");
+            Float y = position2.getFloat("y");
             sceneData.getXList().add(x);
             sceneData.getYList().add(y);
 
@@ -251,13 +251,13 @@ public class TopoHandlerController {
             String target = portElementMap.get(connection.getString("target"));
 
             // 二次处理层级数据
-//            if (externalNetwork.contains(source) && !"终端节点".equals(elements.get(target).getRole())) {
-//                elements.get(target).setHierarchy(1);
-//            }
-//
-//            if (externalNetwork.contains(target) && !"终端节点".equals(elements.get(source).getRole())) {
-//                elements.get(source).setHierarchy(1);
-//            }
+            if (externalNetwork.contains(source) && !"终端节点".equals(elements.get(target).getRole())) {
+                elements.get(target).setHierarchy(1);
+            }
+
+            if (externalNetwork.contains(target) && !"终端节点".equals(elements.get(source).getRole())) {
+                elements.get(source).setHierarchy(1);
+            }
 
             // 构造返回连线数据
             ConnectionInfo connectionInfo = new ConnectionInfo();

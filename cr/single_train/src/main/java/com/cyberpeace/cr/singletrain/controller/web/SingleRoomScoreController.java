@@ -46,8 +46,7 @@ public class SingleRoomScoreController {
 	@GetMapping("/history_detail")
 	public BaseRsp<JSONObject> getStudentScore(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id,
-				CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SingleRoleGroupCode.roleGroup);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
@@ -67,11 +66,11 @@ public class SingleRoomScoreController {
 		data.put("task_count", gettaskCount(missionReport));
 		data.put("radar", radars);
 		data.put("stages", stageRsps);
-		data.put("total_score", 5);
+		data.put("total_score", studentScoreRsp.getTrainingScore().getSumScoreObjective());
 
 		data.put("create_time", new Date());
 		data.put("resource_id", resource_id);
-		data.put("score", 3);
+		data.put("score", studentScoreRsp.getTrainingScore().getGetScoreObjective());
 
 		return new BaseRsp(data);
 	}

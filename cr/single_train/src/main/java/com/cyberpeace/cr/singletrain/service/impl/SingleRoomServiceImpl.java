@@ -85,6 +85,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	private MissionService missionService;
 
 	@Autowired
+	private MissionTemplateService missionTemplateService;
+
+	@Autowired
 	private CrTaskService crTaskService;
 
 	@Autowired
@@ -601,12 +604,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(),
 				JSONObject.class);
 		JSONArray schemeData = missionScheme.getJSONArray("scheme_data");
-		List<MissionTemplate> missionTemplates = missionService
-				.batchGetByMissionSchemeJson(singleTemplate.getMissionsScheme());
-		Map<String, MissionTemplate> missionTemplateMap = Maps.newHashMap();
-		for (MissionTemplate missionTemplate : missionTemplates) {
-			missionTemplateMap.put(missionTemplate.getResourceId(), missionTemplate);
-		}
+		Map<String, MissionTemplate> missionTemplateMap = missionTemplateService
+				.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
 
 		// 生成富文本训练手册
 		StringBuilder writeup = new StringBuilder();

@@ -34,6 +34,9 @@ import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMissionsScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspSchemeStage;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
@@ -601,23 +604,22 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	public String getTrainManual(String businessTemplateId) {
 		// 获取训练方案
 		SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
-		JSONObject missionScheme = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(),
-				JSONObject.class);
-		JSONArray schemeData = missionScheme.getJSONArray("scheme_data");
+		CrRoleRspMissionsScheme missionScheme = JsonUtil
+				.toJsonObject(singleTemplate.getMissionsScheme(), CrRoleRspMissionsScheme.class);
+		List<CrRoleRspSchemeStage> stages = missionScheme.getSchemeData();
 		Map<String, MissionTemplate> missionTemplateMap = missionTemplateService
 				.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
 
 		// 生成富文本训练手册
 		StringBuilder writeup = new StringBuilder();
-		List<JSONObject> stages = schemeData.toJavaList(JSONObject.class);
 		for (int i = 0; i < stages.size(); i++) {
-			JSONObject item = stages.get(i);
-			writeup.append("## ").append("阶段").append(i + 1).append(": ")
-					.append(item.getString("stage")).append("\n\n");
-			List<JSONObject> missions = item.getJSONArray("missions").toJavaList(JSONObject.class);
+			CrRoleRspSchemeStage item = stages.get(i);
+			writeup.append("## ").append("阶段").append(i + 1).append(": ").append(item.getStage())
+					.append("\n\n");
+			List<CrRoleRspMission> missions = item.getMissions();
 			List<String> missionTemplateIds = Lists.newArrayList();
-			for (JSONObject mission : missions) {
-				missionTemplateIds.add(mission.getString("resource_id"));
+			for (CrRoleRspMission mission : missions) {
+				missionTemplateIds.add(mission.getResourceId());
 			}
 			for (int j = 0; j < missions.size(); j++) {
 				MissionTemplate missionTemplate = missionTemplateMap.get(missionTemplateIds.get(j));
@@ -841,7 +843,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				// 任务提交, 评分
 				Integer score = crTaskService.batchSubmitMissions(singleRoom.getResourceId(),
-						missionService.getMissionIdsByScheme(crRole.getMissionScheme()), userAnswer);
+						missionService.getMissionIdsByScheme(crRole.getMissionScheme()),
+						userAnswer);
 
 				// 写入训练记录
 				if (extraRecord.isEmpty()) {

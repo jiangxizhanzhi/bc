@@ -4,10 +4,6 @@
 <mapper namespace="com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper">
     <resultMap id="base" type="com.cyberpeace.oj.ojbase.dao.entity.Comment"/>
 
-    <sql id="orderByTimeDesc">
-        order by create_time desc
-    </sql>
-
     <select id="firstByResource" resultMap="base">
         select * from oj_comment
         <where>
@@ -19,13 +15,12 @@
             </if>
             and root_id is null
         </where>
-        <include refid="orderByTimeDesc"/>
     </select>
 
     <select id="selectByParent" resultMap="base">
         select * from oj_comment
         where root_id = #{parent}
-        <include refid="orderByTimeDesc"/>
+        order by create_time asc
     </select>
 
     <update id="updateComment">
@@ -55,4 +50,9 @@
         delete from oj_comment
         where business_id = #{businessId}
     </delete>
+
+    <select id="selectByReply" resultMap="base">
+        select * from oj_comment
+        where reply_id = #{replyId}
+    </select>
 </mapper>

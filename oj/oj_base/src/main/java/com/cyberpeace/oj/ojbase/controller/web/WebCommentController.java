@@ -1,10 +1,12 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.ojbase.controller.req.CommentIsLikeReq;
 import com.cyberpeace.oj.ojbase.controller.req.CommentReq;
 import com.cyberpeace.oj.ojbase.controller.req.PageCommentReq;
@@ -15,6 +17,7 @@ import com.cyberpeace.oj.ojbase.service.bo.CommentBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,6 +40,9 @@ public class WebCommentController {
 			listComment(@ApiParam @Validated PageCommentReq pageCommentReq) {
 
 		Page page = pageCommentReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
+		}
 		ListRsp<CommentBo> listRsp = commentService.pageComment(page,
 				pageCommentReq.getBusinessId(), pageCommentReq.getBusinessType(), true);
 

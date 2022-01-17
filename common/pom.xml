@@ -21,6 +21,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ma.glasnost.orika</groupId>
             <artifactId>orika-core</artifactId>
             <scope>provided</scope>

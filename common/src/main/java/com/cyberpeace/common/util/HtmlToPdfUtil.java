@@ -1,8 +1,17 @@
 package com.cyberpeace.common.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.google.common.collect.Maps;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +52,72 @@ public class HtmlToPdfUtil {
 			log.error("[{}] to [{}] convert pdf error", htmlFilePath, pdfFilePath, e);
 			return false;
 		}
+	}
+
+	/**
+	 * 生成html模板实例
+	 * @param obj
+	 * @param htmlTemplateEnum
+	 * @param templateInstancePath
+	 */
+	public static void getHtmlTemplateInstance(Object obj, HtmlTemplateEnum htmlTemplateEnum,
+			String templateInstancePath) {
+		Map<String, Object> obj2map = ObjUtil.obj2map(obj);
+		getHtmlTemplateInstance(obj2map, htmlTemplateEnum, templateInstancePath);
+	}
+
+	/**
+	 * 生成html模板实例
+	 * @description 获取模板
+	 */
+	public static void getHtmlTemplateInstance(Map<String, Object> data,
+			HtmlTemplateEnum htmlTemplateEnum, String templateInstancePath) {
+
+		StringWriter writer = null;
+
+		try {
+			// FreeMarker配置
+			Configuration config = new Configuration(Configuration.VERSION_2_3_28);
+			config.setDefaultEncoding("UTF-8");
+
+			// 注意这里是模板所在文件夹，不是文件
+			config.setDirectoryForTemplateLoading(new File(htmlTemplateEnum.getTemplatePath()));
+			config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+			config.setLogTemplateExceptions(false);
+
+			// 注意这里是模板所在文件夹，不是文件
+			Template template = config.getTemplate(htmlTemplateEnum.getTemplateName());
+
+			// 模板和数据的匹配
+			writer = new StringWriter();
+			template.process(data, writer);
+			writer.flush();
+			String html = writer.toString();
+
+			File destFile = new File(templateInstancePath);
+			if (!destFile.getParentFile().exists()) {
+				destFile.mkdirs();
+			}
+
+			if (destFile.exists()) {
+				log.error("templateInstancePath is exist! templateInstancePath=[{}]",
+						templateInstancePath);
+				throw new FileAlreadyExistsException(templateInstancePath);
+			}
+
+			FileUtil.writeToDestFile(html, templateInstancePath);
+
+		} catch (Exception e) {
+			log.error("Get html template instance error template_path=[{}], dest_path=[{}]",
+					htmlTemplateEnum.getTemplatePath() + File.separatorChar
+							+ htmlTemplateEnum.getTemplateName(),
+					e);
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {}
+		}
+
 	}
 
 	private static void ensureDir(File file) {

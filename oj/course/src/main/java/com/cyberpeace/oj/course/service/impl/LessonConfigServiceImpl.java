@@ -200,6 +200,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		List<LessonConfig> configList = Lists.newArrayList();
 		configDumpBos.forEach(configDumpBo -> {
 			LessonConfig lessonConfig = BeanUtils.copy(configDumpBo, LessonConfig.class);
+			String existConfigId = lessonConfigMapper.selectByCourseAndLessonName(courseId,
+					configDumpBo.getName());
+			lessonConfig.setResourceId(StringUtils.isNotBlank(existConfigId) ? existConfigId
+					: IDGeneratorUtil.getID());
 			lessonConfig.setCourseId(courseId);
 			lessonConfig.setParentId(parentId);
 

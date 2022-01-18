@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -29,6 +31,7 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRoleRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
@@ -75,8 +78,7 @@ public class TeamTrainTemplateController {
 			@RequestBody @Validated TeamTrainTemplateAddReq<AddTemplateMission> teamTrainTemplateAddReq) {
 		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils.copy(teamTrainTemplateAddReq,
 				TeamTrainTemplateContext.class);
-		teamTrainTemplateContext
-				.setRoleList(JsonUtil.toJsonString(teamTrainTemplateAddReq.getRoleList()));
+		teamTrainTemplateContext.setRoleList(req2DbJson(teamTrainTemplateAddReq));
 		teamTrainTemplateContext.getBaseInfo()
 				.setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 
@@ -94,8 +96,7 @@ public class TeamTrainTemplateController {
 
 		TeamTrainTemplateContext teamTrainTemplateContext = BeanUtils
 				.copy(teamTrainTemplateModifyReq, TeamTrainTemplateContext.class);
-		teamTrainTemplateContext
-				.setRoleList(JsonUtil.toJsonString(teamTrainTemplateModifyReq.getRoleList()));
+		teamTrainTemplateContext.setRoleList(req2DbJson(teamTrainTemplateModifyReq));
 
 		List<TeamTrainTemplateRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(
 				teamTrainTemplateContext.getRoleList(), TeamTrainTemplateRole.class);
@@ -232,6 +233,22 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
 
 		return teamTrainTemplateRsp;
+	}
+
+	/**
+	 * 过滤前端输入的 req 的 roleList
+	 * @param req 
+	 * @return
+	 */
+	private String req2DbJson(TeamTrainTemplateReq req) {
+		SimplePropertyPreFilter missionFilter = new SimplePropertyPreFilter(
+				AddTemplateMission.class, "resourceId");
+		SimplePropertyPreFilter schemeFilter = new SimplePropertyPreFilter(
+				MissionSchemeObject.class, "stage", "missions");
+		SimplePropertyPreFilter roleFilter = new SimplePropertyPreFilter(RoleListContext.class,
+				"name", "assetNodes", "visibleNodes", "missionsScheme");
+		return JSONObject.toJSONString(req.getRoleList(),
+				new SimplePropertyPreFilter[] { missionFilter, schemeFilter, roleFilter });
 	}
 
 }

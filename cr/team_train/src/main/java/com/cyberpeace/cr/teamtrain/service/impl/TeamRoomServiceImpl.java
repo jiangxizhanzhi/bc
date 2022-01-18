@@ -158,6 +158,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 							JsonUtil.toJsonString(originRole.getMissionsScheme()),
 							teamRoom.getResourceId());
 					crRole.setMissionScheme(copyMission);
+					crRole.setRoleGroup(CrRole.TeamRoleGroupCode.STUDENT.getCode());
 
 					CrRoleNodesData nodesData = new CrRoleNodesData();
 					nodesData.setAssetNodes(originRole.getAssetNodes());

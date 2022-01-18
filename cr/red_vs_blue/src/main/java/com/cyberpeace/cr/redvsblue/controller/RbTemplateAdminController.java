@@ -149,8 +149,8 @@ public class RbTemplateAdminController {
 
 		Map<String, MissionTemplate> mapping = missionTemplateService
 				.getMappingBySchemeJson(roleString);
-		List<JSONObject> redRoleRsps = getRoles(roleObject.getJSONArray("redRoles"), mapping);
-		List<JSONObject> blueRoleRsps = getRoles(roleObject.getJSONArray("blueRoles"), mapping);
+		List<JSONObject> redRoleRsps = getRoles(roleObject.getJSONArray("red_roles"), mapping);
+		List<JSONObject> blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
 
 		// 获取基本信息
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);

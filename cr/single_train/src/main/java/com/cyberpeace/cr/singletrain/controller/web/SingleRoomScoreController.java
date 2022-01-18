@@ -115,11 +115,9 @@ public class SingleRoomScoreController {
 		String destPdfPath = destHtmlPath.replace("html", "pdf");
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
-		// todo 临时取消html删除
-//		if (new File(destHtmlPath).delete()) {
-//			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
-//		}
-		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+		if (new File(destHtmlPath).delete()) {
+			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+		}
 	}
 
 	private Object gettaskCount(MissionReport missionReport) {

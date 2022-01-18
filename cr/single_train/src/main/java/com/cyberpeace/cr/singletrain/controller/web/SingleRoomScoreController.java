@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.FileUtil;
@@ -22,6 +23,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
 import org.apache.shiro.codec.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -112,7 +114,7 @@ public class SingleRoomScoreController {
 
 		String destHtmlPath = String.format("%s%s-%s.html", AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
-		String destPdfPath = destHtmlPath.replace("html", "pdf");
+		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
 //		if (new File(destHtmlPath).delete()) {

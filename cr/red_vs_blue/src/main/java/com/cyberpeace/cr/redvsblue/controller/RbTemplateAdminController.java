@@ -68,8 +68,8 @@ public class RbTemplateAdminController {
 				RbTemplateContext.class);
 
 		JSONObject roleJsonObject = new JSONObject();
-		roleJsonObject.put("redRoles", rbTemplateAddReq.getRedRoles());
-		roleJsonObject.put("blueRoles", rbTemplateAddReq.getBlueRoles());
+		roleJsonObject.put("red_roles", rbTemplateAddReq.getRedRoles());
+		roleJsonObject.put("blue_roles", rbTemplateAddReq.getBlueRoles());
 
 		rbTemplateContext.setRoleList(JsonUtil.toJsonString(roleJsonObject));
 		rbTemplateContext.getBaseInfo()
@@ -100,8 +100,8 @@ public class RbTemplateAdminController {
 				RbTemplateContext.class);
 
 		JSONObject roleJsonObject = new JSONObject();
-		roleJsonObject.put("redRoles", rbTemplateModifyReq.getRedRoles());
-		roleJsonObject.put("blueRoles", rbTemplateModifyReq.getBlueRoles());
+		roleJsonObject.put("red_roles", rbTemplateModifyReq.getRedRoles());
+		roleJsonObject.put("blue_roles", rbTemplateModifyReq.getBlueRoles());
 
 		rbTemplateModifyReq.getRedRoles().forEach(jsonObject -> {
 			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));

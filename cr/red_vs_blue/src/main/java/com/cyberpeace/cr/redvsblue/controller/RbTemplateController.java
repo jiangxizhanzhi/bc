@@ -98,7 +98,7 @@ public class RbTemplateController {
 		RbTemplateRoleRsp rbTemplateRoleRsp3 = new RbTemplateRoleRsp(
 				CrRole.RbRoleGroupCode.RED.getDesc(), CrRole.RbRoleGroupCode.RED.getCode());
 
-		JSONArray redRoles = (JSONArray) rolejsonObject.get("redRoles");
+		JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");
 		List<RbTemplateRoleRsp> redTemplateRoleRsps = Lists.newArrayList();
 		for (int i = 0; i < redRoles.size(); i++) {
 
@@ -113,7 +113,7 @@ public class RbTemplateController {
 		RbTemplateRoleRsp rbTemplateRoleRsp4 = new RbTemplateRoleRsp(
 				CrRole.RbRoleGroupCode.BLUE.getDesc(), CrRole.RbRoleGroupCode.BLUE.getCode());
 
-		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blueRoles");
+		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
 		List<RbTemplateRoleRsp> blueTemplateRoleRsps = Lists.newArrayList();
 		for (int i = 0; i < blueRoles.size(); i++) {
 

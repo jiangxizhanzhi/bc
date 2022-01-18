@@ -43,9 +43,5 @@ public interface CrCommonConstants {
 
 	int MAX_TRAINING_NAME_LEN = 40;
 
-	String RED_ROLE = "redRoles";
-
-	String BLUE_ROLE = "blueRoles";
-
 	String NULL = "null";
 }

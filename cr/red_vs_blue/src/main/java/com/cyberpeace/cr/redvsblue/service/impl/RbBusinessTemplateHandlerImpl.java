@@ -50,10 +50,10 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 				JSONObject.class);
 
 		List<JSONObject> redRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("redRoles").toString(), JSONObject.class);
+				.toJsonObjectArray(roleObject.get("red_roles").toString(), JSONObject.class);
 
 		List<JSONObject> blueRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("blueRoles").toString(), JSONObject.class);
+				.toJsonObjectArray(roleObject.get("blue_roles").toString(), JSONObject.class);
 
 		redRoleRsps.forEach(jsonObject -> {
 			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));

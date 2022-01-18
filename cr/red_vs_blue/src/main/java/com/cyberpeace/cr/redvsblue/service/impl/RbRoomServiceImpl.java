@@ -660,7 +660,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		// 获取红队的角色任务
 		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
-		JSONArray redRoles = (JSONArray) rolejsonObject.get("redRoles");
+		JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");
 		for (int i = 0; i < redRoles.size(); i++) {
 
 			CrRole crRole = getRoleByJson(roomId, i, redRoles,
@@ -670,7 +670,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 
 		// 获取蓝队的角色任务
-		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blueRoles");
+		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
 		for (int i = 0; i < blueRoles.size(); i++) {
 
 			CrRole crRole = getRoleByJson(roomId, i, blueRoles,

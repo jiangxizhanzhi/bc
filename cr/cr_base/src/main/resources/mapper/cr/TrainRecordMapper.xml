@@ -3,6 +3,16 @@
 
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper">
 
+    <update id="setExtra">
+        update cr_train_record
+        <set>
+            extra = #{extra}
+        </set>
+        <where>
+            end_time is null
+            and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}
+        </where>
+    </update>
     <update id="setEndTime">
         update cr_train_record
         <set>

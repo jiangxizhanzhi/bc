@@ -266,6 +266,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				localSceneService.removeById(singleRoom.getLocalSceneId());
 				singleRoomMapper.deleteById(singleRoom);
+				trainRecordService.updateEndDate(singleRoom.getResourceId(),
+                        BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 			}
 		});
 		return true;
@@ -847,12 +849,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 						userAnswer);
 
 				// 写入训练记录
-				if (extraRecord.isEmpty()) {
-					trainRecordService.updateEndDate(businessTemplateId, userId,
-							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null);
-				} else {
+				if (!extraRecord.isEmpty()) {
 					extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, score);
-					trainRecordService.updateEndDate(businessTemplateId, userId,
+					trainRecordService.updateExtraDate(businessTemplateId, userId,
 							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
 							JsonUtil.toJsonString(extraRecord));
 				}

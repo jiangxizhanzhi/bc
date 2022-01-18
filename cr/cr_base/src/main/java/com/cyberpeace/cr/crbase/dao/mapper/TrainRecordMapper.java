@@ -11,6 +11,9 @@ import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 @Repository
 public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 
+	void setExtra(@Param("business_template_id") String businessTemplateId,
+			@Param("user_id") String userId, @Param("business_type") Integer businessType, @Param("extra") String extra);
+
 	void setEndTime(@Param("business_template_id") String businessTemplateId,
 			@Param("user_id") String userId, @Param("business_type") Integer businessType, @Param("extra") String extra);
 

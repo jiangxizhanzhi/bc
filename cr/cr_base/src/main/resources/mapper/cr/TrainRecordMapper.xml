@@ -17,7 +17,7 @@
         update cr_train_record
         <set>
             end_time = now()
-            <if test="extra != null || extra != ''">
+            <if test="extra != null and extra != ''">
                 , extra = #{extra}
             </if>
         </set>
@@ -30,7 +30,7 @@
         update cr_train_record
         <set>
             end_time = now()
-            <if test="extra != null || extra != ''">
+            <if test="extra != null and extra != ''">
                 , extra = #{extra}
             </if>
         </set>

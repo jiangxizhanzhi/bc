@@ -18,9 +18,7 @@ import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
-import com.cyberpeace.oj.practice.service.PaperService;
-import com.cyberpeace.oj.practice.service.PracticeOperationService;
-import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.*;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryDumpLoadBo;
 import com.google.common.collect.Maps;
 import nonapi.io.github.classgraph.json.Id;
@@ -133,6 +131,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
+
+	@Autowired
+	private PracticeTheoryRefService practiceTheoryRefService;
+
+	@Autowired
+	private PracticeOperationRefService practiceOperationRefService;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, String userId) {
@@ -555,6 +559,17 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				for (Paper paper : paperList) {
 					practiceOperationRefMapper.deleteByPaper(paper.getResourceId());
 					practiceTheoryRefMapper.deleteByPaper(paper.getResourceId());
+				}
+
+				// 课后练习相关
+				if (CollectionUtils.isNotEmpty(theoryRefList)) {
+					practiceTheoryRefService.saveBatch(theoryRefList);
+				}
+				if (CollectionUtils.isNotEmpty(operationRefList)) {
+					practiceOperationRefService.saveBatch(operationRefList);
+				}
+				if (CollectionUtils.isNotEmpty(paperList)) {
+					paperService.saveOrUpdateBatch(paperList);
 				}
 
 				return saveOrUpdateBatch(courseList);

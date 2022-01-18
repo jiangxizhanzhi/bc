@@ -112,6 +112,7 @@ public class HtmlToPdfUtil {
 					htmlTemplateEnum.getTemplatePath() + File.separatorChar
 							+ htmlTemplateEnum.getTemplateName(),
 					e);
+			throw new RuntimeException(e);
 		} finally {
 			try {
 				writer.close();

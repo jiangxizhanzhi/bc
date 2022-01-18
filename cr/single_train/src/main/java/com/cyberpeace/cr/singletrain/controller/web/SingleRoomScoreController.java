@@ -1,13 +1,16 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
@@ -27,7 +30,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "团队训练评分")
+import javax.servlet.http.HttpServletResponse;
+
+@Api(tags = "单兵训练评分")
 @RestController
 @RequestMapping("/cr/single_train/single_train")
 @Slf4j
@@ -73,6 +78,22 @@ public class SingleRoomScoreController {
 		data.put("score", studentScoreRsp.getTrainingScore().getGetScoreObjective());
 
 		return new BaseRsp(data);
+	}
+
+	@ApiOperation("训练记录导出为PDF")
+	@GetMapping("/train2pdf")
+	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse, @RequestParam("room_id") String roomId) {
+		JSONObject data = getStudentScore(roomId).getData();
+		data.put("username", UserInfoContext.getUserContext().getUserName());
+
+		String destHtmlPath = String.format("%s%s%s.html", AttachmentPath.OTHER.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
+		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
+		String destPdfPath = destHtmlPath.replace("html", "pdf");
+		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+
+		if (new File(destHtmlPath).delete()) {
+			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+		}
 	}
 
 	private Object gettaskCount(MissionReport missionReport) {

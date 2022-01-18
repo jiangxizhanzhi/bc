@@ -1,36 +1,12 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.HtmlToPdfUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.integratation.service.impl.MpEnvService;
-import com.google.common.io.CharStreams;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.StringUtil;
-import org.apache.shiro.codec.Base64;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
@@ -40,13 +16,23 @@ import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
-
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 
 @Api(tags = "单兵训练评分")
 @RestController

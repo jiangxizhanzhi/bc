@@ -86,14 +86,16 @@ public class SingleRoomScoreController {
 		JSONObject data = getStudentScore(roomId).getData();
 		data.put("username", UserInfoContext.getUserContext().getUserName());
 
-		String destHtmlPath = String.format("%s%s%s.html", AttachmentPath.OTHER.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
+		String destHtmlPath = String.format("%s%s-%s.html", AttachmentPath.OTHER.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
 		String destPdfPath = destHtmlPath.replace("html", "pdf");
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
-		if (new File(destHtmlPath).delete()) {
-			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
-		}
+		// todo 临时取消html删除
+//		if (new File(destHtmlPath).delete()) {
+//			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+//		}
+		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
 	}
 
 	private Object gettaskCount(MissionReport missionReport) {

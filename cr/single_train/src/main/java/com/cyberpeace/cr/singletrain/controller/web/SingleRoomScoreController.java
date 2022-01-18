@@ -1,6 +1,10 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
@@ -11,10 +15,14 @@ import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
+import com.google.common.io.CharStreams;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.poi.util.IOUtils;
+import org.apache.shiro.codec.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,10 +105,7 @@ public class SingleRoomScoreController {
 
 		// 获取用户LOGO
 		try {
-			String content = EntityUtils.toString(HttpClients.custom().build().execute(
-					new HttpGet(mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl())
-			).getEntity());
-			data.put("user_logo", content);
+			data.put("user_logo", mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl());
 		} catch (Exception e) {
 			throw new RemoteServiceException();
 		}

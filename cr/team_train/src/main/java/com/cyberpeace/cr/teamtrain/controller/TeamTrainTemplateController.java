@@ -10,6 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -111,7 +113,8 @@ public class TeamTrainTemplateController {
 		if (template == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
-		teamTrainTemplateContext.setRoleList(JsonUtil.arrayToString(teamTrainTemplateRoleList));
+		teamTrainTemplateContext.setRoleList(JsonUtil.arrayToString(teamTrainTemplateRoleList,
+				PropertyNamingStrategy.SnakeCase));
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
@@ -249,7 +252,9 @@ public class TeamTrainTemplateController {
 				MissionSchemeObject.class, "stage", "missions");
 		SimplePropertyPreFilter roleFilter = new SimplePropertyPreFilter(RoleListContext.class,
 				"name", "assetNodes", "visibleNodes", "missionsScheme");
-		return JSONObject.toJSONString(req.getRoleList(),
+		SerializeConfig config = new SerializeConfig();
+		config.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
+		return JSONObject.toJSONString(req.getRoleList(), config,
 				new SimplePropertyPreFilter[] { missionFilter, schemeFilter, roleFilter });
 	}
 

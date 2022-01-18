@@ -115,4 +115,19 @@ public class JsonUtil {
 		return (JSONObject) JSONObject.toJSON(source, config);
 	}
 
+	/**
+	 * 集合转换为字符串
+	 * @param objArr
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> String arrayToString(List<T> objArr, PropertyNamingStrategy namingStrategy) {
+		if (null == objArr) {
+			return "[]";
+		}
+		SerializeConfig config = new SerializeConfig();
+		config.setPropertyNamingStrategy(namingStrategy);
+		return JSONArray.toJSONString(objArr, config, SerializerFeature.WriteNullStringAsEmpty);
+	}
+
 }

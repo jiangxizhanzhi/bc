@@ -110,7 +110,7 @@ public class SingleRoomScoreController {
 			throw new RemoteServiceException();
 		}
 
-		String destHtmlPath = String.format("%s%s-%s.html", AttachmentPath.OTHER.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
+		String destHtmlPath = String.format("%s%s-%s.html", AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
 		String destPdfPath = destHtmlPath.replace("html", "pdf");
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);

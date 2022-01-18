@@ -30,6 +30,7 @@ public enum AttachmentPath implements GenericEnum {
 	PRACTICE_ATTACHMENT(10, "oj/practice_attachment/"),
 	MISSION(11, "cr/mission/"),
 	UPLOAD_IMAGE(12,"upload/images/"),
+	SINGLE_HTML_TEMPLATE(13, "html_template/RussiaCopy/Individual/"),
 	OTHER(99, "other/");
 
 	@Getter

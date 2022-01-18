@@ -5,10 +5,16 @@ import java.util.Date;
 import java.util.List;
 
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +52,9 @@ public class SingleRoomScoreController {
 
 	@Autowired
 	private CrScoreController crScoreController;
+
+	@Autowired
+	private MpEnvService mpEnvService;
 
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
@@ -85,6 +94,16 @@ public class SingleRoomScoreController {
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse, @RequestParam("room_id") String roomId) {
 		JSONObject data = getStudentScore(roomId).getData();
 		data.put("username", UserInfoContext.getUserContext().getUserName());
+
+		// 获取用户LOGO
+		try {
+			String content = EntityUtils.toString(HttpClients.custom().build().execute(
+					new HttpGet(mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl())
+			).getEntity());
+			data.put("user_logo", content);
+		} catch (Exception e) {
+			throw new RemoteServiceException();
+		}
 
 		String destHtmlPath = String.format("%s%s-%s.html", AttachmentPath.OTHER.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);

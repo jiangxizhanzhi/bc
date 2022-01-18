@@ -125,7 +125,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		CrRole singleRole = new CrRole(CrRole.SingleRoleGroupCode.name,
 				CrRole.SingleRoleGroupCode.roleGroup);
 		singleRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
-		singleRole.setUserIds(userId);
+		singleRole.setUserIds(JsonUtil.toJsonString(Lists.newArrayList(userId)));
 
 		// 开启场景
 		LocalScene localScene = createLocalScene(businessTemplate);

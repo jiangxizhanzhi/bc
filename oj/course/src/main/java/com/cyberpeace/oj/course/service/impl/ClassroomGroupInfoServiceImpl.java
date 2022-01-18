@@ -1,54 +1,52 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupArchiveMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.service.ClassroomSceneService;
-import com.cyberpeace.oj.course.service.bo.ArchiveGroupBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomGroupArchiveBo;
-import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
-import com.cyberpeace.oj.course.service.bo.SimpleUserData;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+import com.cyberpeace.cs.constant.SceneEvent;
+import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.constant.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupArchiveMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -80,6 +78,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
 	@Override
 	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext) {
@@ -353,9 +354,34 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			}
 		});
 
-		// 消息推送 todo
+		if (CollectionUtils.isNotEmpty(localScenes)) {
+			List<String> ojLocalSceneIds = StreamApiUtils.map(localScenes,
+					LocalScene::getBusinessInstanceId);
+			List<OjLocalScene> ojLocalSceneList = ojLocalSceneMapper
+					.selectBatchIds(ojLocalSceneIds);
+			ojLocalSceneList.forEach(ojLocalScene -> pushGroupSyncMessage(ojLocalScene));
+		}
 
 		return true;
+	}
+
+	/**
+	 * 推送数据延时消息
+	 * @param ojLocalScene
+	 */
+	private void pushGroupSyncMessage(OjLocalScene ojLocalScene) {
+		GroupWsMessageIdentifier identifier = new GroupWsMessageIdentifier();
+		identifier.setPath(WsPath.CLASSROOM_GROUP_SCENE);
+		identifier.setGroupId(ojLocalScene.getBusinessId());
+		identifier.setUserId(ojLocalScene.getUserId());
+
+		JSONObject data = new JSONObject();
+		data.put(JsonKeyConstant.CODE, OjEvent.SCENE_CREATE_SYNC);
+		data.put(JsonKeyConstant.DATA, CommonConstant.EMPTY_STRING);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().messageIdentifier(identifier).data(data).build();
+		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
 	@Override

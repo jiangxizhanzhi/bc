@@ -630,7 +630,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	/**
 	 * 实体类转换为bo
-	 *
 	 * @param classroom
 	 * @return
 	 */

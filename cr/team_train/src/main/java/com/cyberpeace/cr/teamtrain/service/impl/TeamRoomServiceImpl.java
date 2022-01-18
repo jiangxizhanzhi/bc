@@ -138,6 +138,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				List<RoomRole> users = teamTrainRoomContext.getRoleConfig();
 				int index = 0;
 				RoleListContext teacherRole = new RoleListContext();
+				// 教员
 				teacherRole.setName(CrRole.TeamRoleGroupCode.TEACHER.getDesc());
 				teacherRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getCode());
 				originRoles.add(0, teacherRole);
@@ -158,8 +159,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 							JsonUtil.toJsonString(originRole.getMissionsScheme()),
 							teamRoom.getResourceId());
 					crRole.setMissionScheme(copyMission);
-					crRole.setRoleGroup(CrRole.TeamRoleGroupCode.STUDENT.getCode());
-
+					// 学员
+					if (crRole.getRoleGroup() == null) {
+						crRole.setRoleGroup(CrRole.TeamRoleGroupCode.STUDENT.getCode());
+					}
 					CrRoleNodesData nodesData = new CrRoleNodesData();
 					nodesData.setAssetNodes(originRole.getAssetNodes());
 					nodesData.setVisibleNodes(originRole.getVisibleNodes());

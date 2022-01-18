@@ -152,4 +152,20 @@ public class CourseValidateHandler {
 		}
 
 	}
+
+	/**
+	 * 校验分类数据是否存在
+	 * @param categoryId
+	 * @return
+	 */
+	public CourseCategory validateCategoryExist(String categoryId) {
+
+		CourseCategory category = courseCategoryMapper.selectById(categoryId);
+		if (null == category) {
+			log.error("Course category not exist! course_category_id=[{}]", categoryId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		return category;
+	}
 }

@@ -953,7 +953,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 视频文件copy
 		if (StringUtils.isNotBlank(courseLesson.getVideoUrl())) {
 			String fileName = copyFile(courseLesson.getVideoUrl(), destFilePath);
-			filePathMap.put(courseLesson.getOriginMarkdownFile(), fileName);
+			filePathMap.put(courseLesson.getVideoUrl(), fileName);
 		}
 
 		// 课时附件

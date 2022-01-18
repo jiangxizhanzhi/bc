@@ -702,6 +702,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 元数据拷贝
 		CourseDumpLoadBo courseDumpLoadBo = BeanUtils.copy(course, CourseDumpLoadBo.class);
 
+		// 分类数据
+		CourseCategory courseCategory = courseValidateHandler
+				.validateCategoryExist(course.getCategoryId());
+		courseDumpLoadBo.setCategoryName(courseCategory.getName());
+
 		// logo文件copy到临时文件夹
 		if (StringUtils.isNotBlank(course.getLogo())) {
 			String realPath = utilService.getRealPath(course.getLogo());

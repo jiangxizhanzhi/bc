@@ -169,10 +169,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		// 基本数据拷贝
 		LessonConfig lessonConfig = BeanUtils.copy(configDumpBo, LessonConfig.class);
-		String configId = lessonConfigMapper.selectByCourseAndLessonName(courseId,
-				lessonConfig.getName());
+		LessonConfig courseNode = lessonConfigMapper.getCourseNode(courseId);
 		lessonConfig.setResourceId(
-				StringUtils.isNotBlank(configId) ? configId : IDGeneratorUtil.getID());
+				null != courseNode ? courseNode.getResourceId() : IDGeneratorUtil.getID());
 		lessonConfig.setCourseId(courseId);
 
 		List<LessonConfig> lessonConfigs = dumpBoToEntity(configDumpBo.getChildren(), courseId,

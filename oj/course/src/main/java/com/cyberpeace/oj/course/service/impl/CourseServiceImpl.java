@@ -522,6 +522,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 												filePath, authContext.getUserId()));
 						// 课后练习试卷
 						Paper paper = initPaper(lesson, practiceTheories, operationList);
+						lesson.setPaperId(paper.getResourceId());
 						paperList.add(paper);
 
 						// 课后练习习题数据
@@ -618,6 +619,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		Paper paper = StringUtils.isNotBlank(lesson.getPaperId())
 				? paperMapper.selectById(lesson.getPaperId())
 				: new Paper();
+
+		if (StringUtils.isBlank(paper.getResourceId())) {
+			paper.setResourceId(IDGeneratorUtil.getID());
+		}
 		paper.setTotalScore(operationScore + theoryScore);
 		paper.setPracticeCount(practiceTheorys.size() + practiceOperations.size());
 		paper.setType(Paper.PaperType.LESSON.getCode());
@@ -637,11 +642,21 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 基本数据设置
 		Course course = BeanUtils.copy(courseDumpLoadBo, Course.class);
+		course.setModifyUserId(userId);
+
+		// 已存在数据查询
 		String courseId = courseMapper.selectByName(course.getName());
 		course.setResourceId(
 				StringUtils.isNotBlank(courseId) ? courseId : courseDumpLoadBo.getCourseNum());
-		course.setCreateUserId(userId);
-		course.setModifyUserId(userId);
+
+		if (StringUtils.isBlank(courseId)) {
+			course.setHeat(CommonConstant.ZERO);
+			course.setBuiltin(CommonConstant.TRUE);
+			course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+			course.setReadAuthIds(CommonConstant.EMPTY_LIST_JSON);
+			course.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+			course.setOperationAuthIds(CommonConstant.EMPTY_LIST_JSON);
+		}
 
 		// 分类数据
 		CourseCategory category = courseCategoryService

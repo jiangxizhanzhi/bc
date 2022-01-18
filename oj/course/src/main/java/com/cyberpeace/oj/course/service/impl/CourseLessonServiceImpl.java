@@ -1026,8 +1026,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			String filePath, Map<String, String> fileMap) {
 
 		CourseLesson lesson = BeanUtils.copy(lessonDumpLoadBo, CourseLesson.class);
+		lesson.setCourseId(courseId);
 		lesson.setResourceId(IDGeneratorUtil.getID());
 		lesson.setBuiltin(CommonConstant.TRUE);
+		lesson.setHeat(CommonConstant.ZERO);
 		String lessonId = courseLessonMapper.selectByCourseAndName(courseId,
 				lessonDumpLoadBo.getName());
 

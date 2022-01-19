@@ -386,10 +386,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
-		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
-				practiceOperation.getResourceId(), practiceOperation.getSceneShareMode(),
-				authContext);
-		operationListBo.setHasSceneData(null != ojLocalScene);
+		if (practiceOperation.getDynamicEnv()
+				&& StringUtils.isNotBlank(practiceOperation.getTopoId())) {
+			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
+					practiceOperation.getResourceId(), practiceOperation.getSceneShareMode(),
+					authContext);
+			operationListBo.setHasSceneData(null != ojLocalScene);
+		}
 
 		if (authContext.getIsWeb()) {
 			if (null != solved) {

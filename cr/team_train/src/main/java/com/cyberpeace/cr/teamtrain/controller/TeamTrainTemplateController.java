@@ -241,11 +241,11 @@ public class TeamTrainTemplateController {
 	 */
 	private String req2DbJson(TeamTrainTemplateReq req) {
 		SimplePropertyPreFilter missionFilter = new SimplePropertyPreFilter(
-				AddTemplateMission.class, "resourceId");
+				AddTemplateMission.class, "resource_id");
 		SimplePropertyPreFilter schemeFilter = new SimplePropertyPreFilter(
 				MissionSchemeObject.class, "stage", "missions");
 		SimplePropertyPreFilter roleFilter = new SimplePropertyPreFilter(RoleListContext.class,
-				"name", "assetNodes", "visibleNodes", "missionsScheme");
+				"name", "asset_nodes", "visible_nodes", "missions_scheme");
 		SerializeConfig config = new SerializeConfig();
 		config.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
 		return JSONObject.toJSONString(req.getRoleList(), config,

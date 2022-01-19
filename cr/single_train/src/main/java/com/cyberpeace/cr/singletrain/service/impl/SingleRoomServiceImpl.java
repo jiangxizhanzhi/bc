@@ -851,13 +851,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				// 写入训练记录
 				if (!extraRecord.isEmpty()) {
 					extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, score);
-					trainRecordService.updateExtraDate(businessTemplateId, userId,
-							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
-							JsonUtil.toJsonString(extraRecord));
 				}
+				trainRecordService.updateEndDate(businessTemplateId, userId,
+						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+						JsonUtil.toJsonString(extraRecord));
 
 				// 设置当前训练已完成
 				singleRoom.setIsFinish(true);
+				singleRoom.setEndTime(new Date());
 				singleRoomMapper.updateById(singleRoom);
 			}
 		});

@@ -24,9 +24,16 @@ public interface TeamTemplateService extends IService<TeamTemplate> {
 
 	TeamTemplate getByTemplateBusinessId(String resourceId);
 
-	void batchDelete(List<String> businessIds, List<String> teamTemplateIds);
+	void batchDelete(List<String> businessIds);
 
 	List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> businessIds);
 
 	Boolean removeByBusinessTemplateId(String businessTemplateId);
+
+	/**
+	 * 从 roleConfig Json字符串读取任务模板
+	 * @param roleConfig
+	 * @return
+	 */
+	List<String> getMissionTemplateIdsByRoleConfig(String roleConfig);
 }

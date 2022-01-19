@@ -63,13 +63,13 @@ public class TeamTrainTemplateController {
 	TeamTemplateService teamTemplateService;
 
 	@Autowired
-	private MissionService missionService;
-
-	@Autowired
 	BusinessTemplateService businessTemplateService;
 
 	@Autowired
 	LocalSceneService localSceneService;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
@@ -180,13 +180,7 @@ public class TeamTrainTemplateController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		List<TeamTemplate> teamTemplates = teamTemplateService
-				.getTeamTemplateByBusinessIds(deleteReq.getIds());
-		List<String> teamTemplateIds = teamTemplates.stream().map(TeamTemplate::getResourceId)
-				.distinct().collect(Collectors.toList());
-
-		teamTemplateService.batchDelete(deleteReq.getIds(), teamTemplateIds);
-
+		teamTemplateService.batchDelete(deleteReq.getIds());
 		return new BaseRsp<>();
 	}
 

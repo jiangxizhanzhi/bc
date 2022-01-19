@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -18,6 +19,8 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
@@ -38,6 +41,9 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 
 	@Autowired
 	LocalSceneService localSceneService;
+
+	@Autowired
+	MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
@@ -107,16 +113,8 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 	}
 
 	@Override
-	public void batchDelete(List<String> businessIds, List<String> roomIds) {
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				businessTemplateService.removeByIds(businessIds);
-				removeByIds(roomIds);
-
-			}
-		});
+	public void batchDelete(List<String> businessTemplateIds) {
+		businessTemplateService.batchDelete(businessTemplateIds);
 	}
 
 	@Override
@@ -129,5 +127,17 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 		IPage<RbTemplateData> data = rbTemplateMapper.listRbTemplate(page, listQuery);
 
 		return data;
+	}
+
+	@Override
+	public List<String> getMissionTemplateIdsByRoleConfig(String roleConfig) {
+		CrRoleConfigRb crRoleConfigRb = JsonUtil.toJsonObject(roleConfig, CrRoleConfigRb.class);
+		List<String> missionTemplateIds = Lists.newArrayList();
+		missionTemplateIds
+				.addAll(missionTemplateService.getIdsByRoleConfig(crRoleConfigRb.getRedRoles()));
+		missionTemplateIds
+				.addAll(missionTemplateService.getIdsByRoleConfig(crRoleConfigRb.getBlueRoles()));
+
+		return missionTemplateIds;
 	}
 }

@@ -110,10 +110,9 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
+	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		SingleTemplate singleTemplate = singleTemplateService
 				.getByBusinessTemplateId(businessTemplate.getResourceId());
-		// todo
 		List<SingleRoom> roomList = singleRoomService
 				.getByBusinessTemplateId(businessTemplate.getResourceId());
 
@@ -124,10 +123,12 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 			log.error(errorMsg);
 			throw new BusinessException(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE);
 		}
+		// 删除任务, 但不删除图片
+		List<String> missionTemplateIds = singleTemplateService
+				.getMissionTemplateIdsByMissionsScheme(singleTemplate.getMissionsScheme());
+		missionTemplateService.batchDelete(missionTemplateIds);
 		// 删除singleTemplate
 		singleTemplateService.removeById(singleTemplate.getResourceId());
-
-		return true;
 	}
 
 	@Override

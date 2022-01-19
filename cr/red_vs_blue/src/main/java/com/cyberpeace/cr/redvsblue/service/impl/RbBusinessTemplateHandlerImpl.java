@@ -107,8 +107,13 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
-		return rbTemplateMapper.deleteByBusinessTemplateId(businessTemplate.getResourceId());
+	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		RbTemplate rbTemplate = rbTemplateMapper
+				.selectByBusinessTemplateId(businessTemplate.getResourceId());
+		// delete mission templates
+		missionTemplateService.batchDelete(
+				rbTemplateService.getMissionTemplateIdsByRoleConfig(rbTemplate.getRoleConfig()));
+		rbTemplateMapper.deleteById(rbTemplate.getResourceId());
 	}
 
 	@Override

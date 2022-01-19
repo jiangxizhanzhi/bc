@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.singletrain.service;
 
+import java.util.List;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
@@ -15,4 +17,10 @@ public interface SingleTemplateService extends IService<SingleTemplate> {
 
 	SingleTemplate getByBusinessTemplateId(String resourceId);
 
+	/**
+	 * 根据 missions_scheme 获取任务模板id列表
+	 * @param missionsScheme
+	 * @return
+	 */
+	List<String> getMissionTemplateIdsByMissionsScheme(String missionsScheme);
 }

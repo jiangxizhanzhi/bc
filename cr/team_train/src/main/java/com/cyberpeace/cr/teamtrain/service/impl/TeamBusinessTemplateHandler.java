@@ -148,8 +148,14 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
-		return teamTemplateService.removeByBusinessTemplateId(businessTemplate.getResourceId());
+	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		TeamTemplate teamTemplate = teamTemplateService
+				.getByTemplateBusinessId(businessTemplate.getResourceId());
+		// 删除任务模板
+		missionTemplateService.batchDelete(teamTemplateService
+				.getMissionTemplateIdsByRoleConfig(teamTemplate.getRoleConfig()));
+		// 删除训练模板
+		teamTemplateService.removeById(teamTemplate.getResourceId());
 	}
 
 	@Override

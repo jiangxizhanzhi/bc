@@ -2,7 +2,6 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -25,7 +24,7 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspBO;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigBO;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateAddReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
@@ -122,12 +121,8 @@ public class RbTemplateAdminController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		List<RbTemplate> rbTemplates = rbTemplateService
-				.getRbTemplateByBusinessIds(deleteReq.getIds());
-		List<String> roomIds = rbTemplates.stream().map(RbTemplate::getResourceId).distinct()
-				.collect(Collectors.toList());
 
-		rbTemplateService.batchDelete(deleteReq.getIds(), roomIds);
+		rbTemplateService.batchDelete(deleteReq.getIds());
 
 		return new BaseRsp<>();
 	}
@@ -179,7 +174,7 @@ public class RbTemplateAdminController {
 		List<JSONObject> result = Lists.newArrayList();
 		// 逐角色逐阶段读取任务信息
 		roleArray.forEach(role -> {
-			CrRoleRspBO roleRsp = ((JSONObject) role).toJavaObject(CrRoleRspBO.class);
+			CrRoleConfigBO roleRsp = ((JSONObject) role).toJavaObject(CrRoleConfigBO.class);
 			roleRsp.setId(IDGeneratorUtil.getID());
 			roleRsp.getMissionsScheme().getSchemeData()
 					.forEach(datum -> datum.getMissions().forEach(mission -> {

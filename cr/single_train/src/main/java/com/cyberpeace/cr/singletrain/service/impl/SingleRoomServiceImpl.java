@@ -34,9 +34,9 @@ import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMissionsScheme;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
@@ -267,7 +267,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				localSceneService.removeById(singleRoom.getLocalSceneId());
 				singleRoomMapper.deleteById(singleRoom);
 				trainRecordService.updateEndDate(singleRoom.getResourceId(),
-                        BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 			}
 		});
 		return true;
@@ -606,21 +606,21 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	public String getTrainManual(String businessTemplateId) {
 		// 获取训练方案
 		SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
-		CrRoleRspMissionsScheme missionScheme = JsonUtil
-				.toJsonObject(singleTemplate.getMissionsScheme(), CrRoleRspMissionsScheme.class);
-		List<CrRoleRspSchemeStage> stages = missionScheme.getSchemeData();
+		CrRoleConfigMissionsScheme missionScheme = JsonUtil
+				.toJsonObject(singleTemplate.getMissionsScheme(), CrRoleConfigMissionsScheme.class);
+		List<CrRoleConfigSchemeStage> stages = missionScheme.getSchemeData();
 		Map<String, MissionTemplate> missionTemplateMap = missionTemplateService
 				.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
 
 		// 生成富文本训练手册
 		StringBuilder writeup = new StringBuilder();
 		for (int i = 0; i < stages.size(); i++) {
-			CrRoleRspSchemeStage item = stages.get(i);
+			CrRoleConfigSchemeStage item = stages.get(i);
 			writeup.append("## ").append("阶段").append(i + 1).append(": ").append(item.getStage())
 					.append("\n\n");
-			List<CrRoleRspMission> missions = item.getMissions();
+			List<CrRoleConfigMission> missions = item.getMissions();
 			List<String> missionTemplateIds = Lists.newArrayList();
-			for (CrRoleRspMission mission : missions) {
+			for (CrRoleConfigMission mission : missions) {
 				missionTemplateIds.add(mission.getResourceId());
 			}
 			for (int j = 0; j < missions.size(); j++) {

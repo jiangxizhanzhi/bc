@@ -28,4 +28,10 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * @return
 	 */
 	Map<String, MissionTemplate> getMappingBySchemeJson(String schemeJson);
+
+	/**
+	 * 批量插入
+	 * @param missionTemplateList
+	 */
+	void batchInsert(List<MissionTemplate> missionTemplateList);
 }

@@ -35,7 +35,6 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
@@ -425,19 +424,13 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			missionTemplate.setCreateUserId(userId);
 			missionTemplate.setCategoryId(loadMission.getCategory());
 			missionTemplate.setResourceId(IDGeneratorUtil.getID());
+			// todo attachment
 
 			return missionTemplate;
 		}).collect(Collectors.toList());
 
-		missionMapper.batchInsertMissionTemplate(missionTemplates);
+		missionTemplateMapper.batchInsert(missionTemplates);
 		return missionTemplates;
-	}
-
-	@Override
-	public void batchInsertMissionTemplates(List<MissionTemplate> missionTemplates) {
-		if (missionTemplates.size() > 0) {
-			missionMapper.batchInsertMissionTemplate(missionTemplates);
-		}
 	}
 
 	@Override

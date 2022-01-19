@@ -48,7 +48,7 @@ public class CrTask extends BaseTable {
 	 */
 	public enum SingleTaskStatus implements GenericEnum {
 
-		RELEASED(11, "未提交"), SUCCESS(1, "成功"), FAIL(2, "失败");
+		UNRELEASED(10, "未下发"), RELEASED(11, "未提交"), SUCCESS(1, "成功"), FAIL(2, "失败");
 
 		@Getter
 		private Integer code;
@@ -68,8 +68,8 @@ public class CrTask extends BaseTable {
 	 */
 	public enum TaskStatus {
 
-		RELEASED(11, "已下发"), STARTED(12, "已开始"), WAIT(0, "待评估"), SUCCESS(1, "成功"), FAIL(2,
-				"失败"), REJECT(3, "驳回");
+		UNRELEASED(10, "未下发"), RELEASED(11, "已下发"), STARTED(12, "已开始"), WAIT(0, "待评估"), SUCCESS(1,
+				"成功"), FAIL(2, "失败"), REJECT(3, "驳回");
 
 		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));

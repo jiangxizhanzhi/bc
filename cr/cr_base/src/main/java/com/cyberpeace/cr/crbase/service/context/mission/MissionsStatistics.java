@@ -13,4 +13,5 @@ public class MissionsStatistics {
 
 	private Integer unpublishedProportion;
 
+	private Integer missionCount;
 }

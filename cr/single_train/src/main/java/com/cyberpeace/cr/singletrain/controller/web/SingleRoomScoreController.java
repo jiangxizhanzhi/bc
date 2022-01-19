@@ -1,5 +1,18 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.RemoteServiceException;
@@ -14,25 +27,16 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
+import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.util.Date;
-import java.util.List;
 
 @Api(tags = "单兵训练评分")
 @RestController
@@ -54,7 +58,7 @@ public class SingleRoomScoreController {
 
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
-	public BaseRsp<JSONObject> getStudentScore(
+	public BaseRsp<JSONObject> getHistoryDetail(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SingleRoleGroupCode.roleGroup);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
@@ -70,12 +74,12 @@ public class SingleRoomScoreController {
 				.getTrainingRecord(resource_id, user_hash);
 
 		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
-		List<StageRsp> stageRsps = getStageRsps(missionSchemeList);
+		List<StageExport> StageExports = getStageExports(missionSchemeList);
 
 		JSONObject data = new JSONObject();
 		data.put("task_count", gettaskCount(missionReport));
 		data.put("radar", radars);
-		data.put("stages", stageRsps);
+		data.put("stages", StageExports);
 		data.put("total_score", studentScoreRsp.getTrainingScore().getSumScoreObjective());
 
 		data.put("create_time", new Date());
@@ -87,18 +91,22 @@ public class SingleRoomScoreController {
 
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
-	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse, @RequestParam("room_id") String roomId) {
-		JSONObject data = getStudentScore(roomId).getData();
+	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
+			@RequestParam("room_id") String roomId) {
+		JSONObject data = getHistoryDetail(roomId).getData();
 		data.put("username", UserInfoContext.getUserContext().getUserName());
 
 		// 获取用户LOGO
 		try {
-			data.put("user_logo", mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl());
+			data.put("user_logo",
+					mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl());
 		} catch (Exception e) {
 			throw new RemoteServiceException();
 		}
 
-		String destHtmlPath = String.format("%s%s-%s.html", AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
+		String destHtmlPath = String.format("%s%s-%s.html",
+				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), roomId,
+				UserInfoContext.getUserContext().getUserId());
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
 		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
@@ -118,18 +126,18 @@ public class SingleRoomScoreController {
 		return taskCount;
 	}
 
-	private List<StageRsp>
-			getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
+	private List<StageExport>
+			getStageExports(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
 
-		List<StageRsp> stageRsps = Lists.newArrayList();
+		List<StageExport> StageExports = Lists.newArrayList();
 
 		for (MissionSchemeObject<TrainingRecordMissionRsp> missionSchemeObject : missionSchemeList) {
-			StageRsp stageRsp = new StageRsp(missionSchemeObject);
+			StageExport StageExport = new StageExport(missionSchemeObject);
 
-			stageRsps.add(stageRsp);
+			StageExports.add(StageExport);
 		}
 
-		return stageRsps;
+		return StageExports;
 	}
 
 }

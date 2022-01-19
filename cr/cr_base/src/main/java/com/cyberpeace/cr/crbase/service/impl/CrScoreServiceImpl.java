@@ -61,6 +61,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		}
 		List<String> crRoleIds = StreamApiUtils.map(crRoleList, CrRole::getResourceId);
 
+		missionsStatistics.setMissionCount(missionCount);
 		missionsStatistics.setUnpublishedProportion(
 				missionCount - crTaskService.countByRoomIdAndRoleIds(roomId, crRoleIds));
 		missionsStatistics.setNotSubmitProportion(

@@ -133,6 +133,11 @@
             <artifactId>gateway</artifactId>
             <version>${gateway.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>report_score</artifactId>
+            <version>${cr.report_score.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>

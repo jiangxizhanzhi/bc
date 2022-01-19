@@ -122,7 +122,7 @@ public class UtilServiceImpl implements UtilService {
 	}
 
 	@Override
-	public String handlerMarkdownFile(String content, String originPath, String destFilePath) {
+	public String handlerMarkdownFile(String content, String destFilePath) {
 		List<String> matchList = LocalStringUtil.getMatchStr(content,
 				PatternConstant.MARKDOWN_IMAGE);
 		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
@@ -135,11 +135,7 @@ public class UtilServiceImpl implements UtilService {
 			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
 			String destPath = destFilePath + File.separatorChar + fileName;
 
-			String imagePath = realPath.startsWith(CommonConstant.PERIOD)
-					? realPath.replace(CommonConstant.PERIOD, originPath)
-					: originPath + File.separatorChar + realPath;
-
-			FileUtil.copyFile(imagePath, destPath, false);
+			FileUtil.copyFile(realPath, destPath, false);
 			String fileUrl = replaceFileUrl(destPath);
 			return handlerFileUrl(fileUrl);
 		});

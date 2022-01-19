@@ -35,10 +35,9 @@ public interface UtilService {
 	 * 处理markdown内容 将里面的文件拷贝到目的地址 同时替换路径为nginx可转发
 	 * @param content markdown内容 内容中地址为绝对地址 请显示用MdUtil先读取一下
 	 * @param destFilePath 目的文件夹地址 nginx可转发文件路径
-	 * @param originPath    
 	 * @return
 	 */
-	String handlerMarkdownFile(String content, String originPath, String destFilePath);
+	String handlerMarkdownFile(String content, String destFilePath);
 
 	/**
 	 * 仅处理markdown内容

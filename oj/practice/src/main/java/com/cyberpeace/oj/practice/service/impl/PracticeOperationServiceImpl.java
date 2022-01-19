@@ -855,9 +855,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 场景flag相关操作
 		String flag = (String) operationData.remove("answer");
+		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
+
 		if (StringUtils.isNotBlank(topoId)) {
 			operation.setTopoId(topoId);
-			operation.setDynamicEnv(CommonConstant.TRUE);
 			String sceneShareMode = (String) operationData.remove("scene_share_mode");
 			operation.setSceneShareMode(
 					sceneShareMode.equals(CommonConstant.RIGHT) ? SceneShare.SHARED.getCode()

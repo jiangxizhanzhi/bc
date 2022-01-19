@@ -122,7 +122,7 @@ public class UtilServiceImpl implements UtilService {
 	}
 
 	@Override
-	public String handlerMarkdownFile(String content, String destFilePath) {
+	public String handlerMarkdownFile(String content, String originPath, String destFilePath) {
 		List<String> matchList = LocalStringUtil.getMatchStr(content,
 				PatternConstant.MARKDOWN_IMAGE);
 		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
@@ -130,11 +130,16 @@ public class UtilServiceImpl implements UtilService {
 
 		// 文件拷贝到nginx可转发目录 同时生成nginx转发地址
 		List<String> nginxUrlList = StreamApiUtils.map(realPathList, realPath -> {
+
 			String fileSuffix = FileUtil.getFileSuffix(realPath);
 			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
 			String destPath = destFilePath + File.separatorChar + fileName;
 
-			FileUtil.copyFile(realPath, destPath, false);
+			String imagePath = realPath.startsWith(CommonConstant.PERIOD)
+					? realPath.replace(CommonConstant.PERIOD, originPath)
+					: originPath + File.separatorChar + realPath;
+
+			FileUtil.copyFile(imagePath, destPath, false);
 			String fileUrl = replaceFileUrl(destPath);
 			return handlerFileUrl(fileUrl);
 		});

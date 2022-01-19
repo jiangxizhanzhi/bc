@@ -260,7 +260,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
 
 		// 构建数据存储
-		List<String> failOperations = Lists.newArrayList();
+		List<String> existOperations = Lists.newArrayList();
 		List<PracticeOperation> operationList = Lists.newArrayList();
 
 		// 执行数据导入
@@ -274,7 +274,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 						ctfPracticeDir, e);
 
 				if (e.getMessage().equals(OjBusinessErrorCode.NAME_IS_EXIST)) {
-					failOperations.add(ctfPracticeDir);
+					existOperations.add(ctfPracticeDir);
 					continue;
 				}
 
@@ -299,7 +299,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			}
 		});
 
-		return failOperations;
+		return existOperations;
 	}
 
 	@Override

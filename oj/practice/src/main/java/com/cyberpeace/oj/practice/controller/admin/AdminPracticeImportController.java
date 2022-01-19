@@ -47,17 +47,17 @@ public class AdminPracticeImportController {
 			importRMCtf(@RequestBody @Validated RmPracticeImportReq practiceImportReq) {
 
 		// 执行数据导入
-		List<String> failListPath = practiceSetService.importRmCtfSet(practiceImportReq.getPath(),
+		List<String> existListPath = practiceSetService.importRmCtfSet(practiceImportReq.getPath(),
 				practiceImportReq.getEnvReqs());
 
 		// 设置返回值
 		BaseRsp<Boolean> baseRsp = new BaseRsp<>();
 		baseRsp.setData(CommonConstant.TRUE);
-		if (CollectionUtils.isNotEmpty(failListPath)) {
-			log.error("Importing failed practice exercises is [{}]",
-					String.join(CommonConstant.VERTICAL_LINE, failListPath));
-			String message = String.format("Importing failed practice exercises is [%s]",
-					String.join(CommonConstant.VERTICAL_LINE, failListPath));
+		if (CollectionUtils.isNotEmpty(existListPath)) {
+			log.error("Exist operation practice is [{}]",
+					String.join(CommonConstant.VERTICAL_LINE, existListPath));
+			String message = String.format("Exist operation practice is [%s]",
+					String.join(CommonConstant.VERTICAL_LINE, existListPath));
 			baseRsp.setMessage(message);
 		}
 

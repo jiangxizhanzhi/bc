@@ -667,7 +667,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				FileSunffixConstant.MD.getDesc());
 		if (StringUtils.isNotBlank(writeFilePath)) {
 			String writeup = MdUtil.parseMarkdown(writeFilePath);
-			writeup = utilService.handlerMarkdownFile(writeup,
+			writeup = utilService.handlerMarkdownFile(writeup, writeFilePath,
 					AttachmentPath.PRACTICE_ATTACHMENT.getDesc());
 			operation.setWriteup(writeup);
 		}

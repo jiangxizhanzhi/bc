@@ -4,12 +4,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreListReq;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreUpdateScoreReq;
+import com.cyberpeace.cr.report_score.controller.req.ScoreRecordListReq;
 import com.cyberpeace.cr.report_score.controller.res.ReportScoreRsp;
+import com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScore;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import io.swagger.annotations.Api;
@@ -34,9 +35,8 @@ public class ReportScoreController {
     @ApiOperation("打分列表")
     @GetMapping("/list")
     public BaseRsp<ListRsp<ReportScoreRsp>> getList(
-            @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
-        Page page = pageReqBase.toPageParam();
-        ReportScoreListReq reportScoreListReq = BeanUtils.copy(pageReqBase, ReportScoreListReq.class);
+            @ApiParam(name = "listReq", value = "查询条件") @Validated ReportScoreListReq reportScoreListReq) {
+        Page page = reportScoreListReq.toPageParam();
         IPage<ReportScoreRsp> reportScoreRsp = reportScoreService.selectPage(page, reportScoreListReq);
         return new BaseRsp(PageUtil.getListResult(reportScoreRsp));
     }
@@ -56,5 +56,14 @@ public class ReportScoreController {
         ReportScore reportScore = BeanUtils.copy(reportScoreUpdateReq, ReportScore.class);
         reportScoreService.updateById(reportScore);
         return new BaseRsp<>();
+    }
+
+    @ApiOperation("科目评分记录")
+    @GetMapping("/score_record")
+    public BaseRsp<ListRsp<ScoreRecordRsp>> getScoreList(
+            @ApiParam(name = "listReq", value = "查询条件") @Validated ScoreRecordListReq scoreRecordListReq) {
+        Page page = scoreRecordListReq.toPageParam();
+        IPage<ScoreRecordRsp> scoreRecordRspIPage = reportScoreService.selectRecordPage(page, scoreRecordListReq);
+        return new BaseRsp<>(PageUtil.getListResult(scoreRecordRspIPage));
     }
 }

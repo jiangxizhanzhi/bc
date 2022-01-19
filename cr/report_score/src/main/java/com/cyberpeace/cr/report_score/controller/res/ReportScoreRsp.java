@@ -25,9 +25,6 @@ public class ReportScoreRsp implements Serializable {
     @ApiModelProperty("所属科目")
     private Integer subject;
 
-    @ApiModelProperty("战队名称")
-    private String teamName;
-
     @ApiModelProperty("评分人")
     private String raterName;
 
@@ -39,6 +36,5 @@ public class ReportScoreRsp implements Serializable {
 
     @ApiModelProperty("状态")
     private Integer status;
-
 
 }

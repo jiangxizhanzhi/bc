@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreListReq;
+import com.cyberpeace.cr.report_score.controller.req.ScoreRecordListReq;
 import com.cyberpeace.cr.report_score.controller.res.ReportScoreRsp;
+import com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScore;
 import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreMapper;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
@@ -28,5 +30,11 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         ReportScore reportScore = getById(resourceId);
         ReportScoreRsp copy = BeanUtils.copy(reportScore, ReportScoreRsp.class);
         return copy;
+    }
+
+    @Override
+    public IPage<ScoreRecordRsp> selectRecordPage(Page page, ScoreRecordListReq scoreRecordListReq) {
+        IPage<ScoreRecordRsp> result = reportScoreMapper.listRecord(page, scoreRecordListReq);
+        return result;
     }
 }

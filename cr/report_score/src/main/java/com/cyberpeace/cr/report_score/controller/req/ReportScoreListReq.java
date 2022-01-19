@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.report_score.controller.req;
 
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.TimeUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,11 +16,12 @@ public class ReportScoreListReq extends PageReqBase {
     private Integer subject;
 
     @ApiModelProperty(value = "开始时间")
-    private Date startTime;
+    private String startTime;
 
     @ApiModelProperty(value = "结束时间")
-    private Date endTime;
+    private String endTime;
 
     @ApiModelProperty(value = "战队/报告名称")
     private String name;
+
 }

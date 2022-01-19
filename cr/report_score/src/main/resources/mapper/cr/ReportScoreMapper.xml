@@ -4,6 +4,33 @@
 <mapper namespace="com.cyberpeace.cr.report_score.dao.mapper.ReportScoreMapper">
     <select id="list" resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScore">
         select * from cr_report_score
+        <where>
+            <if test="listQuery.status != null and listQuery.status != ''">
+                and `status` = #{listQuery.status}
+            </if>
+            <if test="listQuery.subject != null and listQuery.subject != ''">
+                and `subject` = #{listQuery.subject}
+            </if>
+            <if test="listQuery.startTime != null and listQuery.startTime != ''">
+                and `submit_time` &gt;= #{listQuery.startTime}
+            </if>
+            <if test="listQuery.endTime != null and listQuery.endTime != ''">
+                and `submit_time` &lt;= #{listQuery.endTime}
+            </if>
+            <if test="listQuery.name != null and listQuery.name != ''">
+                <bind name="name" value="'%'+listQuery.name+'%'"/>
+                and (`rater_name` like #{name} or `report_name` like #{name})
+            </if>
+        </where>
+    </select>
+
+    <select id="listRecord" resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScore">
+        select * from cr_report_score
+        <where>
+            <if test="listQuery.subject != null and listQuery.subject != ''">
+                and `subject` = #{listQuery.subject}
+            </if>
+        </where>
     </select>
 
 </mapper>

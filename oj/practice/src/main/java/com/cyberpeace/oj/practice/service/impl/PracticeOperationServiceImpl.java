@@ -662,12 +662,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		// 题解数据处理
-		String writeFilePath = FileUtil.getOneFile(
-				new File(path, ResourceImportConstant.WRITEUP).getAbsolutePath(),
+		File writeUpDirFile = new File(path, ResourceImportConstant.WRITEUP);
+		String writeFilePath = FileUtil.getOneFile(writeUpDirFile.getAbsolutePath(),
 				FileSunffixConstant.MD.getDesc());
 		if (StringUtils.isNotBlank(writeFilePath)) {
 			String writeup = MdUtil.parseMarkdown(writeFilePath);
-			writeup = utilService.handlerMarkdownFile(writeup, writeFilePath,
+			writeup = utilService.handlerMarkdownFile(writeup, writeUpDirFile.getAbsolutePath(),
 					AttachmentPath.PRACTICE_ATTACHMENT.getDesc());
 			operation.setWriteup(writeup);
 		}

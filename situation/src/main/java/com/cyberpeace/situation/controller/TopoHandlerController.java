@@ -192,9 +192,6 @@ public class TopoHandlerController {
                 hierarchy = 0;
             }
 
-            // 处理区域数据
-            //List<String> areas = Lists.newArrayList();
-
             // 处理坐标数据
             JSONObject position2 = element.getJSONObject("position2");
             Float x = position2.getFloat("x");
@@ -226,7 +223,7 @@ public class TopoHandlerController {
             elementInfo.setType(type);
             elementInfo.setActionStatus(topoHandlerService.getElementActionStatus(element));
             elementInfo.setStatus(topoHandlerService.getElementStatus(element));
-            elementInfo.setAreas(topoHandlerService.getElementAreas(x, y, areasInfo));
+//            elementInfo.setAreas(topoHandlerService.getElementAreas(x, y, areasInfo));
             elementInfo.setPosition(new PlaneCoordinate(x, y));
             elementInfo.setPorts(portsInfo);
             elementInfo.setHierarchy(hierarchy);

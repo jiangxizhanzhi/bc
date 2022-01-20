@@ -12,10 +12,17 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.List;
+
 @Mapper
 @Repository
 public interface ReportScoreMapper extends BaseMapper<ReportScore> {
     IPage<ReportScoreRsp> list(Page page, @Param("listQuery") ReportScoreListReq reportScoreListReq);
 
     IPage<ScoreRecordRsp> listRecord(Page page, @Param("listQuery") ScoreRecordListReq scoreRecordListReq);
+
+    List<HashMap<String, String>> countSubject();
+
+    List<HashMap<String, String>> countStatus();
 }

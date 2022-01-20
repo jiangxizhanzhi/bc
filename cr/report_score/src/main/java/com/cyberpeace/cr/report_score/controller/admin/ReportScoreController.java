@@ -9,6 +9,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreListReq;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreUpdateScoreReq;
 import com.cyberpeace.cr.report_score.controller.req.ScoreRecordListReq;
+import com.cyberpeace.cr.report_score.controller.res.ReportScoreDetailRsp;
 import com.cyberpeace.cr.report_score.controller.res.ReportScoreRsp;
 import com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScore;
@@ -22,6 +23,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.HashMap;
+import java.util.List;
 
 @Api(tags = "后台-打分列表")
 @RestController
@@ -43,11 +46,11 @@ public class ReportScoreController {
 
     @ApiOperation("打分详情")
     @GetMapping
-    public BaseRsp<ReportScoreRsp> getDetail(
+    public BaseRsp<ReportScoreDetailRsp> getDetail(
             @ApiParam(name = "resource_id", value = "查询id", required = true)
             @RequestParam("resource_id") @NotBlank String resourceId) {
-        ReportScoreRsp reportScoreRsp = reportScoreService.selectById(resourceId);
-        return new BaseRsp<>(reportScoreRsp);
+        ReportScoreDetailRsp reportScoreDetailRsp = reportScoreService.selectById(resourceId);
+        return new BaseRsp<>(reportScoreDetailRsp);
     }
 
     @ApiOperation("更新打分")
@@ -65,5 +68,19 @@ public class ReportScoreController {
         Page page = scoreRecordListReq.toPageParam();
         IPage<ScoreRecordRsp> scoreRecordRspIPage = reportScoreService.selectRecordPage(page, scoreRecordListReq);
         return new BaseRsp<>(PageUtil.getListResult(scoreRecordRspIPage));
+    }
+
+    @ApiOperation("报告科目统计")
+    @GetMapping("/subject/count")
+    public BaseRsp<List<HashMap<String, String>>> getSubjectCount() {
+        List<HashMap<String, String>> result = reportScoreService.selectCountBySubject();
+        return new BaseRsp<>(result);
+    }
+
+    @ApiOperation("报告状态统计")
+    @GetMapping("/status/count")
+    public BaseRsp<List<HashMap<String, String>>> getStatusCount() {
+        List<HashMap<String, String>> result = reportScoreService.selectCountByStatus();
+        return new BaseRsp<>(result);
     }
 }

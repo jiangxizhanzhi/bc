@@ -13,6 +13,9 @@ public class ScoreRecordRsp implements Serializable {
     @ApiModelProperty("报告名称")
     private String reportName;
 
+    @ApiModelProperty("队伍名称")
+    private String teamName;
+
     @ApiModelProperty("评分时间")
     private Date scoreTime;
 

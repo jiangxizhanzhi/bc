@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.cr.report_score.dao.mapper.ReportScoreMapper">
-    <select id="list" resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScore">
+
+    <select id="list" resultType="com.cyberpeace.cr.report_score.controller.res.ReportScoreRsp">
         select * from cr_report_score
         <where>
             <if test="listQuery.status != null and listQuery.status != ''">
@@ -24,13 +25,25 @@
         </where>
     </select>
 
-    <select id="listRecord" resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScore">
-        select * from cr_report_score
+    <select id="listRecord" resultType="com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp">
+        select report_name, rater_name as team_name, score_time, score from cr_report_score
         <where>
             <if test="listQuery.subject != null and listQuery.subject != ''">
                 and `subject` = #{listQuery.subject}
             </if>
         </where>
+    </select>
+
+    <select id="countSubject" resultType="java.util.HashMap">
+        select `subject`, count(`subject`) as count
+        from cr_report_score
+        GROUP BY `subject`;
+    </select>
+
+    <select id="countStatus" resultType="java.util.HashMap">
+        select `status`, count(`status`) as count
+        from cr_report_score
+        GROUP BY `status`;
     </select>
 
 </mapper>

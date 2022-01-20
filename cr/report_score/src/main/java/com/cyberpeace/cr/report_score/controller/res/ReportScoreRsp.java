@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.report_score.controller.res;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -723,7 +723,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 	@Override
 	public SingleRoom getByBusinessId(String businessId) {
-		String[] ids = StringUtils.split(businessId, "_", 1);
+		String[] ids = StringUtils.split(businessId, "_", 2);
 		if (ids.length != 2) {
 			log.error(String.format("invalid business id for single training: %s", businessId));
 			return null;

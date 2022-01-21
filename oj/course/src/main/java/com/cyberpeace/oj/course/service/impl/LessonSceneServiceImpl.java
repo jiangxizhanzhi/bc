@@ -107,7 +107,8 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		initOjLocalScene.setLocalSceneId(localScene.getResourceId());
 
 		// 场景启动
-		String sceneId = localSceneService.startScene(localScene);
+		String sceneId = authContext.getIsWeb() ? localSceneService.startScene(localScene)
+				: localSceneService.testScene(localScene);
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("startScene: Scene start failed! localScene=[{}]",
 					JsonUtil.toJsonString(localScene));

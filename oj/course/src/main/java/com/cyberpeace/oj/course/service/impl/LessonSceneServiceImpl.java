@@ -74,12 +74,6 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
-	@Autowired
-	private RemoteSceneService remoteSceneService;
-
-	@Autowired
-	private RemoteUserService remoteUserService;
-
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
 

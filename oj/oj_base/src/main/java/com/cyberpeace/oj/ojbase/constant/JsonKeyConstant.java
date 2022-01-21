@@ -44,6 +44,9 @@ public interface JsonKeyConstant {
 	/** 场景数据中初始化命令key 用于获取动态设置*/
 	String INIT_COMMANDS = "init_commands";
 
+	/** 获取动态flag注入命令*/
+	String NODE_COMMAND = "node_command";
+
 	/** 会话信息用户编号key*/
 	String USER_KEY = "user";
 
@@ -52,6 +55,5 @@ public interface JsonKeyConstant {
 
 	/** 习题类型*/
 	String PRACTICE_KEY = "practice";
-
 
 }

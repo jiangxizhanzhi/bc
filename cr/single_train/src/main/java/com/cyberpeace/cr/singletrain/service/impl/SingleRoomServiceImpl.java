@@ -796,11 +796,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			trainHistoryBo.setRoomId(item.getRoomId());
 			trainHistoryBo.setTrainTime(item.getEndTime());
 			trainHistoryBo.setTrainTimes(i + 1);
-			if (item.getExtra() == null) {
+
+			JSONObject trainExtraData = JsonUtil.toJsonObject(item.getExtra(), JSONObject.class);
+			if (trainExtraData.isEmpty()) {
 				trainHistoryBo.setScore(0d);
 			} else {
-				trainHistoryBo.setScore(JsonUtil.toJsonObject(item.getExtra(), JSONObject.class)
-						.getDouble(SingleRoom.CrTrainRecordFields.SCORE));
+				trainHistoryBo.setScore(trainExtraData.getDouble(SingleRoom.CrTrainRecordFields.SCORE));
 			}
 
 			result.add(trainHistoryBo);

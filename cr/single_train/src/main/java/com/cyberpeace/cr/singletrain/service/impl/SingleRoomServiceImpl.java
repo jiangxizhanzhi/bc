@@ -447,7 +447,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		if (roomObject == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION);
 		}
 
 		// 单兵训练运行房间任务查询, 答题者即为创建者

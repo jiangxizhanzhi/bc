@@ -107,6 +107,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE, "暂停场景失败");
 			put(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE, "恢复场景失败");
 			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE, "单兵训练模板正在使用，删除失败");
+			put(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION, "请先启动实例");
 
 		}
 	};
@@ -223,6 +224,7 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE, "Failed to pause scene.");
 			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE,
 					"Failed to delete single training template in use.");
+			put(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION, "Please Start Up Case.");
 		}
 	};
 

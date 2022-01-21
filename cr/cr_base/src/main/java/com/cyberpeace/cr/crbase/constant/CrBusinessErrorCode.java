@@ -192,4 +192,7 @@ public interface CrBusinessErrorCode {
 
 	// 单兵训练模板正在使用，删除失败
 	String SINGLE_TRAIN_TEMPLATE_IN_USE = "101061";
+
+	// 空房间时提交任务
+	String ROOM_NOT_EXIST_SUBMIT_MISSION = "101062";
 }

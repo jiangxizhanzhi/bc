@@ -1,28 +1,13 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ListUtil;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
@@ -35,12 +20,22 @@ import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.List;
 
 @Api(tags = "单兵训练评分")
 @RestController
@@ -62,6 +57,9 @@ public class SingleRoomScoreController {
 
 	@Autowired
 	private MpEnvService mpEnvService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
@@ -94,6 +92,19 @@ public class SingleRoomScoreController {
 		data.put("resource_id", resource_id);
 		data.put("score", studentScoreRsp.getTrainingScore().getGetScoreObjective());
 
+		// 用户信息
+		UserInfo userInfo = remoteUserService.getById(user_hash);
+		data.put("user_id", userInfo.getUserId());
+		data.put("username", userInfo.getUserName());
+		// 获取用户LOGO todo 自定义logo获取方式待定
+		try {
+			data.put("user_logo",
+					mpEnvService.getMpHost() + userInfo.getAvatarUrl());
+		} catch (Exception e) {
+			throw new RemoteServiceException();
+		}
+
+
 		return new BaseRsp(data);
 	}
 
@@ -102,19 +113,10 @@ public class SingleRoomScoreController {
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId) {
 		JSONObject data = getHistoryDetail(roomId).getData();
-		data.put("username", UserInfoContext.getUserContext().getUserName());
-
-		// 获取用户LOGO
-		try {
-			data.put("user_logo",
-					mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl());
-		} catch (Exception e) {
-			throw new RemoteServiceException();
-		}
 
 		String destHtmlPath = String.format("%s%s-%s.html",
 				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), roomId,
-				UserInfoContext.getUserContext().getUserId());
+				data.getString("user_id"));
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
 		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);

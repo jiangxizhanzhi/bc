@@ -44,7 +44,7 @@ public class ReferenceMetaData implements Serializable {
 		this.business_code = business_code;
 	}
 
-	public Boolean getIS_web() {
+	public Boolean getIs_web() {
 		return is_web;
 	}
 

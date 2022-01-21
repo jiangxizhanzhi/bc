@@ -16,7 +16,7 @@ public class ReferenceMetaData implements Serializable {
 	/**
 	 * oj专用，暂时不用
 	 */
-	private Boolean from_web;
+	private Boolean is_web;
 
 	private String create_user_id;
 
@@ -44,12 +44,12 @@ public class ReferenceMetaData implements Serializable {
 		this.business_code = business_code;
 	}
 
-	public Boolean getFrom_web() {
-		return from_web;
+	public Boolean getIS_web() {
+		return is_web;
 	}
 
 	public void setFromWeb(Boolean from_web) {
-		this.from_web = from_web;
+		this.is_web = from_web;
 	}
 
 	public String getCreate_user_id() {

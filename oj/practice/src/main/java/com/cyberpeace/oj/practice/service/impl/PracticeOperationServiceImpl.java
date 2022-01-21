@@ -978,7 +978,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 						: SceneStartContext.SceneAttrEnum.SINGLE.getCode());
 
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(operation.getResourceId())
-				.build();
+				.isWeb(ojLocalScene.getFromWeb()).build();
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());

@@ -100,6 +100,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		// 解析meta
 		LocalSceneMeta meta = JSON.parseObject(localScene.getMeta(), LocalSceneMeta.class);
 		referenceMetaData.setBusinessId(meta.getAppResourceId());
+		referenceMetaData.setFromWeb(meta.getIsWeb());
 
 		return referenceMetaData;
 	}

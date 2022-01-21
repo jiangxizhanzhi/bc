@@ -30,4 +30,6 @@ public class LocalSceneMeta implements Serializable {
 	private String appResourceId;
 
 	private JSONObject topoData;
+
+	private Boolean isWeb;
 }

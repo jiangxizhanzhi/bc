@@ -283,7 +283,8 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		// 动态环境flag设置
 		String appResourceId = lesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
 				+ lesson.getResourceId() + CommonConstant.LEFT_OBLIQUE_LINE + lesson.getPaperId();
-		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(appResourceId).build();
+		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(appResourceId)
+				.isWeb(ojLocalScene.getFromWeb()).build();
 
 		if (operation.getDynamicEnv() && operation.getDynamicFlag()) {
 			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),

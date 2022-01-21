@@ -262,6 +262,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		String appResourceId = courseLesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
 				+ courseLesson.getResourceId();
 		localSceneMeta.setAppResourceId(appResourceId);
+		localSceneMeta.setIsWeb(ojLocalScene.getFromWeb());
 
 		// 设置大场景数据 部分课程为资源导入 无法设置reference_type
 		JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());

@@ -49,6 +49,18 @@ public class ClassroomValidateHandler {
 	private RemoteUserService remoteUserService;
 
 	/**
+	 * 校验课时和组织相同的课时存在
+	 * @param lessonId
+	 * @param orgId
+	 */
+	public void validateClassroomLessonExist(String lessonId, String orgId) {
+		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
+		if (null != classroom) {
+			throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
+		}
+	}
+
+	/**
 	 * 校验课程表开始和结束时间
 	 * @param startTime
 	 * @param endTime

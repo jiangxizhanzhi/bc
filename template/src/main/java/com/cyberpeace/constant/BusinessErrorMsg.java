@@ -87,6 +87,7 @@ public interface BusinessErrorMsg {
 			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS, "选择组织下无用户");
 			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "资源正在被使用");
 			put(OjBusinessErrorCode.CLASS_IN_SCHEDULES, "该班级在该时间段内已有课程安排");
+			put(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME, "已存在组织和课时相同的课程安排");
 
 			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "设置录屏开关失败");
 
@@ -190,6 +191,8 @@ public interface BusinessErrorMsg {
 					"Select No users in the organization");
 			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "Resource is being used");
 			put(OjBusinessErrorCode.CLASS_IN_SCHEDULES, "The class has courses during this time");
+			put(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME,
+					"A course schedule with the same organization and lesson already exists");
 
 			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");
@@ -218,7 +221,8 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE, "Failed to unpause scene.");
 			put(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE, "Failed to pause scene.");
-			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE, "Failed to delete single training template in use.");
+			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE,
+					"Failed to delete single training template in use.");
 		}
 	};
 

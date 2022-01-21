@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,7 +73,8 @@ public class SingleRoomScoreController {
 		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
 				crRoleList);
 
-		String user_hash = UserInfoContext.getUserContext().getUserId();
+		// 单兵训练仅有一个用户, 角色仅关联一个用户
+		String user_hash = JsonUtil.stringToArray(crRoleList.get(0).getUserIds()).toJavaList(String.class).get(0);
 
 		List<Integer> radars = crRoleService.getRadar(resource_id, user_hash);
 

@@ -25,6 +25,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
@@ -54,12 +55,15 @@ public class SingleRoomScoreController {
 	private CrScoreController crScoreController;
 
 	@Autowired
+	TrainRecordService trainRecordService;
+
+	@Autowired
 	private MpEnvService mpEnvService;
 
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
 	public BaseRsp<JSONObject> getHistoryDetail(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SingleRoleGroupCode.roleGroup);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
@@ -82,7 +86,7 @@ public class SingleRoomScoreController {
 		data.put("stages", StageExports);
 		data.put("total_score", studentScoreRsp.getTrainingScore().getSumScoreObjective());
 
-		data.put("create_time", new Date());
+		data.put("create_time", trainRecordService.getByRoomId(resource_id).getEndTime());
 		data.put("resource_id", resource_id);
 		data.put("score", studentScoreRsp.getTrainingScore().getGetScoreObjective());
 

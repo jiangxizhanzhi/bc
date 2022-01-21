@@ -84,7 +84,7 @@ public class TeamTrainScoreController {
 		String destHtmlPath = String.format("%s%s-%s.html",
 				AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(), roomId,
 				UserInfoContext.getUserContext().getUserId());
-		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
+		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.TEAM, destHtmlPath);
 		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 

@@ -24,4 +24,6 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 			@Param("type") Integer type);
 
 	void batchEnd(@Param("businessTemplateId") String businessTemplateId);
+
+	TrainRecord getByRoomId(String roomId);
 }

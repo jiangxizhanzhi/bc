@@ -64,7 +64,7 @@
     <select id="getByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.TrainRecord">
         select *
         from cr_train_record
-        where roomId = #{roomId}
+        where room_id = #{roomId}
     </select>
 
 </mapper>

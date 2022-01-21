@@ -38,4 +38,7 @@ public class Flow implements Serializable {
 	@ApiModelProperty("流量执行次数")
 	private Integer count;
 
+	@ApiModelProperty("流量分类")
+	private Integer category;
+
 }

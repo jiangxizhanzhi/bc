@@ -41,4 +41,7 @@ public interface ErrorCode {
 
 	/** 用户不在列表中 */
 	String USER_NOT_IN_LIST = "10016";
+
+	/** 接口访问频繁，被限流 */
+	String INTERFACE_CURRENT_LIMITING = "10017";
 }

@@ -52,6 +52,7 @@ public interface BusinessErrorMsg {
 			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "远程服务异常");
 			put(ErrorCode.FILE_TYPE_ERROR, "文件类型错误");
 			put(ErrorCode.FILE_NOT_EXIST, "文件不存在");
+			put(ErrorCode.INTERFACE_CURRENT_LIMITING, "接口访问太频繁，请稍后访问");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE, "工具分类有关联的工具，不能删除");
 			put(CrBusinessErrorCode.DUPLICATED_TOOL_NAME, "该工具名称与系统内已有名称重复，请重新输入");
@@ -162,6 +163,7 @@ public interface BusinessErrorMsg {
 			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "Remote service error.");
 			put(ErrorCode.FILE_TYPE_ERROR, "File type error.");
 			put(ErrorCode.FILE_NOT_EXIST, "File not exist.");
+			put(ErrorCode.INTERFACE_CURRENT_LIMITING, "interface access is too frequent. please visit later");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE,
 					"unable to delete category, category in use");

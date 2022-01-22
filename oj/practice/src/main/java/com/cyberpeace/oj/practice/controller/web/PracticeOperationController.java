@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
@@ -91,7 +92,8 @@ public class PracticeOperationController {
 				answerReq.getSubmitAnswer());
 
 		// 记录远程操作日志
-		practiceOperationService.createMpLog(answerReq);
+		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
+		practiceOperationService.createMpLog(answerReq.getResourceId(), solved);
 
 		return new BaseRsp<>(evaluateResult);
 	}

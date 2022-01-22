@@ -18,7 +18,6 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
@@ -639,12 +638,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public void createMpLog(SubmitAnswerReq answerReq) {
+	public void createMpLog(String practiceId, LogContent solved) {
 		String language = CommonContext.getLanguage();
-		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(answerReq.getResourceId());
+		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
 		String content = String.format(
 				LogContent.getLocaleValue(LogContent.THEORY_FORMAT, language),
-				practiceTheory.getContent(), answerReq.getSubmitAnswer());
+				practiceTheory.getContent(), LogContent.getLocaleValue(solved, language));
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
 				OperationType.EXERCISE, LogContent.getLocaleValue(LogContent.THEORY, language),
 				content);

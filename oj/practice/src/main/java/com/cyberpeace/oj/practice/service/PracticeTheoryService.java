@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
@@ -105,7 +105,8 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 创建远程操作日志
-	 * @param answerReq
+	 * @param practiceId
+	 * @param solved
 	 */
-	void createMpLog(SubmitAnswerReq answerReq);
+	void createMpLog(String practiceId, LogContent solved);
 }

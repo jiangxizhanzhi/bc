@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
@@ -88,7 +89,8 @@ public class PracticeTheoryController {
 				answerReq.getSubmitAnswer());
 
 		// 记录远程操作日志
-		practiceTheoryService.createMpLog(answerReq);
+		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
+		practiceTheoryService.createMpLog(answerReq.getResourceId(), solved);
 
 		return new BaseRsp<>(evaluateResult);
 	}

@@ -27,7 +27,6 @@ import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
-import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import org.apache.commons.collections.CollectionUtils;
@@ -1000,12 +999,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public void createMpLog(SubmitAnswerReq answerReq) {
+	public void createMpLog(String practiceId, LogContent solved) {
 		String language = CommonContext.getLanguage();
-		PracticeOperation operation = practiceOperationMapper.selectById(answerReq.getResourceId());
+		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
 		String content = String.format(
 				LogContent.getLocaleValue(LogContent.PRACTICE_FORMAT, language),
-				operation.getContent(), answerReq.getSubmitAnswer());
+				operation.getContent(), LogContent.getLocaleValue(solved, language));
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
 				OperationType.EXERCISE, LogContent.getLocaleValue(LogContent.EXERCISE, language),
 				content);

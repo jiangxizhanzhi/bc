@@ -20,9 +20,9 @@ public enum OperationType {
     TEST(9, "测评","Test"),
     PARTICIPATE(10, "参赛","Participate"),
     STOP(11, "停止","Stop"),
-    PAUSE(12, "暂停","Pause"),
+    PAUSE(12, "暂停","Suspend"),
     START(13, "启动","Start"),
-    UNPAUSE(14, "恢复","Unpause");
+    UNPAUSE(14, "恢复","Resume");
 
     @Getter
     private Integer code;

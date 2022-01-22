@@ -7,10 +7,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.model.CommonContext;
 import com.google.common.collect.Lists;
 
 import lombok.Data;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -110,8 +112,17 @@ public class CrRole extends BaseTable {
 		@Getter
 		private Integer code;
 
-		@Getter
 		private String desc;
+
+		private String enDesc;
+		@Override
+		public String getDesc(){
+			if(StringUtils.equals(CommonContext.getLanguage(), "")) {
+				return enDesc;
+			} else {
+				return desc;
+			}
+		}
 
 		RbRoleGroupCode(Integer code, String desc) {
 			this.code = code;

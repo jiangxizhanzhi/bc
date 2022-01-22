@@ -5,7 +5,7 @@ import lombok.Getter;
 public enum HtmlTemplateEnum {
 
 	INDIVIDUAL("index.html", "/cpms/html_template/RussiaCopy/Individual"),
-	REDBLUE("index.html", "/cpms/html_template/RussiaCopy/RedBlue"),
+	REDBLUE("index.html", "C:test/Team"),
 	TEAM("index.html", "/cpms/html_template/RussiaCopy/Team");
 
 	@Getter

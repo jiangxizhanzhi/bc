@@ -6,11 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.cs.constant.AttachmentPath;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +16,7 @@ import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
@@ -41,6 +38,7 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 
 import io.swagger.annotations.Api;
@@ -122,8 +120,50 @@ public class TeamTrainScoreController {
 		jsonObject.put("user_list", userList);
 		jsonObject.put("mission_report", getTrainingMissionReport(roomId).getData());
 		jsonObject.put("report", trainingReport);
+		jsonObject.put("reportTime", getDuration(trainingReport.getTrainingTime()));
 
 		return jsonObject;
+	}
+
+	private String getDuration(Integer trainingTime) {
+		String duration = "";
+		// 几天几小时
+		if (trainingTime > 86400) {
+
+			duration = trainingTime / 86400 + EnumUtils.getEnumDescByCode(
+					TrainingReport.TIME.DAY.getCode(), TrainingReport.TIME.class);
+			int i = trainingTime % 86400 / 3600;
+			if (i > 0) {
+				duration += " " + trainingTime % 86400 / 3600 + EnumUtils.getEnumDescByCode(
+						TrainingReport.TIME.HOUR.getCode(), TrainingReport.TIME.class);
+			}
+		}
+		// 几小时几分钟
+		else if (trainingTime > 3600) {
+			duration = trainingTime / 3600 + EnumUtils.getEnumDescByCode(
+					TrainingReport.TIME.HOUR.getCode(), TrainingReport.TIME.class);
+			int i = trainingTime % 3600 / 60;
+			if (i > 0) {
+				duration += " " + trainingTime % 86400 / 3600 + EnumUtils.getEnumDescByCode(
+						TrainingReport.TIME.MINUTE.getCode(), TrainingReport.TIME.class);
+			}
+		} // 几分钟几秒
+		else if (trainingTime > 60) {
+			duration = trainingTime / 60 + EnumUtils.getEnumDescByCode(
+					TrainingReport.TIME.MINUTE.getCode(), TrainingReport.TIME.class);
+			int i = trainingTime % 60;
+			if (i > 0) {
+				duration += " " + trainingTime % 60 + EnumUtils.getEnumDescByCode(
+						TrainingReport.TIME.SECOND.getCode(), TrainingReport.TIME.class);
+			}
+		} // 几秒
+		else {
+			duration = trainingTime + EnumUtils.getEnumDescByCode(
+					TrainingReport.TIME.SECOND.getCode(), TrainingReport.TIME.class);
+		}
+
+		return duration;
+
 	}
 
 	private List<StageExport>

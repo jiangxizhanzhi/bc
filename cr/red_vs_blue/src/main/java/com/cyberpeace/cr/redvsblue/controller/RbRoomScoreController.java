@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.cs.constant.AttachmentPath;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +29,9 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
@@ -43,6 +44,7 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.google.common.collect.Lists;
@@ -65,6 +67,9 @@ public class RbRoomScoreController {
 
 	@Autowired
 	private CrRoleService crRoleService;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -129,6 +134,9 @@ public class RbRoomScoreController {
 
 		}
 
+		List<RadarLabel> radarLabels = missionService.getRadarLabel();
+
+		jsonObject.put("radarLabels", radarLabels);
 		jsonObject.put("user_list", userList);
 		jsonObject.put("mission_report", getTrainingMissionReport(roomId, roleGroup).getData());
 		jsonObject.put("report", trainingReport);

@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class CrRoleConfigRb implements Serializable {
 
-	private List<CrRoleConfigBO> redRoles;
+	private List<CrRoleConfig> redRoles;
 
-	private List<CrRoleConfigBO> blueRoles;
+	private List<CrRoleConfig> blueRoles;
 }

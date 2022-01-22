@@ -21,7 +21,7 @@ import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
-import com.cyberpeace.cr.crbase.service.CommonService;
+import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -52,7 +52,7 @@ public class RbRoomRefereeController {
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	private CommonService commonService;
+	private CrCommonService crCommonService;
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
@@ -195,7 +195,7 @@ public class RbRoomRefereeController {
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			return new BaseRsp<>(Lists.newArrayList());
 		}
-		return new BaseRsp<>(commonService.getMonitorSessions(room.getLocalSceneId(), null));
+		return new BaseRsp<>(crCommonService.getMonitorSessions(room.getLocalSceneId(), null));
 	}
 
 }

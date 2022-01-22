@@ -1,0 +1,77 @@
+package com.cyberpeace.cr.crbase.utils;
+
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
+import com.google.common.collect.Lists;
+
+/**
+ * 一些靶场工具
+ */
+public class CrCommonUtil {
+
+	/**
+	 * 控制最终存入数据库的 role_config 和 missions_scheme json 只包含哪些字段
+	 */
+	public static <T> String roleConfig2DbJson(T roleConfig) {
+		SimplePropertyPreFilter missionFilter = new SimplePropertyPreFilter(
+				CrRoleConfigMission.class, "resource_id");
+		SimplePropertyPreFilter schemeFilter = new SimplePropertyPreFilter(
+				CrRoleConfigSchemeStage.class, "stage", "missions");
+		SimplePropertyPreFilter roleFilter = new SimplePropertyPreFilter(CrRoleConfig.class, "name",
+				"asset_nodes", "visible_nodes", "missions_scheme");
+		SerializeConfig config = new SerializeConfig();
+		config.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
+		return JSONObject.toJSONString(roleConfig, config,
+				new SimplePropertyPreFilter[] { missionFilter, schemeFilter, roleFilter });
+	}
+
+	/**
+	 * 从 roleConfig 读取 任务模板id 列表
+	 */
+	public static List<String> getMissionTemplateIds(List<CrRoleConfig> roles) {
+		List<String> missionTemplateIds = Lists.newArrayList();
+		roles.forEach(
+				role -> missionTemplateIds.addAll(getMissionTemplateIds(role.getMissionsScheme())));
+		return missionTemplateIds;
+
+	}
+
+	/**
+	 * 从 missions scheme 读取 任务模板id 列表
+	 * @param missionsScheme
+	 * @return
+	 */
+	public static List<String> getMissionTemplateIds(CrRoleConfigMissionsScheme missionsScheme) {
+		List<String> missionTemplateIds = Lists.newArrayList();
+		missionsScheme.getSchemeData().forEach(stage -> stage.getMissions()
+				.forEach(mission -> missionTemplateIds.add(mission.getResourceId())));
+		return missionTemplateIds;
+	}
+
+	/**
+	 * 校验训练 tag
+	 * @param tags
+	 * @return
+	 */
+	public static String handleTrainingTag(List<String> tags) {
+		CrCommonValidator.validateSize(tags, CrCommonConstants.MIN_TAG_COUNT, CrCommonConstants.MAX_TAG_COUNT,
+				CrBusinessErrorCode.INVALID_TAGS_NUM);
+
+		tags.forEach(
+				tag -> CrCommonValidator.validateNameLen(tag, CrBusinessErrorCode.ILLEGAL_TAG_LEN));
+		CrCommonValidator.checkStringListDuplicate(tags, CrBusinessErrorCode.TAG_DUPLICATE);
+
+		return JsonUtil.arrayToString(tags);
+	}
+}

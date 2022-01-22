@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigBO;
 
 public interface MissionTemplateService extends IService<MissionTemplate> {
 
@@ -41,9 +40,4 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * @param missionTemplateIds
 	 */
 	void batchDelete(List<String> missionTemplateIds);
-
-	/**
-	 * 从 roleConfig 读取id列表
-	 */
-	List<String> getIdsByRoleConfig(List<CrRoleConfigBO> roles);
 }

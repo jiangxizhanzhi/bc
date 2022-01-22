@@ -14,7 +14,6 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigBO;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -65,15 +64,6 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 			return;
 		}
 		missionTemplateMapper.deleteBatchIds(missionTemplateIds);
-	}
-
-	@Override
-	public List<String> getIdsByRoleConfig(List<CrRoleConfigBO> roles) {
-		List<String> ids = Lists.newArrayList();
-		roles.forEach(role -> role.getMissionsScheme().getSchemeData().forEach(
-				stage -> stage.getMissions().forEach(mission -> ids.add(mission.getResourceId()))));
-
-		return ids;
 	}
 
 	private List<String> getIdsByMissionsSchemeJson(String schemeJson) {

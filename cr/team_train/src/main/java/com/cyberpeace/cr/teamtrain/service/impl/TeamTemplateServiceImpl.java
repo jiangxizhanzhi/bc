@@ -21,9 +21,10 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigBO;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
@@ -198,8 +199,8 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Override
 	public List<String> getMissionTemplateIdsByRoleConfig(String roleConfig) {
-		List<CrRoleConfigBO> roles = JsonUtil.toJsonObjectArray(roleConfig, CrRoleConfigBO.class);
-		return missionTemplateService.getIdsByRoleConfig(roles);
+		List<CrRoleConfig> roles = JsonUtil.toJsonObjectArray(roleConfig, CrRoleConfig.class);
+		return CrCommonUtil.getMissionTemplateIds(roles);
 	}
 
 }

@@ -109,6 +109,13 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE, "单兵训练模板正在使用，删除失败");
 			put(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION, "请先启动实例");
 
+			put(CrBusinessErrorCode.EMPTY_MISSION_STAGE, "阶段内任务不可为空");
+			put(CrBusinessErrorCode.INVALID_TAGS_NUM, String.format("标签个数在 %d ~ %d 之间",
+					CrCommonConstants.MIN_TAG_COUNT, CrCommonConstants.MAX_TAG_COUNT));
+			put(CrBusinessErrorCode.ILLEGAL_TAG_LEN, "标签字符长度不正确");
+			put(CrBusinessErrorCode.TAG_DUPLICATE, "标签内容不能重复");
+			put(CrBusinessErrorCode.ILLEGAL_NAME_LEN, "名称长度非法");
+
 		}
 	};
 
@@ -225,6 +232,14 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE,
 					"Failed to delete single training template in use.");
 			put(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION, "Please Start Up Case.");
+
+			put(CrBusinessErrorCode.EMPTY_MISSION_STAGE, "Missions of one stage cant be empty.");
+			put(CrBusinessErrorCode.INVALID_TAGS_NUM,
+					String.format("Number of tags is supposed to be between %d ~ %d.",
+							CrCommonConstants.MIN_TAG_COUNT, CrCommonConstants.MAX_TAG_COUNT));
+			put(CrBusinessErrorCode.ILLEGAL_TAG_LEN, "Illegal length for tag.");
+			put(CrBusinessErrorCode.TAG_DUPLICATE, "Tags duplicate.");
+			put(CrBusinessErrorCode.ILLEGAL_NAME_LEN, "Illegal length for name.");
 		}
 	};
 

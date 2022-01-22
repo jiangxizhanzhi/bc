@@ -27,10 +27,6 @@ public interface CrCommonConstants {
 
 	int MAX_STAGE_NAME_LEN = 20;
 
-	int MIN_MISSION_NAME_LEN = 1;
-
-	int MAX_MISSION_NAME_LEN = 255;
-
 	int SCORE_MAX_VALUE = 500;
 
 	int SKILL_POINTS_SIZE = 6;
@@ -44,4 +40,14 @@ public interface CrCommonConstants {
 	int MAX_TRAINING_NAME_LEN = 40;
 
 	String NULL = "null";
+
+	Integer MIN_TAG_COUNT = 1;
+
+	Integer MAX_TAG_COUNT = 4;
+
+	Integer MIN_STR_LEN = 1;
+
+	Integer MAX_NAME_STR_LEN = 255;
+
+	Integer MAX_DESC_LEN = 2048;
 }

@@ -6,6 +6,9 @@ import java.util.Map;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,16 +25,18 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigBO;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
+import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateAddReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.BaseInfoRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbTemplateRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
-import com.cyberpeace.cr.redvsblue.service.context.RbTemplateContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 
@@ -51,71 +56,62 @@ public class RbTemplateAdminController {
 	private RbTemplateService rbTemplateService;
 
 	@Autowired
-	private MissionService missionService;
+	private CrCommonService crCommonService;
 
 	@Autowired
 	private MissionTemplateService missionTemplateService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	@ApiOperation("新增")
 	@PostMapping()
-	public BaseRsp create(@RequestBody @Validated RbTemplateAddReq rbTemplateAddReq) {
+	public BaseRsp create(@RequestBody @Validated RbTemplateAddReq addReq) {
 
-		RbTemplateContext rbTemplateContext = BeanUtils.copy(rbTemplateAddReq,
-				RbTemplateContext.class);
+		// set type
+		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		// create team template
+		RbTemplate rbTemplate = reqToRbTemplate(addReq, new RbTemplate());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		JSONObject roleJsonObject = new JSONObject();
-		roleJsonObject.put("red_roles", rbTemplateAddReq.getRedRoles());
-		roleJsonObject.put("blue_roles", rbTemplateAddReq.getBlueRoles());
-
-		rbTemplateContext.setRoleList(JsonUtil.toJsonString(roleJsonObject));
-		rbTemplateContext.getBaseInfo()
-				.setType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
-
-		businessTemplateService.addTemplate(rbTemplateContext);
-
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// save business template
+				String businessTemplateId = businessTemplateService
+						.addTemplate(addReq.getBaseInfo());
+				// save team template
+				rbTemplate.setBusinessTemplateId(businessTemplateId);
+				rbTemplateService.save(rbTemplate);
+			}
+		});
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("修改")
 	@PatchMapping()
-	public BaseRsp update(@RequestBody @Validated RbTemplateModifyReq rbTemplateModifyReq) {
-		String resourceId = rbTemplateModifyReq.getResourceId();
-		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resourceId);
-
-		if (template == null) {
-			throw new ResourceNotFoundException(resourceId);
-		}
-
-		BusinessTemplate businessTemplate = businessTemplateService
-				.getById(template.getBusinessTemplateId());
+	public BaseRsp update(@RequestBody @Validated RbTemplateModifyReq modifyReq) {
+		String resourceId = modifyReq.getResourceId();
+		RbTemplate rbTemplate = rbTemplateService.getRbTemplateByBusinessId(resourceId);
+		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
 		if (businessTemplate == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
+		// update
+		reqToRbTemplate(modifyReq, rbTemplate);
 
-		RbTemplateContext rbTemplateContext = BeanUtils.copy(rbTemplateModifyReq,
-				RbTemplateContext.class);
+		// save
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		JSONObject roleJsonObject = new JSONObject();
-		roleJsonObject.put("red_roles", rbTemplateModifyReq.getRedRoles());
-		roleJsonObject.put("blue_roles", rbTemplateModifyReq.getBlueRoles());
-
-		rbTemplateModifyReq.getRedRoles().forEach(jsonObject -> {
-			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo());
+				rbTemplateService.updateById(rbTemplate);
+			}
 		});
-		rbTemplateModifyReq.getBlueRoles().forEach(jsonObject -> {
-			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
-		});
-
-		rbTemplateContext.setRoleList(JsonUtil.toJsonString(roleJsonObject));
-		rbTemplateContext.getBaseInfo()
-				.setType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
-
-		rbTemplateService.update(rbTemplateContext, businessTemplate);
-
-		return getRbTemplate(resourceId);
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("删除")
@@ -174,7 +170,7 @@ public class RbTemplateAdminController {
 		List<JSONObject> result = Lists.newArrayList();
 		// 逐角色逐阶段读取任务信息
 		roleArray.forEach(role -> {
-			CrRoleConfigBO roleRsp = ((JSONObject) role).toJavaObject(CrRoleConfigBO.class);
+			CrRoleConfig roleRsp = ((JSONObject) role).toJavaObject(CrRoleConfig.class);
 			roleRsp.setId(IDGeneratorUtil.getID());
 			roleRsp.getMissionsScheme().getSchemeData()
 					.forEach(datum -> datum.getMissions().forEach(mission -> {
@@ -186,6 +182,22 @@ public class RbTemplateAdminController {
 			result.add(JsonUtil.java2JsonObject(roleRsp, PropertyNamingStrategy.SnakeCase));
 		});
 		return result;
+	}
+
+	private RbTemplate reqToRbTemplate(RbTemplateAddReq req, RbTemplate rbTemplate) {
+
+		CrRoleConfigRb roleConfigRb = BeanUtils.copy(req, CrRoleConfigRb.class);
+		BaseInfo baseInfo = req.getBaseInfo();
+		// validate role config
+		crCommonService.validateRbRoleConfig(roleConfigRb);
+		// validate tag
+		rbTemplate.setPreSkill(CrCommonUtil.handleTrainingTag(baseInfo.getPreSkill()));
+		rbTemplate.setTrainSkill(CrCommonUtil.handleTrainingTag(baseInfo.getTrainSkill()));
+		rbTemplate.setSubType(baseInfo.getCategory());
+		rbTemplate.setDurationTime(baseInfo.getDurationTime());
+		rbTemplate.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigRb));
+
+		return rbTemplate;
 	}
 
 }

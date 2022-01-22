@@ -23,6 +23,7 @@ import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
@@ -134,9 +135,9 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 		CrRoleConfigRb crRoleConfigRb = JsonUtil.toJsonObject(roleConfig, CrRoleConfigRb.class);
 		List<String> missionTemplateIds = Lists.newArrayList();
 		missionTemplateIds
-				.addAll(missionTemplateService.getIdsByRoleConfig(crRoleConfigRb.getRedRoles()));
+				.addAll(CrCommonUtil.getMissionTemplateIds((crRoleConfigRb.getRedRoles())));
 		missionTemplateIds
-				.addAll(missionTemplateService.getIdsByRoleConfig(crRoleConfigRb.getBlueRoles()));
+				.addAll(CrCommonUtil.getMissionTemplateIds((crRoleConfigRb.getBlueRoles())));
 
 		return missionTemplateIds;
 	}

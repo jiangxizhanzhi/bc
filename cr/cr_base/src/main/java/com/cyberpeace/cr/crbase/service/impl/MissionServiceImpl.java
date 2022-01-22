@@ -42,6 +42,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateCon
 import com.cyberpeace.cr.crbase.service.context.mission.TrainingManualTeam;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -570,9 +571,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				for (MissionTemplate template : missions) {
 					titles.add(template.getTitle());
 					// 校验任务名称长度
-					CrCommonValidator.validateLength(template.getTitle(),
-							CrCommonConstants.MIN_MISSION_NAME_LEN,
-							CrCommonConstants.MAX_MISSION_NAME_LEN,
+					CrCommonValidator.validateNameLen(template.getTitle(),
 							CrBusinessErrorCode.INVALID_MISSION_NAME);
 				}
 				// 校验阶段内任务重名

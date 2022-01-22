@@ -8,7 +8,7 @@ import lombok.Data;
  * 用于后台模板查询的返回
  */
 @Data
-public class CrRoleConfigBO extends CrRoleNodesData implements Serializable {
+public class CrRoleConfig extends CrRoleNodesData implements Serializable {
 
 	private String name;
 

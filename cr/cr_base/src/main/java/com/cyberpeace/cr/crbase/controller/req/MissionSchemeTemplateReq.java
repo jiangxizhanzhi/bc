@@ -7,7 +7,7 @@ import javax.validation.Valid;
 
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
-import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;

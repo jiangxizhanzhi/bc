@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -15,10 +15,10 @@ public class RbTemplateAddReq extends BasicTemplate {
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<JSONObject> redRoles;
+	private List<CrRoleConfig> redRoles;
 
 	@ApiModelProperty(required = true)
 	@NotNull
-	private List<JSONObject> blueRoles;
+	private List<CrRoleConfig> blueRoles;
 
 }

@@ -191,7 +191,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 				expLessonIds);
 		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
 				TimeUtil.getStartOfDay(endTime));
-		Map<String, List<LessonRecord>> courseRecordMap = lessonRecord.stream()
+		Map<String, List<LessonRecord>> courseRecordMap = lessonRecord.stream().distinct()
 				.collect(Collectors.groupingBy(course -> TimeUtil.format8(course.getCreateTime())));
 		Map<String, List<Note>> finishReportMap = finishReports.stream().collect(Collectors
 				.groupingBy(finishPractice -> TimeUtil.format8(finishPractice.getCreateTime())));

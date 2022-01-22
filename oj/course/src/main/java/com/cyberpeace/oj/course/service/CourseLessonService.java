@@ -166,4 +166,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 */
 	CourseLesson loadLesson(String courseId, LessonDumpLoadBo lessonDumpLoadBo, String filePath,
 			Map<String, String> filePathMap);
+
+	/**
+	 * 创建远程操作日志
+	 * @param lessonInfoBo
+	 */
+	void createMpLog(LessonInfoBo lessonInfoBo);
 }

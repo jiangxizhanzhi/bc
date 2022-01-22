@@ -11,9 +11,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
@@ -46,9 +43,6 @@ public class PracticeTheoryController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
-
-	@Autowired
-	private RemoteLogService remoteLogService;
 
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
@@ -94,9 +88,7 @@ public class PracticeTheoryController {
 				answerReq.getSubmitAnswer());
 
 		// 记录远程操作日志
-		String content = "资源编号为" + answerReq.getResourceId() + "。";
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
-				OperationType.EXERCISE, OperationModule.THEORY.getDesc(), content);
+		practiceTheoryService.createMpLog(answerReq);
 
 		return new BaseRsp<>(evaluateResult);
 	}

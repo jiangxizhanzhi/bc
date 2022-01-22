@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.mp.MpLog;
@@ -57,15 +58,15 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 	@Override
 	@Async
 	public void addCrLog(UserInfo userInfo, OperationModule operationModule,
-			OperationType operationType, String operationTarget) {
+			OperationType operationType, String operationTarget, String language) {
 
 		// 处理基础信息
 		MpLog mpLog = addBasicInfo(userInfo, operationModule, operationType, operationTarget);
 
 		// 拼接操作描述
-		mpLog.setContent(String.format("%s%s了%s[%s]", userInfo.getUserName(),
-				operationType.getDesc(), operationModule.getDesc(), operationTarget));
-
+		mpLog.setContent(String.format(LogContent.getLocaleValue(LogContent.CR_FORMAT, language),
+				OperationType.getLocaleValue(operationType, language),
+				OperationModule.getLocaleValue(operationModule, language), operationTarget));
 		addLog(mpLog);
 
 	}
@@ -73,14 +74,13 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 	@Override
 	@Async
 	public void addOjLog(UserInfo userInfo, OperationModule operationModule,
-			OperationType operationType, String operationTarget, String cotent) {
+			OperationType operationType, String operationTarget, String content) {
 
 		// 处理基础信息
 		MpLog mpLog = addBasicInfo(userInfo, operationModule, operationType, operationTarget);
 
 		// 拼接操作描述
-		mpLog.setContent(String.format("%s%s了%s，%s", userInfo.getUserName(),
-				operationType.getDesc(), operationModule.getDesc(), cotent));
+		mpLog.setContent(content);
 
 		addLog(mpLog);
 	}

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.service.bo.*;
@@ -166,8 +167,13 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param filePath
 	 * @return
 	 */
-	PracticeOperation
-			loadPracticeOperation(String practiceSetId,
+	PracticeOperation loadPracticeOperation(String practiceSetId,
 			PracticeOperationDumpLoadBo dumpBo, Map<String, String> filePathMap, String filePath,
 			String userId);
+
+	/**
+	 * 创建远程操作日志
+	 * @param answerReq
+	 */
+	void createMpLog(SubmitAnswerReq answerReq);
 }

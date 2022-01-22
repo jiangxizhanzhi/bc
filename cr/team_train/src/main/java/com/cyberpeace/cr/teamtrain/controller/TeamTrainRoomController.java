@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -333,7 +334,8 @@ public class TeamTrainRoomController {
 				crRoleService.clearRoomRoles(roomId);
 				teamRoomService.removeById(roomId);
 				// 记录房间删除时间
-				trainRecordService.updateEndDate(roomId, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+				trainRecordService.updateEndDate(roomId,
+						BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 			}
 		});
 
@@ -407,7 +409,8 @@ public class TeamTrainRoomController {
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
 						: OperationType.START;
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName());
+				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName(),
+				CommonContext.getLanguage());
 		return new BaseRsp<>(map);
 	}
 

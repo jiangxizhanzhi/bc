@@ -1,8 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,12 +10,17 @@ import javax.annotation.Resource;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
@@ -27,7 +30,6 @@ import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import com.cyberpeace.oj.practice.service.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -49,8 +51,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
@@ -177,6 +177,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private PracticeOperationService practiceOperationService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
@@ -1249,5 +1252,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(), courseId);
 		AttachmentBo attachmentBo = attachmentService.uploadDest(handoutPath, false, handout);
 		return attachmentBo.getFilePath();
+	}
+
+	@Override
+	public void createMpLog(LessonInfoBo lessonInfoBo){
+		String operationTarget = lessonInfoBo.getCourseName() + "-" + lessonInfoBo.getName();
+		String language = CommonContext.getLanguage();
+		String content = String.format(LogContent.getLocaleValue(LogContent.COURSE_FORMAT, language),
+				lessonInfoBo.getCourseName(), lessonInfoBo.getName());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.STUDY, operationTarget, content);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.cr.crbase.service.MissionService;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
@@ -60,6 +62,9 @@ public class TeamTrainScoreController {
 
 	@Autowired
 	private CrScoreController crScoreController;
+
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private MpEnvService mpEnvService;
@@ -117,6 +122,9 @@ public class TeamTrainScoreController {
 
 		}
 
+		List<RadarLabel> radarLabels = missionService.getRadarLabel();
+
+		jsonObject.put("radarLabels", radarLabels);
 		jsonObject.put("user_list", userList);
 		jsonObject.put("mission_report", getTrainingMissionReport(roomId).getData());
 		jsonObject.put("report", trainingReport);

@@ -103,9 +103,9 @@ public class RbRoomScoreController {
 		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
-		if (new File(destHtmlPath).delete()) {
-			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
-		}
+//		if (new File(destHtmlPath).delete()) {
+////			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+//		}
 	}
 
 	private JSONObject getTrainRecordJsonObject(String roomId, Integer roleGroup) {

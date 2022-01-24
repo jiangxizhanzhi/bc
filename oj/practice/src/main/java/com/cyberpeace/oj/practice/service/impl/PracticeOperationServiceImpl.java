@@ -7,29 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
-import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.integratation.constant.LogContent;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.oj.ojbase.constant.*;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
-import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
-import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,27 +22,52 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
-import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
@@ -135,6 +137,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -275,7 +280,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public WebOperationBo selectById(String resourceId, AuthContext authContext, Boolean isCollected) {
+	public WebOperationBo selectById(String resourceId, AuthContext authContext,
+			Boolean isCollected) {
 
 		OperationBo operationBo = selectById(resourceId);
 		WebOperationBo webOperationBo = BeanUtils.copy(operationBo, WebOperationBo.class);
@@ -434,7 +440,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer, Boolean isCollected) {
+	public EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer,
+			Boolean isCollected) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {

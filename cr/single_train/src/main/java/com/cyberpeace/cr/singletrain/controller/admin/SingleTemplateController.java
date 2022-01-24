@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -45,6 +46,9 @@ public class SingleTemplateController {
 	@GetMapping
 	@ApiOperation("单兵训练模板获取")
 	public BaseRsp<SingleTemplateBo> get(@RequestParam("resource_id") String businessTemplateId) {
+		businessTemplateService.checkPermission(businessTemplateId,
+				UserInfoContext.getUserContext().getUserId());
+
 		return new BaseRsp<>(singleTemplateService.get(businessTemplateId));
 	}
 

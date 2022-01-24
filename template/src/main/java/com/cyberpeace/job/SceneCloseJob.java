@@ -8,6 +8,8 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.SceneOpsContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -27,7 +29,10 @@ public class SceneCloseJob {
 	@Autowired
 	private LocalSceneService localSceneService;
 
-	@Scheduled(fixedRate = 15000)
+	@Autowired
+	private RemoteSceneService remoteSceneService;
+
+//	@Scheduled(fixedRate = 15000)
 	public void invoke() {
 		log.info("SceneCloseJob start");
 
@@ -41,7 +46,12 @@ public class SceneCloseJob {
 		List<LocalScene> toCloseScenes = localSceneMapper.selectByCloseTime(new Date());
 
 		// 2、逐个调用远程接口，关闭
-		toCloseScenes.forEach(localScene -> localSceneService.deleteRemoteScene(localScene));
+		toCloseScenes.forEach(localScene -> {
+			SceneOpsContext context = new SceneOpsContext();
+			context.setId(localScene.getMpSceneId());
+
+//			remoteSceneService.stopScene();
+		});
 	}
 
 }

@@ -34,6 +34,7 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import com.cyberpeace.oj.practice.service.*;
+import com.cyberpeace.oj.practice.service.impl.LessonOperationEvaluateHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,8 +121,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Resource(name = "theory")
 	private PracticeEvaluateHandler theoryEvaluateHandler;
 
-	@Resource(name = "operation")
-	private PracticeEvaluateHandler operationEvaluateHandler;
+	@Resource(name = "lesson_operation")
+	private LessonOperationEvaluateHandler lessonOperationEvaluateHandler;
 
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
@@ -663,8 +664,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				// 实操数据并评估
 				PracticeOperation operation = practiceOperationRefService
 						.selectByPracticeId(paper.getResourceId(), submitContext.getPracticeId());
-				EvaluateResult evaluateResult = operationEvaluateHandler.evaluateByBusiness(
-						answerContext.getUserId(), operation, submitContext.getSubmitAnswer());
+				EvaluateResult evaluateResult = lessonOperationEvaluateHandler.evaluateByBusiness(
+						authContext.getUserId(), operation, submitContext.getSubmitAnswer(),
+						answerContext.getLessonId());
 
 				PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult, PracticeSolvedBo.class);
 				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());

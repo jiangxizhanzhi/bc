@@ -336,59 +336,97 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		// 生成理论习题练习
 		List<PaperPracticeContext> theoryContextList = columnMap.getOrDefault(
 				PracticeCategory.PracticeType.THEORY.getCode().intValue(), Lists.newArrayList());
-		List<PracticeTheoryRef> theoryRefList = contextToEntity(practiceTheoryMapper,
-				theoryContextList, paper, PracticeTheoryRef.class);
+		List<PracticeTheoryRef> theoryRefList = theoryContextToRef(theoryContextList, paper);
 		theoryRefs.addAll(theoryRefList);
 
 		// 生成实践操作练习
 		List<PaperPracticeContext> operationContextList = columnMap.getOrDefault(
 				PracticeCategory.PracticeType.OPERATION.getCode(), Lists.newArrayList());
-		List<PracticeOperationRef> operationRefList = contextToEntity(practiceOperationMapper,
-				operationContextList, paper, PracticeOperationRef.class);
+		List<PracticeOperationRef> operationRefList = operationContextToRef(operationContextList,
+				paper);
 		operationRefs.addAll(operationRefList);
 
 	}
 
 	/**
-	 * 参数转实体类
-	 * @param baseMapper
-	 * @param paperPracticeContexts
+	 * 理论题数据转换
+	 * @param theoryContexts
 	 * @param paper
 	 * @return
 	 */
-	private <T> List<T> contextToEntity(BaseMapper baseMapper,
-			List<PaperPracticeContext> paperPracticeContexts, Paper paper, Class<T> cls) {
+	private List<PracticeTheoryRef> theoryContextToRef(List<PaperPracticeContext> theoryContexts,
+			Paper paper) {
 
 		// 为空则返回空集合
-		if (CollectionUtils.isEmpty(paperPracticeContexts)) {
+		if (CollectionUtils.isEmpty(theoryContexts)) {
 			return Lists.newArrayList();
 		}
 
-		List<String> practiceIds = StreamApiUtils.map(paperPracticeContexts,
+		// 查询习题数据 查询新的以及旧的
+		List<String> practiceIds = StreamApiUtils.map(theoryContexts,
 				PaperPracticeContext::getResourceId);
+		List<PracticeTheory> practiceList = practiceTheoryMapper.selectBatchIds(practiceIds);
+		List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper
+				.selectByPracticeIds(paper.getResourceId(), practiceIds);
 
-		List<PracticeBase> practiceList = baseMapper.selectBatchIds(practiceIds);
-
-		Map<String, PaperPracticeContext> practiceMap = StreamApiUtils.toMap(paperPracticeContexts,
+		// 组装引用数据
+		Map<String, PaperPracticeContext> practiceMap = StreamApiUtils.toMap(theoryContexts,
 				PaperPracticeContext::getResourceId, pc -> pc);
-
-		List<T> refList = StreamApiUtils.map(practiceList, practiceBase -> {
+		practiceList.forEach(practiceTheory -> {
 
 			PracticeTheoryRef theoryRef = new PracticeTheoryRef();
-			practiceBase.setScore(practiceMap.get(practiceBase.getResourceId()).getScore());
+			practiceTheory.setScore(practiceMap.get(practiceTheory.getResourceId()).getScore());
+			theoryRef.setSnapshot(JsonUtil.toJsonString(practiceTheory));
 			theoryRef.setPaperId(paper.getResourceId());
-			theoryRef.setOriginId(practiceBase.getResourceId());
+			theoryRef.setOriginId(practiceTheory.getResourceId());
+
 			theoryRef.setOptionRandom(
-					practiceMap.get(practiceBase.getResourceId()).getOptionRandom());
+					practiceMap.get(practiceTheory.getResourceId()).getOptionRandom());
 			theoryRef.setResourceId(IDGeneratorUtil.getID());
-
-			theoryRef.setSnapshot(JsonUtil.toJsonString(practiceBase));
-
-			T instance = BeanUtils.copy(theoryRef, cls);
-			return instance;
+			theoryRefList.add(theoryRef);
 		});
 
-		return refList;
+		return StreamApiUtils.distinctByColumn(theoryRefList, PracticeTheoryRef::getOriginId);
+	}
+
+	/**
+	 * 实操习题数据
+	 * @param operationContexts
+	 * @param paper
+	 * @return
+	 */
+	private List<PracticeOperationRef>
+			operationContextToRef(List<PaperPracticeContext> operationContexts, Paper paper) {
+
+		// 为空则返回空集合
+		if (CollectionUtils.isEmpty(operationContexts)) {
+			return Lists.newArrayList();
+		}
+
+		// 查询习题数据 查询新的以及旧的
+		List<String> practiceIds = StreamApiUtils.map(operationContexts,
+				PaperPracticeContext::getResourceId);
+		List<PracticeOperation> practiceList = practiceOperationMapper.selectBatchIds(practiceIds);
+		List<PracticeOperationRef> operationRefList = practiceOperationRefMapper
+				.selectByPracticeIds(paper.getResourceId(), practiceIds);
+
+		// 组装引用数据
+		Map<String, PaperPracticeContext> practiceMap = StreamApiUtils.toMap(operationContexts,
+				PaperPracticeContext::getResourceId, pc -> pc);
+		practiceList.forEach(practiceOperation -> {
+			PracticeOperationRef operationRef = new PracticeOperationRef();
+			operationRef.setPaperId(paper.getResourceId());
+			operationRef.setOriginId(practiceOperation.getResourceId());
+
+			practiceOperation
+					.setScore(practiceMap.get(practiceOperation.getResourceId()).getScore());
+			operationRef.setSnapshot(JsonUtil.toJsonString(practiceOperation));
+
+			operationRef.setResourceId(IDGeneratorUtil.getID());
+			operationRefList.add(operationRef);
+		});
+
+		return StreamApiUtils.distinctByColumn(operationRefList, PracticeOperationRef::getOriginId);
 	}
 
 }

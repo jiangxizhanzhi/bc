@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class CourseValidateHandler {
 	private CourseCategoryMapper courseCategoryMapper;
 
 	@Autowired
-	private OjLocalSceneService ojLocalSceneService;
+	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	/**
 	 * 校验课时更新时 名称是否已存在
@@ -60,11 +61,14 @@ public class CourseValidateHandler {
 	 * 校验课时修改是否存在场景信息
 	 * @param courseLesson
 	 */
-	public void validateLessonUpdateSceneExist(CourseLesson courseLesson, AuthContext authContext) {
+	public void validateLessonUpdateSceneExist(CourseLesson courseLesson) {
 
-		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
-				courseLesson.getResourceId(), courseLesson.getSceneShareMode(), authContext);
-		if (null != ojLocalScene) {
+		List<OjLocalScene> webScenes = ojLocalSceneMapper
+				.selectByBusiness(courseLesson.getResourceId(), true);
+		List<OjLocalScene> adminScenes = ojLocalSceneMapper
+				.selectByBusiness(courseLesson.getResourceId(), false);
+
+		if (CollectionUtils.isNotEmpty(webScenes) || CollectionUtils.isNotEmpty(adminScenes)) {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}

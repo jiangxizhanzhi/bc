@@ -408,9 +408,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		courseValidateHandler.validateLessonUpdateNameExist(lessonExist, courseLesson.getName());
 		if (lessonExist.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				.intValue() && StringUtils.isNotBlank(courseLesson.getTopoId())) {
-			AuthContext authContext = AuthContextUtils
-					.constructAuth(UserInfoContext.getUserContext(), false);
-			courseValidateHandler.validateLessonUpdateSceneExist(lessonExist, authContext);
+			courseValidateHandler.validateLessonUpdateSceneExist(lessonExist);
 		}
 
 		// 试卷数据
@@ -1265,10 +1263,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public void createMpLog(LessonInfoBo lessonInfoBo){
+	public void createMpLog(LessonInfoBo lessonInfoBo) {
 		String operationTarget = lessonInfoBo.getCourseName() + "-" + lessonInfoBo.getName();
 		String language = CommonContext.getLanguage();
-		String content = String.format(LogContent.getLocaleValue(LogContent.COURSE_FORMAT, language),
+		String content = String.format(
+				LogContent.getLocaleValue(LogContent.COURSE_FORMAT, language),
 				lessonInfoBo.getCourseName(), lessonInfoBo.getName());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
 				OperationType.STUDY, operationTarget, content);

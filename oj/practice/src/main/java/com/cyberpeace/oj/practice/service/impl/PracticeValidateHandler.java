@@ -6,6 +6,7 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -40,7 +41,7 @@ public class PracticeValidateHandler {
 	private PracticeTheoryMapper practiceTheoryMapper;
 
 	@Autowired
-	private OjLocalSceneService ojLocalSceneService;
+	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	/**
 	 * 字段数据长度校验
@@ -198,13 +199,13 @@ public class PracticeValidateHandler {
 	/**
 	 * 更新时校验场景是否存在
 	 * @param operation
-	 * @param authContext
 	 */
-	public void validateOperationUpdateSceneExist(PracticeOperation operation,
-			AuthContext authContext) {
-		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
-				operation.getResourceId(), operation.getSceneShareMode(), authContext);
-		if (null != ojLocalScene) {
+	public void validateOperationUpdateSceneExist(PracticeOperation operation) {
+		List<OjLocalScene> adminScenes = ojLocalSceneMapper
+				.selectByBusiness(operation.getResourceId(), false);
+		List<OjLocalScene> webScenes = ojLocalSceneMapper
+				.selectByBusiness(operation.getResourceId(), true);
+		if (CollectionUtils.isNotEmpty(adminScenes) || CollectionUtils.isNotEmpty(webScenes)) {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}

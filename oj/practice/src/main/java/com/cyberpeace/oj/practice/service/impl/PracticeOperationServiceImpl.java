@@ -241,9 +241,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				updateOperation.getTitle());
 		if (operation.getDynamicEnv() && null != operation.getSceneShareMode()
 				&& StringUtils.isNotBlank(operation.getTopoId())) {
-			AuthContext authContext = AuthContextUtils
-					.constructAuth(UserInfoContext.getUserContext(), false);
-			practiceValidateHandler.validateOperationUpdateSceneExist(operation, authContext);
+			practiceValidateHandler.validateOperationUpdateSceneExist(operation);
 		}
 
 		// topo更新

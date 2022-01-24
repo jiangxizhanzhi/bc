@@ -43,6 +43,31 @@
     <select id="countStatus" resultType="java.util.HashMap">
         select `status`, count(`status`) as count
         from cr_report_score
+        where `status` in (1, 2, 3)
+        GROUP BY `status`;
+    </select>
+
+    <select id="ListWeb" resultType="com.cyberpeace.cr.report_score.controller.res.WebReportScoreRsp">
+        select * from cr_report_score
+        <where>
+            `user_id` = #{userId}
+            <if test="listQuery.status != null and listQuery.status != ''">
+                and `status` = #{listQuery.status}
+            </if>
+            <if test="listQuery.subject != null and listQuery.subject != ''">
+                and `subject` = #{listQuery.subject}
+            </if>
+            <if test="listQuery.reportName != null and listQuery.reportName != ''">
+                <bind name="name" value="'%'+listQuery.reportName+'%'"/>
+                and `report_name` like #{name}
+            </if>
+        </where>
+    </select>
+
+    <select id="countWebStatus" resultType="java.util.HashMap">
+        select `status`, count(`status`) as count
+        from cr_report_score
+        where `user_id` = #{userId}
         GROUP BY `status`;
     </select>
 

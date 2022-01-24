@@ -23,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class ReportScoreController {
     @PostMapping
     public BaseRsp<String> update(@RequestBody ReportScoreUpdateScoreReq reportScoreUpdateReq) {
         ReportScore reportScore = BeanUtils.copy(reportScoreUpdateReq, ReportScore.class);
+        reportScore.setScoreTime(new Date());
         reportScoreService.updateById(reportScore);
         return new BaseRsp<>();
     }

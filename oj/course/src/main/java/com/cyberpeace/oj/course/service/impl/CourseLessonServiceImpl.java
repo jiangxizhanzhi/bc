@@ -231,10 +231,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.intValue() == CourseLesson.HandoutType.PDF.getCode().intValue()) {
 			infoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
 		}
-		if (null != lesson.getHandoutType() && (lesson.getHandoutType()
-				.intValue() == CourseLesson.HandoutType.DOC.getCode().intValue()
-				|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT.getCode()
-						.intValue())) {
+		if (null != lesson.getHandoutType()
+				&& (lesson.getHandoutType().intValue() == CourseLesson.HandoutType.DOC.getCode()
+						.intValue()
+						|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT
+								.getCode().intValue())
+				&& StringUtils.isNotBlank(lesson.getHandoutUrl())) {
 			infoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
 		}
 		infoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
@@ -327,10 +329,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// word或者ppt讲义处理
-		if (null != lesson.getHandoutType() && (lesson.getHandoutType()
-				.intValue() == CourseLesson.HandoutType.DOC.getCode().intValue()
-				|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT.getCode()
-						.intValue())) {
+		if (null != lesson.getHandoutType()
+				&& (lesson.getHandoutType().intValue() == CourseLesson.HandoutType.DOC.getCode()
+						.intValue()
+						|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT
+								.getCode().intValue())
+				&& StringUtils.isNotBlank(lesson.getHandoutUrl())) {
 			lessonInfoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
 			lessonInfoBo.setHandoutName(StringUtils.substring(lesson.getHandoutUrl(),
 					lesson.getHandoutUrl().lastIndexOf(File.separatorChar) + CommonConstant.ONE));
@@ -407,7 +411,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.validateLessonExist(courseLesson.getResourceId(), false);
 		courseValidateHandler.validateLessonUpdateNameExist(lessonExist, courseLesson.getName());
 		courseValidateHandler.validateLessonUpdateSceneExist(lessonExist);
-
 
 		// 试卷数据
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);

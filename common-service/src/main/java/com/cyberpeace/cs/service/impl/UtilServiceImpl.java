@@ -60,6 +60,10 @@ public class UtilServiceImpl implements UtilService {
 	@Override
 	public String officeUrl(String fileUrl, String fileId) {
 
+		if (StringUtils.isNotBlank(fileUrl)) {
+			return fileUrl;
+		}
+
 		String fileName = fileUrl;
 		int lastIndexOf = fileUrl.lastIndexOf(File.separator);
 		if (lastIndexOf != CommonConstant.NEGATIVE_ONE) {

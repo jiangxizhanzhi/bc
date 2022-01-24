@@ -60,7 +60,7 @@ public class UtilServiceImpl implements UtilService {
 	@Override
 	public String officeUrl(String fileUrl, String fileId) {
 
-		if (StringUtils.isNotBlank(fileUrl)) {
+		if (StringUtils.isBlank(fileUrl)) {
 			return fileUrl;
 		}
 

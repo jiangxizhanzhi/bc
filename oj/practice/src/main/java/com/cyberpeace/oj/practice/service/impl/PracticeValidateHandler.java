@@ -5,6 +5,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -12,6 +14,7 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.itextpdf.tool.xml.html.head.Title;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +38,9 @@ public class PracticeValidateHandler {
 
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
+
+	@Autowired
+	private OjLocalSceneService ojLocalSceneService;
 
 	/**
 	 * 字段数据长度校验
@@ -172,6 +178,34 @@ public class PracticeValidateHandler {
 			log.error("Practice theory content exist! practice_set_id=[{}], practice_id=[{}]",
 					practiceSetId, practiceId);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+	}
+
+	/**
+	 * 校验实操习题修改title已存在问题
+	 * @param operation
+	 * @param newTitle
+	 */
+	public void validateOperationUpdateTitleExist(PracticeOperation operation, String newTitle) {
+		String existTitleId = practiceOperationMapper.selectByTitle(operation.getPracticeSetId(),
+				newTitle);
+		if (StringUtils.isNotBlank(existTitleId)
+				&& !operation.getResourceId().equals(existTitleId)) {
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+	}
+
+	/**
+	 * 更新时校验场景是否存在
+	 * @param operation
+	 * @param authContext
+	 */
+	public void validateOperationUpdateSceneExist(PracticeOperation operation,
+			AuthContext authContext) {
+		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
+				operation.getResourceId(), operation.getSceneShareMode(), authContext);
+		if (null != ojLocalScene) {
+			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}
 }

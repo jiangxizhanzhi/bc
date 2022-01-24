@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -135,9 +136,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
-	private RemoteLogService remoteLogService;
-
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			JSONObject ojSceneConfig, AuthContext authContext) {
@@ -231,6 +229,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig) {
 
+		// 数据校验
+		PracticeOperation operation = practiceValidateHandler
+				.validateOperationExist(updateOperation.getResourceId());
+		practiceValidateHandler.validateOperationUpdateTitleExist(operation,
+				updateOperation.getTitle());
+		if (operation.getDynamicEnv() && null != operation.getSceneShareMode()
+				&& StringUtils.isNotBlank(operation.getTopoId())) {
+			AuthContext authContext = AuthContextUtils
+					.constructAuth(UserInfoContext.getUserContext(), false);
+			practiceValidateHandler.validateOperationUpdateSceneExist(operation, authContext);
+		}
+
+		// topo更新
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
 			localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId());
 		}

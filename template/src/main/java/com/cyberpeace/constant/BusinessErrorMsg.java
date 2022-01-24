@@ -76,7 +76,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE, "任务方案名称重复");
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "习题数量不足");
-			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "课堂场景运行中");
+			put(OjBusinessErrorCode.CLASS_SCENE_IS_RUNNING, "课堂场景运行中");
+			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "场景运行中");
 			put(OjBusinessErrorCode.RESOURCE_PERMISSION, "权限不足");
 			put(OjBusinessErrorCode.COURSE_NUM_IS_EXIST, "课程编号已存在");
 			put(OjBusinessErrorCode.NAME_IS_EXIST, "名称已存在");
@@ -185,22 +186,23 @@ public interface BusinessErrorMsg {
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH,
 					"The number of practice sets is insufficient.");
-			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "Scene is running.");
+			put(OjBusinessErrorCode.CLASS_SCENE_IS_RUNNING, "Class Scene is running.");
 			put(OjBusinessErrorCode.RESOURCE_PERMISSION, "Resource not permission.");
 			put(OjBusinessErrorCode.COURSE_NUM_IS_EXIST, "Course number already exists.");
 			put(OjBusinessErrorCode.NAME_IS_EXIST, "Name already exists.");
 			put(OjBusinessErrorCode.FILED_DATA_TOO_LONG, "The field data is too long.");
-			put(OjBusinessErrorCode.SCENE_START_FAIL, "Scene startup failure");
+			put(OjBusinessErrorCode.SCENE_START_FAIL, "Scene startup failure.");
 			put(OjBusinessErrorCode.END_GT_START_TIME,
-					"The end time must be greater than the start time");
+					"The end time must be greater than the start time.");
 			put(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR,
-					"Time is out of range, only 8 to 21");
+					"Time is out of range, only 8 to 21.");
 			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS,
-					"Select No users in the organization");
-			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "Resource is being used");
-			put(OjBusinessErrorCode.CLASS_IN_SCHEDULES, "The class has courses during this time");
+					"Select No users in the organization.");
+			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "Resource is being used.");
+			put(OjBusinessErrorCode.CLASS_IN_SCHEDULES, "The class has courses during this time.");
 			put(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME,
-					"A course schedule with the same organization and lesson already exists");
+					"A course schedule with the same organization and lesson already exists.");
+			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "Scene is running.");
 
 			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");

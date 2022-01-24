@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -30,6 +31,7 @@ import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import com.cyberpeace.oj.practice.service.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -400,9 +402,16 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public CourseLesson updateLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
 
+		// 数据校验
 		CourseLesson lessonExist = courseValidateHandler
 				.validateLessonExist(courseLesson.getResourceId(), false);
-		Boolean updateFlag = !lessonExist.getName().equals(courseLesson.getName());
+		courseValidateHandler.validateLessonUpdateNameExist(lessonExist, courseLesson.getName());
+		if (lessonExist.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
+				.intValue() && StringUtils.isNotBlank(courseLesson.getTopoId())) {
+			AuthContext authContext = AuthContextUtils
+					.constructAuth(UserInfoContext.getUserContext(), false);
+			courseValidateHandler.validateLessonUpdateSceneExist(lessonExist, authContext);
+		}
 
 		// 试卷数据
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
@@ -418,6 +427,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		LessonConfig lessonConfig = LessonConfig.builder().lessonId(courseLesson.getResourceId())
 				.courseId(courseLesson.getCourseId()).name(courseLesson.getName()).build();
 
+		Boolean updateFlag = !lessonExist.getName().equals(courseLesson.getName());
 		// 课时留言theme_name修改
 		Comment comment = new Comment();
 		if (updateFlag) {
@@ -748,8 +758,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public Boolean addLessonPractice(String resourceId, List<PaperPracticeContext> practiceList) {
-		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(resourceId, false);
+	public Boolean addLessonPractice(String lessonId, List<PaperPracticeContext> practiceList) {
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
 
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 		Paper paper = paperService.update(paperContext);

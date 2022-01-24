@@ -8,12 +8,10 @@
         select * from oj_practice_solved
         where submit_user_id = #{userId}
         and practice_id = #{practiceId}
-        and collection = #{isCollect}
     </select>
 
     <select id="selectUserAndSolved" resultType="java.lang.String">
-        select practice_id from oj_practice_solved where collection = #{isCollect}
-            where collection = #{isCollect}
+        select practice_id from oj_practice_solved
         <where>
             <if test="userId != null and userId != ''">
                 submit_user_id = #{userId}

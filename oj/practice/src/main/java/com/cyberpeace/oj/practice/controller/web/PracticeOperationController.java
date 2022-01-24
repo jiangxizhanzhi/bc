@@ -89,7 +89,7 @@ public class PracticeOperationController {
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
-				answerReq.getSubmitAnswer(), answerReq.getIsCollected());
+				answerReq.getSubmitAnswer(), Boolean.FALSE);
 
 		// 记录远程操作日志
 		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;

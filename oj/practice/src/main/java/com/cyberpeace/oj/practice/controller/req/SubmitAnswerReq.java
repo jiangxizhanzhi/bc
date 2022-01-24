@@ -19,8 +19,4 @@ public class SubmitAnswerReq implements Serializable {
 	@NotBlank
 	private String submitAnswer;
 
-	@ApiModelProperty("是否收藏")
-	@NotBlank
-	private Boolean isCollected;
-
 }

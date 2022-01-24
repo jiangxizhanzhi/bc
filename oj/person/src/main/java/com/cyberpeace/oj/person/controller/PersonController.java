@@ -183,7 +183,7 @@ public class PersonController {
 
 	@ApiOperation("收藏理论题详情页")
 	@GetMapping("/collection_theory_practice_detail")
-	public BaseRsp<WebTheoryBo> collectionTheoryRetrieve(@ApiParam @Validated String resourceId) {
+	public BaseRsp<WebTheoryBo> collectionTheoryRetrieve(@RequestParam(value = "resource_id") String resourceId) {
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
 				UserInfoContext.getUserContext().getUserId(), Boolean.TRUE);
 		return new BaseRsp<>(theoryBo);
@@ -191,7 +191,7 @@ public class PersonController {
 
 	@ApiOperation("收藏实操题详情页")
 	@GetMapping("/collection_operate_practice_detail")
-	public BaseRsp<WebOperationBo> collectionOperateRetrieve(@ApiParam @Validated String resourceId) {
+	public BaseRsp<WebOperationBo> collectionOperateRetrieve(@RequestParam(value = "resource_id") String resourceId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
 		WebOperationBo theoryBo = practiceOperationService.selectById(resourceId, authContext,

@@ -20,7 +20,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for attachment
 -- ----------------------------
-DROP TABLE IF EXISTS `attachment`;
 CREATE TABLE `attachment`  (
                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -36,7 +35,6 @@ CREATE TABLE `attachment`  (
 -- ----------------------------
 -- Table structure for cr_business_template
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_business_template`;
 CREATE TABLE `cr_business_template`  (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
                                          `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -60,7 +58,6 @@ CREATE TABLE `cr_business_template`  (
 -- ----------------------------
 -- Table structure for cr_mission
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_mission`;
 CREATE TABLE `cr_mission`  (
                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                `resource_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -84,7 +81,6 @@ CREATE TABLE `cr_mission`  (
 -- ----------------------------
 -- Table structure for cr_mission_category
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_mission_category`;
 CREATE TABLE `cr_mission_category`  (
                                         `id` int(11) NOT NULL AUTO_INCREMENT,
                                         `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -96,7 +92,6 @@ CREATE TABLE `cr_mission_category`  (
 -- ----------------------------
 -- Table structure for cr_mission_scheme_template
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_mission_scheme_template`;
 CREATE TABLE `cr_mission_scheme_template`  (
                                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                                `resource_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -113,7 +108,6 @@ CREATE TABLE `cr_mission_scheme_template`  (
 -- ----------------------------
 -- Table structure for cr_mission_template
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_mission_template`;
 CREATE TABLE `cr_mission_template`  (
                                         `id` int(11) NOT NULL AUTO_INCREMENT,
                                         `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -137,7 +131,6 @@ CREATE TABLE `cr_mission_template`  (
 -- ----------------------------
 -- Table structure for cr_radar_label
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_radar_label`;
 CREATE TABLE `cr_radar_label`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `resource_id` int(11) NULL DEFAULT NULL,
@@ -148,7 +141,6 @@ CREATE TABLE `cr_radar_label`  (
 -- ----------------------------
 -- Table structure for cr_rb_device
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_rb_device`;
 CREATE TABLE `cr_rb_device`  (
                                  `id` int(11) NOT NULL AUTO_INCREMENT,
                                  `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -163,7 +155,6 @@ CREATE TABLE `cr_rb_device`  (
 -- ----------------------------
 -- Table structure for cr_rb_room
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_rb_room`;
 CREATE TABLE `cr_rb_room`  (
                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -196,7 +187,6 @@ CREATE TABLE `cr_rb_room`  (
 -- ----------------------------
 -- Table structure for cr_rb_template
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_rb_template`;
 CREATE TABLE `cr_rb_template`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -216,7 +206,6 @@ CREATE TABLE `cr_rb_template`  (
 -- ----------------------------
 -- Table structure for cr_rb_time_management
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_rb_time_management`;
 CREATE TABLE `cr_rb_time_management`  (
                                           `id` int(11) NOT NULL AUTO_INCREMENT,
                                           `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -236,7 +225,6 @@ CREATE TABLE `cr_rb_time_management`  (
 -- ----------------------------
 -- Table structure for cr_role
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_role`;
 CREATE TABLE `cr_role`  (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
                             `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -260,7 +248,6 @@ CREATE TABLE `cr_role`  (
 -- ----------------------------
 -- Table structure for cr_score
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_score`;
 CREATE TABLE `cr_score`  (
                              `id` int(11) NOT NULL AUTO_INCREMENT,
                              `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -280,7 +267,6 @@ CREATE TABLE `cr_score`  (
 -- ----------------------------
 -- Table structure for cr_single_room
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_single_room`;
 CREATE TABLE `cr_single_room`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -301,7 +287,6 @@ CREATE TABLE `cr_single_room`  (
 -- ----------------------------
 -- Table structure for cr_single_template
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_single_template`;
 CREATE TABLE `cr_single_template`  (
                                        `id` int(11) NOT NULL AUTO_INCREMENT,
                                        `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -321,7 +306,6 @@ CREATE TABLE `cr_single_template`  (
 -- ----------------------------
 -- Table structure for cr_task
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_task`;
 CREATE TABLE `cr_task`  (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
                             `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -348,7 +332,6 @@ CREATE TABLE `cr_task`  (
 -- ----------------------------
 -- Table structure for cr_task_log
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_task_log`;
 CREATE TABLE `cr_task_log`  (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                 `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -370,7 +353,6 @@ CREATE TABLE `cr_task_log`  (
 -- ----------------------------
 -- Table structure for cr_task_submit
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_task_submit`;
 CREATE TABLE `cr_task_submit`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -396,7 +378,6 @@ CREATE TABLE `cr_task_submit`  (
 -- ----------------------------
 -- Table structure for cr_team_room
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_team_room`;
 CREATE TABLE `cr_team_room`  (
                                  `id` int(11) NOT NULL AUTO_INCREMENT,
                                  `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -427,7 +408,6 @@ CREATE TABLE `cr_team_room`  (
 -- ----------------------------
 -- Table structure for cr_team_template
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_team_template`;
 CREATE TABLE `cr_team_template`  (
                                      `id` int(11) NOT NULL AUTO_INCREMENT,
                                      `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -449,7 +429,6 @@ CREATE TABLE `cr_team_template`  (
 -- ----------------------------
 -- Table structure for cr_tool_exploit
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_tool_exploit`;
 CREATE TABLE `cr_tool_exploit`  (
                                     `id` int(11) NOT NULL,
                                     `status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -473,7 +452,6 @@ CREATE TABLE `cr_tool_exploit`  (
 -- ----------------------------
 -- Table structure for cr_tool_ghdb
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_tool_ghdb`;
 CREATE TABLE `cr_tool_ghdb`  (
                                  `id` int(11) NOT NULL,
                                  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -491,7 +469,6 @@ CREATE TABLE `cr_tool_ghdb`  (
 -- ----------------------------
 -- Table structure for cr_tool_shellcode
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_tool_shellcode`;
 CREATE TABLE `cr_tool_shellcode`  (
                                       `id` int(11) NOT NULL,
                                       `status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -513,7 +490,6 @@ CREATE TABLE `cr_tool_shellcode`  (
 -- ----------------------------
 -- Table structure for cr_tool_tool
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_tool_tool`;
 CREATE TABLE `cr_tool_tool`  (
                                  `id` int(11) NOT NULL AUTO_INCREMENT,
                                  `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -546,7 +522,6 @@ CREATE TABLE `cr_tool_tool`  (
 -- ----------------------------
 -- Table structure for cr_tool_toolcategory
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_tool_toolcategory`;
 CREATE TABLE `cr_tool_toolcategory`  (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
                                          `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -559,7 +534,6 @@ CREATE TABLE `cr_tool_toolcategory`  (
 -- ----------------------------
 -- Table structure for cr_tool_toolfile
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_tool_toolfile`;
 CREATE TABLE `cr_tool_toolfile`  (
                                      `id` int(11) NOT NULL AUTO_INCREMENT,
                                      `file_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -571,7 +545,6 @@ CREATE TABLE `cr_tool_toolfile`  (
 -- ----------------------------
 -- Table structure for cr_train_record
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_train_record`;
 CREATE TABLE `cr_train_record`  (
                                     `id` int(11) NOT NULL AUTO_INCREMENT,
                                     `business_type` int(10) UNSIGNED NOT NULL,
@@ -588,28 +561,10 @@ CREATE TABLE `cr_train_record`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for flyway_schema_history
--- ----------------------------
--- DROP TABLE IF EXISTS `flyway_schema_history`;
--- CREATE TABLE `flyway_schema_history`  (
---                                           `installed_rank` int(11) NOT NULL,
---                                           `version` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
---                                           `description` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
---                                           `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
---                                           `script` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
---                                           `checksum` int(11) NULL DEFAULT NULL,
---                                           `installed_by` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
---                                           `installed_on` timestamp NOT NULL DEFAULT current_timestamp(),
---                                           `execution_time` int(11) NOT NULL,
---                                           `success` tinyint(1) NOT NULL,
---                                           PRIMARY KEY (`installed_rank`) USING BTREE,
---                                           INDEX `flyway_schema_history_s_idx`(`success`) USING BTREE
--- ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for init_rtks_course_related
 -- ----------------------------
-DROP TABLE IF EXISTS `init_rtks_course_related`;
 CREATE TABLE `init_rtks_course_related`  (
                                              `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '课程id',
                                              `related_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '知识点id',
@@ -622,7 +577,6 @@ CREATE TABLE `init_rtks_course_related`  (
 -- ----------------------------
 -- Table structure for init_rtks_knowledge
 -- ----------------------------
-DROP TABLE IF EXISTS `init_rtks_knowledge`;
 CREATE TABLE `init_rtks_knowledge`  (
                                         `id` int(11) NOT NULL AUTO_INCREMENT,
                                         `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -638,7 +592,6 @@ CREATE TABLE `init_rtks_knowledge`  (
 -- ----------------------------
 -- Table structure for init_rtks_knowledge_category
 -- ----------------------------
-DROP TABLE IF EXISTS `init_rtks_knowledge_category`;
 CREATE TABLE `init_rtks_knowledge_category`  (
                                                  `id` int(11) NOT NULL AUTO_INCREMENT,
                                                  `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -652,7 +605,6 @@ CREATE TABLE `init_rtks_knowledge_category`  (
 -- ----------------------------
 -- Table structure for init_rtks_level
 -- ----------------------------
-DROP TABLE IF EXISTS `init_rtks_level`;
 CREATE TABLE `init_rtks_level`  (
                                     `id` int(11) NOT NULL AUTO_INCREMENT,
                                     `resource_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -669,7 +621,6 @@ CREATE TABLE `init_rtks_level`  (
 -- ----------------------------
 -- Table structure for init_rtks_role
 -- ----------------------------
-DROP TABLE IF EXISTS `init_rtks_role`;
 CREATE TABLE `init_rtks_role`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -694,7 +645,6 @@ CREATE TABLE `init_rtks_role`  (
 -- ----------------------------
 -- Table structure for init_rtks_task
 -- ----------------------------
-DROP TABLE IF EXISTS `init_rtks_task`;
 CREATE TABLE `init_rtks_task`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -708,7 +658,6 @@ CREATE TABLE `init_rtks_task`  (
 -- ----------------------------
 -- Table structure for local_scene
 -- ----------------------------
-DROP TABLE IF EXISTS `local_scene`;
 CREATE TABLE `local_scene`  (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                 `resource_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -737,7 +686,6 @@ CREATE TABLE `local_scene`  (
 -- ----------------------------
 -- Table structure for oj_classroom
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_classroom`;
 CREATE TABLE `oj_classroom`  (
                                  `id` int(11) NOT NULL AUTO_INCREMENT,
                                  `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -756,7 +704,6 @@ CREATE TABLE `oj_classroom`  (
 -- ----------------------------
 -- Table structure for oj_classroom_group_archive
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_classroom_group_archive`;
 CREATE TABLE `oj_classroom_group_archive`  (
                                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                                `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -771,7 +718,6 @@ CREATE TABLE `oj_classroom_group_archive`  (
 -- ----------------------------
 -- Table structure for oj_classroom_group_info
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_classroom_group_info`;
 CREATE TABLE `oj_classroom_group_info`  (
                                             `id` int(11) NOT NULL AUTO_INCREMENT,
                                             `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -790,7 +736,6 @@ CREATE TABLE `oj_classroom_group_info`  (
 -- ----------------------------
 -- Table structure for oj_classroom_sign
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_classroom_sign`;
 CREATE TABLE `oj_classroom_sign`  (
                                       `id` int(11) NOT NULL AUTO_INCREMENT,
                                       `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -808,7 +753,6 @@ CREATE TABLE `oj_classroom_sign`  (
 -- ----------------------------
 -- Table structure for oj_comment
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_comment`;
 CREATE TABLE `oj_comment`  (
                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -827,7 +771,6 @@ CREATE TABLE `oj_comment`  (
 -- ----------------------------
 -- Table structure for oj_comment_like
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_comment_like`;
 CREATE TABLE `oj_comment_like`  (
                                     `id` int(11) NOT NULL AUTO_INCREMENT,
                                     `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -842,7 +785,6 @@ CREATE TABLE `oj_comment_like`  (
 -- ----------------------------
 -- Table structure for oj_course
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_course`;
 CREATE TABLE `oj_course`  (
                               `id` int(11) NOT NULL AUTO_INCREMENT,
                               `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -874,7 +816,6 @@ CREATE TABLE `oj_course`  (
 -- ----------------------------
 -- Table structure for oj_course_category
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_course_category`;
 CREATE TABLE `oj_course_category`  (
                                        `id` int(11) NOT NULL AUTO_INCREMENT,
                                        `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -891,7 +832,6 @@ CREATE TABLE `oj_course_category`  (
 -- ----------------------------
 -- Table structure for oj_course_lesson
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_course_lesson`;
 CREATE TABLE `oj_course_lesson`  (
                                      `id` int(64) NOT NULL AUTO_INCREMENT,
                                      `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -925,7 +865,6 @@ CREATE TABLE `oj_course_lesson`  (
 -- ----------------------------
 -- Table structure for oj_lesson_config
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_lesson_config`;
 CREATE TABLE `oj_lesson_config`  (
                                      `id` int(11) NOT NULL AUTO_INCREMENT,
                                      `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -943,7 +882,6 @@ CREATE TABLE `oj_lesson_config`  (
 -- ----------------------------
 -- Table structure for oj_lesson_paper_evaluate
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_lesson_paper_evaluate`;
 CREATE TABLE `oj_lesson_paper_evaluate`  (
                                              `id` int(11) NOT NULL AUTO_INCREMENT,
                                              `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -960,7 +898,6 @@ CREATE TABLE `oj_lesson_paper_evaluate`  (
 -- ----------------------------
 -- Table structure for oj_lesson_record
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_lesson_record`;
 CREATE TABLE `oj_lesson_record`  (
                                      `id` int(11) NOT NULL AUTO_INCREMENT,
                                      `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -976,7 +913,6 @@ CREATE TABLE `oj_lesson_record`  (
 -- ----------------------------
 -- Table structure for oj_local_scene
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_local_scene`;
 CREATE TABLE `oj_local_scene`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -995,7 +931,6 @@ CREATE TABLE `oj_local_scene`  (
 -- ----------------------------
 -- Table structure for oj_note
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_note`;
 CREATE TABLE `oj_note`  (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
                             `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1019,7 +954,6 @@ CREATE TABLE `oj_note`  (
 -- ----------------------------
 -- Table structure for oj_note_evaluate
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_note_evaluate`;
 CREATE TABLE `oj_note_evaluate`  (
                                      `id` int(11) NOT NULL AUTO_INCREMENT,
                                      `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1038,7 +972,6 @@ CREATE TABLE `oj_note_evaluate`  (
 -- ----------------------------
 -- Table structure for oj_paper
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_paper`;
 CREATE TABLE `oj_paper`  (
                              `id` int(11) NOT NULL AUTO_INCREMENT,
                              `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1062,7 +995,6 @@ CREATE TABLE `oj_paper`  (
 -- ----------------------------
 -- Table structure for oj_practice_category
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_practice_category`;
 CREATE TABLE `oj_practice_category`  (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
                                          `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1079,7 +1011,6 @@ CREATE TABLE `oj_practice_category`  (
 -- ----------------------------
 -- Table structure for oj_practice_operation
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_practice_operation`;
 CREATE TABLE `oj_practice_operation`  (
                                           `id` int(11) NOT NULL AUTO_INCREMENT,
                                           `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1110,7 +1041,6 @@ CREATE TABLE `oj_practice_operation`  (
 -- ----------------------------
 -- Table structure for oj_practice_operation_ref
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_practice_operation_ref`;
 CREATE TABLE `oj_practice_operation_ref`  (
                                               `id` int(11) NOT NULL AUTO_INCREMENT,
                                               `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1125,7 +1055,6 @@ CREATE TABLE `oj_practice_operation_ref`  (
 -- ----------------------------
 -- Table structure for oj_practice_set
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_practice_set`;
 CREATE TABLE `oj_practice_set`  (
                                     `id` int(11) NOT NULL AUTO_INCREMENT,
                                     `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1149,7 +1078,6 @@ CREATE TABLE `oj_practice_set`  (
 -- ----------------------------
 -- Table structure for oj_practice_solved
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_practice_solved`;
 CREATE TABLE `oj_practice_solved`  (
                                        `id` int(11) NOT NULL AUTO_INCREMENT,
                                        `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1170,7 +1098,6 @@ CREATE TABLE `oj_practice_solved`  (
 -- ----------------------------
 -- Table structure for oj_practice_theory
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_practice_theory`;
 CREATE TABLE `oj_practice_theory`  (
                                        `id` int(11) NOT NULL AUTO_INCREMENT,
                                        `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1198,7 +1125,6 @@ CREATE TABLE `oj_practice_theory`  (
 -- ----------------------------
 -- Table structure for oj_practice_theory_ref
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_practice_theory_ref`;
 CREATE TABLE `oj_practice_theory_ref`  (
                                            `id` int(11) NOT NULL AUTO_INCREMENT,
                                            `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1214,7 +1140,6 @@ CREATE TABLE `oj_practice_theory_ref`  (
 -- ----------------------------
 -- Table structure for oj_resource_collection
 -- ----------------------------
-DROP TABLE IF EXISTS `oj_resource_collection`;
 CREATE TABLE `oj_resource_collection`  (
                                            `id` int(11) NOT NULL AUTO_INCREMENT,
                                            `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1230,7 +1155,6 @@ CREATE TABLE `oj_resource_collection`  (
 -- ----------------------------
 -- Table structure for radar_label
 -- ----------------------------
-DROP TABLE IF EXISTS `radar_label`;
 CREATE TABLE `radar_label`  (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                 `resource_id` int(11) NULL DEFAULT NULL,
@@ -1241,7 +1165,6 @@ CREATE TABLE `radar_label`  (
 -- ----------------------------
 -- Table structure for rtks_ability
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_ability`;
 CREATE TABLE `rtks_ability`  (
                                  `id` int(11) NOT NULL AUTO_INCREMENT,
                                  `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1255,7 +1178,6 @@ CREATE TABLE `rtks_ability`  (
 -- ----------------------------
 -- Table structure for rtks_course_name
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_course_name`;
 CREATE TABLE `rtks_course_name`  (
                                      `id` int(11) NOT NULL AUTO_INCREMENT,
                                      `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1277,7 +1199,6 @@ CREATE TABLE `rtks_course_name`  (
 -- ----------------------------
 -- Table structure for rtks_course_related
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_course_related`;
 CREATE TABLE `rtks_course_related`  (
                                         `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '课程id',
                                         `related_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '知识点id',
@@ -1290,7 +1211,6 @@ CREATE TABLE `rtks_course_related`  (
 -- ----------------------------
 -- Table structure for rtks_knowledge
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_knowledge`;
 CREATE TABLE `rtks_knowledge`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1306,7 +1226,6 @@ CREATE TABLE `rtks_knowledge`  (
 -- ----------------------------
 -- Table structure for rtks_knowledge_category
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_knowledge_category`;
 CREATE TABLE `rtks_knowledge_category`  (
                                             `id` int(11) NOT NULL AUTO_INCREMENT,
                                             `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1320,7 +1239,6 @@ CREATE TABLE `rtks_knowledge_category`  (
 -- ----------------------------
 -- Table structure for rtks_level
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_level`;
 CREATE TABLE `rtks_level`  (
                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                `resource_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1337,7 +1255,6 @@ CREATE TABLE `rtks_level`  (
 -- ----------------------------
 -- Table structure for rtks_role
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_role`;
 CREATE TABLE `rtks_role`  (
                               `id` int(11) NOT NULL AUTO_INCREMENT,
                               `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1362,7 +1279,6 @@ CREATE TABLE `rtks_role`  (
 -- ----------------------------
 -- Table structure for rtks_role_related
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_role_related`;
 CREATE TABLE `rtks_role_related`  (
                                       `id` int(11) NOT NULL AUTO_INCREMENT,
                                       `role_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1374,7 +1290,6 @@ CREATE TABLE `rtks_role_related`  (
 -- ----------------------------
 -- Table structure for rtks_skill
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_skill`;
 CREATE TABLE `rtks_skill`  (
                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1391,7 +1306,6 @@ CREATE TABLE `rtks_skill`  (
 -- ----------------------------
 -- Table structure for rtks_skill_category
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_skill_category`;
 CREATE TABLE `rtks_skill_category`  (
                                         `id` int(11) NOT NULL AUTO_INCREMENT,
                                         `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1405,7 +1319,6 @@ CREATE TABLE `rtks_skill_category`  (
 -- ----------------------------
 -- Table structure for rtks_skill_system
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_skill_system`;
 CREATE TABLE `rtks_skill_system`  (
                                       `id` int(11) NOT NULL AUTO_INCREMENT,
                                       `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1420,7 +1333,6 @@ CREATE TABLE `rtks_skill_system`  (
 -- ----------------------------
 -- Table structure for rtks_task
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_task`;
 CREATE TABLE `rtks_task`  (
                               `id` int(11) NOT NULL AUTO_INCREMENT,
                               `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -1434,7 +1346,6 @@ CREATE TABLE `rtks_task`  (
 -- ----------------------------
 -- Table structure for rtks_user_role
 -- ----------------------------
-DROP TABLE IF EXISTS `rtks_user_role`;
 CREATE TABLE `rtks_user_role`  (
                                    `id` int(11) NOT NULL AUTO_INCREMENT,
                                    `user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,

@@ -141,6 +141,7 @@ public class CrCommonServiceImpl implements CrCommonService {
 			CrCommonValidator.validateLength(stage.getStage(), CrCommonConstants.MIN_STAGE_NAME_LEN,
 					CrCommonConstants.MAX_STAGE_NAME_LEN, CrBusinessErrorCode.INVALID_STAGE_NAME);
 			stageNames.add(stage.getStage());
+			// 校验 阶段内任务不可为空
 			CrCommonValidator.validateListIfEmpty(stage.getMissions(),
 					CrBusinessErrorCode.EMPTY_MISSION_STAGE);
 			List<String> missionTitles = Lists.newArrayList();

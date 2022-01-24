@@ -95,7 +95,29 @@ public class TeamTrainScoreController {
 			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
 		}
 	}
+	@ApiOperation("训练记录导出为html")
+	@GetMapping("/train2html")
+	public void dumpTrainRecord2PDF1(HttpServletResponse httpServletResponse,
+									@RequestParam("room_id") String roomId) {
+		JSONObject data = getTrainRecordJsonObject(roomId);
+		data.put("username", UserInfoContext.getUserContext().getUserName());
 
+		// 获取用户LOGO
+		try {
+			data.put("user_logo",
+					mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl());
+		} catch (Exception e) {
+			throw new RemoteServiceException();
+		}
+
+		String destHtmlPath = String.format("%s%s-%s.html",
+				AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(), roomId,
+				UserInfoContext.getUserContext().getUserId());
+		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.TEAM, destHtmlPath);
+
+			FileUtil.setResponse(new File(destHtmlPath), true, httpServletResponse);
+
+	}
 	private JSONObject getTrainRecordJsonObject(String roomId) {
 		JSONObject jsonObject = new JSONObject();
 

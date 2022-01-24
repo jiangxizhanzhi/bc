@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
 import com.google.common.collect.Lists;
 
@@ -37,9 +38,8 @@ public class TrainingReport {
 
 		@Override
 		public String getDesc() {
-			String aaa="222";
-
-			if (StringUtils.equals(aaa, "222")) {
+			String aaa = "222";
+			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
 				return enDesc;
 			} else {
 				return desc;

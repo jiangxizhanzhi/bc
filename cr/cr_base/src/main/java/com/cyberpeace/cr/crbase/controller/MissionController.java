@@ -149,40 +149,6 @@ public class MissionController {
 		return new BaseRsp(ret);
 	}
 
-	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {
-		MissionTemplate missionTemplate = BeanUtils.copy(missionTemplateReq, MissionTemplate.class);
-
-		missionTemplate.setCategoryId(missionTemplateReq.getCategory());
-		missionTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		missionTemplate.setSkillPoints(JSON.toJSONString(missionTemplateReq.getSkillPoints()));
-		missionTemplate.setResourceId(IDGeneratorUtil.getID());
-		missionTemplate.setAttachment(getAttachments(missionTemplate.getWriteUp()));
-
-		return missionTemplate;
-	}
-
-	private MissionTemplate requestToMissionTemplate(MissionTemplateModifyReq modifyReq) {
-		MissionTemplate missionTemplate = BeanUtils.copy(modifyReq, MissionTemplate.class);
-
-		missionTemplate.setCategoryId(modifyReq.getCategory());
-		missionTemplate.setSkillPoints(JSON.toJSONString(modifyReq.getSkillPoints()));
-		missionTemplate.setAttachment(getAttachments(missionTemplate.getWriteUp()));
-
-		return missionTemplate;
-	}
-
-	private String getAttachments(String writeup) {
-		if (writeup == null || writeup.length() < CrCommonConstants.GENERATED_UUID_LENGTH) {
-			return CommonConstant.EMPTY_LIST_JSON;
-		}
-		String imagePath = AttachmentPath.UPLOAD_IMAGE.getOriginDesc();
-		String regex = String.format(PatternConstant.WRITEUP_IMG, imagePath,
-				CrCommonConstants.GENERATED_UUID_LENGTH);
-		List<String> imageIds = LocalStringUtil.getMatchStr(writeup, regex, 1);
-
-		return JsonUtil.arrayToString(imageIds);
-	}
-
 	@ApiOperation("前台更新任务")
 	@PutMapping("/mission_update")
 	public BaseRsp<Mission>
@@ -196,21 +162,6 @@ public class MissionController {
 		missionService.updateById(toUpdateMission);
 
 		return new BaseRsp();
-	}
-
-	private Mission requestToMission(MissionModifyReq missionModifyReq) {
-		Mission mission = missionService.getById(missionModifyReq.getResourceId());
-		if (StringUtils.isNotBlank(missionModifyReq.getTitle())) {
-			mission.setTitle(missionModifyReq.getTitle());
-		}
-		if ((missionModifyReq.getScore() != null)) {
-			mission.setScore(missionModifyReq.getScore());
-		}
-		if (missionModifyReq.getSkillPoints() != null) {
-			mission.setSkillPoints(missionModifyReq.getSkillPoints());
-		}
-
-		return mission;
 	}
 
 	@ApiOperation("获取任务类型")
@@ -237,17 +188,6 @@ public class MissionController {
 		return new BaseRsp<>();
 	}
 
-	private MissionSchemeTemplate requestToSchemeTemplate(MissionSchemeTemplateReq templateReq) {
-		MissionSchemeTemplate schemeTemplate = BeanUtils.copy(templateReq,
-				MissionSchemeTemplate.class);
-		schemeTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		schemeTemplate.setTemplateConfig(JSON.toJSONString(new MissionSchemeTemplateConfig(
-				templateReq.getTemplate(), templateReq.getColor())));
-		schemeTemplate.setTemplateData(JSON.toJSONString(templateReq.getCombatConfig()));
-
-		return schemeTemplate;
-	}
-
 	@ApiOperation("批量删除任务方案")
 	@DeleteMapping("/combat_techs/batch_destroy/")
 	public BaseRsp<?> batchDeleteSchemeTemplate(@RequestBody @Validated BatchDeleteReq deleteReq) {
@@ -267,41 +207,6 @@ public class MissionController {
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
 
 		return new BaseRsp<>();
-	}
-
-	private MissionSchemeTemplate
-			requestToSchemeTemplate(MissionSchemeTemplateModifyReq templateModifyReq) {
-		if (StringUtils.isBlank(templateModifyReq.getResourceId())) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
-
-		MissionSchemeTemplate schemeTemplate = missionService
-				.getSchemeTemplateById(templateModifyReq.getResourceId());
-		if (StringUtils.isNotBlank(templateModifyReq.getTitle())
-				&& !templateModifyReq.getTitle().equals(schemeTemplate.getTitle())) {
-			missionService.checkSchemeTemplateTitleDuplicate(templateModifyReq.getTitle());
-			schemeTemplate.setTitle(templateModifyReq.getTitle());
-		}
-		if (StringUtils.isNotBlank(templateModifyReq.getDescription())) {
-			schemeTemplate.setDescription(templateModifyReq.getDescription());
-		}
-		if (templateModifyReq.getTemplate() != null || templateModifyReq.getColor() != null) {
-			MissionSchemeTemplateConfig config = JsonUtil.toJsonObject(
-					schemeTemplate.getTemplateConfig(), MissionSchemeTemplateConfig.class);
-
-			Integer template = templateModifyReq.getTemplate() == null ? config.getTemplate()
-					: templateModifyReq.getTemplate();
-
-			Integer color = templateModifyReq.getColor() == null ? config.getColor()
-					: templateModifyReq.getColor();
-
-			schemeTemplate.setTemplateConfig(
-					JSON.toJSONString(new MissionSchemeTemplateConfig(template, color)));
-		}
-		if (templateModifyReq.getCombatConfig() != null) {
-			schemeTemplate.setTemplateData(JSON.toJSONString(templateModifyReq.getCombatConfig()));
-		}
-		return schemeTemplate;
 	}
 
 	@ApiOperation("分页查询任务方案")
@@ -370,4 +275,100 @@ public class MissionController {
 		}
 		return new BaseRsp();
 	}
+
+	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {
+		MissionTemplate missionTemplate = BeanUtils.copy(missionTemplateReq, MissionTemplate.class);
+
+		missionTemplate.setCategoryId(missionTemplateReq.getCategory());
+		missionTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		missionTemplate.setSkillPoints(JSON.toJSONString(missionTemplateReq.getSkillPoints()));
+		missionTemplate.setResourceId(IDGeneratorUtil.getID());
+		missionTemplate.setAttachment(getAttachments(missionTemplate.getWriteUp()));
+
+		return missionTemplate;
+	}
+
+	private MissionTemplate requestToMissionTemplate(MissionTemplateModifyReq modifyReq) {
+		MissionTemplate missionTemplate = BeanUtils.copy(modifyReq, MissionTemplate.class);
+
+		missionTemplate.setCategoryId(modifyReq.getCategory());
+		missionTemplate.setSkillPoints(JSON.toJSONString(modifyReq.getSkillPoints()));
+		missionTemplate.setAttachment(getAttachments(missionTemplate.getWriteUp()));
+
+		return missionTemplate;
+	}
+
+	private String getAttachments(String writeup) {
+		if (writeup == null || writeup.length() < CrCommonConstants.GENERATED_UUID_LENGTH) {
+			return CommonConstant.EMPTY_LIST_JSON;
+		}
+		String imagePath = AttachmentPath.UPLOAD_IMAGE.getOriginDesc();
+		String regex = String.format(PatternConstant.WRITEUP_IMG, imagePath,
+				CrCommonConstants.GENERATED_UUID_LENGTH);
+		List<String> imageIds = LocalStringUtil.getMatchStr(writeup, regex, 1);
+
+		return JsonUtil.arrayToString(imageIds);
+	}
+
+	private MissionSchemeTemplate
+			requestToSchemeTemplate(MissionSchemeTemplateModifyReq templateModifyReq) {
+		if (StringUtils.isBlank(templateModifyReq.getResourceId())) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		MissionSchemeTemplate schemeTemplate = missionService
+				.getSchemeTemplateById(templateModifyReq.getResourceId());
+		if (StringUtils.isNotBlank(templateModifyReq.getTitle())
+				&& !templateModifyReq.getTitle().equals(schemeTemplate.getTitle())) {
+			missionService.checkSchemeTemplateTitleDuplicate(templateModifyReq.getTitle());
+			schemeTemplate.setTitle(templateModifyReq.getTitle());
+		}
+		if (StringUtils.isNotBlank(templateModifyReq.getDescription())) {
+			schemeTemplate.setDescription(templateModifyReq.getDescription());
+		}
+		if (templateModifyReq.getTemplate() != null || templateModifyReq.getColor() != null) {
+			MissionSchemeTemplateConfig config = JsonUtil.toJsonObject(
+					schemeTemplate.getTemplateConfig(), MissionSchemeTemplateConfig.class);
+
+			Integer template = templateModifyReq.getTemplate() == null ? config.getTemplate()
+					: templateModifyReq.getTemplate();
+
+			Integer color = templateModifyReq.getColor() == null ? config.getColor()
+					: templateModifyReq.getColor();
+
+			schemeTemplate.setTemplateConfig(
+					JSON.toJSONString(new MissionSchemeTemplateConfig(template, color)));
+		}
+		if (templateModifyReq.getCombatConfig() != null) {
+			schemeTemplate.setTemplateData(JSON.toJSONString(templateModifyReq.getCombatConfig()));
+		}
+		return schemeTemplate;
+	}
+
+	private MissionSchemeTemplate requestToSchemeTemplate(MissionSchemeTemplateReq templateReq) {
+		MissionSchemeTemplate schemeTemplate = BeanUtils.copy(templateReq,
+				MissionSchemeTemplate.class);
+		schemeTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		schemeTemplate.setTemplateConfig(JSON.toJSONString(new MissionSchemeTemplateConfig(
+				templateReq.getTemplate(), templateReq.getColor())));
+		schemeTemplate.setTemplateData(JSON.toJSONString(templateReq.getCombatConfig()));
+
+		return schemeTemplate;
+	}
+
+	private Mission requestToMission(MissionModifyReq missionModifyReq) {
+		Mission mission = missionService.getById(missionModifyReq.getResourceId());
+		if (StringUtils.isNotBlank(missionModifyReq.getTitle())) {
+			mission.setTitle(missionModifyReq.getTitle());
+		}
+		if ((missionModifyReq.getScore() != null)) {
+			mission.setScore(missionModifyReq.getScore());
+		}
+		if (missionModifyReq.getSkillPoints() != null) {
+			mission.setSkillPoints(missionModifyReq.getSkillPoints());
+		}
+
+		return mission;
+	}
+
 }

@@ -46,8 +46,6 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -167,12 +165,6 @@ public class TeamTrainTemplateController {
 
 		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
-
-		try {
-			String json = new ObjectMapper().writeValueAsString(teamTrainTemplateRsp);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
 
 		return new BaseRsp(teamTrainTemplateRsp);
 	}

@@ -621,10 +621,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			template.setCreateUserId(userId);
 			template.setCreateTime(null);
 			template.setUpdateTime(null);
-			// 暂不处理重名 todo
-			if (missionSchemeTemplateMapper.selectById(template.getResourceId()) != null) {
-				missionSchemeTemplateMapper.updateById(template);
-			} else {
+
+			// 按5.3逻辑处理重名：重名跳过
+			template.setResourceId(IDGeneratorUtil.getID());
+			if (!missionSchemeTemplateMapper.existByTitle(template.getTitle())) {
 				missionSchemeTemplateMapper.insert(template);
 			}
 		}
@@ -645,7 +645,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public void checkSchemeTemplateTitleDuplicate(String title) {
-		if (missionSchemeTemplateMapper.countByTitle(title) > 0) {
+		if (missionSchemeTemplateMapper.existByTitle(title)) {
 			throw new BusinessException(
 					CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE);
 		}

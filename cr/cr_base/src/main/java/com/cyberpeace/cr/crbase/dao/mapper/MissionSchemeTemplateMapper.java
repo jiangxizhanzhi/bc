@@ -20,5 +20,6 @@ public interface MissionSchemeTemplateMapper extends BaseMapper<MissionSchemeTem
 	void batchInsert(
 			@Param("missionSchemeTemplates") List<MissionSchemeTemplate> missionSchemeTemplates);
 
-	Integer countByTitle(@Param("title") String title);
+	Boolean existByTitle(@Param("title") String title);
+
 }

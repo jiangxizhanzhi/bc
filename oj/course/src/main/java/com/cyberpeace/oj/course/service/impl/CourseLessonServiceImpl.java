@@ -406,10 +406,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		CourseLesson lessonExist = courseValidateHandler
 				.validateLessonExist(courseLesson.getResourceId(), false);
 		courseValidateHandler.validateLessonUpdateNameExist(lessonExist, courseLesson.getName());
-		if (lessonExist.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
-				.intValue() && StringUtils.isNotBlank(courseLesson.getTopoId())) {
-			courseValidateHandler.validateLessonUpdateSceneExist(lessonExist);
-		}
+		courseValidateHandler.validateLessonUpdateSceneExist(lessonExist);
+
 
 		// 试卷数据
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);

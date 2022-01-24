@@ -89,6 +89,11 @@ public class UtilServiceImpl implements UtilService {
 			if (fileUrl.startsWith(FDFS_PREFIX)) {
 				return fileUrl.replace(FDFS_PREFIX, "");
 			}
+
+			// officeUrl 返回null 用于后续做判断
+			if (fileUrl.startsWith(remoteServerEnvService.getOfficeHost())) {
+				return null;
+			}
 		}
 
 		return fileUrl;

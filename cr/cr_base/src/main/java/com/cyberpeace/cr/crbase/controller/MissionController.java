@@ -20,8 +20,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -171,6 +173,10 @@ public class MissionController {
 		List<MissionCategory> categories = missionService.listCategories();
 		List<MissionCategoryRes> data = BeanUtils.deepCopyList(categories,
 				MissionCategoryRes.class);
+		// 国际化
+		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
+			data.forEach(datum -> datum.setName(datum.getKey()));
+		}
 
 		return new BaseRsp(data);
 	}

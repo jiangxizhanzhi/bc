@@ -59,6 +59,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	private Integer MAX_CONTENT_LENGTH;
 
+	private final Boolean IS_COLLECTED = Boolean.FALSE;
+
 	@PostConstruct
 	private void init() {
 		MAX_CONTENT_LENGTH = Integer
@@ -132,7 +134,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-					CommonConstant.TRUE);
+					CommonConstant.TRUE, IS_COLLECTED);
 
 			// 求交集 空则返回为空
 			if (listQuery.getSolved()) {
@@ -161,7 +163,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				} else {
 					PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
 							authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-							practiceTheory.getResourceId());
+							practiceTheory.getResourceId(), IS_COLLECTED);
 					theoryListBo.setSolved(null != practiceSolved ? practiceSolved.getSolved()
 							: CommonConstant.FALSE);
 				}
@@ -179,7 +181,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public WebTheoryBo selectById(String resourceId, String userId) {
+	public WebTheoryBo selectById(String resourceId, String userId, Boolean isCollected) {
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
 		if (null == practiceTheory) {
@@ -200,7 +202,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		}
 
 		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
-				PracticeCategory.PracticeType.THEORY.getCode(), resourceId);
+				PracticeCategory.PracticeType.THEORY.getCode(), resourceId, isCollected);
 
 		answerToNull(webTheoryBo, practiceSolved);
 
@@ -250,7 +252,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer) {
+	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer, Boolean isCollected) {
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(theoryId);
 		if (null == practiceTheory) {
@@ -260,7 +262,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		// 判断是否已完成答题
 		PracticeSolved solvedPractice = practiceSolvedMapper.selectUserAndId(userId,
-				PracticeCategory.PracticeType.THEORY.getCode(), theoryId);
+				PracticeCategory.PracticeType.THEORY.getCode(), theoryId, isCollected);
 		if (null != solvedPractice && solvedPractice.getSolved()) {
 			return BeanUtils.copy(solvedPractice, EvaluateResult.class);
 		}

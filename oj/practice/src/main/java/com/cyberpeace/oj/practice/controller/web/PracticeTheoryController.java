@@ -48,9 +48,8 @@ public class PracticeTheoryController {
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
 	public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {
-
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
-				UserInfoContext.getUserContext().getUserId());
+				UserInfoContext.getUserContext().getUserId(), Boolean.FALSE);
 
 		return new BaseRsp<>(theoryBo);
 	}
@@ -86,7 +85,7 @@ public class PracticeTheoryController {
 
 		EvaluateResult evaluateResult = practiceTheoryService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
-				answerReq.getSubmitAnswer());
+				answerReq.getSubmitAnswer(),answerReq.getIsCollected());
 
 		// 记录远程操作日志
 		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;

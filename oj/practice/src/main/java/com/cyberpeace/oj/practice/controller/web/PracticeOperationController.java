@@ -54,7 +54,7 @@ public class PracticeOperationController {
 	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
-		WebOperationBo operationBo = practiceOperationService.selectById(resourceId, authContext);
+		WebOperationBo operationBo = practiceOperationService.selectById(resourceId, authContext, Boolean.FALSE);
 
 		return new BaseRsp<>(operationBo);
 	}
@@ -89,7 +89,7 @@ public class PracticeOperationController {
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
-				answerReq.getSubmitAnswer());
+				answerReq.getSubmitAnswer(), answerReq.getIsCollected());
 
 		// 记录远程操作日志
 		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;

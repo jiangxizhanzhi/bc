@@ -50,7 +50,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param authContext 后台数据查询不需要
 	 * @return
 	 */
-	WebOperationBo selectById(String resourceId, AuthContext authContext);
+	WebOperationBo selectById(String resourceId, AuthContext authContext, Boolean isCollected);
 
 	/**
 	 * 分页查询实操习题
@@ -71,7 +71,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param submitAnswer
 	 * @return
 	 */
-	EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer);
+	EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer, Boolean isCollected);
 
 	/**
 	 * 获取所有的实操习题编号

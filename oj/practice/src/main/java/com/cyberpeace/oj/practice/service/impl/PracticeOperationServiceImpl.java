@@ -76,6 +76,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationMapper, PracticeOperation> implements PracticeOperationService {
 
+	private final Boolean IS_COLLECTED = Boolean.FALSE;
+
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
@@ -262,7 +264,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public WebOperationBo selectById(String resourceId, AuthContext authContext) {
+	public WebOperationBo selectById(String resourceId, AuthContext authContext, Boolean isCollected) {
 
 		OperationBo operationBo = selectById(resourceId);
 		WebOperationBo webOperationBo = BeanUtils.copy(operationBo, WebOperationBo.class);
@@ -276,7 +278,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 解题状态
 		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
 				authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
-				resourceId);
+				resourceId, isCollected);
 		if (null == practiceSolved) {
 			webOperationBo.setAnswer(null);
 			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
@@ -355,7 +357,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			// 查询已解决习题编号
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
-					CommonConstant.TRUE);
+					CommonConstant.TRUE, IS_COLLECTED);
 
 			// 正确取交集
 			if (listQuery.getSolved()) {
@@ -405,7 +407,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			} else {
 				PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
 						authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
-						practiceOperation.getResourceId());
+						practiceOperation.getResourceId(), IS_COLLECTED);
 				operationListBo.setSolved(
 						null != practiceSolved ? practiceSolved.getSolved() : CommonConstant.FALSE);
 			}
@@ -421,7 +423,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer) {
+	public EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer, Boolean isCollected) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
@@ -430,7 +432,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		PracticeSolved solved = practiceSolvedMapper.selectUserAndId(userId,
-				PracticeCategory.PracticeType.OPERATION.getCode(), resourceId);
+				PracticeCategory.PracticeType.OPERATION.getCode(), resourceId, isCollected);
 		if (solved != null && solved.getSolved()) {
 			EvaluateResult evaluateResult = BeanUtils.copy(solved, EvaluateResult.class);
 			return evaluateResult;

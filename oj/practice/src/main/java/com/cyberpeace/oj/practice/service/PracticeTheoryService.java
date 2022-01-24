@@ -29,7 +29,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param userId
 	 * @return
 	 */
-	WebTheoryBo selectById(String resourceId, String userId);
+	WebTheoryBo selectById(String resourceId, String userId, Boolean isCollected);
 
 	/**
 	 * 答案提交评估
@@ -38,7 +38,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param userAnswer
 	 * @return
 	 */
-	EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer);
+	EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer, Boolean isCollected);
 
 	/**
 	 * 理论基础习题新增

@@ -36,7 +36,7 @@ public class KnowledgeRes implements Serializable {
 	private List<RelatedCourse> courseList;
 
 	@ApiModelProperty("建议学习时长")
-	private Double suggestDuration;
+	private Double suggestDuration = 0.0;
 
 	@ApiModelProperty("知识点关联课程学习进度信息")
 	private List<CourseStudyProcessBo> courseStudyProcessBoList;

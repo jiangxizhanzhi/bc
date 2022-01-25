@@ -33,4 +33,8 @@ public interface ReportScoreService extends IService<ReportScore> {
     String saveFile(MultipartFile multipartFile) throws IOException;
 
     List<HashMap<String, String>> selectWebCountByStatus(String userId);
+
+    HashMap<String, String> getRankScore(String userId);
+
+    void validateReportScoreNameExist(ReportScore reportScore);
 }

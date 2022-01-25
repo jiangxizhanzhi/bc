@@ -34,6 +34,9 @@ public class ReportScore extends BaseTable {
     /**提交者ID */
     private String userId;
 
+    /**提交者姓名 用作队伍名称 */
+    private String userName;
+
     /**状态 */
     private Integer status;
 
@@ -52,7 +55,7 @@ public class ReportScore extends BaseTable {
     /**评分人id */
     private String raterId;
 
-    /**评分人姓名 作为团队名称 */
+    /**评分人姓名 */
     private String raterName;
 
     public enum SubjectCode implements GenericEnum {

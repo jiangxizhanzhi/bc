@@ -71,4 +71,14 @@
         GROUP BY `status`;
     </select>
 
+    <select id="getRankScore" resultType="java.util.HashMap">
+        select `user_id`, `user_name`, sum(`score`) as sum_score, row_number() over (order by sum_score desc) as rank
+        from cr_report_score
+        group by user_id
+    </select>
+
+    <select id="selectByName" resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScore">
+        select * from cr_report_score where user_id = #{userId} and report_name = #{reportName}
+    </select>
+
 </mapper>

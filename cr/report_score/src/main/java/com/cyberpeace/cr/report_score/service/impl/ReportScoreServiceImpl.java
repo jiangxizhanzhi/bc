@@ -3,9 +3,11 @@ package com.cyberpeace.cr.report_score.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreListReq;
 import com.cyberpeace.cr.report_score.controller.req.ScoreRecordListReq;
 import com.cyberpeace.cr.report_score.controller.req.WebReportScoreListReq;
@@ -103,5 +105,26 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
     public List<HashMap<String, String>> selectWebCountByStatus(String userId) {
         List<HashMap<String, String>> result = reportScoreMapper.countWebStatus(userId);
         return result;
+    }
+
+    @Override
+    public HashMap<String, String> getRankScore(String userId) {
+        List<HashMap<String, String>> result = reportScoreMapper.getRankScore();
+        HashMap<String, String> rankScore = new HashMap<>();
+        for (HashMap<String, String> stringStringHashMap : result) {
+            if (stringStringHashMap.get("user_id").equals(userId)) {
+                rankScore = stringStringHashMap;
+            }
+        }
+        return rankScore;
+    }
+
+    @Override
+    public void validateReportScoreNameExist(ReportScore reportScore) {
+        // 名称重复性校验
+        ReportScore reportScoreObject = reportScoreMapper.selectByName(reportScore.getReportName(), reportScore.getUserId());
+        if (reportScoreObject != null) {
+            throw new BusinessException(CrBusinessErrorCode.DUPLICATED_REPORT_SCORE_NAME);
+        }
     }
 }

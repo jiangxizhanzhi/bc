@@ -192,4 +192,7 @@ public interface CrBusinessErrorCode {
 
 	// 单兵训练模板正在使用，删除失败
 	String SINGLE_TRAIN_TEMPLATE_IN_USE = "101061";
+
+	// 同一战队下报告名称重复
+	String DUPLICATED_REPORT_SCORE_NAME = "101062";
 }

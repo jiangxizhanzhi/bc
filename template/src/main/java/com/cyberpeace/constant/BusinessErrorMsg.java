@@ -76,6 +76,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.OPTIONS_DUPLICATE, "选项重复");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE, "任务方案名称重复");
 
+			put(CrBusinessErrorCode.DUPLICATED_REPORT_SCORE_NAME, "同一战队下报告名称重复");
+
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "习题数量不足");
 			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "课堂场景运行中");
 			put(OjBusinessErrorCode.RESOURCE_PERMISSION, "权限不足");
@@ -175,6 +177,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_NAME,
 					"Duplicated mission names in one stage.");
 			put(CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE, "Duplicated title.");
+
+			put(CrBusinessErrorCode.DUPLICATED_REPORT_SCORE_NAME, "Duplicated report name.");
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH,
 					"The number of practice sets is insufficient.");

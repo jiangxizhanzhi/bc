@@ -6,7 +6,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreAddReq;
 import com.cyberpeace.cr.report_score.controller.req.WebReportScoreListReq;
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,8 +45,11 @@ public class WebReportScoreController {
         reportScore.setSubmitTime(new Date());
 
         String userId = UserInfoContext.getUserContext().getUserId();
+        String userName = UserInfoContext.getUserContext().getUserName();
         reportScore.setUserId(userId);
+        reportScore.setUserName(userName);
 
+        reportScoreService.validateReportScoreNameExist(reportScore);
         reportScoreService.save(reportScore);
         return new BaseRsp<>();
     }
@@ -84,6 +85,14 @@ public class WebReportScoreController {
     public BaseRsp<List<HashMap<String, String>>> getStatusCount() {
         String userId = UserInfoContext.getUserContext().getUserId();
         List<HashMap<String, String>> result = reportScoreService.selectWebCountByStatus(userId);
+        return new BaseRsp<>(result);
+    }
+
+    @ApiOperation("排名得分统计")
+    @GetMapping("/rank_score")
+    public BaseRsp<HashMap<String, String>> getRankScore() {
+        String userId = UserInfoContext.getUserContext().getUserId();
+        HashMap<String, String> result = reportScoreService.getRankScore(userId);
         return new BaseRsp<>(result);
     }
 

@@ -31,4 +31,8 @@ public interface ReportScoreMapper extends BaseMapper<ReportScore> {
     IPage<WebReportScoreRsp> ListWeb(Page page, @Param("listQuery") WebReportScoreListReq webReportScoreListReq, String userId);
 
     List<HashMap<String, String>> countWebStatus(String userId);
+
+    List<HashMap<String, String>> getRankScore();
+
+    ReportScore selectByName(String reportName, String userId);
 }

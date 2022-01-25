@@ -100,6 +100,7 @@ public class SingleRoomScoreController {
 		// 用户信息
 		UserInfo userInfo = remoteUserService.getById(user_hash);
 		data.put("user_id", userInfo.getUserId());
+		data.put("username", userInfo.getUserName());
 		data.put("title", crScoreController.getTitle(userInfo.getUserName()));
 		// 获取用户LOGO todo 自定义logo获取方式待定
 		try {

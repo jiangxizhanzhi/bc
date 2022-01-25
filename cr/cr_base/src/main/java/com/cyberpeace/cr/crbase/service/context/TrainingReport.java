@@ -87,6 +87,7 @@ public class TrainingReport {
 		ongoing ("进行中", "Ongoing"),
 		not_released ("未下发", "Not Issued"),
 		not_submitted ("未提交", "Unsubmitted"),
+		not_finished ("未完成", "Unfinished"),
 		release ("下发", "Issue"),
 		submit ("上报", "Submit"),
 		success ("成功", "Successful"),

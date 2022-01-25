@@ -85,7 +85,14 @@ public class TrainingReport {
 		task_record ("任务记录", "Task Record"),
 		completed ("已完成", "Completed"),
 		ongoing ("进行中", "Ongoing"),
-		not_released ("未下发", "Not Issued");
+		not_released ("未下发", "Not Issued"),
+		not_submitted ("未提交", "Unsubmitted"),
+		release ("下发", "Issue"),
+		submit ("上报", "Submit"),
+		success ("成功", "Successful"),
+		fail ("失败", "Failed"),
+		reject ("驳回", "Reject"),
+		wait ("等待", "Wait");
 
 
 		private String desc;

@@ -51,6 +51,7 @@ public interface BusinessErrorMsg {
 			put(ErrorCode.DUPLICATE_KEY, "已存在");
 			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "远程服务异常");
 			put(ErrorCode.FILE_TYPE_ERROR, "文件类型错误");
+			put(ErrorCode.FILE_NOT_EXIST, "文件不存在");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE, "工具分类有关联的工具，不能删除");
 			put(CrBusinessErrorCode.DUPLICATED_TOOL_NAME, "该工具名称与系统内已有名称重复，请重新输入");
@@ -157,9 +158,10 @@ public interface BusinessErrorMsg {
 			put(RtksBusinessErrorCode.UNABLE_DELETE_KNOWLEDGE, "unable to delete knowledge");
 			put(RtksBusinessErrorCode.UNABLE_DELETE_SKILL, "unable to delete skill");
 
-			put(ErrorCode.DUPLICATE_KEY, " already exist");
-			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "remote service error");
-			put(ErrorCode.FILE_TYPE_ERROR, "file type error");
+			put(ErrorCode.DUPLICATE_KEY, "already exist.");
+			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "Remote service error.");
+			put(ErrorCode.FILE_TYPE_ERROR, "File type error.");
+			put(ErrorCode.FILE_NOT_EXIST, "File not exist.");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE,
 					"unable to delete category, category in use");

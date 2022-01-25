@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -15,6 +16,7 @@ import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.controller.rsp.CurrentTimeRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
@@ -72,6 +74,14 @@ public class CrBaseController {
 							: new CodeNameRsp(constant.getCode(), constant.getCnName()));
 			return new BaseRsp(rsp);
 		}
+	}
+
+	@ApiOperation("获取当前服务器时间")
+	@GetMapping("/current_time")
+	public BaseRsp<CurrentTimeRsp> getCurrentTime() {
+		CurrentTimeRsp rsp = new CurrentTimeRsp();
+		rsp.setCurrentTime(new Date());
+		return new BaseRsp<>(rsp);
 	}
 
 }

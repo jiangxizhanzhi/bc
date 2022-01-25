@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -404,5 +407,14 @@ public class CrScoreController {
 		}
 
 		return jsonObject;
+	}
+
+	public String getTitle(String userName) {
+
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			return "Cyber Exercise Report of "+userName;
+		} else {
+			return userName+"训练的训练报告";
+		}
 	}
 }

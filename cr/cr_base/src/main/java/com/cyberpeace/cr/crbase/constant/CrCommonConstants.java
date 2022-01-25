@@ -29,7 +29,7 @@ public interface CrCommonConstants {
 
 	int SCORE_MAX_VALUE = 500;
 
-	int SKILL_POINTS_SIZE = 6;
+	int SKILL_POINTS_SIZE = 7;
 
 	int SKILL_POINT_MIN_VALUE = 1;
 

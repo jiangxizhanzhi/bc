@@ -5,11 +5,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.model.CommonContext;
 
 import lombok.Data;
 import lombok.Getter;
@@ -48,17 +52,30 @@ public class CrTask extends BaseTable {
 	 */
 	public enum SingleTaskStatus implements GenericEnum {
 
-		UNRELEASED(10, "未下发"), RELEASED(11, "未提交"), SUCCESS(1, "成功"), FAIL(2, "失败");
+		UNRELEASED(10, "未下发", "Unassigned"), RELEASED(11, "未提交", "Unsubmitted"), SUCCESS(1, "成功",
+				"Successful"), FAIL(2, "失败", "Failed");
 
 		@Getter
 		private Integer code;
 
-		@Getter
 		private String desc;
 
-		SingleTaskStatus(Integer code, String desc) {
+		private String enDesc;
+
+		@Override
+		public String getDesc() {
+			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+				return enDesc;
+			} else {
+				return desc;
+			}
+		}
+
+		SingleTaskStatus(Integer code, String desc, String enDesc) {
 			this.code = code;
 			this.desc = desc;
+			this.enDesc = enDesc;
+
 		}
 
 	}

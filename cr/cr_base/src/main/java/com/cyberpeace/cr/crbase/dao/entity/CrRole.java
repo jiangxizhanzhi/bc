@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.model.CommonContext;
 import com.google.common.collect.Lists;
@@ -106,8 +107,8 @@ public class CrRole extends BaseTable {
 
 	public enum RbRoleGroupCode implements GenericEnum {
 
-		ADMIN(1, "管理员"), DIRECTOR(2, "导演"), REFEREE(3, "裁判"), RED(4, "红方"), BLUE(5,
-				"蓝方"), RED_BLUE(6, "红方蓝方");
+		ADMIN(1, "管理员","Administrator"), DIRECTOR(2, "导演", "Director"), REFEREE(3, "裁判", "Referee"), RED(4, "红方", "Red"), BLUE(5,
+				"蓝方", "Blue"), RED_BLUE(6, "红方蓝方", "RedBlue");
 
 		@Getter
 		private Integer code;
@@ -117,16 +118,18 @@ public class CrRole extends BaseTable {
 		private String enDesc;
 		@Override
 		public String getDesc(){
-			if(StringUtils.equals(CommonContext.getLanguage(), "")) {
+			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
 				return enDesc;
 			} else {
 				return desc;
 			}
 		}
 
-		RbRoleGroupCode(Integer code, String desc) {
+		RbRoleGroupCode(Integer code, String desc, String enDesc) {
 			this.code = code;
 			this.desc = desc;
+			this.enDesc = enDesc;
+
 		}
 	}
 

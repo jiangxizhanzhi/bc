@@ -38,8 +38,7 @@ public class TrainingReport {
 
 		@Override
 		public String getDesc() {
-			String aaa = "222";
-			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+ 			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
 				return enDesc;
 			} else {
 				return desc;
@@ -94,7 +93,7 @@ public class TrainingReport {
 		@Getter
 		private String enDesc;
 		public String getDesc() {
-			if (true) {
+			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
 				return enDesc;
 			} else {
 				return desc;

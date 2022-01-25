@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -395,4 +396,13 @@ public class CrScoreController {
 		return userReportList;
 	}
 
+	public JSONObject getTemplateI18n() {
+		JSONObject jsonObject = new JSONObject();
+
+		for (TrainingReport.TemplateI18n enumData : TrainingReport.TemplateI18n.values()) {
+			jsonObject.put(enumData.name(), enumData.getDesc());
+		}
+
+		return jsonObject;
+	}
 }

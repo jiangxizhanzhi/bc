@@ -137,6 +137,7 @@ public class RbRoomScoreController {
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 
 		jsonObject.put("radarLabels", radarLabels);
+		jsonObject.put("locale", crScoreController.getTemplateI18n());
 		jsonObject.put("user_list", userList);
 		jsonObject.put("mission_report", getTrainingMissionReport(roomId, roleGroup).getData());
 		jsonObject.put("report", trainingReport);

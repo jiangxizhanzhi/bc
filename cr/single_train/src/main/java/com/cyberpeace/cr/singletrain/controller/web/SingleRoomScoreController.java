@@ -12,7 +12,9 @@ import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
@@ -56,6 +58,9 @@ public class SingleRoomScoreController {
 	TrainRecordService trainRecordService;
 
 	@Autowired
+	private MissionService missionService;
+
+	@Autowired
 	private MpEnvService mpEnvService;
 
 	@Autowired
@@ -95,7 +100,7 @@ public class SingleRoomScoreController {
 		// 用户信息
 		UserInfo userInfo = remoteUserService.getById(user_hash);
 		data.put("user_id", userInfo.getUserId());
-		data.put("username", userInfo.getUserName());
+		data.put("title", crScoreController.getTitle(userInfo.getUserName()));
 		// 获取用户LOGO todo 自定义logo获取方式待定
 		try {
 			data.put("user_logo",
@@ -113,12 +118,16 @@ public class SingleRoomScoreController {
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId) {
 		JSONObject data = getHistoryDetail(roomId).getData();
+		List<RadarLabel> radarLabels = missionService.getRadarLabel();
+		data.put("radarLabels", radarLabels);
+		data.put("locale", crScoreController.getTemplateI18n());
 
 		String destHtmlPath = String.format("%s%s-%s.html",
 				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), roomId,
 				data.getString("user_id"));
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
 		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
+		// todo 文件命名
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
 		if (new File(destHtmlPath).delete()) {

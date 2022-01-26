@@ -97,7 +97,7 @@ public class AdminLearnStatisticController {
 		Page page = pageReq.toPageParam();
 		ListRsp<AdminLessonStatisticsDetailRes> res = courseLearnStatisticsService
 				.LessonStatisticsDetail(pageReq.getOrgId(), pageReq.getLessonId(),
-						pageReq.getSearch(), page);
+						pageReq.getSearch(), page, pageReq.getSort());
 		return new BaseRsp(res);
 	}
 }

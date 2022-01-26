@@ -3,7 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -100,7 +99,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 				.filter(record -> null != remoteUserService.getById(record.getCreateUser()))
 				.collect(Collectors.toList());
 		adminCourseStatisticsResIPage.setRecords(realRecords);
-		adminCourseStatisticsResIPage.setTotal(realRecords.size());
+		adminCourseStatisticsResIPage.setTotal(adminCourseStatisticsResIPage.getTotal());
 		return PageUtil
 				.getListResult(adminCourseStatisticsResIPage.convert(this::curseStatisticToBo));
 	}
@@ -144,7 +143,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 
 	@Override
 	public ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
-			String lessonId, String usernameLike, Page page) {
+																		  String lessonId, String usernameLike, Page page, String sort) {
 		List<String> userIds = new ArrayList<>();
 		// 根据组织id获取userids
 		if (StringUtils.isNotEmpty(organizationId)) {
@@ -170,49 +169,22 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		// 获取学习该课程的所有用户
 		IPage<AdminLessonStatisticsDetailRes> learnedUsers = courseLearnStatisticsMapper
 				.listLessonLearnedRecord(page, userIds, lessonId);
-
-		// 获取课后练习完成数据
-		List<AdminLessonStatisticsDetailRes> practices = courseLearnStatisticsMapper
-				.detailLessonByPage(lessonId, userIds);
-		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
-
-		Map<String, AdminLessonStatisticsDetailRes> expMap = new HashMap<>();
-		Map<String, AdminLessonStatisticsDetailRes> practiceMap = practices.stream()
-				.collect(Collectors.toMap(AdminLessonStatisticsDetailRes::getCreateUser,
-						lessonStatisticsDetailRes -> lessonStatisticsDetailRes));
-		// 实验课时 获取实验报告的数据
-		if (CourseLesson.LessonType.EXPERIMENT.getCode().equals(courseLesson.getType())) {
-			List<AdminLessonStatisticsDetailRes> expReportData = courseLearnStatisticsMapper
-					.detailExpLessonByPage(lessonId, userIds);
-
-			expMap = expReportData.stream()
-					.collect(Collectors.toMap(AdminLessonStatisticsDetailRes::getCreateUser,
-							expLessonStatisticsDetailRes -> expLessonStatisticsDetailRes));
-		}
-		// 实验课额外获取实验报告数据
-		List<AdminLessonStatisticsDetailRes> records = learnedUsers.getRecords();
-		for (AdminLessonStatisticsDetailRes res : records) {
-
-			String createUser = res.getCreateUser();
+		List<AdminLessonStatisticsDetailRes> res = learnedUsers.getRecords();
+		res = res.stream().map(data -> {
+			String record = data.getRecord();
+			if(null != record) {
+				int practiceCount = JSONArray.parseArray(record).size();
+				data.setPracticeCount(practiceCount);
+			}
+			if (null != data.getReportUpdateTime()){
+				data.setIsReport(true);
+			}
+			String createUser = data.getCreateUser();
 			UserInfo userInfo = remoteUserService.getById(createUser);
-			res.setCreateUser(userInfo.getUserName());
-			res.setOrganizationName(userInfo.getOrganizationData());
-			AdminLessonStatisticsDetailRes practiceRecord = practiceMap.get(createUser);
-			if (null != practiceRecord) {
-				int practiceCount = JSONArray.parseArray(practiceRecord.getRecord()).size();
-				res.setPracticeCount(practiceCount);
-			}
-			if (CourseLesson.LessonType.EXPERIMENT.getCode().equals(courseLesson.getType())) {
-				AdminLessonStatisticsDetailRes currentExpData = expMap.get(createUser);
-				if (null != currentExpData) {
-					res.setIsReport(true);
-					res.setMarkingTime(currentExpData.getMarkingTime());
-					res.setScore(currentExpData.getScore());
-					res.setReportUpdateTime(currentExpData.getReportUpdateTime());
-				}
-			}
-		}
-		learnedUsers.setRecords(records);
+			data.setCreateUser(userInfo.getUserName());
+			return data;
+		}).collect(Collectors.toList());
+		learnedUsers.setRecords(res);
 		return PageUtil.getListResult(learnedUsers);
 	}
 }

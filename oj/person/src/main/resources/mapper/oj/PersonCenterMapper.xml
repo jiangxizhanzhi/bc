@@ -270,7 +270,7 @@
     <select id="selectReportAverageByTime" resultType="com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate">
         select *
         from oj_note_evaluate
-        where evaluator_id = #{userId}
+        where note_id in (select resource_id from oj_note where user_id = #{userId})
         and create_time &gt; #{startTime}
         and create_time &lt; #{endTime}
         <if test="lessonIds != null and lessonIds.size() != 0">

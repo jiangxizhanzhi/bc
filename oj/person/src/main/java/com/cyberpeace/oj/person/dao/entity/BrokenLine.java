@@ -19,5 +19,5 @@ public class BrokenLine implements Serializable {
   private List<Integer> ySecondValues;
 
   @ApiModelProperty("y3轴，实验报告平均分数值")
-  private List<Integer> yThirdValues;
+  private List<Double> yThirdValues;
 }

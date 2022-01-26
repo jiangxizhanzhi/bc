@@ -8,4 +8,6 @@ public class ChatMineContent {
 	private String id;
 	private Boolean mine;
 	private String content;
+	// 后面增加的服务器时间
+	private String time;
 }

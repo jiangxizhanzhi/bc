@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Api(tags = "单兵训练评分")
@@ -102,7 +104,7 @@ public class SingleRoomScoreController {
 		data.put("user_id", userInfo.getUserId());
 		data.put("username", userInfo.getUserName());
 		data.put("title", crScoreController.getTitle(userInfo.getUserName()));
-		// 获取用户LOGO todo 自定义logo获取方式待定
+		// 获取用户LOGO todo 当前页面未展示
 		try {
 			data.put("user_logo",
 					mpEnvService.getMpHost() + userInfo.getAvatarUrl());
@@ -123,17 +125,30 @@ public class SingleRoomScoreController {
 		data.put("radarLabels", radarLabels);
 		data.put("locale", crScoreController.getTemplateI18n());
 
-		String destHtmlPath = String.format("%s%s-%s.html",
-				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), roomId,
-				data.getString("user_id"));
+		Path destHtmlPathObj = Paths.get(
+				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
+				String.format("%s-%s", roomId, data.getString("user_id")),
+				"report.html"
+		);
+		// 临时存放目录
+		File directory = destHtmlPathObj.getParent().toFile();
+		if (!directory.exists()) {
+			boolean isCreated = directory.mkdirs();
+			if (!isCreated) {
+				throw new RuntimeException(String.format("TMP directory [%s] create failed, maybe without permission.", directory.getPath()));
+			}
+		}
+		String destHtmlPath = destHtmlPathObj.toString();
+
+		// 生成html
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
+
+		// 在同目录下生成pdf
 		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
-		// todo 文件命名
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
-		if (new File(destHtmlPath).delete()) {
-			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
-		}
+		FileUtil.setResponse(new File(destPdfPath), false, httpServletResponse);
+		FileUtil.deleteDir(directory);
 	}
 
 	private Object gettaskCount(MissionReport missionReport) {

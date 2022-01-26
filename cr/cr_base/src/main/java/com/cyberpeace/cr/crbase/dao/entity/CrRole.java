@@ -2,6 +2,8 @@ package com.cyberpeace.cr.crbase.dao.entity;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -13,7 +15,6 @@ import com.google.common.collect.Lists;
 
 import lombok.Data;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -107,8 +108,9 @@ public class CrRole extends BaseTable {
 
 	public enum RbRoleGroupCode implements GenericEnum {
 
-		ADMIN(1, "管理员","Administrator"), DIRECTOR(2, "导演", "Director"), REFEREE(3, "裁判", "Referee"), RED(4, "红方", "Red"), BLUE(5,
-				"蓝方", "Blue"), RED_BLUE(6, "红方蓝方", "RedBlue");
+		ADMIN(1, "管理员", "Administrator"), DIRECTOR(2, "导演", "Director"), REFEREE(3, "裁判",
+				"Referee"), RED(4, "红方",
+						"Red"), BLUE(5, "蓝方", "Blue"), RED_BLUE(6, "红方蓝方", "RedBlue");
 
 		@Getter
 		private Integer code;
@@ -116,8 +118,9 @@ public class CrRole extends BaseTable {
 		private String desc;
 
 		private String enDesc;
+
 		@Override
-		public String getDesc(){
+		public String getDesc() {
 			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
 				return enDesc;
 			} else {

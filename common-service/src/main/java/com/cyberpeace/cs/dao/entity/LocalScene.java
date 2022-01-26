@@ -2,12 +2,16 @@ package com.cyberpeace.cs.dao.entity;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.model.CommonContext;
 
 import lombok.Data;
 import lombok.Getter;
@@ -151,8 +155,16 @@ public class LocalScene extends BaseTable {
 		@Getter
 		private Integer code;
 
-		@Getter
 		private String desc;
+
+		@Override
+		public String getDesc() {
+			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+				return this.name();
+			} else {
+				return desc;
+			}
+		}
 
 		BusinessCode(Integer code, String desc) {
 			this.code = code;

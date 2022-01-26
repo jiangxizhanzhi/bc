@@ -73,7 +73,7 @@ public class CourseInfoBo implements Serializable {
 	private Integer exerciseCount;
 
 	@ApiModelProperty("建议学习时长")
-	private Integer suggestDuration;
+	private Integer suggestDuration = 0;
 
 	@ApiModelProperty("是否收藏")
 	private Boolean isCollection;

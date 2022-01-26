@@ -44,4 +44,10 @@ public interface ErrorCode {
 
 	/** 对应文件不存在*/
 	String FILE_NOT_EXIST = "100017";
+
+	/** 子类未实现 */
+	String SUB_NOT_IMPLEMENT = "100018";
+
+	/** 类型错误 */
+	String TYPE_ERROR = "100019";
 }

@@ -3,13 +3,12 @@ package com.cyberpeace.common.component;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.ChatException;
 import com.cyberpeace.common.model.ws.*;
 import com.cyberpeace.common.util.JsonUtil;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
@@ -34,18 +33,22 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
-			throw new Error("[wsChat]declareMessageType=[" + declareMessageType() + "] repeat");
+			log.error("[wsChat]declareMessageType=[" + declareMessageType() + "] repeat");
+			throw new ChatException(ErrorCode.TYPE_ERROR);
 		}
 
 		register.put(declareMessageType(), this);
 	}
 
 	public  List<String> getGroup(String businessId, String groupId){
-		throw new Error("Subclass implementation");
+		log.error("[wsChat] Subclass implementation getGroup");
+		throw new ChatException(ErrorCode.SUB_NOT_IMPLEMENT);
 	};
 
 	public  List<String> getFriends(String businessId, String userId){
-		throw new Error("Subclass implementation");
+		log.error("[wsChat] Subclass implementation getFriends");
+		throw new ChatException(ErrorCode.SUB_NOT_IMPLEMENT);
+
 	};
 
 
@@ -56,22 +59,22 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		super.afterConnectionEstablished(session);
-
 		WebSocketConnectionContext webSocketContext = (WebSocketConnectionContext) session
 				.getAttributes().get("key");
 		String businessType = webSocketContext.getOriginParams().get("business_id");
 		if (businessType == null) {
 			log.error("[wsChat]current link parameter business_id could not be found");
-			throw new Error(ErrorCode.METHOD_ARG_NOT_VALID);
+			throw new ChatException(ErrorCode.METHOD_ARG_NOT_VALID);
 		}
 
 		ChatWebSocketHandler handler = getHandler(webSocketContext);
 		if (!handler.checkInBusiness(webSocketContext)){
 			log.error("[wsChat]current user {} is not in the chat service {}", webSocketContext.getUserId(),
 					webSocketContext.getOriginParams());
-			throw new Error(ErrorCode.METHOD_ARG_NOT_VALID);
+			throw new ChatException(ErrorCode.METHOD_ARG_NOT_VALID);
 		};
+
+		super.afterConnectionEstablished(session);
 
 	}
 
@@ -80,7 +83,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 		if (businessType == null || !register.containsKey(Integer.valueOf(businessType))) {
 			log.error("[wsChat]businessType=[{}] cannot find type handler", businessType);
-			throw new Error("businessType=[{}] cannot find type handler");
+			throw new ChatException(ErrorCode.TYPE_ERROR);
 		}
 		return register.get(Integer.valueOf(businessType));
 	}
@@ -116,7 +119,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 			String reverseId = chatContent.getReceiverId();
 			if (!friends.contains(reverseId)){
 				log.error("[wsChat]recipient {} is not in the user friend list {}", reverseId, friends);
-				throw new Error(ErrorCode.USER_NOT_IN_LIST);
+				throw new ChatException(ErrorCode.USER_NOT_IN_LIST);
 			}
 			sendMessage(connectionContext.getIdentifierId(), reverseId, chatMessage);
 		}

@@ -15,19 +15,19 @@ import java.util.concurrent.TimeUnit;
 /**
  * 拦截器的配置
  */
-@Configuration
-public class WebMvcConfiguration implements WebMvcConfigurer {
-
-    @Autowired
-    private Environment environment;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        int permitsPerSeconds = Integer.parseInt(Objects.requireNonNull(environment.getProperty("permitsPerSeconds")));
-        int warmupPeriod = Integer.parseInt(Objects.requireNonNull(environment.getProperty("warmupPeriod")));
-
-        InterceptorRegistration interceptorRegistration = registry.addInterceptor(new RateLimiterInterceptor(RateLimiter.create(permitsPerSeconds, warmupPeriod, TimeUnit.SECONDS)));
-
-        interceptorRegistration.addPathPatterns("/*/**");
-    }
-}
+//@Configuration
+//public class WebMvcConfiguration implements WebMvcConfigurer {
+//
+//    @Autowired
+//    private Environment environment;
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        int permitsPerSeconds = Integer.parseInt(Objects.requireNonNull(environment.getProperty("permitsPerSeconds")));
+//        int warmupPeriod = Integer.parseInt(Objects.requireNonNull(environment.getProperty("warmupPeriod")));
+//
+//        InterceptorRegistration interceptorRegistration = registry.addInterceptor(new RateLimiterInterceptor(RateLimiter.create(permitsPerSeconds, warmupPeriod, TimeUnit.SECONDS)));
+//
+//        interceptorRegistration.addPathPatterns("/*/**");
+//    }
+//}

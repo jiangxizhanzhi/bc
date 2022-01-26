@@ -118,8 +118,8 @@ public class RabbitMQConf {
 			simpleMessageListenerContainer(ConnectionFactory connectionFactory) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(
 				connectionFactory);
-		container.setConcurrentConsumers(1);
-		container.setMaxConcurrentConsumers(1);
+		container.setConcurrentConsumers(2);
+		container.setMaxConcurrentConsumers(2);
 		container.setQueueNames(getQueues());
 		container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
 		container.setExposeListenerChannel(true);

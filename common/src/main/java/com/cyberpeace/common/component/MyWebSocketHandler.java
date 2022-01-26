@@ -126,7 +126,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 				try {
 					userSession.sendMessage(toSendMessage);
 				} catch (IOException e) {
-					log.error("businessId=[{}], userId=[{}], message=[{}] send fail!",
+					log.error("yqrtest businessId=[{}], userId=[{}], message=[{}] send fail!",
 							new Object[] { businessId, userId, jsonMessage });
 				}
 

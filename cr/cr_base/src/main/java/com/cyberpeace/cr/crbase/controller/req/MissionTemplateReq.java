@@ -13,7 +13,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
-import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -50,8 +50,7 @@ public class MissionTemplateReq implements Serializable {
 
 	public void validate() {
 		// 验证名称长度
-		CrCommonValidator.validateLength(title, CrCommonConstants.MIN_MISSION_NAME_LEN,
-				CrCommonConstants.MAX_MISSION_NAME_LEN, CrBusinessErrorCode.INVALID_MISSION_NAME);
+		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);
 
 		// validate skill points
 		// CrCommonValidator.validateSize(skillPoints,

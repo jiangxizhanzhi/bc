@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
+import java.util.Date;
+import java.util.List;
+
 @Mapper
 @Repository
 public interface LocalSceneMapper extends BaseMapper<LocalScene> {
@@ -18,4 +21,10 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 	 */
 	void updateEndTime(LocalScene localScene);
 
+	/**
+	 * 查询到关闭时间的场景
+	 * @param closeTime
+	 * @return
+	 */
+	List<LocalScene> selectByCloseTime(Date closeTime);
 }

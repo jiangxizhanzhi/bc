@@ -23,7 +23,8 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	}
 
 	@Override
-	public void saveRecord(String name, String businessTemplateId, String roomId, String userId, Integer businessType) {
+	public void saveRecord(String name, String businessTemplateId, String roomId, String userId,
+			Integer businessType) {
 
 		TrainRecord trainRecord = new TrainRecord();
 		trainRecord.setBusinessTemplateId(businessTemplateId);
@@ -37,7 +38,8 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	}
 
 	@Override
-	public void updateExtraDate(String businessTemplateId, String userId, Integer businessType, String extra) {
+	public void updateExtraDate(String businessTemplateId, String userId, Integer businessType,
+			String extra) {
 		trainRecordMapper.setExtra(businessTemplateId, userId, businessType, extra);
 	}
 
@@ -47,7 +49,8 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	}
 
 	@Override
-	public void updateEndDate(String businessTemplateId, String userId, Integer businessType, String extra) {
+	public void updateEndDate(String businessTemplateId, String userId, Integer businessType,
+			String extra) {
 		trainRecordMapper.setEndTime(businessTemplateId, userId, businessType, extra);
 	}
 
@@ -59,6 +62,11 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	@Override
 	public void updateEndDate(String businessTemplateId) {
 		trainRecordMapper.batchEnd(businessTemplateId);
+	}
+
+	@Override
+	public TrainRecord getByRoomId(String roomId) {
+		return trainRecordMapper.getByRoomId(roomId);
 	}
 
 }

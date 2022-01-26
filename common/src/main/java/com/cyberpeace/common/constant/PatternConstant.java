@@ -9,7 +9,7 @@ public interface PatternConstant {
 	String MARKDOWN_IMAGE_URL = "(?<=\\()[^\\)]+";
 
 	/** 动态flag匹配*/
-	String DYNAMIC_FLAG = "\\[FLAG\\[[0-9]+\\]\\]";
+	String DYNAMIC_FLAG = "\\{FLAG\\[[0-9]+\\]\\}";
 
 	/** 解析markdown文件匹配标题*/
 	String MARKDOWN_TITLE = "#{2}[^#]+";

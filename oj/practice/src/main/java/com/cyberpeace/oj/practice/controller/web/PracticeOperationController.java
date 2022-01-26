@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
@@ -51,15 +49,12 @@ public class PracticeOperationController {
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
-	private RemoteLogService remoteLogService;
-
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
 	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
-		WebOperationBo operationBo = practiceOperationService.selectById(resourceId, authContext);
+		WebOperationBo operationBo = practiceOperationService.selectById(resourceId, authContext, Boolean.FALSE);
 
 		return new BaseRsp<>(operationBo);
 	}
@@ -94,12 +89,11 @@ public class PracticeOperationController {
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
-				answerReq.getSubmitAnswer());
+				answerReq.getSubmitAnswer(), Boolean.FALSE);
 
 		// 记录远程操作日志
-		String content = "资源编号为" + answerReq.getResourceId() + "。";
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-				OperationType.EXERCISE, "实操练习", content);
+		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
+		practiceOperationService.createMpLog(answerReq.getResourceId(), solved);
 
 		return new BaseRsp<>(evaluateResult);
 	}

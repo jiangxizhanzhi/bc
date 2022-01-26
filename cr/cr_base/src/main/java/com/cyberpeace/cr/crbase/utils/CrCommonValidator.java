@@ -1,14 +1,18 @@
-package com.cyberpeace.cr.crbase.service.impl;
+package com.cyberpeace.cr.crbase.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Set;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.google.common.collect.Sets;
 
 public class CrCommonValidator {
 
+	/**
+	 * 验证字符串长度。中文算2个字符。
+	 */
 	public static void validateLength(String target, Integer minLen, Integer maxLen,
 			String errorCode) {
 		try {
@@ -22,7 +26,7 @@ public class CrCommonValidator {
 		}
 	}
 
-	public static <T> void validateEmptyList(List<T> target, String errorCode) {
+	public static <T> void validateListIfEmpty(List<T> target, String errorCode) {
 		if (target.isEmpty()) {
 			throw new BusinessException(errorCode);
 		}
@@ -53,10 +57,24 @@ public class CrCommonValidator {
 		}
 	}
 
+	public static <T> void validateSize(List<T> target, int min, int max, String errorCode) {
+		if (target.size() < min || target.size() > max) {
+			throw new BusinessException(errorCode);
+		}
+	}
+
 	public static void validateScore(int target, int minValue, int maxValue, String errorCode) {
 		if (target < minValue || target > maxValue) {
 			throw new BusinessException(errorCode);
 		}
+	}
+
+	/**
+	 * 默认 名称长度 1~255
+	 */
+	public static void validateNameLen(String target, String errorCode) {
+		validateLength(target, CrCommonConstants.MIN_STR_LEN, CrCommonConstants.MAX_NAME_STR_LEN,
+				errorCode);
 	}
 
 }

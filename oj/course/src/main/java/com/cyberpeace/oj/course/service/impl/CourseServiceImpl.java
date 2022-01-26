@@ -346,6 +346,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 数据存在性校验
 		Course courseExist = courseValidateHandler.validateCourseExist(course.getResourceId());
+		courseValidateHandler.validateCourseUpdateNameExist(courseExist.getResourceId(),
+				course.getName());
 		if (StringUtils.isNotBlank(course.getCourseNum())
 				&& StringUtils.isNotBlank(courseExist.getCourseNum())) {
 			course.setCourseNum(null);

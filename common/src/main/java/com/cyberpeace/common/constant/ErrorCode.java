@@ -34,13 +34,16 @@ public interface ErrorCode {
 	String FILE_ZIP_FAIL = "100013";
 
 	/** 文件类型不正确*/
-	String FILE_TYPE_ERROR = "10014";
+	String FILE_TYPE_ERROR = "100014";
 
 	/** 文件读取失败*/
-	String FILE_READ_FAIL = "10015";
+	String FILE_READ_FAIL = "100015";
 
 	/** 用户不在列表中 */
-	String USER_NOT_IN_LIST = "10016";
+	String USER_NOT_IN_LIST = "100016";
+
+	/** 对应文件不存在*/
+	String FILE_NOT_EXIST = "100017";
 
 	/** 接口访问频繁，被限流 */
 	String INTERFACE_CURRENT_LIMITING = "10017";

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -53,7 +53,6 @@ class MissionSchemeMission {
 	private String description;
 
 	public void validate() {
-		CrCommonValidator.validateLength(title, CrCommonConstants.MIN_MISSION_NAME_LEN,
-				CrCommonConstants.MAX_MISSION_NAME_LEN, CrBusinessErrorCode.INVALID_MISSION_NAME);
+		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);
 	}
 }

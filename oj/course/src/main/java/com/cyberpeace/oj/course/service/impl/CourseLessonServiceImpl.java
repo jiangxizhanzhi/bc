@@ -1,8 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,12 +10,18 @@ import javax.annotation.Resource;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
@@ -30,6 +34,7 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import com.cyberpeace.oj.practice.service.*;
+import com.cyberpeace.oj.practice.service.impl.LessonOperationEvaluateHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +54,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
@@ -118,8 +121,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Resource(name = "theory")
 	private PracticeEvaluateHandler theoryEvaluateHandler;
 
-	@Resource(name = "operation")
-	private PracticeEvaluateHandler operationEvaluateHandler;
+	@Resource(name = "lesson_operation")
+	private LessonOperationEvaluateHandler lessonOperationEvaluateHandler;
 
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
@@ -178,6 +181,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
 
@@ -226,10 +232,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.intValue() == CourseLesson.HandoutType.PDF.getCode().intValue()) {
 			infoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
 		}
-		if (null != lesson.getHandoutType() && (lesson.getHandoutType()
-				.intValue() == CourseLesson.HandoutType.DOC.getCode().intValue()
-				|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT.getCode()
-						.intValue())) {
+		if (null != lesson.getHandoutType()
+				&& (lesson.getHandoutType().intValue() == CourseLesson.HandoutType.DOC.getCode()
+						.intValue()
+						|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT
+								.getCode().intValue())
+				&& StringUtils.isNotBlank(lesson.getHandoutUrl())) {
 			infoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
 		}
 		infoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
@@ -322,10 +330,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// word或者ppt讲义处理
-		if (null != lesson.getHandoutType() && (lesson.getHandoutType()
-				.intValue() == CourseLesson.HandoutType.DOC.getCode().intValue()
-				|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT.getCode()
-						.intValue())) {
+		if (null != lesson.getHandoutType()
+				&& (lesson.getHandoutType().intValue() == CourseLesson.HandoutType.DOC.getCode()
+						.intValue()
+						|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT
+								.getCode().intValue())
+				&& StringUtils.isNotBlank(lesson.getHandoutUrl())) {
 			lessonInfoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
 			lessonInfoBo.setHandoutName(StringUtils.substring(lesson.getHandoutUrl(),
 					lesson.getHandoutUrl().lastIndexOf(File.separatorChar) + CommonConstant.ONE));
@@ -397,9 +407,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public CourseLesson updateLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
 
+		// 数据校验
 		CourseLesson lessonExist = courseValidateHandler
 				.validateLessonExist(courseLesson.getResourceId(), false);
-		Boolean updateFlag = !lessonExist.getName().equals(courseLesson.getName());
+		courseValidateHandler.validateLessonUpdateNameExist(lessonExist, courseLesson.getName());
+		courseValidateHandler.validateLessonUpdateSceneExist(lessonExist);
 
 		// 试卷数据
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
@@ -415,6 +427,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		LessonConfig lessonConfig = LessonConfig.builder().lessonId(courseLesson.getResourceId())
 				.courseId(courseLesson.getCourseId()).name(courseLesson.getName()).build();
 
+		Boolean updateFlag = !lessonExist.getName().equals(courseLesson.getName());
 		// 课时留言theme_name修改
 		Comment comment = new Comment();
 		if (updateFlag) {
@@ -651,8 +664,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				// 实操数据并评估
 				PracticeOperation operation = practiceOperationRefService
 						.selectByPracticeId(paper.getResourceId(), submitContext.getPracticeId());
-				EvaluateResult evaluateResult = operationEvaluateHandler.evaluateByBusiness(
-						answerContext.getUserId(), operation, submitContext.getSubmitAnswer());
+				EvaluateResult evaluateResult = lessonOperationEvaluateHandler.evaluateByBusiness(
+						authContext.getUserId(), operation, submitContext.getSubmitAnswer(),
+						answerContext.getLessonId());
 
 				PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult, PracticeSolvedBo.class);
 				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
@@ -745,8 +759,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public Boolean addLessonPractice(String resourceId, List<PaperPracticeContext> practiceList) {
-		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(resourceId, false);
+	public Boolean addLessonPractice(String lessonId, List<PaperPracticeContext> practiceList) {
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
 
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 		Paper paper = paperService.update(paperContext);
@@ -1249,5 +1263,16 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(), courseId);
 		AttachmentBo attachmentBo = attachmentService.uploadDest(handoutPath, false, handout);
 		return attachmentBo.getFilePath();
+	}
+
+	@Override
+	public void createMpLog(LessonInfoBo lessonInfoBo) {
+		String operationTarget = lessonInfoBo.getCourseName() + "-" + lessonInfoBo.getName();
+		String language = CommonContext.getLanguage();
+		String content = String.format(
+				LogContent.getLocaleValue(LogContent.COURSE_FORMAT, language),
+				lessonInfoBo.getCourseName(), lessonInfoBo.getName());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.STUDY, operationTarget, content);
 	}
 }

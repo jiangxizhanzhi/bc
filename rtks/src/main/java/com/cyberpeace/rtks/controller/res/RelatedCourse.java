@@ -60,7 +60,7 @@ public class RelatedCourse implements Serializable {
 	private Integer lessonCount;
 
 	@ApiModelProperty("课程课时时长")
-	private Integer courseDuration;
+	private Integer courseDuration = 0;
 
 	@ApiModelProperty("理论课时数量")
 	private Integer theoryCount;

@@ -60,6 +60,10 @@ public class UtilServiceImpl implements UtilService {
 	@Override
 	public String officeUrl(String fileUrl, String fileId) {
 
+		if (StringUtils.isBlank(fileUrl)) {
+			return fileUrl;
+		}
+
 		String fileName = fileUrl;
 		int lastIndexOf = fileUrl.lastIndexOf(File.separator);
 		if (lastIndexOf != CommonConstant.NEGATIVE_ONE) {
@@ -88,6 +92,11 @@ public class UtilServiceImpl implements UtilService {
 
 			if (fileUrl.startsWith(FDFS_PREFIX)) {
 				return fileUrl.replace(FDFS_PREFIX, "");
+			}
+
+			// officeUrl 返回null 用于后续做判断
+			if (fileUrl.startsWith(remoteServerEnvService.getOfficeHost())) {
+				return null;
 			}
 		}
 
@@ -130,6 +139,7 @@ public class UtilServiceImpl implements UtilService {
 
 		// 文件拷贝到nginx可转发目录 同时生成nginx转发地址
 		List<String> nginxUrlList = StreamApiUtils.map(realPathList, realPath -> {
+
 			String fileSuffix = FileUtil.getFileSuffix(realPath);
 			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
 			String destPath = destFilePath + File.separatorChar + fileName;

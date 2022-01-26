@@ -21,7 +21,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.resource.MDParser;
 import com.cyberpeace.cs.service.AttachmentService;
 
@@ -45,7 +45,7 @@ public class CrNoAuthController {
 	private BusinessTemplateService businessTemplateService;
 
 	@Autowired
-	private MissionService missionService;
+	private MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private BusinessTemplateHandler businessTemplateHandler;
@@ -87,7 +87,7 @@ public class CrNoAuthController {
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 					businessTemplateService.save(template);
-					missionService.batchInsertMissionTemplates(missionTemplateList);
+					missionTemplateService.batchInsert(missionTemplateList);
 					handler.loadTrainTemplate(mdParser.getTemplateContext());
 					attachmentService.loadZiguanImages(attachments);
 				}

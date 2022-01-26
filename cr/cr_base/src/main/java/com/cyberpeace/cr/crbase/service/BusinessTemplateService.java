@@ -10,6 +10,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
+import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
@@ -36,6 +37,8 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	void batchSetShares(ShareContext shareContext);
 
 	String addTemplate(BasicTemplate basicTemplate);
+
+	String addTemplate(BaseInfo baseInfo);
 
 	List<String> selectAuthIdsByUserId(String userId);
 
@@ -110,4 +113,16 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @return
 	 */
 	Boolean existByName(String templateName);
+
+	/**
+	 * 更新模板
+	 * @param businessTemplate
+	 * @param baseInfo
+	 */
+	void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo);
+
+	/**
+	 * 创建或更新模板时校验是否重名
+	 */
+	void validateName(String name, Integer type, String resourceId);
 }

@@ -11,9 +11,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
@@ -47,15 +45,11 @@ public class PracticeTheoryController {
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
-	private RemoteLogService remoteLogService;
-
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
 	public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {
-
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
-				UserInfoContext.getUserContext().getUserId());
+				UserInfoContext.getUserContext().getUserId(), Boolean.FALSE);
 
 		return new BaseRsp<>(theoryBo);
 	}
@@ -91,12 +85,11 @@ public class PracticeTheoryController {
 
 		EvaluateResult evaluateResult = practiceTheoryService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
-				answerReq.getSubmitAnswer());
+				answerReq.getSubmitAnswer(),Boolean.FALSE);
 
 		// 记录远程操作日志
-		String content = "资源编号为" + answerReq.getResourceId() + "。";
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
-				OperationType.EXERCISE, OperationModule.THEORY.getDesc(), content);
+		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
+		practiceTheoryService.createMpLog(answerReq.getResourceId(), solved);
 
 		return new BaseRsp<>(evaluateResult);
 	}

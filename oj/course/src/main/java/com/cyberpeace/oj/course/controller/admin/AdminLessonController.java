@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -79,6 +80,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private CourseMapper courseMapper;
+
+	@Autowired
+	private UtilService utilService;
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
@@ -384,6 +388,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 				&& StringUtils.isBlank(lessonUpdateReq.getVideoUrl())) {
 			// 文件为空 url为空则置空
 			courseLesson.setVideoUrl("");
+		} else {
+			courseLesson.setVideoUrl(utilService.replaceFileUrl(lessonUpdateReq.getVideoUrl()));
 		}
 
 		// 有讲义地址并且讲义不为空 则修改文件
@@ -395,6 +401,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		} else if (StringUtils.isBlank(lessonUpdateReq.getHandoutUrl())
 				&& null == lessonUpdateReq.getHandout()) {
 			courseLesson.setHandoutUrl("");
+		} else {
+			courseLesson.setHandoutUrl(utilService.replaceFileUrl(lessonUpdateReq.getHandoutUrl()));
 		}
 
 		return courseLesson;

@@ -2,7 +2,6 @@ package com.cyberpeace.cr.singletrain.dao.mapper;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -33,7 +32,13 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 
 	Integer countByUserId(@Param("userId") String userId);
 
+	Integer countUnfinishedByUserId(@Param("userId") String userId);
+
 	List<SingleRoom> selectByUserId(@Param("userId") String userId);
+
+	List<SingleRoom> selectUnfinishedByUserId(@Param("userId") String userId);
+
+	List<SingleRoom> selectByRoomIds(@Param("roomIds") List<String> roomIds);
 
 	List<SingleRoom> selectByTemplateId(@Param("businessTemplateId") String businessTemplateId);
 }

@@ -348,7 +348,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		String appResourceId = lesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
 				+ lesson.getResourceId();
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(appResourceId)
-				.topoData(topoData).build();
+				.topoData(topoData).isWeb(ojLocalScene.getFromWeb()).build();
 
 		localScene.setMeta(JsonUtil.toJsonString(sceneMeta));
 		return localScene;

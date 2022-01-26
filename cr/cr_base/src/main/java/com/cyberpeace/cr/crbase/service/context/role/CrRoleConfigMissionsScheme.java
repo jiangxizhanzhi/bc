@@ -9,9 +9,11 @@ import lombok.Data;
  * 用于后台模板查询接口返回基本任务信息
  */
 @Data
-public class CrRoleRspSchemeStage implements Serializable {
+public class CrRoleConfigMissionsScheme implements Serializable {
 
-	private String stage;
+	private Integer color;
 
-	private List<CrRoleRspMission> missions;
+	private Integer template;
+
+	private List<CrRoleConfigSchemeStage> schemeData;
 }

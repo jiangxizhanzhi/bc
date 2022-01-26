@@ -109,6 +109,9 @@ public class ZipUtil {
 	 */
 	public static String toZipDest(String srcDir, String destDir) {
 
+		// 创建文件夹
+		FileUtil.mkdirs(destDir);
+
 		ZipOutputStream zos = null;
 		File src = new File(srcDir);
 		String zipPath = destDir + File.separator + src.getName() + SUFFIX;

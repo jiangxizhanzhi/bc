@@ -50,6 +50,22 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		return getMappingByIds(templateIds);
 	}
 
+	@Override
+	public void batchInsert(List<MissionTemplate> missionTemplateList) {
+		if (missionTemplateList.isEmpty()) {
+			return;
+		}
+		missionTemplateMapper.batchInsert(missionTemplateList);
+	}
+
+	@Override
+	public void batchDelete(List<String> missionTemplateIds) {
+		if (missionTemplateIds.isEmpty()) {
+			return;
+		}
+		missionTemplateMapper.deleteBatchIds(missionTemplateIds);
+	}
+
 	private List<String> getIdsByMissionsSchemeJson(String schemeJson) {
 		String reg = String.format(PatternConstant.RESOURCE_ID,
 				CrCommonConstants.GENERATED_UUID_LENGTH);

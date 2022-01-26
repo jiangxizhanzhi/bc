@@ -10,7 +10,8 @@
         </set>
         <where>
             end_time is null
-            and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}
+            and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type =
+            #{business_type}
         </where>
     </update>
     <update id="setEndTime">
@@ -23,7 +24,8 @@
         </set>
         <where>
             end_time is null
-            and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type = #{business_type}
+            and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type =
+            #{business_type}
         </where>
     </update>
     <update id="setEndTimeByRoomId">
@@ -53,11 +55,16 @@
         select count(id)
         from cr_train_record
         where user_id = #{userId}
-          and business_type = #{type}
-          and end_time is not null
-          <if test="type == @com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate$BusinessType@TRAINING_SINGLE.code">
-              and extra is not null
-          </if>
+        and business_type = #{type}
+        and end_time is not null
+        <if test="type == @com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate$BusinessType@TRAINING_SINGLE.code">
+            and extra is not null
+        </if>
+    </select>
+    <select id="getByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.TrainRecord">
+        select *
+        from cr_train_record
+        where room_id = #{roomId}
     </select>
 
 </mapper>

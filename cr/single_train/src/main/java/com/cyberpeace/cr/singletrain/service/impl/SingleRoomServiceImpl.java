@@ -34,9 +34,9 @@ import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMissionsScheme;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
@@ -267,7 +267,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				localSceneService.removeById(singleRoom.getLocalSceneId());
 				singleRoomMapper.deleteById(singleRoom);
 				trainRecordService.updateEndDate(singleRoom.getResourceId(),
-                        BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 			}
 		});
 		return true;
@@ -447,7 +447,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		if (roomObject == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION);
 		}
 
 		// 单兵训练运行房间任务查询, 答题者即为创建者
@@ -606,21 +606,21 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	public String getTrainManual(String businessTemplateId) {
 		// 获取训练方案
 		SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
-		CrRoleRspMissionsScheme missionScheme = JsonUtil
-				.toJsonObject(singleTemplate.getMissionsScheme(), CrRoleRspMissionsScheme.class);
-		List<CrRoleRspSchemeStage> stages = missionScheme.getSchemeData();
+		CrRoleConfigMissionsScheme missionScheme = JsonUtil
+				.toJsonObject(singleTemplate.getMissionsScheme(), CrRoleConfigMissionsScheme.class);
+		List<CrRoleConfigSchemeStage> stages = missionScheme.getSchemeData();
 		Map<String, MissionTemplate> missionTemplateMap = missionTemplateService
 				.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
 
 		// 生成富文本训练手册
 		StringBuilder writeup = new StringBuilder();
 		for (int i = 0; i < stages.size(); i++) {
-			CrRoleRspSchemeStage item = stages.get(i);
+			CrRoleConfigSchemeStage item = stages.get(i);
 			writeup.append("## ").append("阶段").append(i + 1).append(": ").append(item.getStage())
 					.append("\n\n");
-			List<CrRoleRspMission> missions = item.getMissions();
+			List<CrRoleConfigMission> missions = item.getMissions();
 			List<String> missionTemplateIds = Lists.newArrayList();
-			for (CrRoleRspMission mission : missions) {
+			for (CrRoleConfigMission mission : missions) {
 				missionTemplateIds.add(mission.getResourceId());
 			}
 			for (int j = 0; j < missions.size(); j++) {
@@ -723,7 +723,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 	@Override
 	public SingleRoom getByBusinessId(String businessId) {
-		String[] ids = StringUtils.split(businessId, "_", 1);
+		String[] ids = StringUtils.split(businessId, "_", 2);
 		if (ids.length != 2) {
 			log.error(String.format("invalid business id for single training: %s", businessId));
 			return null;
@@ -786,7 +786,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		List<TrainRecord> trainHistory = trainRecordService.lambdaQuery()
 				.eq(TrainRecord::getUserId, UserInfoContext.getUserContext().getUserId())
 				.eq(TrainRecord::getBusinessTemplateId, businessTemplateId)
-				.isNotNull(TrainRecord::getEndTime).orderByAsc(TrainRecord::getEndTime).list();
+				.isNotNull(TrainRecord::getEndTime).isNotNull(TrainRecord::getExtra)
+				.orderByAsc(TrainRecord::getEndTime).list();
 
 		List<TrainHistoryBo> result = Lists.newArrayList();
 		for (int i = 0; i < trainHistory.size(); i++) {
@@ -795,11 +796,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			trainHistoryBo.setRoomId(item.getRoomId());
 			trainHistoryBo.setTrainTime(item.getEndTime());
 			trainHistoryBo.setTrainTimes(i + 1);
-			if (item.getExtra() == null) {
+
+			JSONObject trainExtraData = JsonUtil.toJsonObject(item.getExtra(), JSONObject.class);
+			if (trainExtraData.isEmpty()) {
 				trainHistoryBo.setScore(0d);
 			} else {
-				trainHistoryBo.setScore(JsonUtil.toJsonObject(item.getExtra(), JSONObject.class)
-						.getDouble(SingleRoom.CrTrainRecordFields.SCORE));
+				trainHistoryBo.setScore(trainExtraData.getDouble(SingleRoom.CrTrainRecordFields.SCORE));
 			}
 
 			result.add(trainHistoryBo);
@@ -851,13 +853,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				// 写入训练记录
 				if (!extraRecord.isEmpty()) {
 					extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, score);
-					trainRecordService.updateExtraDate(businessTemplateId, userId,
-							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
-							JsonUtil.toJsonString(extraRecord));
 				}
+				trainRecordService.updateEndDate(businessTemplateId, userId,
+						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+						JsonUtil.toJsonString(extraRecord));
 
 				// 设置当前训练已完成
 				singleRoom.setIsFinish(true);
+				singleRoom.setEndTime(new Date());
 				singleRoomMapper.updateById(singleRoom);
 			}
 		});

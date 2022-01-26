@@ -41,6 +41,7 @@ import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -118,7 +119,38 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			}
 		});
 
-		return null;
+		return businessTemplate.getResourceId();
+	}
+
+	@Override
+	public String addTemplate(BaseInfo baseInfo) {
+		// 1、从输入业务中解析公共模板
+		BusinessTemplate businessTemplate = new BusinessTemplate();
+		businessTemplate.setBusinessType(baseInfo.getType());
+		businessTemplate.setName(baseInfo.getName());
+		businessTemplate.setDescription(baseInfo.getDescription());
+		businessTemplate.setDifficulty(baseInfo.getDifficult());
+		// validate name
+		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(), "");
+
+		businessTemplate.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		businessTemplate.setOperationAuthIds("[]");
+		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+		// 拓扑场景id保存获取
+		SceneConfigData topoData = baseInfo.getSceneConfigData();
+		JSONObject topoJson = new JSONObject();
+		topoJson.put("scene_config", topoData.getSceneConfig());
+		LocalScene.BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
+		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
+
+		// 保存基础模板
+		businessTemplate.setTopoId(topoId);
+		// 2、执行实际的保存
+		// 1、保存公共模版数据
+		save(businessTemplate);
+
+		return businessTemplate.getResourceId();
 	}
 
 	@Override
@@ -133,6 +165,34 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Override
 	public Boolean existByName(String templateName) {
 		return businessTemplateMapper.existByName(templateName);
+	}
+
+	@Override
+	public void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo) {
+		// base info
+		businessTemplate.setName(baseInfo.getName());
+		businessTemplate.setDescription(baseInfo.getDescription());
+		businessTemplate.setDifficulty(baseInfo.getDifficult());
+		// validate name
+		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(),
+				businessTemplate.getResourceId());
+		// update topo
+		SceneConfigData topoData = baseInfo.getSceneConfigData();
+		if (topoData != null) {
+			JSONObject topoJson = new JSONObject();
+			topoJson.put("scene_config", topoData.getSceneConfig());
+			localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
+		}
+		// save
+		updateById(businessTemplate);
+	}
+
+	@Override
+	public void validateName(String name, Integer type, String resourceId) {
+		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		if (businessTemplateMapper.existByNameAndTypeAndId(name, type, resourceId)) {
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
+		}
 	}
 
 	@Override

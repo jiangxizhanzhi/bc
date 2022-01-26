@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context.role;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.Data;
 
@@ -8,11 +9,9 @@ import lombok.Data;
  * 用于后台模板查询接口返回基本任务信息
  */
 @Data
-public class CrRoleRspMission implements Serializable {
+public class CrRoleConfigSchemeStage implements Serializable {
 
-	private String title;
+	private String stage;
 
-	private String resourceId;
-
-	private String description;
+	private List<CrRoleConfigMission> missions;
 }

@@ -50,10 +50,10 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 				JSONObject.class);
 
 		List<JSONObject> redRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("redRoles").toString(), JSONObject.class);
+				.toJsonObjectArray(roleObject.get("red_roles").toString(), JSONObject.class);
 
 		List<JSONObject> blueRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("blueRoles").toString(), JSONObject.class);
+				.toJsonObjectArray(roleObject.get("blue_roles").toString(), JSONObject.class);
 
 		redRoleRsps.forEach(jsonObject -> {
 			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
@@ -107,8 +107,13 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public Boolean deleteTemplateRelated(BusinessTemplate businessTemplate) {
-		return rbTemplateMapper.deleteByBusinessTemplateId(businessTemplate.getResourceId());
+	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		RbTemplate rbTemplate = rbTemplateMapper
+				.selectByBusinessTemplateId(businessTemplate.getResourceId());
+		// delete mission templates
+		missionTemplateService.batchDelete(
+				rbTemplateService.getMissionTemplateIdsByRoleConfig(rbTemplate.getRoleConfig()));
+		rbTemplateMapper.deleteById(rbTemplate.getResourceId());
 	}
 
 	@Override

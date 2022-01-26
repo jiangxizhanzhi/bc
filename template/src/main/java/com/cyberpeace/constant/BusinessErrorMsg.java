@@ -51,6 +51,7 @@ public interface BusinessErrorMsg {
 			put(ErrorCode.DUPLICATE_KEY, "已存在");
 			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "远程服务异常");
 			put(ErrorCode.FILE_TYPE_ERROR, "文件类型错误");
+			put(ErrorCode.FILE_NOT_EXIST, "文件不存在");
 			put(ErrorCode.INTERFACE_CURRENT_LIMITING, "接口访问太频繁，请稍后访问");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE, "工具分类有关联的工具，不能删除");
@@ -79,7 +80,8 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.DUPLICATED_REPORT_SCORE_NAME, "同一战队下报告名称重复");
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH, "习题数量不足");
-			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "课堂场景运行中");
+			put(OjBusinessErrorCode.CLASS_SCENE_IS_RUNNING, "课堂场景运行中");
+			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "场景运行中");
 			put(OjBusinessErrorCode.RESOURCE_PERMISSION, "权限不足");
 			put(OjBusinessErrorCode.COURSE_NUM_IS_EXIST, "课程编号已存在");
 			put(OjBusinessErrorCode.NAME_IS_EXIST, "名称已存在");
@@ -90,6 +92,7 @@ public interface BusinessErrorMsg {
 			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS, "选择组织下无用户");
 			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "资源正在被使用");
 			put(OjBusinessErrorCode.CLASS_IN_SCHEDULES, "该班级在该时间段内已有课程安排");
+			put(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME, "已存在组织和课时相同的课程安排");
 
 			put(CrBusinessErrorCode.SWITCH_RECORDING_FAILURE, "设置录屏开关失败");
 
@@ -109,6 +112,14 @@ public interface BusinessErrorMsg {
 			put(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE, "暂停场景失败");
 			put(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE, "恢复场景失败");
 			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE, "单兵训练模板正在使用，删除失败");
+			put(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION, "请先启动实例");
+
+			put(CrBusinessErrorCode.EMPTY_MISSION_STAGE, "阶段内任务不可为空");
+			put(CrBusinessErrorCode.INVALID_TAGS_NUM, String.format("标签个数在 %d ~ %d 之间",
+					CrCommonConstants.MIN_TAG_COUNT, CrCommonConstants.MAX_TAG_COUNT));
+			put(CrBusinessErrorCode.ILLEGAL_TAG_LEN, "标签字符长度不正确");
+			put(CrBusinessErrorCode.TAG_DUPLICATE, "标签内容不能重复");
+			put(CrBusinessErrorCode.ILLEGAL_NAME_LEN, "名称长度非法");
 
 		}
 	};
@@ -150,9 +161,10 @@ public interface BusinessErrorMsg {
 			put(RtksBusinessErrorCode.UNABLE_DELETE_KNOWLEDGE, "unable to delete knowledge");
 			put(RtksBusinessErrorCode.UNABLE_DELETE_SKILL, "unable to delete skill");
 
-			put(ErrorCode.DUPLICATE_KEY, " already exist");
-			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "remote service error");
-			put(ErrorCode.FILE_TYPE_ERROR, "file type error");
+			put(ErrorCode.DUPLICATE_KEY, "already exist.");
+			put(ErrorCode.REMOTE_SERVICE_EXCEPTION, "Remote service error.");
+			put(ErrorCode.FILE_TYPE_ERROR, "File type error.");
+			put(ErrorCode.FILE_NOT_EXIST, "File not exist.");
 			put(ErrorCode.INTERFACE_CURRENT_LIMITING, "interface access is too frequent. please visit later");
 
 			put(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE,
@@ -182,20 +194,23 @@ public interface BusinessErrorMsg {
 
 			put(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH,
 					"The number of practice sets is insufficient.");
-			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "Scene is running.");
+			put(OjBusinessErrorCode.CLASS_SCENE_IS_RUNNING, "Class Scene is running.");
 			put(OjBusinessErrorCode.RESOURCE_PERMISSION, "Resource not permission.");
 			put(OjBusinessErrorCode.COURSE_NUM_IS_EXIST, "Course number already exists.");
 			put(OjBusinessErrorCode.NAME_IS_EXIST, "Name already exists.");
 			put(OjBusinessErrorCode.FILED_DATA_TOO_LONG, "The field data is too long.");
-			put(OjBusinessErrorCode.SCENE_START_FAIL, "Scene startup failure");
+			put(OjBusinessErrorCode.SCENE_START_FAIL, "Scene startup failure.");
 			put(OjBusinessErrorCode.END_GT_START_TIME,
-					"The end time must be greater than the start time");
+					"The end time must be greater than the start time.");
 			put(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR,
-					"Time is out of range, only 8 to 21");
+					"Time is out of range, only 8 to 21.");
 			put(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS,
-					"Select No users in the organization");
-			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "Resource is being used");
-			put(OjBusinessErrorCode.CLASS_IN_SCHEDULES, "The class has courses during this time");
+					"Select No users in the organization.");
+			put(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED, "Resource is being used.");
+			put(OjBusinessErrorCode.CLASS_IN_SCHEDULES, "The class has courses during this time.");
+			put(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME,
+					"A course schedule with the same organization and lesson already exists.");
+			put(OjBusinessErrorCode.SCENE_IS_RUNNING, "Scene is running.");
 
 			put(CrBusinessErrorCode.SCORE_OUT_OF_RANGE, "Score out of range.");
 			put(CrBusinessErrorCode.ANSWER_NOT_NULLABLE, "Answer cannot be blank.");
@@ -224,7 +239,17 @@ public interface BusinessErrorMsg {
 
 			put(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE, "Failed to unpause scene.");
 			put(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE, "Failed to pause scene.");
-			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE, "Failed to delete single training template in use.");
+			put(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE,
+					"Failed to delete single training template in use.");
+			put(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION, "Please Start Up Case.");
+
+			put(CrBusinessErrorCode.EMPTY_MISSION_STAGE, "Missions of one stage cant be empty.");
+			put(CrBusinessErrorCode.INVALID_TAGS_NUM,
+					String.format("Number of tags is supposed to be between %d ~ %d.",
+							CrCommonConstants.MIN_TAG_COUNT, CrCommonConstants.MAX_TAG_COUNT));
+			put(CrBusinessErrorCode.ILLEGAL_TAG_LEN, "Illegal length for tag.");
+			put(CrBusinessErrorCode.TAG_DUPLICATE, "Tags duplicate.");
+			put(CrBusinessErrorCode.ILLEGAL_NAME_LEN, "Illegal length for name.");
 		}
 	};
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.crbase.service.CommonService;
+import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -25,7 +25,8 @@ import io.swagger.annotations.ApiParam;
 public class TeamTrainTeacherController {
 
 	@Autowired
-	CommonService commonService;
+	CrCommonService crCommonService;
+
 	@Autowired
 	private TeamRoomService teamRoomService;
 
@@ -39,6 +40,7 @@ public class TeamTrainTeacherController {
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			return new BaseRsp<>(Lists.newArrayList());
 		}
-		return new BaseRsp<>(commonService.getMonitorSessions(room.getLocalSceneId(), student_id));
+		return new BaseRsp<>(
+				crCommonService.getMonitorSessions(room.getLocalSceneId(), student_id));
 	}
 }

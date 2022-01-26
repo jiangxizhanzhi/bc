@@ -9,8 +9,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
@@ -27,11 +32,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
@@ -55,6 +58,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper, PracticeTheory> implements PracticeTheoryService {
 
 	private Integer MAX_CONTENT_LENGTH;
+
+	private final Boolean IS_COLLECTED = Boolean.FALSE;
 
 	@PostConstruct
 	private void init() {
@@ -92,6 +97,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
 			AuthContext authContext) {
@@ -126,7 +134,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-					CommonConstant.TRUE);
+					CommonConstant.TRUE, IS_COLLECTED);
 
 			// 求交集 空则返回为空
 			if (listQuery.getSolved()) {
@@ -155,7 +163,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				} else {
 					PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
 							authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-							practiceTheory.getResourceId());
+							practiceTheory.getResourceId(), IS_COLLECTED);
 					theoryListBo.setSolved(null != practiceSolved ? practiceSolved.getSolved()
 							: CommonConstant.FALSE);
 				}
@@ -173,7 +181,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public WebTheoryBo selectById(String resourceId, String userId) {
+	public WebTheoryBo selectById(String resourceId, String userId, Boolean isCollected) {
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
 		if (null == practiceTheory) {
@@ -194,7 +202,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		}
 
 		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
-				PracticeCategory.PracticeType.THEORY.getCode(), resourceId);
+				PracticeCategory.PracticeType.THEORY.getCode(), resourceId, isCollected);
 
 		answerToNull(webTheoryBo, practiceSolved);
 
@@ -244,7 +252,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer) {
+	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer, Boolean isCollected) {
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(theoryId);
 		if (null == practiceTheory) {
@@ -254,7 +262,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		// 判断是否已完成答题
 		PracticeSolved solvedPractice = practiceSolvedMapper.selectUserAndId(userId,
-				PracticeCategory.PracticeType.THEORY.getCode(), theoryId);
+				PracticeCategory.PracticeType.THEORY.getCode(), theoryId, isCollected);
 		if (null != solvedPractice && solvedPractice.getSolved()) {
 			return BeanUtils.copy(solvedPractice, EvaluateResult.class);
 		}
@@ -629,6 +637,18 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
 
 		return practiceTheory;
+	}
+
+	@Override
+	public void createMpLog(String practiceId, LogContent solved) {
+		String language = CommonContext.getLanguage();
+		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
+		String content = String.format(
+				LogContent.getLocaleValue(LogContent.THEORY_FORMAT, language),
+				practiceTheory.getContent(), LogContent.getLocaleValue(solved, language));
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
+				OperationType.EXERCISE, LogContent.getLocaleValue(LogContent.THEORY, language),
+				content);
 	}
 
 }

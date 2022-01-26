@@ -78,5 +78,19 @@
                    end
                    as result;
     </select>
+    <select id="existByNameAndTypeAndId" resultType="java.lang.Boolean">
+        select case
+        when exists(select 1
+        from cr_business_template
+        where `name` = #{templateName}
+        and business_type = #{type}
+        <if test="templateId != null and templateId != ''">
+            and resource_id != #{templateId}
+        </if>)
+        then 1
+        else 0
+        end
+        as result;
+    </select>
 
 </mapper>

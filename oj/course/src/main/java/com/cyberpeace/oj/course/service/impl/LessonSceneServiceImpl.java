@@ -74,12 +74,6 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
-	@Autowired
-	private RemoteSceneService remoteSceneService;
-
-	@Autowired
-	private RemoteUserService remoteUserService;
-
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
 
@@ -113,7 +107,8 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		initOjLocalScene.setLocalSceneId(localScene.getResourceId());
 
 		// 场景启动
-		String sceneId = localSceneService.startScene(localScene);
+		String sceneId = authContext.getIsWeb() ? localSceneService.startScene(localScene)
+				: localSceneService.testScene(localScene);
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("startScene: Scene start failed! localScene=[{}]",
 					JsonUtil.toJsonString(localScene));
@@ -268,6 +263,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		String appResourceId = courseLesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
 				+ courseLesson.getResourceId();
 		localSceneMeta.setAppResourceId(appResourceId);
+		localSceneMeta.setIsWeb(ojLocalScene.getFromWeb());
 
 		// 设置大场景数据 部分课程为资源导入 无法设置reference_type
 		JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());

@@ -3,12 +3,15 @@ package com.cyberpeace.common.util;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -113,9 +116,12 @@ public class MdUtil {
 						CommonConstant.EMPTY_STRING);
 			}
 			File replaceFile = new File(currentDir, relativePath);
-			if (replaceFile.exists()) {
-				content = content.replace(imagePath, replaceFile.getAbsolutePath());
+			if (!replaceFile.exists()) {
+				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
+				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
 			}
+
+			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 		}
 
 		return content;

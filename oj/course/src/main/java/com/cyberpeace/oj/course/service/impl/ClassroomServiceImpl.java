@@ -109,6 +109,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
+		classroomValidateHandler.validateClassroomLessonExist(classroom.getLessonId(),
+				classroom.getOrganizationId());
 		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
 				classroom.getEndTime());
 		classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
@@ -258,7 +260,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (CollectionUtils.isNotEmpty(localScenes)) {
 			log.error("Classroom has scene is running! classroom_id=[{}]",
 					classroom.getResourceId());
-			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
+			throw new BusinessException(OjBusinessErrorCode.CLASS_SCENE_IS_RUNNING);
 		}
 
 	}

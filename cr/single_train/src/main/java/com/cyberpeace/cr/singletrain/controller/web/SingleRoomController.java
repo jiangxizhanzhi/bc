@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -51,7 +52,8 @@ public class SingleRoomController {
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
-				OperationType.START, singleRoomBo.getEventData().getName());
+				OperationType.START, singleRoomBo.getEventData().getName(),
+				CommonContext.getLanguage());
 
 		return new BaseRsp<>(singleRoomBo);
 	}
@@ -81,7 +83,8 @@ public class SingleRoomController {
 		if (deleteRoom) {
 			remoteLogService.addCrLog(UserInfoContext.getUserContext(),
 					OperationModule.SINGLE_TRAIN, OperationType.STOP,
-					singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName());
+					singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName(),
+					CommonContext.getLanguage());
 		}
 		return new BaseRsp<>(deleteRoom);
 	}
@@ -173,13 +176,15 @@ public class SingleRoomController {
 
 	@ApiOperation("训练历史")
 	@GetMapping("/train_history")
-	public BaseRsp<List<TrainHistoryBo>> trainHistory(@RequestParam("resource_id") String businessTemplateId) {
+	public BaseRsp<List<TrainHistoryBo>>
+			trainHistory(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainHistory(businessTemplateId));
 	}
 
 	@ApiOperation("训练提交")
 	@PostMapping("/train_submit")
-	public BaseRsp<String> submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
+	public BaseRsp<String>
+			submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
 		return new BaseRsp<>(singleRoomService.submitTrain(requestBody.getResourceId()));
 	}
 

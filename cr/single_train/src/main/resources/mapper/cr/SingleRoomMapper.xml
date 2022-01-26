@@ -69,10 +69,30 @@
         from cr_single_room
         where user_id = #{userId}
     </select>
+    <select id="countUnfinishedByUserId" resultType="java.lang.Integer">
+        select count(id)
+        from cr_single_room
+        where user_id = #{userId}
+        and end_time is null
+    </select>
     <select id="selectByUserId" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleRoom">
         select *
         from cr_single_room
         where user_id = #{userId}
+    </select>
+    <select id="selectUnfinishedByUserId" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleRoom">
+        select *
+        from cr_single_room
+        where user_id = #{userId}
+        and end_time is null
+    </select>
+    <select id="selectByRoomIds" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleRoom">
+        select *
+        from cr_single_room
+        where resource_id in
+        <foreach collection="roomIds" open="(" close=")" separator=", " item="roomId">
+            #{roomId}
+        </foreach>
     </select>
     <select id="selectByTemplateId" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleRoom">
         select *

@@ -42,7 +42,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
-import com.cyberpeace.cr.crbase.service.impl.CrCommonValidator;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -165,7 +165,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				for (CrRole crRole : crRoles) {
 					if (index >= users.size()) {
 						log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
-						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);					}
+						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
+					}
 
 					if (users.get(index).getUsers().size() == 0) {
 						index += 2;
@@ -414,9 +415,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 					crRoleList.forEach(crRole -> {
 						List<String> users = roomRoleMap.get(crRole.getResourceId()).getUsers();
 						if (users.size() == 0) {
-							log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
+							log.error("role users cannot be empty！rbRoomName=[{}]",
+									rbRoom.getName());
 							throw new BusinessException(
-									CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);						
+									CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
 						}
 						crRole.setUserIds(JsonUtil.toJsonString(users));
 						crRoleService.updateById(crRole);
@@ -660,7 +662,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		// 获取红队的角色任务
 		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
-		JSONArray redRoles = (JSONArray) rolejsonObject.get("redRoles");
+		JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");
 		for (int i = 0; i < redRoles.size(); i++) {
 
 			CrRole crRole = getRoleByJson(roomId, i, redRoles,
@@ -670,7 +672,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 
 		// 获取蓝队的角色任务
-		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blueRoles");
+		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
 		for (int i = 0; i < blueRoles.size(); i++) {
 
 			CrRole crRole = getRoleByJson(roomId, i, blueRoles,

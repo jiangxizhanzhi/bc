@@ -1,50 +1,43 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.integratation.service.impl.MpEnvService;
-import com.google.common.io.CharStreams;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.apache.poi.util.IOUtils;
-import org.apache.shiro.codec.Base64;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
+import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
-
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.List;
 
 @Api(tags = "单兵训练评分")
 @RestController
@@ -62,19 +55,29 @@ public class SingleRoomScoreController {
 	private CrScoreController crScoreController;
 
 	@Autowired
+	TrainRecordService trainRecordService;
+
+	@Autowired
+	private MissionService missionService;
+
+	@Autowired
 	private MpEnvService mpEnvService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
-	public BaseRsp<JSONObject> getStudentScore(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+	public BaseRsp<JSONObject> getHistoryDetail(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SingleRoleGroupCode.roleGroup);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
 				crRoleList);
 
-		String user_hash = UserInfoContext.getUserContext().getUserId();
+		// 单兵训练仅有一个用户, 角色仅关联一个用户
+		String user_hash = JsonUtil.stringToArray(crRoleList.get(0).getUserIds()).toJavaList(String.class).get(0);
 
 		List<Integer> radars = crRoleService.getRadar(resource_id, user_hash);
 
@@ -82,37 +85,50 @@ public class SingleRoomScoreController {
 				.getTrainingRecord(resource_id, user_hash);
 
 		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
-		List<StageRsp> stageRsps = getStageRsps(missionSchemeList);
+		List<StageExport> StageExports = getStageExports(missionSchemeList);
 
 		JSONObject data = new JSONObject();
 		data.put("task_count", gettaskCount(missionReport));
 		data.put("radar", radars);
-		data.put("stages", stageRsps);
+		data.put("stages", StageExports);
 		data.put("total_score", studentScoreRsp.getTrainingScore().getSumScoreObjective());
 
-		data.put("create_time", new Date());
+		data.put("create_time", trainRecordService.getByRoomId(resource_id).getEndTime());
 		data.put("resource_id", resource_id);
 		data.put("score", studentScoreRsp.getTrainingScore().getGetScoreObjective());
+
+		// 用户信息
+		UserInfo userInfo = remoteUserService.getById(user_hash);
+		data.put("user_id", userInfo.getUserId());
+		data.put("username", userInfo.getUserName());
+		data.put("title", crScoreController.getTitle(userInfo.getUserName()));
+		// 获取用户LOGO todo 自定义logo获取方式待定
+		try {
+			data.put("user_logo",
+					mpEnvService.getMpHost() + userInfo.getAvatarUrl());
+		} catch (Exception e) {
+			throw new RemoteServiceException();
+		}
+
 
 		return new BaseRsp(data);
 	}
 
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
-	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse, @RequestParam("room_id") String roomId) {
-		JSONObject data = getStudentScore(roomId).getData();
-		data.put("username", UserInfoContext.getUserContext().getUserName());
+	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
+			@RequestParam("room_id") String roomId) {
+		JSONObject data = getHistoryDetail(roomId).getData();
+		List<RadarLabel> radarLabels = missionService.getRadarLabel();
+		data.put("radarLabels", radarLabels);
+		data.put("locale", crScoreController.getTemplateI18n());
 
-		// 获取用户LOGO
-		try {
-			data.put("user_logo", mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl());
-		} catch (Exception e) {
-			throw new RemoteServiceException();
-		}
-
-		String destHtmlPath = String.format("%s%s-%s.html", AttachmentPath.OTHER.getDesc(), roomId, UserInfoContext.getUserContext().getUserId());
+		String destHtmlPath = String.format("%s%s-%s.html",
+				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), roomId,
+				data.getString("user_id"));
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
-		String destPdfPath = destHtmlPath.replace("html", "pdf");
+		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
+		// todo 文件命名
 		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
 		if (new File(destHtmlPath).delete()) {
@@ -130,18 +146,18 @@ public class SingleRoomScoreController {
 		return taskCount;
 	}
 
-	private List<StageRsp>
-			getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
+	private List<StageExport>
+			getStageExports(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
 
-		List<StageRsp> stageRsps = Lists.newArrayList();
+		List<StageExport> StageExports = Lists.newArrayList();
 
 		for (MissionSchemeObject<TrainingRecordMissionRsp> missionSchemeObject : missionSchemeList) {
-			StageRsp stageRsp = new StageRsp(missionSchemeObject);
+			StageExport StageExport = new StageExport(missionSchemeObject);
 
-			stageRsps.add(stageRsp);
+			StageExports.add(StageExport);
 		}
 
-		return stageRsps;
+		return StageExports;
 	}
 
 }

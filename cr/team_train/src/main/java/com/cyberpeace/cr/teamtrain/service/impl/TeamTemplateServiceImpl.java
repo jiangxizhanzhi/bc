@@ -20,8 +20,11 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
@@ -44,6 +47,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Autowired
 	private TeamTemplateMapper teamTemplateMapper;
+
+	@Autowired
+	private MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -177,14 +183,8 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	}
 
 	@Override
-	public void batchDelete(List<String> businessIds, List<String> teamTemplateIds) {
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				businessTemplateService.batchDelete(businessIds);
-			}
-		});
+	public void batchDelete(List<String> businessTemplateIds) {
+		businessTemplateService.batchDelete(businessTemplateIds);
 	}
 
 	@Override
@@ -195,6 +195,12 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	@Override
 	public Boolean removeByBusinessTemplateId(String businessTemplateId) {
 		return teamTemplateMapper.deleteByBusinessTemplateId(businessTemplateId);
+	}
+
+	@Override
+	public List<String> getMissionTemplateIdsByRoleConfig(String roleConfig) {
+		List<CrRoleConfig> roles = JsonUtil.toJsonObjectArray(roleConfig, CrRoleConfig.class);
+		return CrCommonUtil.getMissionTemplateIds(roles);
 	}
 
 }

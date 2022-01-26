@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
@@ -17,9 +18,9 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspMissionsScheme;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleRspSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
@@ -27,6 +28,7 @@ import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.EventDataBo;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -124,15 +126,25 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		return singleTemplateMapper.getByBusinessId(resourceId);
 	}
 
+	@Override
+	public List<String> getMissionTemplateIdsByMissionsScheme(String missionsScheme) {
+		CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(missionsScheme,
+				CrRoleConfigMissionsScheme.class);
+		List<String> missionTemplateIds = Lists.newArrayList();
+		rspMissionsScheme.getSchemeData().forEach(stage -> stage.getMissions()
+				.forEach(mission -> missionTemplateIds.add(mission.getResourceId())));
+		return missionTemplateIds;
+	}
+
 	private JSONObject getMissionTemplates(String missionsScheme) {
 		// get missionTemplates mapping
 		Map<String, MissionTemplate> mapping = missionTemplateService
 				.getMappingBySchemeJson(missionsScheme);
 		// 循环获取 title 和 desc
-		CrRoleRspMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(missionsScheme,
-				CrRoleRspMissionsScheme.class);
-		for (CrRoleRspSchemeStage stage : rspMissionsScheme.getSchemeData()) {
-			for (CrRoleRspMission mission : stage.getMissions()) {
+		CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(missionsScheme,
+				CrRoleConfigMissionsScheme.class);
+		for (CrRoleConfigSchemeStage stage : rspMissionsScheme.getSchemeData()) {
+			for (CrRoleConfigMission mission : stage.getMissions()) {
 				MissionTemplate missionTemplate = mapping.get(mission.getResourceId());
 				mission.setTitle(missionTemplate.getTitle());
 				mission.setDescription(missionTemplate.getDescription());

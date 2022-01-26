@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.model.AuthTable;
@@ -255,7 +256,7 @@ public class MDParser {
 	/**
 	 * 用于验证是否已存在
 	 */
-	public String getName(){
+	public String getName() {
 		String mdPath = dirPath + SEP + BASE_MD_FILE;
 		String baseText = stripMd(mdPath);
 		Map<String, String> data = parseText(baseText, LINE_SEP + H3,
@@ -316,17 +317,20 @@ public class MDParser {
 
 		// single training
 		if (businessTemplate.getBusinessType().equals(ZiguanConstants.SINGLE_TRAIN)) {
-			templateContext.setMissionsScheme(JsonUtil.toJsonString(single().getMissionsScheme()));
+			templateContext.setMissionsScheme(JsonUtil.toJsonString(single().getMissionsScheme(),
+					PropertyNamingStrategy.SnakeCase));
 		}
 		// team training
 		if (businessTemplate.getBusinessType().equals(ZiguanConstants.TEAM_TRAIN)) {
 			List<Role> roles = parseRoles(data.get(ZiguanConstants.ROLE_INFO)).getStudent();
-			templateContext.setRoleConfig(JsonUtil.arrayToString(team(roles)));
+			templateContext.setRoleConfig(
+					JsonUtil.arrayToString(team(roles), PropertyNamingStrategy.SnakeCase));
 		}
 		// red vs blue
 		if (businessTemplate.getBusinessType().equals(ZiguanConstants.RVB)) {
 			GroupRoles groupRoles = parseRoles(data.get(ZiguanConstants.ROLE_INFO));
-			templateContext.setRoleConfig(JsonUtil.toJsonString(rvb(groupRoles)));
+			templateContext.setRoleConfig(
+					JsonUtil.toJsonString(rvb(groupRoles), PropertyNamingStrategy.SnakeCase));
 		}
 		// other
 		templateContext.setPeopleNumber(4);

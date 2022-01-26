@@ -11,10 +11,12 @@ import java.util.List;
 public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 
 	PracticeSolved selectUserAndId(@Param("userId") String userId,
-			@Param("practiceType") Integer practiceType, @Param("practiceId") String practiceId);
+			@Param("practiceType") Integer practiceType, @Param("practiceId") String practiceId,
+			@Param("isCollect") Boolean isCollect);
 
 	List<String> selectUserAndSolved(@Param("userId") String userId,
-			@Param("practiceType") Integer practiceType, @Param("solved") Boolean solved);
+			@Param("practiceType") Integer practiceType, @Param("solved") Boolean solved,
+			@Param("isCollect") Boolean isCollect);
 
 	int updateSolved(@Param("solved") PracticeSolved practiceSolved);
 }

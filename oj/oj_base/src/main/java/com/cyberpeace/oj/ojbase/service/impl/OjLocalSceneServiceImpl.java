@@ -129,17 +129,17 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		}
 
 		JSONObject sceneConfig = topo.getJSONObject(JsonKeyConstant.SCENE_CONFIG);
-		if (sceneConfig.isEmpty()) {
+		if (null == sceneConfig || sceneConfig.isEmpty()) {
 			return topo;
 		}
 
 		JSONObject topology = sceneConfig.getJSONObject(JsonKeyConstant.TOPOLOGY);
-		if (topology.isEmpty()) {
+		if (null == topology || topology.isEmpty()) {
 			return topo;
 		}
 
 		JSONArray elements = topology.getJSONArray(JsonKeyConstant.ELEMENTS);
-		if (elements.size() <= 0) {
+		if (null == elements || elements.size() <= 0) {
 			return topo;
 		}
 
@@ -147,20 +147,55 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			JSONObject node = (JSONObject) element;
 			List<String> initCommands = JsonUtil
 					.toJsonObjectArray(node.getString(JsonKeyConstant.INIT_COMMANDS), String.class);
-			if (CollectionUtils.isEmpty(initCommands)) {
-				continue;
+
+			if (CollectionUtils.isNotEmpty(initCommands)) {
+
+				// init_command命令注入
+				for (int i = 0; i < initCommands.size(); i++) {
+					String replaceCommand = replaceDynamicFlag(initCommands.get(i), flags);
+					if (StringUtils.isNotBlank(replaceCommand)) {
+						initCommands.set(i, replaceCommand);
+					}
+				}
+				node.put(JsonKeyConstant.INIT_COMMANDS, initCommands);
 			}
 
-			for (int i = 0; i < initCommands.size(); i++) {
-				List<String> matchStr = LocalStringUtil.getMatchStr(initCommands.get(i),
-						PatternConstant.DYNAMIC_FLAG);
-				String replaceCommand = LocalStringUtil.replaceAll(initCommands.get(i), matchStr,
-						JsonUtil.toJsonObjectArray(flags, String.class));
-				initCommands.set(i, replaceCommand);
+			// node_command命令注入
+			String nodeCommand = node.getString(JsonKeyConstant.NODE_COMMAND);
+			if (StringUtils.isNotBlank(nodeCommand)) {
+				String handlerCommand = replaceDynamicFlag(nodeCommand, flags);
+				node.put(JsonKeyConstant.NODE_COMMAND, handlerCommand);
 			}
+
 		}
 
 		return topo;
+	}
+
+	/**
+	 * 动态flag命令替换
+	 *
+	 * @param dynamicFlagCommand
+	 * @param flags
+	 * @return
+	 */
+	private String replaceDynamicFlag(String dynamicFlagCommand, String flags) {
+
+		List<String> matchStr = LocalStringUtil.getMatchStr(dynamicFlagCommand,
+				PatternConstant.DYNAMIC_FLAG);
+
+		if (CollectionUtils.isEmpty(matchStr)) {
+			return CommonConstant.EMPTY_STRING;
+		}
+
+		// 补全flag与init_command长度
+		List<String> flagList = JsonUtil.toJsonObjectArray(flags, String.class);
+		for (int j = 0; j < (matchStr.size() - flagList.size()); j++) {
+			flagList.add(CommonConstant.EMPTY_STRING);
+		}
+
+		String replaceCommand = LocalStringUtil.replaceAll(dynamicFlagCommand, matchStr, flagList);
+		return replaceCommand;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.cs.service.UtilService;
@@ -15,6 +16,7 @@ import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -238,33 +240,6 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 解析课时数据
 		CourseLesson courseLesson = jsonParseLesson(filedConvert);
 
-		// 解析markdown文件
-		String handoutPath = courseLesson.getType().intValue() == CourseLesson.LessonType.THEORY
-				.getCode().intValue()
-						? new File(path, ResourceImportConstant.HANDOUT).getAbsolutePath()
-						: new File(path, ResourceImportConstant.DOC).getAbsolutePath();
-
-		// 目录拷贝
-		String destHandoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
-				course.getResourceId());
-		String dest = new File(destHandoutPath, IDGeneratorUtil.getID()).getAbsolutePath();
-		FileUtil.copyDirectory(handoutPath, dest, false);
-
-		// 目录压缩设置原始markdown文件地址
-		String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
-				course.getResourceId());
-		String originUrl = ZipUtil.toZipDest(dest, markdownPath);
-		courseLesson.setOriginMarkdownFile(originUrl);
-
-		// 文件解析
-		String handoutFilePath = courseLesson.getType().intValue() == CourseLesson.LessonType.THEORY
-				.getCode().intValue()
-						? new File(dest, ResourceImportConstant.HANDOUT_FILE_NAME).getAbsolutePath()
-						: new File(dest, ResourceImportConstant.DOC_FILE_NAME).getAbsolutePath();
-		String markdown = MdUtil.parseMarkdown(handoutFilePath);
-		markdown = utilService.replaceMarkdownFile(markdown);
-		courseLesson.setHandoutUrl(markdown);
-
 		// 解析附件
 		List<String> attachmentList = FileUtil.listDirs(
 				new File(path, ResourceImportConstant.ATTACHMENT).getAbsolutePath(), true);
@@ -289,9 +264,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 			courseLesson.setVideoUrl(videoUrl);
 		}
 
+		// 解析讲义
+		parseLessonHandout(path, courseLesson, course.getResourceId());
+
 		// 其他数据初始化
 		courseLesson.setCourseId(course.getResourceId());
-		courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
 		courseLesson.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
 		courseLesson.setIsPublic(CommonConstant.TRUE);
 		courseLesson.setHeat(CommonConstant.ZERO);
@@ -305,6 +282,77 @@ public class CourseImportServiceImpl implements CourseImportService {
 		}
 
 		return courseLesson;
+	}
+
+	/**
+	 * 课时数据处理
+	 * @param lessonPath 课时目录
+	 * @param courseLesson 课时数据
+	 * @param courseId 课程编号
+	 */
+	private void parseLessonHandout(String lessonPath, CourseLesson courseLesson, String courseId) {
+
+		// 解析课时讲义文件
+		String handoutPath = courseLesson.getType().intValue() == CourseLesson.LessonType.THEORY
+				.getCode().intValue()
+						? new File(lessonPath, ResourceImportConstant.HANDOUT).getAbsolutePath()
+						: new File(lessonPath, ResourceImportConstant.DOC).getAbsolutePath();
+		String destHandoutPath = String.format(AttachmentPath.HANDOUT.getDesc(), courseId);
+
+		List<String> handoutFileList = FileUtil.listDirs(handoutPath, true);
+
+		// 讲义数据类型判断和文件处理
+		String wordOrPptFile = null;
+		String destWordOrPptFile = null;
+		for (String handoutFile : handoutFileList) {
+			String fileSuffix = FileUtil.getFileSuffix(handoutFile);
+			if (fileSuffix.equals(FileSunffixConstant.MD.getDesc())) {
+				courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
+			}
+			if (fileSuffix.equals(FileSunffixConstant.DOC.getDesc())
+					|| fileSuffix.equals(FileSunffixConstant.DOCX.getDesc())) {
+				courseLesson.setHandoutType(CourseLesson.HandoutType.DOC.getCode());
+				wordOrPptFile = handoutFile;
+				destWordOrPptFile = destHandoutPath + File.separatorChar + IDGeneratorUtil.getID()
+						+ CommonConstant.PERIOD + fileSuffix;
+			}
+			if (fileSuffix.equals(FileSunffixConstant.PPT.getDesc())
+					|| fileSuffix.equals(FileSunffixConstant.PPTX.getDesc())) {
+				courseLesson.setHandoutType(CourseLesson.HandoutType.PPT.getCode());
+				wordOrPptFile = handoutFile;
+				destWordOrPptFile = destHandoutPath + File.separatorChar + IDGeneratorUtil.getID()
+						+ CommonConstant.PERIOD + fileSuffix;
+			}
+		}
+
+		// 执行文件复制和
+		if (courseLesson.getHandoutType().intValue() == CourseLesson.HandoutType.MD.getCode()
+				.intValue()) {
+			// 目录拷贝
+			String dest = new File(destHandoutPath, IDGeneratorUtil.getID()).getAbsolutePath();
+			FileUtil.copyDirectory(handoutPath, dest, false);
+
+			// 目录压缩设置原始markdown文件地址
+			String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(), courseId);
+			String originUrl = ZipUtil.toZipDest(dest, markdownPath);
+			courseLesson.setOriginMarkdownFile(originUrl);
+
+			// 文件解析
+			String handoutFilePath = courseLesson.getType()
+					.intValue() == CourseLesson.LessonType.THEORY.getCode().intValue()
+							? new File(dest, ResourceImportConstant.HANDOUT_FILE_NAME)
+									.getAbsolutePath()
+							: new File(dest, ResourceImportConstant.DOC_FILE_NAME)
+									.getAbsolutePath();
+			String markdown = MdUtil.parseMarkdown(handoutFilePath);
+			markdown = utilService.replaceMarkdownFile(markdown);
+			courseLesson.setHandoutUrl(markdown);
+		} else {
+			FileUtil.copyFile(wordOrPptFile, destWordOrPptFile, false);
+			String fileUrl = utilService.replaceFileUrl(destWordOrPptFile);
+			courseLesson.setHandoutUrl(fileUrl);
+		}
+
 	}
 
 	/**

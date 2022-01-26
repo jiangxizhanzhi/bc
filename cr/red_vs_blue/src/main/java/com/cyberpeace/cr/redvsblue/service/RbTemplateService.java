@@ -23,7 +23,14 @@ public interface RbTemplateService extends IService<RbTemplate> {
 
 	List<RbTemplate> getRbTemplateByBusinessIds(List<String> ids);
 
-	void batchDelete(List<String> ids, List<String> roomIds);
+	void batchDelete(List<String> ids);
 
 	IPage<RbTemplateData> page(ListQuery listQuery);
+
+	/**
+	 * 从 role_config 读取 任务模板
+	 * @param roleConfig
+	 * @return
+	 */
+	List<String> getMissionTemplateIdsByRoleConfig(String roleConfig);
 }

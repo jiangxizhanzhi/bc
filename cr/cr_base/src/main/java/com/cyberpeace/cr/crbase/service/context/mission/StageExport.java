@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.singletrain.controller.web;
+package com.cyberpeace.cr.crbase.service.context.mission;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import lombok.Data;
 
 @Data
-public class StageRsp {
+public class StageExport {
 
 	private String stageName;
 
 	private List<StageQuestion> questions;
 
-	public StageRsp(MissionSchemeObject<TrainingRecordMissionRsp> missionScheme) {
+	public StageExport(MissionSchemeObject<TrainingRecordMissionRsp> missionScheme) {
 
 		List<StageQuestion> questionList = Lists.newArrayList();
 		for (TrainingRecordMissionRsp mission : missionScheme.getMissions()) {

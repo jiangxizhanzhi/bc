@@ -41,4 +41,6 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 * @param businessTemplateId
 	 */
 	void updateEndDate(String businessTemplateId);
+
+	TrainRecord getByRoomId(String roomId);
 }

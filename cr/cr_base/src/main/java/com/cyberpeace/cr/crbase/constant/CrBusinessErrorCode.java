@@ -193,6 +193,24 @@ public interface CrBusinessErrorCode {
 	// 单兵训练模板正在使用，删除失败
 	String SINGLE_TRAIN_TEMPLATE_IN_USE = "101061";
 
+	// 空房间时提交任务
+	String ROOM_NOT_EXIST_SUBMIT_MISSION = "101062";
+
+	// 阶段内任务不可为空
+	String EMPTY_MISSION_STAGE = "101063";
+
+	// 标签个数在1~4之间
+	String INVALID_TAGS_NUM = "101064";
+
+	// 标签字符长度不正确
+	String ILLEGAL_TAG_LEN = "101065";
+
+	// 标签内容不能重复
+	String TAG_DUPLICATE = "101066";
+
+	// 名称长度非法
+	String ILLEGAL_NAME_LEN = "101067";
+
 	// 同一战队下报告名称重复
 	String DUPLICATED_REPORT_SCORE_NAME = "101062";
 }

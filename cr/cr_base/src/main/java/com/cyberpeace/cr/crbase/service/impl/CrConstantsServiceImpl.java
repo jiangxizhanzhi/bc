@@ -1,0 +1,50 @@
+package com.cyberpeace.cr.crbase.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.dao.mapper.CrConstantsConfigMapper;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
+import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
+public class CrConstantsServiceImpl implements CrConstantsService {
+
+	@Autowired
+	private CrConstantsConfigMapper crConstantsConfigMapper;
+
+	private volatile Map<Integer, List<CrConstantsConfig>> cache = Maps.newHashMap();
+
+	@Override
+	public List<CrConstantsConfig> getByType(Integer type) {
+		if (cache.isEmpty()) {
+			init();
+		}
+		if (cache.containsKey(type)) {
+			return cache.get(type);
+		} else {
+			return Lists.newArrayList();
+		}
+	}
+
+	private synchronized void init() {
+		if (cache.isEmpty()) {
+			List<CrConstantsConfig> configs = crConstantsConfigMapper.getAll();
+			for (CrConstantsConfig config : configs) {
+				Integer type = config.getType();
+				if (!cache.containsKey(type)) {
+					cache.put(type, Lists.newArrayList());
+				}
+				cache.get(type).add(config);
+			}
+		}
+	}
+}

@@ -103,7 +103,7 @@ public class OperationEventListener extends MessageListener {
 				: SceneShare.PRIVATE.getCode());
 		identifier.setPracticeId(ojLocalScene.getBusinessId());
 		identifier.setPath(WsPath.OPERATION_SCENE);
-		identifier.setUserId(mqContext.getUserId());
+		identifier.setUserId(ojLocalScene.getUserId());
 
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();

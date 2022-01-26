@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -49,7 +50,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param authContext 后台数据查询不需要
 	 * @return
 	 */
-	WebOperationBo selectById(String resourceId, AuthContext authContext);
+	WebOperationBo selectById(String resourceId, AuthContext authContext, Boolean isCollected);
 
 	/**
 	 * 分页查询实操习题
@@ -70,7 +71,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param submitAnswer
 	 * @return
 	 */
-	EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer);
+	EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer, Boolean isCollected);
 
 	/**
 	 * 获取所有的实操习题编号
@@ -166,8 +167,14 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param filePath
 	 * @return
 	 */
-	PracticeOperation
-			loadPracticeOperation(String practiceSetId,
+	PracticeOperation loadPracticeOperation(String practiceSetId,
 			PracticeOperationDumpLoadBo dumpBo, Map<String, String> filePathMap, String filePath,
 			String userId);
+
+	/**
+	 * 创建远程操作日志
+	 * @param practiceId
+	 * @param solved
+	 */
+	void createMpLog(String practiceId, LogContent solved);
 }

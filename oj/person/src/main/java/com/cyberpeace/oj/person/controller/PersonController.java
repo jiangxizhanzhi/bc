@@ -2,6 +2,7 @@ package com.cyberpeace.oj.person.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -16,6 +17,10 @@ import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
+import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -44,7 +49,13 @@ public class PersonController {
 	private static final Logger LOG = LoggerFactory.getLogger(PersonController.class);
 
 	@Autowired
-	private PersonCenterService personCommentService;
+	private PersonCenterService personCenterService;
+
+	@Autowired
+	private PracticeTheoryService practiceTheoryService;
+
+	@Autowired
+	private PracticeOperationService practiceOperationService;
 
 	@ApiOperation("当前用户所有评论")
 	@GetMapping("/comments")
@@ -55,7 +66,7 @@ public class PersonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		String parent = "";
-		IPage<PersonComment> comments = personCommentService.pageComment(page, userId, parent,
+		IPage<PersonComment> comments = personCenterService.pageComment(page, userId, parent,
 				authContext);
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
@@ -69,7 +80,7 @@ public class PersonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		String parent = "parent";
-		IPage<PersonComment> comments = personCommentService.pageComment(page, userId, parent,
+		IPage<PersonComment> comments = personCenterService.pageComment(page, userId, parent,
 				authContext);
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
@@ -82,7 +93,7 @@ public class PersonController {
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
-		IPage<PersonNote> comments = personCommentService.pageNotes(page, userId, authContext);
+		IPage<PersonNote> comments = personCenterService.pageNotes(page, userId, authContext);
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 
@@ -97,7 +108,7 @@ public class PersonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 
-		IPage<PersonCollection> collections = personCommentService.pageCollections(page, userId,
+		IPage<PersonCollection> collections = personCenterService.pageCollections(page, userId,
 				type, authContext);
 		return new BaseRsp<>(PageUtil.getListResult(collections));
 	}
@@ -109,7 +120,7 @@ public class PersonController {
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
-		return personCommentService.studyRecords(userId, authContext);
+		return personCenterService.studyRecords(userId, authContext);
 	}
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")
@@ -133,7 +144,7 @@ public class PersonController {
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
-		return personCommentService.studyPeriodRecords(userId, TimeUtil.toDate1(startTime),
+		return personCenterService.studyPeriodRecords(userId, TimeUtil.toDate1(startTime),
 				TimeUtil.toDate1(endTime), authContext);
 	}
 
@@ -146,7 +157,7 @@ public class PersonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 
-		List<ListSchedule> listSchedules = personCommentService.listSchedules(userId, type,
+		List<ListSchedule> listSchedules = personCenterService.listSchedules(userId, type,
 				authContext);
 		return new BaseRsp<>(listSchedules);
 	}
@@ -156,17 +167,35 @@ public class PersonController {
 	public BaseRsp<List<CollectionPracticeBo>> allCollectionPractice() {
 
 		// 查询收藏的理论习题
-		List<CollectionPracticeBo> theoryCollection = personCommentService.selectCollectionPractice(
+		List<CollectionPracticeBo> theoryCollection = personCenterService.selectCollectionPractice(
 				UserInfoContext.getUserContext().getUserId(),
 				ResourceCollection.BusinessType.THEORY.getCode());
 
 		// 查询收藏的实操习题
-		List<CollectionPracticeBo> operationCollection = personCommentService
+		List<CollectionPracticeBo> operationCollection = personCenterService
 				.selectCollectionPractice(UserInfoContext.getUserContext().getUserId(),
 						ResourceCollection.BusinessType.OPERATION.getCode());
 
 		theoryCollection.addAll(operationCollection);
 		return new BaseRsp<>(theoryCollection);
 
+	}
+
+	@ApiOperation("收藏理论题详情页")
+	@GetMapping("/collection_theory_practice_detail")
+	public BaseRsp<WebTheoryBo> collectionTheoryRetrieve(@RequestParam(value = "resource_id") String resourceId) {
+		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
+				UserInfoContext.getUserContext().getUserId(), Boolean.TRUE);
+		return new BaseRsp<>(theoryBo);
+	}
+
+	@ApiOperation("收藏实操题详情页")
+	@GetMapping("/collection_operate_practice_detail")
+	public BaseRsp<WebOperationBo> collectionOperateRetrieve(@RequestParam(value = "resource_id") String resourceId) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		WebOperationBo theoryBo = practiceOperationService.selectById(resourceId, authContext,
+				Boolean.TRUE);
+		return new BaseRsp<>(theoryBo);
 	}
 }

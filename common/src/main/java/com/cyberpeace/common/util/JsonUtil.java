@@ -115,4 +115,40 @@ public class JsonUtil {
 		return (JSONObject) JSONObject.toJSON(source, config);
 	}
 
+	/**
+	 * 支持命名策略，转化实例为json字符串
+	 * @param obj
+	 * @param namingStrategy
+	 * @return
+	 */
+	public static String toJsonString(Object obj, PropertyNamingStrategy namingStrategy) {
+		if (null == obj) {
+			return "{}";
+		}
+
+		if (obj instanceof String) {
+			return (String) obj;
+		}
+
+		SerializeConfig config = new SerializeConfig();
+		config.setPropertyNamingStrategy(namingStrategy);
+
+		return JSON.toJSONString(obj, config);
+	}
+
+	/**
+	 * 集合转换为字符串
+	 * @param objArr
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> String arrayToString(List<T> objArr, PropertyNamingStrategy namingStrategy) {
+		if (null == objArr) {
+			return "[]";
+		}
+		SerializeConfig config = new SerializeConfig();
+		config.setPropertyNamingStrategy(namingStrategy);
+		return JSONArray.toJSONString(objArr, config, SerializerFeature.WriteNullStringAsEmpty);
+	}
+
 }

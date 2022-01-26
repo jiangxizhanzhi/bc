@@ -351,7 +351,7 @@ public class BusinessTemplateController {
 	}
 
 	private void checkBeforeTestingScene(String templateId) {
-		// todo 模板授权
+		// 暂无
 	}
 
 	private BusinessTemplate ensureTemplateExist(String templateId) {

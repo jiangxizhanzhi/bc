@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -320,6 +324,9 @@ public class CrScoreController {
 							trainingRecord.setRecord(crTask.getUserAnswer());
 							trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
 							trainingRecord.setTime(crTask.getLastSubmitTime());
+						}else{
+							trainingRecordMissionRsp.setTraininStatus(CrTask.TaskStatus.UNRELEASED.getCode());
+
 						}
 						trainingRecordMissionRsp.setTrainingRecord(trainingRecord);
 
@@ -392,4 +399,22 @@ public class CrScoreController {
 		return userReportList;
 	}
 
+	public JSONObject getTemplateI18n() {
+		JSONObject jsonObject = new JSONObject();
+
+		for (TrainingReport.TemplateI18n enumData : TrainingReport.TemplateI18n.values()) {
+			jsonObject.put(enumData.name(), enumData.getDesc());
+		}
+
+		return jsonObject;
+	}
+
+	public String getTitle(String userName) {
+
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			return "Cyber Exercise Report of "+userName;
+		} else {
+			return userName+"训练的训练报告";
+		}
+	}
 }

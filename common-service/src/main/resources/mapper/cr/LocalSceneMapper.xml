@@ -17,4 +17,10 @@
         scene_ttl = #{sceneTtl}
         where resource_id = #{resourceId}
     </update>
+
+    <select id="selectByCloseTime" resultMap="baseResultMap">
+        select * from local_scene
+        where end_time &lt; #{closeTime}
+        and scene_status != 3
+    </select>
 </mapper>

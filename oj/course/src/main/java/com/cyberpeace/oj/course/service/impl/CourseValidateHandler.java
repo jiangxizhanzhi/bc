@@ -1,5 +1,13 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.List;
+
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
@@ -11,14 +19,14 @@ import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+/**
+ * @author chenzhuo
+ */
 @Slf4j
 @Service
 public class CourseValidateHandler {
@@ -31,6 +39,39 @@ public class CourseValidateHandler {
 
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
+
+	@Autowired
+	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	/**
+	 * 校验课时更新时 名称是否已存在
+	 * @param existLesson
+	 * @param newName
+	 */
+	public void validateLessonUpdateNameExist(CourseLesson existLesson, String newName) {
+		String nameExistLesson = courseLessonMapper.selectByCourseAndName(existLesson.getCourseId(),
+				newName);
+		if (StringUtils.isNotBlank(nameExistLesson)
+				&& !nameExistLesson.equals(existLesson.getResourceId())) {
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+	}
+
+	/**
+	 * 校验课时修改是否存在场景信息
+	 * @param courseLesson
+	 */
+	public void validateLessonUpdateSceneExist(CourseLesson courseLesson) {
+
+		List<OjLocalScene> webScenes = ojLocalSceneMapper
+				.selectByBusiness(courseLesson.getResourceId(), true);
+		List<OjLocalScene> adminScenes = ojLocalSceneMapper
+				.selectByBusiness(courseLesson.getResourceId(), false);
+
+		if (CollectionUtils.isNotEmpty(webScenes) || CollectionUtils.isNotEmpty(adminScenes)) {
+			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
+		}
+	}
 
 	/**
 	 * 校验课程权限
@@ -78,6 +119,18 @@ public class CourseValidateHandler {
 		}
 
 		return lesson;
+	}
+
+	/**
+	 * 校验课程修改时名称校验问题
+	 * @param existCourse
+	 * @param newName
+	 */
+	public void validateCourseUpdateNameExist(String existCourse, String newName) {
+		String existNameId = courseMapper.selectByName(newName);
+		if (StringUtils.isNotBlank(existNameId) && !existCourse.equals(existNameId)) {
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
 	}
 
 	/**

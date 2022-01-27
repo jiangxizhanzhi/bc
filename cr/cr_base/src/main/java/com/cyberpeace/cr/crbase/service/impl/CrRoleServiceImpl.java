@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
@@ -437,5 +436,15 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoles;
 	}
 
+	@Override
+	public void checkPermission(String roomId, String userId) {
+		CrRole crRole = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
+
+		if (crRole == null) {
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", roomId,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+	}
 
 }

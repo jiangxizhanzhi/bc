@@ -119,6 +119,8 @@ public class RbRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
+		crRoleService.checkPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
 
 		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
 

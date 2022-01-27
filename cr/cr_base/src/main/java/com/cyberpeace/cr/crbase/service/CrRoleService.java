@@ -107,4 +107,5 @@ public interface CrRoleService extends IService<CrRole> {
 
 	List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup);
 
+    void checkPermission(String roomId, String userId);
 }

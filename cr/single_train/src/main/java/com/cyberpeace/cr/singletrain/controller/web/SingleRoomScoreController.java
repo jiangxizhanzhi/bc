@@ -129,7 +129,7 @@ public class SingleRoomScoreController {
 		data.put("locale", crScoreController.getTemplateI18n());
 
 		Path destHtmlPathObj = Paths.get(AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
-				String.format("%s-%s", roomId, data.getString("user_id")), "report.html");
+				String.format("%s-%s", roomId, data.getString("user_id")), String.format("%s.html", roomId));
 		// 临时存放目录
 		File directory = destHtmlPathObj.getParent().toFile();
 		if (!directory.exists()) {

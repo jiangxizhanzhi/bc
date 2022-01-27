@@ -7,9 +7,9 @@ import java.io.File;
 
 public enum HtmlTemplateEnum {
 	/** html模板枚举*/
-	INDIVIDUAL("index.html", "template/html_to_paf_template/Individual"),
-	REDBLUE("index.html", "template/html_to_paf_template/Team"),
-	TEAM("index.html", "template/html_to_paf_template/Team");
+	INDIVIDUAL("index.html", "template/html_to_pdf_template/Individual"),
+	REDBLUE("index.html", "template/html_to_pdf_template/Team"),
+	TEAM("index.html", "template/html_to_pdf_template/Team");
 
 	@Getter
 	private String templatePath;

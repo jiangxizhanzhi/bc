@@ -72,8 +72,8 @@ public class TeamSceneEventListener extends MessageListener {
 				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		// parse message
 		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-		String nodeId = wsSceneReportBO.getData().getData().getJSONObject("scene_element")
-				.getString("id");
+		String nodeId = wsSceneReportBO.getData().getData().getJSONObject("data")
+				.getJSONObject("scene_element").getString("id");
 		WsSceneReportBO report = null;
 		for (CrRole role : roles) {
 			// is student,
@@ -91,10 +91,9 @@ public class TeamSceneEventListener extends MessageListener {
 						CrRoleNode::getId);
 				if (!assetNodeIds.contains(nodeId)) {
 					report = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-					report.getData().getData().getJSONObject("scene_element").put("ports",
-							Lists.newArrayList());
-					report.getData().getData().put("scene_element_port_plugin_data",
-							new JSONObject());
+					JSONObject coreData = report.getData().getData().getJSONObject("data");
+					coreData.getJSONObject("scene_element").put("ports", Lists.newArrayList());
+					coreData.put("scene_element_port_plugin_data", new JSONObject());
 				}
 			} else {
 				// 教员不过滤

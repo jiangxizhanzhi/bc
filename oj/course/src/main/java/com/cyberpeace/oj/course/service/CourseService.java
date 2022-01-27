@@ -16,10 +16,10 @@ public interface CourseService extends IService<Course> {
 	/**
 	 * 根据编号查询课程信息
 	 * @param courseId
-	 * @param userId
+	 * @param authContext
 	 * @return
 	 */
-	CourseInfoBo selectById(String courseId, String userId);
+	CourseInfoBo selectById(String courseId, AuthContext authContext);
 
 	/**
 	 * 根据课程编号集合查询课程信息

@@ -134,14 +134,15 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private PracticeOperationRefService practiceOperationRefService;
 
 	@Override
-	public CourseInfoBo selectById(String courseId, String userId) {
+	public CourseInfoBo selectById(String courseId, AuthContext authContext) {
 		// 基本数据校验
 		Course course = courseValidateHandler.validateCourseExist(courseId);
+		courseValidateHandler.validateCoursePermission(courseId, authContext);
 
 		CourseInfoBo courseInfoBo = courseToBo(course, true);
 		courseInfoBo.setLogo(utilService.handlerFileUrl(course.getLogo()));
 		// 设置是否收藏
-		Boolean collection = resourceCollectionService.selectByUnique(userId,
+		Boolean collection = resourceCollectionService.selectByUnique(authContext.getUserId(),
 				ResourceCollection.BusinessType.COURSE.getCode(), courseId);
 		courseInfoBo.setIsCollection(collection);
 

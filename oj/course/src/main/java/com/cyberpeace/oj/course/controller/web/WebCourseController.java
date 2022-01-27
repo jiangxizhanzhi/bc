@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -77,8 +78,9 @@ public class WebCourseController {
 	public BaseRsp<WebCourseRes> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") String resourceId) {
 
-		String userId = UserInfoContext.getUserContext().getUserId();
-		CourseInfoBo course = courseService.selectById(resourceId, userId);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		CourseInfoBo course = courseService.selectById(resourceId, authContext);
 
 		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);
 		BaseRsp rsp = new BaseRsp(courseRes);

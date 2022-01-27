@@ -80,9 +80,21 @@ public class CourseValidateHandler {
 	 * @return
 	 */
 	public void validateCoursePermission(String courseId, AuthContext authContext) {
+
+		// 查询授权
 		List<String> authIds = courseMapper.selectByAuth(authContext);
+		if (CollectionUtils.isEmpty(authIds)) {
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		// 查询公开
+		List<String> publicIds = courseMapper.selectIdsByCategory(authIds, null,
+				authContext.getIsWeb());
+		if (CollectionUtils.isEmpty(publicIds)) {
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
 		if (!authIds.contains(courseId)) {
-			log.error("Course not permission! course_id=[{}]", courseId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 	}

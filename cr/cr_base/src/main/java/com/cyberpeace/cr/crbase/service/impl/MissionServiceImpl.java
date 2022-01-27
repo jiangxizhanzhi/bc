@@ -24,6 +24,7 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
@@ -35,11 +36,10 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
-import com.cyberpeace.cr.crbase.service.context.mission.TrainingManualTeam;
+import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -71,6 +71,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	private CrTaskLogMapper crTaskLogMapper;
 
 	@Autowired
+	private CrConstantsService crConstantsService;
+
+	@Autowired
 	private MissionSchemeTemplateMapper missionSchemeTemplateMapper;
 
 	@Autowired
@@ -79,10 +82,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Autowired
-	private MissionCategoryMapper missionCategoryMapper;
-
-	private volatile Map<String, MissionCategory> categoryCache;
+	private volatile Map<String, MissionCategoryCache> categoryCache;
 
 	private Object lock = new Object();
 
@@ -242,8 +242,21 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<MissionCategory> listCategories() {
+		// read categories
 		ensureCache();
-		return new ArrayList<>(categoryCache.values());
+		List<MissionCategoryCache> missionCategories = Lists.newArrayList(categoryCache.values());
+		// get current request language
+		boolean isEn = CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN);
+		// return
+		if (isEn) {
+			return StreamApiUtils.map(missionCategories,
+					missionCategory -> new MissionCategory(missionCategory.getResourceId(),
+							missionCategory.getEnName()));
+		} else {
+			return StreamApiUtils.map(missionCategories,
+					missionCategory -> new MissionCategory(missionCategory.getResourceId(),
+							missionCategory.getCnName()));
+		}
 	}
 
 	@Override
@@ -268,7 +281,13 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public MissionCategory getCategoryById(String categoryId) {
 		ensureCache();
-		return categoryCache.get(categoryId);
+		MissionCategoryCache category = categoryCache.get(categoryId);
+		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
+			return new MissionCategory(categoryId, category.getEnName());
+		} else {
+			return new MissionCategory(categoryId, category.getCnName());
+		}
+
 	}
 
 	@Override
@@ -680,11 +699,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	private void doInit() {
-		List<MissionCategory> categories = missionCategoryMapper.selectAll();
+		List<CrConstantsConfig> missionCategories = crConstantsService
+				.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
+		List<MissionCategoryCache> categories = BeanUtils.deepCopyList(missionCategories,
+				MissionCategoryCache.class);
 
 		categoryCache = Maps.newHashMap();
 
-		for (MissionCategory item : categories) {
+		for (MissionCategoryCache item : categories) {
 			categoryCache.put(item.getResourceId(), item);
 		}
 	}

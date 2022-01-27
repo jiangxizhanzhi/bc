@@ -12,4 +12,5 @@ public interface CrConstantsService {
 	 * @return
 	 */
 	List<CrConstantsConfig> getByType(Integer type);
+
 }

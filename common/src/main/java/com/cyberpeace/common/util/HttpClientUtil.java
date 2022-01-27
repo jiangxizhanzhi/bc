@@ -172,7 +172,7 @@ public class HttpClientUtil {
 							resultType },
 					e);
 
-			throw new RemoteServiceException();
+			throw new RemoteServiceException(e.getMessage());
 		} finally {
 			HttpclientContext.removeContext();
 		}

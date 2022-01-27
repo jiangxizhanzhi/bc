@@ -101,7 +101,7 @@ public class SingleRoomScoreController {
 		data.put("stages", StageExports);
 		data.put("total_score", studentScoreRsp.getTrainingScore().getSumScoreObjective());
 		data.put("create_time", trainRecord.getEndTime());
-		data.put("title", trainRecord.getRoomName());
+		data.put("title", crScoreController.getTitle(trainRecord.getRoomName()));
 		data.put("resource_id", resource_id);
 		data.put("score", studentScoreRsp.getTrainingScore().getGetScoreObjective());
 

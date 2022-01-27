@@ -75,7 +75,7 @@ public class TeamTrainScoreController {
 			@RequestParam("room_id") String roomId) {
 		JSONObject data = getTrainRecordJsonObject(roomId);
 		data.put("username", UserInfoContext.getUserContext().getUserName());
-		data.put("title", teamRoomService.getById(roomId).getName());
+		data.put("title", crScoreController.getTitle(teamRoomService.getById(roomId).getName()));
 
 		// 获取用户LOGO
 		try {

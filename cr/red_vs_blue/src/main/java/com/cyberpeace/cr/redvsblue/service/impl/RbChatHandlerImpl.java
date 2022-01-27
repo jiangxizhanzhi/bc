@@ -29,6 +29,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 	private CrRoleService crRoleService;
 
 
+	@Override
 	public Integer declareMessageType() {
 		return BusinessTemplate.BusinessType.RED_VS_BLUE.getCode();
 	}

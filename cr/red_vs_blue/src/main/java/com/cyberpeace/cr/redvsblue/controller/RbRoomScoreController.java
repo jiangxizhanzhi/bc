@@ -87,7 +87,7 @@ public class RbRoomScoreController {
 			@ApiParam(name = "role_group", value = "角色id", required = true) Integer role_group) {
 		JSONObject data = getTrainRecordJsonObject(roomId, role_group);
 		data.put("username", UserInfoContext.getUserContext().getUserName());
-		data.put("title", crScoreController.getTitle(UserInfoContext.getUserContext().getUserName()));
+		data.put("title", rbRoomService.getById(roomId).getName());
 
 		// 获取用户LOGO
 		try {

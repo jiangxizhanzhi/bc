@@ -103,8 +103,7 @@ public class SingleRoomScoreController {
 		UserInfo userInfo = remoteUserService.getById(user_hash);
 		data.put("user_id", userInfo.getUserId());
 		data.put("username", userInfo.getUserName());
-		data.put("title", crScoreController.getTitle(userInfo.getUserName()));
-		// 获取用户LOGO todo 当前页面未展示
+ 		// 获取用户LOGO todo 当前页面未展示
 		try {
 			data.put("user_logo",
 					mpEnvService.getMpHost() + userInfo.getAvatarUrl());
@@ -124,6 +123,7 @@ public class SingleRoomScoreController {
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 		data.put("radarLabels", radarLabels);
 		data.put("locale", crScoreController.getTemplateI18n());
+		data.put("title", singleRoomService.getById(roomId).getName());
 
 		Path destHtmlPathObj = Paths.get(
 				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),

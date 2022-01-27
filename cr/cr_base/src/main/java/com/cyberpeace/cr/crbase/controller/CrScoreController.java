@@ -409,12 +409,12 @@ public class CrScoreController {
 		return jsonObject;
 	}
 
-	public String getTitle(String userName) {
+	public String getTitle(String name) {
 
 		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-			return "Cyber Exercise Report of "+userName;
+			return "Cyber Exercise Report of "+name;
 		} else {
-			return userName+"训练的训练报告";
+			return name+"训练的训练报告";
 		}
 	}
 }

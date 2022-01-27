@@ -90,7 +90,7 @@ public class ExceptionFilter implements Filter {
 		} else if (e instanceof DuplicateKeyException) {
 			parseDuplicateKeyException(servletResponse, (DuplicateKeyException) e);
 		} else if (e instanceof RemoteServiceException) {
-			parseRemoteServiceException(servletResponse);
+			parseRemoteServiceException(servletResponse, (RemoteServiceException) e);
 		} else if (e instanceof BusinessException) {
 			parseBusinessException(servletResponse, (BusinessException) e);
 		} else {
@@ -122,16 +122,22 @@ public class ExceptionFilter implements Filter {
 	 * 调用第三方服务错误
 	 * @param httpServletResponse
 	 */
-	private void parseRemoteServiceException(HttpServletResponse httpServletResponse) {
+	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
+			RemoteServiceException e) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 		errorInfo.setCode(ErrorCode.REMOTE_SERVICE_EXCEPTION);
+
+		String message = e.getMessage();
 		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-			errorInfo.setMessage(
-					BusinessErrorMsg.ENGLISH_MAP.get(ErrorCode.REMOTE_SERVICE_EXCEPTION));
+			errorInfo.setMessage(StringUtils.isBlank(message)
+					? BusinessErrorMsg.ENGLISH_MAP.get(ErrorCode.REMOTE_SERVICE_EXCEPTION)
+					: message);
 		} else {
-			errorInfo.setMessage(
-					BusinessErrorMsg.CHINESE_MAP.get(ErrorCode.REMOTE_SERVICE_EXCEPTION));
+			errorInfo.setMessage(StringUtils.isBlank(message)
+					? BusinessErrorMsg.CHINESE_MAP.get(ErrorCode.REMOTE_SERVICE_EXCEPTION)
+					: message);
 		}
+
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 

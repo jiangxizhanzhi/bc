@@ -103,24 +103,29 @@
 
     <select id="selectLessonByAuth" resultType="java.lang.String">
         select resource_id from oj_course_lesson where public = True
+        and course_id in
         <if test="courseIds != null and courseIds.size() != 0">
-            and course_id in
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
                 #{courseId}
             </foreach>
+        </if>
+        <if test="courseIds.size() == 0">
+            ('')
         </if>
     </select>
 
     <select id="selectExpLessonByAuth" resultType="java.lang.String">
         select resource_id from oj_course_lesson
         where  public = True and type = 1
+        and resource_id in
         <if test="courseIds != null and courseIds.size() != 0">
-            and resource_id in
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
                 #{courseId}
             </foreach>
         </if>
-
+        <if test="courseIds.size() == 0">
+            ('')
+        </if>
     </select>
 
     <select id="selectOperationPracticeByAuth" resultType="java.lang.String">
@@ -136,11 +141,14 @@
     <select id="selectPublicCourse" resultType="java.lang.String">
         select resource_id from oj_course where
         <include refid="filterByPublic"/>
+        and resource_id in
         <if test="courseIds != null and courseIds.size() != 0">
-            and resource_id in
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
                 #{courseId}
             </foreach>
+        </if>
+        <if test="courseIds.size() == 0">
+            ('')
         </if>
     </select>
 
@@ -245,11 +253,14 @@
         where user_id = #{userId}
         and create_time &gt; #{startTime}
         and create_time &lt; #{endTime}
+        and oj_lesson_record.lesson_id in
         <if test="lessonIds != null and lessonIds.size() != 0">
-            and oj_lesson_record.lesson_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
                 #{lessonId}
             </foreach>
+        </if>
+        <if test="lessonIds.size() == 0">
+            ('')
         </if>
     </select>
 
@@ -259,12 +270,17 @@
         where user_id = #{userId} and note_type = 2 and business_type = 2
         and create_time &gt; #{startTime}
         and create_time &lt; #{endTime}
+        and oj_note.business_id in
         <if test="lessonIds != null and lessonIds.size() != 0">
-            and oj_note.business_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
                 #{lessonId}
             </foreach>
         </if>
+        <if test="lessonIds.size() == 0">
+            ('')
+        </if>
+        and oj_note.resource_id in
+        (select distinct note_id from oj_note_evaluate)
     </select>
 
     <select id="selectReportAverageByTime" resultType="com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate">
@@ -273,11 +289,14 @@
         where note_id in (select resource_id from oj_note where user_id = #{userId})
         and create_time &gt; #{startTime}
         and create_time &lt; #{endTime}
+        and oj_note_evaluate.note_id in
         <if test="lessonIds != null and lessonIds.size() != 0">
-            and oj_note_evaluate.note_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
                 #{lessonId}
             </foreach>
+        </if>
+        <if test="lessonIds.size() == 0">
+            ('')
         </if>
     </select>
 

@@ -20,15 +20,5 @@ public class WsSceneReportBO implements Serializable {
 
 		this.setCode(code);
 		this.setData(reportData);
-
 	}
-
-}
-
-@Data
-class WsSceneReportData implements Serializable {
-
-	private String type;
-
-	private JSONObject data;
 }

@@ -91,9 +91,8 @@ public interface CrRoleService extends IService<CrRole> {
 	/**
 	 * 删除训练房间后删除训练角色
 	 * @param roomId
-	 * @return
 	 */
-	Boolean clearRoomRoles(String roomId);
+	void clearRoomRoles(String roomId);
 
 	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
 
@@ -107,5 +106,5 @@ public interface CrRoleService extends IService<CrRole> {
 
 	List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup);
 
-    void checkPermission(String roomId, String userId);
+	void checkPermission(String roomId, String userId);
 }

@@ -1,6 +1,7 @@
 package com.cyberpeace.common.component;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -136,6 +137,63 @@ public class MyWebSocketHandler implements WebSocketHandler {
 					log.debug("businessId=[{}], userId=[{}], message=[{}] send fail!",
 							new Object[] { businessId, userId, jsonMessage });
 				}
+			}
+		}
+	}
+
+	/**
+	 * 向用户推送websocket消息
+	 * @param message 待推送的websocket消息
+	 * @param userIds 向特定用户推送消息。
+	 */
+	public void pushMessageToUsers(WebSocketMessageContext message, List<String> userIds) {
+		String businessId = message.getMessageIdentifier().getIdentifierId();
+
+		Map<String, Set<CpWebSession>> userSocketSessionMap = businessSocketSessionMap
+				.get(businessId);
+
+		if (MapUtils.isEmpty(userSocketSessionMap)) {
+			log.warn("businessId=[{}], send ws message fail! userSessionMap maybe null",
+					businessId);
+			return;
+		}
+
+		// 实际消息发送
+		for (String userId : userIds) {
+			Set<CpWebSession> sessions = userSocketSessionMap.get(userId);
+			if (!sessions.isEmpty()) {
+				pushToSessions(message, sessions, userId, businessId);
+			}
+		}
+	}
+
+	private void pushToSessions(WebSocketMessageContext message, Set<CpWebSession> sessions,
+			String userId, String businessId) {
+		for (CpWebSession userSession : sessions) {
+			if (null == userSession) {
+				log.warn("businessId=[{}], userId=[{}] send ws message fail! userSession is null!");
+				continue;
+			}
+
+			if (!userSession.isOpen()) {
+				log.warn(
+						"businessId=[{}], userId=[{}] send ws message fail! userSession is closed!");
+				removeSession(userSession);
+				continue;
+			}
+
+			String jsonMessage = JsonUtil.toJsonString(message.getData());
+			TextMessage toSendMessage = new TextMessage(jsonMessage);
+			try {
+				userSession.sendMessage(toSendMessage);
+			} catch (IOException e) {
+				log.error("businessId=[{}], userId=[{}], message=[{}] send fail!",
+						new Object[] { businessId, userId, jsonMessage });
+			}
+
+			if (log.isDebugEnabled()) {
+				log.debug("businessId=[{}], userId=[{}], message=[{}] send fail!",
+						new Object[] { businessId, userId, jsonMessage });
 			}
 		}
 	}

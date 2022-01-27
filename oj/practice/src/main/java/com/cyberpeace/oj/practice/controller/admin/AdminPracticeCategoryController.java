@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.OrderNameConstant;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,9 @@ public class AdminPracticeCategoryController {
 			list(@Validated PracticeCategoryListReq categoryListReq) {
 
 		Page page = categoryListReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
 		CategoryListQuery query = BeanUtils.copy(categoryListReq, CategoryListQuery.class);
 
 		IPage<CategoryListBo> iPage = practiceCategoryService.pageByListQuery(page, query,

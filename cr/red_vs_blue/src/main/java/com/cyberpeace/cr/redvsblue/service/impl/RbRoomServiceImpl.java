@@ -356,7 +356,13 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	private String getFullRoleName(CrRole crRole) {
-		String roleName = crRole.getName();
+		String roleName = EnumUtils.getEnumDescByCode(crRole.getRoleGroup(),
+				CrRole.RbRoleGroupCode.class);
+
+		if (crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.RED.getCode())
+				|| crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.BLUE.getCode())) {
+			roleName = crRole.getName();
+		}
 
 		if (CrRole.RbRoleGroupCode.BLUE.getCode().equals(crRole.getRoleGroup())) {
 			roleName = CrRole.RbRoleGroupCode.BLUE.getDesc() + "/" + roleName;

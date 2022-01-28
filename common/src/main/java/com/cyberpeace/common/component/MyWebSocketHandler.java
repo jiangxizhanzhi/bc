@@ -161,7 +161,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		// 实际消息发送
 		for (String userId : userIds) {
 			Set<CpWebSession> sessions = userSocketSessionMap.get(userId);
-			if (!sessions.isEmpty()) {
+			if (sessions != null && !sessions.isEmpty()) {
 				pushToSessions(message, sessions, userId, businessId);
 			}
 		}

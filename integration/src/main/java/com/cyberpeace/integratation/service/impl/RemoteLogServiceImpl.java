@@ -57,16 +57,14 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 
 	@Override
 	@Async
-	public void addCrLog(UserInfo userInfo, OperationModule operationModule,
-			OperationType operationType, String operationTarget, String language) {
+	public void addCrLog(UserInfo userInfo, OperationModule operationModule, OperationType operationType,
+						 String operationTarget) {
 
 		// 处理基础信息
 		MpLog mpLog = addBasicInfo(userInfo, operationModule, operationType, operationTarget);
 
 		// 拼接操作描述
-		mpLog.setContent(String.format(LogContent.getLocaleValue(LogContent.CR_FORMAT, language),
-				OperationType.getLocaleValue(operationType, language),
-				OperationModule.getLocaleValue(operationModule, language), operationTarget));
+		mpLog.setContent(LogContent.CR_FORMAT.format(operationType, operationModule, operationTarget));
 		addLog(mpLog);
 
 	}

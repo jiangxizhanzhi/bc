@@ -15,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
@@ -72,11 +70,7 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 
         for (ToolCategory item : toolCategories) {
             if (categoryIds.contains(item.getResourceId())) {
-                if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_ZH)) {
-                    i18nName.add(item.getCnName());
-                } else {
-                    i18nName.add(item.getEnName());
-                }
+                i18nName.add(item.selectI18nName());
             }
         }
 

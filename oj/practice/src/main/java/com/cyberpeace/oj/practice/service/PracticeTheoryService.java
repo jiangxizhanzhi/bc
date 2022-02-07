@@ -106,7 +106,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	/**
 	 * 创建远程操作日志
 	 * @param practiceId
-	 * @param solved
+	 * @param logContent
 	 */
-	void createMpLog(String practiceId, LogContent solved);
+	void createMpLog(String practiceId, LogContent logContent);
 }

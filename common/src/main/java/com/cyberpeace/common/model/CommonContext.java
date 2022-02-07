@@ -1,15 +1,21 @@
 package com.cyberpeace.common.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.common.constant.WebConstant;
+
 public class CommonContext {
 
 	private static final ThreadLocal<String> languageContext = new ThreadLocal();
 	private static final ThreadLocal<String> ipContext = new ThreadLocal();
 
-	private CommonContext() {}
+	private CommonContext() {
+	}
 
 	public static String getIp() {
 		return ipContext.get();
 	}
+
 	public static void setIp(String ip) {
 		ipContext.set(ip);
 	}
@@ -19,7 +25,11 @@ public class CommonContext {
 	}
 
 	public static String getLanguage() {
-		return languageContext.get();
+		String language = languageContext.get();
+		if (language != null) {
+			return language;
+		}
+		return WebConstant.LANGUAGE_ZH;
 	}
 
 	public static void setLanguage(String language) {
@@ -28,5 +38,9 @@ public class CommonContext {
 
 	public static void removeLanguage() {
 		languageContext.remove();
+	}
+
+	public static boolean isChinese() {
+		return StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_ZH);
 	}
 }

@@ -110,7 +110,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			Mission mission = missionMap.get(key);
 			CrTask crTask = crTaskMap.get(key);
 			if (mission == null || crTask == null) {
-				throw new BusinessException(null);
+				throw new BusinessException();
 			}
 
 			CrTaskSubmit crTaskSubmit = new CrTaskSubmit();

@@ -5,10 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
@@ -16,24 +14,17 @@ import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
@@ -42,20 +33,17 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.PatternMatchUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -273,12 +261,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				log.error("Parse ctf practice fail! ctf_practice_path=[{}], catch error:",
 						ctfPracticeDir, e);
 
-				if (e.getMessage().equals(OjBusinessErrorCode.NAME_IS_EXIST)) {
+				if (OjBusinessErrorCode.NAME_IS_EXIST.isSameErrorCode(e.getI18nErrorMsg())){
 					existOperations.add(ctfPracticeDir);
 					continue;
 				}
 
-				throw new BusinessException(e.getMessage());
+				throw e;
 
 			}
 		}

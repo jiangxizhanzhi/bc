@@ -13,6 +13,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -282,7 +283,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 			throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
 		}
 		if (flag.equals(UNPAUSE_FLAG) && !management.isPaused()) {
-			throw new BusinessException(CrBusinessErrorCode.NOT_PAUSED);
+			throw new BusinessException(ErrorCode.NOT_PAUSED);
 		}
 	}
 

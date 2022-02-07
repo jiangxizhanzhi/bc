@@ -3,10 +3,9 @@ package com.cyberpeace.cr.crbase.service.context.mission;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
-
 import lombok.Data;
 import lombok.Getter;
 
@@ -19,19 +18,14 @@ public class TrainingManualTeam {
 
 	private Map<String, Mission> missionMap;
 
-	private TemplateLocale locale;
-
-	public TrainingManualTeam(List<CrRoleMissionSchemeStage> stages,
-			Map<String, Mission> missionMap, String language) {
+	public TrainingManualTeam(List<CrRoleMissionSchemeStage> stages, Map<String, Mission> missionMap) {
 		this.text = new StringBuffer();
 		this.stages = stages;
 		this.missionMap = missionMap;
-		this.locale = new TemplateLocale(language);
 	}
 
 	public void addStage(CrRoleMissionSchemeStage stage, Integer index) {
-		String head = String.format("\n\n## %s%d： %s\n\n\n", locale.getStage(), index,
-				stage.getStage());
+		String head = String.format("\n\n## %s%d： %s\n\n\n", Locale.STAGE, index,	stage.getStage());
 		text.append(head);
 
 		for (int i = 1; i <= stage.getMissions().size(); i++) {
@@ -42,8 +36,8 @@ public class TrainingManualTeam {
 
 	public void addMission(String missionId, Integer index) {
 		Mission mission = missionMap.get(missionId);
-		String missionText = String.format("#### %s%d： %s\n\n%s: \n%s\n\n\n", locale.getTask(),
-				index, mission.getTitle(), locale.getWriteup(), mission.getWriteUp());
+		String missionText = String.format("#### %s%d： %s\n\n%s: \n%s\n\n\n", Locale.TASK,
+				index, mission.getTitle(), Locale.WRITEUP, mission.getWriteUp());
 		text.append(missionText);
 	}
 
@@ -55,27 +49,21 @@ public class TrainingManualTeam {
 	}
 }
 
-class TemplateLocale {
+
+enum Locale implements BaseI18n {
+	/***/
+	STAGE("阶段", "Stage"),
+	TASK("任务", "Task"),
+	WRITEUP("题解", "Write Up");
 
 	@Getter
-	private String stage;
+	private final String chinese;
 
 	@Getter
-	private String task;
+	private final String english;
 
-	@Getter
-	private String writeup;
-
-	public TemplateLocale(String language) {
-		if (language.equals(WebConstant.LANGUAGE_ZH)) {
-			this.stage = "阶段";
-			this.task = "任务";
-			this.writeup = "题解";
-		}
-		if (language.equals(WebConstant.LANGUAGE_EN)) {
-			this.stage = "Stage";
-			this.task = "Task";
-			this.writeup = "Write Up";
-		}
+	Locale(String chinese, String english) {
+		this.chinese = chinese;
+		this.english = english;
 	}
 }

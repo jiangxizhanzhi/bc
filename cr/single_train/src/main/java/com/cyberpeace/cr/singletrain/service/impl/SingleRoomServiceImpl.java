@@ -668,7 +668,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(),
 				userId);
 		if (crRole == null) {
-			throw new BusinessException(null);
+			throw new BusinessException();
 		}
 		Map<String, Mission> missionMap = getMissionMapByScheme(crRole.getMissionScheme());
 
@@ -838,7 +838,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(),
 				userId);
 		if (crRole == null) {
-			throw new BusinessException(null);
+			throw new BusinessException();
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

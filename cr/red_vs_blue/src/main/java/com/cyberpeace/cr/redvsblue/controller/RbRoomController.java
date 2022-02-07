@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -411,7 +410,7 @@ public class RbRoomController {
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-				OperationType.START, rbRoom.getName(), CommonContext.getLanguage());
+				OperationType.START, rbRoom.getName());
 
 		return new BaseRsp(rbTimeManagementRsp);
 	}

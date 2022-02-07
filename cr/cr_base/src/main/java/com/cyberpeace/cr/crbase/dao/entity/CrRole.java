@@ -2,17 +2,13 @@ package com.cyberpeace.cr.crbase.dao.entity;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.constant.BaseI18n;
 import com.google.common.collect.Lists;
-
 import lombok.Data;
 import lombok.Getter;
 
@@ -91,10 +87,12 @@ public class CrRole extends BaseTable {
 
 	public enum TeamRoleGroupCode implements GenericEnum {
 
-		TEACHER(1, "教员"), STUDENT(2, "学员");
+		/***/
+		TEACHER(1, "教员"),
+		STUDENT(2, "学员");
 
 		@Getter
-		private Integer code;
+		private final Integer code;
 
 		@Getter
 		private final String desc;
@@ -106,33 +104,33 @@ public class CrRole extends BaseTable {
 
 	}
 
-	public enum RbRoleGroupCode implements GenericEnum {
-
-		ADMIN(1, "管理员", "Administrator"), DIRECTOR(2, "导演", "Director"), REFEREE(3, "裁判",
-				"Referee"), RED(4, "红方",
-						"Red"), BLUE(5, "蓝方", "Blue"), RED_BLUE(6, "红方蓝方", "RedBlue");
+	public enum RbRoleGroupCode implements GenericEnum, BaseI18n {
+		/***/
+		ADMIN(1, "管理员", "Administrator"),
+		DIRECTOR(2, "导演", "Director"),
+		REFEREE(3, "裁判", "Referee"),
+		RED(4, "红方", "Red"),
+		BLUE(5, "蓝方", "Blue"),
+		RED_BLUE(6, "红方蓝方", "RedBlue");
 
 		@Getter
-		private Integer code;
+		private final Integer code;
 
-		private String desc;
+		@Getter
+		private final String chinese;
 
-		private String enDesc;
+		@Getter
+		private final String english;
 
 		@Override
 		public String getDesc() {
-			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-				return enDesc;
-			} else {
-				return desc;
-			}
+			return getMsg();
 		}
 
-		RbRoleGroupCode(Integer code, String desc, String enDesc) {
+		RbRoleGroupCode(Integer code, String chinese, String english) {
 			this.code = code;
-			this.desc = desc;
-			this.enDesc = enDesc;
-
+			this.chinese = chinese;
+			this.english = english;
 		}
 	}
 

@@ -28,7 +28,6 @@ import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -1017,15 +1016,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public void createMpLog(String practiceId, LogContent solved) {
-		String language = CommonContext.getLanguage();
+	public void createMpLog(String practiceId, LogContent logContent) {
 		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
-		String content = String.format(
-				LogContent.getLocaleValue(LogContent.PRACTICE_FORMAT, language),
-				operation.getContent(), LogContent.getLocaleValue(solved, language));
+		String content = LogContent.PRACTICE_FORMAT.format(operation.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-				OperationType.EXERCISE, LogContent.getLocaleValue(LogContent.EXERCISE, language),
-				content);
+				OperationType.EXERCISE, LogContent.EXERCISE.getMsg(), content);
 	}
 
 }

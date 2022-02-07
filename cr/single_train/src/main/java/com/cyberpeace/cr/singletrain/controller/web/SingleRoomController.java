@@ -2,7 +2,6 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -52,8 +51,7 @@ public class SingleRoomController {
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
-				OperationType.START, singleRoomBo.getEventData().getName(),
-				CommonContext.getLanguage());
+				OperationType.START, singleRoomBo.getEventData().getName());
 
 		return new BaseRsp<>(singleRoomBo);
 	}
@@ -83,8 +81,7 @@ public class SingleRoomController {
 		if (deleteRoom) {
 			remoteLogService.addCrLog(UserInfoContext.getUserContext(),
 					OperationModule.SINGLE_TRAIN, OperationType.STOP,
-					singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName(),
-					CommonContext.getLanguage());
+					singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName());
 		}
 		return new BaseRsp<>(deleteRoom);
 	}

@@ -1,58 +1,77 @@
 package com.cyberpeace.oj.ojbase.constant;
 
+import com.cyberpeace.constant.BaseI18nErrorMsg;
+import lombok.Getter;
+
 /**
  * 靶场自定义错误码。
  *  1、从102001开始递增编号；
  *  2、截止编号地址102999；
  */
-public interface OjBusinessErrorCode {
+public enum OjBusinessErrorCode implements BaseI18nErrorMsg {
 
 	/** 习题集类型错误*/
-	String PRACTICE_SET_TYPE_ERROR = "102001";
+	PRACTICE_SET_TYPE_ERROR("102001", "", ""),
 
 	/** 习题分类类型错误*/
-	String PRACTICE_CATEGORY_TYPE_ERROR = "102002";
+	PRACTICE_CATEGORY_TYPE_ERROR("102002", "", ""),
 
 	/** 习题集数量不足*/
-	String PRACTICE_COUNT_NOT_ENOUGH = "102003";
+	PRACTICE_COUNT_NOT_ENOUGH("102003", "习题数量不足", "The number of practice sets is insufficient."),
 
 	/** 资源无权限*/
-	String RESOURCE_PERMISSION = "102004";
+	RESOURCE_PERMISSION("102004", "权限不足", "Resource not permission."),
 
 	/** 课堂场景已启动*/
-	String CLASS_SCENE_IS_RUNNING = "102005";
+	CLASS_SCENE_IS_RUNNING("102005", "课堂场景运行中", "Class Scene is running."),
 
 	/** 课堂场景启动失败*/
-	String SCENE_START_FAIL = "102006";
+	SCENE_START_FAIL("102006", "场景启动失败", "Scene startup failure."),
 
 	/** 字段数据过长*/
-	String FILED_DATA_TOO_LONG = "102007";
+	FILED_DATA_TOO_LONG("102007", "某字段数据过长", "The field data is too long."),
 
 	/** 名称已存在*/
-	String NAME_IS_EXIST = "102008";
+	NAME_IS_EXIST("102008", "名称已存在", "Name already exists."),
 
 	/** 课程编号已存在*/
-	String COURSE_NUM_IS_EXIST = "102009";
+	COURSE_NUM_IS_EXIST("102009", "课程编号已存在", "Course number already exists."),
 
 	/** 结束时间必须大于开始时间*/
-	String END_GT_START_TIME = "102010";
+	END_GT_START_TIME("102010", "结束时间必须大于开始时间", "The end time must be greater than the start time."),
 
 	/** 课程表时间范围为上午八点-晚上21点*/
-	String CLASSROOM_TIME_RANGE_ERROR = "102011";
+	CLASSROOM_TIME_RANGE_ERROR("102011", "课程表时间范围为上午8点-晚上21点", "Time is out of range, only 8 to 21."),
 
 	/** 选择组织下无用户*/
-	String ORGANIZATION_IS_NO_USERS = "102012";
+	ORGANIZATION_IS_NO_USERS("102012", "选择组织下无用户", "Select No users in the organization."),
 
 	/** 资源正在被使用*/
-	String RESOURCE_USED_NOT_DELETED = "102013";
+	RESOURCE_USED_NOT_DELETED("102013", "资源正在被使用", "Resource is being used."),
 
 	/** 该班级在该时间段内已有课程安排*/
-	String CLASS_IN_SCHEDULES = "102014";
+	CLASS_IN_SCHEDULES("102014", "该班级在该时间段内已有课程安排", "The class has courses during this time."),
 
 	/** 已存在组织和课时相同的课程安排*/
-	String CLASS_LESSON_ORG_SAME = "102015";
+	CLASS_LESSON_ORG_SAME("102015", "已存在组织和课时相同的课程安排", "A course schedule with the same organization and lesson already exists."),
 
 	/** 存在运行的场景*/
-	String SCENE_IS_RUNNING = "102016";
+	SCENE_IS_RUNNING("102016", "场景运行中", "Scene is running.");
+
+
+	@Getter
+	private final String chinese;
+
+	@Getter
+	private final String english;
+
+	@Getter
+	private final String errorCode;
+
+	OjBusinessErrorCode(String errorCode, String chinese, String english) {
+		this.errorCode = errorCode;
+		this.chinese = chinese;
+		this.english = english;
+	}
 
 }

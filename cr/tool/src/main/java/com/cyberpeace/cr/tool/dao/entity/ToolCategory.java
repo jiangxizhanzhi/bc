@@ -1,15 +1,16 @@
 package com.cyberpeace.cr.tool.dao.entity;
 
+import java.io.Serializable;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.constant.SelectI18nName;
 import lombok.Data;
-
-import java.io.Serializable;
 
 @TableName("cr_tool_toolcategory")
 @Data
-public class ToolCategory implements Serializable {
+public class ToolCategory implements Serializable, SelectI18nName {
 
 	private Integer id;
 

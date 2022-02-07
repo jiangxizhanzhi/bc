@@ -35,7 +35,9 @@ public class Level extends BaseTable {
 
 	public enum DefaultName {
 
-		ENGLISH(0, "Network Security"), CHINESE(1, "网络安全框架");
+		/***/
+		ENGLISH(0, "Network Security"),
+		CHINESE(1, "网络安全框架");
 
 		@Getter
 		private Integer code;

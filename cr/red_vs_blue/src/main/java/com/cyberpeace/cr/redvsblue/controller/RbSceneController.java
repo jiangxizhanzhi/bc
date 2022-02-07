@@ -2,7 +2,6 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +89,7 @@ public class RbSceneController {
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-				OperationType.PAUSE, rbRoomService.getById(roomId).getName() , CommonContext.getLanguage());
+				OperationType.PAUSE, rbRoomService.getById(roomId).getName());
 
 		return new BaseRsp<>(ret);
 	}
@@ -104,7 +103,7 @@ public class RbSceneController {
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-				OperationType.UNPAUSE, rbRoomService.getById(roomId).getName() ,CommonContext.getLanguage());
+				OperationType.UNPAUSE, rbRoomService.getById(roomId).getName());
 
 		return new BaseRsp<>(ret);
 	}

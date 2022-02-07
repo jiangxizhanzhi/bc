@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -411,8 +410,7 @@ public class TeamTrainRoomController {
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
 						: OperationType.START;
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName(),
-				CommonContext.getLanguage());
+				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName());
 		return new BaseRsp<>(map);
 	}
 

@@ -57,9 +57,7 @@ public class HttpClientUtil {
 		HttpPost post = new HttpPost(url);
 		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
-		post.setHeader(WebConstant.LANGUAGE,
-				CommonContext.getLanguage() == null ? WebConstant.LANGUAGE_ZH
-						: CommonContext.getLanguage());
+		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		post.setEntity(entity);
 
 		// 3、执行实际调用、返回序列化后的结果
@@ -159,7 +157,8 @@ public class HttpClientUtil {
 				// 只要中台的错误码不是000000，都认为是有问题的
 				LOG.error("url=[{}], result=[{}] error, code=[{}]", new Object[] {
 						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode() });
-				throw new RemoteServiceException(baseRsp.message);
+				throw new RemoteServiceException();
+				// todo 把外部生产地错误消息转化为本地国际化消息
 			}
 
 			return null != baseRsp.getData()
@@ -172,7 +171,7 @@ public class HttpClientUtil {
 							resultType },
 					e);
 
-			throw new RemoteServiceException(e.getMessage());
+			throw new RemoteServiceException();
 		} finally {
 			HttpclientContext.removeContext();
 		}

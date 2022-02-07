@@ -74,8 +74,7 @@ public class TestController {
 	public BaseRsp addMpLog() {
 
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		remoteLogService.addCrLog(userInfo, OperationModule.SINGLE_TRAIN, OperationType.STOP,
-				"测试对象" , CommonContext.getLanguage());
+		remoteLogService.addCrLog(userInfo, OperationModule.SINGLE_TRAIN, OperationType.STOP,"测试对象");
 
 		return new BaseRsp();
 	}

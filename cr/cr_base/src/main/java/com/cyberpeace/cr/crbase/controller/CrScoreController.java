@@ -403,7 +403,7 @@ public class CrScoreController {
 		JSONObject jsonObject = new JSONObject();
 
 		for (TrainingReport.TemplateI18n enumData : TrainingReport.TemplateI18n.values()) {
-			jsonObject.put(enumData.name(), enumData.getDesc());
+			jsonObject.put(enumData.name(), enumData.getMsg());
 		}
 
 		return jsonObject;
@@ -411,7 +411,7 @@ public class CrScoreController {
 
 	public String getTitle(String name) {
 
-		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+		if (!CommonContext.isChinese()) {
 			return "Cyber Exercise Report of "+name;
 		} else {
 			return name+"训练的训练报告";

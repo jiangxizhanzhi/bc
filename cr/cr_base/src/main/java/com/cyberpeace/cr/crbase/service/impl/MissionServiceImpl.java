@@ -24,9 +24,7 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -245,18 +243,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		// read categories
 		ensureCache();
 		List<MissionCategoryCache> missionCategories = Lists.newArrayList(categoryCache.values());
-		// get current request language
-		boolean isEn = CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN);
 		// return
-		if (isEn) {
-			return StreamApiUtils.map(missionCategories,
-					missionCategory -> new MissionCategory(missionCategory.getResourceId(),
-							missionCategory.getEnName()));
-		} else {
-			return StreamApiUtils.map(missionCategories,
-					missionCategory -> new MissionCategory(missionCategory.getResourceId(),
-							missionCategory.getCnName()));
-		}
+		return StreamApiUtils.map(missionCategories,
+				category -> new MissionCategory(category.getResourceId(), category.selectI18nName()));
 	}
 
 	@Override
@@ -282,12 +271,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public MissionCategory getCategoryById(String categoryId) {
 		ensureCache();
 		MissionCategoryCache category = categoryCache.get(categoryId);
-		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
-			return new MissionCategory(categoryId, category.getEnName());
-		} else {
-			return new MissionCategory(categoryId, category.getCnName());
-		}
-
+		return new MissionCategory(categoryId, category.selectI18nName());
 	}
 
 	@Override
@@ -431,8 +415,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			missionMap.put(mission.getResourceId(), mission);
 		}
 
-		TrainingManualTeam manual = new TrainingManualTeam(allStages, missionMap,
-				CommonContext.getLanguage());
+		TrainingManualTeam manual = new TrainingManualTeam(allStages, missionMap);
 		return manual.toMarkDown();
 	}
 

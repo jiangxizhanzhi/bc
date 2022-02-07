@@ -92,8 +92,8 @@ public class PracticeOperationController {
 				answerReq.getSubmitAnswer(), Boolean.FALSE);
 
 		// 记录远程操作日志
-		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
-		practiceOperationService.createMpLog(answerReq.getResourceId(), solved);
+		LogContent logContent = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
+		practiceOperationService.createMpLog(answerReq.getResourceId(), logContent);
 
 		return new BaseRsp<>(evaluateResult);
 	}

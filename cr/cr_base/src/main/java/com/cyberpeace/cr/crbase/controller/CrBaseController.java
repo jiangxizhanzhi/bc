@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -60,18 +58,14 @@ public class CrBaseController {
 	@GetMapping("/constants_config")
 	public BaseRsp getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
 		List<CrConstantsConfig> constants = crConstantsService.getByType(type);
-		boolean isEn = CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN);
 		// 任务类型
 		if (type.equals(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode())) {
-			List<MissionCategoryRsp> rsp = StreamApiUtils.map(constants, constant -> isEn
-					? new MissionCategoryRsp(constant.getResourceId(), constant.getEnName())
-					: new MissionCategoryRsp(constant.getResourceId(), constant.getCnName()));
-
+			List<MissionCategoryRsp> rsp = StreamApiUtils.map(constants,
+					constant -> new MissionCategoryRsp(constant.getResourceId(), constant.selectI18nName()));
 			return new BaseRsp(rsp);
 		} else {
 			List<CodeNameRsp> rsp = StreamApiUtils.map(constants,
-					constant -> isEn ? new CodeNameRsp(constant.getCode(), constant.getEnName())
-							: new CodeNameRsp(constant.getCode(), constant.getCnName()));
+					constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName()));
 			return new BaseRsp(rsp);
 		}
 	}

@@ -2,8 +2,8 @@ package com.cyberpeace.cr.redvsblue.service.context.mission;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.google.common.collect.Lists;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +20,7 @@ public class RoleScore {
 	private List<Integer> missionsInfo;
 
 	public RoleScore(String role, Integer code, Integer score, Integer finishedTaskCount,
-			Integer taskCount) {
+					 Integer taskCount) {
 		this.roleName = role;
 		this.roleGroup = code;
 		this.score = score;
@@ -30,6 +30,11 @@ public class RoleScore {
 
 		this.missionsInfo = missions;
 
+	}
+
+	public RoleScore(CrRole.RbRoleGroup roleGroup, Integer score, Integer finishedTaskCount,
+					 Integer taskCount) {
+		this(roleGroup.getDesc(), roleGroup.getCode(), score, finishedTaskCount, taskCount);
 	}
 
 }

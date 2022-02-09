@@ -52,7 +52,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		Integer missionCount = 0;
 		for (CrRole crRole : crRoleList) {
 			Integer roleMissionCount = crRoleService.getMissionCount(crRole);
-			List<String> userList = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			List<String> userList = crRole.getUserIdList();
 			missionCount += roleMissionCount * userList.size();
 		}
 		List<String> crRoleIds = StreamApiUtils.map(crRoleList, CrRole::getResourceId);

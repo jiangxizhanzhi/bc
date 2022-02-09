@@ -76,15 +76,13 @@ public class SingleRoomScoreController {
 	@GetMapping("/history_detail")
 	public BaseRsp<JSONObject> getHistoryDetail(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SingleRoleGroupCode.roleGroup);
+		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SINGLE_ROLE_GROUP_CODE);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
-				crRoleList);
+		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id, crRoleList);
 
 		// 单兵训练仅有一个用户, 角色仅关联一个用户
-		String user_hash = JsonUtil.stringToArray(crRoleList.get(0).getUserIds())
-				.toJavaList(String.class).get(0);
+		String user_hash = crRoleList.get(0).getUserIdList().get(0);
 
 		List<Integer> radars = crRoleService.getRadar(resource_id, user_hash);
 

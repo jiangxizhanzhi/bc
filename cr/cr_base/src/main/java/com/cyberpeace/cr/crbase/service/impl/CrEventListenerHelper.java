@@ -32,9 +32,8 @@ public class CrEventListenerHelper {
 	public String filterDataByRole(CrRole role, String data, String nodeId) {
 		WsSceneReportBO report;
 		// is student
-		if (role.isStudent()) {
-			CrRoleNodesData nodesData = JsonUtil.toJsonObject(role.getNodes(),
-					CrRoleNodesData.class);
+		if (role.isRvbStudent() || role.isTeamStudent()) {
+			CrRoleNodesData nodesData = role.getNodeData();
 			// filter visible nodes
 			List<String> visibleNodeIds = StreamApiUtils.map(nodesData.getVisibleNodes(),
 					CrRoleNode::getId);

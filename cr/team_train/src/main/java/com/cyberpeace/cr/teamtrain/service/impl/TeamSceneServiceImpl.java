@@ -293,8 +293,8 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 
 		// 1、如果是学员，直接返回
-		if (role.getRoleGroup().equals(CrRole.TeamRoleGroupCode.STUDENT.getCode())) {
-			return JsonUtil.toJsonObject(role.getNodes(), CrRoleNodesData.class);
+		if (role.isTeamStudent()) {
+			return role.getNodeData();
 		}
 
 		// 2、教员查看自己的节点，不需要传roleId
@@ -307,7 +307,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		CrRole fakeRole = crRoleService.getById(roleId);
 		// 3.2、返回学员role的可见节点
 		if (fakeRole.getRoomId().equals(roomId)) {
-			return JsonUtil.toJsonObject(fakeRole.getNodes(), CrRoleNodesData.class);
+			return fakeRole.getNodeData();
 		}
 
 		return null;

@@ -23,7 +23,6 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
@@ -139,8 +138,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				int index = 0;
 				RoleListContext teacherRole = new RoleListContext();
 				// 教员
-				teacherRole.setName(CrRole.TeamRoleGroupCode.TEACHER.getDesc());
-				teacherRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getCode());
+				teacherRole.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
+				teacherRole.setRoleGroup(CrRole.TeamRoleGroup.TEACHER);
 				originRoles.add(0, teacherRole);
 
 				for (RoleListContext originRole : originRoles) {
@@ -152,21 +151,21 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 								teamRoom.getName());
 						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
 					}
-					crRole.setUserIds(JsonUtil.toJsonString(users.get(index).getUsers()));
+					crRole.setUserIdList(users.get(index).getUsers());
 					crRole.setRoomId(teamRoom.getResourceId());
 					crRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-					String copyMission = getNewRoomScheme(
+					List<MissionStageScheme> copyMission = getNewRoomScheme(
 							JsonUtil.toJsonString(originRole.getMissionsScheme()),
 							teamRoom.getResourceId());
-					crRole.setMissionScheme(copyMission);
+					crRole.setMissionStageSchemes(copyMission);
 					// 学员
 					if (crRole.getRoleGroup() == null) {
-						crRole.setRoleGroup(CrRole.TeamRoleGroupCode.STUDENT.getCode());
+						crRole.setRoleGroup(CrRole.TeamRoleGroup.STUDENT);
 					}
 					CrRoleNodesData nodesData = new CrRoleNodesData();
 					nodesData.setAssetNodes(originRole.getAssetNodes());
 					nodesData.setVisibleNodes(originRole.getVisibleNodes());
-					crRole.setNodes(JsonUtil.toJsonString(nodesData));
+					crRole.setNodesData(nodesData);
 					crRoleService.save(crRole);
 
 					index++;
@@ -183,11 +182,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param missionsScheme
 	 * @return
 	 */
-	private String getNewRoomScheme(String missionsScheme, String roomId) {
+	private List<MissionStageScheme> getNewRoomScheme(String missionsScheme, String roomId) {
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
 				new TypeReference<ColorMission<AddTemplateMission>>() {});
 		if (null == colorMission || null == colorMission.getSchemeData()) {
-			return "[]";
+			return new ArrayList<>();
 		}
 
 		List<MissionStageScheme> missionStageSchemes = Lists.newArrayList();
@@ -222,9 +221,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 			missionStageSchemes.add(missionStageScheme);
 		}
-
-		return JsonUtil.toJsonString(missionStageSchemes);
-
+		return missionStageSchemes;
 	}
 
 	@Override
@@ -282,7 +279,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 							throw new BusinessException(
 									CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
 						}
-						crRole.setUserIds(JsonUtil.toJsonString(users));
+						crRole.setUserIdList(users);
 						crRoleService.updateById(crRole);
 
 					});
@@ -351,9 +348,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		for (CrRole crRole : crRoles) {
 			// 获取每个学员用户，以及学员id
-			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER.getCode()) {
-
-				List<String> users = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			if (crRole.isTeamStudent()) {
+				List<String> users = crRole.getUserIdList();
 				users.forEach(user -> {
 					UserRole userRole = new UserRole();
 					userRole.setResourceId(user);
@@ -458,12 +454,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public void checkStudentPermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.STUDENT);
 	}
 
 	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.TeamRoleGroupCode.TEACHER.getCode());
+		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.TEACHER);
 	}
 
 	@Override
@@ -482,7 +478,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 	}
 
-	private void permissionCheck(String roomId, String userId, Integer roleCode) {
+	private void permissionCheck(String roomId, String userId, CrRole.TeamRoleGroup roleGroup) {
 		TeamRoom teamRoom = getById(roomId);
 		if (teamRoom == null) {
 			log.error("failed to get TeamRoom with Id [{}]", roomId);
@@ -490,10 +486,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!crRole.getRoleGroup().equals(roleCode)) {
+		if (!roleGroup.equals(crRole.getRoleGroup())) {
 			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
-					roomId, userId,
-					EnumUtils.getEnumDescByCode(roleCode, CrRole.TeamRoleGroupCode.class));
+					roomId, userId, roleGroup.getDesc());
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}

@@ -199,7 +199,7 @@ public class RbRoomDirectorController {
 				List<MissionConfig> missionConfigList = rbMissionDeleteReq.getMissionConfig();
 				for (MissionConfig missionConfig : missionConfigList) {
 					CrRole crRole = crRoleService.getById(missionConfig.getRoleResourceId());
-					if (!crRole.isStudent()) {
+					if (!crRole.isRvbStudent()) {
 						log.error("student role  does not exist！roleId=[{}] ",
 								crRole.getResourceId());
 						throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
@@ -214,8 +214,7 @@ public class RbRoomDirectorController {
 						throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 					}
 
-					List<MissionStageScheme> missionStageSchemeList = JsonUtil
-							.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
+					List<MissionStageScheme> missionStageSchemeList = crRole.getMissionStageSchemes();
 
 					for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
 
@@ -231,7 +230,7 @@ public class RbRoomDirectorController {
 
 					}
 
-					crRole.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
+					crRole.setMissionStageSchemes(missionStageSchemeList);
 					crRoleService.updateById(crRole);
 					missionService.removeByIds(deleteMissions);
 
@@ -252,17 +251,14 @@ public class RbRoomDirectorController {
 		List<String> dynamics = Lists.newArrayList();
 
 		// 遍历学员角色组
-		for (Integer roleCode : CrRole.RB_STUDENT_ROLE_GROUPS) {
-
+		for (CrRole.RbRoleGroup roleGroup : CrRole.RbRoleGroup.studentRoleGroups()) {
 			Integer missionCount = 0;
 			Integer peopleCount = 0;
 
 			List<GroupRole> childRoleInfoList = Lists.newArrayList();
-			String roleGroupName = EnumUtils.getEnumDescByCode(roleCode,
-					CrRole.RbRoleGroupCode.class);
+			String roleGroupName = roleGroup.getDesc();
 
-			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id,
-					roleCode);
+			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id, roleGroup);
 
 			crRbRoleContext.setMissionMapping(crRoleContext.getMissionMapping());
 			crRbRoleContext.setShowWriteupMapping(crRoleContext.getShowWriteupMapping());
@@ -302,8 +298,8 @@ public class RbRoomDirectorController {
 
 								// 如果下发，获取mission的用户列表
 								if (missionIds.contains(roleMission.getResourceId())) {
-									List<UserData> userDatas = crRoleService
-											.getUserDatas(roleData.getUserIds());
+									List<String> userIdList = JsonUtil.toJsonObjectArray(roleData.getUserIds(), String.class);
+									List<UserData> userDatas = crRoleService.getUserDatas(userIdList);
 
 									List<RbUserData> rbUserDatas = userDatas.stream()
 											.map(userData -> {
@@ -343,7 +339,7 @@ public class RbRoomDirectorController {
 			GroupData groupData = new GroupData();
 
 			groupData.setGroup(roleGroupName);
-			groupData.setGroupHash(roleCode);
+			groupData.setGroupHash(roleGroup.getCode());
 			groupData.setRoles(childRoleInfoList);
 			groupData.setGroupNumber(crRoleContextRsp.getRoles().size());
 			groupData.setPeopleNumber(peopleCount);

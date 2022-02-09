@@ -82,44 +82,33 @@ public class RbTemplateController {
 
 		List<RbTemplateRoleRsp> rbTemplateRoleRsps = Lists.newArrayList();
 
-		RbTemplateRoleRsp rbTemplateRoleRsp = new RbTemplateRoleRsp(
-				CrRole.RbRoleGroupCode.ADMIN.getDesc(), CrRole.RbRoleGroupCode.ADMIN.getCode());
-		rbTemplateRoleRsps.add(rbTemplateRoleRsp);
+		rbTemplateRoleRsps.add(new RbTemplateRoleRsp(CrRole.RbRoleGroup.ADMIN));
 
-		RbTemplateRoleRsp rbTemplateRoleRsp1 = new RbTemplateRoleRsp(
-				CrRole.RbRoleGroupCode.DIRECTOR.getDesc(),
-				CrRole.RbRoleGroupCode.DIRECTOR.getCode());
-		rbTemplateRoleRsps.add(rbTemplateRoleRsp1);
+		rbTemplateRoleRsps.add(new RbTemplateRoleRsp(CrRole.RbRoleGroup.DIRECTOR));
 
-		RbTemplateRoleRsp rbTemplateRoleRsp2 = new RbTemplateRoleRsp(
-				CrRole.RbRoleGroupCode.REFEREE.getDesc(), CrRole.RbRoleGroupCode.REFEREE.getCode());
-		rbTemplateRoleRsps.add(rbTemplateRoleRsp2);
+		rbTemplateRoleRsps.add(new RbTemplateRoleRsp(CrRole.RbRoleGroup.REFEREE));
 
-		RbTemplateRoleRsp rbTemplateRoleRsp3 = new RbTemplateRoleRsp(
-				CrRole.RbRoleGroupCode.RED.getDesc(), CrRole.RbRoleGroupCode.RED.getCode());
+		RbTemplateRoleRsp rbTemplateRoleRsp3 = new RbTemplateRoleRsp(CrRole.RbRoleGroup.RED);
 
 		JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");
 		List<RbTemplateRoleRsp> redTemplateRoleRsps = Lists.newArrayList();
 		for (int i = 0; i < redRoles.size(); i++) {
 
-			RbTemplateRoleRsp redTemplateRole = new RbTemplateRoleRsp(
-					redRoles.getJSONObject(i).get("name").toString(),
-					CrRole.RbRoleGroupCode.RED.getCode());
+			RbTemplateRoleRsp redTemplateRole = new RbTemplateRoleRsp(CrRole.RbRoleGroup.RED,
+					redRoles.getJSONObject(i).get("name").toString());
 			redTemplateRoleRsps.add(redTemplateRole);
 		}
 		rbTemplateRoleRsp3.setChildren(redTemplateRoleRsps);
 		rbTemplateRoleRsps.add(rbTemplateRoleRsp3);
 
-		RbTemplateRoleRsp rbTemplateRoleRsp4 = new RbTemplateRoleRsp(
-				CrRole.RbRoleGroupCode.BLUE.getDesc(), CrRole.RbRoleGroupCode.BLUE.getCode());
+		RbTemplateRoleRsp rbTemplateRoleRsp4 = new RbTemplateRoleRsp(CrRole.RbRoleGroup.BLUE);
 
 		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
 		List<RbTemplateRoleRsp> blueTemplateRoleRsps = Lists.newArrayList();
 		for (int i = 0; i < blueRoles.size(); i++) {
 
-			RbTemplateRoleRsp blueTemplateRole = new RbTemplateRoleRsp(
-					blueRoles.getJSONObject(i).get("name").toString(),
-					CrRole.RbRoleGroupCode.BLUE.getCode());
+			RbTemplateRoleRsp blueTemplateRole = new RbTemplateRoleRsp(CrRole.RbRoleGroup.BLUE,
+					blueRoles.getJSONObject(i).get("name").toString());
 			blueTemplateRoleRsps.add(blueTemplateRole);
 		}
 		rbTemplateRoleRsp4.setChildren(blueTemplateRoleRsps);

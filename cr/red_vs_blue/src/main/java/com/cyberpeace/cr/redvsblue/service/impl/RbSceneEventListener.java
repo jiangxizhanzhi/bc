@@ -74,8 +74,7 @@ public class RbSceneEventListener extends MessageListener {
 			if (filteredData == null) {
 				continue;
 			}
-			List<String> userIds = JSONObject.parseArray(role.getUserIds(), String.class);
-			pushDataToWebByUserIds(filteredData, businessId, userIds);
+			pushDataToWebByUserIds(filteredData, businessId, role.getUserIdList());
 		}
 		return true;
 	}

@@ -152,7 +152,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		Date releaseTime = new Date();
 
 		List<CrTask> tasks = new ArrayList<>();
-		for (String userId : JsonUtil.toJsonObjectArray(role.getUserIds(), String.class)) {
+		for (String userId : role.getUserIdList()) {
 			CrTask task = new CrTask();
 			task.setMissionId(mission.getResourceId());
 			task.setUserId(userId);
@@ -215,8 +215,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public Boolean addDynamic(Mission mission, CrRole role, Integer stage) {
 		// 校验是否和角色既存任务重名
-		List<MissionStageScheme> missionStageSchemeList = JsonUtil
-				.toJsonObjectArray(role.getMissionScheme(), MissionStageScheme.class);
+		List<MissionStageScheme> missionStageSchemeList = role.getMissionStageSchemes();
 		List<String> missionIds = Lists.newArrayList();
 		for (MissionStageScheme scheme : missionStageSchemeList) {
 			missionIds.addAll(scheme.getMissions());
@@ -231,7 +230,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				save(mission);
 				addDynamicMissionInfo(missionStageSchemeList, stage, mission.getResourceId());
-				role.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
+				role.setMissionStageSchemes(missionStageSchemeList);
 				crRoleMapper.updateById(role);
 			}
 		});
@@ -400,8 +399,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public String getTeamTrainingManual(String roomId) {
-		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.TeamRoleGroupCode.STUDENT.getCode());
-		List<CrRole> roles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
+		List<CrRole> roles = crRoleMapper.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
 		List<CrRoleMissionSchemeStage> allStages = Lists.newArrayList();
 		for (CrRole role : roles) {
 			List<CrRoleMissionSchemeStage> stages = JsonUtil
@@ -654,13 +652,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public List<String> getMissionIdsByScheme(String missionScheme) {
+	public List<String> getMissionIdsByScheme(List<MissionStageScheme> missionStageSchemes) {
 		List<String> missionIds = Lists.newArrayList();
-
-		JsonUtil.stringToArray(missionScheme).toJavaList(JSONObject.class)
-				.forEach(stage -> missionIds
-						.addAll(stage.getJSONArray("missions").toJavaList(String.class)));
-
+		missionStageSchemes.forEach(stage -> missionIds.addAll(stage.getMissions()));
 		return missionIds;
 	}
 
@@ -669,7 +663,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<String> missionIds = Lists.newArrayList();
 
 		for (CrRole crRole : crRoleList) {
-			missionIds.addAll(getMissionIdsByScheme(crRole.getMissionScheme()));
+			missionIds.addAll(getMissionIdsByScheme(crRole.getMissionStageSchemes()));
 		}
 
 		return batchGet(missionIds);

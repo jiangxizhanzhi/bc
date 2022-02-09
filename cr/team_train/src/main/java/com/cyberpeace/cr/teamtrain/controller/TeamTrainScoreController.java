@@ -283,8 +283,7 @@ public class TeamTrainScoreController {
 	@GetMapping("/get_training_mission_report")
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id,
-				CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
@@ -326,8 +325,7 @@ public class TeamTrainScoreController {
 			return new BaseRsp<>(new TrainingReport());
 		}
 
-		RoleQuery roleQuery = new RoleQuery(resource_id,
-				CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		List<UserReport> userReportList = crScoreController.getTrainingReport(resource_id,

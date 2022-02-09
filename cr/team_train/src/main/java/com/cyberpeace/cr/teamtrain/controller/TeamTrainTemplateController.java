@@ -206,12 +206,11 @@ public class TeamTrainTemplateController {
 
 		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
 				BaseRole.class);
-		teamTrainTemplateRoleList
-				.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroupCode.STUDENT.getCode()));
+		teamTrainTemplateRoleList.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT));
 
 		BaseRole baseRole = new BaseRole();
-		baseRole.setName(CrRole.TeamRoleGroupCode.TEACHER.getDesc());
-		baseRole.setRoleGroup(CrRole.TeamRoleGroupCode.TEACHER.getCode());
+		baseRole.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
+		baseRole.setRoleGroup(CrRole.TeamRoleGroup.TEACHER);
 
 		teamTrainTemplateRoleList.add(0, baseRole);
 

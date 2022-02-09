@@ -342,7 +342,7 @@ public class RbRoomScoreController {
 
 		List<CrRole> crRoles = crRoleService.selectRbStudentsRoleByRoomId(resource_id);
 		for (CrRole crRole : crRoles) {
-			List<String> userIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			List<String> userIds = crRole.getUserIdList();
 
 			allUserIds.addAll(userIds);
 

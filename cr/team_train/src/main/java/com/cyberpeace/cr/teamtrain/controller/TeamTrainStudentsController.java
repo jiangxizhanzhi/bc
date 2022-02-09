@@ -122,8 +122,7 @@ public class TeamTrainStudentsController {
 			List<TeamRoomRoleRes> rolesData = Lists.newArrayList();
 			crRoles.forEach(crRole -> {
 				TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
-				teamRoomRoleRes
-						.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIds()));
+				teamRoomRoleRes.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList()));
 			});
 
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
@@ -242,7 +241,7 @@ public class TeamTrainStudentsController {
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userId)) {
+			if (crRole.containsUser(userId)) {
 				baseRole.setResourceId(crRole.getResourceId());
 				baseRole.setName(crRole.getName());
 
@@ -263,18 +262,18 @@ public class TeamTrainStudentsController {
 		BaseRole baseRole = new BaseRole();
 		List<RoleUsers> roleUsersList = Lists.newArrayList();
 		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userId)) {
+			if (crRole.containsUser(userId)) {
 				baseRole.setResourceId(crRole.getResourceId());
 				baseRole.setName(crRole.getName());
 
 				baseRole.setDescription(crRole.getDescription());
 				baseRole.setRoleGroup(crRole.getRoleGroup());
 			}
-			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER.getCode()) {
+			if (crRole.isTeamStudent()) {
 				RoleUsers roleUsers = new RoleUsers();
 				roleUsers.setRoleName(crRole.getName());
 				roleUsers.setRoleGroup(crRole.getRoleGroup());
-				roleUsers.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+				roleUsers.setUsers(crRole.getUserIdList());
 				roleUsersList.add(roleUsers);
 			}
 		});

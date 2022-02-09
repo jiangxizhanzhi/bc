@@ -345,7 +345,7 @@ public class CrScoreController {
 		List<String> userIds = Lists.newArrayList();
 
 		for (CrRole crRole : crRoleList) {
-			userIds.addAll(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+			userIds.addAll(crRole.getUserIdList());
 		}
 
 		UserPageContext userPageContext = new UserPageContext();
@@ -372,13 +372,11 @@ public class CrScoreController {
 
 		// 遍历每个学员，设置任务统计结果
 		for (CrRole crRole : crRoleList) {
-			List<MissionStageScheme> missionStageSchemes = JsonUtil
-					.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
-			Integer missionCount = 0;
-			for (MissionStageScheme stage : missionStageSchemes) {
+			int missionCount = 0;
+			for (MissionStageScheme stage : crRole.getMissionStageSchemes()) {
 				missionCount += stage.getMissions().size();
 			}
-			List<String> userList = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			List<String> userList = crRole.getUserIdList();
 			for (String userId : userList) {
 				CrScore crScore = studentScoreMap.get(userId);
 				UserReport userReport = new UserReport();

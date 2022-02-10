@@ -1,9 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.component.MyWebSocketHandler;
@@ -150,8 +147,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 		// 数据合并 数据类型转换
 		groupInfoList.addAll(updateGroups);
-		return StreamApiUtils.map(groupInfoList,
-				classroomGroupInfo -> entityTBo(classroomGroupInfo));
+		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
+				ClassroomGroupInfo::getGroupNo);
+		return StreamApiUtils.map(sorted, classroomGroupInfo -> entityTBo(classroomGroupInfo));
 	}
 
 	@Override
@@ -212,7 +210,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			}
 		});
 
-		return StreamApiUtils.map(groupInfoList, groupInfo -> entityTBo(groupInfo));
+		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
+				ClassroomGroupInfo::getGroupNo);
+		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo));
 	}
 
 	@Override
@@ -282,7 +282,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			}
 		});
 
-		return StreamApiUtils.map(groupInfoList, groupInfo -> entityTBo(groupInfo));
+		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
+				ClassroomGroupInfo::getGroupNo);
+		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo));
 	}
 
 	/**

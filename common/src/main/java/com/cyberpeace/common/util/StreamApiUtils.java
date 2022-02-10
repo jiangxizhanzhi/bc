@@ -6,10 +6,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.checkerframework.checker.units.qual.K;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -135,6 +132,20 @@ public class StreamApiUtils {
 		Map<Object, Boolean> hashMap = new HashMap<>();
 		return collection.stream()
 				.filter(t -> hashMap.putIfAbsent(mapper.apply(t), CommonConstant.TRUE) == null)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * 根据某个字段进行排序
+	 * @param collection
+	 * @param keyExtractor
+	 * @param <E>
+	 * @param <U>
+	 * @return
+	 */
+	public static <E, U extends Comparable<? super U>> List<E>
+			sortByColumn(Collection<E> collection, Function<? super E, ? extends U> keyExtractor) {
+		return collection.stream().sorted(Comparator.comparing(keyExtractor))
 				.collect(Collectors.toList());
 	}
 

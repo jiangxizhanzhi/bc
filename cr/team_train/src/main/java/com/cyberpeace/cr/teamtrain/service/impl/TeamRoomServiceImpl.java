@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -452,12 +453,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public void checkStudentPermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.STUDENT);
+		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.STUDENT.getCode());
 	}
 
 	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.TEACHER);
+		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.TEACHER.getCode());
 	}
 
 	@Override
@@ -476,19 +477,26 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 	}
 
-	private void permissionCheck(String roomId, String userId, CrRole.TeamRoleGroup roleGroup) {
+	private void permissionCheck(String roomId, String userId, Integer roleGroup) {
 		TeamRoom teamRoom = getById(roomId);
 		if (teamRoom == null) {
 			log.error("failed to get TeamRoom with Id [{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!roleGroup.equals(crRole.getRoleGroup())) {
-			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
-					roomId, userId, roleGroup.getDesc());
+		try {
+			CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+
+			if (!roleGroup.equals(crRole.getRoleGroup())) {
+				throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+			}
+
+		} catch (Exception e) {
+			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]",
+					roomId, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
+
 	}
 
 	private LocalScene getLocalScene(String teamRoomId) {

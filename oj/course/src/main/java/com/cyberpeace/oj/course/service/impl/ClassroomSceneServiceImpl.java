@@ -338,7 +338,13 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		localScene.setSceneName(
 				lesson.getName() + CommonConstant.UNDER_LINE + groupInfo.getGroupNo().toString());
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
-		localScene.setSceneTtl(groupInfo.getDestroyDelay() * CommonConstant.SIXTY);
+
+		// 场景存活时间设置
+		if (null != groupInfo.getDestroyDelay()
+				&& groupInfo.getDestroyDelay() > CommonConstant.ZERO) {
+			localScene.setSceneTtl(groupInfo.getDestroyDelay() * CommonConstant.SIXTY);
+		}
+
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.TEAM.getCode());
 
 		// 设置场景类型

@@ -268,7 +268,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 
 				// 场景存活时间为空则代表不设置场景结束时间 目前仅存在于课堂设置场景延时则无倒计时
-				if (null != localScene.getSceneTtl()) {
+				if (null != localScene.getSceneTtl()
+						&& localScene.getSceneTtl() > CommonConstant.ZERO) {
 					localScene.setEndTime(
 							TimeUtil.addMins(localScene.getStartTime(), localScene.getSceneTtl()));
 				}
@@ -312,7 +313,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			log.error(
 					"checkSceneStartCount: Scene start greater limit count! start_scene=[{}], limit_scene=[{}]",
 					startCount, limitCount);
-			throw new InvalidParamException("场景数量启动启动过多！");
+			throw new BusinessException(OjBusinessErrorCode.SCENE_RUNNING_TOO_MUCH);
 		}
 
 	}

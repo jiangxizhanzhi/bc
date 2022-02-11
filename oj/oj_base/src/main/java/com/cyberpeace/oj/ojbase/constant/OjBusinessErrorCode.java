@@ -11,10 +11,10 @@ import lombok.Getter;
 public enum OjBusinessErrorCode implements BaseI18nErrorMsg {
 
 	/** 习题集类型错误*/
-	PRACTICE_SET_TYPE_ERROR("102001", "", ""),
+	PRACTICE_SET_TYPE_ERROR("102001", "习题集类型错误", "Practice set type error."),
 
 	/** 习题分类类型错误*/
-	PRACTICE_CATEGORY_TYPE_ERROR("102002", "", ""),
+	PRACTICE_CATEGORY_TYPE_ERROR("102002", "习题分类类型错误", "Practice set category type error."),
 
 	/** 习题集数量不足*/
 	PRACTICE_COUNT_NOT_ENOUGH("102003", "习题数量不足", "The number of practice sets is insufficient."),
@@ -56,7 +56,9 @@ public enum OjBusinessErrorCode implements BaseI18nErrorMsg {
 	CLASS_LESSON_ORG_SAME("102015", "已存在组织和课时相同的课程安排", "A course schedule with the same organization and lesson already exists."),
 
 	/** 存在运行的场景*/
-	SCENE_IS_RUNNING("102016", "场景运行中", "Scene is running.");
+	SCENE_IS_RUNNING("102016", "场景运行中", "Scene is running."),
+
+	SCENE_RUNNING_TOO_MUCH("102017", "场景数量启动过多", "Too many scene are started");
 
 
 	@Getter

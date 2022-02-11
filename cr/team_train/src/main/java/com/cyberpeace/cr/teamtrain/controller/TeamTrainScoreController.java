@@ -217,6 +217,8 @@ public class TeamTrainScoreController {
 	public BaseRsp<StudentScoreRsp> getStudentScore(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		teamRoomService.checkTeacherPermission(resource_id, userId);
 
 		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
 
@@ -227,8 +229,10 @@ public class TeamTrainScoreController {
 	@PostMapping("/student_score")
 	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
 			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+ 		teamRoomService.checkTeacherPermission(studentScoreReq.getRoomId(), userId);
 
-		teamRoomService.checkRoomOpening(studentScoreReq.getRoomId());
+ 		teamRoomService.checkRoomOpening(studentScoreReq.getRoomId());
 
 		crScoreController.updateStudentScore(studentScoreReq);
 

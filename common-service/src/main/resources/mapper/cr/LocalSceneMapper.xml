@@ -13,8 +13,11 @@
 
     <update id="updateEndTime">
         update local_scene
-        set destroy_time = #{destroyTime},
-        scene_ttl = #{sceneTtl}
+        <set>
+            start_time = #{startTime},
+            end_time = #{endTime},
+            scene_ttl = #{sceneTtl}
+        </set>
         where resource_id = #{resourceId}
     </update>
 

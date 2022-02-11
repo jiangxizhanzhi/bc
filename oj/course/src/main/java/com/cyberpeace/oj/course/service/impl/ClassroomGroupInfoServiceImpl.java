@@ -326,6 +326,11 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			// 需要更新的场景数据
 			if (null != ojLocalScene) {
 				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+
+				if (!end) {
+					localScene.setStartTime(new Date());
+				}
+
 				localScene.setEndTime(!end ? TimeUtil.addHours(localScene.getStartTime(),
 						courseLesson.getDestroyDelay()) : null);
 				localScene.setSceneTtl(

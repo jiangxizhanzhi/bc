@@ -155,13 +155,13 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			// 仅查询公开习题
 			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds, true);
 			queryBo.setResourceIds(theoryIds);
-			return theoryConvert(queryBo, page, authContext);
+			return theoryConvert(queryBo, page);
 		}
 
 		PracticeSet practiceSet = practiceSetMapper.selectById(queryBo.getPracticeSetId());
 		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
 				.getCode()) {
-			return theoryConvert(queryBo, page, authContext);
+			return theoryConvert(queryBo, page);
 		} else {
 			// 仅查询公开习题
 			OperationListQuery listQuery = BeanUtils.copy(queryBo, OperationListQuery.class);
@@ -237,15 +237,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * 理论习题数据转换
 	 * @param queryBo
 	 * @param page
-	 * @param authContext
 	 * @return
 	 */
-	private IPage<LibPracticeListBo> theoryConvert(LibPracticeQueryBo queryBo, Page page,
-			AuthContext authContext) {
+	private IPage<LibPracticeListBo> theoryConvert(LibPracticeQueryBo queryBo, Page page) {
 
 		TheoryListQuery theoryListQuery = BeanUtils.copy(queryBo, TheoryListQuery.class);
-		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
-				authContext.getIsWeb());
+		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery, true);
 
 		IPage<LibPracticeListBo> convert = iPage
 				.convert(practiceTheory -> theoryToListBo(practiceTheory));

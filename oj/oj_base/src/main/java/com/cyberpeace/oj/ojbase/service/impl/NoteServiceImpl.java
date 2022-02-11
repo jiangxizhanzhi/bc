@@ -72,7 +72,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		if (StringUtils.isNotBlank(noteListQuery.getUserName())) {
 			UserPageContext pageContext = UserPageContext.builder()
 					.username(noteListQuery.getUserName()).build();
-			List<UserInfo> userList = remoteUserService.getLazyUserList(pageContext);
+			List<UserInfo> userList = remoteUserService.getFuzzyQueryUserList(pageContext);
 			List<String> userIds = StreamApiUtils.map(userList, UserInfo::getUserId);
 			listQuery.setUserIds(userIds);
 

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -152,15 +153,15 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfoList;
 	}
 
-  /**
-   * 姓名、用户名模糊查询
-   *
-   * @param userPageContext
-   * @return
-   */
-  @Override
-  @Cacheable(cacheNames = "getFuzzyQueryuser", key = "#userPageContext")
-  public List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext) {
+	/**
+	 * 姓名、用户名模糊查询
+	 *
+	 * @param userPageContext
+	 * @return
+	 */
+	@Override
+	@Cacheable(cacheNames = "getFuzzyQueryuser", key = "#userPageContext")
+	public List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 
 		List jsonArray = (List) HttpClientUtil

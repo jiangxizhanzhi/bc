@@ -383,7 +383,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		identifier.setUserId(ojLocalScene.getUserId());
 
 		JSONObject data = new JSONObject();
-		data.put(JsonKeyConstant.CODE, OjEvent.SCENE_CREATE_SYNC);
+		data.put(JsonKeyConstant.CODE, OjEvent.SCENE_CREATE_SYNC.getCode());
 		data.put(JsonKeyConstant.DATA, CommonConstant.EMPTY_STRING);
 
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext

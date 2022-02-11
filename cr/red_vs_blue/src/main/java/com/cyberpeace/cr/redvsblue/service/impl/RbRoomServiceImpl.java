@@ -532,9 +532,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			});
 		}
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
@@ -596,9 +594,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		}
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));

@@ -362,9 +362,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 		}
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));

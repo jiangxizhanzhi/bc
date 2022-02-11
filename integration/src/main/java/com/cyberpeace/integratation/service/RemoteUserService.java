@@ -25,7 +25,6 @@ public interface RemoteUserService {
 
 	JSONObject getList(Long page, Long perPage, String pattern, String organization);
 
-	List<UserInfo> getLazyUserList(UserPageContext userPageContext);
 
 	List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext);
 

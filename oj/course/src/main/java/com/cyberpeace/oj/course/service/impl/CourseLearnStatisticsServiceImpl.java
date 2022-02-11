@@ -160,7 +160,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			UserPageContext userPageContext = new UserPageContext();
 			userPageContext.setUsername(usernameLike);
 			userPageContext.setIds(String.join(",", userIds));
-			List<UserInfo> lazyUserList = remoteUserService.getLazyUserList(userPageContext);
+			List<UserInfo> lazyUserList = remoteUserService.getFuzzyQueryUserList(userPageContext);
 			userIds = StreamApiUtils.map(lazyUserList, UserInfo::getUserId);
 		}
 		if (userIds.size() == 0){

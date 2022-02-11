@@ -270,9 +270,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	private List<NameElement> getUserByRoleUsers(List<String> userList) {
 		List<NameElement> userElements = Lists.newArrayList();
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 		userInfoList.forEach(userInfo -> {
 			if (userList.contains(userInfo.getUserId())) {
 				NameElement nameElement = new NameElement();
@@ -288,9 +287,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Override
 	public String getUserNamesByRoleUsers(List<String> userList) {
 		List<String> userNames = Lists.newArrayList();
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 		userInfoList.forEach(userInfo -> {
 			if (userList.contains(userInfo.getUserId())) {
 				userNames.add(userInfo.getUserName());

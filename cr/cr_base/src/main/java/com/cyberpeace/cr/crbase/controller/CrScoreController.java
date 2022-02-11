@@ -348,9 +348,8 @@ public class CrScoreController {
 			userIds.addAll(crRole.getUserIdList());
 		}
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userIds));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 

@@ -52,7 +52,7 @@
 
     <select id="courseNumStats" resultType="com.alibaba.fastjson.JSONObject">
         select
-               count(T1.resource_id) as course_count,
+               count(distinct T1.resource_id) as course_count,
                count(if(T2.type = #{theory_type}, TRUE, NULL )) as theory_count,
                count(if(T2.type = #{exp_type}, TRUE, NULL )) as exp_count
         from oj_course T1 left join oj_course_lesson T2 on T1.resource_id = T2.course_id;

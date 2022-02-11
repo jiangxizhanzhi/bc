@@ -26,7 +26,7 @@ public class StudyRecord implements Serializable {
   @ApiModelProperty("完成报告数")
   private Integer reportCount;
 
-  private Integer score;
+  private double score;
 
   @ApiModelProperty("练习排名")
   private Integer practiceRanking;

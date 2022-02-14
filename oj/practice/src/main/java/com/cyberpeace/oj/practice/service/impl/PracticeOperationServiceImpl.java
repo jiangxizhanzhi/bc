@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.integratation.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +45,10 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
@@ -136,9 +139,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private RemoteLogService remoteLogService;
-
-	@Autowired
-	private SystemConfigService systemConfigService;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -1001,14 +1001,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(operation.getResourceId())
 				.isWeb(ojLocalScene.getFromWeb()).build();
+
 		// 设置场景类型
-		Boolean record = Integer.parseInt(systemConfigService
-				.getSystemConfig(JsonKeyConstant.SCREEN_RECORDING)) == CommonConstant.ONE;
-		// JSONObject topoData =
-		// ojLocalSceneService.switchScreenRecord(operation.getTopoId(), record);
 		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
-		topoData.put(JsonKeyConstant.ENABLE_RECORDING, record);
 
 		// 动态环境flag设置
 		if (StringUtils.isNotBlank(operation.getTopoId())) {

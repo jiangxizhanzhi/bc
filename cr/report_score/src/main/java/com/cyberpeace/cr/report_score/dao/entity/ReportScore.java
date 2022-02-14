@@ -63,7 +63,7 @@ public class ReportScore extends BaseTable {
         ANALYSIS(2,"抵近分析"),
         STORM(3, "外网强攻"),
         AMBUSH(4, "内网设伏"),
-        ATTACK(5, "内网攻击");
+        ATTACK(5, "中网攻击");
 
         @Getter
         private Integer code;

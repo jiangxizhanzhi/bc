@@ -178,4 +178,18 @@ public class LocalStringUtil {
 
 		return content;
 	}
+
+	/**
+	 * 获取随机长度字符串
+	 * @param length
+	 * @return
+	 */
+	public static String getRandomStr(int length) {
+		String randomStr = IDGeneratorUtil.getID();
+		if (randomStr.length() >= length) {
+			return randomStr.substring(0, length);
+		}
+
+		return randomStr + getRandomStr(length - randomStr.length());
+	}
 }

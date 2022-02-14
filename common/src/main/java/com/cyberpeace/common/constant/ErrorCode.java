@@ -78,7 +78,9 @@ public enum ErrorCode implements BaseI18nErrorMsg {
 
 	FAILED_TO_OBTAIN_OFFICE_FILE_INFO("", "", "Failed to obtain office file information！"),
 
-	BUSINESS_ERROR("", "", "");
+	BUSINESS_ERROR("", "", ""),
+
+	SCENE_RUNNING_FAILED("100020", "场景启动失败", "Scene startup failure.");
 
 
 	@Getter

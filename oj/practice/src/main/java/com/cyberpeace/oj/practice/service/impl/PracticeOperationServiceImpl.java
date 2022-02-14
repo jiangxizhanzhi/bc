@@ -520,7 +520,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				: localSceneService.testScene(localScene);
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("Operation startScene: Scene start failed! scene_id is null");
-			throw new InvalidParamException("场景启动失败！");
+			throw new BusinessException(ErrorCode.SCENE_RUNNING_FAILED);
 		}
 
 		// 数据存储
@@ -1006,7 +1006,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
 
 		// 动态环境flag设置
-		if (operation.getDynamicEnv() && operation.getDynamicFlag()) {
+		if (StringUtils.isNotBlank(operation.getTopoId())) {
 			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
 					topoData);
 			sceneMeta.setTopoData(dynamicFlag);

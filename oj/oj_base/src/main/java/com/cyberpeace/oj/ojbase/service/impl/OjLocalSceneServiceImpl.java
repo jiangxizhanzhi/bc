@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.UUIDEditor;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,23 +44,11 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
 public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjLocalScene> implements OjLocalSceneService {
-
-	private String FLAG_TEMPLATE;
-
-	@PostConstruct
-	public void init() {
-		String templateData = ConfigUtil.getContextProperty("oj.flag.template.data");
-		String flagPrefix = systemConfigService.getSystemConfig("flag_prefix");
-		FLAG_TEMPLATE = String.format(templateData, flagPrefix, "%s");
-	}
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
@@ -112,7 +101,13 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 		// flag设置
 		if (sceneContext.getDynamicFlag()) {
-			String flag = String.format(FLAG_TEMPLATE, IDGeneratorUtil.getID());
+			String templateData = ConfigUtil.getContextProperty("oj.flag.template.data");
+			String flagPrefix = systemConfigService.getSystemConfig("flag_prefix");
+			String FLAG_TEMPLATE = String.format(templateData, flagPrefix, "%s");
+			String FLAG_LENGTH = systemConfigService.getSystemConfig("flag_length");
+
+			String flag = String.format(FLAG_TEMPLATE,
+					LocalStringUtil.getRandomStr(Integer.parseInt(FLAG_LENGTH)));
 			ojLocalScene.setFlags(JsonUtil.arrayToString(Arrays.asList(flag)));
 		} else {
 			ojLocalScene.setFlags(JsonUtil.toJsonString(sceneContext.getFlags()));

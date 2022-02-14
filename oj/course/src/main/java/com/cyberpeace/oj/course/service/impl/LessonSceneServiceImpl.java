@@ -9,6 +9,7 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.SystemConfigService;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.service.bo.MonitorInfoBo;
@@ -73,6 +74,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private SystemConfigService systemConfigService;
 
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
@@ -250,6 +254,8 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		localScene.setSceneAttr(courseLesson.getSceneShareMode().intValue() == SceneShare.SHARED
 				.getCode().intValue() ? SceneStartContext.SceneAttrEnum.NULL.getCode()
 						: SceneStartContext.SceneAttrEnum.SINGLE.getCode());
+		localScene.setRecord(Integer.parseInt(systemConfigService
+				.getSystemConfig(JsonKeyConstant.SCREEN_RECORDING)) == CommonConstant.ONE);
 
 		// 设置初始化信息
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());

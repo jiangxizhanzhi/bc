@@ -56,4 +56,7 @@ public interface JsonKeyConstant {
 	/** 习题类型*/
 	String PRACTICE_KEY = "practice";
 
+	/** 录屏*/
+	String SCREEN_RECORDING = "screen_recording";
+
 }

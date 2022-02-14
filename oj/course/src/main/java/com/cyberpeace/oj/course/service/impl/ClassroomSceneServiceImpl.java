@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.service.SystemConfigService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -95,6 +96,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	@Autowired
+	private SystemConfigService systemConfigService;
 
 	@Override
 	public JSONObject startScene(String groupId, AuthContext authContext) {
@@ -338,6 +342,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		localScene.setSceneName(
 				lesson.getName() + CommonConstant.UNDER_LINE + groupInfo.getGroupNo().toString());
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setRecord(Integer.parseInt(systemConfigService
+				.getSystemConfig(JsonKeyConstant.SCREEN_RECORDING)) == CommonConstant.ONE);
 
 		// 场景存活时间设置
 		if (null != groupInfo.getDestroyDelay()

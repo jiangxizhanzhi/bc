@@ -52,5 +52,5 @@ public interface ErrorCode {
 	String TYPE_ERROR = "100019";
 
 	/** 接口访问频繁，被限流 */
-	String INTERFACE_CURRENT_LIMITING = "10017";
+	String INTERFACE_CURRENT_LIMITING = "10099";
 }

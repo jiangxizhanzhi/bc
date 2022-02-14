@@ -22,6 +22,7 @@ public class ChatMessage {
 	private final Integer cid = 0;
 	private final Boolean mine = Boolean.FALSE;
 	private String fromid;
+	private String time;
 	private long timestamp;
 
 	public void setTimestamp() {

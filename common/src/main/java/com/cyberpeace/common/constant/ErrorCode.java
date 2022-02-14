@@ -45,6 +45,12 @@ public interface ErrorCode {
 	/** 对应文件不存在*/
 	String FILE_NOT_EXIST = "100017";
 
+	/** 子类未实现 */
+	String SUB_NOT_IMPLEMENT = "100018";
+
+	/** 类型错误 */
+	String TYPE_ERROR = "100019";
+
 	/** 接口访问频繁，被限流 */
 	String INTERFACE_CURRENT_LIMITING = "10017";
 }

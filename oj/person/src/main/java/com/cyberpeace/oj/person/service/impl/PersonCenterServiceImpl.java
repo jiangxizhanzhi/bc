@@ -41,10 +41,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -201,7 +198,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> dates = Lists.newArrayList();
 		List<Integer> courseRecords = Lists.newArrayList();
 		List<Integer> reportRecords = Lists.newArrayList();
-		List<Integer> reportAverageRecords = Lists.newArrayList();
+		List<Double> reportAverageRecords = Lists.newArrayList();
 		for (int i = 0; i < daysBetween; i++) {
 			Date date = TimeUtil.addDates(startTime, i);
 			String currentDate = TimeUtil.format8(date);
@@ -220,9 +217,10 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 			}
 			List<NoteEvaluate> reportAverageLists = reportAverageMap.get(currentDate);
 			if (reportAverageLists == null || reportAverageLists.size() == 0) {
-				reportAverageRecords.add(0);
+				reportAverageRecords.add(0.0d);
 			} else {
-				reportAverageRecords.add(reportAverageLists.size());
+				double asDouble = reportAverageLists.stream().mapToDouble(NoteEvaluate::getScore).average().getAsDouble();
+				reportAverageRecords.add(asDouble);
 			}
 		}
 		BaseRsp<BrokenLine> baseRsp = new BaseRsp<>();

@@ -23,6 +23,6 @@ public interface CourseLearnStatisticsService {
 			Page page, LessonStatisticsListReq pageReq);
 
 	ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
-			String lessonId, String usernameLike, Page page);
+			String lessonId, String usernameLike, Page page, String sort);
 
 }

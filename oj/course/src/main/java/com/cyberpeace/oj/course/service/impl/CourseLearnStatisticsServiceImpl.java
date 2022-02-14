@@ -123,6 +123,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		Map<String, AdminLessonStatisticsRes> resMap = lessonPractices.stream().collect(
 				Collectors.toMap(AdminLessonStatisticsRes::getResourceId, record -> record));
 		List<AdminLessonStatisticsRes> res = rsp.getRecords().stream().map(rspRecord -> {
+
 			AdminLessonStatisticsRes adminLessonStatisticsRes = resMap
 					.get(rspRecord.getResourceId());
 			if (null == adminLessonStatisticsRes) {
@@ -174,6 +175,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			String createUser = data.getCreateUser();
 			UserInfo userInfo = remoteUserService.getById(createUser);
 			data.setCreateUser(userInfo.getUserName());
+			data.setOrganizationName(userInfo.getOrganizationData());
 			return data;
 		}).collect(Collectors.toList());
 		learnedUsers.setRecords(res);

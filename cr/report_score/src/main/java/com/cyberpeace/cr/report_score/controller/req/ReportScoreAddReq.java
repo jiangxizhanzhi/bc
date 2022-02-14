@@ -23,6 +23,9 @@ public class ReportScoreAddReq implements Serializable {
     @ApiModelProperty("报告附件")
     private String reportFile;
 
+    @ApiModelProperty("报告附件名称")
+    private String reportFileName;
+
     @ApiModelProperty("报告状态")
     private Integer status;
 

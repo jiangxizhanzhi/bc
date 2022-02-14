@@ -8,7 +8,9 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreAddReq;
+import com.cyberpeace.cr.report_score.controller.req.ReportScoreUpdateReq;
 import com.cyberpeace.cr.report_score.controller.req.WebReportScoreListReq;
+import com.cyberpeace.cr.report_score.controller.res.ReportScoreFileRsp;
 import com.cyberpeace.cr.report_score.controller.res.WebReportScoreDetailRsp;
 import com.cyberpeace.cr.report_score.controller.res.WebReportScoreRsp;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScore;
@@ -46,8 +48,10 @@ public class WebReportScoreController {
 
         String userId = UserInfoContext.getUserContext().getUserId();
         String userName = UserInfoContext.getUserContext().getUserName();
+        String avatarUrl = UserInfoContext.getUserContext().getAvatarUrl();
         reportScore.setUserId(userId);
         reportScore.setUserName(userName);
+        reportScore.setAvatarUrl(avatarUrl);
 
         reportScoreService.validateReportScoreNameExist(reportScore);
         reportScoreService.save(reportScore);
@@ -64,6 +68,14 @@ public class WebReportScoreController {
         return new BaseRsp<>(PageUtil.getListResult(webReportScoreRsp));
     }
 
+    @ApiOperation("更新报告")
+    @PostMapping("/update")
+    public BaseRsp<String> update(@RequestBody ReportScoreUpdateReq reportScoreUpdateReq) {
+        ReportScore reportScore = BeanUtils.copy(reportScoreUpdateReq, ReportScore.class);
+        reportScoreService.updateById(reportScore);
+        return new BaseRsp<>();
+    }
+
     @ApiOperation("报告详情")
     @GetMapping()
     public BaseRsp<WebReportScoreDetailRsp> getDetail(
@@ -75,9 +87,12 @@ public class WebReportScoreController {
 
     @ApiOperation("上传报告附件")
     @PostMapping("/upload_report_file")
-    public BaseRsp<String> uploadReportFile(@RequestParam("file") MultipartFile file) throws IOException {
+    public BaseRsp<ReportScoreFileRsp> uploadReportFile(@RequestParam("file") MultipartFile file) throws IOException {
         String res = reportScoreService.saveFile(file);
-        return new BaseRsp<>(res);
+        ReportScoreFileRsp reportScoreFileRsp = new ReportScoreFileRsp();
+        reportScoreFileRsp.setFileUrl(res);
+        reportScoreFileRsp.setFileName(file.getName());
+        return new BaseRsp<>(reportScoreFileRsp);
     }
 
     @ApiOperation("报告状态统计")

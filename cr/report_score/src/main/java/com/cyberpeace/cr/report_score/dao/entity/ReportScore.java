@@ -37,11 +37,17 @@ public class ReportScore extends BaseTable {
     /**提交者姓名 用作队伍名称 */
     private String userName;
 
+    /**提交者头像 */
+    private String avatarUrl;
+
     /**状态 */
     private Integer status;
 
     /**报告附件 */
     private String reportFile;
+
+    /**报告附件名称 */
+    private String reportFileName;
 
     /**得分 */
     private Integer score;
@@ -61,9 +67,9 @@ public class ReportScore extends BaseTable {
     public enum SubjectCode implements GenericEnum {
         INVESTIGATION(1, "网络侦查"),
         ANALYSIS(2,"抵近分析"),
-        STORM(3, "外网强攻"),
-        AMBUSH(4, "内网设伏"),
-        ATTACK(5, "中网攻击");
+        STORM(3, "外网突破"),
+        AMBUSH(4, "里应外合"),
+        ATTACK(5, "内网失陷");
 
         @Getter
         private Integer code;

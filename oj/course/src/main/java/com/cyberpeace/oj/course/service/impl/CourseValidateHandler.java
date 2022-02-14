@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -234,5 +235,15 @@ public class CourseValidateHandler {
 		}
 
 		return category;
+	}
+
+	/**
+	 * 分类名称长度校验
+	 * @param name
+	 */
+	public void categoryNameLengthValidate(String name) {
+		if (name.length() > 200) {
+			throw new BusinessException(OjBusinessErrorCode.FIELD_TOO_LONG);
+		}
 	}
 }

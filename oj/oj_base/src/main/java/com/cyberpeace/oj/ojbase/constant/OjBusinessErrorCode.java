@@ -58,7 +58,9 @@ public enum OjBusinessErrorCode implements BaseI18nErrorMsg {
 	/** 存在运行的场景*/
 	SCENE_IS_RUNNING("102016", "场景运行中", "Scene is running."),
 
-	SCENE_RUNNING_TOO_MUCH("102017", "场景数量启动过多", "Too many scene are started");
+	SCENE_RUNNING_TOO_MUCH("102017", "场景数量启动过多", "Too many scene are started"),
+
+	FIELD_TOO_LONG("102018", "数据长度超过限制", "The field data is too long.");
 
 
 	@Getter

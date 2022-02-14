@@ -6,6 +6,7 @@
     <select id="list" resultType="com.cyberpeace.cr.report_score.controller.res.ReportScoreRsp">
         select * from cr_report_score
         <where>
+                `status` != 4
             <if test="listQuery.status != null and listQuery.status != ''">
                 and `status` = #{listQuery.status}
             </if>

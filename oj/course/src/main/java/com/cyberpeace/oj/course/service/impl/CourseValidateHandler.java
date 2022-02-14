@@ -242,7 +242,7 @@ public class CourseValidateHandler {
 	 * @param name
 	 */
 	public void categoryNameLengthValidate(String name) {
-		if (name.length() > 128) {
+		if (name.length() > 64) {
 			throw new BusinessException(OjBusinessErrorCode.FIELD_TOO_LONG);
 		}
 	}

@@ -1004,8 +1004,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 设置场景类型
 		Boolean record = Integer.parseInt(systemConfigService
 				.getSystemConfig(JsonKeyConstant.SCREEN_RECORDING)) == CommonConstant.ONE;
-		JSONObject topoData = ojLocalSceneService.switchScreenRecord(operation.getTopoId(), record);
+		// JSONObject topoData =
+		// ojLocalSceneService.switchScreenRecord(operation.getTopoId(), record);
+		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
+		topoData.put(JsonKeyConstant.ENABLE_RECORDING, record);
 
 		// 动态环境flag设置
 		if (StringUtils.isNotBlank(operation.getTopoId())) {

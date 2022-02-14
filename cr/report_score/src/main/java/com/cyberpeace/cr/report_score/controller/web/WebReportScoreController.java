@@ -91,7 +91,7 @@ public class WebReportScoreController {
         String res = reportScoreService.saveFile(file);
         ReportScoreFileRsp reportScoreFileRsp = new ReportScoreFileRsp();
         reportScoreFileRsp.setFileUrl(res);
-        reportScoreFileRsp.setFileName(file.getName());
+        reportScoreFileRsp.setFileName(file.getOriginalFilename());
         return new BaseRsp<>(reportScoreFileRsp);
     }
 

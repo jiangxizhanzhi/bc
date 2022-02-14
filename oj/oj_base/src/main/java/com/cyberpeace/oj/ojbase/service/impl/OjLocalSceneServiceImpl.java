@@ -14,6 +14,7 @@ import com.cyberpeace.cs.constant.SceneEventStatus;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.TopoSwitchRecordingContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -64,6 +65,9 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -386,5 +390,11 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		});
 
 		return lessonMonitorBos;
+	}
+
+	@Override
+	public JSONObject switchScreenRecord(String topoId, Boolean record) {
+		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId, record);
+		return remoteTopoService.sync(JsonUtil.java2JsonObject(context));
 	}
 }

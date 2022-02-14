@@ -998,13 +998,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				operation.getSceneShareMode() == SceneShare.SHARED.getCode().intValue()
 						? SceneStartContext.SceneAttrEnum.NULL.getCode()
 						: SceneStartContext.SceneAttrEnum.SINGLE.getCode());
-		localScene.setRecord(Integer.parseInt(systemConfigService
-				.getSystemConfig(JsonKeyConstant.SCREEN_RECORDING)) == CommonConstant.ONE);
 
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(operation.getResourceId())
 				.isWeb(ojLocalScene.getFromWeb()).build();
 		// 设置场景类型
-		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
+		Boolean record = Integer.parseInt(systemConfigService
+				.getSystemConfig(JsonKeyConstant.SCREEN_RECORDING)) == CommonConstant.ONE;
+		JSONObject topoData = ojLocalSceneService.switchScreenRecord(operation.getTopoId(), record);
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
 
 		// 动态环境flag设置

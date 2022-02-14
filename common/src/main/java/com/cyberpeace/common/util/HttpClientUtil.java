@@ -155,22 +155,20 @@ public class HttpClientUtil {
 
 			if (!isSuccess(baseRsp)) {
 				// 只要中台的错误码不是000000，都认为是有问题的
-				LOG.error("url=[{}], result=[{}] error, code=[{}]", new Object[] {
-						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode() });
-				throw new RemoteServiceException();
-				// todo 把外部生产地错误消息转化为本地国际化消息
+				LOG.error("url=[{}], result=[{}] error, code=[{}]", HttpclientContext.getContext().getUrl(),
+						httpResponse, baseRsp.getCode());
+				throw new RemoteServiceException(baseRsp.getMessage());
 			}
-
-			return null != baseRsp.getData()
-					? JsonUtil.toJsonObject(baseRsp.getData().toString(), resultType)
-					: null;
+			if (null == baseRsp.getData()) {
+				return null;
+			}
+			return JsonUtil.toJsonObject(baseRsp.getData().toString(), resultType);
+		} catch (RemoteServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			// 遇到不能解析的返回结果，直接报错
 			LOG.error("parse httpResponse error, url=[{}], result=[{}], resultType=[{}]",
-					new Object[] { HttpclientContext.getContext().getUrl(), httpResponse,
-							resultType },
-					e);
-
+					HttpclientContext.getContext().getUrl(), httpResponse, resultType);
 			throw new RemoteServiceException();
 		} finally {
 			HttpclientContext.removeContext();

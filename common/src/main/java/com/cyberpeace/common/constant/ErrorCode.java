@@ -68,7 +68,7 @@ public enum ErrorCode implements BaseI18nErrorMsg {
 	 */
 	TYPE_ERROR("100019", "", ""),
 
-	REMOTE_SERVICE_EXCEPTION("010000", "远程服务异常", "Remote service error."),
+	REMOTE_SERVICE_EXCEPTION("010000", "远程服务异常。%s", "Remote service error.%s"),
 
 	NOT_PAUSED("101035", "非暂停状态不能执行恢复操作", "Scene is not paused"),
 

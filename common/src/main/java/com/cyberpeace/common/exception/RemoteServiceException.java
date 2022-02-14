@@ -1,7 +1,6 @@
 package com.cyberpeace.common.exception;
 
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.constant.BaseI18nErrorMsg;
 
 /**
  * @author yinqingrong
@@ -10,11 +9,11 @@ import com.cyberpeace.constant.BaseI18nErrorMsg;
 public class RemoteServiceException extends I18nException {
 
 	public RemoteServiceException() {
-		super(ErrorCode.REMOTE_SERVICE_EXCEPTION);
+		this("");
 	}
 
-	public RemoteServiceException(BaseI18nErrorMsg i18nErrorMsg) {
-		super(i18nErrorMsg);
+	public RemoteServiceException(String message) {
+		super(ErrorCode.REMOTE_SERVICE_EXCEPTION.parameterize(message));
 	}
 
 }

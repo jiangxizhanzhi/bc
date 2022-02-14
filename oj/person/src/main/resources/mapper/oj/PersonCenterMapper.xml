@@ -117,7 +117,7 @@
     <select id="selectExpLessonByAuth" resultType="java.lang.String">
         select resource_id from oj_course_lesson
         where  public = True and type = 1
-        and resource_id in
+        and course_id in
         <if test="courseIds != null and courseIds.size() != 0">
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
                 #{courseId}
@@ -286,10 +286,9 @@
     <select id="selectReportAverageByTime" resultType="com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate">
         select *
         from oj_note_evaluate
-        where note_id in (select resource_id from oj_note where user_id = #{userId})
-        and create_time &gt; #{startTime}
-        and create_time &lt; #{endTime}
-        and oj_note_evaluate.note_id in
+        where
+        note_id in (select resource_id from oj_note where user_id = #{userId}
+        and oj_note.business_id in
         <if test="lessonIds != null and lessonIds.size() != 0">
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
                 #{lessonId}
@@ -298,6 +297,10 @@
         <if test="lessonIds.size() == 0">
             ('')
         </if>
+        )
+        and create_time &gt; #{startTime}
+        and create_time &lt; #{endTime}
+
     </select>
 
 

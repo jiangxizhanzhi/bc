@@ -145,24 +145,16 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	public ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
 																		  String lessonId, String usernameLike, Page page, String sort) {
 		List<String> userIds = new ArrayList<>();
-		// 根据组织id获取userids
+		// 根据用户名pattern + 组织id获取userids
 		if (StringUtils.isNotEmpty(organizationId)) {
 			if (organizationId.equals("all")) {
 				organizationId = "";
 			}
-			JSONObject userJsons = remoteUserService.getList(0L, 0L, "", organizationId);
+			JSONObject userJsons = remoteUserService.getList(null, 0L, usernameLike, organizationId);
 			List<UserInfo> users = userJsons.getJSONArray("list").toJavaList(UserInfo.class);
 			userIds = StreamApiUtils.map(users, UserInfo::getUserId);
 		}
 
-		// 根据用户名pattern获取userids
-		if (StringUtils.isNotEmpty(usernameLike)) {
-			UserPageContext userPageContext = new UserPageContext();
-			userPageContext.setUsername(usernameLike);
-			userPageContext.setIds(String.join(",", userIds));
-			List<UserInfo> lazyUserList = remoteUserService.getFuzzyQueryUserList(userPageContext);
-			userIds = StreamApiUtils.map(lazyUserList, UserInfo::getUserId);
-		}
 		if (userIds.size() == 0){
 			return PageUtil.getListResult(null);
 		}

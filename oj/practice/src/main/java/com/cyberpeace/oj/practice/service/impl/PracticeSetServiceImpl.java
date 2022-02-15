@@ -116,7 +116,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		if (CollectionUtils.isEmpty(accessSetIds) || !accessSetIds.contains(resourceId)) {
 			log.error("This set not permission! practice_set_id=[{}]", resourceId);
-			throw new InvalidParamException("非法操作！");
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 	}
 
@@ -190,13 +190,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		String categoryId = practiceSetMapper.selectByName(practiceSet.getName());
 		// 名称校验
 		if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(existSet.getResourceId())) {
-			throw new InvalidParamException("习题集名称已存在！");
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 
 		// 类型校验 防止习题集类型改变
 		if (null != practiceSet.getPracticeType()) {
 			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()) {
-				throw new InvalidParamException("非法操作,习题集下存在不兼容类型习题！");
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_TYPE_ERROR);
 			}
 		}
 
@@ -214,7 +214,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			PracticeSet practiceSet = practiceSetMapper.selectById(setId);
 			List<String> practiceIds = hasPractice(practiceSet, authContext);
 			if (CollectionUtils.isNotEmpty(practiceIds)) {
-				throw new InvalidParamException("习题集[" + practiceSet.getName() + "]下存在习题！");
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
 			}
 		}
 	}

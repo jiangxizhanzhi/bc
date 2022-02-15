@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.PaperService;
@@ -59,7 +62,7 @@ public class AdminCourseImportController {
 		File file = new File(courseImportReq.getPath());
 		if (!file.exists()) {
 			log.error("RMCourseImport：File path not exist! path=[{}]", courseImportReq.getPath());
-			throw new InvalidParamException("路径不存在！");
+			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
 		}
 
 		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);

@@ -29,6 +29,7 @@
     <select id="listRecord" resultType="com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp">
         select report_name, rater_name as team_name, score_time, score from cr_report_score
         <where>
+                `score_time` is not null
             <if test="listQuery.subject != null and listQuery.subject != ''">
                 and `subject` = #{listQuery.subject}
             </if>

@@ -151,8 +151,14 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			if (organizationId.equals("all")) {
 				organizationId = "";
 			}
-			JSONObject userJsons = remoteUserService.getList(null, 0L, usernameLike, organizationId);
+			JSONObject userJsons = remoteUserService.getList(null, 0L, null, organizationId);
 			List<UserInfo> users = userJsons.getJSONArray("list").toJavaList(UserInfo.class);
+			if (StringUtils.isNotEmpty(usernameLike) && StringUtils.isNotBlank(usernameLike)) {
+				users = StreamApiUtils.filter(users,
+						userInfo -> StringUtils.isBlank(usernameLike)
+								|| userInfo.getUserName().contains(usernameLike)
+								|| userInfo.getName().contains(usernameLike));
+			}
 			userIds = StreamApiUtils.map(users, UserInfo::getUserId);
 		}
 

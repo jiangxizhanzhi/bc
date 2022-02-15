@@ -20,7 +20,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FiledExceptionMsg;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
@@ -30,7 +29,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.constant.BaseI18nErrorMsg;
@@ -211,7 +209,7 @@ public class ExceptionFilter implements Filter {
 			// 找到第一个错误的字段，直接返回。
 			// 不管是否配置了快速失败
 			if (StringUtils.isNoneBlank(field)) {
-				String desc = EnumUtils.getDescByField(field, FiledExceptionMsg.class);
+				String desc = CommonContext.isChinese() ? ConfigUtil.getContextProperty(field + ".cn") : ConfigUtil.getContextProperty(field + ".en");
 				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID,
 						StringUtils.isNotBlank(desc) ? desc : field);
 

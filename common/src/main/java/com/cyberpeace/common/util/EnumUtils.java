@@ -1,6 +1,7 @@
 package com.cyberpeace.common.util;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.constant.BaseI18nErrorMsg;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,19 @@ public class EnumUtils {
 	public static <T extends GenericEnum> T getEnumByCode(Integer code, Class<T> enumClass) {
 		return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getCode().equals(code))
 				.findFirst().orElse(null);
+	}
+
+	/**
+	 * 根据字段获取获取错误信息
+	 * @param filed
+	 * @param enumClass
+	 * @param <T>
+	 * @return
+	 */
+	public static <T extends BaseI18nErrorMsg> String getDescByField(String filed,
+																	 Class<T> enumClass) {
+		return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getErrorCode().equals(filed))
+				.findFirst().map(t -> t.getMsg()).orElse(null);
 	}
 
 	/***

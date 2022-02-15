@@ -81,15 +81,6 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
-	@Autowired
-	private LocalSceneService localSceneService;
-
-	@Autowired
-	private AttachmentService attachmentService;
-
-	@Autowired
-	private PracticeCategoryService practiceCategoryService;
-
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
 

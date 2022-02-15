@@ -13,6 +13,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.FiledExceptionMsg;
+import com.cyberpeace.common.util.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -173,7 +175,8 @@ public class ExceptionFilter implements Filter {
 			// 找到第一个错误的字段，直接返回。
 			// 不管是否配置了快速失败
 			if (StringUtils.isNoneBlank(field)) {
-				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID, field);
+				String desc = EnumUtils.getDescByField(field, FiledExceptionMsg.class);
+				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID, StringUtils.isNotBlank(desc)? desc : field);
 
 				return;
 			}

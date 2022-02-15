@@ -321,6 +321,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				});
 
 		String dataPath = destDir + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.mkdirs(destDir);
 		FileUtil.writeToDestFile(JsonUtil.arrayToString(setDumpLoadBos), dataPath);
 
 		// 压缩当前文件夹
@@ -483,7 +484,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		PracticeSetDumpLoadBo setDumpLoadBo = BeanUtils.copy(practiceSet,
 				PracticeSetDumpLoadBo.class);
 		// logo文件copy
-		if (!StringUtils.isBlank(practiceSet.getLogo())) {
+		if (StringUtils.isNotBlank(practiceSet.getLogo())) {
 			String realPath = utilService.getRealPath(practiceSet.getLogo());
 			String fileName = FileUtil.getFileName(realPath, true);
 			String newName = FileUtil.getNewName(fileName);

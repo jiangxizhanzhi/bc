@@ -26,11 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -137,5 +133,68 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         if (reportScoreObject != null) {
             throw new BusinessException(CrBusinessErrorCode.DUPLICATED_REPORT_SCORE_NAME);
         }
+    }
+
+    @Override
+    public List<RankingRep> rankingStatistics() {
+        List<RankingRep> rankScoreList = reportScoreMapper.getRankScore();
+        Map<String, RankingRep> rankScoreMap = rankScoreList.stream()
+                .collect(Collectors.toMap(RankingRep::getUserId, item -> item));
+
+        List<UserInfo> userInfoList = remoteUserService.getList();
+        List<RankingRep> rankingRepList = Lists.newArrayList();
+        for (UserInfo userInfo : userInfoList) {
+            if (userInfo.getUserName().equals("admin")) {
+                log.info("skip admin user");
+                continue;
+            }
+
+            RankingRep rankingRep = new RankingRep();
+            rankingRep.setLogo(userInfo.getAvatarUrl());
+            rankingRep.setSumScore("0");
+            rankingRep.setUserName(userInfo.getName());
+            rankingRep.setUserId(userInfo.getUserId());
+            rankingRep.setRank("0");
+
+            RankingRep userRankRep = rankScoreMap.get(userInfo.getUserId());
+            if (userRankRep != null) {
+                rankingRep.setRank(userRankRep.getRank());
+                rankingRep.setSumScore(userRankRep.getSumScore());
+            }
+            rankingRepList.add(rankingRep);
+        }
+        return amountRank(rankingRepList);
+    }
+
+    private static List<RankingRep> amountRank(List<RankingRep> rankingRepList) {
+        rankingRepList.sort((s1, s2) -> -Long.compare(Long.parseLong(s1.getSumScore()), Long.parseLong(s2.getSumScore())));
+
+        int index = 0;
+        int count = 0;
+        int tmpSize = 0;
+        long lastCount = -1L;
+
+        List<RankingRep> tmpAmountRankList = new ArrayList<>();
+        for (RankingRep rankingRep : rankingRepList) {
+
+            long sumScoreLong = Long.parseLong(rankingRep.getSumScore());
+
+            if (lastCount != sumScoreLong) {
+                lastCount = sumScoreLong;
+                index = index + 1 + count;
+                count = 0;
+            }
+            rankingRep.setRank(String.valueOf(index));
+            //相同并列，不同则跳过，序号一次递增
+            if (tmpSize > 0) {
+                if (sumScoreLong < Long.parseLong(rankingRepList.get(tmpSize - 1).getSumScore())) {
+                    rankingRep.setRank(String.valueOf(tmpSize + 1));
+                    index = tmpSize + 1;
+                }
+            }
+            tmpAmountRankList.add(rankingRep);
+            tmpSize = tmpAmountRankList.size();
+        }
+        return tmpAmountRankList;
     }
 }

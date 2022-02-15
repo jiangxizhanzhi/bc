@@ -149,4 +149,22 @@ public class StreamApiUtils {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * 获取分页数据
+	 * @param data
+	 * @param currentPage
+	 * @param pageSize
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> List<T> pageByList(List<T> data, long currentPage, long pageSize) {
+
+		if (currentPage <= CommonConstant.ZERO) {
+			currentPage = CommonConstant.ONE;
+		}
+
+		return data.stream().skip((currentPage - CommonConstant.ONE) * pageSize).limit(pageSize)
+				.collect(Collectors.toList());
+	}
+
 }

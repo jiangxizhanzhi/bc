@@ -245,7 +245,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// topo更新
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
-			localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId());
+			updateOperation.setTopoId(localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId()));;
 		}
 
 		return practiceOperationMapper.updateById(updateOperation);

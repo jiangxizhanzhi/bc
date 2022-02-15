@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.FileUtil;
@@ -15,6 +16,9 @@ import com.cyberpeace.cr.report_score.controller.res.*;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScore;
 import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreMapper;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,11 +26,19 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, ReportScore> implements ReportScoreService {
+
+    @Autowired
+    private RemoteUserService remoteUserService;
 
     private final String savePath = "report" + File.separator + "report" + File.separator;
 
@@ -108,15 +120,14 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
     }
 
     @Override
-    public HashMap<String, String> getRankScore(String userId) {
-        List<HashMap<String, String>> result = reportScoreMapper.getRankScore();
-        HashMap<String, String> rankScore = new HashMap<>();
-        for (HashMap<String, String> stringStringHashMap : result) {
-            if (stringStringHashMap.get("user_id").equals(userId)) {
-                rankScore = stringStringHashMap;
+    public RankingRep getRankScore(String userId) {
+        List<RankingRep> rankingRepList = reportScoreMapper.getRankScore();
+        for (RankingRep rankingRep : rankingRepList) {
+            if(rankingRep.getUserId().equals(userId)) {
+                return rankingRep;
             }
         }
-        return rankScore;
+        return null;
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.cyberpeace.cr.report_score.controller.req.ReportScoreAddReq;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreUpdateReq;
 import com.cyberpeace.cr.report_score.controller.req.WebReportScoreListReq;
 import com.cyberpeace.cr.report_score.controller.res.ReportScoreFileRsp;
+import com.cyberpeace.cr.report_score.controller.res.RankingRep;
 import com.cyberpeace.cr.report_score.controller.res.WebReportScoreDetailRsp;
 import com.cyberpeace.cr.report_score.controller.res.WebReportScoreRsp;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScore;
@@ -105,10 +106,10 @@ public class WebReportScoreController {
 
     @ApiOperation("排名得分统计")
     @GetMapping("/rank_score")
-    public BaseRsp<HashMap<String, String>> getRankScore() {
+    public BaseRsp<RankingRep> getRankScore() {
         String userId = UserInfoContext.getUserContext().getUserId();
-        HashMap<String, String> result = reportScoreService.getRankScore(userId);
-        return new BaseRsp<>(result);
+        RankingRep rankScore = reportScoreService.getRankScore(userId);
+        return new BaseRsp<>(rankScore);
     }
 
 }

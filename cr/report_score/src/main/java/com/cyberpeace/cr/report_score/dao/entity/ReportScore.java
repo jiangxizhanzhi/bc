@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 @Data
@@ -50,7 +51,7 @@ public class ReportScore extends BaseTable {
     private String reportFileName;
 
     /**得分 */
-    private Integer score;
+    private BigInteger score;
 
     /**报告评语 */
     private String comment;

@@ -80,7 +80,9 @@ public enum ErrorCode implements BaseI18nErrorMsg {
 
 	BUSINESS_ERROR("", "", ""),
 
-	SCENE_RUNNING_FAILED("100020", "场景启动失败", "Scene startup failure.");
+	SCENE_RUNNING_FAILED("100020", "场景启动失败", "Scene startup failure."),
+
+	FILE_CONTENT_INVALID("100021", "文件读取失败，请检查文件内容是否有效。", "File content invalid.");
 
 
 	@Getter

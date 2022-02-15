@@ -27,6 +27,9 @@ public class WebReportScoreRsp implements Serializable {
     @ApiModelProperty("评分人")
     private String raterName;
 
+    @ApiModelProperty("是否匿名")
+    private Integer anonymous;
+
     @ApiModelProperty("提交时间")
     private Date submitTime;
 

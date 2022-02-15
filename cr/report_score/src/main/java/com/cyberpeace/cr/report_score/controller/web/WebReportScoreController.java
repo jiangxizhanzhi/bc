@@ -66,6 +66,13 @@ public class WebReportScoreController {
         String userId = UserInfoContext.getUserContext().getUserId();
         Page page = webReportScoreListReq.toPageParam();
         IPage<WebReportScoreRsp> webReportScoreRsp = reportScoreService.selectWebPage(page, webReportScoreListReq, userId);
+        List<WebReportScoreRsp> res = webReportScoreRsp.getRecords();
+        for (WebReportScoreRsp item : res) {
+            if (item.getAnonymous() != null && item.getAnonymous() == 1) {
+                item.setRaterName("匿名者");
+            }
+        }
+        webReportScoreRsp.setRecords(res);
         return new BaseRsp<>(PageUtil.getListResult(webReportScoreRsp));
     }
 

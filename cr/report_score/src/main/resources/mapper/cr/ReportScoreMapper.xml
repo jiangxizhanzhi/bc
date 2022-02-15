@@ -6,7 +6,7 @@
     <select id="list" resultType="com.cyberpeace.cr.report_score.controller.res.ReportScoreRsp">
         select * from cr_report_score
         <where>
-                `status` != 4
+            `status` != 4
             <if test="listQuery.status != null and listQuery.status != ''">
                 and `status` = #{listQuery.status}
             </if>
@@ -29,7 +29,7 @@
     <select id="listRecord" resultType="com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp">
         select report_name, rater_name as team_name, score_time, score from cr_report_score
         <where>
-                `score_time` is not null
+            `score_time` is not null
             <if test="listQuery.subject != null and listQuery.subject != ''">
                 and `subject` = #{listQuery.subject}
             </if>
@@ -39,6 +39,7 @@
     <select id="countSubject" resultType="java.util.HashMap">
         select `subject`, count(`subject`) as count
         from cr_report_score
+        where `status` != 4
         GROUP BY `subject`;
     </select>
 
@@ -80,7 +81,10 @@
     </select>
 
     <select id="selectByName" resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScore">
-        select * from cr_report_score where user_id = #{userId} and report_name = #{reportName}
+        select *
+        from cr_report_score
+        where user_id = #{userId}
+          and report_name = #{reportName}
     </select>
 
 </mapper>

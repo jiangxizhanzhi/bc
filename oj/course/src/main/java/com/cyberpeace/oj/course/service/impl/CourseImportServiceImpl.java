@@ -323,6 +323,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 				destWordOrPptFile = destHandoutPath + File.separatorChar + IDGeneratorUtil.getID()
 						+ CommonConstant.PERIOD + fileSuffix;
 			}
+			if (fileSuffix.equals(FileSunffixConstant.PDF.getDesc())) {
+				courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
+				wordOrPptFile = handoutFile;
+				destWordOrPptFile = destHandoutPath + File.separatorChar + IDGeneratorUtil.getID()
+						+ CommonConstant.PERIOD + fileSuffix;
+			}
 		}
 
 		// 执行文件复制和

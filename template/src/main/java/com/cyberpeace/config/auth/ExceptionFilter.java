@@ -2,19 +2,13 @@ package com.cyberpeace.config.auth;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.FiledExceptionMsg;
-import com.cyberpeace.common.util.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -26,21 +20,28 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FiledExceptionMsg;
 import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.I18nException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.constant.BaseI18nErrorMsg;
+import com.google.common.collect.Maps;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
+
+	private Map<String, String> cache = Maps.newHashMap();
 
 	private String errorPrefix = null;
 
@@ -50,12 +51,11 @@ public class ExceptionFilter implements Filter {
 	}
 
 	@Override
-	public void destroy() {
-	}
+	public void destroy() {}
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-						 FilterChain filterChain) throws IOException, ServletException {
+			FilterChain filterChain) throws IOException, ServletException {
 		try {
 			filterChain.doFilter(servletRequest, servletResponse);
 		} catch (Exception e) {
@@ -90,8 +90,10 @@ public class ExceptionFilter implements Filter {
 			parseAuthenticationException(servletResponse);
 		} else if (e instanceof DuplicateKeyException) {
 			parseDuplicateKeyException(servletResponse, (DuplicateKeyException) e);
-		} else if (e instanceof I18nException) {
-			parseI18nException(servletResponse, (I18nException) e);
+		} else if (e instanceof RemoteServiceException) {
+			parseRemoteServiceException(servletResponse, (RemoteServiceException) e);
+		} else if (e instanceof BusinessException) {
+			parseBusinessException(servletResponse, (BusinessException) e);
 		} else {
 			dealDefaultError(servletResponse);
 		}
@@ -99,15 +101,45 @@ public class ExceptionFilter implements Filter {
 
 	/**
 	 * 处理自定义业务异常
+	 * @param httpServletResponse
+	 * @param e
 	 */
-	private void parseI18nException(HttpServletResponse httpServletResponse, I18nException e) {
-		flushErrorInfo(httpServletResponse, e.getI18nErrorMsg());
+	private void parseBusinessException(HttpServletResponse httpServletResponse,
+			BusinessException e) {
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setCode(e.getMessage());
+		errorInfo.setMessage(e.getErrorMessage());
+		flushErrorInfo(httpServletResponse, errorInfo);
+	}
+
+	/**
+	 * 调用第三方服务错误
+	 * @param httpServletResponse
+	 */
+	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
+			RemoteServiceException e) {
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setCode(ErrorCode.REMOTE_SERVICE_EXCEPTION);
+
+		String message = e.getMessage();
+		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
+			errorInfo.setMessage(StringUtils.isBlank(message)
+					? ConfigUtil.getContextProperty(ErrorCode.REMOTE_SERVICE_EXCEPTION + ".en")
+					: message);
+		} else {
+			errorInfo.setMessage(StringUtils.isBlank(message)
+					? ConfigUtil.getContextProperty(ErrorCode.REMOTE_SERVICE_EXCEPTION + ".cn")
+					: message);
+		}
+
+		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
 	/**
 	 * 处理主键重复异常
 	 */
-	private void parseDuplicateKeyException(HttpServletResponse httpServletResponse, DuplicateKeyException e) {
+	private void parseDuplicateKeyException(HttpServletResponse httpServletResponse,
+			DuplicateKeyException e) {
 		String errorMsg = e.getCause().getMessage();
 		String duplicateKey = getDuplicateKey(errorMsg);
 
@@ -116,7 +148,8 @@ public class ExceptionFilter implements Filter {
 			duplicateKey = "编号";
 		}
 
-		String message = duplicateKey + ErrorCode.DUPLICATE_KEY.getMsg();
+		String message = duplicateKey
+				+ BusinessException.getMessageByLanguage(ErrorCode.DUPLICATE_KEY);
 		flushErrorInfo(httpServletResponse, ErrorCode.DUPLICATE_KEY, message);
 	}
 
@@ -142,14 +175,16 @@ public class ExceptionFilter implements Filter {
 	/**
 	 * 处理根据resource_id找不到对应资源时的异常
 	 **/
-	private void parseResourceNotFoundException(HttpServletResponse httpServletResponse, ResourceNotFoundException e) {
+	private void parseResourceNotFoundException(HttpServletResponse httpServletResponse,
+			ResourceNotFoundException e) {
 		flushErrorInfo(httpServletResponse, ErrorCode.RESOURCE_NOT_FOUND, e.getMessage());
 	}
 
 	/**
 	 * 处理用户输入参数异常
 	 **/
-	private void parseInvalidParamException(HttpServletResponse httpServletResponse, InvalidParamException e) {
+	private void parseInvalidParamException(HttpServletResponse httpServletResponse,
+			InvalidParamException e) {
 		flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID, e.getMessage());
 	}
 
@@ -164,7 +199,8 @@ public class ExceptionFilter implements Filter {
 	/**
 	 * 参数校验异常处理
 	 */
-	private void parseArgumentNotValidException(HttpServletResponse httpServletResponse, BindException e) {
+	private void parseArgumentNotValidException(HttpServletResponse httpServletResponse,
+			BindException e) {
 		BindingResult br = e.getBindingResult();
 		List<FieldError> errorList = br.getFieldErrors();
 
@@ -176,7 +212,8 @@ public class ExceptionFilter implements Filter {
 			// 不管是否配置了快速失败
 			if (StringUtils.isNoneBlank(field)) {
 				String desc = EnumUtils.getDescByField(field, FiledExceptionMsg.class);
-				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID, StringUtils.isNotBlank(desc)? desc : field);
+				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID,
+						StringUtils.isNotBlank(desc) ? desc : field);
 
 				return;
 			}
@@ -187,23 +224,36 @@ public class ExceptionFilter implements Filter {
 		flushErrorInfo(httpServletResponse, ErrorCode.INTERNAL_ERROR, "");
 	}
 
+	private void flushErrorInfo(HttpServletResponse httpServletResponse, BaseRsp errorInfo) {
+		httpServletResponse.setContentType(WebConstant.CONTENT_TYPE);
+		httpServletResponse.setStatus(WebConstant.HTTP_200);
+		try {
+			httpServletResponse.getWriter().write(JsonUtil.toJsonString(errorInfo));
+		} catch (Exception e) {
+			log.error("flushErrorInfo error:", e);
+		}
+	}
+
 	/**
 	 * 不添加错误码前缀
 	 */
-	private void flushErrorInfo(HttpServletResponse httpServletResponse, BaseI18nErrorMsg i18nErrorMsg) {
+	private void flushErrorInfo(HttpServletResponse httpServletResponse,
+			BaseI18nErrorMsg i18nErrorMsg) {
 		flushErrorInfo(httpServletResponse, i18nErrorMsg.getErrorCode(), i18nErrorMsg.getMsg());
 	}
 
 	/**
 	 * 添加错误码前缀 自定义错误消息
 	 */
-	private void flushErrorInfo(HttpServletResponse httpServletResponse, BaseI18nErrorMsg i18nErrorMsg, String message) {
+	private void flushErrorInfo(HttpServletResponse httpServletResponse,
+			BaseI18nErrorMsg i18nErrorMsg, String message) {
 		String code = i18nErrorMsg.getErrorCode();
 		code = this.errorPrefix + code;
 		flushErrorInfo(httpServletResponse, code, message);
 	}
 
-	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code, String message) {
+	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code,
+			String message) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 
 		errorInfo.setMessage(message);
@@ -217,5 +267,13 @@ public class ExceptionFilter implements Filter {
 		} catch (Exception e) {
 			log.error("flushErrorInfo error:", e);
 		}
+	}
+
+	private String getErrorCode(String code) {
+		if (!cache.containsKey(code)) {
+			cache.put(code, ConfigUtil.getContextProperty("errorPrefix") + code);
+		}
+
+		return cache.get(code);
 	}
 }

@@ -1,5 +1,19 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -8,14 +22,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
@@ -28,27 +39,14 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -252,7 +250,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				log.error("Parse ctf practice fail! ctf_practice_path=[{}], catch error:",
 						ctfPracticeDir, e);
 
-				if (OjBusinessErrorCode.NAME_IS_EXIST.isSameErrorCode(e.getI18nErrorMsg())){
+				if (OjBusinessErrorCode.NAME_IS_EXIST.equals(e.getMessage())) {
 					existOperations.add(ctfPracticeDir);
 					continue;
 				}
@@ -482,7 +480,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			String destLogoPath = fileStorePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
 			FileUtil.copyFile(realPath, destLogoPath, false);
 
-			String logoRelativePath = destLogoPath.replace(fileStorePath, CommonConstant.EMPTY_STRING);
+			String logoRelativePath = destLogoPath.replace(fileStorePath,
+					CommonConstant.EMPTY_STRING);
 			filePathMap.put(practiceSet.getLogo(), logoRelativePath);
 		}
 
@@ -525,7 +524,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				.selectBySetIds(Lists.newArrayList(practiceSetId), false);
 
 		List<PracticeOperation> operationList = Lists.newArrayList();
-		if (!operationIds.isEmpty()){
+		if (!operationIds.isEmpty()) {
 			operationList = practiceOperationMapper.selectBatchIds(operationIds);
 		}
 

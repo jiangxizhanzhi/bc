@@ -32,7 +32,8 @@ public class CustomConf {
 				new ClassPathResource("modules/rtks.properties"),
 				new ClassPathResource("modules/common.properties"),
 				new ClassPathResource("modules/evaluate.properties"),
-				new ClassPathResource("application.properties") };
+				new ClassPathResource("application.properties"),
+				new ClassPathResource("modules/errorMessage.properties") };
 		configurer.setLocations(resources);
 
 		return configurer;

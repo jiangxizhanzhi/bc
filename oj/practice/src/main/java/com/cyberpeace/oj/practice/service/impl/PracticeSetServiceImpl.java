@@ -483,14 +483,16 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		PracticeSetDumpLoadBo setDumpLoadBo = BeanUtils.copy(practiceSet,
 				PracticeSetDumpLoadBo.class);
 		// logo文件copy
-		String realPath = utilService.getRealPath(practiceSet.getLogo());
-		String fileName = FileUtil.getFileName(realPath, true);
-		String newName = FileUtil.getNewName(fileName);
-		String destLogoPath = fileStorePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
-		FileUtil.copyFile(realPath, destLogoPath, false);
+		if (!StringUtils.isBlank(practiceSet.getLogo())) {
+			String realPath = utilService.getRealPath(practiceSet.getLogo());
+			String fileName = FileUtil.getFileName(realPath, true);
+			String newName = FileUtil.getNewName(fileName);
+			String destLogoPath = fileStorePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
+			FileUtil.copyFile(realPath, destLogoPath, false);
 
-		String logoRelativePath = destLogoPath.replace(fileStorePath, CommonConstant.EMPTY_STRING);
-		filePathMap.put(practiceSet.getLogo(), logoRelativePath);
+			String logoRelativePath = destLogoPath.replace(fileStorePath, CommonConstant.EMPTY_STRING);
+			filePathMap.put(practiceSet.getLogo(), logoRelativePath);
+		}
 
 		return setDumpLoadBo;
 	}
@@ -529,8 +531,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 数据查询
 		List<String> operationIds = practiceOperationMapper
 				.selectBySetIds(Lists.newArrayList(practiceSetId), false);
-		List<PracticeOperation> operationList = practiceOperationMapper
-				.selectBatchIds(operationIds);
+
+		List<PracticeOperation> operationList = Lists.newArrayList();
+		if (!operationIds.isEmpty()){
+			operationList = practiceOperationMapper.selectBatchIds(operationIds);
+		}
 
 		// 数据转换
 		return StreamApiUtils.map(operationList, operation -> practiceOperationService
@@ -546,7 +551,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 数据查询
 		List<String> theoryIds = practiceTheoryMapper
 				.selectBySetIds(Lists.newArrayList(practiceSetId), false);
-		List<PracticeTheory> practiceTheories = practiceTheoryMapper.selectBatchIds(theoryIds);
+
+		List<PracticeTheory> practiceTheories = Lists.newArrayList();
+		if (!theoryIds.isEmpty()) {
+			practiceTheories = practiceTheoryMapper.selectBatchIds(theoryIds);
+		}
 
 		// 数据转换
 		return StreamApiUtils.map(practiceTheories,

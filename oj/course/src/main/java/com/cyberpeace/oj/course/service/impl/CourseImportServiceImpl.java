@@ -305,6 +305,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 		String wordOrPptFile = null;
 		String destWordOrPptFile = null;
 		for (String handoutFile : handoutFileList) {
+			if (!new File(handoutFile).isFile()) {
+				continue;
+			}
+
 			String fileSuffix = FileUtil.getFileSuffix(handoutFile);
 			if (fileSuffix.equals(FileSunffixConstant.MD.getDesc())) {
 				courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
@@ -329,6 +333,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 				destWordOrPptFile = destHandoutPath + File.separatorChar + IDGeneratorUtil.getID()
 						+ CommonConstant.PERIOD + fileSuffix;
 			}
+		}
+
+		// 无讲义怎不管
+		if (courseLesson.getHandoutType() == null) {
+			return;
 		}
 
 		// 执行文件复制和

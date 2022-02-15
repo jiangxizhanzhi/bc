@@ -7,6 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreListReq;
@@ -16,7 +17,9 @@ import com.cyberpeace.cr.report_score.controller.res.*;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScore;
 import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreMapper;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
+import com.cyberpeace.cr.report_score.service.bo.UserSubjectGroupBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,11 +144,11 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         Map<String, RankingRep> rankScoreMap = rankScoreList.stream()
                 .collect(Collectors.toMap(RankingRep::getUserId, item -> item));
 
+        // 获取全部用户作为队伍， 除了admin
         List<UserInfo> userInfoList = remoteUserService.getList();
         List<RankingRep> rankingRepList = Lists.newArrayList();
         for (UserInfo userInfo : userInfoList) {
-            if (userInfo.getUserName().equals("admin")) {
-                log.info("skip admin user");
+            if (isSkipUser(userInfo.getUserName())) {
                 continue;
             }
 
@@ -164,6 +167,64 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
             rankingRepList.add(rankingRep);
         }
         return amountRank(rankingRepList);
+    }
+
+    @Override
+    public List<SubjectCompleteRep> subjectCompleteSt() {
+        List<UserSubjectGroupBo> userSubjectGroupList = reportScoreMapper.getUserSubjectGroup();
+
+        Map<String, List<UserSubjectGroupBo>> subjectMap = Maps.newHashMap();
+        for (UserSubjectGroupBo userSubjectGroupBo : userSubjectGroupList) {
+            subjectMap.putIfAbsent(userSubjectGroupBo.getUserId(), Lists.newArrayList());
+            subjectMap.get(userSubjectGroupBo.getUserId()).add(userSubjectGroupBo);
+        }
+
+        // 获取全部用户作为队伍， 除了admin
+        List<UserInfo> userInfoList = remoteUserService.getList();
+        List<SubjectCompleteRep> subjectCompleteRepList = Lists.newArrayList();
+
+        for (UserInfo userInfo : userInfoList) {
+            if (isSkipUser(userInfo.getUserName())) {
+                continue;
+            }
+
+            SubjectCompleteRep subjectCompleteRep = new SubjectCompleteRep();
+            subjectCompleteRep.setUserId(userInfo.getUserId());
+            subjectCompleteRep.setUserName(userInfo.getName());
+
+            List<UserSubjectGroupBo> userSubjectGroupBos = subjectMap.get(userInfo.getUserId());
+            if (userSubjectGroupBos != null) {
+                // 按顺序获取1-5的科目分数，组成数组
+                List<String> subjectScoreList = getSubjectScoreList(userSubjectGroupBos);
+                subjectCompleteRep.setSubjectScore(subjectScoreList);
+            }
+            subjectCompleteRepList.add(subjectCompleteRep);
+        }
+        return subjectCompleteRepList;
+    }
+
+    private Boolean isSkipUser(String name) {
+        boolean isSkip = name.equals("admin");
+        if (isSkip) {
+            log.info("skip admin user");
+        }
+        return isSkip;
+    }
+
+    private static List<String> getSubjectScoreList(List<UserSubjectGroupBo> userSubjectGroupBos) {
+        List<String> subjectScoreList = Lists.newArrayList();
+
+        Map<String, String> collect = userSubjectGroupBos.stream()
+                .collect(Collectors.toMap(UserSubjectGroupBo::getSubject,
+                        UserSubjectGroupBo::getSubjectScore));
+
+        List<Integer> listCode = EnumUtils.getListCode(ReportScore.SubjectCode.class);
+        for (Integer code : listCode) {
+            String subjectScore = collect.get(String.valueOf(code));
+            subjectScoreList.add(subjectScore != null ? subjectScore: "0");
+        }
+
+        return subjectScoreList;
     }
 
     private static List<RankingRep> amountRank(List<RankingRep> rankingRepList) {

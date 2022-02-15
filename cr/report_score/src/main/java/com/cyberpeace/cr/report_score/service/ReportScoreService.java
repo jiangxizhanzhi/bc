@@ -39,4 +39,6 @@ public interface ReportScoreService extends IService<ReportScore> {
     void validateReportScoreNameExist(ReportScore reportScore);
 
     List<RankingRep> rankingStatistics();
+
+    List<SubjectCompleteRep> subjectCompleteSt();
 }

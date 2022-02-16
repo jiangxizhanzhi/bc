@@ -8,7 +8,7 @@ public interface FileTypeContant {
 	/** 课时讲义允许上传类型*/
 	String LESSON_HANDOUT_TYPE = "ZIP,PDF,DOC,DOCX,PPT,PPTX";
 
-	/** 习题集导入文件上传类型*/
-	String PRACTICE_SET_IMPORT_TYPE = "ZIP";
+	/** 课程、习题集导入文件上传类型*/
+	String RESOURCE_DATA_IMPORT_TYPE = "ZIP";
 
 }

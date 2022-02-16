@@ -248,7 +248,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
 	public BaseRsp importCourse(@Validated LoadCourseReq loadCourseReq) {
-		FileUtil.validateFileSuffix(loadCourseReq.getFile().getOriginalFilename(), FileTypeContant.PRACTICE_SET_IMPORT_TYPE);
+		FileUtil.validateFileSuffix(loadCourseReq.getFile().getOriginalFilename(), FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
 
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
 				false, loadCourseReq.getFile(), true);

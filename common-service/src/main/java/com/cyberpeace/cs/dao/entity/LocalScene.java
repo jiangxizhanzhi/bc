@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
 
@@ -135,7 +135,7 @@ public class LocalScene extends BaseTable {
 
 	}
 
-	public enum BusinessCode implements GenericEnum {
+	public enum BusinessCode implements GenericEnum, BaseI18n {
 		/***/
 		DEFAULT(0, "默认"),
 		PRACTICE(110, "练习"),
@@ -143,10 +143,10 @@ public class LocalScene extends BaseTable {
 		CLASSROOM(121, "课程表"),
 		EXAM(130, "考试"),
 		LESSON_PRACTICE(140, "课程练习"),
-		SINGLE_TRAINING(211, "单兵训练"),
+		SINGLE_TRAINING(211, "单兵训练", "Individual Training"),
 		LIVE_VULN(212, "漏洞"),
-		TEAM_TRAINING(213, "团队训练"),
-		RED_VS_BLUE(214, "红蓝对抗"),
+		TEAM_TRAINING(213, "团队训练", "Team Training"),
+		RED_VS_BLUE(214, "红蓝对抗", "Cyber Wargame"),
 		WEAPON_TEST(216, "武器"),
 		SYSTEM_TEST(217, "系统"),
 		SOFTWARE_TEST(221, "软件测试"),
@@ -161,16 +161,27 @@ public class LocalScene extends BaseTable {
 		@Getter
 		private final Integer code;
 
-		private final String desc;
+		@Getter
+		private final String chinese;
+
+		@Getter
+		private final String english;
 
 		@Override
 		public String getDesc() {
-			return CommonContext.isChinese() ? desc : name();
+			return getMsg();
 		}
 
-		BusinessCode(Integer code, String desc) {
+		BusinessCode(Integer code, String chinese) {
 			this.code = code;
-			this.desc = desc;
+			this.chinese = chinese;
+			this.english = this.name();
+		}
+
+		BusinessCode(Integer code, String chinese, String english) {
+			this.code = code;
+			this.chinese = chinese;
+			this.english = english;
 		}
 
 	}

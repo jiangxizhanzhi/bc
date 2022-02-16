@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.CommonContext;
  * @author shazhichuan
  */
 public interface BaseI18n extends Formattable {
+
 	/**
 	 * 获取国际化字符串的默认方法
 	 *
@@ -35,7 +36,6 @@ public interface BaseI18n extends Formattable {
 	 */
 	String getEnglish();
 
-
 	@Override
 	default void formatTo(Formatter formatter, int flags, int width, int precision) {
 		formatter.format(getMsg());
@@ -44,7 +44,7 @@ public interface BaseI18n extends Formattable {
 	/**
 	 * 提供转化为参数化的字符串的方法
 	 * */
-	default String format(Object ...args){
+	default String format(Object... args) {
 		return String.format(getMsg(), args);
 	}
 }

@@ -53,6 +53,7 @@ public interface ErrorCode {
 
 	String SCENE_RUNNING_FAILED = "100020";
 
+	/** 无效文件错误 */
 	String FILE_CONTENT_INVALID = "100021";
 
 	String FAILED_TO_COPY_FILE = "100022";

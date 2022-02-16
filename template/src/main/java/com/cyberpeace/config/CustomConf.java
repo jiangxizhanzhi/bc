@@ -33,7 +33,8 @@ public class CustomConf {
 				new ClassPathResource("modules/common.properties"),
 				new ClassPathResource("modules/evaluate.properties"),
 				new ClassPathResource("application.properties"),
-				new ClassPathResource("modules/errorMessage.properties") };
+				new ClassPathResource("modules/errorMessageZH.properties"),
+				new ClassPathResource("modules/errorMessageEN.properties") };
 		configurer.setLocations(resources);
 
 		return configurer;

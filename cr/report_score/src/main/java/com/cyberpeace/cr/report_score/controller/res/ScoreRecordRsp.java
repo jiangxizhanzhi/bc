@@ -20,5 +20,5 @@ public class ScoreRecordRsp implements Serializable {
     private Date scoreTime;
 
     @ApiModelProperty("得分")
-    private Integer score;
+    private Long score;
 }

@@ -24,12 +24,6 @@ public class ReportScoreUpdateScoreReq implements Serializable {
     private String comment;
 
     @ApiModelProperty("得分")
-    private Integer score;
-
-    @ApiModelProperty("评分人id")
-    private String raterId;
-
-    @ApiModelProperty("评分人姓名")
-    private String raterName;
+    private Long score;
 
 }

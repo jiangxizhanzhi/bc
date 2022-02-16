@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreListReq;
@@ -58,7 +59,13 @@ public class ReportScoreController {
     @PostMapping
     public BaseRsp<String> update(@RequestBody ReportScoreUpdateScoreReq reportScoreUpdateReq) {
         ReportScore reportScore = BeanUtils.copy(reportScoreUpdateReq, ReportScore.class);
+
         reportScore.setScoreTime(new Date());
+        String userId = UserInfoContext.getUserContext().getUserId();
+        String userName = UserInfoContext.getUserContext().getUserName();
+        reportScore.setRaterId(userId);
+        reportScore.setRaterName(userName);
+
         reportScoreService.updateById(reportScore);
         return new BaseRsp<>();
     }

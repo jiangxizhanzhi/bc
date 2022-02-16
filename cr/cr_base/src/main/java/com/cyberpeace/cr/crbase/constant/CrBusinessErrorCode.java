@@ -212,5 +212,5 @@ public interface CrBusinessErrorCode {
 	String ILLEGAL_NAME_LEN = "101067";
 
 	// 同一战队下报告名称重复
-	String DUPLICATED_REPORT_SCORE_NAME = "101062";
+	String DUPLICATED_REPORT_SCORE_NAME = "101068";
 }

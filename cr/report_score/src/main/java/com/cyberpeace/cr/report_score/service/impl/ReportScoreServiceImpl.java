@@ -16,6 +16,7 @@ import com.cyberpeace.cr.report_score.controller.req.WebReportScoreListReq;
 import com.cyberpeace.cr.report_score.controller.res.*;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScore;
 import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreMapper;
+import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import com.cyberpeace.cr.report_score.service.bo.UserSubjectGroupBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -38,6 +39,9 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
 
     @Autowired
     private RemoteUserService remoteUserService;
+
+    @Autowired
+    private ReportScoreConfigService reportScoreConfigService;
 
     private final String savePath = "report" + File.separator + "report" + File.separator;
 
@@ -145,12 +149,9 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
                 .collect(Collectors.toMap(RankingRep::getUserId, item -> item));
 
         // 获取全部用户作为队伍， 除了admin
-        List<UserInfo> userInfoList = remoteUserService.getList();
+        List<UserInfo> userInfoList = getUsers();
         List<RankingRep> rankingRepList = Lists.newArrayList();
         for (UserInfo userInfo : userInfoList) {
-            if (isSkipUser(userInfo.getUserName())) {
-                continue;
-            }
 
             RankingRep rankingRep = new RankingRep();
             rankingRep.setLogo(userInfo.getAvatarUrl());
@@ -180,13 +181,10 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         }
 
         // 获取全部用户作为队伍， 除了admin
-        List<UserInfo> userInfoList = remoteUserService.getList();
+        List<UserInfo> userInfoList = getUsers();
         List<SubjectCompleteRep> subjectCompleteRepList = Lists.newArrayList();
 
         for (UserInfo userInfo : userInfoList) {
-            if (isSkipUser(userInfo.getUserName())) {
-                continue;
-            }
 
             SubjectCompleteRep subjectCompleteRep = new SubjectCompleteRep();
             subjectCompleteRep.setUserId(userInfo.getUserId());
@@ -201,6 +199,25 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
             subjectCompleteRepList.add(subjectCompleteRep);
         }
         return subjectCompleteRepList;
+    }
+
+    private List<UserInfo> getUsers() {
+        // 获取全部用户作为队伍， 除了admin
+        // List<UserInfo> userInfoList = remoteUserService.getList();
+
+        List<String> userIds = reportScoreConfigService.getUserIds();
+        if (userIds == null || userIds.isEmpty()) {
+            log.error("Not found user config");
+            throw new BusinessException("Not found user config");
+        }
+        List<UserInfo> userByIdList = remoteUserService.getByIdList(userIds);
+
+        if (userByIdList.size() != userIds.size()) {
+            log.error("Configure user data not always {}:{}", userByIdList.size(), userIds.size());
+            throw new BusinessException("Configure user data not always");
+        }
+
+        return userByIdList;
     }
 
     private Boolean isSkipUser(String name) {

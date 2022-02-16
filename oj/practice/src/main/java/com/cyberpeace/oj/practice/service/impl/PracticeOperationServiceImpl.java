@@ -28,7 +28,6 @@ import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -246,7 +245,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// topo更新
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
-			localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId());
+			updateOperation.setTopoId(localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId()));;
 		}
 
 		return practiceOperationMapper.updateById(updateOperation);
@@ -521,7 +520,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				: localSceneService.testScene(localScene);
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("Operation startScene: Scene start failed! scene_id is null");
-			throw new InvalidParamException("场景启动失败！");
+			throw new BusinessException(ErrorCode.SCENE_RUNNING_FAILED);
 		}
 
 		// 数据存储
@@ -1002,12 +1001,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(operation.getResourceId())
 				.isWeb(ojLocalScene.getFromWeb()).build();
+
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
 
 		// 动态环境flag设置
-		if (operation.getDynamicEnv() && operation.getDynamicFlag()) {
+		if (StringUtils.isNotBlank(operation.getTopoId())) {
 			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
 					topoData);
 			sceneMeta.setTopoData(dynamicFlag);
@@ -1017,15 +1017,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public void createMpLog(String practiceId, LogContent solved) {
-		String language = CommonContext.getLanguage();
+	public void createMpLog(String practiceId, LogContent logContent) {
 		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
-		String content = String.format(
-				LogContent.getLocaleValue(LogContent.PRACTICE_FORMAT, language),
-				operation.getContent(), LogContent.getLocaleValue(solved, language));
+		String content = LogContent.PRACTICE_FORMAT.format(operation.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-				OperationType.EXERCISE, LogContent.getLocaleValue(LogContent.EXERCISE, language),
-				content);
+				OperationType.EXERCISE, LogContent.EXERCISE.getMsg(), content);
 	}
 
 }

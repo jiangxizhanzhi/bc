@@ -1,17 +1,24 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
-import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
-import com.cyberpeace.cr.teamtrain.service.context.TeamSceneWsMessageIdentifier;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.cs.service.impl.MessageListener;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +35,12 @@ public class TeamSceneEventListener extends MessageListener {
 
 	@Autowired
 	private TeamSceneService teamSceneService;
+
+	@Autowired
+	private CrRoleService crRoleService;
+
+	@Autowired
+	private CrEventListenerHelper crEventListenerHelper;
 
 	@Override
 	public Integer declareMessageType() {
@@ -52,25 +65,40 @@ public class TeamSceneEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
-		pushDataToWeb(data, businessId);
-
+		// get roles
+		List<CrRole> roles = crRoleService.getRolesByRoom(businessId,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		// parse message
+		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
+		String nodeId = wsSceneReportBO.getData().getData().getJSONObject("data")
+				.getJSONObject("scene_element").getString("id");
+		for (CrRole role : roles) {
+			String filteredData = crEventListenerHelper.filterDataByRole(role, data, nodeId);
+			if (filteredData == null) {
+				continue;
+			}
+			pushDataToWebByUserIds(filteredData, businessId, role.getUserIdList());
+		}
 		return true;
 	}
 
 	/**
-	 * 场景和节点的状态变更消息统一推送
+	 * 场景消息统一推送
 	 * @param data
 	 * @param businessId
 	 */
 	private void pushDataToWeb(String data, String businessId) {
-		// 构建需要向页面推送的消息上下文
-		TeamSceneWsMessageIdentifier identifier = new TeamSceneWsMessageIdentifier();
-		identifier.setPath(WsPath.CR_SCENE);
-		identifier.setBusiness_id(businessId);
-
-		WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
-				.messageIdentifier(identifier).build();
-
+		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
+				businessId);
 		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	/**
+	 * 推送消息给某个角色的所有用户
+	 */
+	private void pushDataToWebByUserIds(String data, String businessId, List<String> userIds) {
+		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
+				businessId);
+		myWebSocketHandler.pushMessageToUsers(messageContext, userIds);
 	}
 }

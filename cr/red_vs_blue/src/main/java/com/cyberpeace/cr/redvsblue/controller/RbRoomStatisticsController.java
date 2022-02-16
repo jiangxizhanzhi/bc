@@ -160,7 +160,7 @@ public class RbRoomStatisticsController {
 
 		List<CrRole> crRoles = crRoleService.selectRbStudentsRoleByRoomId(resource_id);
 		for (CrRole crRole : crRoles) {
-			List<String> userIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			List<String> userIds = crRole.getUserIdList();
 
 			allUserIds.addAll(userIds);
 
@@ -212,7 +212,7 @@ public class RbRoomStatisticsController {
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		if (CrRole.RbRoleGroupCode.RED_BLUE.getCode().equals(role_type)) {
+		if (CrRole.RbRoleGroup.RED_BLUE.equals(role_type)) {
 			return new BaseRsp(getRbScoreProgress_6(resource_id, role_type, userId));
 		}
 
@@ -236,13 +236,11 @@ public class RbRoomStatisticsController {
 		return data;
 	}
 
-	private void permissionCheckTeacherOrGroup(String resource_id, String userId,
-			Integer role_type) {
+	private void permissionCheckTeacherOrGroup(String resource_id, String userId, Integer role_type) {
 		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
 
-		if (crRole.isStudent() && !crRole.getRoleGroup().equals(role_type)) {
-			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id,
-					userId);
+		if (crRole.isRvbStudent() && !crRole.getRoleGroup().equals(role_type)) {
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}

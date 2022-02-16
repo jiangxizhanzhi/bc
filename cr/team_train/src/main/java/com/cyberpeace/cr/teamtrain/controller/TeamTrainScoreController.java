@@ -75,7 +75,7 @@ public class TeamTrainScoreController {
 			@RequestParam("room_id") String roomId) {
 		JSONObject data = getTrainRecordJsonObject(roomId);
 		data.put("username", UserInfoContext.getUserContext().getUserName());
-		data.put("title", crScoreController.getTitle(UserInfoContext.getUserContext().getUserName()));
+		data.put("title", crScoreController.getTitle(teamRoomService.getById(roomId).getName()));
 
 		// 获取用户LOGO
 		try {
@@ -217,6 +217,8 @@ public class TeamTrainScoreController {
 	public BaseRsp<StudentScoreRsp> getStudentScore(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		teamRoomService.checkTeacherPermission(resource_id, userId);
 
 		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
 
@@ -227,8 +229,10 @@ public class TeamTrainScoreController {
 	@PostMapping("/student_score")
 	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
 			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+ 		teamRoomService.checkTeacherPermission(studentScoreReq.getRoomId(), userId);
 
-		teamRoomService.checkRoomOpening(studentScoreReq.getRoomId());
+ 		teamRoomService.checkRoomOpening(studentScoreReq.getRoomId());
 
 		crScoreController.updateStudentScore(studentScoreReq);
 
@@ -283,8 +287,7 @@ public class TeamTrainScoreController {
 	@GetMapping("/get_training_mission_report")
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id,
-				CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
@@ -326,8 +329,7 @@ public class TeamTrainScoreController {
 			return new BaseRsp<>(new TrainingReport());
 		}
 
-		RoleQuery roleQuery = new RoleQuery(resource_id,
-				CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		List<UserReport> userReportList = crScoreController.getTrainingReport(resource_id,

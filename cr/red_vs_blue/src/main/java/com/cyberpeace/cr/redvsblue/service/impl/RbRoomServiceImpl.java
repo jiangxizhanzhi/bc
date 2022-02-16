@@ -172,7 +172,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 						index += 2;
 					}
 
-					crRole.setUserIds(JsonUtil.toJsonString(users.get(index++).getUsers()));
+					crRole.setUserIdList(users.get(index++).getUsers());
 					crRole.setRoomId(rbRoom.getResourceId());
 					crRole.setBusinessType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 
@@ -205,10 +205,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
 
 		for (CrRole crRole : crRoles) {
-
-			// 获取所有用户
-			List<String> roleUserIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(),
-					String.class);
+			List<String> roleUserIds = crRole.getUserIdList();
 			userIds.addAll(roleUserIds);
 
 			for (String userId : roleUserIds) {
@@ -258,22 +255,20 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		for (CrRole crRole : crRoles) {
 			// 如果是红方或蓝方角色
-			if (CrRole.RB_STUDENT_ROLE_GROUPS.contains(myRole.getRoleGroup())) {
+			if (myRole.isRvbStudent()) {
 				// 如果自己也是红蓝角色，并且不是己方角色，直接跳过
-				if (!crRole.getRoleGroup().equals(myRole.getRoleGroup())
-						&& CrRole.RB_STUDENT_ROLE_GROUPS.contains(crRole.getRoleGroup())) {
+				if (!crRole.getRoleGroup().equals(myRole.getRoleGroup()) && crRole.isRvbStudent()) {
 					continue;
 				}
 			}
 
 			// 获取所有用户
-			List<String> roleUserIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(),
-					String.class);
+			List<String> roleUserIds = crRole.getUserIdList();
 			userIds.addAll(roleUserIds);
-			if (!CrRole.RbRoleGroupCode.BLUE.getCode().equals(crRole.getRoleGroup())) {
+			if (!crRole.isBlueStudent()) {
 				redMembers.addAll(roleUserIds);
 			}
-			if (!CrRole.RbRoleGroupCode.RED.getCode().equals(crRole.getRoleGroup())) {
+			if (!crRole.isRedStudent()) {
 				blueMembers.addAll(roleUserIds);
 			}
 
@@ -298,32 +293,29 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		List<DashboardGroup> groups = Lists.newArrayList();
 
-		DashboardGroup redGroup = new DashboardGroup(CrRole.RbRoleGroupCode.RED.getDesc());
-		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroupCode.BLUE.getDesc());
+		DashboardGroup redGroup = new DashboardGroup(CrRole.RbRoleGroup.RED.getDesc());
+		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroup.BLUE.getDesc());
 
 		redGroup.setMembers(redMembers);
-		redGroup.setId(roomId + "_" + CrRole.RbRoleGroupCode.RED.getCode().toString());
+		redGroup.setId(roomId + "_" + CrRole.RbRoleGroup.RED.getCode().toString());
 		blueGroup.setMembers(blueMembers);
-		blueGroup.setId(roomId + "_" + CrRole.RbRoleGroupCode.BLUE.getCode().toString());
+		blueGroup.setId(roomId + "_" + CrRole.RbRoleGroup.BLUE.getCode().toString());
 
 		// 自己不是红方，放入蓝方
-		if (!CrRole.RbRoleGroupCode.RED.getCode().equals(myRole.getRoleGroup())) {
+		if (!myRole.isRedStudent()) {
 			groups.add(blueGroup);
 		}
 
 		// 自己不是蓝方，放入红方
-		if (!CrRole.RbRoleGroupCode.BLUE.getCode().equals(myRole.getRoleGroup())) {
+		if (!myRole.isBlueStudent()) {
 			groups.add(redGroup);
 		}
 
 		// 如果自己是红方或蓝方角色，再放入自己的角色
-		if (CrRole.RB_STUDENT_ROLE_GROUPS.contains(myRole.getRoleGroup())) {
-			DashboardGroup selfGroup = new DashboardGroup(
-					groups.get(0).getGroupname() + "/" + myRole.getName());
-
+		if (myRole.isRvbStudent()) {
+			DashboardGroup selfGroup = new DashboardGroup(groups.get(0).getGroupname() + "/" + myRole.getName());
 			selfGroup.setId(myRole.getResourceId());
-			selfGroup.setMembers(JsonUtil.toJsonObjectArray(myRole.getUserIds(), String.class));
-
+			selfGroup.setMembers(myRole.getUserIdList());
 			groups.add(selfGroup);
 		}
 		// 获取全部用户
@@ -356,13 +348,18 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	private String getFullRoleName(CrRole crRole) {
-		String roleName = crRole.getName();
+		String roleName = EnumUtils.getEnumDescByCode(crRole.getRoleGroup(),
+				CrRole.RbRoleGroup.class);
 
-		if (CrRole.RbRoleGroupCode.BLUE.getCode().equals(crRole.getRoleGroup())) {
-			roleName = CrRole.RbRoleGroupCode.BLUE.getDesc() + "/" + roleName;
+		if (crRole.isRedStudent() || crRole.isBlueStudent()) {
+			roleName = crRole.getName();
 		}
-		if (CrRole.RbRoleGroupCode.RED.getCode().equals(crRole.getRoleGroup())) {
-			roleName = CrRole.RbRoleGroupCode.RED.getDesc() + "/" + roleName;
+
+		if (crRole.isBlueStudent()) {
+			roleName = CrRole.RbRoleGroup.BLUE.getDesc() + "/" + roleName;
+		}
+		if (crRole.isRedStudent()) {
+			roleName = CrRole.RbRoleGroup.RED.getDesc() + "/" + roleName;
 		}
 
 		return roleName;
@@ -420,7 +417,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 							throw new BusinessException(
 									CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
 						}
-						crRole.setUserIds(JsonUtil.toJsonString(users));
+						crRole.setUserIdList(users);
 						crRoleService.updateById(crRole);
 
 					});
@@ -429,7 +426,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		});
 	}
 
-	private void permissionCheck(String roomId, String userId, Integer roleCode) {
+	private void permissionCheck(String roomId, String userId, CrRole.RbRoleGroup roleGroup) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
 			log.error("failed to get RbRoom with Id [{}]", roomId);
@@ -437,22 +434,21 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!crRole.getRoleGroup().equals(roleCode)) {
+		if (!crRole.isInGroup(roleGroup)) {
 			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}], role=[{}]",
-					roomId, userId,
-					EnumUtils.getEnumDescByCode(roleCode, CrRole.TeamRoleGroupCode.class));
+					roomId, userId, roleGroup.getDesc());
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
 
 	@Override
 	public void checkDirectorPermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.RbRoleGroupCode.DIRECTOR.getCode());
+		permissionCheck(roomId, userId, CrRole.RbRoleGroup.DIRECTOR);
 	}
 
 	@Override
 	public void checkRefereePermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.RbRoleGroupCode.REFEREE.getCode());
+		permissionCheck(roomId, userId, CrRole.RbRoleGroup.REFEREE);
 	}
 
 	@Override
@@ -507,8 +503,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (!crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.RED.getCode())
-				&& !crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.BLUE.getCode())) {
+		if (!crRole.isRedStudent() && !crRole.isBlueStudent()) {
 			log.error("user does not have RbRoom student Permission！roomId=[{}], userId=[{}]",
 					roomId, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
@@ -525,7 +520,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		List<CrRole> crRoles = crRoleService.selectRbStudentsRoleByRoomId(roomId);
 
 		for (CrRole crRole : crRoles) {
-			List<String> users = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			List<String> users = crRole.getUserIdList();
 			users.forEach(user -> {
 				UserRole userRole = new UserRole();
 				userRole.setResourceId(user);
@@ -537,9 +532,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			});
 		}
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
@@ -601,9 +594,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		}
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
@@ -637,7 +628,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		if (role.isStudent()) {
+		if (role.isRvbStudent()) {
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
@@ -648,44 +639,29 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		// 获取红蓝的角色组
 		String roleString = rbTemplateData.getRoleConfig();
 
-		CrRole rbTemplateRoleRsp = new CrRole(CrRole.RbRoleGroupCode.ADMIN.getDesc(),
-				CrRole.RbRoleGroupCode.ADMIN.getCode());
-		crRoleList.add(rbTemplateRoleRsp);
-
-		CrRole rbTemplateRoleRsp1 = new CrRole(CrRole.RbRoleGroupCode.DIRECTOR.getDesc(),
-				CrRole.RbRoleGroupCode.DIRECTOR.getCode());
-		crRoleList.add(rbTemplateRoleRsp1);
-
-		CrRole rbTemplateRoleRsp2 = new CrRole(CrRole.RbRoleGroupCode.REFEREE.getDesc(),
-				CrRole.RbRoleGroupCode.REFEREE.getCode());
-		crRoleList.add(rbTemplateRoleRsp2);
+		crRoleList.add(new CrRole(CrRole.RbRoleGroup.ADMIN));
+		crRoleList.add(new CrRole(CrRole.RbRoleGroup.DIRECTOR));
+		crRoleList.add(new CrRole(CrRole.RbRoleGroup.REFEREE));
 
 		// 获取红队的角色任务
 		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 		JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");
 		for (int i = 0; i < redRoles.size(); i++) {
-
-			CrRole crRole = getRoleByJson(roomId, i, redRoles,
-					CrRole.RbRoleGroupCode.RED.getCode());
-
+			CrRole crRole = getRoleByJson(roomId, i, redRoles, CrRole.RbRoleGroup.RED);
 			crRoleList.add(crRole);
 		}
 
 		// 获取蓝队的角色任务
 		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
 		for (int i = 0; i < blueRoles.size(); i++) {
-
-			CrRole crRole = getRoleByJson(roomId, i, blueRoles,
-					CrRole.RbRoleGroupCode.BLUE.getCode());
-
+			CrRole crRole = getRoleByJson(roomId, i, blueRoles,	CrRole.RbRoleGroup.BLUE);
 			crRoleList.add(crRole);
-
 		}
 
 		return crRoleList;
 	}
 
-	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles, Integer code) {
+	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles, CrRole.RbRoleGroup roleGroup) {
 		JSONObject rolesJSONObject = redRoles.getJSONObject(index);
 
 		CrRoleNodesData nodesData = new CrRoleNodesData();
@@ -696,11 +672,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		String visibleNodes = rolesJSONObject.get("visible_nodes").toString();
 		nodesData.setVisibleNodes(JsonUtil.toJsonObjectArray(visibleNodes, CrRoleNode.class));
 
-		CrRole crRole = new CrRole(rolesJSONObject.get("name").toString(), code);
+		CrRole crRole = new CrRole(roleGroup, rolesJSONObject.get("name").toString());
 
-		crRole.setMissionScheme(
-				getNewRoomScheme(rolesJSONObject.get("missions_scheme").toString(), roomId));
-		crRole.setNodes(JsonUtil.toJsonString(nodesData));
+		crRole.setMissionStageSchemes(getNewRoomScheme(rolesJSONObject.get("missions_scheme").toString(), roomId));
+		crRole.setNodesData(nodesData);
 
 		return crRole;
 	}
@@ -709,11 +684,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param missionsScheme
 	 * @return
 	 */
-	private String getNewRoomScheme(String missionsScheme, String roomId) {
+	private List<MissionStageScheme> getNewRoomScheme(String missionsScheme, String roomId) {
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
 				new TypeReference<ColorMission<AddTemplateMission>>() {});
 		if (null == colorMission || null == colorMission.getSchemeData()) {
-			return "[]";
+			return new ArrayList<>();
 		}
 
 		List<MissionStageScheme> missionStageSchemes = Lists.newArrayList();
@@ -748,9 +723,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 			missionStageSchemes.add(missionStageScheme);
 		}
-
-		return JsonUtil.toJsonString(missionStageSchemes);
-
+		return missionStageSchemes;
 	}
 
 	private void validateName(String name) {

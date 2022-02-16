@@ -22,7 +22,7 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId
 	 * @return
 	 */
-	CrRoleContext<MissionContext> getRoles(String roomId, Integer roleCode);
+	CrRoleContext<MissionContext> getRoles(String roomId, CrRole.RoleGroup roleGroup);
 
 	/**
 	 * 获取训练分组信息
@@ -72,10 +72,10 @@ public interface CrRoleService extends IService<CrRole> {
 	Integer getMissionCount(CrRole crRole);
 
 	/** 将用户id替换为用户名字
-	 * @param userIds
+	 * @param userList
 	 * @return
 	 */
-	String getUserNamesByRoleUsers(String userIds);
+	String getUserNamesByRoleUsers(List<String> userList);
 
 	/**获取团队训练实战任务统计信息
 	 * @param roomId
@@ -84,16 +84,15 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	TaskCounter getTaskCounter(String roomId, String studentId);
 
-	List<UserData> getUserDatas(String userIds);
+	List<UserData> getUserDatas(List<String> userIdList);
 
 	List<CrRole> selectRbStudentsRoleByRoomId(String roomId);
 
 	/**
 	 * 删除训练房间后删除训练角色
 	 * @param roomId
-	 * @return
 	 */
-	Boolean clearRoomRoles(String roomId);
+	void clearRoomRoles(String roomId);
 
 	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
 
@@ -107,4 +106,5 @@ public interface CrRoleService extends IService<CrRole> {
 
 	List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup);
 
+	void checkPermission(String roomId, String userId);
 }

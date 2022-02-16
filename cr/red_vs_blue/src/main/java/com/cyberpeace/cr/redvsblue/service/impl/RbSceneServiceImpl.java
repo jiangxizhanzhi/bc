@@ -13,6 +13,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -282,7 +283,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 			throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
 		}
 		if (flag.equals(UNPAUSE_FLAG) && !management.isPaused()) {
-			throw new BusinessException(CrBusinessErrorCode.NOT_PAUSED);
+			throw new BusinessException(ErrorCode.NOT_PAUSED);
 		}
 	}
 
@@ -380,8 +381,8 @@ public class RbSceneServiceImpl implements RbSceneService {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 
 		// 1、如果是学员角色，直接返回
-		if (role.isStudent()) {
-			return JsonUtil.toJsonObject(role.getNodes(), CrRoleNodesData.class);
+		if (role.isRvbStudent()) {
+			return role.getNodeData();
 		}
 
 		// 2、教员角色查看自己的节点，不需要传roleId
@@ -394,7 +395,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		CrRole fakeRole = crRoleService.getById(roleId);
 		// 3.2、返回学员role的可见节点
 		if (fakeRole.getRoomId().equals(roomId)) {
-			return JsonUtil.toJsonObject(fakeRole.getNodes(), CrRoleNodesData.class);
+			return fakeRole.getNodeData();
 		}
 
 		return null;

@@ -144,7 +144,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		String viewUrl = utilService.replaceFileUrl(destFileName);
-		Attachment attachment = Attachment.builder().fileName(new File(destFileName).getName())
+		Attachment attachment = Attachment.builder().fileName(file.getOriginalFilename())
 				.filePath(viewUrl).isPublic(true).build();
 
 		// 插入数据库

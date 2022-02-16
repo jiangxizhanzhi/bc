@@ -92,8 +92,8 @@
                 and theory_type = #{listQuery.questionType}
             </if>
             <if test="listQuery.pattern != null and listQuery.pattern != ''">
-                <bind name="listQuery.pattern" value="'%' + listQuery.pattern + '%'"/>
-                and content like #{listQuery.pattern}
+                <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>
+                and content like #{pattern}
             </if>
             <if test="isPublic != null and isPublic">
                 and `public` = #{isPublic}

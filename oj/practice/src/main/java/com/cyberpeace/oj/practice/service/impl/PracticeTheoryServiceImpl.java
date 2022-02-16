@@ -9,7 +9,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -640,15 +639,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public void createMpLog(String practiceId, LogContent solved) {
-		String language = CommonContext.getLanguage();
+	public void createMpLog(String practiceId, LogContent logContent) {
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
-		String content = String.format(
-				LogContent.getLocaleValue(LogContent.THEORY_FORMAT, language),
-				practiceTheory.getContent(), LogContent.getLocaleValue(solved, language));
+		String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
-				OperationType.EXERCISE, LogContent.getLocaleValue(LogContent.THEORY, language),
-				content);
+				OperationType.EXERCISE, LogContent.THEORY.getMsg(),	content);
 	}
 
 }

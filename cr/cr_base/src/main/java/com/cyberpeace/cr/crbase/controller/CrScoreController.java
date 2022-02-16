@@ -345,12 +345,11 @@ public class CrScoreController {
 		List<String> userIds = Lists.newArrayList();
 
 		for (CrRole crRole : crRoleList) {
-			userIds.addAll(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+			userIds.addAll(crRole.getUserIdList());
 		}
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userIds));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 
@@ -372,13 +371,11 @@ public class CrScoreController {
 
 		// 遍历每个学员，设置任务统计结果
 		for (CrRole crRole : crRoleList) {
-			List<MissionStageScheme> missionStageSchemes = JsonUtil
-					.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
-			Integer missionCount = 0;
-			for (MissionStageScheme stage : missionStageSchemes) {
+			int missionCount = 0;
+			for (MissionStageScheme stage : crRole.getMissionStageSchemes()) {
 				missionCount += stage.getMissions().size();
 			}
-			List<String> userList = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			List<String> userList = crRole.getUserIdList();
 			for (String userId : userList) {
 				CrScore crScore = studentScoreMap.get(userId);
 				UserReport userReport = new UserReport();
@@ -403,18 +400,18 @@ public class CrScoreController {
 		JSONObject jsonObject = new JSONObject();
 
 		for (TrainingReport.TemplateI18n enumData : TrainingReport.TemplateI18n.values()) {
-			jsonObject.put(enumData.name(), enumData.getDesc());
+			jsonObject.put(enumData.name(), enumData.getMsg());
 		}
 
 		return jsonObject;
 	}
 
-	public String getTitle(String userName) {
+	public String getTitle(String name) {
 
-		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-			return "Cyber Exercise Report of "+userName;
+		if (!CommonContext.isChinese()) {
+			return "Cyber Exercise Report of "+name;
 		} else {
-			return userName+"训练的训练报告";
+			return name+"训练的训练报告";
 		}
 	}
 }

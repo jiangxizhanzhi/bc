@@ -29,8 +29,8 @@
                 </foreach>
             </if>
             <if test="noteListQuery.pattern != null">
-                <bind name="noteListQuery.pattern" value="'%' + noteListQuery.pattern + '%'"/>
-                and content like #{noteListQuery.pattern}
+                <bind name="pattern" value="'%' + noteListQuery.pattern + '%'"/>
+                and content like #{pattern}
             </if>
             <if test="isPublic != null and isPublic">
                 and `public` = #{isPublic}

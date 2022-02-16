@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -35,11 +34,10 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
-import com.cyberpeace.cr.crbase.service.context.mission.TrainingManualTeam;
+import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -71,6 +69,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	private CrTaskLogMapper crTaskLogMapper;
 
 	@Autowired
+	private CrConstantsService crConstantsService;
+
+	@Autowired
 	private MissionSchemeTemplateMapper missionSchemeTemplateMapper;
 
 	@Autowired
@@ -79,10 +80,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Autowired
-	private MissionCategoryMapper missionCategoryMapper;
-
-	private volatile Map<String, MissionCategory> categoryCache;
+	private volatile Map<String, MissionCategoryCache> categoryCache;
 
 	private Object lock = new Object();
 
@@ -154,7 +152,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		Date releaseTime = new Date();
 
 		List<CrTask> tasks = new ArrayList<>();
-		for (String userId : JsonUtil.toJsonObjectArray(role.getUserIds(), String.class)) {
+		for (String userId : role.getUserIdList()) {
 			CrTask task = new CrTask();
 			task.setMissionId(mission.getResourceId());
 			task.setUserId(userId);
@@ -217,8 +215,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public Boolean addDynamic(Mission mission, CrRole role, Integer stage) {
 		// 校验是否和角色既存任务重名
-		List<MissionStageScheme> missionStageSchemeList = JsonUtil
-				.toJsonObjectArray(role.getMissionScheme(), MissionStageScheme.class);
+		List<MissionStageScheme> missionStageSchemeList = role.getMissionStageSchemes();
 		List<String> missionIds = Lists.newArrayList();
 		for (MissionStageScheme scheme : missionStageSchemeList) {
 			missionIds.addAll(scheme.getMissions());
@@ -233,7 +230,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				save(mission);
 				addDynamicMissionInfo(missionStageSchemeList, stage, mission.getResourceId());
-				role.setMissionScheme(JSONObject.toJSONString(missionStageSchemeList));
+				role.setMissionStageSchemes(missionStageSchemeList);
 				crRoleMapper.updateById(role);
 			}
 		});
@@ -242,8 +239,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public List<MissionCategory> listCategories() {
+		// read categories
 		ensureCache();
-		return new ArrayList<>(categoryCache.values());
+		List<MissionCategoryCache> missionCategories = Lists.newArrayList(categoryCache.values());
+		// return
+		return StreamApiUtils.map(missionCategories,
+				category -> new MissionCategory(category.getResourceId(), category.selectI18nName()));
 	}
 
 	@Override
@@ -268,7 +269,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public MissionCategory getCategoryById(String categoryId) {
 		ensureCache();
-		return categoryCache.get(categoryId);
+		MissionCategoryCache category = categoryCache.get(categoryId);
+		return new MissionCategory(categoryId, category.selectI18nName());
 	}
 
 	@Override
@@ -397,8 +399,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public String getTeamTrainingManual(String roomId) {
-		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.TeamRoleGroupCode.STUDENT.getCode());
-		List<CrRole> roles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
+		List<CrRole> roles = crRoleMapper.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
 		List<CrRoleMissionSchemeStage> allStages = Lists.newArrayList();
 		for (CrRole role : roles) {
 			List<CrRoleMissionSchemeStage> stages = JsonUtil
@@ -412,8 +413,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			missionMap.put(mission.getResourceId(), mission);
 		}
 
-		TrainingManualTeam manual = new TrainingManualTeam(allStages, missionMap,
-				CommonContext.getLanguage());
+		TrainingManualTeam manual = new TrainingManualTeam(allStages, missionMap);
 		return manual.toMarkDown();
 	}
 
@@ -652,13 +652,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public List<String> getMissionIdsByScheme(String missionScheme) {
+	public List<String> getMissionIdsByScheme(List<MissionStageScheme> missionStageSchemes) {
 		List<String> missionIds = Lists.newArrayList();
-
-		JsonUtil.stringToArray(missionScheme).toJavaList(JSONObject.class)
-				.forEach(stage -> missionIds
-						.addAll(stage.getJSONArray("missions").toJavaList(String.class)));
-
+		missionStageSchemes.forEach(stage -> missionIds.addAll(stage.getMissions()));
 		return missionIds;
 	}
 
@@ -667,7 +663,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<String> missionIds = Lists.newArrayList();
 
 		for (CrRole crRole : crRoleList) {
-			missionIds.addAll(getMissionIdsByScheme(crRole.getMissionScheme()));
+			missionIds.addAll(getMissionIdsByScheme(crRole.getMissionStageSchemes()));
 		}
 
 		return batchGet(missionIds);
@@ -680,11 +676,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	private void doInit() {
-		List<MissionCategory> categories = missionCategoryMapper.selectAll();
+		List<CrConstantsConfig> missionCategories = crConstantsService
+				.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
+		List<MissionCategoryCache> categories = BeanUtils.deepCopyList(missionCategories,
+				MissionCategoryCache.class);
 
 		categoryCache = Maps.newHashMap();
 
-		for (MissionCategory item : categories) {
+		for (MissionCategoryCache item : categories) {
 			categoryCache.put(item.getResourceId(), item);
 		}
 	}

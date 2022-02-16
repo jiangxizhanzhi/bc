@@ -88,8 +88,8 @@ public class PracticeTheoryController {
 				answerReq.getSubmitAnswer(),Boolean.FALSE);
 
 		// 记录远程操作日志
-		LogContent solved = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
-		practiceTheoryService.createMpLog(answerReq.getResourceId(), solved);
+		LogContent logContent = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
+		practiceTheoryService.createMpLog(answerReq.getResourceId(), logContent);
 
 		return new BaseRsp<>(evaluateResult);
 	}

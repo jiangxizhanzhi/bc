@@ -11,8 +11,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
@@ -596,6 +594,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
 		for (CourseLesson courseLesson : courseLessons) {
+
+			// 校验是否存在课时名称相同的课时
+			courseValidateHandler.validateLessonNameExist(courseId, courseLesson.getName());
 			courseLesson.setId(null);
 			courseLesson.setCourseId(course.getResourceId());
 			courseLesson.setResourceId(IDGeneratorUtil.getID());
@@ -1268,10 +1269,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public void createMpLog(LessonInfoBo lessonInfoBo) {
 		String operationTarget = lessonInfoBo.getCourseName() + "-" + lessonInfoBo.getName();
-		String language = CommonContext.getLanguage();
-		String content = String.format(
-				LogContent.getLocaleValue(LogContent.COURSE_FORMAT, language),
-				lessonInfoBo.getCourseName(), lessonInfoBo.getName());
+		String content = LogContent.COURSE_FORMAT.format(lessonInfoBo.getCourseName(),
+				lessonInfoBo.getName());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
 				OperationType.STUDY, operationTarget, content);
 	}

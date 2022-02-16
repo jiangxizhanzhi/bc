@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
@@ -11,6 +12,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
@@ -186,14 +188,14 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<String> theoryIds = practiceTheoryMapper.selectByCategoryIds(allDeleteIds,
 				CommonConstant.FALSE);
 		if (CollectionUtils.isNotEmpty(theoryIds)) {
-			throw new InvalidParamException("习题集下存在习题！");
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
 		}
 
 		// 查询是否存在实操题
 		List<String> operationIds = practiceOperationMapper.selectByCategoryIds(allDeleteIds,
 				CommonConstant.FALSE);
 		if (CollectionUtils.isNotEmpty(operationIds)) {
-			throw new InvalidParamException("习题集下存在习题！");
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
 		}
 
 		// 数据删除

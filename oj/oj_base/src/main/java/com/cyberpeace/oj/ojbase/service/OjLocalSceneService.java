@@ -75,4 +75,12 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	 */
 	List<SceneMonitorBo> selectMonitorList(List<OjLocalScene> ojLocalScenes);
 
+	/**
+	 * 是否开启录屏
+	 * @param topoId
+	 * @param record
+	 * @return
+	 */
+	JSONObject switchScreenRecord(String topoId, Boolean record);
+
 }

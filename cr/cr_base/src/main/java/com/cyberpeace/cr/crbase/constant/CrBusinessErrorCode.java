@@ -211,6 +211,9 @@ public interface CrBusinessErrorCode {
 	// 名称长度非法
 	String ILLEGAL_NAME_LEN = "101067";
 
+	// 非法的技能点数值
+	String INVALID_SKILL_POINT_VALUE = "101068";
+
 	// 同一战队下报告名称重复
-	String DUPLICATED_REPORT_SCORE_NAME = "101068";
+	String DUPLICATED_REPORT_SCORE_NAME = "101168";
 }

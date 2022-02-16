@@ -1,6 +1,7 @@
 package com.cyberpeace.gateway.service.impl;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.service.UtilService;
@@ -52,7 +53,7 @@ public class OfficeServiceImpl implements OfficeViewService {
 			log.error(
 					"Failed to obtain office file information！lesson_id=[{}], file_path=[{}], catch error:",
 					lessonId, realPath, e);
-			throw new BusinessException(e.toString());
+			throw new BusinessException(ErrorCode.FAILED_TO_OBTAIN_OFFICE_FILE_INFO);
 		}
 
 		return officeFileInfoBo;

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -119,6 +118,8 @@ public class RbRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
+		crRoleService.checkPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
 
 		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
 
@@ -181,28 +182,28 @@ public class RbRoomController {
 
 		for (CrRole crRole : crRoles) {
 			RbRoomRoleRes rbRoomRoleRes = BeanUtils.copy(crRole, RbRoomRoleRes.class);
-			rbRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIds()));
-			rbRoomRoleRes.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+			rbRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIdList()));
+			rbRoomRoleRes.setUsers(crRole.getUserIdList());
 
-			if (crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.RED.getCode())) {
+			if (crRole.isRedStudent()) {
 				redRoles.add(rbRoomRoleRes);
-			} else if (crRole.getRoleGroup().equals(CrRole.RbRoleGroupCode.BLUE.getCode())) {
+			} else if (crRole.isBlueStudent()) {
 				blueRoles.add(rbRoomRoleRes);
 			} else {
 				rbRoomRoleResList.add(rbRoomRoleRes);
 			}
 		}
 		RbRoomRoleRes redRoleRes = new RbRoomRoleRes();
-		redRoleRes.setName(CrRole.RbRoleGroupCode.RED.getDesc());
+		redRoleRes.setName(CrRole.RbRoleGroup.RED.getDesc());
 		redRoleRes.setResourceId("redResourceId");
-		redRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.RED.getCode());
+		redRoleRes.setRoleGroup(CrRole.RbRoleGroup.RED);
 		redRoleRes.setChildren(redRoles);
 		rbRoomRoleResList.add(redRoleRes);
 
 		RbRoomRoleRes blueRoleRes = new RbRoomRoleRes();
-		blueRoleRes.setName(CrRole.RbRoleGroupCode.BLUE.getDesc());
+		blueRoleRes.setName(CrRole.RbRoleGroup.BLUE.getDesc());
 		blueRoleRes.setResourceId("blueResourceId");
-		blueRoleRes.setRoleGroup(CrRole.RbRoleGroupCode.BLUE.getCode());
+		blueRoleRes.setRoleGroup(CrRole.RbRoleGroup.BLUE);
 		blueRoleRes.setChildren(blueRoles);
 		rbRoomRoleResList.add(blueRoleRes);
 
@@ -218,7 +219,7 @@ public class RbRoomController {
 		BaseRole baseRole = new BaseRole();
 		List<RoleUsers> roleUsersList = Lists.newArrayList();
 		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userId)) {
+			if (crRole.containsUser(userId)) {
 				baseRole.setResourceId(crRole.getResourceId());
 				baseRole.setName(crRole.getName());
 				baseRole.setParentHash(crRole.getRoleGroup());
@@ -229,8 +230,7 @@ public class RbRoomController {
 			RoleUsers roleUsers = new RoleUsers();
 			roleUsers.setRoleName(crRole.getName());
 			roleUsers.setRoleGroup(crRole.getRoleGroup());
-			String userNamesByRoleUsers = crRoleService
-					.getUserNamesByRoleUsers(crRole.getUserIds());
+			String userNamesByRoleUsers = crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList());
 			roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
 
 			roleUsersList.add(roleUsers);
@@ -409,7 +409,7 @@ public class RbRoomController {
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-				OperationType.START, rbRoom.getName(), CommonContext.getLanguage());
+				OperationType.START, rbRoom.getName());
 
 		return new BaseRsp(rbTimeManagementRsp);
 	}

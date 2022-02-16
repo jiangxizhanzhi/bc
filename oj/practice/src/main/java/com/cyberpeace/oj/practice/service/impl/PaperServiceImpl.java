@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
@@ -26,10 +27,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PaperService;
@@ -154,14 +151,15 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		if (StringUtils.isBlank(queryBo.getPracticeSetId())) {
 			// 仅查询公开习题
 			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(permissionIds, true);
-			queryBo.setResourceIds(theoryIds);
-			return theoryConvert(queryBo, page, authContext);
+			List<String> operationIds = practiceOperationMapper.selectBySetIds(permissionIds, true);
+
+			return selectAllLibPractice(theoryIds, operationIds, page);
 		}
 
 		PracticeSet practiceSet = practiceSetMapper.selectById(queryBo.getPracticeSetId());
 		if (practiceSet.getPracticeType().intValue() == PracticeCategory.PracticeType.THEORY
 				.getCode()) {
-			return theoryConvert(queryBo, page, authContext);
+			return theoryConvert(queryBo, page);
 		} else {
 			// 仅查询公开习题
 			OperationListQuery listQuery = BeanUtils.copy(queryBo, OperationListQuery.class);
@@ -173,6 +171,33 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			return convert;
 		}
+	}
+
+	private IPage<LibPracticeListBo> selectAllLibPractice(List<String> theoryIds,
+			List<String> operationIds, Page page) {
+
+		theoryIds.addAll(operationIds);
+		List<String> pageByIds = StreamApiUtils.pageByList(theoryIds,
+				page.getCurrent(), page.getSize());
+
+		// 查询理论习题
+		List<PracticeTheory> theoryList = practiceTheoryMapper.selectBatchIds(pageByIds);
+		List<LibPracticeListBo> theoryBoList = StreamApiUtils.map(theoryList,
+				theory -> theoryToListBo(theory));
+
+		// 查询实操习题
+		List<PracticeOperation> operationList = practiceOperationMapper
+				.selectBatchIds(pageByIds);
+		List<LibPracticeListBo> operationBoList = StreamApiUtils.map(operationList,
+				operation -> operationToListBo(operation));
+
+		// 数据分页
+		theoryBoList.addAll(operationBoList);
+
+		page.setRecords(theoryBoList);
+		page.setTotal(theoryIds.size());
+
+		return page;
 	}
 
 	@Override
@@ -237,15 +262,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	 * 理论习题数据转换
 	 * @param queryBo
 	 * @param page
-	 * @param authContext
 	 * @return
 	 */
-	private IPage<LibPracticeListBo> theoryConvert(LibPracticeQueryBo queryBo, Page page,
-			AuthContext authContext) {
+	private IPage<LibPracticeListBo> theoryConvert(LibPracticeQueryBo queryBo, Page page) {
 
 		TheoryListQuery theoryListQuery = BeanUtils.copy(queryBo, TheoryListQuery.class);
-		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
-				authContext.getIsWeb());
+		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery, true);
 
 		IPage<LibPracticeListBo> convert = iPage
 				.convert(practiceTheory -> theoryToListBo(practiceTheory));

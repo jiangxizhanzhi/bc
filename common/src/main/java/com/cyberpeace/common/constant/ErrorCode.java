@@ -51,6 +51,17 @@ public interface ErrorCode {
 	/** 类型错误 */
 	String TYPE_ERROR = "100019";
 
-	/** 接口访问频繁，被限流 */
-	String INTERFACE_CURRENT_LIMITING = "10099";
+	String SCENE_RUNNING_FAILED = "100020";
+
+	/** 无效文件错误 */
+	String FILE_CONTENT_INVALID = "100021";
+
+	String FAILED_TO_COPY_FILE = "100022";
+
+	String NOT_PAUSED = "100023";
+
+	String FAILED_TO_SAVE_FILE = "100024";
+
+	String FAILED_TO_OBTAIN_OFFICE_FILE_INFO = "100025";
+
 }

@@ -13,13 +13,12 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.dao.entity.MissionCategory;
 import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionCategoryMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 import com.google.common.collect.Maps;
 
@@ -31,9 +30,6 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 
 	@Autowired
 	CrScoreMapper crScoreMapper;
-
-	@Autowired
-	MissionCategoryMapper missionCategoryMapper;
 
 	@Autowired
 	MissionService missionService;
@@ -56,7 +52,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		Integer missionCount = 0;
 		for (CrRole crRole : crRoleList) {
 			Integer roleMissionCount = crRoleService.getMissionCount(crRole);
-			List<String> userList = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
+			List<String> userList = crRole.getUserIdList();
 			missionCount += roleMissionCount * userList.size();
 		}
 		List<String> crRoleIds = StreamApiUtils.map(crRoleList, CrRole::getResourceId);

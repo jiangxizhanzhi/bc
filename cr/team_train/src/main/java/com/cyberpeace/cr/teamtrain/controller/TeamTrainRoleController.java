@@ -38,8 +38,7 @@ public class TeamTrainRoleController {
 	@GetMapping()
 	public BaseRsp<CrRoleContext<RoleMissionRsp>> getRoles(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id,
-				CrRole.TeamRoleGroupCode.STUDENT.getCode());
+		CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id, CrRole.TeamRoleGroup.STUDENT);
 
 		CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
 				CrRoleContext.class);

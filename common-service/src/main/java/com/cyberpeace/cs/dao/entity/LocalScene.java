@@ -2,17 +2,13 @@ package com.cyberpeace.cs.dao.entity;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.common.model.CommonContext;
-
+import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
 
@@ -108,80 +104,98 @@ public class LocalScene extends BaseTable {
 	 * json格式。
 	 * 目前保存appResourceId
 	 * {
-	 *     "app_resource_id":"abcd"
+	 * "app_resource_id":"abcd"
 	 * }
-	 *
+	 * <p>
 	 * app_resource_id用于前端页面场景小球的路由。对于靶场而言=业务实例id；
 	 * 实训习题=习题编号
 	 * 实训课时=course_id/lesson_id
-	 * 实训课后联系=course_id/lesson_id/paper_id 
+	 * 实训课后联系=course_id/lesson_id/paper_id
 	 */
 	private String meta;
 
 	public enum SceneStatusEnum implements GenericEnum {
 
-		INIT(0, "未启动"), START(1, "启动"), DESTROY(2, "删除"), PAUSE(3, "暂停");
+		/***/
+		INIT(0, "未启动"),
+		START(1, "启动"),
+		DESTROY(2, "删除"),
+		PAUSE(3, "暂停");
 
 		@Getter
-		private Integer code;
+		private final Integer code;
 
 		@Getter
-		private String desc;
+		private final String desc;
 
-		private SceneStatusEnum(Integer code, String desc) {
+		SceneStatusEnum(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}
 
 	}
 
-	public enum BusinessCode implements GenericEnum {
-
-		DEFAULT(0, "默认"), PRACTICE(110, "练习"), LESSON(120, "课程"), CLASSROOM(121, "课程表"), EXAM(130,
-				"考试"), LESSON_PRACTICE(140, "课程练习"), SINGLE_TRAINING(211, "单兵训练"), LIVE_VULN(212,
-						"漏洞"), TEAM_TRAINING(213, "团队训练"), RED_VS_BLUE(214, "红蓝对抗"), WEAPON_TEST(
-								216, "武器"), SYSTEM_TEST(217, "系统"), SOFTWARE_TEST(221,
-										"软件测试"), TEST_SCENE(222, "后台测试"), COURSE_TRAINING(150,
-												"课程训练"), SKILLS_ASSESSMENT(231,
-														"技能评估"), TACTICAL_ASSESSMENT(232,
-																" 战术评估"), COMPREHENSIVE_ASSESSMENT(
-																		233,
-																		"综合评估"), TACTICAL_TRAINING(
-																				234,
-																				"战术训练"), COMPREHENSIVE_TRAINING(
-																						235,
-																						"综合训练");
+	public enum BusinessCode implements GenericEnum, BaseI18n {
+		/***/
+		DEFAULT(0, "默认"),
+		PRACTICE(110, "练习"),
+		LESSON(120, "课程"),
+		CLASSROOM(121, "课程表"),
+		EXAM(130, "考试"),
+		LESSON_PRACTICE(140, "课程练习"),
+		SINGLE_TRAINING(211, "单兵训练", "Individual Training"),
+		LIVE_VULN(212, "漏洞"),
+		TEAM_TRAINING(213, "团队训练", "Team Training"),
+		RED_VS_BLUE(214, "红蓝对抗", "Cyber Wargame"),
+		WEAPON_TEST(216, "武器"),
+		SYSTEM_TEST(217, "系统"),
+		SOFTWARE_TEST(221, "软件测试"),
+		TEST_SCENE(222, "后台测试"),
+		COURSE_TRAINING(150, "课程训练"),
+		SKILLS_ASSESSMENT(231, "技能评估"),
+		TACTICAL_ASSESSMENT(232, " 战术评估"),
+		COMPREHENSIVE_ASSESSMENT(233, "综合评估"),
+		TACTICAL_TRAINING(234, "战术训练"),
+		COMPREHENSIVE_TRAINING(235, "综合训练");
 
 		@Getter
-		private Integer code;
+		private final Integer code;
 
-		private String desc;
+		@Getter
+		private final String chinese;
+
+		@Getter
+		private final String english;
 
 		@Override
 		public String getDesc() {
-			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-				return this.name();
-			} else {
-				return desc;
-			}
+			return getMsg();
 		}
 
-		BusinessCode(Integer code, String desc) {
+		BusinessCode(Integer code, String chinese) {
 			this.code = code;
-			this.desc = desc;
+			this.chinese = chinese;
+			this.english = this.name();
+		}
+
+		BusinessCode(Integer code, String chinese, String english) {
+			this.code = code;
+			this.chinese = chinese;
+			this.english = english;
 		}
 
 	}
 
 	public enum DestroyMode implements GenericEnum {
-
-		MANUAL(1, "手动销毁"), AUTO(2, "自动销毁");
-
-		@Getter
-		private Integer code;
+		/***/
+		MANUAL(1, "手动销毁"),
+		AUTO(2, "自动销毁");
 
 		@Getter
-		private String desc;
+		private final Integer code;
+
+		@Getter
+		private final String desc;
 
 		DestroyMode(Integer code, String desc) {
 			this.code = code;

@@ -33,6 +33,7 @@ import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
@@ -122,10 +123,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		room.setIsFinish(false);
 
 		// setup single role
-		CrRole singleRole = new CrRole(CrRole.SingleRoleGroupCode.name,
-				CrRole.SingleRoleGroupCode.roleGroup);
+		CrRole singleRole = new CrRole(CrRole.SINGLE_ROLE_GROUP_NAME, CrRole.SINGLE_ROLE_GROUP_CODE);
 		singleRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
-		singleRole.setUserIds(JsonUtil.toJsonString(Lists.newArrayList(userId)));
+		singleRole.setUserIdList(Lists.newArrayList(userId));
 
 		// 开启场景
 		LocalScene localScene = createLocalScene(businessTemplate);
@@ -668,9 +668,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(),
 				userId);
 		if (crRole == null) {
-			throw new BusinessException(null);
+			throw new BusinessException();
 		}
-		Map<String, Mission> missionMap = getMissionMapByScheme(crRole.getMissionScheme());
+		Map<String, Mission> missionMap = getMissionMapByScheme(crRole.getMissionStageSchemes());
 
 		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(),
 				JSONObject.class);
@@ -838,7 +838,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(),
 				userId);
 		if (crRole == null) {
-			throw new BusinessException(null);
+			throw new BusinessException();
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -847,7 +847,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				// 任务提交, 评分
 				Integer score = crTaskService.batchSubmitMissions(singleRoom.getResourceId(),
-						missionService.getMissionIdsByScheme(crRole.getMissionScheme()),
+						missionService.getMissionIdsByScheme(crRole.getMissionStageSchemes()),
 						userAnswer);
 
 				// 写入训练记录
@@ -868,8 +868,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return singleRoom.getResourceId();
 	}
 
-	private Map<String, Mission> getMissionMapByScheme(String missionScheme) {
-		List<String> missionIds = missionService.getMissionIdsByScheme(missionScheme);
+	private Map<String, Mission> getMissionMapByScheme(List<MissionStageScheme> missionStageSchemes) {
+		List<String> missionIds = missionService.getMissionIdsByScheme(missionStageSchemes);
 
 		if (missionIds.isEmpty()) {
 			return Maps.newHashMap();

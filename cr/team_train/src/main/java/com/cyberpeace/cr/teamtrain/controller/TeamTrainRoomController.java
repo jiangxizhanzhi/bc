@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -286,6 +285,8 @@ public class TeamTrainRoomController {
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
+		crRoleService.checkPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
 
 		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
@@ -311,8 +312,8 @@ public class TeamTrainRoomController {
 		List<TeamRoomRoleRes> teamRoomRoleResList = Lists.newArrayList();
 		for (CrRole crRole : crRoles) {
 			TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
-			teamRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIds()));
-			teamRoomRoleRes.setUsers(JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class));
+			teamRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIdList()));
+			teamRoomRoleRes.setUsers(crRole.getUserIdList());
 
 			teamRoomRoleRes.setTrainingTeam(crRole.getRoomId());
 			teamRoomRoleResList.add(teamRoomRoleRes);
@@ -370,8 +371,7 @@ public class TeamTrainRoomController {
 			List<TeamRoomRoleRes> rolesData = Lists.newArrayList();
 			crRoles.forEach(crRole -> {
 				TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
-				teamRoomRoleRes
-						.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIds()));
+				teamRoomRoleRes.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList()));
 			});
 
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
@@ -409,8 +409,7 @@ public class TeamTrainRoomController {
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
 						: OperationType.START;
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName(),
-				CommonContext.getLanguage());
+				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName());
 		return new BaseRsp<>(map);
 	}
 
@@ -518,7 +517,7 @@ public class TeamTrainRoomController {
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userId)) {
+			if (crRole.containsUser(userId)) {
 				baseRole.setResourceId(crRole.getResourceId());
 				baseRole.setName(crRole.getName());
 
@@ -535,19 +534,18 @@ public class TeamTrainRoomController {
 		BaseRole baseRole = new BaseRole();
 		List<RoleUsers> roleUsersList = Lists.newArrayList();
 		crRoles.forEach(crRole -> {
-			if (crRole.getUserIds().contains(userId)) {
+			if (crRole.containsUser(userId)) {
 				baseRole.setResourceId(crRole.getResourceId());
 				baseRole.setName(crRole.getName());
 
 				baseRole.setDescription(crRole.getDescription());
 				baseRole.setRoleGroup(crRole.getRoleGroup());
 			}
-			if (crRole.getRoleGroup().intValue() != CrRole.TeamRoleGroupCode.TEACHER.getCode()) {
+			if (crRole.isTeamStudent()) {
 				RoleUsers roleUsers = new RoleUsers();
 				roleUsers.setRoleName(crRole.getName());
 				roleUsers.setRoleGroup(crRole.getRoleGroup());
-				String userNamesByRoleUsers = crRoleService
-						.getUserNamesByRoleUsers(crRole.getUserIds());
+				String userNamesByRoleUsers = crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList());
 				roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
 				roleUsersList.add(roleUsers);
 			}

@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.cs.service.UtilService;
 import com.google.common.collect.Lists;
@@ -247,6 +248,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
 	public BaseRsp importCourse(@Validated LoadCourseReq loadCourseReq) {
+		FileUtil.validateFileSuffix(loadCourseReq.getFile().getOriginalFilename(), FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
+
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
 				false, loadCourseReq.getFile(), true);
 		String realPath = utilService.getRealPath(attachmentBo.getFilePath());

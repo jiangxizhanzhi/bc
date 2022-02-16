@@ -3,7 +3,7 @@ package com.cyberpeace.cr.redvsblue.service.context.room;
 import java.util.List;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
-
+import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
 
@@ -16,19 +16,29 @@ public class DashboardFriend {
 
 	private List<DashboardUser> list;
 
-	public enum GROUP_NAME implements GenericEnum {
+	public enum GROUP_NAME implements GenericEnum, BaseI18n {
 
-		FRIEND_LIST(1, "好友列表");
-
-		@Getter
-		private Integer code;
+		/***/
+		FRIEND_LIST(1, "好友列表", "Friends List");
 
 		@Getter
-		private String desc;
+		private final Integer code;
 
-		GROUP_NAME(Integer code, String desc) {
+		@Getter
+		private final String chinese;
+
+		@Getter
+		private final String english;
+
+		@Override
+		public String getDesc() {
+			return getMsg();
+		}
+
+		GROUP_NAME(Integer code, String desc, String enDesc) {
 			this.code = code;
-			this.desc = desc;
+			this.chinese = desc;
+			this.english = enDesc;
 		}
 	}
 }

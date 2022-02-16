@@ -11,7 +11,7 @@ public interface RemoteLogService {
 	 */
 
 	void addCrLog(UserInfo userInfo, OperationModule operationModule, OperationType operationType,
-			String operationTarget, String language);
+			String operationTarget);
 
 	void addOjLog(UserInfo userInfo, OperationModule operationModule, OperationType operationType,
 			String operationTarget, String content);

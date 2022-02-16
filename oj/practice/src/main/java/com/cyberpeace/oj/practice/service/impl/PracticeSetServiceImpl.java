@@ -1,66 +1,52 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.component.ExcelDataHandler;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import com.cyberpeace.oj.practice.dao.context.SetListQuery;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.cyberpeace.oj.practice.service.PracticeCategoryService;
-import com.cyberpeace.oj.practice.service.PracticeOperationService;
-import com.cyberpeace.oj.practice.service.PracticeSetService;
-import com.cyberpeace.oj.practice.service.PracticeTheoryService;
-import com.cyberpeace.oj.practice.service.bo.*;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.PatternMatchUtils;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
+import com.cyberpeace.oj.practice.dao.context.SetListQuery;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -93,15 +79,6 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
-	@Autowired
-	private LocalSceneService localSceneService;
-
-	@Autowired
-	private AttachmentService attachmentService;
-
-	@Autowired
-	private PracticeCategoryService practiceCategoryService;
-
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
 
@@ -128,7 +105,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		if (CollectionUtils.isEmpty(accessSetIds) || !accessSetIds.contains(resourceId)) {
 			log.error("This set not permission! practice_set_id=[{}]", resourceId);
-			throw new InvalidParamException("非法操作！");
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 	}
 
@@ -202,13 +179,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		String categoryId = practiceSetMapper.selectByName(practiceSet.getName());
 		// 名称校验
 		if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(existSet.getResourceId())) {
-			throw new InvalidParamException("习题集名称已存在！");
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 
 		// 类型校验 防止习题集类型改变
 		if (null != practiceSet.getPracticeType()) {
 			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()) {
-				throw new InvalidParamException("非法操作,习题集下存在不兼容类型习题！");
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_TYPE_ERROR);
 			}
 		}
 
@@ -226,7 +203,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			PracticeSet practiceSet = practiceSetMapper.selectById(setId);
 			List<String> practiceIds = hasPractice(practiceSet, authContext);
 			if (CollectionUtils.isNotEmpty(practiceIds)) {
-				throw new InvalidParamException("习题集[" + practiceSet.getName() + "]下存在习题！");
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
 			}
 		}
 	}
@@ -273,12 +250,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				log.error("Parse ctf practice fail! ctf_practice_path=[{}], catch error:",
 						ctfPracticeDir, e);
 
-				if (e.getMessage().equals(OjBusinessErrorCode.NAME_IS_EXIST)) {
+				if (OjBusinessErrorCode.NAME_IS_EXIST.equals(e.getMessage())) {
 					existOperations.add(ctfPracticeDir);
 					continue;
 				}
 
-				throw new BusinessException(e.getMessage());
+				throw e;
 
 			}
 		}
@@ -333,6 +310,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				});
 
 		String dataPath = destDir + File.separatorChar + ResourceImportConstant.DATA_JSON;
+		FileUtil.mkdirs(destDir);
 		FileUtil.writeToDestFile(JsonUtil.arrayToString(setDumpLoadBos), dataPath);
 
 		// 压缩当前文件夹
@@ -495,14 +473,17 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		PracticeSetDumpLoadBo setDumpLoadBo = BeanUtils.copy(practiceSet,
 				PracticeSetDumpLoadBo.class);
 		// logo文件copy
-		String realPath = utilService.getRealPath(practiceSet.getLogo());
-		String fileName = FileUtil.getFileName(realPath, true);
-		String newName = FileUtil.getNewName(fileName);
-		String destLogoPath = fileStorePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
-		FileUtil.copyFile(realPath, destLogoPath, false);
+		if (StringUtils.isNotBlank(practiceSet.getLogo())) {
+			String realPath = utilService.getRealPath(practiceSet.getLogo());
+			String fileName = FileUtil.getFileName(realPath, true);
+			String newName = FileUtil.getNewName(fileName);
+			String destLogoPath = fileStorePath + CommonConstant.LEFT_OBLIQUE_LINE + newName;
+			FileUtil.copyFile(realPath, destLogoPath, false);
 
-		String logoRelativePath = destLogoPath.replace(fileStorePath, CommonConstant.EMPTY_STRING);
-		filePathMap.put(practiceSet.getLogo(), logoRelativePath);
+			String logoRelativePath = destLogoPath.replace(fileStorePath,
+					CommonConstant.EMPTY_STRING);
+			filePathMap.put(practiceSet.getLogo(), logoRelativePath);
+		}
 
 		return setDumpLoadBo;
 	}
@@ -541,8 +522,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 数据查询
 		List<String> operationIds = practiceOperationMapper
 				.selectBySetIds(Lists.newArrayList(practiceSetId), false);
-		List<PracticeOperation> operationList = practiceOperationMapper
-				.selectBatchIds(operationIds);
+
+		List<PracticeOperation> operationList = Lists.newArrayList();
+		if (!operationIds.isEmpty()) {
+			operationList = practiceOperationMapper.selectBatchIds(operationIds);
+		}
 
 		// 数据转换
 		return StreamApiUtils.map(operationList, operation -> practiceOperationService
@@ -558,7 +542,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 数据查询
 		List<String> theoryIds = practiceTheoryMapper
 				.selectBySetIds(Lists.newArrayList(practiceSetId), false);
-		List<PracticeTheory> practiceTheories = practiceTheoryMapper.selectBatchIds(theoryIds);
+
+		List<PracticeTheory> practiceTheories = Lists.newArrayList();
+		if (!theoryIds.isEmpty()) {
+			practiceTheories = practiceTheoryMapper.selectBatchIds(theoryIds);
+		}
 
 		// 数据转换
 		return StreamApiUtils.map(practiceTheories,

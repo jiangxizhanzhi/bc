@@ -94,6 +94,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public Integer batchSubmitMissions(String roomId, List<String> missionIds,
 			Map<String, String> answer) {
+		if(missionIds.size()==0){
+			return 0;
+		}
+
 		Map<String, Mission> missionMap = StreamApiUtils.toMap(
 				missionMapper.selectBatchIds(missionIds), MissionBase::getResourceId,
 				mission -> mission);
@@ -110,7 +114,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			Mission mission = missionMap.get(key);
 			CrTask crTask = crTaskMap.get(key);
 			if (mission == null || crTask == null) {
-				throw new BusinessException(null);
+				throw new BusinessException();
 			}
 
 			CrTaskSubmit crTaskSubmit = new CrTaskSubmit();

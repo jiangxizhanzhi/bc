@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +54,8 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		try {
 			Files.copy(file, newFile);
 		} catch (IOException e) {
-			throw new BusinessException("复制文件失败: " + filePath + " ,to:" + fullPath);
+			throw new BusinessException(ErrorCode.FAILED_TO_COPY_FILE);
+			//("复制文件失败: " + filePath + " ,to:" + fullPath);
 		}
 
 		return newToolFile(fileName, fileName);
@@ -75,7 +77,7 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 			// 保存文件
 			log.error("[TOOL]save file{} to {} path error: {}", multipartFile.getOriginalFilename(), uploadPath,
 					e.getMessage());
-			throw new BusinessException("保存文件失败");
+			throw new BusinessException(ErrorCode.FAILED_TO_SAVE_FILE);
 		}
 
 		return newToolFile(multipartFile.getOriginalFilename(), newFile.getName());

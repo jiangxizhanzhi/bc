@@ -1,10 +1,10 @@
 package com.cyberpeace.common.util;
 
-import com.cyberpeace.common.baseinterface.GenericEnum;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.cyberpeace.common.baseinterface.GenericEnum;
 
 public class EnumUtils {
 

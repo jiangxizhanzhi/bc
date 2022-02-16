@@ -18,17 +18,13 @@ import java.util.List;
 @Component("rbChatHandlerImpl")
 public class RbChatHandlerImpl extends ChatWebSocketHandler {
 
-	public final static List<Integer> roleAdminGroups = new ArrayList<>(
-			Arrays.asList(CrRole.RbRoleGroupCode.ADMIN.getCode(),
-					CrRole.RbRoleGroupCode.REFEREE.getCode(),
-					CrRole.RbRoleGroupCode.DIRECTOR.getCode()));
-
 	private final static String SIGN = "_";
 
 	@Autowired
 	private CrRoleService crRoleService;
 
 
+	@Override
 	public Integer declareMessageType() {
 		return BusinessTemplate.BusinessType.RED_VS_BLUE.getCode();
 	}
@@ -50,8 +46,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 		List<String> userIds = Lists.newArrayList();
 
 		for (CrRole role: rolesByRoom) {
-			List<String> roleUserIds = JsonUtil.toJsonObjectArray(role.getUserIds(),
-					String.class);
+			List<String> roleUserIds = role.getUserIdList();
 
 			if (role.getRoleGroup().toString().equals(parentGroupId)){
 				userIds.addAll(roleUserIds);
@@ -59,7 +54,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 			}
 
 			// 管理员全部加入
-			if (roleAdminGroups.contains(role.getRoleGroup())) {
+			if (role.isRvbStaff()) {
 				userIds.addAll(roleUserIds);
 			}
 
@@ -73,9 +68,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 		if (crRole == null) {
 			return Lists.newArrayList();
 		}
-
-		return JsonUtil.toJsonObjectArray(crRole.getUserIds(),
-				String.class);
+		return crRole.getUserIdList();
 	}
 
 	@Override
@@ -86,23 +79,22 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 		boolean isRoleAdmin = Boolean.FALSE;
 
 		for (CrRole role: rolesByRoom) {
-			List<String> roleUserIds = JsonUtil.toJsonObjectArray(role.getUserIds(),
-					String.class);
+			List<String> roleUserIds = role.getUserIdList();
 			allUserIds.addAll(roleUserIds);
 
 			// 当前用户是管理员，获取所有用户信息
-			if (roleAdminGroups.contains(role.getRoleGroup()) && role.getUserIds().contains(userId)) {
+			if (role.isRvbStaff() && role.containsUser(userId)) {
 				isRoleAdmin = Boolean.TRUE;
 			}
 
 			// 包含就加入，当前用户是普通用户，获取管理组所有人员+本组所有人员
-			if(role.getUserIds().contains(userId)) {
+			if(role.containsUser(userId)) {
 				userIds.addAll(roleUserIds);
 				continue;
 			}
 
 			// 管理员全部加入
-			if (roleAdminGroups.contains(role.getRoleGroup())) {
+			if (role.isRvbStaff()) {
 				userIds.addAll(roleUserIds);
 			}
 		}
@@ -118,12 +110,8 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 		List<String> userIds = Lists.newArrayList();
 
 		for (CrRole role: rolesByRoom) {
-			List<String> roleUserIds = JsonUtil.toJsonObjectArray(role.getUserIds(),
-					String.class);
-
+			List<String> roleUserIds = role.getUserIdList();
 			userIds.addAll(roleUserIds);
-
-
 		}
 
 		return userIds.contains(userId);

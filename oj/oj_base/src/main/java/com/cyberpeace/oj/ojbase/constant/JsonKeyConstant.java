@@ -17,6 +17,8 @@ public interface JsonKeyConstant {
 	/**  场景类型 对应LocalScene.SceneStatusEnum枚举值*/
 	String REFERENCE_TYPE = "reference_type";
 
+	String ENABLE_RECORDING = "enable_recording";
+
 	/** 返回数据体*/
 	String DATA = "data";
 
@@ -55,5 +57,8 @@ public interface JsonKeyConstant {
 
 	/** 习题类型*/
 	String PRACTICE_KEY = "practice";
+
+	/** 录屏*/
+	String SCREEN_RECORDING = "screen_recording";
 
 }

@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 
 public interface MissionService extends IService<Mission> {
 
@@ -140,5 +141,5 @@ public interface MissionService extends IService<Mission> {
 
 	List<Mission> batchGetByRoomAndCrRoles(String roomId, List<CrRole> crRoleList);
 
-	List<String> getMissionIdsByScheme(String missionScheme);
+	List<String> getMissionIdsByScheme(List<MissionStageScheme> missionStageSchemes);
 }

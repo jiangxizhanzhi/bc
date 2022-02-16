@@ -29,7 +29,7 @@ public class Flow implements Serializable {
 	@ApiModelProperty("交互类型 0:背景流量， 1：攻击流量，2：全流量")
 	private Integer interactiveType;
 
-	@ApiModelProperty("流量状态 -1：场景未开启 0：初始化，1：正在运行，2：正在停止， 3：已停止")
+	@ApiModelProperty("流量状态")
 	private Integer status;
 
 	@ApiModelProperty("状态描述")

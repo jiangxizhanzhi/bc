@@ -9,9 +9,9 @@ import javax.validation.constraints.NotEmpty;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -38,7 +38,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
@@ -183,6 +182,8 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@ApiOperation("习题集资源数据导入")
 	@PostMapping("/batch_loads")
 	public BaseRsp importPracticeSet(@Validated LoadResourceReq loadReq) {
+
+		FileUtil.validateFileSuffix(loadReq.getFile().getOriginalFilename(), FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
 
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),

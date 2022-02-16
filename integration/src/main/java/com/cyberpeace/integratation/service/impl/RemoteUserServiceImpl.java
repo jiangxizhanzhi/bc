@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +22,7 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -134,33 +134,15 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return result;
 	}
 
+	/**
+	 * 姓名、用户名模糊查询
+	 *
+	 * @param userPageContext
+	 * @return
+	 */
 	@Override
-	@Cacheable(cacheNames = "getLazyuser", key = "#userPageContext")
-	public List<UserInfo> getLazyUserList(UserPageContext userPageContext) {
-		List<UserInfo> userInfoList = new ArrayList<>();
-
-		if (userPageContext.getIds().length() > 0) {
-			List jsonArray = (List) HttpClientUtil
-					.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class)
-					.get("list");
-
-			for (Object object : jsonArray) {
-				userInfoList.add(userInfoFromJsonObject((JSONObject) object));
-			}
-		}
-
-		return userInfoList;
-	}
-
-  /**
-   * 姓名、用户名模糊查询
-   *
-   * @param userPageContext
-   * @return
-   */
-  @Override
-  @Cacheable(cacheNames = "getFuzzyQueryuser", key = "#userPageContext")
-  public List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext) {
+	@Cacheable(cacheNames = "getFuzzyQueryuser", key = "#userPageContext")
+	public List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 
 		List jsonArray = (List) HttpClientUtil
@@ -175,9 +157,15 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@Override
 	public List<UserInfo> getByIdList(List<String> ids) {
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", ids));
-		return getLazyUserList(userPageContext);
+		List<UserInfo> userInfoList = new ArrayList<>();
+
+		if (ids.size() > 0) {
+			UserPageContext userPageContext = new UserPageContext();
+			userPageContext.setIds(String.join(",", ids));
+			userInfoList = getFuzzyQueryUserList(userPageContext);
+		}
+
+		return userInfoList;
 	}
 
 	@Override

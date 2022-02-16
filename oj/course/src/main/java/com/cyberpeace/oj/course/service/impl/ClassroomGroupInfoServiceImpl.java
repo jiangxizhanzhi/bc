@@ -1,9 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.component.MyWebSocketHandler;
@@ -150,8 +147,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 		// 数据合并 数据类型转换
 		groupInfoList.addAll(updateGroups);
-		return StreamApiUtils.map(groupInfoList,
-				classroomGroupInfo -> entityTBo(classroomGroupInfo));
+		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
+				ClassroomGroupInfo::getGroupNo);
+		return StreamApiUtils.map(sorted, classroomGroupInfo -> entityTBo(classroomGroupInfo));
 	}
 
 	@Override
@@ -212,7 +210,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			}
 		});
 
-		return StreamApiUtils.map(groupInfoList, groupInfo -> entityTBo(groupInfo));
+		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
+				ClassroomGroupInfo::getGroupNo);
+		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo));
 	}
 
 	@Override
@@ -282,7 +282,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			}
 		});
 
-		return StreamApiUtils.map(groupInfoList, groupInfo -> entityTBo(groupInfo));
+		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
+				ClassroomGroupInfo::getGroupNo);
+		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo));
 	}
 
 	/**
@@ -324,6 +326,11 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			// 需要更新的场景数据
 			if (null != ojLocalScene) {
 				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+
+				if (!end) {
+					localScene.setStartTime(new Date());
+				}
+
 				localScene.setEndTime(!end ? TimeUtil.addHours(localScene.getStartTime(),
 						courseLesson.getDestroyDelay()) : null);
 				localScene.setSceneTtl(
@@ -376,7 +383,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		identifier.setUserId(ojLocalScene.getUserId());
 
 		JSONObject data = new JSONObject();
-		data.put(JsonKeyConstant.CODE, OjEvent.SCENE_CREATE_SYNC);
+		data.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC.getCode());
 		data.put(JsonKeyConstant.DATA, CommonConstant.EMPTY_STRING);
 
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext

@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -80,9 +81,21 @@ public class CourseValidateHandler {
 	 * @return
 	 */
 	public void validateCoursePermission(String courseId, AuthContext authContext) {
+
+		// 查询授权
 		List<String> authIds = courseMapper.selectByAuth(authContext);
-		if (!authIds.contains(courseId)) {
-			log.error("Course not permission! course_id=[{}]", courseId);
+		if (CollectionUtils.isEmpty(authIds)) {
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		// 查询公开
+		List<String> publicIds = courseMapper.selectIdsByCategory(authIds, null,
+				authContext.getIsWeb());
+		if (CollectionUtils.isEmpty(publicIds)) {
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+		}
+
+		if (!publicIds.contains(courseId)) {
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 	}
@@ -94,8 +107,10 @@ public class CourseValidateHandler {
 	 * @return
 	 */
 	public CourseLesson validateLessonPermission(String lessonId, AuthContext authContext) {
+
 		CourseLesson courseLesson = courseLessonMapper.selectByPublic(lessonId,
 				authContext.getIsWeb());
+		validateCoursePermission(courseLesson.getCourseId(), authContext);
 		if (null == courseLesson) {
 			log.error("Lesson not public! lesson_id=[{}]", lessonId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
@@ -220,5 +235,15 @@ public class CourseValidateHandler {
 		}
 
 		return category;
+	}
+
+	/**
+	 * 分类名称长度校验
+	 * @param name
+	 */
+	public void categoryNameLengthValidate(String name) {
+		if (name.length() > 64) {
+			throw new BusinessException(OjBusinessErrorCode.FIELD_TOO_LONG);
+		}
 	}
 }

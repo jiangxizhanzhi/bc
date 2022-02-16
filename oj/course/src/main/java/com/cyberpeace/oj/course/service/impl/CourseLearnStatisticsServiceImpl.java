@@ -123,6 +123,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		Map<String, AdminLessonStatisticsRes> resMap = lessonPractices.stream().collect(
 				Collectors.toMap(AdminLessonStatisticsRes::getResourceId, record -> record));
 		List<AdminLessonStatisticsRes> res = rsp.getRecords().stream().map(rspRecord -> {
+
 			AdminLessonStatisticsRes adminLessonStatisticsRes = resMap
 					.get(rspRecord.getResourceId());
 			if (null == adminLessonStatisticsRes) {
@@ -145,24 +146,22 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	public ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
 																		  String lessonId, String usernameLike, Page page, String sort) {
 		List<String> userIds = new ArrayList<>();
-		// 根据组织id获取userids
+		// 根据用户名pattern + 组织id获取userids
 		if (StringUtils.isNotEmpty(organizationId)) {
 			if (organizationId.equals("all")) {
 				organizationId = "";
 			}
-			JSONObject userJsons = remoteUserService.getList(0L, 0L, "", organizationId);
+			JSONObject userJsons = remoteUserService.getList(null, 0L, null, organizationId);
 			List<UserInfo> users = userJsons.getJSONArray("list").toJavaList(UserInfo.class);
+			if (StringUtils.isNotEmpty(usernameLike) && StringUtils.isNotBlank(usernameLike)) {
+				users = StreamApiUtils.filter(users,
+						userInfo -> StringUtils.isBlank(usernameLike)
+								|| userInfo.getUserName().contains(usernameLike)
+								|| userInfo.getName().contains(usernameLike));
+			}
 			userIds = StreamApiUtils.map(users, UserInfo::getUserId);
 		}
 
-		// 根据用户名pattern获取userids
-		if (StringUtils.isNotEmpty(usernameLike)) {
-			UserPageContext userPageContext = new UserPageContext();
-			userPageContext.setUsername(usernameLike);
-			userPageContext.setIds(String.join(",", userIds));
-			List<UserInfo> lazyUserList = remoteUserService.getLazyUserList(userPageContext);
-			userIds = StreamApiUtils.map(lazyUserList, UserInfo::getUserId);
-		}
 		if (userIds.size() == 0){
 			return PageUtil.getListResult(null);
 		}
@@ -182,6 +181,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			String createUser = data.getCreateUser();
 			UserInfo userInfo = remoteUserService.getById(createUser);
 			data.setCreateUser(userInfo.getUserName());
+			data.setOrganizationName(userInfo.getOrganizationData());
 			return data;
 		}).collect(Collectors.toList());
 		learnedUsers.setRecords(res);

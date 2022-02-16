@@ -1,5 +1,19 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.RemoteServiceException;
@@ -13,6 +27,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
@@ -24,22 +39,11 @@ import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 @Api(tags = "单兵训练评分")
 @RestController
@@ -72,14 +76,13 @@ public class SingleRoomScoreController {
 	@GetMapping("/history_detail")
 	public BaseRsp<JSONObject> getHistoryDetail(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SingleRoleGroupCode.roleGroup);
+		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SINGLE_ROLE_GROUP_CODE);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
-				crRoleList);
+		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id, crRoleList);
 
 		// 单兵训练仅有一个用户, 角色仅关联一个用户
-		String user_hash = JsonUtil.stringToArray(crRoleList.get(0).getUserIds()).toJavaList(String.class).get(0);
+		String user_hash = crRoleList.get(0).getUserIdList().get(0);
 
 		List<Integer> radars = crRoleService.getRadar(resource_id, user_hash);
 
@@ -88,14 +91,15 @@ public class SingleRoomScoreController {
 
 		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
 		List<StageExport> StageExports = getStageExports(missionSchemeList);
+		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
 
 		JSONObject data = new JSONObject();
 		data.put("task_count", gettaskCount(missionReport));
 		data.put("radar", radars);
 		data.put("stages", StageExports);
 		data.put("total_score", studentScoreRsp.getTrainingScore().getSumScoreObjective());
-
-		data.put("create_time", trainRecordService.getByRoomId(resource_id).getEndTime());
+		data.put("create_time", trainRecord.getEndTime());
+		data.put("title", crScoreController.getTitle(trainRecord.getRoomName()));
 		data.put("resource_id", resource_id);
 		data.put("score", studentScoreRsp.getTrainingScore().getGetScoreObjective());
 
@@ -103,15 +107,12 @@ public class SingleRoomScoreController {
 		UserInfo userInfo = remoteUserService.getById(user_hash);
 		data.put("user_id", userInfo.getUserId());
 		data.put("username", userInfo.getUserName());
-		data.put("title", crScoreController.getTitle(userInfo.getUserName()));
 		// 获取用户LOGO todo 当前页面未展示
 		try {
-			data.put("user_logo",
-					mpEnvService.getMpHost() + userInfo.getAvatarUrl());
+			data.put("user_logo", mpEnvService.getMpHost() + userInfo.getAvatarUrl());
 		} catch (Exception e) {
 			throw new RemoteServiceException();
 		}
-
 
 		return new BaseRsp(data);
 	}
@@ -125,17 +126,16 @@ public class SingleRoomScoreController {
 		data.put("radarLabels", radarLabels);
 		data.put("locale", crScoreController.getTemplateI18n());
 
-		Path destHtmlPathObj = Paths.get(
-				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
-				String.format("%s-%s", roomId, data.getString("user_id")),
-				"report.html"
-		);
+		Path destHtmlPathObj = Paths.get(AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
+				String.format("%s-%s", roomId, data.getString("user_id")), String.format("%s.html", roomId));
 		// 临时存放目录
 		File directory = destHtmlPathObj.getParent().toFile();
 		if (!directory.exists()) {
 			boolean isCreated = directory.mkdirs();
 			if (!isCreated) {
-				throw new RuntimeException(String.format("TMP directory [%s] create failed, maybe without permission.", directory.getPath()));
+				throw new RuntimeException(
+						String.format("TMP directory [%s] create failed, maybe without permission.",
+								directory.getPath()));
 			}
 		}
 		String destHtmlPath = destHtmlPathObj.toString();

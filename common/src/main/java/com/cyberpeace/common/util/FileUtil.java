@@ -95,12 +95,14 @@ public class FileUtil {
 		} catch (Exception e) {
 			// 文件读取失败
 			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
-			throw new RuntimeException();
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
 		} finally {
 			try {
 				br.close();
 			} catch (IOException e) {
 				// 不做任何处理
+			} catch (NullPointerException e) {
+				// 对象未创建空指针异常捕获，不做任何处理
 			}
 		}
 	}

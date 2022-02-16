@@ -1,12 +1,15 @@
 package com.cyberpeace.common.constant;
 
 import lombok.Getter;
+import org.springframework.util.ClassUtils;
+
+import java.io.File;
 
 public enum HtmlTemplateEnum {
-
-	INDIVIDUAL("index.html", "/cpms/html_template/RussiaCopy/Individual"),
-	REDBLUE("index.html", "/cpms/html_template/RussiaCopy/Team"),
-	TEAM("index.html", "/cpms/html_template/RussiaCopy/Team");
+	/** html模板枚举*/
+	INDIVIDUAL("index.html", "static/template/html_to_pdf_template/Individual"),
+	REDBLUE("index.html", "static/template/html_to_pdf_template/Team"),
+	TEAM("index.html", "static/template/html_to_pdf_template/Team");
 
 	@Getter
 	private String templatePath;
@@ -16,7 +19,8 @@ public enum HtmlTemplateEnum {
 
 	HtmlTemplateEnum(String templateName, String templatePath) {
 		this.templateName = templateName;
-		this.templatePath = templatePath;
+		this.templatePath = ClassUtils.getDefaultClassLoader().getResource("").getPath()
+				+ File.separatorChar + templatePath;
 	}
 
 }

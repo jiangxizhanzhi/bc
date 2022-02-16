@@ -14,6 +14,7 @@ import com.cyberpeace.cs.constant.SceneEventStatus;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.TopoSwitchRecordingContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -30,6 +31,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.UUIDEditor;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,23 +45,11 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
 public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjLocalScene> implements OjLocalSceneService {
-
-	private String FLAG_TEMPLATE;
-
-	@PostConstruct
-	public void init() {
-		String templateData = ConfigUtil.getContextProperty("oj.flag.template.data");
-		String flagPrefix = systemConfigService.getSystemConfig("flag_prefix");
-		FLAG_TEMPLATE = String.format(templateData, flagPrefix, "%s");
-	}
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
@@ -75,6 +65,9 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -112,7 +105,13 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 		// flag设置
 		if (sceneContext.getDynamicFlag()) {
-			String flag = String.format(FLAG_TEMPLATE, IDGeneratorUtil.getID());
+			String templateData = ConfigUtil.getContextProperty("oj.flag.template.data");
+			String flagPrefix = systemConfigService.getSystemConfig("flag_prefix");
+			String FLAG_TEMPLATE = String.format(templateData, flagPrefix, "%s");
+			String FLAG_LENGTH = systemConfigService.getSystemConfig("flag_length");
+
+			String flag = String.format(FLAG_TEMPLATE,
+					LocalStringUtil.getRandomStr(Integer.parseInt(FLAG_LENGTH)));
 			ojLocalScene.setFlags(JsonUtil.arrayToString(Arrays.asList(flag)));
 		} else {
 			ojLocalScene.setFlags(JsonUtil.toJsonString(sceneContext.getFlags()));
@@ -268,7 +267,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 
 				// 场景存活时间为空则代表不设置场景结束时间 目前仅存在于课堂设置场景延时则无倒计时
-				if (null != localScene.getSceneTtl()) {
+				if (null != localScene.getSceneTtl()
+						&& localScene.getSceneTtl() > CommonConstant.ZERO) {
 					localScene.setEndTime(
 							TimeUtil.addMins(localScene.getStartTime(), localScene.getSceneTtl()));
 				}
@@ -312,7 +312,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			log.error(
 					"checkSceneStartCount: Scene start greater limit count! start_scene=[{}], limit_scene=[{}]",
 					startCount, limitCount);
-			throw new InvalidParamException("场景数量启动启动过多！");
+			throw new BusinessException(OjBusinessErrorCode.SCENE_RUNNING_TOO_MUCH);
 		}
 
 	}
@@ -390,5 +390,11 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		});
 
 		return lessonMonitorBos;
+	}
+
+	@Override
+	public JSONObject switchScreenRecord(String topoId, Boolean record) {
+		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId, record);
+		return remoteTopoService.sync(JsonUtil.java2JsonObject(context));
 	}
 }

@@ -58,8 +58,7 @@ public class MissionTemplateReq implements Serializable {
 		// "invalid skill points size");
 		for (Integer skillPoint : skillPoints) {
 			CrCommonValidator.validateScore(skillPoint, CrCommonConstants.SKILL_POINT_MIN_VALUE,
-					CrCommonConstants.SKILL_POINT_MAX_VALUE,
-					"illegal skill point value, 1~5 expected");
+					CrCommonConstants.SKILL_POINT_MAX_VALUE, CrBusinessErrorCode.INVALID_SKILL_POINT_VALUE);
 		}
 
 		// validate score

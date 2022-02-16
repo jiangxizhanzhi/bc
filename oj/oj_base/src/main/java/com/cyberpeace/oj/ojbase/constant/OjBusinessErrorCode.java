@@ -55,4 +55,7 @@ public interface OjBusinessErrorCode {
 	/** 存在运行的场景*/
 	String SCENE_IS_RUNNING = "102016";
 
+	String SCENE_RUNNING_TOO_MUCH = "102017";
+
+	String FIELD_TOO_LONG = "102018";
 }

@@ -19,7 +19,7 @@ public class CrCommonValidator {
 			String targetStr = new String(target.getBytes("GBK"), "iso-8859-1");
 			int len = targetStr.length();
 			if (len < minLen || len > maxLen) {
-				throw new BusinessException(errorCode);
+				throw new BusinessException(errorCode, minLen, maxLen);
 			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

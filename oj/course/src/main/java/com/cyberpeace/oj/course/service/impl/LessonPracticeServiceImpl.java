@@ -7,6 +7,7 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.SystemConfigService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -286,7 +287,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(appResourceId)
 				.isWeb(ojLocalScene.getFromWeb()).build();
 
-		if (operation.getDynamicEnv() && operation.getDynamicFlag()) {
+		if (StringUtils.isNotBlank(operation.getTopoId())) {
 			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
 					topoData);
 			sceneMeta.setTopoData(dynamicFlag);

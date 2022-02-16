@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
@@ -64,9 +63,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public CrRoleContext<MissionContext> getRoles(String roomId, Integer roleCode) {
+	public CrRoleContext<MissionContext> getRoles(String roomId, CrRole.RoleGroup roleGroup) {
 		CrRoleContext<MissionContext> crRoleContext = new CrRoleContext();
-		RoleQuery roleQuery = new RoleQuery(roomId, roleCode);
+		RoleQuery roleQuery = new RoleQuery(roomId, roleGroup);
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
 		if (crRoles == null) {
@@ -91,7 +90,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			roleResData.setName(crRole.getName());
 			roleResData.setResourceId(crRole.getResourceId());
 			roleResData.setMissionsList(missionSchemeObjectList);
-			roleResData.setUsers(getUserByRoleUsers(crRole.getUserIds()));
+			roleResData.setUsers(getUserByRoleUsers(crRole.getUserIdList()));
 			roleResData.setUserIds(crRole.getUserIds());
 
 			roleResDataList.add(roleResData);
@@ -128,10 +127,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Override
 	public List<MissionSchemeObject<MissionContext>> getBaseMissionByRole(CrRole crRole) {
 		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = Lists.newArrayList();
-		List<MissionStageScheme> missionStageSchemeList = JsonUtil
-				.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
-
-		for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
+		for (MissionStageScheme missionStageScheme : crRole.getMissionStageSchemes()) {
 			List<Mission> missionList = missionService.batchGet(missionStageScheme.getMissions());
 
 			missionList.forEach(mission -> {
@@ -265,23 +261,17 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	@Override
 	public Integer getMissionCount(CrRole crRole) {
-		List<MissionStageScheme> missionStageSchemeList = JsonUtil
-				.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
-		Integer count = 0;
-		for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
+		int count = 0;
+		for (MissionStageScheme missionStageScheme : crRole.getMissionStageSchemes()) {
 			count += missionStageScheme.getMissions().size();
 		}
 		return count;
 	}
 
-	private List<NameElement> getUserByRoleUsers(String userIds) {
-
+	private List<NameElement> getUserByRoleUsers(List<String> userList) {
 		List<NameElement> userElements = Lists.newArrayList();
-		List<String> userList = JsonUtil.toJsonObjectArray(userIds, String.class);
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 		userInfoList.forEach(userInfo -> {
 			if (userList.contains(userInfo.getUserId())) {
 				NameElement nameElement = new NameElement();
@@ -295,14 +285,10 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public String getUserNamesByRoleUsers(String userIds) {
-
+	public String getUserNamesByRoleUsers(List<String> userList) {
 		List<String> userNames = Lists.newArrayList();
-		List<String> userList = JsonUtil.toJsonObjectArray(userIds, String.class);
 
-		UserPageContext userPageContext = new UserPageContext();
-		userPageContext.setIds(String.join(",", userList));
-		List<UserInfo> userInfoList = remoteUserService.getLazyUserList(userPageContext);
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 		userInfoList.forEach(userInfo -> {
 			if (userList.contains(userInfo.getUserId())) {
 				userNames.add(userInfo.getUserName());
@@ -317,8 +303,6 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		TaskCounter taskCounter = new TaskCounter();
 
 		CrRole crRole = getCrRoleByRoomIdAndUserId(roomId, studentId);
-		List<MissionStageScheme> missionStageSchemes = JsonUtil
-				.toJsonObjectArray(crRole.getMissionScheme(), MissionStageScheme.class);
 		Integer finished = 0;
 		Integer released = 0;
 		List<TaskContext> taskContextList = crTaskService.getByRoomIdAndUser(roomId, studentId);
@@ -333,7 +317,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		taskCounter.setFinished(finished);
 		taskCounter.setReleased(released);
 		int countMissions = 0;
-		for (MissionStageScheme missionStageScheme : missionStageSchemes) {
+		for (MissionStageScheme missionStageScheme : crRole.getMissionStageSchemes()) {
 			countMissions += missionStageScheme.getMissions().size();
 		}
 		taskCounter.setNotReleased(countMissions - finished - released);
@@ -342,10 +326,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public List<UserData> getUserDatas(String userIds) {
+	public List<UserData> getUserDatas(List<String> userIdList) {
 		List<UserData> userDataList = Lists.newArrayList();
-		List<UserInfo> userInfoList = remoteUserService
-				.getByIdList(JsonUtil.toJsonObjectArray(userIds, String.class));
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIdList);
 		for (UserInfo userInfo : userInfoList) {
 			UserData userData = new UserData();
 			userData.setResourceId(userInfo.getUserId());
@@ -360,7 +343,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	public List<CrRole> selectRbStudentsRoleByRoomId(String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();
 
-		for (Integer roleCode : CrRole.RB_STUDENT_ROLE_GROUPS) {
+		for (CrRole.RbRoleGroup roleCode : CrRole.RbRoleGroup.studentRoleGroups()) {
 			RoleQuery roleQuery = new RoleQuery(roomId, roleCode);
 			List<CrRole> crRoles = selectCrRoleByRoomId(roleQuery);
 			crRoleList.addAll(crRoles);
@@ -370,8 +353,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public Boolean clearRoomRoles(String roomId) {
-		return crRoleMapper.batchDeleteByRoomId(roomId);
+	public void clearRoomRoles(String roomId) {
+		crRoleMapper.batchDeleteByRoomId(roomId);
 	}
 
 	@Override
@@ -426,7 +409,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	@Override
 	public List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup) {
-		if (!CrRole.RB_STUDENT_ROLE_GROUPS.contains(roleGroup)) {
+		if (!CrRole.RbRoleGroup.isRvbStudentRole(roleGroup)) {
 			log.error("role does not exist！roleId=[{}]", roleGroup);
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
@@ -437,5 +420,15 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoles;
 	}
 
+	@Override
+	public void checkPermission(String roomId, String userId) {
+		CrRole crRole = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
+
+		if (crRole == null) {
+			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", roomId,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+	}
 
 }

@@ -3,9 +3,9 @@ package com.cyberpeace.cr.teamtrain.service.context;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-
 import lombok.Data;
 
 @Data
@@ -34,5 +34,13 @@ public class RoleListContext<T> implements Serializable {
 	private String type;
 
 	private ColorMission<T> missionsScheme;
+
+	public void setRoleGroup(Integer roleGroup) {
+		this.roleGroup = roleGroup;
+	}
+
+	public void setRoleGroup(CrRole.RoleGroup roleGroup) {
+		this.roleGroup = roleGroup.getCode();
+	}
 
 }

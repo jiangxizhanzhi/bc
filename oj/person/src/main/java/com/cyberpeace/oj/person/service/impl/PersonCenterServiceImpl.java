@@ -1,5 +1,15 @@
 package com.cyberpeace.oj.person.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -33,16 +43,9 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
-import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -52,25 +55,10 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 	private RemoteUserService remoteUserService;
 
 	@Autowired
-	private CommentMapper commentMapper;
-
-	@Autowired
-	private CourseLessonMapper courseLessonMapper;
-
-	@Autowired
-	private LessonRecordMapper lessonRecordMapper;
-
-	@Autowired
 	private CourseMapper courseMapper;
 
 	@Autowired
-	private ResourceCollectionMapper resourceCollectionMapper;
-
-	@Autowired
 	private PersonCenterMapper personCenterMapper;
-
-	@Autowired
-	private NoteMapper noteMapper;
 
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
@@ -157,9 +145,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		if (users.contains(userId)) {
 			StudyRecord practiceRecord = personCenterMapper.selectPracticeByUser(userId, lessonIds);
 			if (null != practiceRecord) {
-				int practiceCount = JSONArray.parseArray(practiceRecord.getRecord()).size();
+				int practiceCount = Integer.parseInt(practiceRecord.getRecord());
 				studyRecord.setPracticeFinishCount(practiceCount);
-				Integer score = practiceRecord.getScore();
+				double score = practiceRecord.getScore();
 				Integer practiceRanking = practiceRecord.getPracticeRanking();
 				studyRecord.setPracticeRanking(practiceRanking);
 				studyRecord.setScore(score);

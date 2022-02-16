@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
@@ -239,7 +240,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	private void ensureScenePaused(LocalScene localScene) {
 		if (!localScene.getSceneStatus().equals(LocalScene.SceneStatusEnum.PAUSE.getCode())) {
 			log.error("scene [{}] is not paused", localScene.getMpSceneId());
-			throw new BusinessException("scene [{}] is not paused");
+			throw new BusinessException(ErrorCode.NOT_PAUSED);
 		}
 	}
 

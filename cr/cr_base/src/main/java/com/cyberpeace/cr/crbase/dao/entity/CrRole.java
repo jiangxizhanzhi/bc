@@ -1,23 +1,23 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.constant.BaseI18n;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.google.common.collect.Lists;
-
 import lombok.Data;
 import lombok.Getter;
 
 /**
- * 
  * @TableName cr_role
  */
 @TableName(value = "cr_role")
@@ -80,8 +80,8 @@ public class CrRole extends BaseTable {
 	 */
 	private Integer businessType;
 
-	public CrRole(String role, Integer code) {
-		this.name = role;
+	public CrRole(String name, Integer code) {
+		this.name = name;
 		this.roleGroup = code;
 	}
 
@@ -89,80 +89,174 @@ public class CrRole extends BaseTable {
 
 	}
 
-	public enum TeamRoleGroupCode implements GenericEnum {
+	public void setRoleGroup(Integer roleGroup) {
+		this.roleGroup = roleGroup;
+	}
 
-		TEACHER(1, "教员"), STUDENT(2, "学员");
+	public List<String> getUserIdList() {
+		return JsonUtil.toJsonObjectArray(getUserIds(), String.class);
+	}
+
+	public boolean containsUser(String userId) {
+		return getUserIdList().contains(userId);
+	}
+
+	public void setUserIdList(List<String> userIdList) {
+		this.userIds = JsonUtil.toJsonString(userIdList);
+	}
+
+	public List<MissionStageScheme> getMissionStageSchemes() {
+		return JsonUtil.toJsonObjectArray(getMissionScheme(), MissionStageScheme.class);
+	}
+
+	public void setMissionStageSchemes(List<MissionStageScheme> missionStageSchemeList) {
+		this.missionScheme = JSONObject.toJSONString(missionStageSchemeList);
+	}
+
+	public CrRoleNodesData getNodeData(){
+		return JsonUtil.toJsonObject(getNodes(), CrRoleNodesData.class);
+	}
+
+	public void setNodesData(CrRoleNodesData nodesData){
+		this.nodes = JsonUtil.toJsonString(nodesData);
+	}
+
+
+	public interface RoleGroup {
+		/**
+		 * 角色类型数字代码
+		 */
+		Integer getCode();
+	}
+
+	public void setRoleGroup(RoleGroup roleGroup) {
+		this.roleGroup = roleGroup.getCode();
+	}
+
+	/**
+	 * 团队训练
+	 */
+
+	public boolean isTeamRole() {
+		return BusinessTemplate.BusinessType.TRAINING_TEAM.getCode().equals(businessType);
+	}
+
+	public enum TeamRoleGroup implements GenericEnum, RoleGroup {
+
+		/***/
+		TEACHER(1, "教员"),
+		STUDENT(2, "学员");
 
 		@Getter
-		private Integer code;
+		private final Integer code;
 
 		@Getter
 		private final String desc;
 
-		TeamRoleGroupCode(Integer code, String desc) {
+		TeamRoleGroup(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}
 
+		public boolean equals(Integer roleGroupCode) {
+			return getCode().equals(roleGroupCode);
+		}
 	}
 
-	public enum RbRoleGroupCode implements GenericEnum {
+	public boolean isTeamStudent() {
+		return isTeamRole() && TeamRoleGroup.STUDENT.equals(getRoleGroup());
+	}
 
-		ADMIN(1, "管理员", "Administrator"), DIRECTOR(2, "导演", "Director"), REFEREE(3, "裁判",
-				"Referee"), RED(4, "红方",
-						"Red"), BLUE(5, "蓝方", "Blue"), RED_BLUE(6, "红方蓝方", "RedBlue");
+	public boolean isTeamTeacher() {
+		return isTeamRole() && TeamRoleGroup.TEACHER.equals(getRoleGroup());
+	}
+
+	/**
+	 * 红蓝对抗
+	 */
+
+	public boolean isRvbRole() {
+		return BusinessTemplate.BusinessType.RED_VS_BLUE.getCode().equals(businessType);
+	}
+
+	public enum RbRoleGroup implements GenericEnum, BaseI18n, RoleGroup {
+		/***/
+		ADMIN(1, "管理员", "Administrator"),
+		DIRECTOR(2, "导演", "Director"),
+		REFEREE(3, "裁判", "Referee"),
+		RED(4, "红方", "Red"),
+		BLUE(5, "蓝方", "Blue"),
+		RED_BLUE(6, "红方蓝方", "RedBlue");
 
 		@Getter
-		private Integer code;
+		private final Integer code;
 
-		private String desc;
+		@Getter
+		private final String chinese;
 
-		private String enDesc;
+		@Getter
+		private final String english;
 
 		@Override
 		public String getDesc() {
-			if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-				return enDesc;
-			} else {
-				return desc;
-			}
+			return getMsg();
 		}
 
-		RbRoleGroupCode(Integer code, String desc, String enDesc) {
+		RbRoleGroup(Integer code, String chinese, String english) {
 			this.code = code;
-			this.desc = desc;
-			this.enDesc = enDesc;
+			this.chinese = chinese;
+			this.english = english;
+		}
 
+		public boolean equals(Integer roleGroupCode) {
+			return getCode().equals(roleGroupCode);
+		}
+
+		public static boolean isRvbStudentRole(Integer roleGroupCode) {
+			return RED.equals(roleGroupCode) || BLUE.equals(roleGroupCode);
+		}
+
+		public static List<RbRoleGroup> studentRoleGroups() {
+			ArrayList<RbRoleGroup> rbRoleGroups = Lists.newArrayList();
+			rbRoleGroups.add(RED);
+			rbRoleGroups.add(BLUE);
+			return rbRoleGroups;
 		}
 	}
 
-	public interface SingleRoleGroupCode {
 
-		String name = "单兵训练角色";
-
-		Integer role = 1;
-
-		Integer roleGroup = 1;
+	public CrRole(RbRoleGroup roleGroup) {
+		this(roleGroup, roleGroup.getDesc());
 	}
 
-	public Boolean isStudent() {
-		boolean result = false;
-		if (BusinessTemplate.BusinessType.RED_VS_BLUE.getCode().equals(this.businessType)) {
-			result = result || roleGroup.intValue() == RbRoleGroupCode.RED.getCode();
-			result = result || roleGroup.intValue() == RbRoleGroupCode.BLUE.getCode();
-		}
-		if (BusinessTemplate.BusinessType.TRAINING_TEAM.getCode().equals(this.businessType)) {
-			result = result || roleGroup.intValue() == TeamRoleGroupCode.STUDENT.getCode();
-		}
-
-		return result;
+	public CrRole(RbRoleGroup roleGroup, String name) {
+		this(name, roleGroup.getCode());
 	}
 
-	public final static List<Integer> RB_STUDENT_ROLE_GROUPS = Lists.newArrayList();
-
-	static {
-		RB_STUDENT_ROLE_GROUPS.add(RbRoleGroupCode.RED.getCode());
-		RB_STUDENT_ROLE_GROUPS.add(RbRoleGroupCode.BLUE.getCode());
+	public boolean isInGroup(RbRoleGroup roleGroup) {
+		return isRvbRole() && getRoleGroup().equals(roleGroup.getCode());
 	}
 
+	public boolean isRedStudent() {
+		return isInGroup(RbRoleGroup.RED);
+	}
+
+	public boolean isBlueStudent() {
+		return isInGroup(RbRoleGroup.BLUE);
+	}
+
+	public boolean isRvbStudent() {
+		return isRedStudent() || isBlueStudent();
+	}
+
+	public boolean isRvbStaff() {
+		return isInGroup(RbRoleGroup.ADMIN) || isInGroup(RbRoleGroup.DIRECTOR) || isInGroup(RbRoleGroup.REFEREE);
+	}
+
+
+	/**
+	 * 单兵训练
+	 */
+	public static final String SINGLE_ROLE_GROUP_NAME = "单兵训练角色";
+	public static final Integer SINGLE_ROLE_GROUP_CODE = 1;
 }

@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.crbase.constant;
 
-import com.cyberpeace.common.util.ConfigUtil;
-
 /**
  * 靶场常用常量
  */
@@ -25,31 +23,31 @@ public interface CrCommonConstants {
 
 	Integer STUDENT_ROLE = 1;
 
-	int SKILL_POINTS_SIZE = new Integer(ConfigUtil.getContextProperty("cr.skill.point.size"));
+	int SKILL_POINTS_SIZE = ConfigReader.readInt("cr.skill.point.size");
 
-	int SKILL_POINT_MIN_VALUE = new Integer(ConfigUtil.getContextProperty("cr.skill.point.min"));
+	int SKILL_POINT_MIN_VALUE = ConfigReader.readInt("cr.skill.point.min");
 
-	int SKILL_POINT_MAX_VALUE = new Integer(ConfigUtil.getContextProperty("cr.skill.point.max"));
+	int SKILL_POINT_MAX_VALUE = ConfigReader.readInt("cr.skill.point.max");
 
-	int MIN_STAGE_NAME_LEN = new Integer(ConfigUtil.getContextProperty("cr.stage.name.len.min"));
+	int MIN_STAGE_NAME_LEN = ConfigReader.readInt("cr.stage.name.len.min");
 
-	int MAX_STAGE_NAME_LEN = new Integer(ConfigUtil.getContextProperty("cr.stage.name.len.max"));
+	int MAX_STAGE_NAME_LEN = ConfigReader.readInt("cr.stage.name.len.max");
 
-	int SCORE_MAX_VALUE = new Integer(ConfigUtil.getContextProperty("cr.score.max"));
+	int SCORE_MAX_VALUE = ConfigReader.readInt("cr.score.max");
 
-	int MIN_TRAINING_NAME_LEN = new Integer(ConfigUtil.getContextProperty("cr.training.name.len.min"));
+	int MIN_TRAINING_NAME_LEN = ConfigReader.readInt("cr.training.name.len.min");
 
-	int MAX_TRAINING_NAME_LEN = new Integer(ConfigUtil.getContextProperty("cr.training.name.len.max"));
+	int MAX_TRAINING_NAME_LEN = ConfigReader.readInt("cr.training.name.len.max");
 
 	String NULL = "null";
 
-	Integer MIN_TAG_COUNT = new Integer(ConfigUtil.getContextProperty("cr.tag.count.min"));
+	Integer MIN_TAG_COUNT = ConfigReader.readInt("cr.tag.count.min");
 
-	Integer MAX_TAG_COUNT = new Integer(ConfigUtil.getContextProperty("cr.tag.count.max"));
+	Integer MAX_TAG_COUNT = ConfigReader.readInt("cr.tag.count.max");
 
-	Integer MIN_STR_LEN = new Integer(ConfigUtil.getContextProperty("cr.str.len.min"));
+	Integer MIN_STR_LEN = ConfigReader.readInt("cr.str.len.min");
 
-	Integer MAX_NAME_STR_LEN = new Integer(ConfigUtil.getContextProperty("cr.str.len.name.max"));
+	Integer MAX_NAME_STR_LEN = ConfigReader.readInt("cr.str.len.name.max");
 
-	Integer MAX_DESC_LEN = new Integer(ConfigUtil.getContextProperty("cr.desc.len.max"));
+	Integer MAX_DESC_LEN = ConfigReader.readInt("cr.desc.len.max");
 }

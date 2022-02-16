@@ -26,15 +26,17 @@ public class BusinessException extends RuntimeException {
 		errorMessage = String.format(getMessageByLanguage(code), args);
 	}
 
-	public static String getMessageByLanguage(String code) {
-		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
-			return ConfigUtil.getContextProperty(code + ".en");
-		} else {
-			return ConfigUtil.getContextProperty(code + ".cn");
-		}
-	}
-
 	public BusinessException() {
 		super();
+	}
+
+	public static String getMessageByLanguage(String code) {
+		String ret;
+		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
+			ret = ConfigUtil.getContextProperty(code + ".en");
+		} else {
+			ret = ConfigUtil.getContextProperty(code + ".cn");
+		}
+		return ret == null ? "" : ret;
 	}
 }

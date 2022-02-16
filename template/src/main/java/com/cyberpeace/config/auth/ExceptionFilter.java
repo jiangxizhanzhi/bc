@@ -31,7 +31,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
-import com.cyberpeace.constant.BaseI18nErrorMsg;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -105,7 +104,7 @@ public class ExceptionFilter implements Filter {
 	private void parseBusinessException(HttpServletResponse httpServletResponse,
 			BusinessException e) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
-		errorInfo.setCode(e.getMessage());
+		errorInfo.setCode(getErrorCode(e.getMessage()));
 		errorInfo.setMessage(e.getErrorMessage());
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}
@@ -117,19 +116,13 @@ public class ExceptionFilter implements Filter {
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
 			RemoteServiceException e) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
-		errorInfo.setCode(ErrorCode.REMOTE_SERVICE_EXCEPTION);
+		errorInfo.setCode(getErrorCode(ErrorCode.REMOTE_SERVICE_EXCEPTION));
 
 		String message = e.getMessage();
-		if (StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_EN)) {
-			errorInfo.setMessage(StringUtils.isBlank(message)
-					? ConfigUtil.getContextProperty(ErrorCode.REMOTE_SERVICE_EXCEPTION + ".en")
-					: message);
-		} else {
-			errorInfo.setMessage(StringUtils.isBlank(message)
-					? ConfigUtil.getContextProperty(ErrorCode.REMOTE_SERVICE_EXCEPTION + ".cn")
-					: message);
+		if (StringUtils.isBlank(message)) {
+			message = BusinessException.getMessageByLanguage(ErrorCode.REMOTE_SERVICE_EXCEPTION);
 		}
-
+		errorInfo.setMessage(message);
 		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
@@ -209,7 +202,9 @@ public class ExceptionFilter implements Filter {
 			// 找到第一个错误的字段，直接返回。
 			// 不管是否配置了快速失败
 			if (StringUtils.isNoneBlank(field)) {
-				String desc = CommonContext.isChinese() ? ConfigUtil.getContextProperty(field + ".cn") : ConfigUtil.getContextProperty(field + ".en");
+				String desc = CommonContext.isChinese()
+						? ConfigUtil.getContextProperty(field + ".cn")
+						: ConfigUtil.getContextProperty(field + ".en");
 				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID,
 						StringUtils.isNotBlank(desc) ? desc : field);
 
@@ -219,7 +214,8 @@ public class ExceptionFilter implements Filter {
 	}
 
 	private void dealDefaultError(HttpServletResponse httpServletResponse) {
-		flushErrorInfo(httpServletResponse, ErrorCode.INTERNAL_ERROR, "");
+		flushErrorInfo(httpServletResponse, ErrorCode.INTERNAL_ERROR,
+				BusinessException.getMessageByLanguage(ErrorCode.INTERNAL_ERROR));
 	}
 
 	private void flushErrorInfo(HttpServletResponse httpServletResponse, BaseRsp errorInfo) {
@@ -232,30 +228,12 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
-	/**
-	 * 不添加错误码前缀
-	 */
-	private void flushErrorInfo(HttpServletResponse httpServletResponse,
-			BaseI18nErrorMsg i18nErrorMsg) {
-		flushErrorInfo(httpServletResponse, i18nErrorMsg.getErrorCode(), i18nErrorMsg.getMsg());
-	}
-
-	/**
-	 * 添加错误码前缀 自定义错误消息
-	 */
-	private void flushErrorInfo(HttpServletResponse httpServletResponse,
-			BaseI18nErrorMsg i18nErrorMsg, String message) {
-		String code = i18nErrorMsg.getErrorCode();
-		code = this.errorPrefix + code;
-		flushErrorInfo(httpServletResponse, code, message);
-	}
-
 	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code,
 			String message) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
 
 		errorInfo.setMessage(message);
-		errorInfo.setCode(code);
+		errorInfo.setCode(getErrorCode(code));
 
 		httpServletResponse.setContentType(WebConstant.CONTENT_TYPE);
 		httpServletResponse.setStatus(WebConstant.HTTP_200);
@@ -269,7 +247,7 @@ public class ExceptionFilter implements Filter {
 
 	private String getErrorCode(String code) {
 		if (!cache.containsKey(code)) {
-			cache.put(code, ConfigUtil.getContextProperty("errorPrefix") + code);
+			cache.put(code, errorPrefix + code);
 		}
 
 		return cache.get(code);

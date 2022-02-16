@@ -227,7 +227,6 @@ public class ExceptionFilter implements Filter {
 
 		if (e instanceof MethodArgumentNotValidException) {
 			br = ((MethodArgumentNotValidException) e).getBindingResult();
-			((MethodArgumentNotValidException) e).getBindingResult();
 		} else if (e instanceof BindException) {
 			br = ((BindException) e).getBindingResult();
 		}
@@ -242,7 +241,8 @@ public class ExceptionFilter implements Filter {
 			// 不管是否配置了快速失败
 			if (StringUtils.isNoneBlank(field)) {
 				BaseRsp<String> errorInfo = new BaseRsp<>();
-				errorInfo.setMessage(field);
+				String message = field + ":" + error.getDefaultMessage();
+				errorInfo.setMessage(message);
 				errorInfo.setCode(getErrorCode(ErrorCode.METHOD_ARG_NOT_VALID));
 
 				flushErrorInfo(httpServletResponse, errorInfo);

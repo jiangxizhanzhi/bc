@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.constant;
 
+import com.cyberpeace.common.util.ConfigUtil;
+
 /**
  * 靶场常用常量
  */
@@ -23,31 +25,31 @@ public interface CrCommonConstants {
 
 	Integer STUDENT_ROLE = 1;
 
-	int MIN_STAGE_NAME_LEN = 4;
+	int SKILL_POINTS_SIZE = new Integer(ConfigUtil.getContextProperty("cr.skill.point.size"));
 
-	int MAX_STAGE_NAME_LEN = 20;
+	int SKILL_POINT_MIN_VALUE = new Integer(ConfigUtil.getContextProperty("cr.skill.point.min"));
 
-	int SCORE_MAX_VALUE = 500;
+	int SKILL_POINT_MAX_VALUE = new Integer(ConfigUtil.getContextProperty("cr.skill.point.max"));
 
-	int SKILL_POINTS_SIZE = 7;
+	int MIN_STAGE_NAME_LEN = new Integer(ConfigUtil.getContextProperty("cr.stage.name.len.min"));
 
-	int SKILL_POINT_MIN_VALUE = 1;
+	int MAX_STAGE_NAME_LEN = new Integer(ConfigUtil.getContextProperty("cr.stage.name.len.max"));
 
-	int SKILL_POINT_MAX_VALUE = 5;
+	int SCORE_MAX_VALUE = new Integer(ConfigUtil.getContextProperty("cr.score.max"));
 
-	int MIN_TRAINING_NAME_LEN = 4;
+	int MIN_TRAINING_NAME_LEN = new Integer(ConfigUtil.getContextProperty("cr.training.name.len.min"));
 
-	int MAX_TRAINING_NAME_LEN = 40;
+	int MAX_TRAINING_NAME_LEN = new Integer(ConfigUtil.getContextProperty("cr.training.name.len.max"));
 
 	String NULL = "null";
 
-	Integer MIN_TAG_COUNT = 1;
+	Integer MIN_TAG_COUNT = new Integer(ConfigUtil.getContextProperty("cr.tag.count.min"));
 
-	Integer MAX_TAG_COUNT = 4;
+	Integer MAX_TAG_COUNT = new Integer(ConfigUtil.getContextProperty("cr.tag.count.max"));
 
-	Integer MIN_STR_LEN = 1;
+	Integer MIN_STR_LEN = new Integer(ConfigUtil.getContextProperty("cr.str.len.min"));
 
-	Integer MAX_NAME_STR_LEN = 255;
+	Integer MAX_NAME_STR_LEN = new Integer(ConfigUtil.getContextProperty("cr.str.len.name.max"));
 
-	Integer MAX_DESC_LEN = 2048;
+	Integer MAX_DESC_LEN = new Integer(ConfigUtil.getContextProperty("cr.desc.len.max"));
 }

@@ -213,4 +213,7 @@ public interface CrBusinessErrorCode {
 
 	// 非法的技能点数值
 	String INVALID_SKILL_POINT_VALUE = "101068";
+
+	// 非法的技能点个数
+	String INVALID_SKILL_POINTS_SIZE = "101069";
 }

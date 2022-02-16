@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.io.Serializable;
 
 @Data
@@ -24,6 +26,8 @@ public class ReportScoreUpdateScoreReq implements Serializable {
     private String comment;
 
     @ApiModelProperty("得分")
+    @Positive(message="必须正整数")
+    @Max(value = 100000, message = "超出分数上限100000")
     private Long score;
 
 }

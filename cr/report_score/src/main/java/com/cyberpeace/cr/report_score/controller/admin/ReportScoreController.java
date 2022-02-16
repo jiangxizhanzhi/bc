@@ -57,7 +57,7 @@ public class ReportScoreController {
 
     @ApiOperation("更新打分")
     @PostMapping
-    public BaseRsp<String> update(@RequestBody ReportScoreUpdateScoreReq reportScoreUpdateReq) {
+    public BaseRsp<String> update(@RequestBody @Validated ReportScoreUpdateScoreReq reportScoreUpdateReq) {
         ReportScore reportScore = BeanUtils.copy(reportScoreUpdateReq, ReportScore.class);
 
         reportScore.setScoreTime(new Date());

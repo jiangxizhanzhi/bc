@@ -130,10 +130,10 @@ public class MessageListener implements ChannelAwareMessageListener {
 					break;
 				case SCENE:
 					// 判断是否是已删除场景的推送消息
-					String mpSceneId = object.getJSONObject("data").getJSONObject("data")
-							.getString("cscene_id");
+					String mpSceneId = object.getJSONObject("data").getString("cscene_id");
 					if (!localScene.getMpSceneId().equals(mpSceneId)) {
-						log.info("mp scene {} has been deleted, no longer belongs to business {}", mpSceneId, businessId);
+						log.info("mp scene {} has been deleted, no longer belongs to business {}",
+								mpSceneId, businessId);
 						break;
 					}
 					WsSceneReportBO sceneReportBO = new WsSceneReportBO("", type,

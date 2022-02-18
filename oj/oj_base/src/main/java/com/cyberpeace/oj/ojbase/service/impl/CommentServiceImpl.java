@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
 			boolean children) {
 		IPage<Comment> iPage = commentMapper.firstByResource(page, businessId, businessType);
 
-		IPage<CommentBo> convert = iPage.convert(comment -> commentToBo(comment, null));
+		IPage<CommentBo> convert = iPage.convert(comment -> commentToBo(UserInfoContext.getUserContext().getUserId(), comment, null));
 
 		// 是否查询评论下的回复
 		if (children) {
@@ -74,11 +74,11 @@ public class CommentServiceImpl implements CommentService {
 				// 获取不到说明是父节点
 				Comment replyComment = commentUserMap.get(comment.getReplyId());
 				if (null == replyComment) {
-					return commentToBo(comment, commentBo);
+					return commentToBo(UserInfoContext.getUserContext().getUserId(), comment, commentBo);
 				}
 
-				CommentBo reply = commentToBo(replyComment, null);
-				return commentToBo(comment, reply);
+				CommentBo reply = commentToBo(UserInfoContext.getUserContext().getUserId(), replyComment, null);
+				return commentToBo(UserInfoContext.getUserContext().getUserId(), comment, reply);
 			});
 
 			commentBo.setCommentReply(boList);
@@ -91,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
 	 * @param comment
 	 * @return
 	 */
-	private CommentBo commentToBo(Comment comment, CommentBo replyComment) {
+	private CommentBo commentToBo(String userId, Comment comment, CommentBo replyComment) {
 		CommentBo commentBo = BeanUtils.copy(comment, CommentBo.class);
 
 		// 获取用户信息
@@ -104,7 +104,7 @@ public class CommentServiceImpl implements CommentService {
 		// 获取点赞数量
 		List<CommentLike> commentLikes = commentLikeMapper.listByComment(comment.getResourceId());
 		commentBo.setLikesCount(commentLikes.size());
-		commentBo.setIsLike(null != commentLikeMapper.selectByCommentAndUser(comment.getResourceId(), userInfo.getUserId()));
+		commentBo.setIsLike(null != commentLikeMapper.selectByCommentAndUser(comment.getResourceId(), userId));
 
 		if (null != replyComment) {
 			commentBo.setReplyUsername(replyComment.getUserName());

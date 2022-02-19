@@ -994,6 +994,21 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			filePathMap.put(courseLesson.getHandoutUrl(), fileName);
 		}
 
+		// markdown讲义修改
+		if (null != courseLesson.getHandoutType()
+				&& courseLesson.getHandoutType() == CourseLesson.HandoutType.MD.getCode().intValue()
+				&& StringUtils.isNotBlank(courseLesson.getHandoutUrl())) {
+
+			List<String> matchList = LocalStringUtil.getMatchStr(courseLesson.getHandoutUrl(),
+					PatternConstant.MARKDOWN_IMAGE);
+			List<String> matchPathList = StreamApiUtils.map(matchList, matchPath -> LocalStringUtil
+					.getFirstMatchStr(matchPath, PatternConstant.MARKDOWN_IMAGE_URL));
+			matchPathList.forEach(match -> {
+				String fileName = copyFile(match, destFilePath);
+				filePathMap.put(match, fileName);
+			});
+		}
+
 		// 理论课后练习习题数据导出
 		List<String> theoryRefIds = practiceTheoryRefMapper
 				.selectByPaper(courseLesson.getPaperId());
@@ -1162,9 +1177,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		String realPath = utilService.getRealPath(storeDbPath);
 		String fileSuffix = FileUtil.getFileSuffix(realPath);
 		String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
-		String markdownFilePath = destFilePath + File.separatorChar + fileName;
+		String destPath = destFilePath + File.separatorChar + fileName;
 
-		FileUtil.copyFile(realPath, markdownFilePath, false);
+		FileUtil.copyFile(realPath, destPath, false);
 
 		return fileName;
 	}

@@ -10,6 +10,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.hld.controller.req.HldRoomAddReq;
 import com.cyberpeace.cr.hld.controller.req.HldRoomModifyReq;
+import com.cyberpeace.cr.hld.controller.rsp.HldRoomRsp;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
 import com.cyberpeace.cr.hld.service.HldRoomService;
@@ -51,7 +52,7 @@ public class HldRoomController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	public BaseRsp<String> create(@RequestBody @Validated HldRoomAddReq addReq) {
+	public BaseRsp<HldRoomRsp> create(@RequestBody @Validated HldRoomAddReq addReq) {
 
 		CrRoleConfigHld roleConfigHld = BeanUtils.copy(addReq, CrRoleConfigHld.class);
 
@@ -62,7 +63,10 @@ public class HldRoomController {
 
 		HldRoom hldRoom = hldRoomService.create(hldRoomContext);
 
-		return new BaseRsp<>(hldRoom.getResourceId());
+		HldRoomRsp hldRoomRsp = new HldRoomRsp();
+		hldRoomRsp.setRoomId(hldRoom.getResourceId());
+
+		return new BaseRsp<>(hldRoomRsp);
 	}
 
 	@ApiOperation("修改")

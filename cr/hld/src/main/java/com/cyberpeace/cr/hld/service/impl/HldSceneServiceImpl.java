@@ -109,6 +109,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 					localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
 					localScene.setStartTime(new Date());
 					room.setLocalSceneId(localScene.getResourceId());
+					room.setStatus(HldRoom.StatusCode.RUNNING.getCode());
 
 					// 执行表更新
 					localSceneService.save(localScene);
@@ -168,9 +169,12 @@ public class HldSceneServiceImpl implements HldSceneService {
 		}
 
 		Boolean stopResult = localSceneService.stopScene(room.getLocalSceneId());
+
 		if (stopResult) {
 			// 清除localScene
 			clearLocal(room);
+			room.setStatus(HldRoom.StatusCode.ENDED.getCode());
+			hldRoomService.updateById(room);
 		}
 
 		return stopResult;
@@ -189,6 +193,9 @@ public class HldSceneServiceImpl implements HldSceneService {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE);
 		}
 
+		room.setStatus(HldRoom.StatusCode.PAUSE.getCode());
+		hldRoomService.updateById(room);
+
 		return true;
 	}
 
@@ -203,6 +210,9 @@ public class HldSceneServiceImpl implements HldSceneService {
 				&& !localSceneService.unpauseScene(room.getLocalSceneId())) {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE);
 		}
+
+		room.setStatus(HldRoom.StatusCode.RECOVERY.getCode());
+		hldRoomService.updateById(room);
 
 		return true;
 	}

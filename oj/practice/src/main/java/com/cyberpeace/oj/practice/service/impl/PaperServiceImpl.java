@@ -218,10 +218,8 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 					.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
 			practiceIds.removeAll(practiceQuery.getSelectIds());
 
-			// 数据量判断
+			// 习题集下数据量判断
 			if (practiceIds.size() < practiceQuery.getCount()) {
-				log.error("Practice not enough! get_count=[{}], practice_count=[{}]",
-						practiceQuery.getCount(), practiceIds.size());
 				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
 			}
 
@@ -230,6 +228,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			theoryListQuery.setResourceIds(practiceIds);
 			List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
 					practiceQuery.getCount());
+
+			// 其他条件下数据量判断
+			if (theories.size() < practiceQuery.getCount()) {
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
+			}
 
 			theories.forEach(practiceTheory -> practiceTheory.setScore(score));
 			return StreamApiUtils.map(theories, practiceTheory -> theoryToListBo(practiceTheory));
@@ -240,10 +243,8 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 					.selectBySetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()), true);
 			practiceIds.removeAll(practiceQuery.getSelectIds());
 
-			// 数据量判断
+			// 习题集下数据量判断
 			if (practiceIds.size() < practiceQuery.getCount()) {
-				log.error("Practice not enough! get_count=[{}], practice_count=[{}]",
-						practiceQuery.getCount(), practiceIds.size());
 				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
 			}
 
@@ -252,6 +253,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			listQuery.setResourceIds(practiceIds);
 			List<PracticeOperation> operations = practiceOperationMapper.randomChoice(listQuery,
 					practiceQuery.getCount());
+
+			// 其他条件下数据量判断
+			if (operations.size() < practiceQuery.getCount()) {
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
+			}
 
 			operations.forEach(operation -> operation.setScore(score));
 			return StreamApiUtils.map(operations, operation -> operationToListBo(operation));

@@ -54,6 +54,23 @@
         where room_id = #{roomId}
         and user_ids like #{userId}
     </select>
+
+    <select id="getCrRoleByRoomIdAndRoleName" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        select resource_id,
+        `name` ,
+        room_id,
+        description,
+        role_group,
+        nodes,
+        user_ids,
+        exercise_paper,
+        parent_resource_id,
+        mission_scheme,
+        business_type
+        from cr_role
+        where room_id = #{roomId}
+        and name = #{roleName}
+    </select>
     <select id="getRoomIdsByUserIdAndType" resultType="java.lang.String">
         <bind name="user_id" value="'%' + userId + '%'"/>
         select room_id

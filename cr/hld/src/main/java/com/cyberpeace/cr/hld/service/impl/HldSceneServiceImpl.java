@@ -9,10 +9,12 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
@@ -21,6 +23,7 @@ import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
+import com.cyberpeace.cr.hld.service.context.CrRoleConfigHld;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -62,6 +65,9 @@ public class HldSceneServiceImpl implements HldSceneService {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private CrRoleMapper crRoleMapper;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -120,7 +126,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 	}
 
 	@Override
-	public SceneViewContext viewScene(String roomId, String roleId) {
+	public SceneViewContext viewScene(String roomId, String roleName) {
 		SceneViewContext ret = new SceneViewContext();
 		ret.setRoomId(roomId);
 		HldRoom room = hldRoomService.getById(roomId);
@@ -129,8 +135,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 		}
 
 		// 1. 获取用户可见节点
-		String userId = UserInfoContext.getUserContext().getUserId();
-		CrRoleNodesData nodes = getNodes(userId, roomId, roleId);
+		CrRoleNodesData nodes = getNodes(room, roleName);
 
 		// 2、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(room);
@@ -322,28 +327,15 @@ public class HldSceneServiceImpl implements HldSceneService {
 		return sceneData;
 	}
 
-	private CrRoleNodesData getNodes(String userId, String roomId, String roleId) {
-		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+	private CrRoleNodesData getNodes(HldRoom hldRoom, String roleName) {
 
-		// 1、如果是学员角色，直接返回
-		if (role.isRvbStudent()) {
+		CrRole role = crRoleMapper.getCrRoleByRoomIdAndRoleName(hldRoom.getResourceId(), roleName);
+
+		if (role == null) {
+			return null;
+		} else {
 			return role.getNodeData();
 		}
-
-		// 2、教员角色查看自己的节点，不需要传roleId
-		if (StringUtils.isBlank(roleId)) {
-			return null;
-		}
-
-		// 3、教员查看学员角色的战争迷雾
-		// 3.1、查找学员的role
-		CrRole fakeRole = crRoleService.getById(roleId);
-		// 3.2、返回学员role的可见节点
-		if (fakeRole.getRoomId().equals(roomId)) {
-			return fakeRole.getNodeData();
-		}
-
-		return null;
 	}
 
 	@Override

@@ -24,6 +24,8 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 
+	CrRole getCrRoleByRoomIdAndRoleName(String roomId, String roleName);
+
 	Boolean batchDeleteByRoomId(@Param("roomId") String roomId);
 
 	List<String> getRoomIdsByUserIdAndType(@Param("userId") String userId,

@@ -259,4 +259,39 @@ public class CrRole extends BaseTable {
 	 */
 	public static final String SINGLE_ROLE_GROUP_NAME = "单兵训练角色";
 	public static final Integer SINGLE_ROLE_GROUP_CODE = 1;
+
+	/**
+	 * 葫芦岛
+	 */
+	public enum HldRoleGroup implements GenericEnum, BaseI18n, RoleGroup {
+
+		WHITE(1, "白方", "White"),
+		RED(2, "红方", "Red"),
+		BLUE(3, "蓝方", "Blue");
+
+		@Getter
+		private final Integer code;
+
+		@Getter
+		private final String chinese;
+
+		@Getter
+		private final String english;
+
+		@Override
+		public String getDesc() {
+			return getMsg();
+		}
+
+		HldRoleGroup(Integer code, String chinese, String english) {
+			this.code = code;
+			this.chinese = chinese;
+			this.english = english;
+		}
+
+		public boolean equals(Integer roleGroupCode) {
+			return getCode().equals(roleGroupCode);
+		}
+
+	}
 }

@@ -6,6 +6,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.hld.controller.req.HldRoomAddReq;
 import com.cyberpeace.cr.hld.controller.req.HldRoomModifyReq;
@@ -41,6 +42,9 @@ public class HldRoomController {
 
 	@Autowired
 	private HldSceneService hldSceneService;
+
+	@Autowired
+	private CrRoleService crRoleService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -110,6 +114,7 @@ public class HldRoomController {
 
 				for (HldRoom hldRoom : hldRooms) {
 					hldSceneService.stopScene(hldRoom.getResourceId());
+					crRoleService.clearRoomRoles(hldRoom.getResourceId());
 					hldRoomService.removeById(hldRoom.getResourceId());
 				}
 			}

@@ -20,6 +20,7 @@
         <module>tool</module>
         <module>cr_base</module>
         <module>red_vs_blue</module>
+        <module>hld</module>
         <module>team_train</module>
         <module>single_train</module>
     </modules>

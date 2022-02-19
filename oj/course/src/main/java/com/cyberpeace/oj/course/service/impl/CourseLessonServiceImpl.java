@@ -841,6 +841,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 获取解压的讲义文件
 			String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
+			if (StringUtils.isBlank(mdFilePath)) {
+				throw new BusinessException(OjBusinessErrorCode.LESSON_HANDOUT_CONTENT_ERROR);
+			}
 			courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
 
 			// md文件内容作为url

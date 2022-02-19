@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/cr/hld/")
-public class HldRoomController {
+public class RvbHldController {
 
 	@Autowired
 	private CrRoleService crRoleService;

@@ -18,7 +18,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -175,6 +174,15 @@ public class RbSceneServiceImpl implements RbSceneService {
 		sceneFilterService.filterVisibleTopo(topoData, nodes);
 		ret.setTopoData(topoData);
 		return ret;
+	}
+
+	@Override
+	public JSONObject viewSceneNoAuth(String roomId) {
+		RbRoom room = rbRoomService.getById(roomId);
+		if (room == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return getMpSceneData(room);
 	}
 
 	@Override
@@ -366,8 +374,13 @@ public class RbSceneServiceImpl implements RbSceneService {
 			return null;
 		}
 		// 请求远程场景数据
-		JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
-				UserInfoContext.getUserContext().getUserId());
+		String currentUserId;
+		try {
+			currentUserId = UserInfoContext.getUserContext().getUserId();
+		} catch (NullPointerException e) {
+			currentUserId = "";
+		}
+		JSONObject sceneData = localSceneService.getSceneData(mpSceneId, currentUserId);
 		// 场景数据为空，清除本地脏数据
 		if (null == sceneData) {
 			clearLocal(room);

@@ -475,6 +475,10 @@ public class MDParser {
 		// parse scheme
 		List<SchemeDatum> schemeData = Lists.newArrayList();
 		for (String stage : missionStages) {
+			// 角色任务为空
+			if(stage.isEmpty()){
+				break;
+			}
 			String[] stageParts = stage.split(LINE_SEP + H3, 2);
 			String stagePart = stageParts[0];
 			String missionPart = stageParts[1];

@@ -9,13 +9,11 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
@@ -23,7 +21,6 @@ import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
-import com.cyberpeace.cr.hld.service.context.CrRoleConfigHld;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -56,9 +53,6 @@ public class HldSceneServiceImpl implements HldSceneService {
 
 	@Autowired
 	private LocalSceneService localSceneService;
-
-	@Autowired
-	private CrRoleService crRoleService;
 
 	@Autowired
 	private SceneFilterService sceneFilterService;

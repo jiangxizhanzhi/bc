@@ -7,9 +7,11 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.hld.controller.req.HldRoomAddReq;
 import com.cyberpeace.cr.hld.controller.req.HldRoomModifyReq;
+import com.cyberpeace.cr.hld.controller.rsp.HldRoomIdRsp;
 import com.cyberpeace.cr.hld.controller.rsp.HldRoomRsp;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
@@ -19,6 +21,7 @@ import com.cyberpeace.cr.hld.service.context.CrRoleConfigHld;
 import com.cyberpeace.cr.hld.service.context.HldRoomContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -52,7 +55,7 @@ public class HldRoomController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	public BaseRsp<HldRoomRsp> create(@RequestBody @Validated HldRoomAddReq addReq) {
+	public BaseRsp<HldRoomIdRsp> create(@RequestBody @Validated HldRoomAddReq addReq) {
 
 		CrRoleConfigHld roleConfigHld = BeanUtils.copy(addReq, CrRoleConfigHld.class);
 
@@ -63,15 +66,28 @@ public class HldRoomController {
 
 		HldRoom hldRoom = hldRoomService.create(hldRoomContext);
 
-		HldRoomRsp hldRoomRsp = new HldRoomRsp();
-		hldRoomRsp.setRoomId(hldRoom.getResourceId());
+		HldRoomIdRsp hldRoomIdRsp = new HldRoomIdRsp();
+		hldRoomIdRsp.setRoomId(hldRoom.getResourceId());
 
+		return new BaseRsp<>(hldRoomIdRsp);
+	}
+
+	@ApiOperation("查询")
+	@GetMapping()
+	public BaseRsp<HldRoomRsp> get(
+			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id,
+			@ApiParam(name = "role_name", value = "角色名称", required = true) String role_name) {
+
+		HldRoom hldRoom = hldRoomService.getById(room_id);
+		SceneViewContext context = hldSceneService.viewScene(room_id, role_name);
+		HldRoomRsp hldRoomRsp = BeanUtils.copy(context, HldRoomRsp.class);
+		hldRoomRsp.setRoomStatus(hldRoom.getStatus());
 		return new BaseRsp<>(hldRoomRsp);
 	}
 
 	@ApiOperation("修改")
 	@PatchMapping()
-	public BaseRsp update(@RequestBody @Validated HldRoomModifyReq modifyReq) {
+	public BaseRsp<HldRoomIdRsp> update(@RequestBody @Validated HldRoomModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		HldRoom hldRoom = hldRoomService.getById(resourceId);
 
@@ -102,7 +118,10 @@ public class HldRoomController {
 				hldRoomService.updateById(hldRoom);
 			}
 		});
-		return new BaseRsp<>();
+
+		HldRoomIdRsp hldRoomIdRsp = new HldRoomIdRsp();
+		hldRoomIdRsp.setRoomId(hldRoom.getResourceId());
+		return new BaseRsp<>(hldRoomIdRsp);
 	}
 
 	@ApiOperation("删除")

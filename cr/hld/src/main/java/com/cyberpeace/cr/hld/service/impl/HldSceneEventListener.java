@@ -4,8 +4,6 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
@@ -36,9 +34,6 @@ public class HldSceneEventListener extends MessageListener {
 	@Autowired
 	private CrEventListenerHelper crEventListenerHelper;
 
-	@Autowired
-	private CrRoleService crRoleService;
-
 	@Override
 	public Integer declareMessageType() {
 		return LocalScene.BusinessCode.HLD.getCode();
@@ -47,7 +42,9 @@ public class HldSceneEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		HldRoom room = hldRoomService.getById(businessId);
-		hldSceneService.clearLocal(room);
+		if (room != null) {
+			hldSceneService.clearLocal(room);
+		}
 		return true;
 	}
 
@@ -59,20 +56,8 @@ public class HldSceneEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
-		// get roles
-		List<CrRole> roles = crRoleService.getRolesByRoom(businessId,
-				BusinessTemplate.BusinessType.HLD.getCode());
-		// parse message
 		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-		String nodeId = wsSceneReportBO.getData().getData().getJSONObject("data")
-				.getJSONObject("scene_element").getString("id");
-		for (CrRole role : roles) {
-			String filteredData = crEventListenerHelper.filterDataByRole(role, data, nodeId);
-			if (filteredData == null) {
-				continue;
-			}
-			pushDataToWebByUserIds(filteredData, businessId, role.getUserIdList());
-		}
+		pushDataToWeb(JsonUtil.toJsonString(wsSceneReportBO), businessId);
 		return true;
 	}
 

@@ -14,8 +14,10 @@ public enum ActionType {
     HOST_ATTACK(4, "主机攻占"),
     TRY_ATTACK(5, "尝试攻击"),
     SUCCESS_ATTACK(6, "攻击成功"),
-    REPAIR(7, "修复");
-
+    REPAIR(7, "修复"),
+    START_ATTACK(8, "起始节点特效"),
+    NORMAL(9, "普通攻击"),
+    NONE(10, "无");
 
     @Getter
     private Integer code;

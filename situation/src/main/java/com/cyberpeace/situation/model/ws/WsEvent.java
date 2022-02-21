@@ -10,16 +10,16 @@ import java.io.Serializable;
 @Data
 public class WsEvent implements Serializable {
 
-    @ApiModelProperty("场景id")
+    @ApiModelProperty("线型")
     private LineStyle lineStyle;
 
-    @ApiModelProperty("源节点信息（更新部分）")
+    @ApiModelProperty("源节点id")
     private String sourceId;
 
-    @ApiModelProperty("源节点信息（更新部分）")
+    @ApiModelProperty("目的节点id")
     private String targetId;
 
-    @ApiModelProperty("源节点信息（更新部分）")
+    @ApiModelProperty("攻击类型")
     private Integer attackType;
 
 }

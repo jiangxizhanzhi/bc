@@ -8,7 +8,8 @@ public enum MessageType {
      */
 
     SingleNodeEffect(1, "single_node_effect"),
-    MultiNodeEffect(2, "multi_node_effect");
+    MultiNodeEffect(2, "multi_node_effect"),
+    JyjAttackEvent(3, "jyj_attack_event");
 
     @Getter
     private Integer code;

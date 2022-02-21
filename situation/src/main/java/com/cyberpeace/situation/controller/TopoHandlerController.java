@@ -11,6 +11,7 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.JyjWsEvent;
 import com.cyberpeace.situation.model.ws.WsEvent;
 import com.cyberpeace.situation.model.ws.WsMultiNodeEffect;
 import com.cyberpeace.situation.model.ws.WsSingleNodeEffect;
@@ -332,6 +333,27 @@ public class TopoHandlerController {
         JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
         topoHandlerService.pushDataToRoom(data, sceneId);
         return new BaseRsp<>(wsEvent);
+    }
+
+    @ApiOperation("随机推送Jyj事件信息")
+    @GetMapping("jyj_event")
+    public BaseRsp<JyjWsEvent> sendJyjEventMessage(
+            @ApiParam(name = "scene_id", value = "场景编号")
+            @RequestParam(value = "scene_id", required = true) String sceneId) {
+
+        JSONArray elements = getElements(sceneId);
+        JyjWsEvent jyjWsEvent = new JyjWsEvent();
+        jyjWsEvent.setAttackType(ActionType.getRandomValue(ActionType.values()));
+        List<ElementInfo> randomElements = topoHandlerService.getRandomElements(elements, 2);
+        jyjWsEvent.setSourceId(randomElements.get(0).getElementId());
+        jyjWsEvent.setTargetId(randomElements.get(1).getElementId());
+        jyjWsEvent.setSourceName("攻击队伍");
+        jyjWsEvent.setDescription("攻击描述");
+        jyjWsEvent.setLookAtTarget((new Random()).nextBoolean());
+        jyjWsEvent.setLineStyle(topoHandlerService.getLineStyle());
+        JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(jyjWsEvent), JSONObject.class);
+        topoHandlerService.pushDataToRoom(data, sceneId);
+        return new BaseRsp<>(jyjWsEvent);
     }
 
     private JSONArray getElements(String sceneId) {

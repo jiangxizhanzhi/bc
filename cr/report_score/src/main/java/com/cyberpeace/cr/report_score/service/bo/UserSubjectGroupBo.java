@@ -13,7 +13,7 @@ public class UserSubjectGroupBo {
 	private String userName;
 
 	@ApiModelProperty("科目")
-	private String subject;
+	private Integer subject;
 
 	@ApiModelProperty("科目总分")
 	private String subjectScore;

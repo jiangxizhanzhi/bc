@@ -148,7 +148,7 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         Map<String, RankingRep> rankScoreMap = rankScoreList.stream()
                 .collect(Collectors.toMap(RankingRep::getUserId, item -> item));
 
-        // 获取全部用户作为队伍， 除了admin
+
         List<UserInfo> userInfoList = getUsers();
         List<RankingRep> rankingRepList = Lists.newArrayList();
         for (UserInfo userInfo : userInfoList) {
@@ -162,10 +162,16 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
 
             RankingRep userRankRep = rankScoreMap.get(userInfo.getUserId());
             if (userRankRep != null) {
-                rankingRep.setRank(userRankRep.getRank());
+                // 该排名为数据库中部分排名，不是最终排名
+                // rankingRep.setRank(userRankRep.getRank());
                 rankingRep.setSumScore(userRankRep.getSumScore());
             }
             rankingRepList.add(rankingRep);
+        }
+        if(rankingRepList.stream().allMatch(rankingRep -> rankingRep.getSumScore().equals("0"))) {
+            // 初始状态分数为0分，排名全部为0
+            log.info("all team source 0 , rank init is 0 ");
+            return rankingRepList;
         }
         return amountRank(rankingRepList);
     }
@@ -205,12 +211,18 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         // 获取全部用户作为队伍， 除了admin
         // List<UserInfo> userInfoList = remoteUserService.getList();
 
+        // 获取数据库指定配置用户
         List<String> userIds = reportScoreConfigService.getUserIds();
         if (userIds == null || userIds.isEmpty()) {
             log.error("Not found user config");
             throw new BusinessException("Not found user config");
         }
         List<UserInfo> userByIdList = remoteUserService.getByIdList(userIds);
+
+        if (userByIdList.size() != 8) {
+            // 8个队伍进行统计
+            log.warn("Leaderboard users are not 8");
+        }
 
         if (userByIdList.size() != userIds.size()) {
             log.error("Configure user data not always {}:{}", userByIdList.size(), userIds.size());
@@ -231,13 +243,13 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
     private static List<String> getSubjectScoreList(List<UserSubjectGroupBo> userSubjectGroupBos) {
         List<String> subjectScoreList = Lists.newArrayList();
 
-        Map<String, String> collect = userSubjectGroupBos.stream()
+        Map<Integer, String> collect = userSubjectGroupBos.stream()
                 .collect(Collectors.toMap(UserSubjectGroupBo::getSubject,
                         UserSubjectGroupBo::getSubjectScore));
 
         List<Integer> listCode = EnumUtils.getListCode(ReportScore.SubjectCode.class);
         for (Integer code : listCode) {
-            String subjectScore = collect.get(String.valueOf(code));
+            String subjectScore = collect.get(code);
             subjectScoreList.add(subjectScore != null ? subjectScore: "0");
         }
 
@@ -248,31 +260,30 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         rankingRepList.sort((s1, s2) -> -Long.compare(Long.parseLong(s1.getSumScore()), Long.parseLong(s2.getSumScore())));
 
         int index = 0;
-        int count = 0;
         int tmpSize = 0;
-        long lastCount = -1L;
+        long lastSumScore = -1L;
 
         List<RankingRep> tmpAmountRankList = new ArrayList<>();
         for (RankingRep rankingRep : rankingRepList) {
 
             long sumScoreLong = Long.parseLong(rankingRep.getSumScore());
 
-            if (lastCount != sumScoreLong) {
-                lastCount = sumScoreLong;
-                index = index + 1 + count;
-                count = 0;
+            if (lastSumScore != sumScoreLong) {
+                lastSumScore = sumScoreLong;
+                index = index + 1;
             }
             rankingRep.setRank(String.valueOf(index));
             //相同并列，不同则跳过，序号一次递增
             if (tmpSize > 0) {
                 if (sumScoreLong < Long.parseLong(rankingRepList.get(tmpSize - 1).getSumScore())) {
-                    rankingRep.setRank(String.valueOf(tmpSize + 1));
                     index = tmpSize + 1;
+                    rankingRep.setRank(String.valueOf(index));
                 }
             }
             tmpAmountRankList.add(rankingRep);
             tmpSize = tmpAmountRankList.size();
         }
+
         return tmpAmountRankList;
     }
 }

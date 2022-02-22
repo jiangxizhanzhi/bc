@@ -75,7 +75,7 @@
     </select>
 
     <select id="getRankScore" resultType="com.cyberpeace.cr.report_score.controller.res.RankingRep">
-        select `user_id`, `user_name`, sum(`score`) as sum_score, row_number() over (order by sum_score desc) as rank
+        select `user_id`, `avatar_url` as logo, `user_name`, sum(`score`) as sum_score, row_number() over (order by sum_score desc) as rank
         from cr_report_score
         where status = 2
         group by user_id

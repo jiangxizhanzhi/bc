@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -18,6 +17,6 @@ public class SubmitMissionsReq {
 	private String missionHash;
 
 	@ApiModelProperty(required = true)
-	@NotEmpty
+	@NotNull
 	private String answer;
 }

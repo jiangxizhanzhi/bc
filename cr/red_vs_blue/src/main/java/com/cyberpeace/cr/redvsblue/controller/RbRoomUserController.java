@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -184,6 +185,9 @@ public class RbRoomUserController {
 	@PostMapping("/submit_missions")
 	public BaseRsp<String>
 			submitMissions(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+		CrCommonValidator.checkStringExist(submitMissionsReq.getAnswer(),
+				CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		rbRoomService.checkStudentPermission(submitMissionsReq.getResourceId(), userId);

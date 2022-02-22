@@ -1,5 +1,12 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
+import java.util.List;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -7,6 +14,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomOpsReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomTrainSubmitReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
@@ -18,16 +26,10 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Api(tags = "单兵训练")
 @RestController
@@ -95,9 +97,13 @@ public class SingleRoomController {
 
 	@PostMapping("/mission_submit")
 	@ApiOperation("任务提交")
-	public BaseRsp<Boolean> submitMission(@RequestBody @Validated  SubmitMissionReq requestData) {
+	public BaseRsp<Boolean> submitMission(@RequestBody @Validated SubmitMissionReq requestData) {
 		// todo mission refactor
+		CrCommonValidator.checkStringExist(requestData.getAnswer(),
+				CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+
 		return new BaseRsp<>(
+
 				singleRoomService.submitMission(requestData.getBusinessTemplateId(), requestData));
 	}
 

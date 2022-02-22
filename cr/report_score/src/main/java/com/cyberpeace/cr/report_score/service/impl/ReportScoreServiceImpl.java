@@ -156,33 +156,6 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         return baseRanking(userInfoList, rankScoreMap);
     }
 
-    private List<RankingRep> baseRanking(List<UserInfo> userInfoList, Map<String, String> rankScoreMap) {
-        List<RankingRep> rankingRepList = Lists.newArrayList();
-        for (UserInfo userInfo : userInfoList) {
-
-            RankingRep rankingRep = new RankingRep();
-            rankingRep.setLogo(userInfo.getAvatarUrl());
-            rankingRep.setSumScore("0");
-            rankingRep.setUserName(userInfo.getName());
-            rankingRep.setUserId(userInfo.getUserId());
-            rankingRep.setRank("0");
-
-            String userSumScore = rankScoreMap.get(userInfo.getUserId());
-            if (userSumScore != null) {
-                // 该排名为数据库中部分排名，不是最终排名
-                // rankingRep.setRank(userRankRep.getRank());
-                rankingRep.setSumScore(userSumScore);
-            }
-            rankingRepList.add(rankingRep);
-        }
-        if(rankingRepList.stream().allMatch(rankingRep -> rankingRep.getSumScore().equals("0"))) {
-            // 初始状态分数为0分，排名全部为0
-            log.info("all team score 0 , rank init is 0 ");
-            return rankingRepList;
-        }
-        return amountRank(rankingRepList);
-    }
-
     @Override
     public List<SubjectCompleteRep> subjectCompleteSt() {
         List<UserSubjectGroupBo> userSubjectGroupList = reportScoreMapper.getUserSubjectGroup();
@@ -242,6 +215,32 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         return subRankingMap;
     }
 
+    private List<RankingRep> baseRanking(List<UserInfo> userInfoList, Map<String, String> rankScoreMap) {
+        List<RankingRep> rankingRepList = Lists.newArrayList();
+        for (UserInfo userInfo : userInfoList) {
+
+            RankingRep rankingRep = new RankingRep();
+            rankingRep.setLogo(userInfo.getAvatarUrl());
+            rankingRep.setSumScore("0");
+            rankingRep.setUserName(userInfo.getName());
+            rankingRep.setUserId(userInfo.getUserId());
+            rankingRep.setRank("0");
+
+            String userSumScore = rankScoreMap.get(userInfo.getUserId());
+            if (userSumScore != null) {
+                // 该排名为数据库中部分排名，不是最终排名
+                // rankingRep.setRank(userRankRep.getRank());
+                rankingRep.setSumScore(userSumScore);
+            }
+            rankingRepList.add(rankingRep);
+        }
+        if(rankingRepList.stream().allMatch(rankingRep -> rankingRep.getSumScore().equals("0"))) {
+            // 初始状态分数为0分，排名全部为0
+            log.info("all team score 0 , rank init is 0 ");
+            return rankingRepList;
+        }
+        return amountRank(rankingRepList);
+    }
 
     private List<UserInfo> getUsers() {
         // 获取全部用户作为队伍， 除了admin

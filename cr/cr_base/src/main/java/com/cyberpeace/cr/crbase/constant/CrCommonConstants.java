@@ -25,6 +25,8 @@ public interface CrCommonConstants {
 
 	int MIN_STAGE_NAME_LEN = 4;
 
+	Integer TERMINAL_TYPE_CODE = 4;
+
 	int MAX_STAGE_NAME_LEN = 20;
 
 	int SCORE_MAX_VALUE = 500;

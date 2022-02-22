@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
@@ -35,9 +36,13 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 				elements.remove(i);
 			} else {
 				// 非资产节点去除接入方式
-				// 只去除终端的ports，保留路由器、交换机等的
-				if (!assetNodeIds.contains(elementId) && elementType == 4) {
-					element.put("ports", Lists.newArrayList());
+				// 去除终端的ports的access_modes
+				if (!assetNodeIds.contains(elementId)
+						&& elementType.equals(CrCommonConstants.TERMINAL_TYPE_CODE)) {
+					JSONArray ports = element.getJSONArray("ports");
+					for (int j = 0; j < ports.size(); j++) {
+						ports.getJSONObject(j).put("access_modes", Lists.newArrayList());
+					}
 				}
 				i++;
 			}

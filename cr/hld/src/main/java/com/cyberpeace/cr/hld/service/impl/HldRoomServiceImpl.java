@@ -179,21 +179,37 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 	}
 
 	@Override
-	public CrRoleConfigHld getHldRoleConfig(HldTaskContext hldTaskContext) {
+	public List<HldRoleConfigBase> getHldRoleConfig(HldTaskContext hldTaskContext) {
 
-		CrRoleConfigHld crRoleConfigHld = new CrRoleConfigHld();
+		List<HldRoleConfigBase> hldRoleConfigBases = Lists.newArrayList();
 
 		// 提取红方角色数据
 		List<HldRoleContext> redTrainUser = hldTaskContext.getRedTrainUser();
 		List<HldRoleConfig> redRoles = transRoleConfig(redTrainUser);
-		crRoleConfigHld.setRedRoles(redRoles);
+		HldRoleConfigBase redRoleConfigBase = new HldRoleConfigBase();
+		redRoleConfigBase.setKey("");
+		redRoleConfigBase.setType("red");
+		redRoleConfigBase.setId("red");
+		redRoleConfigBase.setName("red");
+		redRoleConfigBase.setChildren(redRoles);
+		redRoleConfigBase.setAssetNodes(Lists.newArrayList());
+		redRoleConfigBase.setVisibleNodes(Lists.newArrayList());
+		hldRoleConfigBases.add(redRoleConfigBase);
 
 		// 提取蓝方角色数据
 		List<HldRoleContext> blueTrainUser = hldTaskContext.getBlueTrainUser();
 		List<HldRoleConfig> blueRoles = transRoleConfig(blueTrainUser);
-		crRoleConfigHld.setBlueRoles(blueRoles);
+		HldRoleConfigBase blueRoleConfigBase = new HldRoleConfigBase();
+		blueRoleConfigBase.setKey("");
+		blueRoleConfigBase.setType("blue");
+		blueRoleConfigBase.setId("blue");
+		blueRoleConfigBase.setName("blue");
+		blueRoleConfigBase.setChildren(blueRoles);
+		blueRoleConfigBase.setAssetNodes(Lists.newArrayList());
+		blueRoleConfigBase.setVisibleNodes(Lists.newArrayList());
+		hldRoleConfigBases.add(blueRoleConfigBase);
 
-		return crRoleConfigHld;
+		return hldRoleConfigBases;
 	}
 
 	private List<HldRoleConfig> transRoleConfig(List<HldRoleContext> hldRoleContexts) {

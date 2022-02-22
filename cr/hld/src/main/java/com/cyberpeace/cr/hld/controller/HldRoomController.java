@@ -21,6 +21,7 @@ import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
 import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
 import com.cyberpeace.cr.hld.service.context.CrRoleConfigHld;
+import com.cyberpeace.cr.hld.service.context.HldRoleConfigBase;
 import com.cyberpeace.cr.hld.service.context.HldRoomContext;
 import com.cyberpeace.cr.hld.service.context.HldTaskContext;
 import com.cyberpeace.integratation.service.HldTaskService;
@@ -148,11 +149,11 @@ public class HldRoomController {
 
 	@ApiOperation("查询葫芦岛角色配置")
 	@GetMapping("/roles")
-	public BaseRsp<CrRoleConfigHld> getRoleConfig(
+	public BaseRsp<List<HldRoleConfigBase>> getRoleConfig(
 			@ApiParam(name = "task_id", value = "葫芦岛任务id", required = true) String task_id) {
 		HldTaskContext hldTaskContext = getHldTaskContext(task_id);
-		CrRoleConfigHld crRoleConfigHld = hldRoomService.getHldRoleConfig(hldTaskContext);
-		return new BaseRsp<>(crRoleConfigHld);
+		List<HldRoleConfigBase> hldRoleConfigBases = hldRoomService.getHldRoleConfig(hldTaskContext);
+		return new BaseRsp<>(hldRoleConfigBases);
 	}
 
 	private HldTaskContext getHldTaskContext(String taskId){

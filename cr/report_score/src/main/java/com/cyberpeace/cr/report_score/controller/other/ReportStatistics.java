@@ -28,6 +28,7 @@ public class ReportStatistics {
 	@ApiOperation("排行榜")
 	@GetMapping("/ranking")
 	public BaseRsp<List<RankingRep>> ranking() {
+		// todo 总榜中前三名需要获取攻击手法top前五
 		List<RankingRep> rankingReps = reportScoreService.rankingStatistics();
 
 		return new BaseRsp<>(rankingReps);

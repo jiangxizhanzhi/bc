@@ -1,15 +1,17 @@
 package com.cyberpeace.cr.hld.service.context;
 
-import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import lombok.Data;
 
 @Data
 public class HldRoomContext {
 
+	private String taskId;
+
 	private String resourceId;
 
 	private String roleConfig;
 
-	private SceneConfigData sceneConfigData;
+	private BaseInfo baseInfo;
 
 }

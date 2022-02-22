@@ -1,13 +1,16 @@
 package com.cyberpeace.cr.hld.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.hld.controller.req.HldRoomAddReq;
 import com.cyberpeace.cr.hld.controller.req.HldRoomModifyReq;
@@ -19,6 +22,8 @@ import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
 import com.cyberpeace.cr.hld.service.context.CrRoleConfigHld;
 import com.cyberpeace.cr.hld.service.context.HldRoomContext;
+import com.cyberpeace.cr.hld.service.context.HldTaskContext;
+import com.cyberpeace.integratation.service.HldTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -48,7 +53,10 @@ public class HldRoomController {
 	private HldSceneService hldSceneService;
 
 	@Autowired
-	private CrRoleService crRoleService;
+	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private HldTaskService hldTaskService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -57,18 +65,18 @@ public class HldRoomController {
 	@PostMapping()
 	public BaseRsp<HldRoomIdRsp> create(@RequestBody @Validated HldRoomAddReq addReq) {
 
-		CrRoleConfigHld roleConfigHld = BeanUtils.copy(addReq, CrRoleConfigHld.class);
+		// 构造初始数据
+		HldRoomContext hldRoomContext = reqToHldRoomContext(addReq);
 
-		HldRoomContext hldRoomContext = new HldRoomContext();
-
-		hldRoomContext.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigHld));
-		hldRoomContext.setSceneConfigData(addReq.getSceneConfigData());
-
+		// 执行创建
 		HldRoom hldRoom = hldRoomService.create(hldRoomContext);
 
+		// 远程写入映射关系
+		updateHldTaskZt(addReq.getTaskId(), hldRoom.getResourceId());
+
+		// 构造返回参数
 		HldRoomIdRsp hldRoomIdRsp = new HldRoomIdRsp();
 		hldRoomIdRsp.setRoomId(hldRoom.getResourceId());
-
 		return new BaseRsp<>(hldRoomIdRsp);
 	}
 
@@ -82,6 +90,7 @@ public class HldRoomController {
 		SceneViewContext context = hldSceneService.viewScene(room_id, role_name);
 		HldRoomRsp hldRoomRsp = BeanUtils.copy(context, HldRoomRsp.class);
 		hldRoomRsp.setRoomStatus(hldRoom.getStatus());
+		hldRoomRsp.setTemplateId(hldRoom.getTemplateId());
 		return new BaseRsp<>(hldRoomRsp);
 	}
 
@@ -91,6 +100,7 @@ public class HldRoomController {
 		String resourceId = modifyReq.getResourceId();
 		HldRoom hldRoom = hldRoomService.getById(resourceId);
 
+		// 不存在的训练直接异常
 		if (hldRoom == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
@@ -100,25 +110,20 @@ public class HldRoomController {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_HAS_BEGUN);
 		}
 
-		// update
-		CrRoleConfigHld roleConfigHld = BeanUtils.copy(modifyReq, CrRoleConfigHld.class);
+		BusinessTemplate businessTemplate = businessTemplateService.getById(hldRoom.getTemplateId());
 
-		HldRoomContext hldRoomContext = new HldRoomContext();
+		// 如果业务模板不存在，返回异常
+		if (businessTemplate == null) {
+			throw new ResourceNotFoundException(resourceId);
+		}
 
-		hldRoomContext.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigHld));
-		hldRoomContext.setSceneConfigData(modifyReq.getSceneConfigData());
+		// 构造初始数据
+		HldRoomContext hldRoomContext = reqToHldRoomContext(modifyReq);
 
+		// 更新业务数据
 		hldRoomService.update(hldRoomContext, hldRoom);
 
-		// save
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				hldRoomService.updateById(hldRoom);
-			}
-		});
-
+		// 构造返回参数
 		HldRoomIdRsp hldRoomIdRsp = new HldRoomIdRsp();
 		hldRoomIdRsp.setRoomId(hldRoom.getResourceId());
 		return new BaseRsp<>(hldRoomIdRsp);
@@ -128,23 +133,56 @@ public class HldRoomController {
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
-		List<HldRoom> hldRooms = hldRoomMapper.selectBatchIds(deleteReq.getIds());
+		List<String> businessTemplateIds = hldRoomMapper.listBusinessTemplateIds(deleteReq.getIds());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-				for (HldRoom hldRoom : hldRooms) {
-					hldSceneService.stopScene(hldRoom.getResourceId());
-					crRoleService.clearRoomRoles(hldRoom.getResourceId());
-					hldRoomService.removeById(hldRoom.getResourceId());
-				}
+				businessTemplateService.batchDelete(businessTemplateIds);
 			}
-
 		});
 
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("查询葫芦岛角色配置")
+	@GetMapping("/roles")
+	public BaseRsp<CrRoleConfigHld> getRoleConfig(
+			@ApiParam(name = "task_id", value = "葫芦岛任务id", required = true) String task_id) {
+		HldTaskContext hldTaskContext = getHldTaskContext(task_id);
+		CrRoleConfigHld crRoleConfigHld = hldRoomService.getHldRoleConfig(hldTaskContext);
+		return new BaseRsp<>(crRoleConfigHld);
+	}
+
+	private HldTaskContext getHldTaskContext(String taskId){
+		JSONObject jsonObject = hldTaskService.getTaskInfo(taskId);
+		HldTaskContext hldTaskContext = jsonObject.getObject("baseInfo", HldTaskContext.class);
+		return hldTaskContext;
+	}
+
+	private Boolean updateHldTaskZt(String taskId, String sceneId){
+		hldTaskService.updateTaskZt(taskId, sceneId);
+		return true;
+	}
+
+	private HldRoomContext reqToHldRoomContext(HldRoomAddReq addReq) {
+
+		// 提取角色信息
+		CrRoleConfigHld roleConfigHld = BeanUtils.copy(addReq, CrRoleConfigHld.class);
+
+		// 提取基础信息
+		HldTaskContext hldTaskContext = getHldTaskContext(addReq.getTaskId());
+		BaseInfo baseInfo = hldRoomService.getHldBaseInfo(hldTaskContext);
+		baseInfo.setSceneConfigData(addReq.getSceneConfigData());
+
+		// 构造初始数据
+		HldRoomContext hldRoomContext = new HldRoomContext();
+		hldRoomContext.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigHld));
+		hldRoomContext.setBaseInfo(baseInfo);
+		hldRoomContext.setTaskId(addReq.getTaskId());
+
+		return hldRoomContext;
 	}
 
 }

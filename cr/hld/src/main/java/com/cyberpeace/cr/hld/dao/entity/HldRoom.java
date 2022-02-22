@@ -14,6 +14,10 @@ public class HldRoom extends BaseTable {
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	private String templateId;
+
+	private String taskId;
+
 	private String localSceneId;
 
 	private String copyedTopoId;

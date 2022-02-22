@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.hld.service.context;
 
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,9 +11,9 @@ import java.util.List;
 @Data
 public class CrRoleConfigHld implements Serializable {
 
-	private List<CrRoleConfig> whiteRoles;
+	private List<HldRoleConfig> whiteRoles;
 
-	private List<CrRoleConfig> redRoles;
+	private List<HldRoleConfig> redRoles;
 
-	private List<CrRoleConfig> blueRoles;
+	private List<HldRoleConfig> blueRoles;
 }

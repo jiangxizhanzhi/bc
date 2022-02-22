@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper">
+
+    <select id="selectByBusinessTemplateId" resultType="com.cyberpeace.cr.hld.dao.entity.HldRoom">
+        select *
+        from cr_hld_room
+        where template_id = #{businessTemplateId}
+    </select>
+
+    <select id="listBusinessTemplateIds" resultType="java.lang.String">
+        select template_id
+        from cr_hld_room
+        where resource_id in
+        <foreach collection="hldRoomIds" item="hldRoomId" separator="," open="(" close=")">
+            #{hldRoomId}
+        </foreach>
+    </select>
+
+</mapper>

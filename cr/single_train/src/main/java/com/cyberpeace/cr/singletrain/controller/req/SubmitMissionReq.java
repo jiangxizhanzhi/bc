@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -19,7 +20,7 @@ public class SubmitMissionReq implements Serializable {
     @ApiModelProperty("记录内容")
     private String trainingRecord;
 
-    @NotNull
+    @NotEmpty
     @ApiModelProperty("用户提交答案")
     private String answer;
 

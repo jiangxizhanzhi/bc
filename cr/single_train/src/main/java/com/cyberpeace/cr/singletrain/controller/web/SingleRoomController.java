@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(tags = "单兵训练")
@@ -94,7 +95,7 @@ public class SingleRoomController {
 
 	@PostMapping("/mission_submit")
 	@ApiOperation("任务提交")
-	public BaseRsp<Boolean> submitMission(@RequestBody @Validated SubmitMissionReq requestData) {
+	public BaseRsp<Boolean> submitMission(@RequestBody @Validated  SubmitMissionReq requestData) {
 		// todo mission refactor
 		return new BaseRsp<>(
 				singleRoomService.submitMission(requestData.getBusinessTemplateId(), requestData));

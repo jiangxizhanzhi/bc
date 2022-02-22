@@ -27,6 +27,8 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		List<String> assetNodeIds = nodes.getAssetNodes().stream().map(CrRoleNode::getId)
 				.collect(Collectors.toList());
 		JSONArray elements = topoData.getJSONObject("topology").getJSONArray("elements");
+		JSONObject elementPorts = topoData.getJSONObject("plugins").getJSONObject("cpcloud")
+				.getJSONObject("element_ports");
 		int i = 0;
 		while (i < elements.size()) {
 			JSONObject element = elements.getJSONObject(i);
@@ -41,7 +43,12 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 						&& elementType.equals(CrCommonConstants.TERMINAL_TYPE_CODE)) {
 					JSONArray ports = element.getJSONArray("ports");
 					for (int j = 0; j < ports.size(); j++) {
-						ports.getJSONObject(j).put("access_modes", Lists.newArrayList());
+						JSONObject port = ports.getJSONObject(j);
+						port.put("access_modes", Lists.newArrayList());
+
+						String portId = port.getString("id");
+						elementPorts.getJSONObject(portId).put("access_modes",
+								Lists.newArrayList());
 					}
 				}
 				i++;

@@ -23,4 +23,7 @@ public interface RtksBusinessErrorCode {
 
 	/** 已经绑定了技能点，无法删除*/
 	String UNABLE_DELETE_SKILL = "100004";
+
+	/** 未检索到相应岗位 */
+	String ROLE_NOT_EXIST = "100005";
 }

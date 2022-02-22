@@ -43,7 +43,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	private Level getInternationalById(String levelId) {
 		Level level = getById(levelId);
-		if ("default".equals(level.getResourceId()) && !CommonContext.isChinese()) {
+		if (level != null && "default".equals(level.getResourceId()) && !CommonContext.isChinese()) {
 			level.setName(Level.DefaultName.ENGLISH.getDesc());
 		}
 		return level;

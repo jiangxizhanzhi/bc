@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +48,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	public List<CourseKnowledgeSkillBo> getCourseKnowledge(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(),
@@ -88,7 +90,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	public List<CourseKnowledgeSkillBo> getCourseSkillByRoleId(String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
@@ -113,7 +115,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	public List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
@@ -140,7 +142,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	public List<RoleCourseBo> getRoleCoursePath(String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(),

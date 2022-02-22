@@ -85,13 +85,27 @@ public class HldRoomController {
 	@GetMapping()
 	public BaseRsp<HldRoomRsp> get(
 			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id,
-			@ApiParam(name = "role_name", value = "角色名称", required = true) String role_name) {
+			@ApiParam(name = "task_id", value = "葫芦岛任务id", required = true) String task_id) {
+
+		String role_name = "红方1";
 
 		HldRoom hldRoom = hldRoomService.getById(room_id);
 		SceneViewContext context = hldSceneService.viewScene(room_id, role_name);
 		HldRoomRsp hldRoomRsp = BeanUtils.copy(context, HldRoomRsp.class);
 		hldRoomRsp.setRoomStatus(hldRoom.getStatus());
 		hldRoomRsp.setTemplateId(hldRoom.getTemplateId());
+		return new BaseRsp<>(hldRoomRsp);
+	}
+
+	@ApiOperation("查询测试模板id")
+	@GetMapping("/template_id")
+	public BaseRsp<HldRoomRsp> getTemplateId(
+			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
+
+		HldRoom hldRoom = hldRoomService.getById(room_id);
+		HldRoomRsp hldRoomRsp = BeanUtils.copy(hldRoom, HldRoomRsp.class);
+		hldRoomRsp.setRoomId(hldRoom.getResourceId());
+
 		return new BaseRsp<>(hldRoomRsp);
 	}
 

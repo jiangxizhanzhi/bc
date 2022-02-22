@@ -17,6 +17,5 @@ public class SubmitMissionsReq {
 	private String missionHash;
 
 	@ApiModelProperty(required = true)
-	@NotNull
-	private String answer;
+ 	private String answer;
 }

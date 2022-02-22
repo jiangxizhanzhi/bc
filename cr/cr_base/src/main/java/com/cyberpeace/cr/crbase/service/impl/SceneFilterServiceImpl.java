@@ -30,11 +30,13 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		while (i < elements.size()) {
 			JSONObject element = elements.getJSONObject(i);
 			String elementId = element.getString("id");
+			Integer elementType = element.getInteger("type");
 			if (!visibleNodeIds.contains(elementId)) {
 				elements.remove(i);
 			} else {
 				// 非资产节点去除接入方式
-				if (!assetNodeIds.contains(elementId)) {
+				// 只去除终端的ports，保留路由器、交换机等的
+				if (!assetNodeIds.contains(elementId) && elementType == 4) {
 					element.put("ports", Lists.newArrayList());
 				}
 				i++;

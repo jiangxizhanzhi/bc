@@ -23,6 +23,8 @@ public interface CrCommonConstants {
 
 	Integer STUDENT_ROLE = 1;
 
+	Integer TERMINAL_TYPE_CODE = 4;
+
 	int SKILL_POINTS_SIZE = ConfigReader.readInt("cr.skill.point.size");
 
 	int SKILL_POINT_MIN_VALUE = ConfigReader.readInt("cr.skill.point.min");

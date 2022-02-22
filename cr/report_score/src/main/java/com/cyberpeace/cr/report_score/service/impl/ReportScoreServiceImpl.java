@@ -149,11 +149,14 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
     @Override
     public List<RankingRep> rankingStatistics() {
         List<RankingRep> rankScoreList = reportScoreMapper.getRankScore();
-        Map<String, RankingRep> rankScoreMap = rankScoreList.stream()
-                .collect(Collectors.toMap(RankingRep::getUserId, item -> item));
-
-
+        Map<String, String> rankScoreMap = rankScoreList.stream()
+                .collect(Collectors.toMap(RankingRep::getUserId, RankingRep::getSumScore));
         List<UserInfo> userInfoList = getUsers();
+
+        return baseRanking(userInfoList, rankScoreMap);
+    }
+
+    private List<RankingRep> baseRanking(List<UserInfo> userInfoList, Map<String, String> rankScoreMap) {
         List<RankingRep> rankingRepList = Lists.newArrayList();
         for (UserInfo userInfo : userInfoList) {
 
@@ -164,17 +167,17 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
             rankingRep.setUserId(userInfo.getUserId());
             rankingRep.setRank("0");
 
-            RankingRep userRankRep = rankScoreMap.get(userInfo.getUserId());
-            if (userRankRep != null) {
+            String userSumScore = rankScoreMap.get(userInfo.getUserId());
+            if (userSumScore != null) {
                 // 该排名为数据库中部分排名，不是最终排名
                 // rankingRep.setRank(userRankRep.getRank());
-                rankingRep.setSumScore(userRankRep.getSumScore());
+                rankingRep.setSumScore(userSumScore);
             }
             rankingRepList.add(rankingRep);
         }
         if(rankingRepList.stream().allMatch(rankingRep -> rankingRep.getSumScore().equals("0"))) {
             // 初始状态分数为0分，排名全部为0
-            log.info("all team source 0 , rank init is 0 ");
+            log.info("all team score 0 , rank init is 0 ");
             return rankingRepList;
         }
         return amountRank(rankingRepList);
@@ -210,6 +213,35 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         }
         return subjectCompleteRepList;
     }
+
+    /**
+     * 科目排行榜
+     */
+    @Override
+    public Map<Integer, List<RankingRep>> subjectRanking() {
+        HashMap<Integer, List<RankingRep>> subRankingMap = Maps.newHashMap();
+        List<UserInfo> userInfoList = getUsers();
+
+        List<UserSubjectGroupBo> userSubjectGroupList = reportScoreMapper.getUserSubjectGroup();
+        Map<Integer, List<UserSubjectGroupBo>> subjectGroupMap = userSubjectGroupList.stream()
+                .collect(Collectors.groupingBy(UserSubjectGroupBo::getSubject));
+
+        List<Integer> subjectCodeList = EnumUtils.getListCode(ReportScore.SubjectCode.class);
+        for (Integer subjectCode: subjectCodeList) {
+            List<UserSubjectGroupBo> userSubjectGroupBos = subjectGroupMap
+                    .getOrDefault(subjectCode, Lists.newArrayList());
+            log.info("subjectCode is {}, get userSubjectGroupBos {}", subjectCode, userSubjectGroupBos);
+
+            Map<String, String> userSumScoreMap = userSubjectGroupBos.stream().collect(Collectors
+                    .toMap(UserSubjectGroupBo::getUserId, UserSubjectGroupBo::getSubjectScore));
+
+            List<RankingRep> rankingRepList = baseRanking(userInfoList, userSumScoreMap);
+            subRankingMap.put(subjectCode, rankingRepList);
+        }
+
+        return subRankingMap;
+    }
+
 
     private List<UserInfo> getUsers() {
         // 获取全部用户作为队伍， 除了admin
@@ -261,6 +293,7 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
     }
 
     private static List<RankingRep> amountRank(List<RankingRep> rankingRepList) {
+        log.info("amountRank sort start");
         rankingRepList.sort((s1, s2) -> -Long.compare(Long.parseLong(s1.getSumScore()), Long.parseLong(s2.getSumScore())));
 
         int index = 0;
@@ -284,10 +317,12 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
                     rankingRep.setRank(String.valueOf(index));
                 }
             }
+            log.info("amountRank rank is {} score is {}, userId is {}, userName is {}", index,
+                    sumScoreLong, rankingRep.getUserId(), rankingRep.getUserName());
             tmpAmountRankList.add(rankingRep);
             tmpSize = tmpAmountRankList.size();
         }
-
+        log.info("amountRank sort end");
         return tmpAmountRankList;
     }
 }

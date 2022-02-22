@@ -1,10 +1,7 @@
 package com.cyberpeace.cr.report_score.controller.other;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.report_score.controller.res.AttackLogRes;
-import com.cyberpeace.cr.report_score.controller.res.AttackStRes;
-import com.cyberpeace.cr.report_score.controller.res.RankingRep;
-import com.cyberpeace.cr.report_score.controller.res.SubjectCompleteRep;
+import com.cyberpeace.cr.report_score.controller.res.*;
 import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import io.swagger.annotations.Api;
@@ -13,7 +10,6 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Key;
 import java.util.List;
 import java.util.Map;
 
@@ -39,9 +35,16 @@ public class ReportStatistics {
 
 	@ApiOperation("任务完成统计")
 	@GetMapping("/subject/st")
-	public BaseRsp<List<SubjectCompleteRep>> missionCompleteSt() {
+	public BaseRsp<List<SubjectCompleteRep>> subjectCompleteSt() {
 		List<SubjectCompleteRep> subjectCompleteReps = reportScoreService.subjectCompleteSt();
 		return new BaseRsp<>(subjectCompleteReps);
+	}
+
+	@ApiOperation(("任务完成得分排行"))
+	@GetMapping("/subject/ranking")
+	public BaseRsp<Map<Integer, List<RankingRep>>> subjectRanking() {
+		Map<Integer, List<RankingRep>> integerListMap = reportScoreService.subjectRanking();
+		return new BaseRsp<>(integerListMap);
 	}
 
 	@ApiOperation("系统信息")

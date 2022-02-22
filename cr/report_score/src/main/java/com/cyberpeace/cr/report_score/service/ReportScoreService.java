@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface ReportScoreService extends IService<ReportScore> {
     IPage<ReportScoreRsp> selectPage(Page page, ReportScoreListReq reportScoreListReq);
@@ -41,4 +42,6 @@ public interface ReportScoreService extends IService<ReportScore> {
     List<RankingRep> rankingStatistics();
 
     List<SubjectCompleteRep> subjectCompleteSt();
+
+    Map<Integer, List<RankingRep>> subjectRanking();
 }

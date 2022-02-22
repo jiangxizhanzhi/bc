@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSONException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +83,14 @@ public class MessageListener implements ChannelAwareMessageListener {
 	}
 
 	private boolean dispatch(String message) {
-		JSONObject object = JSON.parseObject(message);
+		JSONObject object;
+
+		try {
+			object = JSON.parseObject(message);
+		} catch (JSONException e) {
+			log.error("can not JSON.parseObject message: {}", message);
+			return true;
+		}
 
 		String type = object.getString("type");
 

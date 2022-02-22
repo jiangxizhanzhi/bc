@@ -533,7 +533,7 @@ public class MDParser {
 		// option, single choice & multi choice
 		if (template.getType().equals(ZiguanConstants.SINGLE_CHOICE_TYPE)
 				|| template.getType().equals(ZiguanConstants.MULTI_CHOICE_TYPE)) {
-			String rawOption = template.getOption().substring(2);
+			String rawOption = missionData.get(ZiguanConstants.OPTION).substring(2);
 			List<Option> options = Lists.newArrayList();
 			char[] a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 			String[] rawOptions = rawOption.split(LIST_SEP);

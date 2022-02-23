@@ -8,15 +8,19 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.AbilityListReq;
 import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.dao.mapper.AbilityMapper;
 import com.cyberpeace.rtks.service.AbilityService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class AbilityServiceImpl extends ServiceImpl<AbilityMapper, Ability> implements AbilityService {
 
 	@Autowired
@@ -32,11 +36,12 @@ public class AbilityServiceImpl extends ServiceImpl<AbilityMapper, Ability> impl
 	}
 
 	@Override
-	public void checkIds(List<String> ids) {
-		List<String> existingIds = abilityMapper.filterIds(ids);
-		for (String id : ids) {
-			if (!existingIds.contains(id)) {
-				throw new ResourceNotFoundException("能力" + id + "不存在");
+	public void checkIds(List<String> abilityIdIds) {
+		List<String> existingIds = abilityMapper.filterIds(abilityIdIds);
+		for (String abilityId : abilityIdIds) {
+			if (!existingIds.contains(abilityId)) {
+				log.error("ability not exist！abilityId=[{}]", abilityId);
+				throw new BusinessException(RtksBusinessErrorCode.ABILITY_NOT_EXIST);
 			}
 		}
 	}

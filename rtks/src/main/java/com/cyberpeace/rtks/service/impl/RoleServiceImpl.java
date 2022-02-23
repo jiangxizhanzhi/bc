@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
@@ -37,7 +38,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	public Role getOr404(String roleId) {
 		Role role = getById(roleId);
 		if (role == null) {
-			throw new ResourceNotFoundException("岗位" + roleId + "未找到");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 		return role;
 	}

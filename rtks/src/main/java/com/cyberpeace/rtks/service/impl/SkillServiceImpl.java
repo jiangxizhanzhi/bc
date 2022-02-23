@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -21,6 +20,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
@@ -35,9 +35,12 @@ import com.cyberpeace.rtks.service.bo.KnowledgeUnderCourseBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  *
  */
+@Slf4j
 @Service
 public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements SkillService {
 
@@ -113,10 +116,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	@Override
 	public void validate(Skill skill) {
 		if (skillCategoryService.getById(skill.getCategoryId()) == null) {
-			throw new InvalidParamException("类别不存在");
+			log.error("Skill Category not exist！CategoryId=[{}]", skill.getCategoryId());
+			throw new BusinessException(RtksBusinessErrorCode.CATEGORY_NOT_EXIST);
 		}
 		if (skillSystemService.getById(skill.getSystemId()) == null) {
-			throw new InvalidParamException("体系不存在");
+			log.error("Skill System not exist！SystemId=[{}]", skill.getSystemId());
+			throw new BusinessException(RtksBusinessErrorCode.CATEGORY_NOT_EXIST);
 		}
 	}
 
@@ -124,7 +129,8 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	public Skill getOr404(String skillId) {
 		Skill skill = getById(skillId);
 		if (skill == null) {
-			throw new ResourceNotFoundException("技能" + skillId + "未找到");
+			log.error("skill not exist！skillId=[{}]", skillId);
+			throw new BusinessException(RtksBusinessErrorCode.SKILL_NOT_EXIST);
 		}
 		return skill;
 	}

@@ -1,6 +1,8 @@
 package com.cyberpeace.rtks.service.impl;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ public class UserRelateServiceImpl implements UserRelateService {
     public UserRole roleRelateUser(String roleId, String userId, String userName) {
         Role role = roleMapper.selectById(roleId);
         if (null == role) {
-            throw new InvalidParamException("岗位非法！");
+            throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
         }
         UserRole userRole = new UserRole();
         userRole.setRoleId(roleId);

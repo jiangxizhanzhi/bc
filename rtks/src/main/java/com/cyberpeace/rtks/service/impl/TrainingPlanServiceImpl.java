@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Service
+@Slf4j
 public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
@@ -257,7 +259,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 			}
 		}
 		if (index >= 10 || index == 1) {
-			throw new ResourceNotFoundException("层级" + levelId + "不合法");
+			log.error("level Loop is out of range！levelId=[{}],loop is [{}]", level.getResourceId(),index-1);
+			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 		}
 
 		for (Level level1 : newlevelList) {

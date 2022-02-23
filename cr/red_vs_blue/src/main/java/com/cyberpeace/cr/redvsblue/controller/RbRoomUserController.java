@@ -133,7 +133,7 @@ public class RbRoomUserController {
 				missionInfoRsp.setWriteUp("");
 			}
 
-			missionInfoRsp.setMissionStatus(taskContext.getStatus());
+ 			missionInfoRsp.setMissionStatus(0);
 			missionInfoRsp.setCategory(taskContext.getMission().getCategoryId());
 			missionInfoRsp.setWriteUpShow(taskContext.getMission().getShowWriteup());
 			missionInfoRsp.setUserAnswer(taskContext.getUserAnswer());

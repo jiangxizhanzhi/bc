@@ -39,6 +39,8 @@ public class HttpClientUtil {
 
 	private static final String SUCCESS_POSTFIX = "-000000";
 
+	private static final String EXTERNAL_SUCCESS = "200";
+
 	/**
 	 * 执行post请求
 	 * @param url 请求的url地址
@@ -222,7 +224,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static boolean isSuccess(BaseRsp baseRsp) {
-		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
+		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX) || EXTERNAL_SUCCESS.equals(baseRsp.getCode());
 	}
 
 	/**

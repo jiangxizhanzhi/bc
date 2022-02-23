@@ -87,7 +87,7 @@ public class HldRoomController {
 			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id,
 			@ApiParam(name = "task_id", value = "葫芦岛任务id", required = true) String task_id) {
 
-		String role_name = "红方1";
+		String role_name = "红1";
 
 		HldRoom hldRoom = hldRoomService.getById(room_id);
 		SceneViewContext context = hldSceneService.viewScene(room_id, role_name);

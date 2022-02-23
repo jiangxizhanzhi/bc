@@ -425,7 +425,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		// 过滤掉镜像文件夹并排序
 		List<String> notImagePathList = StreamApiUtils.filter(chapterPaths,
-				pathStr -> !new File(path).getName().equals(ResourceImportConstant.IMAGE_NAME));
+				pathStr -> !new File(pathStr).getName().equals(ResourceImportConstant.IMAGE_NAME));
 		List<String> sortList = StreamApiUtils.sortByColumn(notImagePathList,
 				pathStr -> Integer
 						.parseInt(new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
@@ -451,7 +451,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 			// 课时数据组装
 			List<String> lessonPathList = FileUtil.listDirs(chapterPath, false);
 			List<String> sortLessonList = StreamApiUtils.sortByColumn(lessonPathList, pathStr -> {
-				String sortStr = new File(path).getName().split(PatternConstant.UNDER_LINE,
+				String sortStr = new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
 						CommonConstant.TWO)[CommonConstant.ZERO];
 				return Integer
 						.parseInt(sortStr.split(PatternConstant.STRIGULA)[CommonConstant.ZERO]);

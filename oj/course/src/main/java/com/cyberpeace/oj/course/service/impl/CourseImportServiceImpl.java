@@ -13,6 +13,7 @@ import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.*;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
@@ -421,7 +422,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		int index = CommonConstant.ONE;
 		List<String> chapterPaths = FileUtil.listDirs(path, false);
-		for (String chapterPath : chapterPaths) {
+		List<String> sortList = StreamApiUtils.sortByColumn(chapterPaths, pathStr -> Integer.parseInt(new File(pathStr).getName()
+				.split(PatternConstant.UNDER_LINE, CommonConstant.TWO)[CommonConstant.ONE]));
+
+		for (String chapterPath : sortList) {
 			// 过滤掉镜像文件夹
 			if (new File(chapterPath).getName().equals(ResourceImportConstant.IMAGE_NAME)) {
 				continue;
@@ -449,6 +453,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 				String name = nameArray.length > CommonConstant.ONE ? nameArray[CommonConstant.ONE]
 						: nameArray[0];
 
+				if (StringUtils.isBlank(nameMap.get(name))) {
+					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR);
+				}
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)

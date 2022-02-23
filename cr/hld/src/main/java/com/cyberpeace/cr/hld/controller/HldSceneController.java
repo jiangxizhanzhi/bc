@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
@@ -64,9 +65,12 @@ public class HldSceneController {
 	@ApiOperation("查看场景")
 	@GetMapping("")
 	public BaseRsp<SceneViewContext> getScene(
-			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id,
-			@ApiParam(name = "role_name", value = "角色名称", required = true) String role_name) {
-		SceneViewContext context = hldSceneService.viewScene(room_id, role_name);
+			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
+
+		// 获取当前用户角色
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole role = hldRoomService.getUserRole(room_id, userId);
+		SceneViewContext context = hldSceneService.viewScene(room_id, role);
 
 		return new BaseRsp<>(context);
 	}

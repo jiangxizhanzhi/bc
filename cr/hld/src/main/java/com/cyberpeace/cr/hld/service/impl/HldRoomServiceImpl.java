@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.hld.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -209,8 +210,53 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		blueRoleConfigBase.setVisibleNodes(Lists.newArrayList());
 		hldRoleConfigBases.add(blueRoleConfigBase);
 
+		// 构建管理员数据
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		HldUserContext admin = new HldUserContext();
+		admin.setName(userInfo.getName());
+		admin.setUserCode(userInfo.getUserId());
+		admin.setUserName(userInfo.getUserName());
+		HldRoleContext adminRole = userTrans2Role(admin, "admin");
+
+		// 获取导演数据
+		HldUserContext director = hldTaskContext.getControlUser();
+		HldRoleContext directorRole = userTrans2Role(director, "director");
+
+		// 获取裁判数据
+		HldUserContext referee = hldTaskContext.getAssessUser();
+		HldRoleContext refereeRole = userTrans2Role(referee, "referee");
+
+		// 提取白方角色数据
+		List<HldRoleContext> whiteUsers = Lists.newArrayList();
+		whiteUsers.add(adminRole);
+		whiteUsers.add(directorRole);
+		whiteUsers.add(refereeRole);
+		List<HldRoleConfig> whiteRoles = transRoleConfig(whiteUsers);
+		HldRoleConfigBase whiteRoleConfigBase = new HldRoleConfigBase();
+		whiteRoleConfigBase.setKey("");
+		whiteRoleConfigBase.setType("white");
+		whiteRoleConfigBase.setId("white");
+		whiteRoleConfigBase.setName("white");
+		whiteRoleConfigBase.setChildren(whiteRoles);
+		hldRoleConfigBases.add(whiteRoleConfigBase);
+
 		return hldRoleConfigBases;
 	}
+
+	private HldRoleContext userTrans2Role(HldUserContext hldUserContext, String roleName){
+		HldRoleContext hldRoleContext = new HldRoleContext();
+		List<HldUserContext> hldUserContexts = Lists.newArrayList();
+		hldUserContexts.add(hldUserContext);
+		hldRoleContext.setUserList(hldUserContexts);
+		hldRoleContext.setName(roleName);
+
+		return hldRoleContext;
+	}
+
+
+
+
+
 
 	private List<HldRoleConfig> transRoleConfig(List<HldRoleContext> hldRoleContexts) {
 
@@ -242,6 +288,11 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		baseInfo.setDescription(hldTaskContext.getAttackTaskSenceDes());
 		baseInfo.setDifficult(0);
 		return baseInfo;
+	}
+
+	@Override
+	public CrRole getUserRole(String roomId, String userId){
+		return crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 	}
 
 }

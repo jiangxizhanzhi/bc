@@ -5,10 +5,13 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
@@ -54,6 +57,9 @@ public class HldRoomController {
 	private HldSceneService hldSceneService;
 
 	@Autowired
+	private CrRoleService crRoleService;
+
+	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	@Autowired
@@ -84,13 +90,14 @@ public class HldRoomController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<HldRoomRsp> get(
-			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id,
-			@ApiParam(name = "task_id", value = "葫芦岛任务id", required = true) String task_id) {
+			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
 
-		String role_name = "红1";
+		// 获取当前用户角色
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole role = hldRoomService.getUserRole(room_id, userId);
 
 		HldRoom hldRoom = hldRoomService.getById(room_id);
-		SceneViewContext context = hldSceneService.viewScene(room_id, role_name);
+		SceneViewContext context = hldSceneService.viewScene(room_id, role);
 		HldRoomRsp hldRoomRsp = BeanUtils.copy(context, HldRoomRsp.class);
 		hldRoomRsp.setRoomStatus(hldRoom.getStatus());
 		hldRoomRsp.setTemplateId(hldRoom.getTemplateId());
@@ -193,7 +200,7 @@ public class HldRoomController {
 
 		// 构造初始数据
 		HldRoomContext hldRoomContext = new HldRoomContext();
-		hldRoomContext.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigHld));
+		hldRoomContext.setRoleConfig(JSONObject.toJSONString(roleConfigHld));
 		hldRoomContext.setBaseInfo(baseInfo);
 		hldRoomContext.setTaskId(addReq.getTaskId());
 

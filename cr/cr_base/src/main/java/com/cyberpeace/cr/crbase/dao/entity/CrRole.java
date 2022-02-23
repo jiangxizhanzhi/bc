@@ -294,4 +294,21 @@ public class CrRole extends BaseTable {
 		}
 
 	}
+
+	public boolean isInHldGroup(HldRoleGroup hldRoleGroup) {
+		return BusinessTemplate.BusinessType.HLD.getCode().equals(businessType) &&
+				getRoleGroup().equals(hldRoleGroup.getCode());
+	}
+
+	public boolean isHldRedStudent() {
+		return isInHldGroup(HldRoleGroup.RED);
+	}
+
+	public boolean isHldBlueStudent() {
+		return isInHldGroup(HldRoleGroup.BLUE);
+	}
+
+	public boolean isHldStudent() {
+		return isHldRedStudent() || isHldBlueStudent();
+	}
 }

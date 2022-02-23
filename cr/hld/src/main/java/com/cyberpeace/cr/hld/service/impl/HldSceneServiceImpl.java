@@ -121,7 +121,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 	}
 
 	@Override
-	public SceneViewContext viewScene(String roomId, String roleName) {
+	public SceneViewContext viewScene(String roomId, CrRole role) {
 		SceneViewContext ret = new SceneViewContext();
 		ret.setRoomId(roomId);
 		HldRoom room = hldRoomService.getById(roomId);
@@ -130,7 +130,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 		}
 
 		// 1. 获取用户可见节点
-		CrRoleNodesData nodes = getNodes(room, roleName);
+		CrRoleNodesData nodes = getNodes(room, role);
 
 		// 2、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(room);
@@ -331,15 +331,14 @@ public class HldSceneServiceImpl implements HldSceneService {
 		return sceneData;
 	}
 
-	private CrRoleNodesData getNodes(HldRoom hldRoom, String roleName) {
+	private CrRoleNodesData getNodes(HldRoom hldRoom, CrRole role) {
 
-		CrRole role = crRoleMapper.getCrRoleByRoomIdAndRoleName(hldRoom.getResourceId(), roleName);
-
-		if (role == null) {
-			return null;
-		} else {
+		// 1、如果是学员角色，直接返回
+		if (role.isHldStudent()) {
 			return role.getNodeData();
 		}
+
+		return null;
 	}
 
 	@Override

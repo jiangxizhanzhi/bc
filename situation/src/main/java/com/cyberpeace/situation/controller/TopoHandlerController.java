@@ -168,8 +168,8 @@ public class TopoHandlerController {
             JSONObject elementExtendedInfo = extendElementInfo.getJSONObject(elementId);
 
             //处理设备类型（虚/实）
-            Integer virtualType = elementExtendedInfo.getInteger("virtual_type");
-            String deviceType = virtualType != 0 ? "virtual" : "entity";
+            String virtualType = elementExtendedInfo.getString("image_type");
+            String deviceType = "entity".equals(virtualType) ? "entity" : "virtual";
 
             // 处理类型数据
             Integer category = elementExtendedInfo.getInteger("category");

@@ -1,19 +1,26 @@
 package com.cyberpeace.cr.hld.service.impl;
 
-import com.alibaba.fastjson.JSON;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
-
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
@@ -25,20 +32,10 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -59,9 +56,6 @@ public class HldSceneServiceImpl implements HldSceneService {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
-
-	@Autowired
-	private CrRoleMapper crRoleMapper;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -146,6 +140,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 				.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
 		sceneFilterService.filterVisibleTopo(topoData, nodes);
 		ret.setTopoData(topoData);
+
 		return ret;
 	}
 
@@ -296,6 +291,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 	}
 
 	private JSONObject getMpSceneData(HldRoom room) {
+
 		String localSceneId = room.getLocalSceneId();
 
 		// localSceneId字段为空
@@ -328,6 +324,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 		}
 
 		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
+
 		return sceneData;
 	}
 
@@ -343,6 +340,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 
 	@Override
 	public void clearLocal(HldRoom room) {
+
 		String localSceneId = room.getLocalSceneId();
 		room.setLocalSceneId("");
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -356,6 +354,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 	}
 
 	private LocalScene createLocalScene(HldRoom room, String topoId) {
+
 		LocalScene localScene = new LocalScene();
 
 		localScene.setBusinessCode(LocalScene.BusinessCode.HLD.getCode());

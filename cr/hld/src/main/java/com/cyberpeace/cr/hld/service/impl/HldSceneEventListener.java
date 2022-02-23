@@ -1,10 +1,12 @@
 package com.cyberpeace.cr.hld.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.service.HldRoomService;
@@ -12,11 +14,8 @@ import com.cyberpeace.cr.hld.service.HldSceneService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.cs.service.impl.MessageListener;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -72,12 +71,4 @@ public class HldSceneEventListener extends MessageListener {
 		webSocketHandler.pushMessage(messageContext, true);
 	}
 
-	/**
-	 * 推送消息给某个角色的所有用户
-	 */
-	private void pushDataToWebByUserIds(String data, String businessId, List<String> userIds) {
-		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
-				businessId);
-		webSocketHandler.pushMessageToUsers(messageContext, userIds);
-	}
 }

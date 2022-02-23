@@ -1,5 +1,12 @@
 package com.cyberpeace.cr.hld.controller;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -17,16 +24,11 @@ import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags = "葫芦岛场景")
 @Slf4j
@@ -47,18 +49,21 @@ public class HldSceneController {
 	@ApiOperation("启动场景")
 	@PostMapping("")
 	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
+
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
-
 		String sceneId = hldSceneService.startScene(roomId, userId);
+
 		return new BaseRsp(new StartSceneRsp(sceneId));
 	}
 
 	@ApiOperation("停止场景")
 	@DeleteMapping("")
 	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
+
 		String roomId = sceneStopReq.getRoomId();
 		Boolean result = hldSceneService.stopScene(roomId);
+
 		return new BaseRsp(result);
 	}
 
@@ -70,6 +75,8 @@ public class HldSceneController {
 		// 获取当前用户角色
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole role = hldRoomService.getUserRole(room_id, userId);
+
+		// 获取角色过滤后的数据
 		SceneViewContext context = hldSceneService.viewScene(room_id, role);
 
 		return new BaseRsp<>(context);
@@ -78,16 +85,20 @@ public class HldSceneController {
 	@ApiOperation("暂停场景")
 	@PostMapping("/pause")
 	public BaseRsp<Boolean> pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+
 		String roomId = sceneOpsReq.getRoomId();
 		Boolean ret = hldSceneService.pauseScene(roomId);
+
 		return new BaseRsp<>(ret);
 	}
 
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/unpause")
 	public BaseRsp<Boolean> unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+
 		String roomId = sceneOpsReq.getRoomId();
 		Boolean ret = hldSceneService.unpauseScene(roomId);
+
 		return new BaseRsp<>(ret);
 	}
 
@@ -95,15 +106,18 @@ public class HldSceneController {
 	@GetMapping("flow")
 	public BaseRsp<FlowRsp> getFlowList(
 			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
+
 		List<Flow> flows = hldSceneService.getFlowList(room_id);
 		FlowRsp ret = new FlowRsp();
 		ret.setData(flows);
+
 		return new BaseRsp<>(ret);
 	}
 
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
 	public BaseRsp startFlow(@RequestBody FlowOpsReq req) {
+
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
@@ -121,12 +135,14 @@ public class HldSceneController {
 		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 		}
+
 		return new BaseRsp();
 	}
 
 	@ApiOperation("停止流量")
 	@PostMapping("/flow/stop")
 	public BaseRsp stopFlow(@RequestBody FlowOpsReq req) {
+
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 1、鉴权
@@ -141,12 +157,14 @@ public class HldSceneController {
 		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.STOP_FLOW_FAILURE);
 		}
+
 		return new BaseRsp();
 	}
 
 	@ApiOperation("重启节点")
 	@PostMapping("/node/restart")
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+
 		HldRoom room = hldRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
@@ -156,12 +174,14 @@ public class HldSceneController {
 		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
+
 		return new BaseRsp();
 	}
 
 	@ApiOperation("重建节点")
 	@PostMapping("/node/recreate")
 	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+
 		HldRoom room = hldRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
@@ -171,6 +191,7 @@ public class HldSceneController {
 		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
+
 		return new BaseRsp();
 	}
 }

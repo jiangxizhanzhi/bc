@@ -1,5 +1,13 @@
 package com.cyberpeace.cr.hld.service.impl;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -17,15 +25,8 @@ import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.context.*;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Date;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -78,12 +79,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 				save(hldRoom);
 
 				// 创建靶场角色记录
-				List<CrRole> crRoles = getCrRoleByHldRoom(hldRoom);
-				for (CrRole crRole : crRoles) {
-					crRole.setBusinessType(BusinessTemplate.BusinessType.HLD.getCode());
-					crRoleService.save(crRole);
-				}
-
+				saveCrRoles(hldRoom);
 			}
 
 		});
@@ -117,11 +113,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 
 				// 更新角色数据
 				crRoleService.clearRoomRoles(hldRoom.getResourceId());
-				List<CrRole> crRoles = getCrRoleByHldRoom(hldRoom);
-				for (CrRole crRole : crRoles) {
-					crRole.setBusinessType(BusinessTemplate.BusinessType.HLD.getCode());
-					crRoleService.save(crRole);
-				}
+				saveCrRoles(hldRoom);
 			}
 
 		});
@@ -133,35 +125,46 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 	@Override
 	public void checkUserPermission(String roomId, String userId) {}
 
-	private List<CrRole> getCrRoleByHldRoom(HldRoom hldRoom) {
+	private void addCrRoles(List<CrRole> crRoleList, List<HldRoleConfig> hldRoleConfigs,
+			String roomId, CrRole.HldRoleGroup hldRoleGroup) {
+		for (HldRoleConfig hldRoleConfig : hldRoleConfigs) {
+			CrRole crRole = getCrRoleByConfig(roomId, hldRoleConfig, hldRoleGroup);
+			crRoleList.add(crRole);
+		}
+	}
+
+	private List<CrRole> getCrRoles(HldRoom hldRoom) {
 
 		List<CrRole> crRoleList = Lists.newArrayList();
 
-		CrRoleConfigHld crRoleConfigHld = JsonUtil.toJsonObject(hldRoom.getRoleConfig(),
-				CrRoleConfigHld.class);
+		HldRolesConfig hldRolesConfig = JsonUtil.toJsonObject(hldRoom.getRoleConfig(),
+				HldRolesConfig.class);
+		String roomId = hldRoom.getResourceId();
 
-		// 获取红队的角色任务
-		List<HldRoleConfig> redRoles = crRoleConfigHld.getRedRoles();
-		for (HldRoleConfig hldRoleConfig : redRoles) {
-			CrRole crRole = getRoleByConfig(hldRoom.getResourceId(), hldRoleConfig,
-					CrRole.HldRoleGroup.RED);
-			crRoleList.add(crRole);
-		}
+		// 获取红队的角色
+		addCrRoles(crRoleList, hldRolesConfig.getRedRoles(), roomId, CrRole.HldRoleGroup.RED);
 
-		// 获取蓝队的角色任务
-		List<HldRoleConfig> blueRoles = crRoleConfigHld.getBlueRoles();
-		for (HldRoleConfig hldRoleConfig : blueRoles) {
-			CrRole crRole = getRoleByConfig(hldRoom.getResourceId(), hldRoleConfig,
-					CrRole.HldRoleGroup.BLUE);
-			crRoleList.add(crRole);
-		}
+		// 获取蓝队的角色
+		addCrRoles(crRoleList, hldRolesConfig.getBlueRoles(), roomId, CrRole.HldRoleGroup.BLUE);
+
+		// 获取白队的角色
+		addCrRoles(crRoleList, hldRolesConfig.getWhiteRoles(), roomId, CrRole.HldRoleGroup.WHITE);
 
 		return crRoleList;
 	}
 
-	private CrRole getRoleByConfig(String roomId, HldRoleConfig hldRoleConfig,
+	private void saveCrRoles(HldRoom hldRoom) {
+		List<CrRole> crRoles = getCrRoles(hldRoom);
+		for (CrRole crRole : crRoles) {
+			crRole.setBusinessType(BusinessTemplate.BusinessType.HLD.getCode());
+			crRoleService.save(crRole);
+		}
+	}
+
+	private CrRole getCrRoleByConfig(String roomId, HldRoleConfig hldRoleConfig,
 			CrRole.HldRoleGroup roleGroup) {
 
+		// 设置节点数据
 		CrRoleNodesData nodesData = new CrRoleNodesData();
 		nodesData.setAssetNodes(hldRoleConfig.getAssetNodes());
 		nodesData.setVisibleNodes(hldRoleConfig.getVisibleNodes());
@@ -170,6 +173,8 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 
 		crRole.setRoomId(roomId);
 		crRole.setNodesData(nodesData);
+
+		// 设置角色用户数据
 		if (hldRoleConfig.getUsers() == null) {
 			crRole.setUserIds("[]");
 		} else {
@@ -179,120 +184,113 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		return crRole;
 	}
 
-	@Override
-	public List<HldRoleConfigBase> getHldRoleConfig(HldTaskContext hldTaskContext) {
+	private void addTaskRoleConfig(List<TaskRoleConfig> taskRoleConfigs,
+			List<TaskRoleContext> taskRoleContexts, String name) {
 
-		List<HldRoleConfigBase> hldRoleConfigBases = Lists.newArrayList();
+		List<HldRoleConfig> hldRoleConfigs = transRoleConfig(taskRoleContexts);
+
+		TaskRoleConfig taskRoleConfig = new TaskRoleConfig();
+		taskRoleConfig.setKey("");
+		taskRoleConfig.setType(name);
+		taskRoleConfig.setId(name);
+		taskRoleConfig.setName(name);
+		taskRoleConfig.setChildren(hldRoleConfigs);
+		taskRoleConfig.setAssetNodes(Lists.newArrayList());
+		taskRoleConfig.setVisibleNodes(Lists.newArrayList());
+		taskRoleConfigs.add(taskRoleConfig);
+
+	}
+
+	@Override
+	public List<TaskRoleConfig> getTaskRoleConfig(HldTaskContext hldTaskContext) {
+
+		List<TaskRoleConfig> taskRoleConfigs = Lists.newArrayList();
 
 		// 提取红方角色数据
-		List<HldRoleContext> redTrainUser = hldTaskContext.getRedTrainUser();
-		List<HldRoleConfig> redRoles = transRoleConfig(redTrainUser);
-		HldRoleConfigBase redRoleConfigBase = new HldRoleConfigBase();
-		redRoleConfigBase.setKey("");
-		redRoleConfigBase.setType("red");
-		redRoleConfigBase.setId("red");
-		redRoleConfigBase.setName("red");
-		redRoleConfigBase.setChildren(redRoles);
-		redRoleConfigBase.setAssetNodes(Lists.newArrayList());
-		redRoleConfigBase.setVisibleNodes(Lists.newArrayList());
-		hldRoleConfigBases.add(redRoleConfigBase);
+		addTaskRoleConfig(taskRoleConfigs, hldTaskContext.getRedTrainUser(), "red");
 
 		// 提取蓝方角色数据
-		List<HldRoleContext> blueTrainUser = hldTaskContext.getBlueTrainUser();
-		List<HldRoleConfig> blueRoles = transRoleConfig(blueTrainUser);
-		HldRoleConfigBase blueRoleConfigBase = new HldRoleConfigBase();
-		blueRoleConfigBase.setKey("");
-		blueRoleConfigBase.setType("blue");
-		blueRoleConfigBase.setId("blue");
-		blueRoleConfigBase.setName("blue");
-		blueRoleConfigBase.setChildren(blueRoles);
-		blueRoleConfigBase.setAssetNodes(Lists.newArrayList());
-		blueRoleConfigBase.setVisibleNodes(Lists.newArrayList());
-		hldRoleConfigBases.add(blueRoleConfigBase);
+		addTaskRoleConfig(taskRoleConfigs, hldTaskContext.getBlueTrainUser(), "blue");
 
 		// 构建管理员数据
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		HldUserContext admin = new HldUserContext();
+		TaskUserInfo admin = new TaskUserInfo();
 		admin.setName(userInfo.getName());
 		admin.setUserCode(userInfo.getUserId());
 		admin.setUserName(userInfo.getUserName());
-		HldRoleContext adminRole = userTrans2Role(admin, "admin");
+		TaskRoleContext adminRoleContext = getRoleFromUser(admin, "admin");
 
 		// 获取导演数据
-		HldUserContext director = hldTaskContext.getControlUser();
-		HldRoleContext directorRole = userTrans2Role(director, "director");
+		TaskUserInfo director = hldTaskContext.getControlUser();
+		TaskRoleContext directorRoleContext = getRoleFromUser(director, "director");
 
 		// 获取裁判数据
-		HldUserContext referee = hldTaskContext.getAssessUser();
-		HldRoleContext refereeRole = userTrans2Role(referee, "referee");
+		TaskUserInfo referee = hldTaskContext.getAssessUser();
+		TaskRoleContext refereeRoleContext = getRoleFromUser(referee, "referee");
 
 		// 提取白方角色数据
-		List<HldRoleContext> whiteUsers = Lists.newArrayList();
-		whiteUsers.add(adminRole);
-		whiteUsers.add(directorRole);
-		whiteUsers.add(refereeRole);
-		List<HldRoleConfig> whiteRoles = transRoleConfig(whiteUsers);
-		HldRoleConfigBase whiteRoleConfigBase = new HldRoleConfigBase();
-		whiteRoleConfigBase.setKey("");
-		whiteRoleConfigBase.setType("white");
-		whiteRoleConfigBase.setId("white");
-		whiteRoleConfigBase.setName("white");
-		whiteRoleConfigBase.setChildren(whiteRoles);
-		hldRoleConfigBases.add(whiteRoleConfigBase);
+		List<TaskRoleContext> whiteUsers = Lists.newArrayList();
+		whiteUsers.add(adminRoleContext);
+		whiteUsers.add(directorRoleContext);
+		whiteUsers.add(refereeRoleContext);
 
-		return hldRoleConfigBases;
+		addTaskRoleConfig(taskRoleConfigs, whiteUsers, "white");
+
+		return taskRoleConfigs;
 	}
 
-	private HldRoleContext userTrans2Role(HldUserContext hldUserContext, String roleName){
-		HldRoleContext hldRoleContext = new HldRoleContext();
-		List<HldUserContext> hldUserContexts = Lists.newArrayList();
-		hldUserContexts.add(hldUserContext);
-		hldRoleContext.setUserList(hldUserContexts);
-		hldRoleContext.setName(roleName);
+	private TaskRoleContext getRoleFromUser(TaskUserInfo taskUserInfo, String roleName) {
 
-		return hldRoleContext;
+		TaskRoleContext taskRoleContext = new TaskRoleContext();
+		List<TaskUserInfo> taskUserInfos = Lists.newArrayList();
+		taskUserInfos.add(taskUserInfo);
+		taskRoleContext.setUserList(taskUserInfos);
+		taskRoleContext.setName(roleName);
+
+		return taskRoleContext;
 	}
 
-
-
-
-
-
-	private List<HldRoleConfig> transRoleConfig(List<HldRoleContext> hldRoleContexts) {
+	private List<HldRoleConfig> transRoleConfig(List<TaskRoleContext> taskRoleContexts) {
 
 		List<HldRoleConfig> hldRoleConfigs = Lists.newArrayList();
-		for (HldRoleContext hldRoleContext : hldRoleContexts) {
-			HldRoleConfig hldRoleConfig = BeanUtils.deepCopy(hldRoleContext, HldRoleConfig.class);
+		for (TaskRoleContext taskRoleContext : taskRoleContexts) {
+			HldRoleConfig hldRoleConfig = BeanUtils.deepCopy(taskRoleContext, HldRoleConfig.class);
 			hldRoleConfig.setAssetNodes(Lists.newArrayList());
 			hldRoleConfig.setVisibleNodes(Lists.newArrayList());
-			hldRoleConfig.setUsers(getRoleUsers(hldRoleContext.getUserList()));
+			hldRoleConfig.setUsers(getRoleUsers(taskRoleContext.getUserList()));
 			hldRoleConfigs.add(hldRoleConfig);
 		}
+
 		return hldRoleConfigs;
 	}
 
-	private List<String> getRoleUsers(List<HldUserContext> userList) {
+	private List<String> getRoleUsers(List<TaskUserInfo> userList) {
 
 		List<String> users = Lists.newArrayList();
-		for (HldUserContext hldUserContext : userList) {
-			users.add(hldUserContext.getUserCode());
+		for (TaskUserInfo taskUserInfo : userList) {
+			users.add(taskUserInfo.getUserCode());
 		}
+
 		return users;
 	}
 
 	@Override
 	public BaseInfo getHldBaseInfo(HldTaskContext hldTaskContext) {
+
 		BaseInfo baseInfo = new BaseInfo();
 		baseInfo.setType(BusinessTemplate.BusinessType.HLD.getCode());
 		baseInfo.setName(hldTaskContext.getTaskName());
 		baseInfo.setDescription(hldTaskContext.getAttackTaskSenceDes());
 		baseInfo.setDifficult(0);
+
 		return baseInfo;
 	}
 
 	@Override
-	public CrRole getUserRole(String roomId, String userId){
+	public CrRole getUserRole(String roomId, String userId) {
+
 		return crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+
 	}
 
 }

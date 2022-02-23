@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.hld.controller.req;
 
+import javax.validation.constraints.NotNull;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 public class HldRoomModifyReq extends HldRoomAddReq {

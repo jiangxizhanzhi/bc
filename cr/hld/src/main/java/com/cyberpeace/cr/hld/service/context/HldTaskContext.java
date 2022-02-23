@@ -1,8 +1,8 @@
 package com.cyberpeace.cr.hld.service.context;
 
-import lombok.Data;
-
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class HldTaskContext {
@@ -11,12 +11,12 @@ public class HldTaskContext {
 
 	private String attackTaskSenceDes;
 
-	private HldUserContext controlUser;
+	private TaskUserInfo controlUser;
 
-	private HldUserContext assessUser;
+	private TaskUserInfo assessUser;
 
-	private List<HldRoleContext> redTrainUser;
+	private List<TaskRoleContext> redTrainUser;
 
-	private List<HldRoleContext> blueTrainUser;
+	private List<TaskRoleContext> blueTrainUser;
 
 }

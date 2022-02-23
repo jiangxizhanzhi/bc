@@ -3,7 +3,7 @@ package com.cyberpeace.cr.hld.service.context;
 import lombok.Data;
 
 @Data
-public class HldUserContext {
+public class TaskUserInfo {
 
 	private String userCode;
 

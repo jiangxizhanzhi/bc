@@ -1,5 +1,12 @@
 package com.cyberpeace.cr.hld.controller;
 
+import java.util.List;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -8,13 +15,10 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.hld.controller.req.HldRoomAddReq;
 import com.cyberpeace.cr.hld.controller.req.HldRoomModifyReq;
 import com.cyberpeace.cr.hld.controller.rsp.HldRoomIdRsp;
@@ -23,23 +27,15 @@ import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
 import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
-import com.cyberpeace.cr.hld.service.context.CrRoleConfigHld;
-import com.cyberpeace.cr.hld.service.context.HldRoleConfigBase;
+import com.cyberpeace.cr.hld.service.context.HldRolesConfig;
 import com.cyberpeace.cr.hld.service.context.HldRoomContext;
 import com.cyberpeace.cr.hld.service.context.HldTaskContext;
+import com.cyberpeace.cr.hld.service.context.TaskRoleConfig;
 import com.cyberpeace.integratation.service.HldTaskService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags = "葫芦岛房间")
 @RestController
@@ -57,16 +53,10 @@ public class HldRoomController {
 	private HldSceneService hldSceneService;
 
 	@Autowired
-	private CrRoleService crRoleService;
-
-	@Autowired
-	private BusinessTemplateService businessTemplateService;
-
-	@Autowired
 	private HldTaskService hldTaskService;
 
 	@Autowired
-	private TransactionTemplate transactionTemplate;
+	private BusinessTemplateService businessTemplateService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -79,28 +69,28 @@ public class HldRoomController {
 		HldRoom hldRoom = hldRoomService.create(hldRoomContext);
 
 		// 远程写入映射关系
-		updateHldTaskZt(addReq.getTaskId(), hldRoom.getResourceId());
+		hldTaskService.updateTaskZt(addReq.getTaskId(), hldRoom.getResourceId());
 
-		// 构造返回参数
-		HldRoomIdRsp hldRoomIdRsp = new HldRoomIdRsp();
-		hldRoomIdRsp.setRoomId(hldRoom.getResourceId());
-		return new BaseRsp<>(hldRoomIdRsp);
+		return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
 	}
 
 	@ApiOperation("查询")
 	@GetMapping()
-	public BaseRsp<HldRoomRsp> get(
-			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
+	public BaseRsp<HldRoomRsp>
+			get(@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
 
 		// 获取当前用户角色
 		String userId = UserInfoContext.getUserContext().getUserId();
-		CrRole role = hldRoomService.getUserRole(room_id, userId);
+		CrRole userRole = hldRoomService.getUserRole(room_id, userId);
 
 		HldRoom hldRoom = hldRoomService.getById(room_id);
-		SceneViewContext context = hldSceneService.viewScene(room_id, role);
+		SceneViewContext context = hldSceneService.viewScene(room_id, userRole);
+
+		// 构造返回数据
 		HldRoomRsp hldRoomRsp = BeanUtils.copy(context, HldRoomRsp.class);
 		hldRoomRsp.setRoomStatus(hldRoom.getStatus());
 		hldRoomRsp.setTemplateId(hldRoom.getTemplateId());
+
 		return new BaseRsp<>(hldRoomRsp);
 	}
 
@@ -122,7 +112,7 @@ public class HldRoomController {
 		String resourceId = modifyReq.getResourceId();
 		HldRoom hldRoom = hldRoomService.getById(resourceId);
 
-		// 不存在的训练直接异常
+		// 不存在的训练直接抛出异常
 		if (hldRoom == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
@@ -132,66 +122,51 @@ public class HldRoomController {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_HAS_BEGUN);
 		}
 
-		BusinessTemplate businessTemplate = businessTemplateService.getById(hldRoom.getTemplateId());
-
-		// 如果业务模板不存在，返回异常
-		if (businessTemplate == null) {
+		// 如果业务模板不存在，抛出异常
+		if (businessTemplateService.getById(hldRoom.getTemplateId()) == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
 
-		// 构造初始数据
+		// 构造更新数据
 		HldRoomContext hldRoomContext = reqToHldRoomContext(modifyReq);
 
 		// 更新业务数据
 		hldRoomService.update(hldRoomContext, hldRoom);
 
-		// 构造返回参数
-		HldRoomIdRsp hldRoomIdRsp = new HldRoomIdRsp();
-		hldRoomIdRsp.setRoomId(hldRoom.getResourceId());
-		return new BaseRsp<>(hldRoomIdRsp);
+		return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
 	}
 
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-
-		List<String> businessTemplateIds = hldRoomMapper.listBusinessTemplateIds(deleteReq.getIds());
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				businessTemplateService.batchDelete(businessTemplateIds);
-			}
-		});
+		List<String> businessTemplateIds = hldRoomMapper
+				.listBusinessTemplateIds(deleteReq.getIds());
+		businessTemplateService.batchDelete(businessTemplateIds);
 
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("查询葫芦岛角色配置")
 	@GetMapping("/roles")
-	public BaseRsp<List<HldRoleConfigBase>> getRoleConfig(
+	public BaseRsp<List<TaskRoleConfig>> getRoleConfig(
 			@ApiParam(name = "task_id", value = "葫芦岛任务id", required = true) String task_id) {
 		HldTaskContext hldTaskContext = getHldTaskContext(task_id);
-		List<HldRoleConfigBase> hldRoleConfigBases = hldRoomService.getHldRoleConfig(hldTaskContext);
-		return new BaseRsp<>(hldRoleConfigBases);
+		List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getTaskRoleConfig(hldTaskContext);
+
+		return new BaseRsp<>(taskRoleConfigs);
 	}
 
-	private HldTaskContext getHldTaskContext(String taskId){
+	private HldTaskContext getHldTaskContext(String taskId) {
 		JSONObject jsonObject = hldTaskService.getTaskInfo(taskId);
 		HldTaskContext hldTaskContext = jsonObject.getObject("baseInfo", HldTaskContext.class);
-		return hldTaskContext;
-	}
 
-	private Boolean updateHldTaskZt(String taskId, String sceneId){
-		hldTaskService.updateTaskZt(taskId, sceneId);
-		return true;
+		return hldTaskContext;
 	}
 
 	private HldRoomContext reqToHldRoomContext(HldRoomAddReq addReq) {
 
 		// 提取角色信息
-		CrRoleConfigHld roleConfigHld = BeanUtils.copy(addReq, CrRoleConfigHld.class);
+		HldRolesConfig hldRolesConfig = BeanUtils.copy(addReq, HldRolesConfig.class);
 
 		// 提取基础信息
 		HldTaskContext hldTaskContext = getHldTaskContext(addReq.getTaskId());
@@ -200,7 +175,7 @@ public class HldRoomController {
 
 		// 构造初始数据
 		HldRoomContext hldRoomContext = new HldRoomContext();
-		hldRoomContext.setRoleConfig(JSONObject.toJSONString(roleConfigHld));
+		hldRoomContext.setRoleConfig(JSONObject.toJSONString(hldRolesConfig));
 		hldRoomContext.setBaseInfo(baseInfo);
 		hldRoomContext.setTaskId(addReq.getTaskId());
 

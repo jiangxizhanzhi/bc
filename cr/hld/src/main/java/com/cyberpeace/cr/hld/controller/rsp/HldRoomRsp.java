@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.hld.controller.rsp;
 
+import java.io.Serializable;
+
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
 
 @Data
 public class HldRoomRsp extends SceneViewContext implements Serializable {

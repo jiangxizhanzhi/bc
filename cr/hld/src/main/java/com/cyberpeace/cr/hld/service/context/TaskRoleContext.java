@@ -1,16 +1,16 @@
 package com.cyberpeace.cr.hld.service.context;
 
-import lombok.Data;
-
 import java.util.List;
 
+import lombok.Data;
+
 @Data
-public class HldRoleContext {
+public class TaskRoleContext {
 
 	private String name;
 
 	private String id;
 
-	private List<HldUserContext> userList;
+	private List<TaskUserInfo> userList;
 
 }

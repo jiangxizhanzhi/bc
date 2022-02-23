@@ -14,4 +14,5 @@ import lombok.Data;
 public class HldRoleConfig extends CrRoleConfig implements Serializable {
 
 	private List<String> users;
+
 }

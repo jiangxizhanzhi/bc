@@ -137,6 +137,7 @@ public class RbRoomUserController {
 			missionInfoRsp.setCategory(taskContext.getMission().getCategoryId());
 			missionInfoRsp.setWriteUpShow(taskContext.getMission().getShowWriteup());
 			missionInfoRsp.setUserAnswer(taskContext.getUserAnswer());
+			missionInfoRsp.setScore(taskContext.getScore());
 
 			if (CrTask.TaskStatus.RELEASED.getCode().equals(taskContext.getStatus())) {
 				missionInfoRsp.setUserMissionStatus(

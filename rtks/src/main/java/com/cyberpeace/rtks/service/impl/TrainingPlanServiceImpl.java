@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
@@ -20,6 +21,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.TrainingPlanController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
@@ -39,6 +41,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Service
+@Slf4j
 public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
@@ -169,7 +172,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	public RoleDetailRes getLearningPathTree(String resource_id, String type) {
 		Role role = getRoleByRoleId(resource_id);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
@@ -212,7 +215,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	public Role getRoleByRoleId(String existRoleId) {
 		Role role = roleMapper.selectById(existRoleId);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		return role;
@@ -256,14 +259,15 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 			}
 		}
 		if (index >= 10 || index == 1) {
-			throw new ResourceNotFoundException("层级" + levelId + "不合法");
+			log.error("level Loop is out of range！levelId=[{}],loop is [{}]", level.getResourceId(),index-1);
+			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 		}
 
 		for (Level level1 : newlevelList) {
 			if (StringUtils.isBlank(level1.getParent())) {
 				// 如果是英语环境，修改名称
 				if ("default".equals(level.getResourceId()) && !CommonContext.isChinese()) {
-						level.setName(Level.DefaultName.ENGLISH.getDesc());
+					level.setName(Level.DefaultName.ENGLISH.getDesc());
 				}
 				levelTreeOutput = getLevelTreeOutputFromLevel(level1);
 			}

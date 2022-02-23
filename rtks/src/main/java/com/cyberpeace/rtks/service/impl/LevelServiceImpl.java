@@ -10,10 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.mapper.LevelMapper;
@@ -21,7 +20,10 @@ import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.LevelService;
 import com.google.common.collect.Lists;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements LevelService {
 
 	@Autowired
@@ -34,7 +36,8 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	public Level getOr404(String levelId) {
 		Level level = getInternationalById(levelId);
 		if (level == null) {
-			throw new ResourceNotFoundException("层级" + levelId + "未找到");
+			log.error("level not exist！levelId=[{}]", levelId);
+			throw new BusinessException(RtksBusinessErrorCode.LEVEL_NOT_EXIST);
 		}
 
 		ensureNotFrame(level);
@@ -43,7 +46,8 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	private Level getInternationalById(String levelId) {
 		Level level = getById(levelId);
-		if ("default".equals(level.getResourceId()) && !CommonContext.isChinese()) {
+		if (level != null && "default".equals(level.getResourceId())
+				&& !CommonContext.isChinese()) {
 			level.setName(Level.DefaultName.ENGLISH.getDesc());
 		}
 		return level;
@@ -85,7 +89,8 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	private Level findFrame(Level level, int maxLoop, Consumer<Level> collector) {
 		if (maxLoop <= 0) {
-			throw new InvalidParamException("层级层数超限");
+			log.error("level Loop is less than zero！levelId=[{}]", level.getResourceId());
+			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 		}
 
 		collector.accept(level);
@@ -104,7 +109,8 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	public Level getLevelOrFrameOr404(String levelId) {
 		Level level = getInternationalById(levelId);
 		if (level == null) {
-			throw new ResourceNotFoundException("框架/层级" + levelId + "不存在");
+			log.error("level not exist！levelId=[{}]", levelId);
+			throw new BusinessException(RtksBusinessErrorCode.LEVEL_NOT_EXIST);
 		}
 		return level;
 	}
@@ -147,20 +153,28 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	 */
 	private void ensureIsFrame(Level frame) {
 		if (!StringUtils.isBlank(frame.getParent())) {
-			throw new InvalidParamException("脏数据:框架" + frame.getResourceId() + "parent字段应为空");
+			log.error("parent field of the frame should be empty ,frameId is [{}]",
+					frame.getResourceId());
+			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 
 		}
 		if (!StringUtils.isBlank(frame.getFrame())) {
-			throw new InvalidParamException("脏数据:框架" + frame.getResourceId() + "frame字段应为空");
+			log.error("frame field of the frame should be empty ,frameId is [{}]",
+					frame.getResourceId());
+			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 		}
 	}
 
 	private void ensureNotFrame(Level level) {
 		if (StringUtils.isBlank(level.getParent())) {
-			throw new InvalidParamException("脏数据:层级" + level.getResourceId() + "parent字段不应为空");
+			log.error("parent field of the level should not be empty ,levelId is [{}]",
+					level.getResourceId());
+			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 		}
 		if (StringUtils.isBlank(level.getFrame())) {
-			throw new InvalidParamException("脏数据:层级" + level.getResourceId() + "frame字段不应为空");
+			log.error("frame field of the level should not be empty ,levelId is [{}]",
+					level.getResourceId());
+			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 		}
 	}
 

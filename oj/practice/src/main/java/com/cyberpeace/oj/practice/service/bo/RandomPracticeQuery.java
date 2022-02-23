@@ -13,7 +13,7 @@ public class RandomPracticeQuery implements Serializable {
 	private String practiceSetId;
 
 	@ApiModelProperty("分类编号")
-	private List<String> categoryId;
+	private List<String> categoryIds;
 
 	@ApiModelProperty("题型 0=单选 1-多选.....")
 	private Integer questionType;

@@ -191,6 +191,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public void validateName(String name, Integer type, String resourceId) {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		if (businessTemplateMapper.existByNameAndTypeAndId(name, type, resourceId)) {
+			log.error("template name already exist！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
 		}
 	}
@@ -198,16 +199,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		return businessTemplateMapper.selectIdsByUserId(userId);
-	}
-
-	@Override
-	public void validateNamePatch(String name, Integer type, String id) {
-		BusinessTemplate businessTemplate = businessTemplateMapper.selectByNameAndType(name, type,
-				id);
-		if (businessTemplate != null) {
-			log.error("template name already exist！name=[{}]", name);
-			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
-		}
 	}
 
 	@Override

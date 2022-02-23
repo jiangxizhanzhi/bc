@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -104,8 +105,8 @@ public class RbRoomUserController {
 			Integer evaluateStatus = taskContext.getStatus();
 
 			// 未提交过
-			if (taskSubmits == null) {
-				evaluateStatus = CrTaskSubmit.EvaluateStatus.TASK_NOT_SUBMITTED.getCode();
+			if (taskSubmits == null || taskSubmits.size() == 0) {
+				evaluateStatus = CrTask.TaskStatus.RELEASED.getCode();
 			}
 			// 已提交过，获取任务驳回记录
 			else {
@@ -132,10 +133,11 @@ public class RbRoomUserController {
 				missionInfoRsp.setWriteUp("");
 			}
 
-			missionInfoRsp.setMissionStatus(taskContext.getStatus());
+ 			missionInfoRsp.setMissionStatus(0);
 			missionInfoRsp.setCategory(taskContext.getMission().getCategoryId());
 			missionInfoRsp.setWriteUpShow(taskContext.getMission().getShowWriteup());
 			missionInfoRsp.setUserAnswer(taskContext.getUserAnswer());
+			missionInfoRsp.setScore(taskContext.getScore());
 
 			if (CrTask.TaskStatus.RELEASED.getCode().equals(taskContext.getStatus())) {
 				missionInfoRsp.setUserMissionStatus(
@@ -184,6 +186,9 @@ public class RbRoomUserController {
 	@PostMapping("/submit_missions")
 	public BaseRsp<String>
 			submitMissions(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+		CrCommonValidator.checkStringExist(submitMissionsReq.getAnswer(),
+				CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		rbRoomService.checkStudentPermission(submitMissionsReq.getResourceId(), userId);

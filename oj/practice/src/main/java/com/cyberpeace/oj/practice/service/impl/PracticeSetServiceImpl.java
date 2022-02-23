@@ -212,17 +212,17 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	public boolean importRmTheorySet(String path) {
 
 		// 习题集数据插入处理
-		PracticeSet practiceSet = handlerPracticeSet(path, true);
+		PracticeSet practiceSet = handlerPracticeSet(path);
 
 		// 习题数据导入
 		List<PracticeTheory> theoryList = practiceTheoryService.parseRmTheory(path, practiceSet);
-		practiceSet.setPracticeCount(theoryList.size());
+		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theoryList.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
 
 			@Override
 			public Boolean doInTransaction(TransactionStatus status) {
-				practiceSetMapper.insert(practiceSet);
+				saveOrUpdate(practiceSet);
 				return practiceTheoryService.saveBatch(theoryList);
 			}
 		});
@@ -231,7 +231,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Override
 	public List<String> importRmCtfSet(String path, Map<String, String> envReqs) {
 		// 习题集数据处理
-		PracticeSet practiceSet = handlerPracticeSet(path, false);
+		PracticeSet practiceSet = handlerPracticeSet(path);
 
 		// 遍历习题数据处理
 		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
@@ -247,16 +247,17 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 						envReqs, practiceSet);
 				operationList.add(operation);
 			} catch (BusinessException e) {
-				log.error("Parse ctf practice fail! ctf_practice_path=[{}], catch error:",
-						ctfPracticeDir, e);
 
 				if (OjBusinessErrorCode.NAME_IS_EXIST.equals(e.getMessage())) {
+					log.error("Parse ctf practice exist! ctf_practice_path=[{}], catch error:",
+							ctfPracticeDir, e);
 					existOperations.add(ctfPracticeDir);
 					continue;
+				} else {
+					log.error("Parse ctf practice fail! ctf_practice_path=[{}], catch error:",
+							ctfPracticeDir, e);
+					throw e;
 				}
-
-				throw e;
-
 			}
 		}
 
@@ -557,10 +558,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * 习题集数据读取
 	 *
 	 * @param path 习题集路径
-	 * @param throwException 习题集已存在 覆盖或者抛出异常
 	 * @return
 	 */
-	private PracticeSet handlerPracticeSet(String path, boolean throwException) {
+	private PracticeSet handlerPracticeSet(String path) {
 
 		// 读取习题集数据信息
 		File setMarkdownFile = new File(path, ResourceImportConstant.README_NAME);
@@ -600,11 +600,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			return practiceSet;
 		}
 
-		if (throwException) {
-			log.error("Practice set exist! practice_set_id=[{}], practice_set_name=[{}]",
-					existSetId, practiceSet.getName());
-			throw new BusinessException(ErrorCode.DUPLICATE_KEY);
-		}
+		log.warn("Practice set exist! practice_set_id=[{}], practice_set_name=[{}]", existSetId,
+				practiceSet.getName());
 
 		return practiceSetMapper.selectById(existSetId);
 	}

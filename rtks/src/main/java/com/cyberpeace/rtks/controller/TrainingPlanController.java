@@ -96,9 +96,12 @@ public class TrainingPlanController {
 		if (StringUtils.isBlank(resource_id)) {
 			List<Level> levelList = levelService.list();
 			for (Level level : levelList) {
+
 				if (StringUtils.isNotBlank(level.getFrame())) {
 					resource_id = level.getFrame();
 					break;
+				} else {
+					resource_id = level.getResourceId();
 				}
 			}
 		}
@@ -108,7 +111,6 @@ public class TrainingPlanController {
 
 		return new BaseRsp<>(frame);
 	}
-
 
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path")

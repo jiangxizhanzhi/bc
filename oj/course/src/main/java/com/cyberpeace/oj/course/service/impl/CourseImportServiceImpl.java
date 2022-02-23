@@ -13,6 +13,7 @@ import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.*;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
@@ -421,11 +422,17 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		int index = CommonConstant.ONE;
 		List<String> chapterPaths = FileUtil.listDirs(path, false);
-		for (String chapterPath : chapterPaths) {
-			// 过滤掉镜像文件夹
-			if (new File(chapterPath).getName().equals(ResourceImportConstant.IMAGE_NAME)) {
-				continue;
-			}
+
+		// 过滤掉镜像文件夹并排序
+		List<String> notImagePathList = StreamApiUtils.filter(chapterPaths,
+				pathStr -> !new File(pathStr).getName().equals(ResourceImportConstant.IMAGE_NAME));
+		List<String> sortList = StreamApiUtils.sortByColumn(notImagePathList,
+				pathStr -> Integer
+						.parseInt(new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
+								CommonConstant.TWO)[CommonConstant.ZERO]));
+
+		for (String chapterPath : sortList) {
+
 			String[] chapterNameArray = new File(chapterPath).getName()
 					.split(PatternConstant.UNDER_LINE, CommonConstant.TWO);
 			String chapterName = chapterNameArray.length > CommonConstant.ONE
@@ -443,12 +450,21 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 			// 课时数据组装
 			List<String> lessonPathList = FileUtil.listDirs(chapterPath, false);
-			for (String lessonPath : lessonPathList) {
+			List<String> sortLessonList = StreamApiUtils.sortByColumn(lessonPathList, pathStr -> {
+				String sortStr = new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
+						CommonConstant.TWO)[CommonConstant.ZERO];
+				return Integer
+						.parseInt(sortStr.split(PatternConstant.STRIGULA)[CommonConstant.ZERO]);
+			});
+			for (String lessonPath : sortLessonList) {
 				String[] nameArray = new File(lessonPath).getName()
 						.split(PatternConstant.UNDER_LINE, CommonConstant.TWO);
 				String name = nameArray.length > CommonConstant.ONE ? nameArray[CommonConstant.ONE]
 						: nameArray[0];
 
+				if (StringUtils.isBlank(nameMap.get(name))) {
+					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR);
+				}
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)

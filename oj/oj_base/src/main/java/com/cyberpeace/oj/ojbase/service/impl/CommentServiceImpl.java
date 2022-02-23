@@ -87,7 +87,6 @@ public class CommentServiceImpl implements CommentService {
 
 	/**
 	 * 数据格式转换
-	 * @param userId
 	 * @param replyComment
 	 * @param comment
 	 * @return
@@ -105,7 +104,7 @@ public class CommentServiceImpl implements CommentService {
 		// 获取点赞数量
 		List<CommentLike> commentLikes = commentLikeMapper.listByComment(comment.getResourceId());
 		commentBo.setLikesCount(commentLikes.size());
-		commentBo.setIsLike(null != commentLikeMapper.selectByCommentAndUser(userId, comment.getResourceId()));
+		commentBo.setIsLike(null != commentLikeMapper.selectByCommentAndUser(comment.getResourceId(), userId));
 
 		if (null != replyComment) {
 			commentBo.setReplyUsername(replyComment.getUserName());

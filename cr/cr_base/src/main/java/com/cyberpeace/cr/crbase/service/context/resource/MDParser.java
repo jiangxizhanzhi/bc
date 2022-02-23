@@ -475,6 +475,10 @@ public class MDParser {
 		// parse scheme
 		List<SchemeDatum> schemeData = Lists.newArrayList();
 		for (String stage : missionStages) {
+			// 角色任务为空
+			if(stage.isEmpty()){
+				break;
+			}
 			String[] stageParts = stage.split(LINE_SEP + H3, 2);
 			String stagePart = stageParts[0];
 			String missionPart = stageParts[1];
@@ -529,7 +533,7 @@ public class MDParser {
 		// option, single choice & multi choice
 		if (template.getType().equals(ZiguanConstants.SINGLE_CHOICE_TYPE)
 				|| template.getType().equals(ZiguanConstants.MULTI_CHOICE_TYPE)) {
-			String rawOption = template.getOption().substring(2);
+			String rawOption = missionData.get(ZiguanConstants.OPTION).substring(2);
 			List<Option> options = Lists.newArrayList();
 			char[] a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 			String[] rawOptions = rawOption.split(LIST_SEP);

@@ -2,6 +2,9 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -17,6 +20,7 @@ import com.cyberpeace.rtks.service.TaskService;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements TaskService {
 
 	@Autowired
@@ -35,7 +39,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 		List<String> existingIds = taskMapper.filterIds(ids);
 		for (String id : ids) {
 			if (!existingIds.contains(id)) {
-				throw new ResourceNotFoundException("职责" + id + "不存在");
+				log.error("task not exist！taskId=[{}]", id);
+				throw new BusinessException(RtksBusinessErrorCode.TASK_NOT_EXIST);
 			}
 		}
 	}

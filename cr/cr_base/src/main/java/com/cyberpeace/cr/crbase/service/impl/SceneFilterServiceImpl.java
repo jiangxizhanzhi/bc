@@ -27,6 +27,10 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		List<String> assetNodeIds = nodes.getAssetNodes().stream().map(CrRoleNode::getId)
 				.collect(Collectors.toList());
 		JSONArray elements = topoData.getJSONObject("topology").getJSONArray("elements");
+		// topo 为空
+		if(elements.isEmpty()){
+			return;
+		}
 		JSONObject elementPorts = topoData.getJSONObject("plugins").getJSONObject("cpcloud")
 				.getJSONObject("element_ports");
 		int i = 0;

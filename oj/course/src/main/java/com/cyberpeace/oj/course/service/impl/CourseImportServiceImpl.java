@@ -422,14 +422,17 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		int index = CommonConstant.ONE;
 		List<String> chapterPaths = FileUtil.listDirs(path, false);
-		List<String> sortList = StreamApiUtils.sortByColumn(chapterPaths, pathStr -> Integer.parseInt(new File(pathStr).getName()
-				.split(PatternConstant.UNDER_LINE, CommonConstant.TWO)[CommonConstant.ZERO]));
+
+		// 过滤掉镜像文件夹并排序
+		List<String> notImagePathList = StreamApiUtils.filter(chapterPaths,
+				pathStr -> !new File(path).getName().equals(ResourceImportConstant.IMAGE_NAME));
+		List<String> sortList = StreamApiUtils.sortByColumn(notImagePathList,
+				pathStr -> Integer
+						.parseInt(new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
+								CommonConstant.TWO)[CommonConstant.ZERO]));
 
 		for (String chapterPath : sortList) {
-			// 过滤掉镜像文件夹
-			if (new File(chapterPath).getName().equals(ResourceImportConstant.IMAGE_NAME)) {
-				continue;
-			}
+
 			String[] chapterNameArray = new File(chapterPath).getName()
 					.split(PatternConstant.UNDER_LINE, CommonConstant.TWO);
 			String chapterName = chapterNameArray.length > CommonConstant.ONE
@@ -448,9 +451,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 			// 课时数据组装
 			List<String> lessonPathList = FileUtil.listDirs(chapterPath, false);
 			List<String> sortLessonList = StreamApiUtils.sortByColumn(lessonPathList, pathStr -> {
-				String sortStr = new File(path).getName()
-						.split(PatternConstant.UNDER_LINE, CommonConstant.TWO)[CommonConstant.ZERO];
-				return Integer.parseInt(sortStr.split(PatternConstant.STRIGULA)[CommonConstant.ZERO]);
+				String sortStr = new File(path).getName().split(PatternConstant.UNDER_LINE,
+						CommonConstant.TWO)[CommonConstant.ZERO];
+				return Integer
+						.parseInt(sortStr.split(PatternConstant.STRIGULA)[CommonConstant.ZERO]);
 			});
 			for (String lessonPath : sortLessonList) {
 				String[] nameArray = new File(lessonPath).getName()

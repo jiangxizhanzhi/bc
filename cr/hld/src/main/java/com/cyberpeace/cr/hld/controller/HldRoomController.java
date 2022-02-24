@@ -167,7 +167,10 @@ public class HldRoomController {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_GET_TASK_INFO);
 		}
 
-		HldTaskContext hldTaskContext = jsonObject.getObject("baseInfo", HldTaskContext.class);
+		HldTaskContext hldTaskContext = jsonObject.toJavaObject(HldTaskContext.class);
+		hldTaskContext.setTaskName(jsonObject.getJSONObject("baseInfo").getString("taskName"));
+		hldTaskContext.setAttackTaskSenceDes(
+				jsonObject.getJSONObject("baseInfo").getString("attackTaskSenceDes"));
 
 		return hldTaskContext;
 	}

@@ -11,9 +11,9 @@ public class HldTaskContext {
 
 	private String attackTaskSenceDes;
 
-	private TaskUserInfo controlUser;
+	private List<TaskUserInfo> controlUser;
 
-	private TaskUserInfo assessUser;
+	private List<TaskUserInfo> assessUser;
 
 	private List<TaskRoleContext> redTrainUser;
 

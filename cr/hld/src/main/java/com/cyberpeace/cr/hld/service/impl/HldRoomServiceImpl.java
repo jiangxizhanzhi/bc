@@ -218,15 +218,16 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		admin.setName(userInfo.getName());
 		admin.setUserCode(userInfo.getUserId());
 		admin.setUserName(userInfo.getUserName());
-		TaskRoleContext adminRoleContext = getRoleFromUser(admin, "admin");
+		List<TaskUserInfo> admins = Lists.newArrayList(admin);
+		TaskRoleContext adminRoleContext = getRoleFromUsers(admins, "admin");
 
 		// 获取导演数据
-		TaskUserInfo director = hldTaskContext.getControlUser();
-		TaskRoleContext directorRoleContext = getRoleFromUser(director, "director");
+		List<TaskUserInfo> directors = hldTaskContext.getControlUser();
+		TaskRoleContext directorRoleContext = getRoleFromUsers(directors, "director");
 
 		// 获取裁判数据
-		TaskUserInfo referee = hldTaskContext.getAssessUser();
-		TaskRoleContext refereeRoleContext = getRoleFromUser(referee, "referee");
+		List<TaskUserInfo> referees = hldTaskContext.getAssessUser();
+		TaskRoleContext refereeRoleContext = getRoleFromUsers(referees, "referee");
 
 		// 提取白方角色数据
 		List<TaskRoleContext> whiteUsers = Lists.newArrayList();
@@ -239,11 +240,9 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		return taskRoleConfigs;
 	}
 
-	private TaskRoleContext getRoleFromUser(TaskUserInfo taskUserInfo, String roleName) {
+	private TaskRoleContext getRoleFromUsers(List<TaskUserInfo> taskUserInfos, String roleName) {
 
 		TaskRoleContext taskRoleContext = new TaskRoleContext();
-		List<TaskUserInfo> taskUserInfos = Lists.newArrayList();
-		taskUserInfos.add(taskUserInfo);
 		taskRoleContext.setUserList(taskUserInfos);
 		taskRoleContext.setName(roleName);
 

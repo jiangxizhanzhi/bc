@@ -2,8 +2,6 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +24,7 @@ import com.cyberpeace.rtks.service.KnowledgeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "RTKS-知识点类别管理")
 @RestController
@@ -64,11 +63,10 @@ public class KnowledgeCategoryController {
 	}
 
 	private void validate(String content) {
-		KnowledgeCategory knowledgeCategory = knowledgeCategoryService.getByContent(content);
+		List<KnowledgeCategory> knowledgeCategory = knowledgeCategoryService.getByContent(content);
 
-		if(knowledgeCategory != null){
-			log.error("knowledgeCategory already exist,knowledgeCategory is [{}]",
-					content);
+		if (knowledgeCategory.size() > 0) {
+			log.error("knowledgeCategory already exist,knowledgeCategory is [{}]", content);
 			throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_CATEGORY_NAME_DUPLICATE);
 		}
 	}

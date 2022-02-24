@@ -9,11 +9,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.rtks.dao.entity.KnowledgeCategory;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface KnowledgeCategoryMapper extends BaseMapper<KnowledgeCategory> {
 
 	IPage<KnowledgeCategory> listKnowledgeCategory(Page page, @Param("pattern") String pattern);
 
-    KnowledgeCategory getByContent(String content);
+    List<KnowledgeCategory> getByContent(String content);
 }

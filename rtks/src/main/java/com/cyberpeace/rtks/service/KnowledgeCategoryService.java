@@ -5,6 +5,8 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.dao.entity.KnowledgeCategory;
 
+import java.util.List;
+
 /**
  *
  */
@@ -12,5 +14,5 @@ public interface KnowledgeCategoryService extends IService<KnowledgeCategory> {
 
 	ListRsp<KnowledgeCategory> page(PageReqBase pageReqBase);
 
-    KnowledgeCategory getByContent(String content);
+    List<KnowledgeCategory> getByContent(String content);
 }

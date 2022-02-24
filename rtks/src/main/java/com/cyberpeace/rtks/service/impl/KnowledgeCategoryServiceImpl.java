@@ -13,6 +13,8 @@ import com.cyberpeace.rtks.dao.entity.KnowledgeCategory;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeCategoryMapper;
 import com.cyberpeace.rtks.service.KnowledgeCategoryService;
 
+import java.util.List;
+
 /**
  *
  */
@@ -32,7 +34,7 @@ public class KnowledgeCategoryServiceImpl extends ServiceImpl<KnowledgeCategoryM
 	}
 
 	@Override
-	public KnowledgeCategory getByContent(String content) {
+	public List<KnowledgeCategory> getByContent(String content) {
 		return knowledgeCategoryMapper.getByContent(content);
 	}
 

@@ -3,10 +3,27 @@
 
 <mapper namespace="com.cyberpeace.cr.report_score.dao.mapper.ReportScoreConfigMapper">
 
+    <resultMap id="TypeConfig" type="com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig">
+        <result property="type" column="type" />
+        <result property="key" column="key" />
+        <result property="value" column="value" />
+    </resultMap>
 
     <select id="getTypeConfigs"
             resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig">
         select * from cr_report_score_config
         where `type` = #{type}
+    </select>
+
+    <select id="getTypeConfig" resultMap="TypeConfig">
+        select * from cr_report_score_config
+        <where>
+            <if test="type != null and type != ''">
+                and `type` = #{type}
+            </if>
+            <if test="key != null and key != ''">
+                and `key` = #{key}
+            </if>
+        </where>
     </select>
 </mapper>

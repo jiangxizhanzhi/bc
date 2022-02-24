@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.report_score.service;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.report_score.controller.res.AttackLogRes;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig;
 
 import java.util.List;
@@ -10,4 +11,6 @@ public interface ReportScoreConfigService extends IService<ReportScoreConfig> {
 	List<String> getUserIds();
 
 	Map<String, String> getSystemConfig();
+
+	List<AttackLogRes> getAttackLogRes();
 }

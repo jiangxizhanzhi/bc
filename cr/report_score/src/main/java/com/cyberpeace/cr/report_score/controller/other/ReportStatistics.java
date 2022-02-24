@@ -65,8 +65,8 @@ public class ReportStatistics {
 	@ApiOperation("攻击日志")
 	@GetMapping("/attack/log")
 	public BaseRsp<List<AttackLogRes>> attackLog() {
-		// todo 中提供攻击日志列表接口，用户初始化展示
-		return null;
+		List<AttackLogRes> attackLogRes = reportScoreConfigService.getAttackLogRes();
+		return new BaseRsp<>(attackLogRes);
 	}
 
 	@ApiOperation("攻击动态")

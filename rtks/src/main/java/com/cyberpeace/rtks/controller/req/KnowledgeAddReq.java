@@ -16,6 +16,7 @@ import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 @Data
 @ApiModel("")
@@ -36,8 +37,15 @@ public class KnowledgeAddReq implements Serializable {
 	private List<RelatedCourse> courseList;
 
 	public void validate() {
-		if (null == weight || weight < CommonConstant.ZERO || weight > CommonConstant.NINE) {
-			throw new BusinessException(RtksBusinessErrorCode.INVALID_WEIGHT, CommonConstant.ZERO, CommonConstant.NINE);
+		if (CollectionUtils.isNotEmpty(courseList)) {
+			for (RelatedCourse relatedCourse : courseList) {
+				if (null == relatedCourse.getWeight()
+						|| relatedCourse.getWeight() < CommonConstant.ZERO
+						|| relatedCourse.getWeight() > CommonConstant.NINE) {
+					throw new BusinessException(RtksBusinessErrorCode.INVALID_WEIGHT,
+							CommonConstant.ZERO, CommonConstant.NINE);
+				}
+			}
 		}
 	}
 }

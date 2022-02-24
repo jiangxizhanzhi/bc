@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.report_score.controller.res;
 
+import com.cyberpeace.integratation.model.mp.MpAttackCount;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,5 +25,8 @@ public class RankingRep implements Serializable {
 
 	@ApiModelProperty("队伍分数")
 	private String sumScore;
+
+	@ApiModelProperty("前三名，统计流量，攻击次数信息")
+	private MpAttackCount attackCount;
 
 }

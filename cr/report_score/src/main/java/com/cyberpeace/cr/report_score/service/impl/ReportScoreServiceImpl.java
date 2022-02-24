@@ -19,10 +19,14 @@ import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreMapper;
 import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import com.cyberpeace.cr.report_score.service.bo.UserSubjectGroupBo;
+import com.cyberpeace.integratation.model.context.AttackCountContext;
+import com.cyberpeace.integratation.model.mp.MpAttackCount;
+import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +46,9 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
 
     @Autowired
     private ReportScoreConfigService reportScoreConfigService;
+
+    @Autowired
+    private RemoteSituationService remoteSituationService;
 
     private final String savePath = "report" + File.separator + "report" + File.separator;
 
@@ -152,8 +159,23 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         Map<String, String> rankScoreMap = rankScoreList.stream()
                 .collect(Collectors.toMap(RankingRep::getUserId, RankingRep::getSumScore));
         List<UserInfo> userInfoList = getUsers();
+        List<RankingRep> rankingRepList = baseRanking(userInfoList, rankScoreMap);
 
-        return baseRanking(userInfoList, rankScoreMap);
+        // 前三名获取流量，攻击top5展示
+        List<String> top3List = Arrays.asList("1", "2", "3");
+        Map<String, String> userIpMap = reportScoreConfigService.getUserIps();
+        String sceneIds = reportScoreConfigService.getSceneIds();
+
+        for (RankingRep rankingRep : rankingRepList) {
+            if (top3List.contains(rankingRep.getRank())) {
+                String ips = userIpMap.get(rankingRep.getUserId());
+                log.info("get top3 userId is {} and ips is {}", rankingRep.getUserId(), ips);
+                MpAttackCount userAttackCount = getUserAttackCount(sceneIds, ips);
+                rankingRep.setAttackCount(userAttackCount);
+            }
+        }
+
+        return rankingRepList;
     }
 
     @Override
@@ -213,6 +235,22 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         }
 
         return subRankingMap;
+    }
+
+    private MpAttackCount getUserAttackCount(String sceneIds, String ips) {
+        if (StringUtils.isBlank(ips) || StringUtils.isBlank(sceneIds)) {
+            log.warn("not found ips {} or not found sceneIds {} so attack count has question", ips,
+                    sceneIds);
+            return null;
+        }
+
+        String[] splitIps = ips.split(",");
+
+        AttackCountContext attackCountContext = new AttackCountContext();
+        attackCountContext.setSceneId(sceneIds);
+        attackCountContext.setIps(Arrays.asList(splitIps));
+        return remoteSituationService
+                .getAttackCountTop5(attackCountContext);
     }
 
     private List<RankingRep> baseRanking(List<UserInfo> userInfoList, Map<String, String> rankScoreMap) {

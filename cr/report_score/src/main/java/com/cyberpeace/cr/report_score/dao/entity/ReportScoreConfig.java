@@ -7,8 +7,8 @@ import lombok.Data;
  * 可能需要的配置，作为初始化数据
  * 1. 指定态势大屏显示的名称  type system
  * name： xxx系统大屏
- * 2. 指定需要统计的4套场景id   type scene
- * scene_id: 123456672664562
+ * 2. 指定需要统计的4套场景id   type system
+ * scene: 123456672664562,41234123,421341
  * 3. 配置操作机IP和用户一一对应, 排行榜中的用户是否来自这里  type user
  * user_id: 192.168.1.1
  */

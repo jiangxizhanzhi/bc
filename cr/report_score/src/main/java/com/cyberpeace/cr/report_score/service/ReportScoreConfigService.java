@@ -13,4 +13,8 @@ public interface ReportScoreConfigService extends IService<ReportScoreConfig> {
 	Map<String, String> getSystemConfig();
 
 	List<AttackLogRes> getAttackLogRes();
+
+	String getSceneIds();
+
+	Map<String,String> getUserIps();
 }

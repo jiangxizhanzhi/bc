@@ -26,7 +26,6 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 	private static final String SYSTEM_TYPE = "system";
 
 	private static final String SCENE_KEY = "scene";
-
 	@Autowired
 	private ReportScoreConfigMapper reportScoreConfigMapper;
 
@@ -42,7 +41,26 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
 	@Override
 	public Map<String, String> getSystemConfig() {
-		List<ReportScoreConfig> typeConfigs = reportScoreConfigMapper.getTypeConfigs(SYSTEM_TYPE);
+		return getConfigByType(SYSTEM_TYPE);
+	}
+
+	@Override
+	public String getSceneIds() {
+		Map<String, String> systemConfig = getSystemConfig();
+
+		String sceneIds = systemConfig.getOrDefault(SCENE_KEY, "");
+		log.info("getSceneIds is {}", sceneIds);
+
+		return sceneIds;
+	}
+
+	@Override
+	public Map<String, String> getUserIps() {
+		return getConfigByType(USER_TYPE);
+	}
+
+	private Map<String, String> getConfigByType(String type) {
+		List<ReportScoreConfig> typeConfigs = reportScoreConfigMapper.getTypeConfigs(type);
 		return typeConfigs.stream()
 				.collect(Collectors.toMap(ReportScoreConfig::getKey, ReportScoreConfig::getValue));
 	}

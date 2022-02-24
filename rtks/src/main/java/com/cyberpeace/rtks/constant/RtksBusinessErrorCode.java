@@ -50,7 +50,6 @@ public interface RtksBusinessErrorCode {
 
 	/** 知识点类别已存在 */
 	String KNOWLEDGE_CATEGORY_NAME_DUPLICATE = "103013";
- }
 
-	String INVALID_WEIGHT = "103013";
+	String INVALID_WEIGHT = "103014";
 }

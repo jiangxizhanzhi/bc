@@ -21,7 +21,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
@@ -79,7 +78,8 @@ public class SingleRoomScoreController {
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SINGLE_ROLE_GROUP_CODE);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id, crRoleList);
+		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
+				crRoleList);
 
 		// 单兵训练仅有一个用户, 角色仅关联一个用户
 		String user_hash = crRoleList.get(0).getUserIdList().get(0);
@@ -127,7 +127,8 @@ public class SingleRoomScoreController {
 		data.put("locale", crScoreController.getTemplateI18n());
 
 		Path destHtmlPathObj = Paths.get(AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
-				String.format("%s-%s", roomId, data.getString("user_id")), String.format("%s.html", roomId));
+				String.format("%s-%s", roomId, data.getString("user_id")),
+				String.format("%s.html", roomId));
 		// 临时存放目录
 		File directory = destHtmlPathObj.getParent().toFile();
 		if (!directory.exists()) {
@@ -139,16 +140,26 @@ public class SingleRoomScoreController {
 			}
 		}
 		String destHtmlPath = destHtmlPathObj.toString();
+		try {
+			// 生成html
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
 
-		// 生成html
-		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
+			// 在同目录下生成pdf
+			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+					+ "pdf";
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
-		// 在同目录下生成pdf
-		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
-		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+			FileUtil.setResponse(new File(destPdfPath), false, httpServletResponse);
 
-		FileUtil.setResponse(new File(destPdfPath), false, httpServletResponse);
-		FileUtil.deleteDir(directory);
+		} catch (Exception e) {
+			log.error("failed to export pdf: {}", destHtmlPath);
+			throw e;
+		} finally {
+			if (!FileUtil.deleteDir(directory)) {
+				log.error("failed to delete dir: {}", directory);
+			}
+		}
+
 	}
 
 	private Object gettaskCount(MissionReport missionReport) {

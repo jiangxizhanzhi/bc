@@ -19,7 +19,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
 import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
@@ -52,10 +51,12 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "红蓝对抗评分")
 @RestController
 @RequiresAuthentication
+@Slf4j
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomScoreController {
 
@@ -100,12 +101,19 @@ public class RbRoomScoreController {
 		String destHtmlPath = String.format("%s%s-%s.html",
 				AttachmentPath.RED_BLUE_HTML_TEMPLATE.getDesc(), roomId,
 				UserInfoContext.getUserContext().getUserId());
-		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.REDBLUE, destHtmlPath);
-		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
-		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
-
-		if (new File(destHtmlPath).delete()) {
+		try {
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.REDBLUE, destHtmlPath);
+			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+					+ "pdf";
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+		} catch (Exception e) {
+			log.error("failed to export pdf: {}", destHtmlPath);
+			throw e;
+		} finally {
+			if (!new File(destHtmlPath).delete()) {
+				log.error("failed to delete file:{}", destHtmlPath);
+			}
 		}
 	}
 

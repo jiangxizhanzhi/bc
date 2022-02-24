@@ -54,7 +54,7 @@ public class KnowledgeCategoryController {
 	@PostMapping()
 	public BaseRsp<String>
 			addKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
-		validate(knowledgeCategoryAddReq);
+		validate(knowledgeCategoryAddReq.getContent());
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
 
 		BeanUtils.copyProperties(knowledgeCategoryAddReq, knowledgeCategory);
@@ -63,12 +63,12 @@ public class KnowledgeCategoryController {
 		return new BaseRsp<>();
 	}
 
-	private void validate(KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
-		KnowledgeCategory knowledgeCategory = knowledgeCategoryService.getByContent(knowledgeCategoryAddReq.getContent());
+	private void validate(String content) {
+		KnowledgeCategory knowledgeCategory = knowledgeCategoryService.getByContent(content);
 
 		if(knowledgeCategory != null){
 			log.error("knowledgeCategory already exist,knowledgeCategory is [{}]",
-					knowledgeCategoryAddReq.getContent());
+					content);
 			throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_CATEGORY_NAME_DUPLICATE);
 		}
 	}
@@ -77,6 +77,7 @@ public class KnowledgeCategoryController {
 	@PutMapping()
 	public BaseRsp<String>
 			modifyKnowledge(@RequestBody @Validated AbilityAddReq knowledgeCatagaryOrSystemAddReq) {
+		validate(knowledgeCatagaryOrSystemAddReq.getContent());
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
 		BeanUtils.copyProperties(knowledgeCatagaryOrSystemAddReq, knowledgeCategory);
 		knowledgeCategoryService.updateById(knowledgeCategory);

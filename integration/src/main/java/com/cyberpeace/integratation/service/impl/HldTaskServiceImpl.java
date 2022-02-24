@@ -2,14 +2,14 @@ package com.cyberpeace.integratation.service.impl;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.integratation.model.hld.UpdateTaskZt;
-import com.cyberpeace.integratation.service.HldTaskService;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.integratation.model.hld.UpdateTaskZt;
+import com.cyberpeace.integratation.service.HldTaskService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +47,8 @@ public class HldTaskServiceImpl implements HldTaskService {
 		JSONObject jsonObject = null;
 
 		try {
-			jsonObject = HttpClientUtil.rawGet(HLD_GET_TASK_INFO_URL + "/" + taskId, JSONObject.class);
+			jsonObject = HttpClientUtil.rawGet(HLD_GET_TASK_INFO_URL + "/" + taskId,
+					JSONObject.class);
 		} catch (Exception e) {
 			log.error("Failed to get task info.", e);
 		}
@@ -61,7 +62,7 @@ public class HldTaskServiceImpl implements HldTaskService {
 	}
 
 	@Override
-	public Boolean updateTaskZt(String taskId, String sceneId){
+	public Boolean updateTaskZt(String taskId, String sceneId) {
 
 		UpdateTaskZt updateTaskZt = new UpdateTaskZt();
 		updateTaskZt.setId(taskId);
@@ -71,6 +72,7 @@ public class HldTaskServiceImpl implements HldTaskService {
 			HttpClientUtil.post(HLD_UPDATE_TASK_ZT_URL, updateTaskZt, JSONObject.class);
 		} catch (Exception e) {
 			log.error("Failed to update task info.", e);
+			return false;
 		}
 
 		return true;

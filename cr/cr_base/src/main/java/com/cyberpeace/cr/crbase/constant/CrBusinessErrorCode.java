@@ -216,4 +216,11 @@ public interface CrBusinessErrorCode {
 
 	// 非法的技能点个数
 	String INVALID_SKILL_POINTS_SIZE = "101069";
+
+	// 查询HLD任务失败
+	String FAILED_TO_GET_TASK_INFO = "101088";
+
+	// 写入HLD映射信息失败
+	String FAILED_TO_UPDATE_TASK_ZT = "101089";
+
 }

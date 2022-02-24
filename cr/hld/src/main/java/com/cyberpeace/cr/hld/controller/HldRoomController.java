@@ -69,7 +69,9 @@ public class HldRoomController {
 		HldRoom hldRoom = hldRoomService.create(hldRoomContext);
 
 		// 远程写入映射关系
-		hldTaskService.updateTaskZt(addReq.getTaskId(), hldRoom.getResourceId());
+		if (!hldTaskService.updateTaskZt(addReq.getTaskId(), hldRoom.getResourceId())) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
+		}
 
 		return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
 	}
@@ -157,7 +159,14 @@ public class HldRoomController {
 	}
 
 	private HldTaskContext getHldTaskContext(String taskId) {
+
 		JSONObject jsonObject = hldTaskService.getTaskInfo(taskId);
+
+		// 获取不到数据时抛出异常
+		if (null == jsonObject) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_GET_TASK_INFO);
+		}
+
 		HldTaskContext hldTaskContext = jsonObject.getObject("baseInfo", HldTaskContext.class);
 
 		return hldTaskContext;

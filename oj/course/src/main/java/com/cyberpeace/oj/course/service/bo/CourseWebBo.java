@@ -46,6 +46,9 @@ public class CourseWebBo implements Serializable {
 	@ApiModelProperty("课程类型")
 	private Integer courseType;
 
+	@ApiModelProperty("课程类型")
+	private Integer ebook;
+
 	@ApiModelProperty("课程课时数量")
 	private Integer lessonCount;
 

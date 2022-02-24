@@ -274,6 +274,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			CourseAdminBo courseAdminBo = BeanUtils.copy(courseInfoBo, CourseAdminBo.class);
 			courseAdminBo.setAuth(course.getReadAuthType());
 			courseAdminBo.setShare(course.getOperationAuthType());
+			courseAdminBo.setEbook(course.getCourseType());
 			if (course.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE
 					.getCode().intValue()) {
 				List<String> orgs = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
@@ -294,6 +295,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		} else {
 			CourseInfoBo courseInfoBo = courseToBo(course, true);
 			CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
+			courseWebBo.setEbook(course.getCourseType());
 			return courseWebBo;
 		}
 

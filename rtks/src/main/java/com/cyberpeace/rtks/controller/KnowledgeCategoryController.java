@@ -63,7 +63,7 @@ public class KnowledgeCategoryController {
 	}
 
 	private void validate(String content) {
-		List<KnowledgeCategory> knowledgeCategory = knowledgeCategoryService.getByContent(content);
+		List<KnowledgeCategory> knowledgeCategory = knowledgeCategoryService.getByContent(content.trim());
 
 		if (knowledgeCategory.size() > 0) {
 			log.error("knowledgeCategory already exist,knowledgeCategory is [{}]", content);

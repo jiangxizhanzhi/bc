@@ -69,4 +69,9 @@ public interface ErrorCode {
 
 	/** 无效的配置 */
 	String INVALID_CONFIGURATION = "100027";
+
+	/**
+	 * 操作过于频繁
+	 */
+	String OPERATION_TOO_FREQUENT = "100028";
 }

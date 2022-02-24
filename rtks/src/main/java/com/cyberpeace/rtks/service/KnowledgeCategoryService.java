@@ -12,4 +12,5 @@ public interface KnowledgeCategoryService extends IService<KnowledgeCategory> {
 
 	ListRsp<KnowledgeCategory> page(PageReqBase pageReqBase);
 
+    KnowledgeCategory getByContent(String content);
 }

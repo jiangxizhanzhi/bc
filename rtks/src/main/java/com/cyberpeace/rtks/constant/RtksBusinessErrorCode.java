@@ -47,4 +47,7 @@ public interface RtksBusinessErrorCode {
 
 	/** 框架/层级不合法 */
 	String INVALID_LEVEL = "103012";
-}
+
+	/** 知识点类别已存在 */
+	String KNOWLEDGE_CATEGORY_NAME_DUPLICATE = "103013";
+ }

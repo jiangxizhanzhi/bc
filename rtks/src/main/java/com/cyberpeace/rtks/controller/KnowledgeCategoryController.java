@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/rtks/knowledge-category")
 @RequiresAuthentication
+@Slf4j
 public class KnowledgeCategoryController {
 
 	@Autowired
@@ -51,11 +54,23 @@ public class KnowledgeCategoryController {
 	@PostMapping()
 	public BaseRsp<String>
 			addKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
+		validate(knowledgeCategoryAddReq);
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
+
 		BeanUtils.copyProperties(knowledgeCategoryAddReq, knowledgeCategory);
 		knowledgeCategoryService.save(knowledgeCategory);
 
 		return new BaseRsp<>();
+	}
+
+	private void validate(KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
+		KnowledgeCategory knowledgeCategory = knowledgeCategoryService.getByContent(knowledgeCategoryAddReq.getContent());
+
+		if(knowledgeCategory != null){
+			log.error("knowledgeCategory already exist,knowledgeCategory is [{}]",
+					knowledgeCategoryAddReq.getContent());
+			throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_CATEGORY_NAME_DUPLICATE);
+		}
 	}
 
 	@ApiOperation("修改单条")

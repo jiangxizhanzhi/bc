@@ -31,4 +31,9 @@ public class KnowledgeCategoryServiceImpl extends ServiceImpl<KnowledgeCategoryM
 		return PageUtil.getListResult(result);
 	}
 
+	@Override
+	public KnowledgeCategory getByContent(String content) {
+		return knowledgeCategoryMapper.getByContent(content);
+	}
+
 }

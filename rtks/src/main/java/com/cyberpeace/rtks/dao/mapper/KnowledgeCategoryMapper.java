@@ -15,4 +15,5 @@ public interface KnowledgeCategoryMapper extends BaseMapper<KnowledgeCategory> {
 
 	IPage<KnowledgeCategory> listKnowledgeCategory(Page page, @Param("pattern") String pattern);
 
+    KnowledgeCategory getByContent(String content);
 }

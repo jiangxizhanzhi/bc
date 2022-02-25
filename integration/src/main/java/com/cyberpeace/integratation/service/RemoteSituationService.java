@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.AttackLogPageContext;
 
 import com.cyberpeace.integratation.model.context.AttackCountContext;
@@ -16,7 +17,7 @@ public interface RemoteSituationService {
      * @param sceneIds
      * @return
      */
-    JSONArray getAttackLog(AttackLogPageContext attackLogPageContext);
+    JSONObject getAttackLog(AttackLogPageContext attackLogPageContext);
 
 	MpAttackCount getAttackCountTop5(AttackCountContext attackCountContext);
 }

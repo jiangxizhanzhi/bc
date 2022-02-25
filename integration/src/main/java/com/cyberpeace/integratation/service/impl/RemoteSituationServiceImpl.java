@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.model.AttackLogPageContext;
@@ -37,7 +38,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 
     @Override
-    public JSONArray getAttackLog(AttackLogPageContext attackLogPageContext) {
-        return HttpClientUtil.rawGetByParam(attackLogPageContext, ATTACK_LOG, JSONArray.class);
+    public JSONObject getAttackLog(AttackLogPageContext attackLogPageContext) {
+        return HttpClientUtil.rawGetByParam(attackLogPageContext, ATTACK_LOG, JSONObject.class);
     }
 }

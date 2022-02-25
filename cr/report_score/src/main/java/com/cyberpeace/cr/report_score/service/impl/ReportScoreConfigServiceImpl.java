@@ -2,6 +2,7 @@ package com.cyberpeace.cr.report_score.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.report_score.controller.res.AttackLogRes;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig;
 import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreConfigMapper;
@@ -81,6 +82,9 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 		attackLogPageContext.setEndTime(endTime);
 
 		JSONObject attackLog = remoteSituationService.getAttackLog(attackLogPageContext);
+		List<JSONObject> objects = JsonUtil.toJsonObjectArray(attackLog.getJSONArray("list").toString(), JSONObject.class);
+
+		AttackLogRes attackLogRes = new AttackLogRes();
 
 
 		return null;

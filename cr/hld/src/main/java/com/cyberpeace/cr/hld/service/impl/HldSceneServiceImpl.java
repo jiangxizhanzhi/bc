@@ -314,9 +314,16 @@ public class HldSceneServiceImpl implements HldSceneService {
 			return null;
 		}
 
+		// 获取用户id
+		String currentUserId;
+		try {
+			currentUserId = UserInfoContext.getUserContext().getUserId();
+		} catch (NullPointerException e) {
+			currentUserId = "";
+		}
+
 		// 请求远程场景数据
-		JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
-				UserInfoContext.getUserContext().getUserId());
+		JSONObject sceneData = localSceneService.getSceneData(mpSceneId, currentUserId);
 		// 场景数据为空，清除本地脏数据
 		if (null == sceneData) {
 			clearLocal(room);
@@ -371,4 +378,16 @@ public class HldSceneServiceImpl implements HldSceneService {
 
 		return localScene;
 	}
+
+	@Override
+	public JSONObject viewSceneNoAuth(String roomId) {
+		HldRoom room = hldRoomService.getById(roomId);
+
+		if (room == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		return getMpSceneData(room);
+	}
+
 }

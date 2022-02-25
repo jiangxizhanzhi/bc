@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.controller.rsp;
+package com.cyberpeace.cr.hld.controller.rsp;
 
 import java.util.List;
 

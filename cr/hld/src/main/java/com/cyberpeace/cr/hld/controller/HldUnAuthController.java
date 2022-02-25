@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.controller;
+package com.cyberpeace.cr.hld.controller;
 
 import java.util.List;
 
@@ -16,48 +16,50 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.redvsblue.controller.rsp.HldTopoAssetsRsp;
-import com.cyberpeace.cr.redvsblue.service.RbSceneService;
+import com.cyberpeace.cr.hld.controller.rsp.HldTopoAssetsRsp;
+import com.cyberpeace.cr.hld.service.HldSceneService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "红蓝对抗实例")
+@Api(tags = "HLD房间")
 @Slf4j
 @RestController
 @RequestMapping("/cr/hld/")
-public class RvbHldController {
+public class HldUnAuthController {
 
 	@Autowired
 	private CrRoleService crRoleService;
 
 	@Autowired
-	private RbSceneService rbSceneService;
+	private HldSceneService hldSceneService;
 
 	@ApiOperation("读取topo和角色资产")
 	@GetMapping("/topoAssets")
 	public BaseRsp<HldTopoAssetsRsp> getTopoAssets(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "HLD房间id", required = true) String resource_id) {
+
 		// read scene data
-		JSONObject sceneData = rbSceneService.viewSceneNoAuth(resource_id);
+		JSONObject sceneData = hldSceneService.viewSceneNoAuth(resource_id);
 		if (sceneData == null) {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		HldTopoAssetsRsp rsp = new HldTopoAssetsRsp();
 		rsp.setSceneData(sceneData);
+
 		// read role assets
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(resource_id);
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		for (CrRole role : crRoles) {
-			if (role.isRvbStudent()) {
+			if (role.isHldStudent()) {
 				CrRoleConfig config = JsonUtil.toJsonObject(role.getNodes(), CrRoleConfig.class);
 				config.setName(role.getName());
 				config.setId(role.getResourceId());
 
-				if (role.isBlueStudent()) {
+				if (role.isHldBlueStudent()) {
 					rsp.getBlueRole().add(config);
 				} else {
 					rsp.getRedRoles().add(config);

@@ -37,7 +37,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "葫芦岛房间")
+@Api(tags = "HLD房间")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/hld/rooms/")
@@ -79,7 +79,7 @@ public class HldRoomController {
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<HldRoomRsp>
-			get(@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
+			get(@ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
 
 		// 获取当前用户角色
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -99,7 +99,7 @@ public class HldRoomController {
 	@ApiOperation("查询测试模板id")
 	@GetMapping("/template_id")
 	public BaseRsp<HldRoomRsp> getTemplateId(
-			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
+			@ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
 
 		HldRoom hldRoom = hldRoomService.getById(room_id);
 		HldRoomRsp hldRoomRsp = BeanUtils.copy(hldRoom, HldRoomRsp.class);
@@ -148,10 +148,10 @@ public class HldRoomController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("查询葫芦岛角色配置")
+	@ApiOperation("查询HLD角色配置")
 	@GetMapping("/roles")
 	public BaseRsp<List<TaskRoleConfig>> getRoleConfig(
-			@ApiParam(name = "task_id", value = "葫芦岛任务id", required = true) String task_id) {
+			@ApiParam(name = "task_id", value = "HLD任务id", required = true) String task_id) {
 		HldTaskContext hldTaskContext = getHldTaskContext(task_id);
 		List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getTaskRoleConfig(hldTaskContext);
 

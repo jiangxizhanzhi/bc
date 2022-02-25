@@ -30,7 +30,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "葫芦岛场景")
+@Api(tags = "HLD场景")
 @Slf4j
 @RestController
 @RequiresAuthentication
@@ -70,7 +70,7 @@ public class HldSceneController {
 	@ApiOperation("查看场景")
 	@GetMapping("")
 	public BaseRsp<SceneViewContext> getScene(
-			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
+			@ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
 
 		// 获取当前用户角色
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -105,7 +105,7 @@ public class HldSceneController {
 	@ApiOperation("查询流量")
 	@GetMapping("flow")
 	public BaseRsp<FlowRsp> getFlowList(
-			@ApiParam(name = "room_id", value = "葫芦岛房间id", required = true) String room_id) {
+			@ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
 
 		List<Flow> flows = hldSceneService.getFlowList(room_id);
 		FlowRsp ret = new FlowRsp();

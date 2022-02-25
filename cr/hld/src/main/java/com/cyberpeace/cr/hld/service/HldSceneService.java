@@ -2,6 +2,7 @@ package com.cyberpeace.cr.hld.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
@@ -22,5 +23,7 @@ public interface HldSceneService {
 	Boolean unpauseScene(String roomId);
 
 	List<Flow> getFlowList(String roomId);
+
+	JSONObject viewSceneNoAuth(String roomId);
 
 }

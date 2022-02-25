@@ -37,6 +37,8 @@ public interface CommonConstant {
 
 	Integer NINETY = 90;
 
+	Integer NINE = 9;
+
 	Boolean TRUE = true;
 
 	Boolean FALSE = false;

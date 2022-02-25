@@ -119,7 +119,7 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 
 				if (courseInfoBo != null) {
 					org.springframework.beans.BeanUtils.copyProperties(courseInfoBo, relatedCourse);
-
+					relatedCourse.setEBook(courseInfoBo.getCourseType());
 					relatedCourse.setWeight(weight);
 				}
 

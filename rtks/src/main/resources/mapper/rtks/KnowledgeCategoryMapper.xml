@@ -16,5 +16,12 @@
             </if>
         </where>
     </select>
+    <select id="getByContent" resultType="com.cyberpeace.rtks.dao.entity.KnowledgeCategory">
+        select resource_id,content
+        from rtks_knowledge_category
+        where content = #{content}
+
+
+    </select>
 
 </mapper>

@@ -154,11 +154,11 @@ public class CrScoreController {
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
-		if (studentScoreReq.getComment().length() > CrScore.ScoreValue.MAX_COMMENT_LEN.getCode()) {
-			log.error("comment length out of range！comment length=[{}]",
-					studentScoreReq.getComment().length());
-			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
-		}
+//		if (studentScoreReq.getComment().length() > CrScore.ScoreValue.MAX_COMMENT_LEN.getCode()) {
+//			log.error("comment length out of range！comment length=[{}]",
+//					studentScoreReq.getComment().length());
+//			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+//		}
 
 		CrScore crScore = crScoreService.getByRoomIdAndUser(studentScoreReq.getRoomId(),
 				studentScoreReq.getUser());

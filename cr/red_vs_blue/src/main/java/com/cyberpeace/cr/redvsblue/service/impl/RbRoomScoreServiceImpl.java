@@ -215,26 +215,27 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		Integer unreportedCount = crTaskService.countUnreportedByUsers(roomId,
 				roleUserIds.getUserIds());
 
-		// 获取学员提交数据
-		List<CrTaskSubmit> crTaskSubmits = crTaskSubmitMapper.selectByRoomIdAndUsers(roomId,
+		// 获取任务状态数据
+		List<TaskContext> crTaskSubmits = crTaskService.getTaskContextByRoomIdAndUsers(roomId,
 				roleUserIds.getUserIds());
 		Integer waitCount = 0;
 		Integer successCount = 0;
 		Integer failCount = 0;
 		Integer rejectCount = 0;
 
-		for (CrTaskSubmit taskSubmit : crTaskSubmits) {
+		for (TaskContext taskSubmit : crTaskSubmits) {
 
 			if (CrTaskSubmit.EvaluateStatus.SUCCESS.getCode()
-					.equals(taskSubmit.getEvaluateStatus())) {
+					.equals(taskSubmit.getStatus())) {
 				successCount++;
 			} else if (CrTaskSubmit.EvaluateStatus.FAIL.getCode()
-					.equals(taskSubmit.getEvaluateStatus())) {
+					.equals(taskSubmit.getStatus())) {
 				failCount++;
 			} else if (CrTaskSubmit.EvaluateStatus.REJECT.getCode()
-					.equals(taskSubmit.getEvaluateStatus())) {
+					.equals(taskSubmit.getStatus())) {
 				rejectCount++;
-			} else {
+			} else if (CrTaskSubmit.EvaluateStatus.WAIT.getCode()
+					.equals(taskSubmit.getStatus())) {
 				waitCount++;
 			}
 		}

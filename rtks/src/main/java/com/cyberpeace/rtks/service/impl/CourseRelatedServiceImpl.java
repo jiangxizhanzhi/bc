@@ -38,7 +38,7 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 			courseRelated.setRelatedId(resourceId);
 			courseRelated.setResourceId(relatedCourse.getResourceId());
 			courseRelated.setWeight(relatedCourse.getWeight());
-			if (relatedCourse.getWeight() == null || relatedCourse.getWeight() == 0) {
+			if (relatedCourse.getWeight() == null) {
 				courseRelated.setWeight(CourseInfoBo.DEFAULT_WEIGHT);
 			}
 			courseRelated.setType(type);

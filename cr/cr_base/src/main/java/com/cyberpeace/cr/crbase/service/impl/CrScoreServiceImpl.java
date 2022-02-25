@@ -86,7 +86,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				.collect(Collectors.toMap(MissionCategory::getResourceId, bo -> bo.getName()));
 
 		for (Mission mission : missionList) {
-			Integer count = missionsCategory.getOrDefault(mission.getCategoryId(), 0) + 1;
+			Integer count = missionsCategory.getOrDefault(missionCategoryMap.get(mission.getCategoryId()), 0) + 1;
 			missionsCategory.put(missionCategoryMap.get(mission.getCategoryId()), count);
 		}
 

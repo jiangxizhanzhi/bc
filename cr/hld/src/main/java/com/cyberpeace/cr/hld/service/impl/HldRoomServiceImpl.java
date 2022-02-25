@@ -277,9 +277,22 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 	public BaseInfo getHldBaseInfo(HldTaskContext hldTaskContext) {
 
 		BaseInfo baseInfo = new BaseInfo();
+
 		baseInfo.setType(BusinessTemplate.BusinessType.HLD.getCode());
-		baseInfo.setName(hldTaskContext.getTaskName());
-		baseInfo.setDescription(hldTaskContext.getAttackTaskSenceDes());
+
+		// 设置任务名称
+		if (hldTaskContext.getTaskName() == null || hldTaskContext.getTaskName().isEmpty()) {
+			baseInfo.setName("task_" + System.currentTimeMillis());
+		} else {
+			baseInfo.setName(hldTaskContext.getTaskName());
+		}
+
+		// 设置任务描述
+		if (hldTaskContext.getAttackTaskSenceDes() == null) {
+			baseInfo.setDescription("");
+		} else {
+			baseInfo.setDescription(hldTaskContext.getAttackTaskSenceDes());
+		}
 		baseInfo.setDifficult(0);
 
 		return baseInfo;

@@ -37,7 +37,7 @@ public interface ReportScoreService extends IService<ReportScore> {
 
     RankingRep getRankScore(String userId);
 
-    void validateReportScoreNameExist(ReportScore reportScore);
+    void validateReportScore(ReportScore reportScore);
 
     List<RankingRep> rankingStatistics();
 

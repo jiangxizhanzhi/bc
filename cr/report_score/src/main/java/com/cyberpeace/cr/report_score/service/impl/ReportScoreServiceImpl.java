@@ -145,11 +145,14 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
     }
 
     @Override
-    public void validateReportScoreNameExist(ReportScore reportScore) {
+    public void validateReportScore(ReportScore reportScore) {
         // 名称重复性校验
         ReportScore reportScoreObject = reportScoreMapper.selectByName(reportScore.getReportName(), reportScore.getUserId());
         if (reportScoreObject != null) {
             throw new BusinessException(CrBusinessErrorCode.DUPLICATED_REPORT_SCORE_NAME);
+        }
+        if (reportScore.getReportDescription().length() > 255) {
+            throw new BusinessException(CrBusinessErrorCode.REPORT_DESCRIPTION_LENGTH_EXCEEDS_LIMIT);
         }
     }
 

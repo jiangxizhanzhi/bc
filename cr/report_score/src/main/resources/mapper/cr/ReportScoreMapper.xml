@@ -21,15 +21,15 @@
             </if>
             <if test="listQuery.name != null and listQuery.name != ''">
                 <bind name="name" value="'%'+listQuery.name+'%'"/>
-                and (`rater_name` like #{name} or `report_name` like #{name})
+                and (`user_name` like #{name} or `report_name` like #{name})
             </if>
         </where>
     </select>
 
     <select id="listRecord" resultType="com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp">
-        select report_name, rater_name as team_name, score_time, score from cr_report_score
+        select report_name, user_name as team_name, score_time, score from cr_report_score
         <where>
-            `score_time` is not null
+            `score_time` is not null and `status` = 2
             <if test="listQuery.subject != null and listQuery.subject != ''">
                 and `subject` = #{listQuery.subject}
             </if>

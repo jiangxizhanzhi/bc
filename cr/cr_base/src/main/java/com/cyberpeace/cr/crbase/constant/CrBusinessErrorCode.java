@@ -216,4 +216,7 @@ public interface CrBusinessErrorCode {
 
 	// 同一战队下报告名称重复
 	String DUPLICATED_REPORT_SCORE_NAME = "101168";
+
+	// 报告描述长度超出限制
+	String REPORT_DESCRIPTION_LENGTH_EXCEEDS_LIMIT = "101169";
 }

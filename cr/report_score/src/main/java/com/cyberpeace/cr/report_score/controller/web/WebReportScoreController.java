@@ -54,7 +54,7 @@ public class WebReportScoreController {
         reportScore.setUserName(userName);
         reportScore.setAvatarUrl(avatarUrl);
 
-        reportScoreService.validateReportScoreNameExist(reportScore);
+        reportScoreService.validateReportScore(reportScore);
         reportScoreService.save(reportScore);
         return new BaseRsp<>();
     }
@@ -90,6 +90,9 @@ public class WebReportScoreController {
             @ApiParam(name = "resource_id", value = "查询id", required = true)
             @RequestParam("resource_id") @NotBlank String resourceId) {
         WebReportScoreDetailRsp webReportScoreDetailRsp = reportScoreService.selectWebById(resourceId);
+        if (webReportScoreDetailRsp.getAnonymous() != null && webReportScoreDetailRsp.getAnonymous() == 1) {
+            webReportScoreDetailRsp.setRaterName("匿名者");
+        }
         return new BaseRsp<>(webReportScoreDetailRsp);
     }
 

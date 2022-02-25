@@ -169,8 +169,8 @@ public class HldRoomController {
 
 		HldTaskContext hldTaskContext = jsonObject.toJavaObject(HldTaskContext.class);
 		hldTaskContext.setTaskName(jsonObject.getJSONObject("baseInfo").getString("taskName"));
-		hldTaskContext.setAttackTaskSenceDes(
-				jsonObject.getJSONObject("baseInfo").getString("attackTaskSenceDes"));
+		hldTaskContext.setAttackTaskSceneDes(
+				jsonObject.getJSONObject("baseInfo").getString("attackTaskSceneDes"));
 
 		return hldTaskContext;
 	}

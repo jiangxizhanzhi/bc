@@ -288,10 +288,10 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		}
 
 		// 设置任务描述
-		if (hldTaskContext.getAttackTaskSenceDes() == null) {
+		if (hldTaskContext.getAttackTaskSceneDes() == null) {
 			baseInfo.setDescription("");
 		} else {
-			baseInfo.setDescription(hldTaskContext.getAttackTaskSenceDes());
+			baseInfo.setDescription(hldTaskContext.getAttackTaskSceneDes());
 		}
 		baseInfo.setDifficult(0);
 

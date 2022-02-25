@@ -9,7 +9,7 @@ public class HldTaskContext {
 
 	private String taskName;
 
-	private String attackTaskSenceDes;
+	private String attackTaskSceneDes;
 
 	private List<TaskUserInfo> controlUser;
 

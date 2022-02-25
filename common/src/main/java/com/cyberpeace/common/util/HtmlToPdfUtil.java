@@ -4,16 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.FileAlreadyExistsException;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
-import com.google.common.collect.Maps;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HtmlToPdfUtil {
 
@@ -100,7 +101,7 @@ public class HtmlToPdfUtil {
 			}
 
 			if (destFile.exists()) {
-				log.error("templateInstancePath is exist! templateInstancePath=[{}]",
+				log.error("templateInstancePath exists! templateInstancePath=[{}]",
 						templateInstancePath);
 				throw new FileAlreadyExistsException(templateInstancePath);
 			}

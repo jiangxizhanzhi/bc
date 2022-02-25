@@ -24,11 +24,13 @@ import com.cyberpeace.rtks.service.KnowledgeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "RTKS-知识点类别管理")
 @RestController
 @RequestMapping("/rtks/knowledge-category")
 @RequiresAuthentication
+@Slf4j
 public class KnowledgeCategoryController {
 
 	@Autowired
@@ -51,17 +53,29 @@ public class KnowledgeCategoryController {
 	@PostMapping()
 	public BaseRsp<String>
 			addKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
+		validate(knowledgeCategoryAddReq.getContent());
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
+
 		BeanUtils.copyProperties(knowledgeCategoryAddReq, knowledgeCategory);
 		knowledgeCategoryService.save(knowledgeCategory);
 
 		return new BaseRsp<>();
 	}
 
+	private void validate(String content) {
+		List<KnowledgeCategory> knowledgeCategory = knowledgeCategoryService.getByContent(content.trim());
+
+		if (knowledgeCategory.size() > 0) {
+			log.error("knowledgeCategory already exist,knowledgeCategory is [{}]", content);
+			throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_CATEGORY_NAME_DUPLICATE);
+		}
+	}
+
 	@ApiOperation("修改单条")
 	@PutMapping()
 	public BaseRsp<String>
 			modifyKnowledge(@RequestBody @Validated AbilityAddReq knowledgeCatagaryOrSystemAddReq) {
+		validate(knowledgeCatagaryOrSystemAddReq.getContent());
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
 		BeanUtils.copyProperties(knowledgeCatagaryOrSystemAddReq, knowledgeCategory);
 		knowledgeCategoryService.updateById(knowledgeCategory);

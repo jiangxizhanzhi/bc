@@ -77,7 +77,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			listQuery.setUserIds(userIds);
 
 			userInfoMap = StreamApiUtils.toMap(userList, UserInfo::getUserId,
-					UserInfo::getUserName);
+					UserInfo::getName);
 		}
 
 		IPage<Note> iPage = noteMapper.pageByUserIdsAndContent(page, listQuery, isWeb);
@@ -95,7 +95,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			return iPage.convert(note -> {
 				UserInfo userInfo = remoteUserService.getById(note.getUserId());
 				NoteListBo noteBo = BeanUtils.copy(note, NoteListBo.class);
-				noteBo.setUserName(null != userInfo ? userInfo.getUserName() : "");
+				noteBo.setUserName(null != userInfo ? userInfo.getName() : "");
 				return noteBo;
 			});
 		}

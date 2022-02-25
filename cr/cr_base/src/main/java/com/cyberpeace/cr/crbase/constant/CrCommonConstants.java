@@ -23,33 +23,33 @@ public interface CrCommonConstants {
 
 	Integer STUDENT_ROLE = 1;
 
-	int MIN_STAGE_NAME_LEN = 4;
-
 	Integer TERMINAL_TYPE_CODE = 4;
 
-	int MAX_STAGE_NAME_LEN = 20;
+	int SKILL_POINTS_SIZE = ConfigReader.readInt("cr.skill.point.size");
 
-	int SCORE_MAX_VALUE = 500;
+	int SKILL_POINT_MIN_VALUE = ConfigReader.readInt("cr.skill.point.min");
 
-	int SKILL_POINTS_SIZE = 7;
+	int SKILL_POINT_MAX_VALUE = ConfigReader.readInt("cr.skill.point.max");
 
-	int SKILL_POINT_MIN_VALUE = 1;
+	int MIN_STAGE_NAME_LEN = ConfigReader.readInt("cr.stage.name.len.min");
 
-	int SKILL_POINT_MAX_VALUE = 5;
+	int MAX_STAGE_NAME_LEN = ConfigReader.readInt("cr.stage.name.len.max");
 
-	int MIN_TRAINING_NAME_LEN = 4;
+	int SCORE_MAX_VALUE = ConfigReader.readInt("cr.score.max");
 
-	int MAX_TRAINING_NAME_LEN = 40;
+	int MIN_TRAINING_NAME_LEN = ConfigReader.readInt("cr.training.name.len.min");
+
+	int MAX_TRAINING_NAME_LEN = ConfigReader.readInt("cr.training.name.len.max");
 
 	String NULL = "null";
 
-	Integer MIN_TAG_COUNT = 1;
+	Integer MIN_TAG_COUNT = ConfigReader.readInt("cr.tag.count.min");
 
-	Integer MAX_TAG_COUNT = 4;
+	Integer MAX_TAG_COUNT = ConfigReader.readInt("cr.tag.count.max");
 
-	Integer MIN_STR_LEN = 1;
+	Integer MIN_STR_LEN = ConfigReader.readInt("cr.str.len.min");
 
-	Integer MAX_NAME_STR_LEN = 255;
+	Integer MAX_NAME_STR_LEN = ConfigReader.readInt("cr.str.len.name.max");
 
-	Integer MAX_DESC_LEN = 2048;
+	Integer MAX_DESC_LEN = ConfigReader.readInt("cr.desc.len.max");
 }

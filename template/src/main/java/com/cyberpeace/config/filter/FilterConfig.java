@@ -4,6 +4,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.cyberpeace.config.auth.DebounceFilter;
 import com.cyberpeace.config.auth.ExceptionFilter;
 import com.cyberpeace.config.auth.MyFilter;
 
@@ -26,6 +27,17 @@ public class FilterConfig {
 		filterRegistrationBean.setOrder(105);
 		filterRegistrationBean.setFilter(new MyFilter());
 		filterRegistrationBean.setName("myFilter");
+		filterRegistrationBean.addUrlPatterns("/*");
+		return filterRegistrationBean;
+	}
+
+	@Bean
+	public FilterRegistrationBean debounceFilter() {
+
+		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+		filterRegistrationBean.setOrder(106);
+		filterRegistrationBean.setFilter(new DebounceFilter());
+		filterRegistrationBean.setName("deBounceFilter");
 		filterRegistrationBean.addUrlPatterns("/*");
 		return filterRegistrationBean;
 	}

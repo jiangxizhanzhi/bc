@@ -122,7 +122,7 @@ public class AdminPaperController {
 		if (StringUtils.isNotBlank(randomPracticeReq.getCategoryId())) {
 			List<String> categoryIds = practiceCategoryService
 					.selectChildrenIds(randomPracticeReq.getCategoryId(), true);
-			practiceQuery.setCategoryId(categoryIds);
+			practiceQuery.setCategoryIds(categoryIds);
 		}
 
 		List<LibPracticeListBo> randomPracticeList = paperService

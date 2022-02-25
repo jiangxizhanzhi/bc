@@ -58,4 +58,8 @@ public interface OjBusinessErrorCode {
 	String SCENE_RUNNING_TOO_MUCH = "102017";
 
 	String FIELD_TOO_LONG = "102018";
+
+	String LESSON_HANDOUT_CONTENT_ERROR = "102019";
+
+	String LESSON_DIR_NAME_ERROR = "102020";
 }

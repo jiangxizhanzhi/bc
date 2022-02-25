@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.model.ws;
 
-import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.LineStyle;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

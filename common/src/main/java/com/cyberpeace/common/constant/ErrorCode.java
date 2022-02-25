@@ -64,4 +64,14 @@ public interface ErrorCode {
 
 	String FAILED_TO_OBTAIN_OFFICE_FILE_INFO = "100025";
 
+	/** 未配置 */
+	String NOT_CONFIGURED = "100026";
+
+	/** 无效的配置 */
+	String INVALID_CONFIGURATION = "100027";
+
+	/**
+	 * 操作过于频繁
+	 */
+	String OPERATION_TOO_FREQUENT = "100028";
 }

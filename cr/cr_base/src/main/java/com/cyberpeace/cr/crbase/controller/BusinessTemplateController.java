@@ -141,52 +141,52 @@ public class BusinessTemplateController {
 		return new BaseRsp();
 	}
 
-	/**
-	 * 导入业务模板
-	 * @return
-	 */
-	@ApiOperation("导入业务模板")
-	@PostMapping("/batch_loads")
-	public BaseRsp batchLoads(@RequestParam MultipartFile file) {
-		try {
-			File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
-			String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
-			File unzipFileDirectory = new File(unZipPath);
-
-			if (unzipFileDirectory.isDirectory()) {
-				File[] unzipFiles = unzipFileDirectory.listFiles();
-				Map<String, String> files = Maps.newHashMap();
-				for (File unzipFile : unzipFiles) {
-					if (unzipFile.isDirectory()) {
-						searchFile(unzipFile, files);
-						continue;
-					}
-
-					if (!unzipFile.getName().endsWith(".json")) {
-						log.error("find wrong file when loads, fileName=[{}]",
-								unzipFile.getAbsolutePath());
-						continue;
-					}
-
-					ParserConfig parserConfig = new ParserConfig();
-					parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-					LoadTemplate loadTemplate = JSON.parseObject(FileUtil.getContent(unzipFile),
-							LoadTemplate.class, parserConfig);
-
-					businessTemplateService.batchLoads(loadTemplate, files);
-				}
-			}
-		} catch (ZipException e) {
-			log.error("unable unzip file！filename=[{}]", file.getOriginalFilename());
-			throw new BusinessException(CrBusinessErrorCode.FILE_FORMAT_ERROR);
-		} catch (IOException e) {
-			log.error("unable save file！filename=[{}],path=[{}]", file.getOriginalFilename(),
-					ZipUtil.generatePath());
-			throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
-		}
-
-		return new BaseRsp();
-	}
+//	/**
+//	 * 导入业务模板
+//	 * @return
+//	 */
+//	@ApiOperation("导入业务模板")
+//	@PostMapping("/batch_loads")
+//	public BaseRsp batchLoads(@RequestParam MultipartFile file) {
+//		try {
+//			File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+//			String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+//			File unzipFileDirectory = new File(unZipPath);
+//
+//			if (unzipFileDirectory.isDirectory()) {
+//				File[] unzipFiles = unzipFileDirectory.listFiles();
+//				Map<String, String> files = Maps.newHashMap();
+//				for (File unzipFile : unzipFiles) {
+//					if (unzipFile.isDirectory()) {
+//						searchFile(unzipFile, files);
+//						continue;
+//					}
+//
+//					if (!unzipFile.getName().endsWith(".json")) {
+//						log.error("find wrong file when loads, fileName=[{}]",
+//								unzipFile.getAbsolutePath());
+//						continue;
+//					}
+//
+//					ParserConfig parserConfig = new ParserConfig();
+//					parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+//					LoadTemplate loadTemplate = JSON.parseObject(FileUtil.getContent(unzipFile),
+//							LoadTemplate.class, parserConfig);
+//
+//					businessTemplateService.batchLoads(loadTemplate, files);
+//				}
+//			}
+//		} catch (ZipException e) {
+//			log.error("unable unzip file！filename=[{}]", file.getOriginalFilename());
+//			throw new BusinessException(CrBusinessErrorCode.FILE_FORMAT_ERROR);
+//		} catch (IOException e) {
+//			log.error("unable save file！filename=[{}],path=[{}]", file.getOriginalFilename(),
+//					ZipUtil.generatePath());
+//			throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
+//		}
+//
+//		return new BaseRsp();
+//	}
 
 	private void searchFile(File file, Map<String, String> map) {
 		File[] fs = file.listFiles();
@@ -208,7 +208,7 @@ public class BusinessTemplateController {
 	@ApiOperation("校验模板名字")
 	@PatchMapping("/validate_name_patch/")
 	public BaseRsp<String> validateNamePatch(@RequestBody @Validated NameValidReq nameValidReq) {
-		businessTemplateService.validateNamePatch(nameValidReq.getName(), nameValidReq.getType(),
+		businessTemplateService.validateName(nameValidReq.getName(), nameValidReq.getType(),
 				nameValidReq.getId());
 		return new BaseRsp();
 	}

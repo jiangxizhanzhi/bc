@@ -53,7 +53,7 @@ public class CrCommonValidator {
 
 	public static <T> void validateSize(List<T> target, int size, String errorCode) {
 		if (target.size() != size) {
-			throw new BusinessException(errorCode);
+			throw new BusinessException(errorCode, size, target.size());
 		}
 	}
 

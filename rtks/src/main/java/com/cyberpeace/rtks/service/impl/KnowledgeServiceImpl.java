@@ -5,6 +5,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,7 @@ import com.google.common.collect.Maps;
  *
  */
 @Service
+@Slf4j
 public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge> implements KnowledgeService {
 
 	@Autowired
@@ -103,7 +107,8 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	public Knowledge getOr404(String knowledgeId) {
 		Knowledge knowledge = getById(knowledgeId);
 		if (knowledge == null) {
-			throw new ResourceNotFoundException("知识点" + knowledgeId + "未找到");
+			log.error("knowledge not exist！knowledgeId=[{}]", knowledgeId);
+			throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_NOT_EXIST);
 		}
 		return knowledge;
 	}
@@ -111,7 +116,8 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	@Override
 	public void validate(Knowledge knowledge) {
 		if (knowledgeCategoryService.getById(knowledge.getCategoryId()) == null) {
-			throw new InvalidParamException("类别不存在");
+			log.error("knowledge Category not exist！CategoryId=[{}]", knowledge.getCategoryId());
+			throw new BusinessException(RtksBusinessErrorCode.CATEGORY_NOT_EXIST);
 		}
 	}
 

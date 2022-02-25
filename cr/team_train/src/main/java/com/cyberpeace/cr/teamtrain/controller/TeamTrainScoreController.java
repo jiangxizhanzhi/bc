@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.cr.crbase.service.MissionService;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +30,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.crbase.service.context.UserReport;
@@ -88,21 +88,30 @@ public class TeamTrainScoreController {
 		String destHtmlPath = String.format("%s%s-%s.html",
 				AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(), roomId,
 				UserInfoContext.getUserContext().getUserId());
-		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.TEAM, destHtmlPath);
-		String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
-		HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
-
-		if (new File(destHtmlPath).delete()) {
+		try {
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.TEAM, destHtmlPath);
+			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+					+ "pdf";
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 			FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(!new File(destHtmlPath).delete()){
+				log.error("failed to delete file:{}", destHtmlPath);
+			}
 		}
 	}
+
 	@ApiOperation("训练记录导出为html")
 	@GetMapping("/train2html")
 	public void dumpTrainRecord2PDF1(HttpServletResponse httpServletResponse,
-									@RequestParam("room_id") String roomId) {
+			@RequestParam("room_id") String roomId) {
 		JSONObject data = getTrainRecordJsonObject(roomId);
 		data.put("username", UserInfoContext.getUserContext().getUserName());
-		data.put("title", crScoreController.getTitle(UserInfoContext.getUserContext().getUserName()));
+		data.put("title",
+				crScoreController.getTitle(UserInfoContext.getUserContext().getUserName()));
 
 		// 获取用户LOGO
 		try {
@@ -117,9 +126,10 @@ public class TeamTrainScoreController {
 				UserInfoContext.getUserContext().getUserId());
 		HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.TEAM, destHtmlPath);
 
-			FileUtil.setResponse(new File(destHtmlPath), true, httpServletResponse);
+		FileUtil.setResponse(new File(destHtmlPath), true, httpServletResponse);
 
 	}
+
 	private JSONObject getTrainRecordJsonObject(String roomId) {
 		JSONObject jsonObject = new JSONObject();
 
@@ -230,9 +240,9 @@ public class TeamTrainScoreController {
 	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
 			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
- 		teamRoomService.checkTeacherPermission(studentScoreReq.getRoomId(), userId);
+		teamRoomService.checkTeacherPermission(studentScoreReq.getRoomId(), userId);
 
- 		teamRoomService.checkRoomOpening(studentScoreReq.getRoomId());
+		teamRoomService.checkRoomOpening(studentScoreReq.getRoomId());
 
 		crScoreController.updateStudentScore(studentScoreReq);
 

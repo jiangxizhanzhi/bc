@@ -54,6 +54,10 @@ public class KnowledgeController {
 	@ApiOperation("新增单条")
 	@PostMapping()
 	public BaseRsp<String> addKnowledge(@RequestBody @Validated KnowledgeAddReq knowledgeAddReq) {
+
+		// 数据校验
+		knowledgeAddReq.validate();
+
 		Knowledge knowledge = new Knowledge();
 		BeanUtils.copyProperties(knowledgeAddReq, knowledge);
 		knowledge.setCourses(JsonUtil.toJsonString(knowledgeAddReq.getCourseList()));
@@ -73,6 +77,10 @@ public class KnowledgeController {
 	@PutMapping()
 	public BaseRsp<String>
 			modifyKnowledge(@RequestBody @Validated KnowledgeAddReq knowledgeAddReq) {
+
+		// 数据校验
+		knowledgeAddReq.validate();
+
 		Knowledge knowledge = new Knowledge();
 		BeanUtils.copyProperties(knowledgeAddReq, knowledge);
 		knowledge.setCourses(JsonUtil.toJsonString(knowledgeAddReq.getCourseList()));

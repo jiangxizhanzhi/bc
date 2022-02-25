@@ -841,6 +841,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 获取解压的讲义文件
 			String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
+			if (StringUtils.isBlank(mdFilePath)) {
+				throw new BusinessException(OjBusinessErrorCode.LESSON_HANDOUT_CONTENT_ERROR);
+			}
 			courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());
 
 			// md文件内容作为url
@@ -992,6 +995,21 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				&& StringUtils.isNotBlank(courseLesson.getHandoutUrl())) {
 			String fileName = copyFile(courseLesson.getHandoutUrl(), destFilePath);
 			filePathMap.put(courseLesson.getHandoutUrl(), fileName);
+		}
+
+		// markdown讲义修改
+		if (null != courseLesson.getHandoutType()
+				&& courseLesson.getHandoutType() == CourseLesson.HandoutType.MD.getCode().intValue()
+				&& StringUtils.isNotBlank(courseLesson.getHandoutUrl())) {
+
+			List<String> matchList = LocalStringUtil.getMatchStr(courseLesson.getHandoutUrl(),
+					PatternConstant.MARKDOWN_IMAGE);
+			List<String> matchPathList = StreamApiUtils.map(matchList, matchPath -> LocalStringUtil
+					.getFirstMatchStr(matchPath, PatternConstant.MARKDOWN_IMAGE_URL));
+			matchPathList.forEach(match -> {
+				String fileName = copyFile(match, destFilePath);
+				filePathMap.put(match, fileName);
+			});
 		}
 
 		// 理论课后练习习题数据导出
@@ -1162,9 +1180,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		String realPath = utilService.getRealPath(storeDbPath);
 		String fileSuffix = FileUtil.getFileSuffix(realPath);
 		String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
-		String markdownFilePath = destFilePath + File.separatorChar + fileName;
+		String destPath = destFilePath + File.separatorChar + fileName;
 
-		FileUtil.copyFile(realPath, markdownFilePath, false);
+		FileUtil.copyFile(realPath, destPath, false);
 
 		return fileName;
 	}

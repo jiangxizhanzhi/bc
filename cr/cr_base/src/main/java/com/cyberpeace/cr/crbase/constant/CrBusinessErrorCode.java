@@ -219,4 +219,7 @@ public interface CrBusinessErrorCode {
 
 	// 报告描述长度超出限制
 	String REPORT_DESCRIPTION_LENGTH_EXCEEDS_LIMIT = "101169";
+
+	// 非法的技能点个数
+	String INVALID_SKILL_POINTS_SIZE = "101069";
 }

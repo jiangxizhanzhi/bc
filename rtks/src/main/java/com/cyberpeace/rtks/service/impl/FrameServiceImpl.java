@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
 
 @Service
+@Slf4j
 public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements FrameService {
 
 	@Autowired
@@ -85,7 +89,8 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	public Level getOr404(String frameId) {
 		Level frame = levelService.getLevelOrFrameOr404(frameId);
 		if (frame == null) {
-			throw new ResourceNotFoundException("找不到" + frameId + "对应的框架");
+			log.error("frame not exist！frameId=[{}]", frameId);
+			throw new BusinessException(RtksBusinessErrorCode.LEVEL_NOT_EXIST);
 		}
 
 		ensureIsFrame(frame);
@@ -98,8 +103,9 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	 */
 	private void ensureIsFrame(Level level) {
 		if (StringUtils.isNotBlank(level.getParent())) {
-			throw new InvalidParamException(level.getResourceId() + "不是框架而是层级");
-		}
+			log.error("level is not valid Frame！levelId=[{}]", level.getResourceId());
+			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
+ 		}
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -290,7 +292,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
@@ -710,7 +712,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private List<Skill> getSkills(String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		List<String> resourceIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
@@ -741,7 +743,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private List<Knowledge> getKnowledges(String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
-			throw new InvalidParamException("未检索到相应岗位!");
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
 		List<String> resourceIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(), String.class);

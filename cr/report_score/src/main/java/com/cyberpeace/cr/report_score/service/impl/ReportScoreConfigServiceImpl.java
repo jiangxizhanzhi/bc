@@ -1,10 +1,7 @@
 package com.cyberpeace.cr.report_score.service.impl;
-
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.report_score.controller.res.AttackLogRes;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig;
@@ -22,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,15 +55,18 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         return getConfigByType(SYSTEM_TYPE);
     }
 
-    @Override
-    public String getSceneIds() {
-        Map<String, String> systemConfig = getSystemConfig();
+	@Override
+	public String getSceneIds() {
 
-        String sceneIds = systemConfig.getOrDefault(SCENE_KEY, "");
-        log.info("getSceneIds is {}", sceneIds);
+		ReportScoreConfig typeConfig = reportScoreConfigMapper
+				.getTypeConfig(SYSTEM_TYPE, SCENE_KEY, null);
 
-        return sceneIds;
-    }
+		if (typeConfig == null) {
+			log.info("getSceneIds is null");
+			return "";
+		}
+		return typeConfig.getValue();
+	}
 
     @Override
     public Map<String, String> getUserIps() {
@@ -83,13 +85,13 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
         ReportScoreConfig typeConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, SCENE_KEY, null);
 
-//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		String startTime = df.format(new Date(System.currentTimeMillis() - 1000));
-//		String endTime = df.format(new Date());
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String startTime = df.format(new Date(System.currentTimeMillis() - 1000));
+		String endTime = df.format(new Date());
 
         attackLogPageContext.setId(typeConfig.getValue());
-//		attackLogPageContext.setStartTime(startTime);
-//		attackLogPageContext.setEndTime(endTime);
+		attackLogPageContext.setStartTime(startTime);
+		attackLogPageContext.setEndTime(endTime);
 
         JSONObject attackLog = remoteSituationService.getAttackLog(attackLogPageContext);
         List<JSONObject> objects = JsonUtil.toJsonObjectArray(attackLog.getJSONArray("list").toString(), JSONObject.class);

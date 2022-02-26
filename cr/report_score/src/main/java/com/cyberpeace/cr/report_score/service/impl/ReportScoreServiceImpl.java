@@ -20,7 +20,9 @@ import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import com.cyberpeace.cr.report_score.service.bo.UserSubjectGroupBo;
 import com.cyberpeace.integratation.model.context.AttackCountContext;
+import com.cyberpeace.integratation.model.context.AttackIPContext;
 import com.cyberpeace.integratation.model.mp.MpAttackCount;
+import com.cyberpeace.integratation.model.mp.MpAttackIPCount;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
@@ -238,6 +240,51 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         }
 
         return subRankingMap;
+    }
+
+    @Override
+    public List<AttackStRes> attackSt() {
+        List<AttackStRes> attackStResList = Lists.newArrayList();
+
+        Map<String, String> userIpMap = reportScoreConfigService.getUserIps();
+        List<MpAttackIPCount> ipCountList = getTotalIPCount(userIpMap);
+
+        List<UserInfo> userInfoList = getUsers();
+        for (UserInfo userInfo: userInfoList) {
+            AttackStRes attackStRes = new AttackStRes();
+
+            attackStRes.setUserId(userInfo.getUserId());
+            attackStRes.setUserName(userInfo.getUserName());
+
+            String userIps = userIpMap.getOrDefault(userInfo.getUserId(), "");
+            attackStRes.setIps(userIps);
+
+            String userIPCount = getUserIPCount(userIps, ipCountList);
+            attackStRes.setCount(userIPCount);
+
+            log.info("user {} ip is {} and attack count is {}", userInfo.getUserId(), userIps, userIPCount);
+        }
+
+        return attackStResList;
+    }
+
+    private String getUserIPCount(String ips, List<MpAttackIPCount> mpAttackIPCountList) {
+        int sum = mpAttackIPCountList.stream()
+                .filter(mpAttackIPCount -> ips.contains(mpAttackIPCount.getIp()))
+                .mapToInt(MpAttackIPCount::getTimes).sum();
+        return String.valueOf(sum);
+    }
+
+    private List<MpAttackIPCount> getTotalIPCount(Map<String, String> userIpMap) {
+        String sceneIds = reportScoreConfigService.getSceneIds();
+        List<String> ipList = new ArrayList<>(userIpMap.values());
+        String ips = String.join(",", ipList);
+        String[] split = ips.split(",");
+        AttackIPContext attackIPContext = new AttackIPContext();
+        attackIPContext.setSceneId(sceneIds);
+        attackIPContext.setIps(Arrays.asList(split));
+        return remoteSituationService
+                .getAttackIPCount(attackIPContext);
     }
 
     private MpAttackCount getUserAttackCount(String sceneIds, String ips) {

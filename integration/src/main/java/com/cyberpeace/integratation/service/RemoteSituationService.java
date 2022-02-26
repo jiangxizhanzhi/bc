@@ -5,7 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.AttackLogPageContext;
 
 import com.cyberpeace.integratation.model.context.AttackCountContext;
+import com.cyberpeace.integratation.model.context.AttackIPContext;
 import com.cyberpeace.integratation.model.mp.MpAttackCount;
+import com.cyberpeace.integratation.model.mp.MpAttackIPCount;
+
+import java.util.List;
 
 /**
  * 获取场景态势数据
@@ -20,4 +24,6 @@ public interface RemoteSituationService {
     JSONObject getAttackLog(AttackLogPageContext attackLogPageContext);
 
 	MpAttackCount getAttackCountTop5(AttackCountContext attackCountContext);
+
+	List<MpAttackIPCount> getAttackIPCount(AttackIPContext attackIPContext);
 }

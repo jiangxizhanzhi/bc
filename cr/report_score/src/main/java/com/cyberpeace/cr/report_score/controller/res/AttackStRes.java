@@ -18,4 +18,7 @@ public class AttackStRes implements Serializable {
 	@ApiModelProperty("攻击次数")
 	private String count;
 
+	@ApiModelProperty("队伍IP")
+	private String ips;
+
 }

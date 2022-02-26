@@ -12,18 +12,18 @@ import java.util.Date;
 public class AttackLogRes implements Serializable {
 
 	@ApiModelProperty("攻击时间")
-	private Date attack_time;
-
-	@ApiModelProperty("队伍ID")
-	private String userId;
+	private String attackTime;
 
 	@ApiModelProperty("队伍名称")
 	private String userName;
 
+	@ApiModelProperty("源IP")
+	private String sourceIp;
+
 	@ApiModelProperty("目标设备")
-	private String target;
+	private String targetNodeName;
 
 	@ApiModelProperty("目标IP")
-	private String IP;
+	private String targetIp;
 
 }

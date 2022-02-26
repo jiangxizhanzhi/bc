@@ -24,6 +24,10 @@
             <if test="key != null and key != ''">
                 and `key` = #{key}
             </if>
+            <if test="value != null and value != ''">
+                <bind name="value" value="'%'+value+'%'" />
+                and `value` like #{value}
+            </if>
         </where>
     </select>
 </mapper>

@@ -26,7 +26,7 @@ public class RankingRep implements Serializable {
 	@ApiModelProperty("队伍分数")
 	private String sumScore;
 
-	@ApiModelProperty("前三名，统计流量，攻击次数信息")
+	@ApiModelProperty("总榜前三名，统计流量，攻击次数信息")
 	private MpAttackCount attackCount;
 
 }

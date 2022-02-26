@@ -218,8 +218,8 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
      * 科目排行榜
      */
     @Override
-    public Map<Integer, List<RankingRep>> subjectRanking() {
-        HashMap<Integer, List<RankingRep>> subRankingMap = Maps.newHashMap();
+    public List<SubjectRankingRes> subjectRanking() {
+        List<SubjectRankingRes> subjectRankingResList = Lists.newArrayList();
         List<UserInfo> userInfoList = getUsers();
 
         List<UserSubjectGroupBo> userSubjectGroupList = reportScoreMapper.getUserSubjectGroup();
@@ -234,12 +234,17 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
 
             Map<String, String> userSumScoreMap = userSubjectGroupBos.stream().collect(Collectors
                     .toMap(UserSubjectGroupBo::getUserId, UserSubjectGroupBo::getSubjectScore));
-
             List<RankingRep> rankingRepList = baseRanking(userInfoList, userSumScoreMap);
-            subRankingMap.put(subjectCode, rankingRepList);
+
+            SubjectRankingRes subjectRankingRes = new SubjectRankingRes();
+
+            subjectRankingRes.setSubject(subjectCode);
+            subjectRankingRes.setRankingRepList(rankingRepList);
+
+            subjectRankingResList.add(subjectRankingRes);
         }
 
-        return subRankingMap;
+        return subjectRankingResList;
     }
 
     @Override

@@ -43,7 +43,7 @@ public interface ReportScoreService extends IService<ReportScore> {
 
     List<SubjectCompleteRep> subjectCompleteSt();
 
-    Map<Integer, List<RankingRep>> subjectRanking();
+    List<SubjectRankingRes> subjectRanking();
 
     List<AttackStRes> attackSt();
 }

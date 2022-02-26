@@ -1,11 +1,14 @@
 package com.cyberpeace.cr.report_score.controller.other;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.report_score.controller.res.*;
 import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,16 +44,18 @@ public class ReportStatistics {
 
 	@ApiOperation(("任务完成得分排行"))
 	@GetMapping("/subject/ranking")
-	public BaseRsp<Map<Integer, List<RankingRep>>> subjectRanking() {
-		Map<Integer, List<RankingRep>> integerListMap = reportScoreService.subjectRanking();
-		return new BaseRsp<>(integerListMap);
+	public BaseRsp<List<SubjectRankingRes>> subjectRanking() {
+		List<SubjectRankingRes> subjectRankingResList = reportScoreService.subjectRanking();
+		return new BaseRsp<>(subjectRankingResList);
 	}
 
 	@ApiOperation("系统信息")
 	@GetMapping("/system")
-	public BaseRsp<Map<String, String>> system() {
+	public BaseRsp<SystemConfigRes> system() {
 		Map<String, String> systemConfig = reportScoreConfigService.getSystemConfig();
-		return new BaseRsp<>(systemConfig);
+		SystemConfigRes systemConfigRes = JsonUtil
+				.toJsonObject(JsonUtil.toJsonString(systemConfig), SystemConfigRes.class);
+		return new BaseRsp<>(systemConfigRes);
 	}
 
 	@ApiOperation("攻击次数统计")

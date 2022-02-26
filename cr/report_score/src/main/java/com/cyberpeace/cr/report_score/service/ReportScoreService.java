@@ -44,4 +44,6 @@ public interface ReportScoreService extends IService<ReportScore> {
     List<SubjectCompleteRep> subjectCompleteSt();
 
     Map<Integer, List<RankingRep>> subjectRanking();
+
+    List<AttackStRes> attackSt();
 }

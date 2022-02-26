@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.report_score.controller.res.AttackLogRes;
+import com.cyberpeace.cr.report_score.controller.res.AttackStRes;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig;
 import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreConfigMapper;
 import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
@@ -14,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,12 +47,15 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
 	@Override
 	public String getSceneIds() {
-		Map<String, String> systemConfig = getSystemConfig();
 
-		String sceneIds = systemConfig.getOrDefault(SCENE_KEY, "");
-		log.info("getSceneIds is {}", sceneIds);
+		ReportScoreConfig typeConfig = reportScoreConfigMapper
+				.getTypeConfig(SYSTEM_TYPE, SCENE_KEY);
 
-		return sceneIds;
+		if (typeConfig == null) {
+			log.info("getSceneIds is null");
+			return "";
+		}
+		return typeConfig.getValue();
 	}
 
 	@Override

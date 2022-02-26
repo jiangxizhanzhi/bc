@@ -56,8 +56,8 @@ public class ReportStatistics {
 	@ApiOperation("攻击次数统计")
 	@GetMapping("/sttack/st")
 	public BaseRsp<List<AttackStRes>> attackSt() {
-		// todo 中台提供IP次数接口，统计固定队伍攻击次数
-		return null;
+		List<AttackStRes> attackStResList = reportScoreService.attackSt();
+		return new BaseRsp<>(attackStResList);
 	}
 
 	@ApiOperation("攻击日志")

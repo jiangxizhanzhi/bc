@@ -70,6 +70,7 @@ public class HldTaskServiceImpl implements HldTaskService {
 
 		try {
 			HttpClientUtil.post(HLD_UPDATE_TASK_ZT_URL, updateTaskZt, JSONObject.class);
+			log.info(String.format("Update TaskZt, taskId: %s, sceneId: %s", taskId, sceneId));
 		} catch (Exception e) {
 			log.error("Failed to update task info.", e);
 			return false;

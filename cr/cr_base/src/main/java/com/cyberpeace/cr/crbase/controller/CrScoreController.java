@@ -5,17 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -37,7 +35,6 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
-import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -154,11 +151,12 @@ public class CrScoreController {
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
-//		if (studentScoreReq.getComment().length() > CrScore.ScoreValue.MAX_COMMENT_LEN.getCode()) {
-//			log.error("comment length out of range！comment length=[{}]",
-//					studentScoreReq.getComment().length());
-//			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
-//		}
+		// if (studentScoreReq.getComment().length() >
+		// CrScore.ScoreValue.MAX_COMMENT_LEN.getCode()) {
+		// log.error("comment length out of range！comment length=[{}]",
+		// studentScoreReq.getComment().length());
+		// throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+		// }
 
 		CrScore crScore = crScoreService.getByRoomIdAndUser(studentScoreReq.getRoomId(),
 				studentScoreReq.getUser());
@@ -324,8 +322,9 @@ public class CrScoreController {
 							trainingRecord.setRecord(crTask.getUserAnswer());
 							trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
 							trainingRecord.setTime(crTask.getLastSubmitTime());
-						}else{
-							trainingRecordMissionRsp.setTraininStatus(CrTask.TaskStatus.UNRELEASED.getCode());
+						} else {
+							trainingRecordMissionRsp
+									.setTraininStatus(CrTask.TaskStatus.UNRELEASED.getCode());
 
 						}
 						trainingRecordMissionRsp.setTrainingRecord(trainingRecord);
@@ -348,10 +347,7 @@ public class CrScoreController {
 			userIds.addAll(crRole.getUserIdList());
 		}
 
-
-		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
-		Map<String, UserInfo> userInfoMap = userInfoList.stream()
-				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
 		// 获取每个学员的任务信息
 		List<CrScore> studentScoreList = crScoreService.selectByRoomIdAndUserIds(resource_id,
@@ -409,9 +405,9 @@ public class CrScoreController {
 	public String getTitle(String name) {
 
 		if (!CommonContext.isChinese()) {
-			return "Cyber Exercise Report of "+name;
+			return "Cyber Exercise Report of " + name;
 		} else {
-			return name+"训练的训练报告";
+			return name + "训练的训练报告";
 		}
 	}
 }

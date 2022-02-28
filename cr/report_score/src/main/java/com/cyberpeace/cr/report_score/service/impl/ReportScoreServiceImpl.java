@@ -171,12 +171,14 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         Map<String, String> userIpMap = reportScoreConfigService.getUserIps();
         String sceneIds = reportScoreConfigService.getSceneIds();
 
+        int attackCount = 0;
         for (RankingRep rankingRep : rankingRepList) {
-            if (top3List.contains(rankingRep.getRank())) {
+            if (top3List.contains(rankingRep.getRank()) && attackCount < 3) {
                 String ips = userIpMap.get(rankingRep.getUserId());
                 log.info("get top3 userId is {} and ips is {}", rankingRep.getUserId(), ips);
                 MpAttackCount userAttackCount = getUserAttackCount(sceneIds, ips);
                 rankingRep.setAttackCount(userAttackCount);
+                attackCount += 1;
             }
         }
 

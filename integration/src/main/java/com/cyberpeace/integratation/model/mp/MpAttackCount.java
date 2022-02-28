@@ -17,7 +17,7 @@ public class MpAttackCount implements Serializable {
 	@ApiModelProperty("攻击次数")
 	private Integer totalAttackNumber;
 
-	@ApiModelProperty("流量大小")
+	@ApiModelProperty("流量大小(B)")
 	private Double totalTrafficSize;
 
 }

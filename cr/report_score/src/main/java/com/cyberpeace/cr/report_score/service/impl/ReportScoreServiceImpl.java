@@ -266,7 +266,7 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
 
             String userIPCount = getUserIPCount(userIps, ipCountList);
             attackStRes.setCount(userIPCount);
-
+            attackStResList.add(attackStRes);
             log.info("user {} ip is {} and attack count is {}", userInfo.getUserId(), userIps, userIPCount);
         }
 

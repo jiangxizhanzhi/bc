@@ -290,7 +290,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		if (hldTaskContext.getTaskName() == null || hldTaskContext.getTaskName().isEmpty()) {
 			baseInfo.setName("task_" + System.currentTimeMillis());
 		} else {
-			baseInfo.setName(hldTaskContext.getTaskName());
+			baseInfo.setName(hldTaskContext.getTaskName() + "_" + System.currentTimeMillis());
 		}
 
 		// 设置任务描述

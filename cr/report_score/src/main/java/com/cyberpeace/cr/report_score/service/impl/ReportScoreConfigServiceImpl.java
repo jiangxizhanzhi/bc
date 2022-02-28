@@ -14,6 +14,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.model.LineStyle;
 import com.cyberpeace.situation.model.ws.JyjWsEvent;
+import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
     @Autowired
     private RemoteUserService remoteUserService;
+
+    @Autowired
+    private TopoHandlerService topoHandlerService;
 
     @Override
     public List<String> getUserIds() {
@@ -108,8 +112,10 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
             String userName = getUserName(object.getString("source_ip"));
             attackLogRes.setUserName(userName);
 
+            // ws推送大屏消息
             JyjWsEvent wsEvent = getWsEvent(object, userName);
-            // todo ws推送大屏信息
+            JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
+            topoHandlerService.pushDataToRoom(data, typeConfig.getValue());
 
             arrayObjects.add(attackLogRes);
         }
@@ -119,6 +125,10 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
     private String getUserName(String sourceIp) {
         ReportScoreConfig typeConfig = reportScoreConfigMapper.getTypeConfig(USER_TYPE, null, sourceIp);
+        if (typeConfig == null) {
+            log.info(String.format("value is %s, getTypeConfig is null", sourceIp));
+            return "";
+        }
         UserInfo user = remoteUserService.getById(typeConfig.getKey());
         return user.getUserName();
     }
@@ -130,10 +140,16 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         jyjWsEvent.setSourceId(object.getString("source_node_id"));
         jyjWsEvent.setTargetId(object.getString("target_node_id"));
 
-        String attack_type = object.getObject("attack_info", JSONObject.class).getString("attack_type");
-        Integer code = AttackLogEnumUtils.getEnumByDesc(attack_type, AttackType.class).getCode();
+        String enDesc = object.getObject("attack_info", JSONObject.class).getString("attack_type");
+        AttackType enumByEnDesc = AttackLogEnumUtils.getEnumByEnDesc(enDesc, AttackType.class);
+        if (enumByEnDesc == null) {
+            log.info(String.format("enDesc is %s, getEnumByEnDesc is null", enDesc));
+            return null;
+        }
+        Integer code = enumByEnDesc.getCode();
+        String attackType = enumByEnDesc.getCnDesc();
         jyjWsEvent.setAttackType(code);
-        String desc = String.format("%s对%s发起%s", userName, object.getString("target_node_name"), attack_type);
+        String desc = String.format("%s对%s发起%s", userName, object.getString("target_node_name"), attackType);
         jyjWsEvent.setDescription(desc);
 
         LineStyle lineStyle = new LineStyle();

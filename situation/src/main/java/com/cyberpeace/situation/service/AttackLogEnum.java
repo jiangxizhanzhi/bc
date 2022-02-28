@@ -6,7 +6,9 @@ public interface AttackLogEnum {
 
     String getType();
 
-    String getDesc();
+    String getCnDesc();
+
+    String getEnDesc();
 
     String getKeyWord();
 

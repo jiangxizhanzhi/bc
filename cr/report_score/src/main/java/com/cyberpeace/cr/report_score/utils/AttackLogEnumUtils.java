@@ -8,8 +8,8 @@ public class AttackLogEnumUtils {
     /**
      * 根据desc获取枚举
      */
-    public static <T extends AttackLogEnum> T getEnumByDesc(String desc, Class<T> enumClass) {
-        return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getDesc().equals(desc))
+    public static <T extends AttackLogEnum> T getEnumByEnDesc(String enDesc, Class<T> enumClass) {
+        return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getEnDesc().equals(enDesc))
                 .findFirst().orElse(null);
     }
 

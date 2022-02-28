@@ -284,10 +284,9 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         String sceneIds = reportScoreConfigService.getSceneIds();
         List<String> ipList = new ArrayList<>(userIpMap.values());
         String ips = String.join(",", ipList);
-        String[] split = ips.split(",");
         AttackIPContext attackIPContext = new AttackIPContext();
         attackIPContext.setSceneId(sceneIds);
-        attackIPContext.setIps(Arrays.asList(split));
+        attackIPContext.setIps(ips);
         return remoteSituationService
                 .getAttackIPCount(attackIPContext);
     }
@@ -299,11 +298,9 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
             return null;
         }
 
-        String[] splitIps = ips.split(",");
-
         AttackCountContext attackCountContext = new AttackCountContext();
         attackCountContext.setSceneId(sceneIds);
-        attackCountContext.setIps(Arrays.asList(splitIps));
+        attackCountContext.setIps(ips);
         return remoteSituationService
                 .getAttackCountTop5(attackCountContext);
     }

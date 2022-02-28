@@ -308,6 +308,10 @@ public class CrRole extends BaseTable {
 		return isInHldGroup(HldRoleGroup.BLUE);
 	}
 
+	public boolean isHldWhite() {
+		return isInHldGroup(HldRoleGroup.WHITE);
+	}
+
 	public boolean isHldStudent() {
 		return isHldRedStudent() || isHldBlueStudent();
 	}

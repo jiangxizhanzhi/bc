@@ -36,6 +36,25 @@
         where user_ids like #{userId}
     </select>
 
+    <select id="selectCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+
+        <bind name="userId" value="'%' + userId + '%'"/>
+        select resource_id,
+        `name` ,
+        room_id,
+        description,
+        role_group,
+        nodes,
+        user_ids,
+        exercise_paper,
+        parent_resource_id,
+        mission_scheme,
+        business_type
+        from cr_role
+        where room_id = #{roomId}
+        and user_ids like #{userId}
+    </select>
+
     <select id="getCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
 
         <bind name="userId" value="'%' + userId + '%'"/>

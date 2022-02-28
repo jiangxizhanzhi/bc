@@ -22,6 +22,8 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 
 	List<String> getRoomIdsByUserId(String userId);
 
+	List<CrRole> selectCrRoleByRoomIdAndUserId(String roomId, String userId);
+
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 
 	CrRole getCrRoleByRoomIdAndRoleName(String roomId, String roleName);

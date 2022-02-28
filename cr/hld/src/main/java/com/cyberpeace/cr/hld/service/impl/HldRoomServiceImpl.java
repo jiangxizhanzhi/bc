@@ -9,12 +9,15 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
@@ -40,6 +43,9 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 
 	@Autowired
 	private CrRoleService crRoleService;
+
+	@Autowired
+	private CrRoleMapper crRoleMapper;
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
@@ -301,8 +307,25 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 	@Override
 	public CrRole getUserRole(String roomId, String userId) {
 
-		return crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomIdAndUserId(roomId, userId);
 
+		if (crRoles.isEmpty()) {
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+
+		// 优先取白方角色
+		for (CrRole crRole : crRoles) {
+			if (crRole.isHldWhite()) {
+				return crRole;
+			}
+		}
+
+		// 当用户既无白方身份，角色数又大于1时，抛出角色冲突。
+		if (crRoles.size() != 1) {
+			throw new BusinessException(CrBusinessErrorCode.TASK_ROLE_CONFLICT);
+		}
+
+		return crRoles.get(0);
 	}
 
 }

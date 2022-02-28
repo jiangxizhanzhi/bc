@@ -218,6 +218,9 @@ public interface CrBusinessErrorCode {
 	String INVALID_SKILL_POINTS_SIZE = "101069";
 
 	// 查询HLD任务失败
+	String TASK_ROLE_CONFLICT = "101087";
+
+	// 查询HLD任务失败
 	String FAILED_TO_GET_TASK_INFO = "101088";
 
 	// 写入HLD映射信息失败

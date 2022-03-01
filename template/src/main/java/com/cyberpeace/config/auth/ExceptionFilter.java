@@ -15,6 +15,7 @@ import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.impl.TraceIdContext;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -73,6 +74,11 @@ public class ExceptionFilter implements Filter {
 		if (e instanceof ServletException) {
 			// 如果拦截到的是spring封装过的异常，获取原始异常信息
 			e = (Exception) e.getCause();
+		}
+
+		// 前端输入反序列化错误
+		if(e instanceof HttpMessageNotReadableException){
+			e = (Exception) e.getCause().getCause();
 		}
 
 		if (e instanceof BindException) {

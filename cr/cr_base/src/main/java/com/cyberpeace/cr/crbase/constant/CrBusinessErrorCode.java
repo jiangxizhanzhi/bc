@@ -222,4 +222,7 @@ public interface CrBusinessErrorCode {
 
 	// 报告描述长度超出限制
 	String REPORT_DESCRIPTION_LENGTH_EXCEEDS_LIMIT = "101169";
+
+	/** 打分必须为正整数 */
+	String INVALID_SCORE = "101070";
 }

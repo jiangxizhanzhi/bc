@@ -242,9 +242,9 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 
 		List<TaskRoleConfig> taskRoleConfigs = Lists.newArrayList();
 
-		taskRoleConfigs.add(new TaskRoleConfig("white", hldRolesConfig.getWhiteRoles()));
 		taskRoleConfigs.add(new TaskRoleConfig("red", hldRolesConfig.getRedRoles()));
 		taskRoleConfigs.add(new TaskRoleConfig("blue", hldRolesConfig.getBlueRoles()));
+		taskRoleConfigs.add(new TaskRoleConfig("white", hldRolesConfig.getWhiteRoles()));
 
 		return taskRoleConfigs;
 	}

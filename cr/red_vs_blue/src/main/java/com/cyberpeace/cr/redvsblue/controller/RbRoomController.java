@@ -184,6 +184,7 @@ public class RbRoomController {
 			RbRoomRoleRes rbRoomRoleRes = BeanUtils.copy(crRole, RbRoomRoleRes.class);
 			rbRoomRoleRes.setUsersData(crRoleService.getUserDatas(crRole.getUserIdList()));
 			rbRoomRoleRes.setUsers(crRole.getUserIdList());
+			rbRoomRoleRes.setRoleGroup(crRole.getRoleGroup());
 
 			if (crRole.isRedStudent()) {
 				redRoles.add(rbRoomRoleRes);
@@ -196,14 +197,14 @@ public class RbRoomController {
 		RbRoomRoleRes redRoleRes = new RbRoomRoleRes();
 		redRoleRes.setName(CrRole.RbRoleGroup.RED.getDesc());
 		redRoleRes.setResourceId("redResourceId");
-		redRoleRes.setRoleGroup(CrRole.RbRoleGroup.RED);
+		redRoleRes.setRoleGroup(CrRole.RbRoleGroup.RED.getCode());
 		redRoleRes.setChildren(redRoles);
 		rbRoomRoleResList.add(redRoleRes);
 
 		RbRoomRoleRes blueRoleRes = new RbRoomRoleRes();
 		blueRoleRes.setName(CrRole.RbRoleGroup.BLUE.getDesc());
 		blueRoleRes.setResourceId("blueResourceId");
-		blueRoleRes.setRoleGroup(CrRole.RbRoleGroup.BLUE);
+		blueRoleRes.setRoleGroup(CrRole.RbRoleGroup.BLUE.getCode());
 		blueRoleRes.setChildren(blueRoles);
 		rbRoomRoleResList.add(blueRoleRes);
 

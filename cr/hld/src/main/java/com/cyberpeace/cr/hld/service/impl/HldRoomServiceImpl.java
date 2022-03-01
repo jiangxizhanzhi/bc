@@ -194,16 +194,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 			List<TaskRoleContext> taskRoleContexts, String name) {
 
 		List<HldRoleConfig> hldRoleConfigs = transRoleConfig(taskRoleContexts);
-
-		TaskRoleConfig taskRoleConfig = new TaskRoleConfig();
-		taskRoleConfig.setKey("");
-		taskRoleConfig.setType(name);
-		taskRoleConfig.setId(name);
-		taskRoleConfig.setName(name);
-		taskRoleConfig.setChildren(hldRoleConfigs);
-		taskRoleConfig.setAssetNodes(Lists.newArrayList());
-		taskRoleConfig.setVisibleNodes(Lists.newArrayList());
-		taskRoleConfigs.add(taskRoleConfig);
+		taskRoleConfigs.add(new TaskRoleConfig(name, hldRoleConfigs));
 
 	}
 
@@ -242,6 +233,18 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		whiteUsers.add(refereeRoleContext);
 
 		addTaskRoleConfig(taskRoleConfigs, whiteUsers, "white");
+
+		return taskRoleConfigs;
+	}
+
+	@Override
+	public List<TaskRoleConfig> getRoomRoleConfig(HldRolesConfig hldRolesConfig) {
+
+		List<TaskRoleConfig> taskRoleConfigs = Lists.newArrayList();
+
+		taskRoleConfigs.add(new TaskRoleConfig("white", hldRolesConfig.getWhiteRoles()));
+		taskRoleConfigs.add(new TaskRoleConfig("red", hldRolesConfig.getRedRoles()));
+		taskRoleConfigs.add(new TaskRoleConfig("blue", hldRolesConfig.getBlueRoles()));
 
 		return taskRoleConfigs;
 	}

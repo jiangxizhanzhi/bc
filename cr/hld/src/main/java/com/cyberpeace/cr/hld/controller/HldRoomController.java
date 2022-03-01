@@ -14,6 +14,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -151,11 +152,27 @@ public class HldRoomController {
 	@ApiOperation("查询HLD角色配置")
 	@GetMapping("/roles")
 	public BaseRsp<List<TaskRoleConfig>> getRoleConfig(
-			@ApiParam(name = "task_id", value = "HLD任务id", required = true) String task_id) {
-		HldTaskContext hldTaskContext = getHldTaskContext(task_id);
-		List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getTaskRoleConfig(hldTaskContext);
+			@ApiParam(name = "room_id", value = "HLD房间id") String room_id,
+			@ApiParam(name = "task_id", value = "HLD任务id") String task_id) {
 
-		return new BaseRsp<>(taskRoleConfigs);
+		if ( room_id != null ) {
+
+			// 获取房间角色信息
+			HldRoom hldRoom = hldRoomService.getById(room_id);
+			HldRolesConfig hldRolesConfig = JsonUtil.toJsonObject(hldRoom.getRoleConfig(),
+					HldRolesConfig.class);
+			List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getRoomRoleConfig(hldRolesConfig);
+
+			return new BaseRsp<>(taskRoleConfigs);
+
+		} else {
+
+			// 获取任务角色信息
+			HldTaskContext hldTaskContext = getHldTaskContext(task_id);
+			List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getTaskRoleConfig(hldTaskContext);
+
+			return new BaseRsp<>(taskRoleConfigs);
+		}
 	}
 
 	private HldTaskContext getHldTaskContext(String taskId) {

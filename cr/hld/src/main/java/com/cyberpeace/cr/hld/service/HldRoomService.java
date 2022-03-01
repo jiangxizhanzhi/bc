@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
+import com.cyberpeace.cr.hld.service.context.HldRolesConfig;
 import com.cyberpeace.cr.hld.service.context.HldRoomContext;
 import com.cyberpeace.cr.hld.service.context.HldTaskContext;
 import com.cyberpeace.cr.hld.service.context.TaskRoleConfig;
@@ -19,6 +20,8 @@ public interface HldRoomService extends IService<HldRoom> {
 	void checkUserPermission(String roomId, String userId);
 
 	List<TaskRoleConfig> getTaskRoleConfig(HldTaskContext hldTaskContext);
+
+	List<TaskRoleConfig> getRoomRoleConfig(HldRolesConfig hldRolesConfig);
 
 	BaseInfo getHldBaseInfo(HldTaskContext hldTaskContext);
 

@@ -74,4 +74,9 @@ public interface ErrorCode {
 	 * 操作过于频繁
 	 */
 	String OPERATION_TOO_FREQUENT = "100028";
+
+	/**
+	 * 用户信息缺失/用户不存在
+	 */
+	String USER_INFO_MISSING = "100029";
 }

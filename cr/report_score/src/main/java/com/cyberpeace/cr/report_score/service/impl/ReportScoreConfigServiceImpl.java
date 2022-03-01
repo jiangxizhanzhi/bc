@@ -89,13 +89,13 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
         ReportScoreConfig typeConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, SCENE_KEY, null);
 
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String startTime = df.format(new Date(System.currentTimeMillis() - 1000));
-		String endTime = df.format(new Date());
+//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		String startTime = df.format(new Date(System.currentTimeMillis() - 1000));
+//		String endTime = df.format(new Date());
 
         attackLogPageContext.setId(typeConfig.getValue());
-		attackLogPageContext.setStartTime(startTime);
-		attackLogPageContext.setEndTime(endTime);
+//		attackLogPageContext.setStartTime(startTime);
+//		attackLogPageContext.setEndTime(endTime);
 
         JSONObject attackLog = remoteSituationService.getAttackLog(attackLogPageContext);
         List<JSONObject> objects = JsonUtil.toJsonObjectArray(attackLog.getJSONArray("list").toString(), JSONObject.class);

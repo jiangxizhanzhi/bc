@@ -309,8 +309,14 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 
 		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomIdAndUserId(roomId, userId);
 
+		// 临时指定取不到用户时返回管理员角色
 		if (crRoles.isEmpty()) {
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+			// throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+			try {
+				return crRoleMapper.getCrRoleByRoomIdAndRoleName(roomId, "admin");
+			} catch (Exception e) {
+				throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+			}
 		}
 
 		// 优先取白方角色

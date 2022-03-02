@@ -115,6 +115,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 						hldRoomContext.getBaseInfo());
 
 				// 更新房间数据
+				hldRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
 				updateById(hldRoom);
 
 				// 更新角色数据

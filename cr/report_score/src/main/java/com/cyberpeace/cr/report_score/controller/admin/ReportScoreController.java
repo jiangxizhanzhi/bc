@@ -2,11 +2,14 @@ package com.cyberpeace.cr.report_score.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreListReq;
 import com.cyberpeace.cr.report_score.controller.req.ReportScoreUpdateScoreReq;
 import com.cyberpeace.cr.report_score.controller.req.ScoreRecordListReq;
@@ -18,12 +21,14 @@ import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,10 +37,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/cr/admin/report_score")
 @RequiresAuthentication
+@Slf4j
 public class ReportScoreController {
 
     @Autowired
     private ReportScoreService reportScoreService;
+
+    /**
+     * 前端定义的菜单名称
+     */
+    private static final String PERMISSION_KEY = "report-score-folder";
 
     @ApiOperation("打分列表")
     @GetMapping("/list")
@@ -58,13 +69,30 @@ public class ReportScoreController {
     @ApiOperation("更新打分")
     @PostMapping
     public BaseRsp<String> update(@RequestBody @Validated ReportScoreUpdateScoreReq reportScoreUpdateReq) {
+        UserInfo userContext = UserInfoContext.getUserContext();
+        if(!userContext.getPermissions().contains(PERMISSION_KEY)) {
+            log.error("user {} not permission update, use permission key is {}", userContext.getUserId(),PERMISSION_KEY);
+            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+        }
+
+        ReportScore reportScoreById = reportScoreService.getById(reportScoreUpdateReq.getResourceId());
+        List<Integer> notAllowedModifyCode = Arrays.asList(ReportScore.StatusCode.PASS.getCode(),
+                        ReportScore.StatusCode.REJECT.getCode());
+        if (reportScoreById == null || notAllowedModifyCode.contains(reportScoreById.getStatus())){
+            log.error("report score {} not allow modify by user {}, please check db status",
+                    reportScoreUpdateReq.getResourceId(),  userContext.getUserId());
+            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+        }
+
         ReportScore reportScore = BeanUtils.copy(reportScoreUpdateReq, ReportScore.class);
 
         reportScore.setScoreTime(new Date());
-        String userId = UserInfoContext.getUserContext().getUserId();
-        String userName = UserInfoContext.getUserContext().getUserName();
+        String userId = userContext.getUserId();
+        String userName = userContext.getUserName();
         reportScore.setRaterId(userId);
         reportScore.setRaterName(userName);
+
+        log.info("update report score reportScore {}", reportScore);
 
         reportScoreService.updateById(reportScore);
         return new BaseRsp<>();

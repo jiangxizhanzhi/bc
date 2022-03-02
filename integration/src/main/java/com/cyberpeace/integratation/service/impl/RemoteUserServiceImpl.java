@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -44,6 +45,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String ORG_INFO_LIST_URL;
 
+	private String AUTH_PERMISSION_MENUS_URL;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -59,6 +62,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.list");
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
+		AUTH_PERMISSION_MENUS_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.auth.permission.menus");
 	}
 
 	@Override
@@ -75,6 +79,18 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 		return userInfo;
 	}
+
+	@Override
+	public Set<String> getUserPermission(String userId) {
+		String targetUrl = AUTH_PERMISSION_MENUS_URL + userId;
+		JSONArray objects = HttpClientUtil.rawGet(targetUrl,
+				JSONArray.class);
+		List<MpAuthPermission> mpAuthPermissions = objects.toJavaList(MpAuthPermission.class);
+
+		return mpAuthPermissions.stream().map(MpAuthPermission::getIdentifier)
+				.collect(Collectors.toSet());
+	}
+
 
 	@Override
 	public UserInfo getById(String userId) {
@@ -293,6 +309,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setOrganizationId(byId.getOrganizationId());
 		userInfo.setSuperuser(byId.isSuperuser());
 		userInfo.setAdmin(byId.isAdmin());
+
+		Set<String> userPermission = getUserPermission(mpAuthenticatedUser.getId());
+		userInfo.setPermissions(userPermission);
 
 		return userInfo;
 	}

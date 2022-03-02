@@ -214,7 +214,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		UserInfo userInfo = UserInfoContext.getUserContext();
 		TaskUserInfo admin = new TaskUserInfo();
 		admin.setName(userInfo.getName());
-		admin.setUserCode(userInfo.getUserId());
+		admin.setId(userInfo.getUserId());
 		admin.setUserName(userInfo.getUserName());
 		List<TaskUserInfo> admins = Lists.newArrayList(admin);
 		TaskRoleContext adminRoleContext = getRoleFromUsers(admins, "admin");
@@ -277,7 +277,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 
 		List<String> users = Lists.newArrayList();
 		for (TaskUserInfo taskUserInfo : userList) {
-			users.add(taskUserInfo.getUserCode());
+			users.add(taskUserInfo.getId());
 		}
 
 		return users;

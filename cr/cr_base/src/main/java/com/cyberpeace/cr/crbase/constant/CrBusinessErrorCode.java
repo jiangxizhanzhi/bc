@@ -217,7 +217,7 @@ public interface CrBusinessErrorCode {
 	// 非法的技能点个数
 	String INVALID_SKILL_POINTS_SIZE = "101069";
 
-	// 查询HLD任务失败
+	// 任务角色冲突
 	String TASK_ROLE_CONFLICT = "101087";
 
 	// 查询HLD任务失败

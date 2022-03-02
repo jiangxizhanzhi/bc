@@ -155,10 +155,16 @@ public class HldRoomController {
 			@ApiParam(name = "room_id", value = "HLD房间id") String room_id,
 			@ApiParam(name = "task_id", value = "HLD任务id") String task_id) {
 
-		if ( room_id != null ) {
+		if ( room_id != null && !room_id.isEmpty()) {
 
 			// 获取房间角色信息
 			HldRoom hldRoom = hldRoomService.getById(room_id);
+
+			// 未查询到相关房间报错
+			if (hldRoom == null) {
+				throw new ResourceNotFoundException(room_id);
+			}
+
 			HldRolesConfig hldRolesConfig = JsonUtil.toJsonObject(hldRoom.getRoleConfig(),
 					HldRolesConfig.class);
 			List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getRoomRoleConfig(hldRolesConfig);

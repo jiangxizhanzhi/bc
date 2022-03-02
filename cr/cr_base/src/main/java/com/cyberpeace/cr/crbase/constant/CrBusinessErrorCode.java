@@ -217,6 +217,9 @@ public interface CrBusinessErrorCode {
 	// 非法的技能点个数
 	String INVALID_SKILL_POINTS_SIZE = "101069";
 
+	/** 打分必须为正整数 */
+	String INVALID_SCORE = "101070";
+
 	// 任务角色冲突
 	String TASK_ROLE_CONFLICT = "101087";
 

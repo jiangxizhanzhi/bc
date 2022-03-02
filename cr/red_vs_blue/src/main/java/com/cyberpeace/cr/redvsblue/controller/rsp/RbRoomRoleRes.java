@@ -23,8 +23,4 @@ public class RbRoomRoleRes implements Serializable {
 
 	private List<RbRoomRoleRes> children = Lists.newArrayList();
 
-	public void setRoleGroup(CrRole.RbRoleGroup roleGroup) {
-		this.roleGroup = roleGroup.getCode();
-	}
-
 }

@@ -1,5 +1,8 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,4 +26,16 @@ public class SubmitEvaluationReq {
 
 	@ApiModelProperty(value = "分数改判")
 	private Integer score;
+
+	public void setScore(String score) {
+		// 校验打分为非零整数
+		try {
+			this.score = new Integer(score);
+			if (this.score < 0) {
+				throw new BusinessException(CrBusinessErrorCode.INVALID_SCORE);
+			}
+		} catch (Exception e) {
+			throw new BusinessException(CrBusinessErrorCode.INVALID_SCORE);
+		}
+	}
 }

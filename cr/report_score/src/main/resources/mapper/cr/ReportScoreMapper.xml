@@ -24,6 +24,7 @@
                 and (`user_name` like #{name} or `report_name` like #{name})
             </if>
         </where>
+        order by `submit_time` desc
     </select>
 
     <select id="listRecord" resultType="com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp">
@@ -65,6 +66,7 @@
                 and `report_name` like #{name}
             </if>
         </where>
+        order by `submit_time` desc
     </select>
 
     <select id="countWebStatus" resultType="java.util.HashMap">

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.hld.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
@@ -55,8 +56,7 @@ public class HldSceneEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
-		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-		pushDataToWeb(JsonUtil.toJsonString(wsSceneReportBO), businessId);
+		pushDataToWeb(data, businessId);
 		return true;
 	}
 

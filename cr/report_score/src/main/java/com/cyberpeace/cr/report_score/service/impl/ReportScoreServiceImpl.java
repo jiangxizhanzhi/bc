@@ -261,7 +261,7 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
             AttackStRes attackStRes = new AttackStRes();
 
             attackStRes.setUserId(userInfo.getUserId());
-            attackStRes.setUserName(userInfo.getUserName());
+            attackStRes.setUserName(userInfo.getName());
 
             String userIps = userIpMap.getOrDefault(userInfo.getUserId(), "");
             attackStRes.setIps(userIps);

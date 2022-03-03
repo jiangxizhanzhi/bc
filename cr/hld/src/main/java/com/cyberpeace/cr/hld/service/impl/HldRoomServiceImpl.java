@@ -185,7 +185,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		if (hldRoleConfig.getUsers() == null) {
 			crRole.setUserIds("[]");
 		} else {
-			crRole.setUserIds(hldRoleConfig.getUsers().toString());
+			crRole.setUserIdList(hldRoleConfig.getUsers());
 		}
 
 		return crRole;

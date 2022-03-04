@@ -356,9 +356,25 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			course.setCourseNum(null);
 		}
 
+		final boolean modify = StringUtils.isNotBlank(course.getName())
+				&& !course.getName().equals(courseExist.getName());
+
 		// 数据更新
 		course.setModifyUserId(userId);
-		courseMapper.updateById(course);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				courseMapper.updateById(course);
+				if (modify) {
+					LessonConfig courseNode = lessonConfigMapper
+							.getCourseNode(course.getResourceId());
+					courseNode.setName(course.getName());
+					lessonConfigMapper.updateById(courseNode);
+				}
+			}
+		});
+
 		return course;
 	}
 

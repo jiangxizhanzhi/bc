@@ -28,3 +28,10 @@
 - 在服务器上执行， all_permissions_json_jyj.json由前台提供，增加了报告评分菜单
 - 修改Authorization的值， 和10.2.96.1:8001中的IP和端口，file指向的文件路径地址
 - curl -X POST -H 'Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjNmNjU1ZDg3MTEyZjRhZTA5NGJiYWY3MDgzMGUyMGFhIiwiZXhwIjoxNjQ2MjA5NzYxLCJrZXkiOiJjNmIyMDVhZmUzZWE0MTRhOTc1MDQwZWY3N2JlYTc1MCIsInVzZXJuYW1lIjoiYWRtaW4ifQ.Esiew1jPRcqMqaGDlEvgABISArpQwiUD991ZBr_g2cE'  -F 'file=@/root/all_permissions_json_jyj.json' http://10.2.96.1:8001/api/mp/sys/admin/menu/reimport
+
+
+### 态势修改
+- 找到服务器上部署的态势静态文件StreamingAssets/configure.txt
+- 修改url和ws链接的IP
+- 里面有sceneId,topoId配置，可以修改
+- "CameraData"字段可以调整态势展示位置，在态势页面使用alt+d组合键，在console中会打印视角，将其输出复制到"CameraData"字段中

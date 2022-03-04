@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -94,7 +95,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public Integer batchSubmitMissions(String roomId, List<String> missionIds,
 			Map<String, String> answer) {
-		if(missionIds.size()==0){
+		if (missionIds.size() == 0) {
 			return 0;
 		}
 
@@ -345,6 +346,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		Mission mission = missionMapper.selectById(missionId);
 		if (mission == null) {
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+
+		// 多选题答案校验
+		if (mission.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
+			if (answer.equals(CommonConstant.EMPTY_LIST_JSON)) {
+				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+			}
 		}
 
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);

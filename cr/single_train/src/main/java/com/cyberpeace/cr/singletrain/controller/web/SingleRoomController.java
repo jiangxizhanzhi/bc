@@ -103,7 +103,6 @@ public class SingleRoomController {
 				CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 
 		return new BaseRsp<>(
-
 				singleRoomService.submitMission(requestData.getBusinessTemplateId(), requestData));
 	}
 

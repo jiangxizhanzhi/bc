@@ -133,9 +133,9 @@ public class HldSceneServiceImpl implements HldSceneService {
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(ret.getLocalSceneId());
 			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
-			return ret;
 		}
-		// 3、 远程场景不存在，返回topo数据
+
+		// 3、 写入topo数据
 		JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId())
 				.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
 		sceneFilterService.filterVisibleTopo(topoData, nodes);

@@ -1,5 +1,12 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
@@ -8,212 +15,225 @@ import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.model.*;
-import com.cyberpeace.situation.service.TopoHandlerService;
 import com.cyberpeace.situation.model.ws.SituationWsMessageIdentifier;
+import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class TopoHandlerServiceImpl implements TopoHandlerService {
 
-    @Autowired
-    private MyWebSocketHandler myWebSocketHandler;
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
-    @Override
-    public CategorieMap getCategorieMap(JSONObject deviceCategorie) {
+	@Override
+	public CategorieMap getCategorieMap(JSONObject deviceCategorie) {
 
-        List<DeviceType> firstDeviceTypes = JsonUtil.toJsonObjectArray(deviceCategorie.getJSONArray("first_type_list").toString(), DeviceType.class);
-        List<DeviceType> secondDeviceTypes = JsonUtil.toJsonObjectArray(deviceCategorie.getJSONArray("second_type_list").toString(), DeviceType.class);
+		List<DeviceType> firstDeviceTypes = JsonUtil.toJsonObjectArray(
+				deviceCategorie.getJSONArray("first_type_list").toString(), DeviceType.class);
+		List<DeviceType> secondDeviceTypes = JsonUtil.toJsonObjectArray(
+				deviceCategorie.getJSONArray("second_type_list").toString(), DeviceType.class);
 
-        List<DeviceRole> roles = JsonUtil.toJsonObjectArray(deviceCategorie.getJSONArray("role").toString(), DeviceRole.class);
+		List<DeviceRole> roles = JsonUtil.toJsonObjectArray(
+				deviceCategorie.getJSONArray("role").toString(), DeviceRole.class);
 
-        // 处理靶标一级分类映射
-        Map<Integer, String> firstCategorie = Maps.newHashMap();
-        for (DeviceType firstDeviceType : firstDeviceTypes) {
-            firstCategorie.put(firstDeviceType.getId(), firstDeviceType.getName());
-        }
+		// 处理靶标一级分类映射
+		Map<Integer, String> firstCategorie = Maps.newHashMap();
+		for (DeviceType firstDeviceType : firstDeviceTypes) {
+			firstCategorie.put(firstDeviceType.getId(), firstDeviceType.getName());
+		}
 
-        // 处理靶标二级分类映射
-        Map<Integer, String> secondCategorie = Maps.newHashMap();
-        for (DeviceType secondDeviceType : secondDeviceTypes) {
-            secondCategorie.put(secondDeviceType.getId(), secondDeviceType.getName());
-        }
+		// 处理靶标二级分类映射
+		Map<Integer, String> secondCategorie = Maps.newHashMap();
+		for (DeviceType secondDeviceType : secondDeviceTypes) {
+			secondCategorie.put(secondDeviceType.getId(), secondDeviceType.getName());
+		}
 
-        // 处理靶标角色映射
-        Map<Integer, String> role = Maps.newHashMap();
-        for (DeviceRole deviceRole : roles) {
-            role.put(deviceRole.getId(), deviceRole.getName());
-        }
+		// 处理靶标角色映射
+		Map<Integer, String> role = Maps.newHashMap();
+		for (DeviceRole deviceRole : roles) {
+			role.put(deviceRole.getId(), deviceRole.getName());
+		}
 
-        CategorieMap categorieMap = new CategorieMap();
-        categorieMap.setFirstCategorie(firstCategorie);
-        categorieMap.setSecondCategorie(secondCategorie);
-        categorieMap.setRole(role);
+		// 构造返回数据
+		CategorieMap categorieMap = new CategorieMap();
+		categorieMap.setFirstCategorie(firstCategorie);
+		categorieMap.setSecondCategorie(secondCategorie);
+		categorieMap.setRole(role);
 
-        return categorieMap;
-    }
+		return categorieMap;
+	}
 
-    @Override
-    public String getLineColor() {
+	@Override
+	public String getLineColor() {
 
-        String color = Color.getRandomValue(Color.values());
+		String color = Color.getRandomValue(Color.values());
 
-        return color;
+		return color;
 
-    }
+	}
 
-    @Override
-    public Integer getLineWidth() {
+	@Override
+	public Integer getLineWidth() {
 
-        Integer lineWidth = 5;
+		Integer lineWidth = 5;
 
-        return lineWidth;
+		return lineWidth;
 
-    }
+	}
 
-    @Override
-    public String getLineType() {
+	@Override
+	public String getLineType() {
 
-        String lineType = LineType.getRandomValue(LineType.values());
+		String lineType = LineType.getRandomValue(LineType.values());
 
-        return lineType;
+		return lineType;
 
-    }
+	}
 
-    @Override
-    public LineStyle getLineStyle() {
-        LineStyle lineStyle = new LineStyle();
-        lineStyle.setLineType(getLineType());
-        lineStyle.setWidth(getLineWidth());
-        lineStyle.setColor(getLineColor());
+	@Override
+	public LineStyle getLineStyle() {
+		LineStyle lineStyle = new LineStyle();
+		lineStyle.setLineType(getLineType());
+		lineStyle.setWidth(getLineWidth());
+		lineStyle.setColor(getLineColor());
 
-        return lineStyle;
-    }
+		return lineStyle;
+	}
 
-    @Override
-    public List<String> getLineEffect() {
+	@Override
+	public List<String> getLineEffect() {
 
-        List<String> effect = LineEffect.getRandomEffect(LineEffect.values());
+		List<String> effect = LineEffect.getRandomEffect(LineEffect.values());
 
-        return effect;
-    }
+		return effect;
+	}
 
-    @Override
-    public List<PlaneCoordinate> getSceneScope(List<Float> xList, List<Float> yList) {
+	@Override
+	public List<PlaneCoordinate> getSceneScope(List<Float> xList, List<Float> yList) {
 
-        // 获取x、y坐标的极值
-        Float xMax = Collections.max(xList);
-        Float xMin = Collections.min(xList);
-        Float yMax = Collections.max(yList);
-        Float yMin = Collections.min(yList);
+		// 获取x、y坐标的极值
+		Float xMax = Collections.max(xList);
+		Float xMin = Collections.min(xList);
+		Float yMax = Collections.max(yList);
+		Float yMin = Collections.min(yList);
 
-        // 构造拓扑最大坐标范围
-        List<PlaneCoordinate> sceneScope = Lists.newArrayList();
-        sceneScope.add(new PlaneCoordinate(xMin, yMin));
-        sceneScope.add(new PlaneCoordinate(xMin, yMax));
-        sceneScope.add(new PlaneCoordinate(xMax, yMax));
-        sceneScope.add(new PlaneCoordinate(xMax, yMin));
+		// 构造拓扑最大坐标范围
+		List<PlaneCoordinate> sceneScope = Lists.newArrayList();
+		sceneScope.add(new PlaneCoordinate(xMin, yMin));
+		sceneScope.add(new PlaneCoordinate(xMin, yMax));
+		sceneScope.add(new PlaneCoordinate(xMax, yMax));
+		sceneScope.add(new PlaneCoordinate(xMax, yMin));
 
-        return sceneScope;
+		return sceneScope;
 
-    }
+	}
 
-    @Override
-    public String getAreaShape(JSONObject area) {
-        return AreaShape.RECTANGLE.getCode();
-    }
+	@Override
+	public String getAreaShape(JSONObject area) {
+		return AreaShape.RECTANGLE.getCode();
+	}
 
-    @Override
-    public String getAreaStatus(JSONObject area) {
-        return AreaStatus.NORMAL.getCode();
-    }
+	@Override
+	public String getAreaStatus(JSONObject area) {
+		return AreaStatus.NORMAL.getCode();
+	}
 
-    @Override
-    public String getElementStatus(JSONObject element) {
+	@Override
+	public String getElementStatus(JSONObject element) {
 
-        Integer event = (Integer) element.getOrDefault("event", Event.UNUSE.getCode());
-        Integer eventStatus = (Integer) element.getOrDefault("event_status", EventStatus.OVER.getCode());
-        Integer processStatus = (Integer) element.getOrDefault("process_status", ProcessStatus.OVER.getCode());
+		// 提取原始数据
+		Integer event = (Integer) element.getOrDefault("event", Event.UNUSE.getCode());
+		Integer eventStatus = (Integer) element.getOrDefault("event_status",
+				EventStatus.OVER.getCode());
+		Integer processStatus = (Integer) element.getOrDefault("process_status",
+				ProcessStatus.OVER.getCode());
 
-        String elementStatus;
-        if (eventStatus.equals(EventStatus.ABNORMAL.getCode()) || processStatus.equals(ProcessStatus.ABNORMAL.getCode())) {
-            elementStatus = ElementStatus.ABNORMAL.getCode();
-        } else if (Event.getUnstartedCodeList().contains(event) && eventStatus.equals(EventStatus.OVER.getCode())) {
-            elementStatus = ElementStatus.UNSTARTED.getCode();
-        } else if (Event.getCreatingCodeList().contains(event) && eventStatus.equals(EventStatus.OVER.getCode())) {
-            elementStatus = ElementStatus.CREATING.getCode();
-        } else if (Event.getStartingCodeList().contains(event) && eventStatus.equals(EventStatus.IN_PROGRESS.getCode())) {
-            elementStatus = ElementStatus.STARTING.getCode();
-        } else {
-            elementStatus = ElementStatus.RUNNING.getCode();
-        }
-        return elementStatus;
-    }
+		// 综合判断节点状态
+		String elementStatus;
 
-    @Override
-    public String getElementActionStatus(JSONObject element) {
-        return ElementActionStatus.NORMAL.getCode();
-    }
+		if (eventStatus.equals(EventStatus.ABNORMAL.getCode())
+				|| processStatus.equals(ProcessStatus.ABNORMAL.getCode())) {
+			// 异常节点
+			elementStatus = ElementStatus.ABNORMAL.getCode();
+		} else if (Event.getUnstartedCodeList().contains(event)
+				&& eventStatus.equals(EventStatus.OVER.getCode())) {
+			// 未启动节点
+			elementStatus = ElementStatus.UNSTARTED.getCode();
+		} else if (Event.getCreatingCodeList().contains(event)
+				&& eventStatus.equals(EventStatus.OVER.getCode())) {
+			// 创建中节点
+			elementStatus = ElementStatus.CREATING.getCode();
+		} else if (Event.getStartingCodeList().contains(event)
+				&& eventStatus.equals(EventStatus.IN_PROGRESS.getCode())) {
+			// 启动中节点
+			elementStatus = ElementStatus.STARTING.getCode();
+		} else {
+			// 运行中节点
+			elementStatus = ElementStatus.RUNNING.getCode();
+		}
+		return elementStatus;
+	}
 
-    @Override
-    public List<String> getElementAreas(Float x, Float y, Map<String, AreaInfo> areasInfo) {
+	@Override
+	public String getElementActionStatus(JSONObject element) {
+		return ElementActionStatus.NORMAL.getCode();
+	}
 
-        List<String> elementAreas = Lists.newArrayList();
+	@Override
+	public List<String> getElementAreas(Float x, Float y, Map<String, AreaInfo> areasInfo) {
 
-        for (AreaInfo areaInfo : areasInfo.values()) {
+		List<String> elementAreas = Lists.newArrayList();
 
-            Float xMin = areaInfo.getScope().get(0).getX();
-            Float yMin = areaInfo.getScope().get(0).getY();
-            Float xMax = areaInfo.getScope().get(2).getX();
-            Float yMax = areaInfo.getScope().get(2).getY();
+		for (AreaInfo areaInfo : areasInfo.values()) {
 
-            if (xMin <= x && x <= xMax && yMin <= y && y <= yMax) {
-                elementAreas.add(areaInfo.getAreaId());
-            }
-        }
+			Float xMin = areaInfo.getScope().get(0).getX();
+			Float yMin = areaInfo.getScope().get(0).getY();
+			Float xMax = areaInfo.getScope().get(2).getX();
+			Float yMax = areaInfo.getScope().get(2).getY();
 
-        return elementAreas;
-    }
+			if (xMin <= x && x <= xMax && yMin <= y && y <= yMax) {
+				elementAreas.add(areaInfo.getAreaId());
+			}
+		}
 
-    @Override
-    public List<ElementInfo> getRandomElements(JSONArray elements, Integer num) {
-        List<Integer> indexs = Lists.newArrayList();
-        List<ElementInfo> randomElements = Lists.newArrayList();
+		return elementAreas;
+	}
 
-        for (int i = 0; i < num; i++) {
-            while (true) {
-                Integer j = (int) (Math.random() * elements.size());
-                if (!indexs.contains(j)) {
-                    JSONObject element = elements.getJSONObject(j);
-                    ElementInfo elementInfo = new ElementInfo();
-                    elementInfo.setElementId(element.getString("id"));
-                    elementInfo.setActionStatus(ElementActionStatus.getRandomValue(ElementActionStatus.values()));
-                    randomElements.add(elementInfo);
-                    indexs.add(j);
-                    break;
-                }
-            }
-        }
-        return randomElements;
-    }
+	@Override
+	public List<ElementInfo> getRandomElements(JSONArray elements, Integer num) {
+		List<Integer> indexs = Lists.newArrayList();
+		List<ElementInfo> randomElements = Lists.newArrayList();
 
-    @Override
-    public void pushDataToRoom(JSONObject data, String sceneId) {
+		for (int i = 0; i < num; i++) {
+			while (true) {
+				Integer j = (int) (Math.random() * elements.size());
+				if (!indexs.contains(j)) {
+					JSONObject element = elements.getJSONObject(j);
+					ElementInfo elementInfo = new ElementInfo();
+					elementInfo.setElementId(element.getString("id"));
+					elementInfo.setActionStatus(
+							ElementActionStatus.getRandomValue(ElementActionStatus.values()));
+					randomElements.add(elementInfo);
+					indexs.add(j);
+					break;
+				}
+			}
+		}
+		return randomElements;
+	}
 
-        SituationWsMessageIdentifier identifier = new SituationWsMessageIdentifier();
-        identifier.setPath(WsPath.SITUATION);
-        identifier.setSceneId(sceneId);
+	@Override
+	public void pushDataToRoom(JSONObject data, String sceneId) {
 
-        WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
-                .messageIdentifier(identifier).build();
+		SituationWsMessageIdentifier identifier = new SituationWsMessageIdentifier();
+		identifier.setPath(WsPath.SITUATION);
+		identifier.setSceneId(sceneId);
 
-        myWebSocketHandler.pushMessage(messageContext, true);
-    }
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
+				.messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
+	}
 
 }

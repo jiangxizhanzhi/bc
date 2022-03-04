@@ -3,36 +3,37 @@ package com.cyberpeace.situation.constant.ws;
 import lombok.Getter;
 
 public enum ActionType {
-    /**
-     * 消息类型
-     */
 
-    NETWORK_SCANNING(0, "网络扫描"),
-    VIRUS_ATTACKS(1, "病毒攻击"),
-    TROJAN(2, "木马"),
-    DDOS(3, "DDOS"),
-    HOST_ATTACK(4, "主机攻占"),
-    TRY_ATTACK(5, "尝试攻击"),
-    SUCCESS_ATTACK(6, "攻击成功"),
-    REPAIR(7, "修复"),
-    START_ATTACK(8, "起始节点特效"),
-    NORMAL(9, "普通攻击"),
-    NONE(10, "无");
+	/**
+	 * 消息类型
+	 */
 
-    @Getter
-    private Integer code;
+	NETWORK_SCANNING(0, "网络扫描"),
+	VIRUS_ATTACKS(1, "病毒攻击"),
+	TROJAN(2, "木马"),
+	DDOS(3, "DDOS"),
+	HOST_ATTACK(4, "主机攻占"),
+	TRY_ATTACK(5, "尝试攻击"),
+	SUCCESS_ATTACK(6, "攻击成功"),
+	REPAIR(7, "修复"),
+	START_ATTACK(8, "起始节点特效"),
+	NORMAL(9, "普通攻击"),
+	NONE(10, "无");
 
-    @Getter
-    private String desc;
+	@Getter
+	private Integer code;
 
-    ActionType(Integer code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
+	@Getter
+	private String desc;
 
-    public static Integer getRandomValue(ActionType[] values) {
+	ActionType(Integer code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
 
-        return values[(int) (Math.random() * values.length)].code;
+	public static Integer getRandomValue(ActionType[] values) {
 
-    }
+		return values[(int) (Math.random() * values.length)].code;
+
+	}
 }

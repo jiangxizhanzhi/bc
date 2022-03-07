@@ -53,7 +53,6 @@ import com.cyberpeace.cr.redvsblue.service.context.room.DashboardFriend;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardGroup;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
-import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -313,7 +312,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		// 如果自己是红方或蓝方角色，再放入自己的角色
 		if (myRole.isRvbStudent()) {
-			DashboardGroup selfGroup = new DashboardGroup(groups.get(0).getGroupname() + "/" + myRole.getName());
+			DashboardGroup selfGroup = new DashboardGroup(
+					groups.get(0).getGroupname() + "/" + myRole.getName());
 			selfGroup.setId(myRole.getResourceId());
 			selfGroup.setMembers(myRole.getUserIdList());
 			groups.add(selfGroup);
@@ -323,7 +323,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 
-		mine.setUsername(userInfoMap.get(mine.getId()).getUserName());
+		mine.setUsername(userInfoMap.get(mine.getId()).getName());
 		mine.setRole(userInfoMap.get(mine.getId()).getUserName());
 		mine.setAvatar(userInfoMap.get(mine.getId()).getAvatarUrl());
 
@@ -331,7 +331,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			UserInfo userInfo = userInfoMap.getOrDefault(dashboardUser.getId(), new UserInfo());
 			dashboardUser.setRole(userInfo.getUserName());
 			dashboardUser.setAvatar(userInfo.getAvatarUrl());
-			dashboardUser.setUsername(userInfo.getUserName() + "/" + dashboardUser.getUsername());
+			dashboardUser.setUsername(userInfo.getName() + "/" + dashboardUser.getUsername());
 
 		}
 
@@ -654,14 +654,15 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		// 获取蓝队的角色任务
 		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
 		for (int i = 0; i < blueRoles.size(); i++) {
-			CrRole crRole = getRoleByJson(roomId, i, blueRoles,	CrRole.RbRoleGroup.BLUE);
+			CrRole crRole = getRoleByJson(roomId, i, blueRoles, CrRole.RbRoleGroup.BLUE);
 			crRoleList.add(crRole);
 		}
 
 		return crRoleList;
 	}
 
-	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles, CrRole.RbRoleGroup roleGroup) {
+	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles,
+			CrRole.RbRoleGroup roleGroup) {
 		JSONObject rolesJSONObject = redRoles.getJSONObject(index);
 
 		CrRoleNodesData nodesData = new CrRoleNodesData();
@@ -674,7 +675,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		CrRole crRole = new CrRole(roleGroup, rolesJSONObject.get("name").toString());
 
-		crRole.setMissionStageSchemes(getNewRoomScheme(rolesJSONObject.get("missions_scheme").toString(), roomId));
+		crRole.setMissionStageSchemes(
+				getNewRoomScheme(rolesJSONObject.get("missions_scheme").toString(), roomId));
 		crRole.setNodesData(nodesData);
 
 		return crRole;

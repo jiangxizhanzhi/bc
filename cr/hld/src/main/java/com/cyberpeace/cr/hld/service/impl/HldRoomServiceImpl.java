@@ -60,6 +60,11 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		hldRoom.setCreateUserId(userId);
 		hldRoom.setTaskId(hldRoomContext.getTaskId());
 
+		// 设置任务名称
+		String taskName = hldRoomContext.getBaseInfo().getName();
+		hldRoom.setTaskName(taskName);
+		hldRoomContext.getBaseInfo().setName(taskName + "_" + System.currentTimeMillis());
+
 		// 设置状态信息
 		hldRoom.setStatus(HldRoom.StatusCode.UNOPENED.getCode());
 
@@ -99,6 +104,11 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		// 设置基础信息
 		String userId = UserInfoContext.getUserContext().getUserId();
 		hldRoom.setModifyUserId(userId);
+
+		// 修改任务名称
+		String taskName = hldRoomContext.getBaseInfo().getName();
+		hldRoom.setTaskName(taskName);
+		hldRoomContext.getBaseInfo().setName(taskName + "_" + System.currentTimeMillis());
 
 		// 设置角色信息
 		hldRoom.setRoleConfig(hldRoomContext.getRoleConfig());
@@ -292,9 +302,9 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 
 		// 设置任务名称
 		if (hldTaskContext.getTaskName() == null || hldTaskContext.getTaskName().isEmpty()) {
-			baseInfo.setName("task_" + System.currentTimeMillis());
+			baseInfo.setName("task");
 		} else {
-			baseInfo.setName(hldTaskContext.getTaskName() + "_" + System.currentTimeMillis());
+			baseInfo.setName(hldTaskContext.getTaskName());
 		}
 
 		// 设置任务描述

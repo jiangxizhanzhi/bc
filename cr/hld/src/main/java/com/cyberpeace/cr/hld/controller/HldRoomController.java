@@ -2,6 +2,7 @@ package com.cyberpeace.cr.hld.controller;
 
 import java.util.List;
 
+import com.cyberpeace.cr.hld.controller.rsp.HldTaskRsp;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -149,9 +150,9 @@ public class HldRoomController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("查询HLD角色配置")
+	@ApiOperation("查询HLD任务配置")
 	@GetMapping("/roles")
-	public BaseRsp<List<TaskRoleConfig>> getRoleConfig(
+	public BaseRsp<HldTaskRsp> getRoleConfig(
 			@ApiParam(name = "room_id", value = "HLD房间id") String room_id,
 			@ApiParam(name = "task_id", value = "HLD任务id") String task_id) {
 
@@ -169,7 +170,7 @@ public class HldRoomController {
 					HldRolesConfig.class);
 			List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getRoomRoleConfig(hldRolesConfig);
 
-			return new BaseRsp<>(taskRoleConfigs);
+			return new BaseRsp<>(new HldTaskRsp(taskRoleConfigs, hldRoom.getTaskName()));
 
 		} else {
 
@@ -177,7 +178,7 @@ public class HldRoomController {
 			HldTaskContext hldTaskContext = getHldTaskContext(task_id);
 			List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getTaskRoleConfig(hldTaskContext);
 
-			return new BaseRsp<>(taskRoleConfigs);
+			return new BaseRsp<>(new HldTaskRsp(taskRoleConfigs, hldTaskContext.getTaskName()));
 		}
 	}
 

@@ -19,6 +19,8 @@ public class HldRoom extends BaseTable {
 
 	private String taskId;
 
+	private String taskName;
+
 	private String localSceneId;
 
 	private String copyedTopoId;

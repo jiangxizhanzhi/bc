@@ -16,4 +16,7 @@ public class HldRoomRsp extends SceneViewContext implements Serializable {
 	@ApiModelProperty("业务模板id, 测试场景用")
 	private String templateId;
 
+	@ApiModelProperty("任务名称")
+	private String taskName;
+
 }

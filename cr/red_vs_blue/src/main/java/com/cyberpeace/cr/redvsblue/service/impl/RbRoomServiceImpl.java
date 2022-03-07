@@ -329,7 +329,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		for (DashboardUser dashboardUser : friend) {
 			UserInfo userInfo = userInfoMap.getOrDefault(dashboardUser.getId(), new UserInfo());
-			dashboardUser.setRole(userInfo.getUserName());
+			dashboardUser.setRole(userInfo.getName());
 			dashboardUser.setAvatar(userInfo.getAvatarUrl());
 			dashboardUser.setUsername(userInfo.getName() + "/" + dashboardUser.getUsername());
 

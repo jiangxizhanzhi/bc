@@ -94,6 +94,7 @@ public class HldRoomController {
 		HldRoomRsp hldRoomRsp = BeanUtils.copy(context, HldRoomRsp.class);
 		hldRoomRsp.setRoomStatus(hldRoom.getStatus());
 		hldRoomRsp.setTemplateId(hldRoom.getTemplateId());
+		hldRoomRsp.setTaskName(hldRoom.getTaskName());
 
 		return new BaseRsp<>(hldRoomRsp);
 	}

@@ -12,16 +12,16 @@
         <where>
             <if test="pattern != null and pattern != ''">
                 <bind name="pattern" value="'%' + pattern + '%'"/>
-                and content like #{pattern}
+                content like #{pattern}
             </if>
             <if test="category != null and category != ''">
-                and category = #{category}
+                and category_id = #{category}
             </if>
             <if test="practice_set != null and practice_set != ''">
-                and practice_set = #{practice_set}
+                and practice_set_id = #{practice_set}
             </if>
             <if test="question_type != null">
-                and question_type = #{question_type}
+                and theory_type = #{question_type}
             </if>
             <if test="difficulty != null">
                 and difficulty = #{difficulty}

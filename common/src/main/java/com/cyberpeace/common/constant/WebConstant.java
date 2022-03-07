@@ -31,4 +31,10 @@ public interface WebConstant {
 	String PASS_THROUGH_BUSINESS_ID = "business_id";
 
 	Integer SCENE_ID_LENGTH = 32;
+
+	/** 外部接口使用*/
+	String OJ_HEADER_KEY = "OPT-OJ-KEY";
+
+	/** 外部接口使用*/
+	String OJ_HEADER_KEY_VALUE = "Cmycjs1bWUHsKb8r";
 }

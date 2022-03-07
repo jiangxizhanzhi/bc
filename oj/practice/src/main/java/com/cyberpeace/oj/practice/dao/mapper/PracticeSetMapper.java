@@ -17,12 +17,6 @@ import com.cyberpeace.oj.practice.service.externalBo.PracticeSetSimple;
 public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	/**
-	 * 查询所有习题库 #外部接口使用
-	 * @return
-	 */
-	List<PracticeSetSimple> getAll();
-
-	/**
 	 * 根据权限获取可访问的资源数据
 	 * @param authContext
 	 * @return

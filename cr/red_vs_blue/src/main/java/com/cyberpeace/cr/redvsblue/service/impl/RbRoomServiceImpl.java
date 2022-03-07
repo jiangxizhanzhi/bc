@@ -276,14 +276,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				dashboardUser.setId(userId);
 				dashboardUser.setStatus("online");
 				dashboardUser.setSign("");
-				dashboardUser.setUsername(getFullRoleName(crRole));
+				dashboardUser.setRole(getFullRoleName(crRole));
 
 				// 找到当前用户角色
 				if (userId.equals(currentUserId)) {
-					crRole.getRoomId();
 					mine = dashboardUser;
 				} else {
-
 					friend.add(dashboardUser);
 				}
 			}
@@ -324,14 +322,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 
 		mine.setUsername(userInfoMap.get(mine.getId()).getName());
-		mine.setRole(userInfoMap.get(mine.getId()).getUserName());
 		mine.setAvatar(userInfoMap.get(mine.getId()).getAvatarUrl());
 
 		for (DashboardUser dashboardUser : friend) {
 			UserInfo userInfo = userInfoMap.getOrDefault(dashboardUser.getId(), new UserInfo());
-			dashboardUser.setRole(userInfo.getName());
 			dashboardUser.setAvatar(userInfo.getAvatarUrl());
-			dashboardUser.setUsername(userInfo.getName() + "/" + dashboardUser.getUsername());
+			dashboardUser.setUsername(userInfo.getName());
 
 		}
 

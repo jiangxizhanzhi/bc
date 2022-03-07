@@ -219,4 +219,7 @@ public interface CrBusinessErrorCode {
 
 	/** 打分必须为正整数 */
 	String INVALID_SCORE = "101070";
+
+	/** 只有超级管理员可以修改雷达图 */
+	String SUPERUSER_CAN_EDIT_RADAR = "101071";
 }

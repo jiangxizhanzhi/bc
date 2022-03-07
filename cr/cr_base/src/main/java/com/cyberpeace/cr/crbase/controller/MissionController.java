@@ -24,6 +24,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -92,6 +93,12 @@ public class MissionController {
 	@ApiOperation("后台更新任务技能点")
 	@PostMapping("/missions/radar_labels")
 	public BaseRsp<MissionTemplate> updateRadarLabel(@RequestBody @Validated LabelReq labels) {
+		// 只有超级用户有权修改
+		UserInfo user = UserInfoContext.getUserContext();
+		if (!user.isSuperuser()) {
+			throw new BusinessException(CrBusinessErrorCode.SUPERUSER_CAN_EDIT_RADAR);
+		}
+
 		List<RadarLabel> radarLabelList = Lists.newArrayList();
 
 		for (int i = 0; i < labels.getLabels().size(); i++) {

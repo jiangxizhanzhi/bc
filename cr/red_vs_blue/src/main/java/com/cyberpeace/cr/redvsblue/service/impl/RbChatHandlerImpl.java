@@ -1,18 +1,18 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
-import com.cyberpeace.common.component.ChatWebSocketHandler;
-import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
+import com.google.common.collect.Lists;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component("rbChatHandlerImpl")
@@ -23,12 +23,10 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 	@Autowired
 	private CrRoleService crRoleService;
 
-
 	@Override
 	public Integer declareMessageType() {
 		return BusinessTemplate.BusinessType.RED_VS_BLUE.getCode();
 	}
-
 
 	@Override
 	public List<String> getGroup(String roomId, String groupId) {
@@ -45,10 +43,10 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 		List<CrRole> rolesByRoom = crRoleService.getRolesByRoom(roomId, declareMessageType());
 		List<String> userIds = Lists.newArrayList();
 
-		for (CrRole role: rolesByRoom) {
+		for (CrRole role : rolesByRoom) {
 			List<String> roleUserIds = role.getUserIdList();
 
-			if (role.getRoleGroup().toString().equals(parentGroupId)){
+			if (role.getRoleGroup().toString().equals(parentGroupId)) {
 				userIds.addAll(roleUserIds);
 				continue;
 			}
@@ -78,7 +76,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 		List<String> allUserIds = Lists.newArrayList();
 		boolean isRoleAdmin = Boolean.FALSE;
 
-		for (CrRole role: rolesByRoom) {
+		for (CrRole role : rolesByRoom) {
 			List<String> roleUserIds = role.getUserIdList();
 			allUserIds.addAll(roleUserIds);
 
@@ -88,7 +86,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 			}
 
 			// 包含就加入，当前用户是普通用户，获取管理组所有人员+本组所有人员
-			if(role.containsUser(userId)) {
+			if (role.containsUser(userId)) {
 				userIds.addAll(roleUserIds);
 				continue;
 			}
@@ -99,7 +97,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 			}
 		}
 
-		return isRoleAdmin ? allUserIds: userIds;
+		return isRoleAdmin ? allUserIds : userIds;
 	}
 
 	@Override
@@ -109,7 +107,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 		List<CrRole> rolesByRoom = crRoleService.getRolesByRoom(businessId, declareMessageType());
 		List<String> userIds = Lists.newArrayList();
 
-		for (CrRole role: rolesByRoom) {
+		for (CrRole role : rolesByRoom) {
 			List<String> roleUserIds = role.getUserIdList();
 			userIds.addAll(roleUserIds);
 		}

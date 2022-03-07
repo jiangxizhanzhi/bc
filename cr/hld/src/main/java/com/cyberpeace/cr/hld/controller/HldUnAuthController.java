@@ -3,20 +3,26 @@ package com.cyberpeace.cr.hld.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.hld.controller.req.HldSceneOpsReq;
 import com.cyberpeace.cr.hld.controller.rsp.HldTopoAssetsRsp;
+import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
 import com.cyberpeace.cr.hld.service.HldSceneService;
 
 import io.swagger.annotations.Api;
@@ -24,7 +30,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "HLD房间")
+@Api(tags = "HLD拓扑（非认证）")
 @Slf4j
 @RestController
 @RequestMapping("/cr/hld/")
@@ -36,10 +42,16 @@ public class HldUnAuthController {
 	@Autowired
 	private HldSceneService hldSceneService;
 
+	@Autowired
+	private HldRoomMapper hldRoomMapper;
+
+	@Autowired
+	private BusinessTemplateService businessTemplateService;
+
 	@ApiOperation("读取topo和角色资产")
 	@GetMapping("/topoAssets")
-	public BaseRsp<HldTopoAssetsRsp> getTopoAssets(
-			@ApiParam(name = "resource_id", value = "HLD房间id", required = true) String resource_id) {
+	public BaseRsp<HldTopoAssetsRsp> getTopoAssets(@ApiParam(name = "resource_id",
+			value = "HLD拓扑id", required = true) String resource_id) {
 
 		// read scene data
 		JSONObject sceneData = hldSceneService.viewSceneNoAuth(resource_id);
@@ -67,5 +79,63 @@ public class HldUnAuthController {
 			}
 		}
 		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("启动场景")
+	@PostMapping("")
+	public BaseRsp startScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
+
+		setUserInfo("task");
+		String sceneId = hldSceneService.startScene(hldSceneOpsReq.getResourceId(), "");
+
+		return new BaseRsp(new StartSceneRsp(sceneId));
+	}
+
+	@ApiOperation("停止场景")
+	@DeleteMapping("")
+	public BaseRsp stopScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
+
+		setUserInfo("task");
+		Boolean result = hldSceneService.stopScene(hldSceneOpsReq.getResourceId());
+
+		return new BaseRsp(result);
+	}
+
+	@ApiOperation("暂停场景")
+	@PostMapping("/pause")
+	public BaseRsp<Boolean> pauseScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
+
+		setUserInfo("task");
+		Boolean ret = hldSceneService.pauseScene(hldSceneOpsReq.getResourceId());
+
+		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("从暂停中恢复场景")
+	@PostMapping("/unpause")
+	public BaseRsp<Boolean> unpauseScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
+
+		setUserInfo("task");
+		Boolean ret = hldSceneService.unpauseScene(hldSceneOpsReq.getResourceId());
+
+		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("删除场景")
+	@DeleteMapping("/delete")
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		setUserInfo("task");
+		List<String> businessTemplateIds = hldRoomMapper
+				.listBusinessTemplateIds(deleteReq.getIds());
+		businessTemplateService.batchDelete(businessTemplateIds);
+
+		return new BaseRsp<>();
+	}
+
+	private void setUserInfo(String userId) {
+		UserInfo userInfo = new UserInfo();
+		userInfo.setUserId(userId);
+		UserInfoContext.setUserContext(userInfo);
 	}
 }

@@ -220,6 +220,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		ConcurrentMap<String, JSONObject> execGroupMap = Maps.newConcurrentMap();
 
 		UserInfo userInfo = UserInfoContext.getUserContext();
+		String ip = CommonContext.getIp();
+		String language = CommonContext.getLanguage();
 
 		// 场景启动
 		for (ClassroomGroupInfo groupInfo : groupInfoList) {
@@ -227,8 +229,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 				try {
 					// 设置当前用户
 					UserInfoContext.setUserContext(userInfo);
-					CommonContext.setIp(CommonContext.getIp());
-					CommonContext.setLanguage(CommonContext.getLanguage());
+					CommonContext.setIp(ip);
+					CommonContext.setLanguage(language);
 					// 有用户的组才可以启动场景
 					if (CollectionUtils.isNotEmpty(JsonUtil
 							.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class))) {

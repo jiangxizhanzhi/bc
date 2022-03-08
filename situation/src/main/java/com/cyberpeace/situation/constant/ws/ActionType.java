@@ -32,8 +32,10 @@ public enum ActionType {
 	}
 
 	public static Integer getRandomValue(ActionType[] values) {
-
 		return values[(int) (Math.random() * values.length)].code;
+	}
 
+	public static ActionType getRandom(ActionType[] values) {
+		return values[(int) (Math.random() * values.length)];
 	}
 }

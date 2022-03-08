@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.UtilService;
@@ -10,6 +11,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -88,14 +90,26 @@ public class WebNoteController {
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
 
 		// 无笔记存在 实验报告返回默认值
-		if (null == noteBo) {
-			BaseRsp<WebNoteRes> rsp = new BaseRsp<>();
+		if (null == noteBo || StringUtils.isBlank(noteBo.getContent())) {
+
 			if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
+				String template_name = "oj.report.template_en.data";
+				if (CommonContext.isChinese()) {
+					template_name = "oj.report.template.data";
+				}
 				WebNoteRes webNoteRes = WebNoteRes.builder()
-						.content(ConfigUtil.getContextProperty("oj.report.template.data")).build();
-				rsp.setData(webNoteRes);
+						.content(ConfigUtil.getContextProperty(template_name)).build();
+
+				if (null == noteBo) {
+					BaseRsp<WebNoteRes> rsp = new BaseRsp<>();
+					rsp.setData(webNoteRes);
+					return rsp;
+				}
+				String note_content = webNoteRes.getContent();
+				noteBo.setContent(note_content);
+
 			}
-			return rsp;
+
 		}
 
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);

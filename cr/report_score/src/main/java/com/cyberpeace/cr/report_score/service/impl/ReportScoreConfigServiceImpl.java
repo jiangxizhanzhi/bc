@@ -143,6 +143,32 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
                 .getAttackIpCount(attackIpContext);
     }
 
+    @Override
+    public void testWS(String sourceName, String targetName) {
+        // ws推送大屏消息
+        ReportScoreConfig topoConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, TOPE_KEY, null);
+        JyjWsEvent jyjWsEvent = new JyjWsEvent();
+        jyjWsEvent.setSourceName(targetName);
+        jyjWsEvent.setLookAtTarget(true);
+        jyjWsEvent.setSourceId(sourceName);
+        jyjWsEvent.setTargetId(targetName);
+
+        AttackType enumByEnDesc = AttackLogEnumUtils.getEnumByEnDesc("Not Suspicious Traffic", AttackType.class);
+        Integer code = enumByEnDesc.getCode();
+        String attackType = enumByEnDesc.getCnDesc();
+        jyjWsEvent.setAttackType(code);
+        String desc = String.format("%s对%s发起%s", "test", "test服务器", attackType);
+        jyjWsEvent.setDescription(desc);
+
+        LineStyle lineStyle = new LineStyle();
+        lineStyle.setLineType("dashed");
+        lineStyle.setWidth(5);
+        lineStyle.setColor("#FF0000");
+        jyjWsEvent.setLineStyle(lineStyle);
+        JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(jyjWsEvent), JSONObject.class);
+        topoHandlerService.pushDataToRoom(data, topoConfig.getValue());
+    }
+
     private String getSourceIps() {
         List<ReportScoreConfig> typeConfigs = reportScoreConfigMapper.getTypeConfigs(USER_TYPE);
         String userIps = ListUtil.list2String(StreamApiUtils.map(typeConfigs, ReportScoreConfig::getValue));

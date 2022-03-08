@@ -106,4 +106,15 @@ public class ReportStatistics {
 		// todo 产品显示字段暂未确定，且统计内容和攻击日志一致，确认是否改成任务动态会更好
 		return null;
 	}
+
+	@ApiOperation("test ws")
+	@GetMapping("/test/ws")
+	public BaseRsp<String> testWS(
+			@ApiParam(name = "sourceName", value = "源节点", required = true) String sourceName,
+			@ApiParam(name = "targetName", value = "目标节点", required = true) String targetName
+	) {
+		reportScoreConfigService.testWS(sourceName, targetName);
+
+		return new BaseRsp<>("test over");
+	}
 }

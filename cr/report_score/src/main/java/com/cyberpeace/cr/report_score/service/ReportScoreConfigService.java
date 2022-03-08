@@ -25,4 +25,6 @@ public interface ReportScoreConfigService extends IService<ReportScoreConfig> {
 	JSONArray getSceneTrend(String sceneId);
 
 	JSONArray getAttackIpCount(String sceneId);
+
+	void testWS(String sourceName, String targetName);
 }

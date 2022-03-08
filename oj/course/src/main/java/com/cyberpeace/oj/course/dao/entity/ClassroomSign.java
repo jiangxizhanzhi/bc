@@ -29,6 +29,6 @@ public class ClassroomSign extends BaseTable {
 
 	private Date signInTime;
 
-	private Boolean needHelp;
+	private String nodeId;
 
 }

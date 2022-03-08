@@ -13,4 +13,11 @@ public interface ClassroomSignService extends IService<ClassroomSign> {
 	 * @return
 	 */
 	Boolean signIn(String classroomId, AuthContext authContext);
+
+	/**
+	 * 远程协助数据注册
+	 * @param lessonId
+	 * @param nodeId
+	 */
+	void needHelp(String lessonId, String nodeId);
 }

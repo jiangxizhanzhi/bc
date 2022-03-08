@@ -624,7 +624,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 签到数据
 		ClassroomSign classroomSign = userSignMap.get(userInfo.getUserId());
 		monitorBo.setSignIn(null != classroomSign);
-		monitorBo.setNeedHelp(null != classroomSign ? classroomSign.getNeedHelp() : null);
+		monitorBo.setNeedHelp(
+				null != classroomSign ? StringUtils.isNotBlank(classroomSign.getNodeId()) : null);
 		monitorBo.setSignInTime(null != classroomSign ? classroomSign.getSignInTime() : null);
 
 		return monitorBo;

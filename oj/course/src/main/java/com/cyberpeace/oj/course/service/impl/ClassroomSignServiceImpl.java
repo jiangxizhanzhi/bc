@@ -4,11 +4,13 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
+
+	@Autowired
+	private ClassroomValidateHandler classroomValidateHandler;
 
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
@@ -55,5 +60,36 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 
 		return true;
+	}
+
+	@Override
+	public void needHelp(String lessonId, String nodeId) {
+
+		// 课堂数据校验
+		Classroom classroom = classroomValidateHandler.validateClassroomLessonExist(lessonId,
+				UserInfoContext.getUserContext().getOrganizationId());
+
+		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(
+				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
+		if (null == classroomSign) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 已存在相同虚拟机远程协助不管
+		if (StringUtils.isNotBlank(classroomSign.getNodeId())
+				&& classroomSign.getNodeId().equals(nodeId)) {
+			return;
+		}
+
+		// 不能同时两台虚拟机都远程协助
+		if (StringUtils.isNotBlank(classroomSign.getNodeId())
+				&& classroomSign.getNodeId().equals(nodeId)) {
+			throw new BusinessException(OjBusinessErrorCode.SCENE_START_FAIL);
+		}
+
+		// 数据填写到数据库
+		classroomSign.setNodeId(nodeId);
+		classroomSignMapper.updateById(classroomSign);
+
 	}
 }

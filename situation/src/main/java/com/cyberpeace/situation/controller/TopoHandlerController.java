@@ -165,6 +165,7 @@ public class TopoHandlerController {
 
             JSONObject element = elements.getJSONObject(i);
             String elementId = element.getString("id");
+            String elementName = element.getString("name");
             JSONObject elementExtendedInfo = extendElementInfo.getJSONObject(elementId);
 
             //处理设备类型（虚/实）
@@ -207,7 +208,7 @@ public class TopoHandlerController {
             for (int j = 0; j < ports.size(); j++) {
                 JSONObject port = ports.getJSONObject(j);
                 String portId = port.getString("id");
-                sceneData.getPortElementMap().put(portId, elementId);
+                sceneData.getPortElementMap().put(portId, elementName);
 
                 PortInfo portInfo = BeanUtils.deepCopy(port, PortInfo.class);
                 portInfo.setPortId(portId);
@@ -224,12 +225,11 @@ public class TopoHandlerController {
             elementInfo.setType(type);
             elementInfo.setActionStatus(topoHandlerService.getElementActionStatus(element));
             elementInfo.setStatus(topoHandlerService.getElementStatus(element));
-//            elementInfo.setAreas(topoHandlerService.getElementAreas(x, y, areasInfo));
+            // elementInfo.setAreas(topoHandlerService.getElementAreas(x, y, areasInfo));
             elementInfo.setPosition(new PlaneCoordinate(x, y));
             elementInfo.setPorts(portsInfo);
             elementInfo.setHierarchy(hierarchy);
-
-            elementsInfo.put(elementId, elementInfo);
+            elementsInfo.put(elementName, elementInfo);
         }
 
         return elementsInfo;

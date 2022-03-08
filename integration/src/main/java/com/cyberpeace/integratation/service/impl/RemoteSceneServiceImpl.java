@@ -180,7 +180,32 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		}
 
 		String sceneIdStr = String.join(CommonConstant.CODE_COMMA, sceneIds);
-		return HttpClientUtil.rawGet(NODE_SESSION_URL + sceneIdStr, JSONArray.class);
+		return HttpClientUtil.rawGet(String.format(NODE_SESSION_URL, sceneIdStr, "", "", ""),
+				JSONArray.class);
+	}
+
+	@Override
+	public JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds,
+			List<String> userIds, String type) {
+		if (CollectionUtils.isEmpty(sceneIds)) {
+			return new JSONArray();
+		}
+
+		String sceneIdsStr = String.join(CommonConstant.CODE_COMMA, sceneIds);
+		String nodeIdsStr = "";
+		String userIdsStr = "";
+		String typeStr = StringUtils.isNotBlank(type) ? type : "";
+		if (!CollectionUtils.isEmpty(nodeIds)) {
+			nodeIdsStr = String.join(CommonConstant.CODE_COMMA, nodeIds);
+		}
+
+		if (!CollectionUtils.isEmpty(userIds)) {
+			userIdsStr = String.join(CommonConstant.CODE_COMMA, userIds);
+		}
+
+		return HttpClientUtil.rawGet(
+				String.format(NODE_SESSION_URL, sceneIdsStr, nodeIdsStr, userIdsStr, typeStr),
+				JSONArray.class);
 	}
 
 	@Override

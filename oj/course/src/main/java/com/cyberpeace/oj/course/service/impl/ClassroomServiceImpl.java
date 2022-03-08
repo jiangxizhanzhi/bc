@@ -6,15 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
@@ -29,6 +34,7 @@ import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +106,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
+
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -328,6 +340,35 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		List<ClassroomMonitorBo> monitorBos = StreamApiUtils.map(userInfos,
 				userInfo -> userToMonitorBo(userInfo, signMap));
+
+		// 页面获取
+		List<String> nodeIds = StreamApiUtils.map(signList, ClassroomSign::getNodeId);
+		if (CollectionUtils.isNotEmpty(nodeIds)) {
+			List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper
+					.selectByRoom(classroomId);
+			List<String> sceneIds = StreamApiUtils.map(groupInfoList, groupInfo -> {
+				OjLocalScene ojLocalScene = ojLocalSceneMapper
+						.selectGroupScene(groupInfo.getResourceId());
+				if (null == ojLocalScene) {
+					return null;
+				}
+
+				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+				return localScene.getMpSceneId();
+			});
+
+			JSONArray nodeSessions = remoteSceneService.getNodeSessions(sceneIds, nodeIds, null,
+					ClassroomSign.SessionType.ASSISTANCE.getType());
+			Map<String, String> userAssistanceMap = StreamApiUtils.toMap(nodeSessions,
+					object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
+					object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
+
+			monitorBos.forEach(classroomMonitorBo -> classroomMonitorBo
+					.setHelpUrl(classroomMonitorBo.getNeedHelp()
+							? userAssistanceMap.get(classroomMonitorBo.getUserId())
+							: null));
+
+		}
 
 		return PageUtil.getListResult(monitorBos, page, monitorBos.size());
 

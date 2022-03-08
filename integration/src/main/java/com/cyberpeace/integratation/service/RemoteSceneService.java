@@ -53,6 +53,17 @@ public interface RemoteSceneService {
 	JSONArray getNodeSessions(List<String> sceneIds);
 
 	/**
+	 * 获取场景场景监控和远程协助地址
+	 * @param sceneIds 场景编号
+	 * @param nodeIds 节点编号
+	 * @param userIds 用户编号
+	 * @param type 类型 all=监控和远程协助都获取 assistance=远程协助地址
+	 * @return
+	 */
+	JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds, List<String> userIds,
+			String type);
+
+	/**
 	 * 获取场景监控会话
 	 * @param mpSceneId
 	 * @param studentId

@@ -92,4 +92,13 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		classroomSignMapper.updateById(classroomSign);
 
 	}
+
+	@Override
+	public void toHelp(String classroomId) {
+
+		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId,
+				UserInfoContext.getUserContext().getUserId());
+		classroomSign.setNodeId("");
+		classroomSignMapper.updateById(classroomSign);
+	}
 }

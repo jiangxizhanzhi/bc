@@ -20,4 +20,10 @@ public interface ClassroomSignService extends IService<ClassroomSign> {
 	 * @param nodeId
 	 */
 	void needHelp(String lessonId, String nodeId);
+
+	/**
+	 * 远程协助数据注销
+	 * @param classroomId
+	 */
+	void toHelp(String classroomId);
 }

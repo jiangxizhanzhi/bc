@@ -52,6 +52,9 @@ public interface JsonKeyConstant {
 	/** 会话信息用户编号key*/
 	String USER_KEY = "user";
 
+	/** 远程协助地址字短*/
+	String ASSISTANCE_URL = "assistance_url";
+
 	/** 节点名称key*/
 	String NODE_NAME = "node_name";
 

@@ -31,4 +31,7 @@ public class ClassroomMonitorBo implements Serializable {
 
 	@ApiModelProperty("是否需要帮助")
 	private Boolean needHelp;
+
+	@ApiModelProperty("远程协助地址")
+	private String helpUrl;
 }

@@ -48,6 +48,7 @@ public enum AttackType implements AttackLogEnum {
     PUP_ACTIVITY(9, "普通攻击", "无用程序", "Possibly Unwanted Program Detected", "pup-activity"),
     CREDENTIAL_THEFT(9, "普通攻击", "凭证窃取", "Successful Credential Theft Detected", "credential-theft"),
     SOCIAL_ENGINEERING(9, "普通攻击", "社会工程", "Possible Social Engineering Attempted", "social-engineering"),
+    ABNORMAL_LINKS(9, "异常链接", "异常链接", "Abnormal links", "Abnormal links"),
     COIN_MINING(1, "病毒攻击", "挖矿病毒", "Crypto Currency Mining Activity Detected", "coin-mining");
 
     @Getter

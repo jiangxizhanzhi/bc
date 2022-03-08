@@ -189,16 +189,15 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         List<ReportScoreConfig> typeConfigs = reportScoreConfigMapper.getTypeConfigs(USER_TYPE);
         List<String> userIds = StreamApiUtils.map(typeConfigs, ReportScoreConfig::getKey);
         List<UserInfo> userByIdList = remoteUserService.getByIdList(userIds);
-
-        String userIps = ListUtil.list2String(StreamApiUtils.map(typeConfigs, ReportScoreConfig::getValue));
+        String userIps = typeConfigs.stream().map(ReportScoreConfig::getValue).collect(Collectors.joining(","));
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startTime = df.format(new Date(System.currentTimeMillis() - 1000));
         String endTime = df.format(new Date());
 
         attackLogPageContext.setId(typeConfig.getValue());
-		attackLogPageContext.setStartTime(startTime);
-		attackLogPageContext.setEndTime(endTime);
+//		attackLogPageContext.setStartTime(startTime);
+//		attackLogPageContext.setEndTime(endTime);
         attackLogPageContext.setSourceIps(userIps);
 
         JSONObject attackLog = remoteSituationService.getAttackLog(attackLogPageContext);

@@ -8,8 +8,8 @@ public enum MessageType {
 	 * 消息类型
 	 */
 
-	SingleNodeEffect(1, "single_node_effect"),
-    MultiNodeEffect(2, "multi_node_effect");
+	SingleNodeDynamic(1, "single_node_dynamic"),
+    MultiNodeDynamic(2, "multi_node_dynamic");
 
 	@Getter
 	private Integer code;

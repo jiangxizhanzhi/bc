@@ -5,12 +5,28 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.model.*;
 
 /**
  * 5.3版本场景拓扑数据到3D拓扑格式转换
  */
 public interface TopoHandlerService {
+
+	/**
+	 * 获取场景数据
+	 * @param sceneId
+	 * @param topoId
+	 * @return SceneData
+	 */
+	SceneData getSceneData(String sceneId, String topoId);
+
+	/**
+	 * 获取处理后的态势数据
+	 * @param sceneData
+	 * @return SituationTopo
+	 */
+	SituationTopo getSituationTopo(SceneData sceneData);
 
 	/**
 	 * 获取靶标类型映射
@@ -104,10 +120,26 @@ public interface TopoHandlerService {
 	List<ElementInfo> getRandomElements(JSONArray elements, Integer num);
 
 	/**
+	 * 获取流量日志
+	 * @param flowLogReq
+	 * @return List<JSONObject>
+	 */
+	List<JSONObject> getFlowLogs(FlowLogReq flowLogReq);
+
+	/**
+	 * 获取多节点动态消息
+	 * @param flowLogs
+	 * @param sceneId
+	 * @return List<WsMultiNodeDynamic>
+	 */
+	List<JSONObject> getWsMultiNodeDynamicList(List<JSONObject> flowLogs, String sceneId);
+
+	/**
 	 * 推送消息至房间
 	 * @param data 消息
 	 * @param sceneId 场景id
 	 * @return 无
 	 */
 	void pushDataToRoom(JSONObject data, String sceneId);
+
 }

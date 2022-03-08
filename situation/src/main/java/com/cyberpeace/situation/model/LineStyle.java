@@ -17,4 +17,12 @@ public class LineStyle implements Serializable {
 	@ApiModelProperty("线型")
 	private String lineType;
 
+	public LineStyle(String color, Integer width, String lineType) {
+		this.color = color;
+		this.width = width;
+		this.lineType = lineType;
+	}
+
+	public LineStyle() {}
+
 }

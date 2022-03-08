@@ -137,8 +137,8 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         JyjWsEvent jyjWsEvent = new JyjWsEvent();
         jyjWsEvent.setSourceName(userName);
         jyjWsEvent.setLookAtTarget(true);
-        jyjWsEvent.setSourceId(object.getString("source_node_id"));
-        jyjWsEvent.setTargetId(object.getString("target_node_id"));
+        jyjWsEvent.setSourceId(object.getString("source_node_name"));
+        jyjWsEvent.setTargetId(object.getString("target_node_name"));
 
         String enDesc = object.getObject("attack_info", JSONObject.class).getString("attack_type");
         AttackType enumByEnDesc = AttackLogEnumUtils.getEnumByEnDesc(enDesc, AttackType.class);

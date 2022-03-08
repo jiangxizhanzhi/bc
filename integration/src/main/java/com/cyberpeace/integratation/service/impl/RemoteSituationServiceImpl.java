@@ -7,7 +7,8 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.AttackLogPageContext;
 import com.cyberpeace.integratation.model.context.AttackCountContext;
-import com.cyberpeace.integratation.model.context.AttackIPContext;
+import com.cyberpeace.integratation.model.context.AttackContext;
+import com.cyberpeace.integratation.model.context.AttackIpContext;
 import com.cyberpeace.integratation.model.mp.MpAttackCount;
 import com.cyberpeace.integratation.model.mp.MpAttackIPCount;
 import com.cyberpeace.integratation.service.RemoteSituationService;
@@ -20,35 +21,59 @@ import java.util.List;
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
 
-	private String ATTACK_COUNT_URL;
+    private String ATTACK_COUNT_URL;
 
     private String ATTACK_LOG;
 
     private String ATTACK_IP_URL;
 
+    private String ATTACK_TYPE_COUNT_URL;
+
+    private String ATTACK_SCENE_TREND;
+
     @Autowired
     private MpEnvService mpEnvService;
 
-	@PostConstruct
-	public void init() {
-		ATTACK_COUNT_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.situation.attack.count");
+    @PostConstruct
+    public void init() {
+        ATTACK_COUNT_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.situation.attack.count");
 
-		ATTACK_LOG = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.situation.attack.log");
+        ATTACK_LOG = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.situation.attack.log");
 
-		ATTACK_IP_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.situation.attack.ip.log");
-	}
+        ATTACK_IP_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.situation.attack.ip.log");
 
-	@Override
-	public MpAttackCount getAttackCountTop5(AttackCountContext attackCountContext) {
-		return HttpClientUtil.rawGetByParam(attackCountContext, ATTACK_COUNT_URL, MpAttackCount.class);
-	}
+        ATTACK_TYPE_COUNT_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.situation.attack.type.count");
 
-	@Override
-	public List<MpAttackIPCount> getAttackIPCount(AttackIPContext attackIPContext) {
-		JSONArray objects = HttpClientUtil
-				.rawGetByParam(attackIPContext, ATTACK_IP_URL, JSONArray.class);
-		return objects.toJavaList(MpAttackIPCount.class);
-	}
+        ATTACK_SCENE_TREND = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.situation.attack.scene.trend");
+
+    }
+
+    @Override
+    public MpAttackCount getAttackCountTop5(AttackCountContext attackCountContext) {
+        return HttpClientUtil.rawGetByParam(attackCountContext, ATTACK_COUNT_URL, MpAttackCount.class);
+    }
+
+    @Override
+    public List<MpAttackIPCount> getAttackIPCount(AttackContext AttackContext) {
+        JSONArray objects = HttpClientUtil
+                .rawGetByParam(AttackContext, ATTACK_IP_URL, JSONArray.class);
+        return objects.toJavaList(MpAttackIPCount.class);
+    }
+
+    @Override
+    public JSONArray getAttackTypeCount(AttackIpContext attackIpContext) {
+        return HttpClientUtil.rawGetByParam(attackIpContext, ATTACK_TYPE_COUNT_URL, JSONArray.class);
+    }
+
+    @Override
+    public JSONArray getSceneTrend(AttackIpContext attackIpContext) {
+        return HttpClientUtil.rawGetByParam(attackIpContext, ATTACK_SCENE_TREND, JSONArray.class);
+    }
+
+    @Override
+    public JSONArray getAttackIpCount(AttackIpContext attackIpContext) {
+        return HttpClientUtil.rawGetByParam(attackIpContext, ATTACK_IP_URL, JSONArray.class);
+    }
 
     @Override
     public JSONObject getAttackLog(AttackLogPageContext attackLogPageContext) {

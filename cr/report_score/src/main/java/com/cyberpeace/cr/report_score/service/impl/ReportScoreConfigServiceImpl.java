@@ -1,14 +1,21 @@
 package com.cyberpeace.cr.report_score.service.impl;
+
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.report_score.controller.res.AttackLogRes;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig;
 import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreConfigMapper;
 import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.utils.AttackLogEnumUtils;
 import com.cyberpeace.integratation.model.AttackLogPageContext;
+import com.cyberpeace.integratation.model.context.AttackCountContext;
+import com.cyberpeace.integratation.model.context.AttackIpContext;
+import com.cyberpeace.integratation.model.mp.MpAttackCount;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.situation.constant.ws.AttackType;
@@ -17,6 +24,7 @@ import com.cyberpeace.situation.model.ws.JyjWsEvent;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +43,9 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
     private static final String SYSTEM_TYPE = "system";
 
     private static final String SCENE_KEY = "scene";
+
+    private static final String TOPE_KEY = "topo";
+
     @Autowired
     private ReportScoreConfigMapper reportScoreConfigMapper;
 
@@ -59,18 +70,18 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         return getConfigByType(SYSTEM_TYPE);
     }
 
-	@Override
-	public String getSceneIds() {
+    @Override
+    public String getSceneIds() {
 
-		ReportScoreConfig typeConfig = reportScoreConfigMapper
-				.getTypeConfig(SYSTEM_TYPE, SCENE_KEY, null);
+        ReportScoreConfig typeConfig = reportScoreConfigMapper
+                .getTypeConfig(SYSTEM_TYPE, SCENE_KEY, null);
 
-		if (typeConfig == null) {
-			log.info("getSceneIds is null");
-			return "";
-		}
-		return typeConfig.getValue();
-	}
+        if (typeConfig == null) {
+            log.info("getSceneIds is null");
+            return "";
+        }
+        return typeConfig.getValue();
+    }
 
     @Override
     public Map<String, String> getUserIps() {
@@ -82,25 +93,94 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         return typeConfigs.stream()
                 .collect(Collectors.toMap(ReportScoreConfig::getKey, ReportScoreConfig::getValue));
     }
+    public JSONArray getAttackTypeCount(String sceneId) {
+        String ips = getSourceIps();
+        if (StringUtils.isBlank(ips) || StringUtils.isBlank(sceneId)) {
+            log.warn("not found ips {} or not found sceneId {} so attack count has question", ips,
+                    sceneId);
+            return null;
+        }
+
+        AttackIpContext attackIpContext = new AttackIpContext();
+        attackIpContext.setSceneId(sceneId);
+        attackIpContext.setSourceIps(ips);
+        return remoteSituationService
+                .getAttackTypeCount(attackIpContext);
+    }
+
+    @Override
+    public JSONArray getSceneTrend(String sceneId) {
+        String ips = getSourceIps();
+        if (StringUtils.isBlank(ips) || StringUtils.isBlank(sceneId)) {
+            log.warn("not found ips {} or not found sceneId {} so attack count has question", ips,
+                    sceneId);
+            return null;
+        }
+
+        AttackIpContext attackIpContext = new AttackIpContext();
+        attackIpContext.setSceneId(sceneId);
+        attackIpContext.setSourceIps(ips);
+        return remoteSituationService
+                .getSceneTrend(attackIpContext);
+    }
+
+    @Override
+    public JSONArray getAttackIpCount(String sceneId) {
+        String ips = getSourceIps();
+        if (StringUtils.isBlank(ips) || StringUtils.isBlank(sceneId)) {
+            log.warn("not found ips {} or not found sceneId {} so attack count has question", ips,
+                    sceneId);
+            return null;
+        }
+
+        AttackIpContext attackIpContext = new AttackIpContext();
+        attackIpContext.setSceneId(sceneId);
+        attackIpContext.setSourceIps(ips);
+        attackIpContext.setIps(ips);
+        attackIpContext.setIpType(1);
+
+        return remoteSituationService
+                .getAttackIpCount(attackIpContext);
+    }
+
+    private String getSourceIps() {
+        List<ReportScoreConfig> typeConfigs = reportScoreConfigMapper.getTypeConfigs(USER_TYPE);
+        String userIps = ListUtil.list2String(StreamApiUtils.map(typeConfigs, ReportScoreConfig::getValue));
+
+        if(userIps.endsWith(",")){
+            userIps = userIps.substring(0,userIps.length()-1);
+        }
+        return userIps;
+    }
 
     @Override
     public List<AttackLogRes> getAttackLogRes() {
         AttackLogPageContext attackLogPageContext = new AttackLogPageContext();
 
         ReportScoreConfig typeConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, SCENE_KEY, null);
+        ReportScoreConfig topoConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, TOPE_KEY, null);
 
-//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		String startTime = df.format(new Date(System.currentTimeMillis() - 1000));
-//		String endTime = df.format(new Date());
+        List<ReportScoreConfig> typeConfigs = reportScoreConfigMapper.getTypeConfigs(USER_TYPE);
+        List<String> userIds = StreamApiUtils.map(typeConfigs, ReportScoreConfig::getKey);
+        List<UserInfo> userByIdList = remoteUserService.getByIdList(userIds);
+
+        String userIps = ListUtil.list2String(StreamApiUtils.map(typeConfigs, ReportScoreConfig::getValue));
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String startTime = df.format(new Date(System.currentTimeMillis() - 1000));
+        String endTime = df.format(new Date());
 
         attackLogPageContext.setId(typeConfig.getValue());
-//		attackLogPageContext.setStartTime(startTime);
-//		attackLogPageContext.setEndTime(endTime);
+		attackLogPageContext.setStartTime(startTime);
+		attackLogPageContext.setEndTime(endTime);
+        attackLogPageContext.setSourceIps(userIps);
 
         JSONObject attackLog = remoteSituationService.getAttackLog(attackLogPageContext);
         List<JSONObject> objects = JsonUtil.toJsonObjectArray(attackLog.getJSONArray("list").toString(), JSONObject.class);
 
         List<AttackLogRes> arrayObjects = Lists.newArrayList();
+
+
 
         for (JSONObject object : objects) {
             AttackLogRes attackLogRes = new AttackLogRes();
@@ -109,18 +189,30 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
             attackLogRes.setTargetIp(object.getString("target_ip"));
             attackLogRes.setTargetNodeName(object.getString("target_node_name"));
 
-            String userName = getUserName(object.getString("source_ip"));
+            String userName = getUserNameByIp(object.getString("source_ip"), typeConfigs, userByIdList);
             attackLogRes.setUserName(userName);
 
             // ws推送大屏消息
             JyjWsEvent wsEvent = getWsEvent(object, userName);
             JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
-            topoHandlerService.pushDataToRoom(data, typeConfig.getValue());
+            topoHandlerService.pushDataToRoom(data, topoConfig.getValue());
 
             arrayObjects.add(attackLogRes);
         }
 
         return arrayObjects;
+    }
+
+    private String getUserNameByIp(String sourceIp, List<ReportScoreConfig> typeConfigs, List<UserInfo> userByIdList) {
+        Map<String, String> userMaps = StreamApiUtils.toMap(userByIdList, UserInfo::getUserId, UserInfo::getUserName);
+
+        for (ReportScoreConfig typeConfig : typeConfigs) {
+            if (typeConfig.getValue().contains(sourceIp)) {
+                return userMaps.getOrDefault(typeConfig.getKey(), "");
+             }
+        }
+
+        return "";
     }
 
     private String getUserName(String sourceIp) {

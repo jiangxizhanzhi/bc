@@ -229,6 +229,7 @@ public class TopoHandlerController {
             elementInfo.setPosition(new PlaneCoordinate(x, y));
             elementInfo.setPorts(portsInfo);
             elementInfo.setHierarchy(hierarchy);
+
             elementsInfo.put(elementName, elementInfo);
         }
 

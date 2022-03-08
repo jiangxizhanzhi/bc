@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.report_score.controller.other;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.report_score.controller.res.*;
@@ -7,6 +8,7 @@ import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +70,34 @@ public class ReportStatistics {
 	public BaseRsp<List<AttackLogRes>> attackLog() {
 		List<AttackLogRes> attackLogRes = reportScoreConfigService.getAttackLogRes();
 		return new BaseRsp<>(attackLogRes);
+	}
+
+	@ApiOperation("攻击流量各类别统计")
+	@GetMapping("/attack/attack_type_count")
+	public BaseRsp<JSONArray> getAttackTypeCount(
+			@ApiParam(name = "sceneId", value = "场景id", required = true) String sceneId) {
+		JSONArray data = reportScoreConfigService.getAttackTypeCount(sceneId);
+
+		return new BaseRsp(data);
+	}
+
+
+	@ApiOperation("场景流量趋势图")
+	@GetMapping("/attack/scene_trend")
+	public BaseRsp<JSONArray> getSceneTrend(
+			@ApiParam(name = "sceneId", value = "场景id", required = true) String sceneId) {
+		JSONArray data = reportScoreConfigService.getSceneTrend(sceneId);
+
+		return new BaseRsp(data);
+	}
+
+	@ApiOperation("攻击次数各按ip统计")
+	@GetMapping("/attack/attack_ip_count")
+	public BaseRsp<JSONArray> getAttackIpCount(
+			@ApiParam(name = "sceneId", value = "场景id", required = true) String sceneId) {
+		JSONArray data = reportScoreConfigService.getAttackIpCount(sceneId);
+
+		return new BaseRsp(data);
 	}
 
 	@ApiOperation("攻击动态")

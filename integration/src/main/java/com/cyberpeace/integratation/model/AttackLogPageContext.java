@@ -17,4 +17,7 @@ public class AttackLogPageContext implements Serializable {
     private String startTime;
 
     private String endTime;
+
+    private String sourceIps;
+
 }

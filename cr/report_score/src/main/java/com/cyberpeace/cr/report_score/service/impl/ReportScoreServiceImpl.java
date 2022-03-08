@@ -20,7 +20,7 @@ import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
 import com.cyberpeace.cr.report_score.service.bo.UserSubjectGroupBo;
 import com.cyberpeace.integratation.model.context.AttackCountContext;
-import com.cyberpeace.integratation.model.context.AttackIPContext;
+import com.cyberpeace.integratation.model.context.AttackContext;
 import com.cyberpeace.integratation.model.mp.MpAttackCount;
 import com.cyberpeace.integratation.model.mp.MpAttackIPCount;
 import com.cyberpeace.integratation.service.RemoteSituationService;
@@ -286,11 +286,11 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
         String sceneIds = reportScoreConfigService.getSceneIds();
         List<String> ipList = new ArrayList<>(userIpMap.values());
         String ips = String.join(",", ipList);
-        AttackIPContext attackIPContext = new AttackIPContext();
-        attackIPContext.setSceneId(sceneIds);
-        attackIPContext.setIps(ips);
+        AttackContext AttackContext = new AttackContext();
+        AttackContext.setSceneId(sceneIds);
+        AttackContext.setIps(ips);
         return remoteSituationService
-                .getAttackIPCount(attackIPContext);
+                .getAttackIPCount(AttackContext);
     }
 
     private MpAttackCount getUserAttackCount(String sceneIds, String ips) {

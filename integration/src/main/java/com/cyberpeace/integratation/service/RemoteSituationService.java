@@ -5,7 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.AttackLogPageContext;
 
 import com.cyberpeace.integratation.model.context.AttackCountContext;
-import com.cyberpeace.integratation.model.context.AttackIPContext;
+import com.cyberpeace.integratation.model.context.AttackContext;
+import com.cyberpeace.integratation.model.context.AttackIpContext;
 import com.cyberpeace.integratation.model.mp.MpAttackCount;
 import com.cyberpeace.integratation.model.mp.MpAttackIPCount;
 
@@ -25,5 +26,11 @@ public interface RemoteSituationService {
 
 	MpAttackCount getAttackCountTop5(AttackCountContext attackCountContext);
 
-	List<MpAttackIPCount> getAttackIPCount(AttackIPContext attackIPContext);
+	List<MpAttackIPCount> getAttackIPCount(AttackContext AttackContext);
+
+    JSONArray getAttackTypeCount(AttackIpContext attackIpContext);
+
+    JSONArray getSceneTrend(AttackIpContext attackIpContext);
+
+    JSONArray getAttackIpCount(AttackIpContext attackIpContext);
 }

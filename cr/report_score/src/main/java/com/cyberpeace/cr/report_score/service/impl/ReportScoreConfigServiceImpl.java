@@ -231,7 +231,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
             lastTime = new ReportScoreConfig();
             lastTime.setType(AUTO_TYPE);
             lastTime.setKey(LAST_TIME_KEY);
-         }
+        }
 
         for (JSONObject object : Lists.reverse(objects)) {
             AttackLogRes attackLogRes = new AttackLogRes();
@@ -243,7 +243,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
             String userName = getUserNameByIp(object.getString("source_ip"), typeConfigs, userByIdList);
             attackLogRes.setUserName(userName);
 
-            if (checkLastTime(attackLogRes.getAttackTime(), lastTime)) {
+            if (checkLastTime(object.getString("timestamp"), lastTime)) {
                 // ws推送大屏消息
                 JyjWsEvent wsEvent = getWsEvent(object, userName);
                 JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
@@ -283,9 +283,9 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
             return true;
         } else {
-            Date lastDate = DateUtil.StringToDate(lastTime.getValue(), DateUtil.NORMAL_PATTERN);
+//            Date lastDate = DateUtil.StringToDate(lastTime.getValue(), DateUtil.NORMAL_PATTERN);
             //数据库记录的最新时间早于攻击时间，发送消息
-            if (lastDate.before(DateUtil.StringToDate(attackTime, DateUtil.NORMAL_PATTERN))) {
+            if (Long.parseLong(lastTime.getValue()) < Long.parseLong(attackTime)) {
                 lastTime.setValue(attackTime);
 
                 return true;

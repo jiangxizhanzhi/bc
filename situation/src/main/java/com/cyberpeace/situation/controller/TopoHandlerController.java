@@ -51,7 +51,7 @@ public class TopoHandlerController {
 
 		// 处理流量日志
 		List<JSONObject> wsMultiNodeDynamics = topoHandlerService
-				.getWsMultiNodeDynamicList(flowLogs, flowLogReq.getSceneId());
+				.getAttackEventList(flowLogs, flowLogReq.getSceneId());
 
 		return wsMultiNodeDynamics;
 	}

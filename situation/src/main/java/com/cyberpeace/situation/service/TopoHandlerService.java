@@ -132,7 +132,7 @@ public interface TopoHandlerService {
 	 * @param sceneId
 	 * @return List<WsMultiNodeDynamic>
 	 */
-	List<JSONObject> getWsMultiNodeDynamicList(List<JSONObject> flowLogs, String sceneId);
+	List<JSONObject> getAttackEventList(List<JSONObject> flowLogs, String sceneId);
 
 	/**
 	 * 推送消息至房间

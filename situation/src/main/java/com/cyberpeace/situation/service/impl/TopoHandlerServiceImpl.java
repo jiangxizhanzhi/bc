@@ -508,7 +508,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	}
 
 	@Override
-	public List<JSONObject> getWsMultiNodeDynamicList(List<JSONObject> flowLogs, String sceneId) {
+	public List<JSONObject> getAttackEventList(List<JSONObject> flowLogs, String sceneId) {
 
 		List<JSONObject> arrayObjects = Lists.newArrayList();
 
@@ -543,7 +543,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 			// ws推送消息
 			WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(
-					MessageType.MultiNodeDynamic.getDesc(), attackEvent);
+					MessageType.AttackEvent.getDesc(), attackEvent);
 			JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage),
 					JSONObject.class);
 			pushDataToRoom(data, sceneId);

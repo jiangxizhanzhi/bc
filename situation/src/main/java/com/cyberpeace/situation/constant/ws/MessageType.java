@@ -9,7 +9,8 @@ public enum MessageType {
 	 */
 
 	SingleNodeDynamic(1, "single_node_dynamic"),
-    MultiNodeDynamic(2, "multi_node_dynamic");
+    MultiNodeDynamic(2, "multi_node_dynamic"),
+	AttackEvent(3, "attack_event");
 
 	@Getter
 	private Integer code;

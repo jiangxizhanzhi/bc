@@ -62,9 +62,9 @@ public class TopoTestController {
 		return data;
 	}
 
-	@ApiOperation("随机推送多点动效信息")
-	@GetMapping("multi_message")
-	public JSONObject sendMultiMessage(@ApiParam(name = "scene_id",
+	@ApiOperation("随机推送攻击动效信息")
+	@GetMapping("attack_event")
+	public JSONObject sendAttackEvent(@ApiParam(name = "scene_id",
 			value = "场景编号") @RequestParam(value = "scene_id", required = true) String sceneId) {
 
 		JSONArray elements = getElements(sceneId);
@@ -95,7 +95,7 @@ public class TopoTestController {
 				String.format("%s对%s发起%s", sourceName, targetName, actionType.getDesc()));
 
 		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(
-				MessageType.MultiNodeDynamic.getDesc(), wsEvent);
+				MessageType.AttackEvent.getDesc(), wsEvent);
 		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
 		topoHandlerService.pushDataToRoom(data, sceneId);
 		return data;

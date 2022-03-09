@@ -298,7 +298,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
     }
 
     private String getUserNameByIp(String sourceIp, List<ReportScoreConfig> typeConfigs, List<UserInfo> userByIdList) {
-        Map<String, String> userMaps = StreamApiUtils.toMap(userByIdList, UserInfo::getUserId, UserInfo::getUserName);
+        Map<String, String> userMaps = StreamApiUtils.toMap(userByIdList, UserInfo::getUserId, UserInfo::getName);
 
         for (ReportScoreConfig typeConfig : typeConfigs) {
             if (typeConfig.getValue().contains(sourceIp)) {

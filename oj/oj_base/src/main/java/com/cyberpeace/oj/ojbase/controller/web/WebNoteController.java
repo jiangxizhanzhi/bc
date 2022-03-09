@@ -91,7 +91,7 @@ public class WebNoteController {
 
 		// 无笔记存在 实验报告返回默认值
 		if (null == noteBo || StringUtils.isBlank(noteBo.getContent())) {
-
+			BaseRsp<WebNoteRes> rsp = new BaseRsp<>();
 			if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
 				String template_name = "oj.report.template_en.data";
 				if (CommonContext.isChinese()) {
@@ -101,13 +101,14 @@ public class WebNoteController {
 						.content(ConfigUtil.getContextProperty(template_name)).build();
 
 				if (null == noteBo) {
-					BaseRsp<WebNoteRes> rsp = new BaseRsp<>();
 					rsp.setData(webNoteRes);
 					return rsp;
 				}
 				String note_content = webNoteRes.getContent();
 				noteBo.setContent(note_content);
 
+			} else if (null == noteBo) {
+				return rsp;
 			}
 
 		}

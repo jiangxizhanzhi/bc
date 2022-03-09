@@ -55,11 +55,16 @@ public interface OjBusinessErrorCode {
 	/** 存在运行的场景*/
 	String SCENE_IS_RUNNING = "102016";
 
+	/** 场景运行过多*/
 	String SCENE_RUNNING_TOO_MUCH = "102017";
 
+	/** 字段数据过长*/
 	String FIELD_TOO_LONG = "102018";
 
+	/** 讲义内容错误*/
 	String LESSON_HANDOUT_CONTENT_ERROR = "102019";
 
+	/** 课时目录名称错误*/
 	String LESSON_DIR_NAME_ERROR = "102020";
+
 }

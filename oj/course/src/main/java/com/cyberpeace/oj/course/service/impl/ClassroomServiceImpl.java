@@ -666,7 +666,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		ClassroomSign classroomSign = userSignMap.get(userInfo.getUserId());
 		monitorBo.setSignIn(null != classroomSign);
 		monitorBo.setNeedHelp(
-				null != classroomSign ? StringUtils.isNotBlank(classroomSign.getNodeId()) : null);
+				null != classroomSign ? StringUtils.isNotBlank(classroomSign.getNodeId()) : false);
 		monitorBo.setSignInTime(null != classroomSign ? classroomSign.getSignInTime() : null);
 
 		return monitorBo;

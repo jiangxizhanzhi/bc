@@ -66,8 +66,8 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	public void needHelp(String lessonId, String nodeId) {
 
 		// 课堂数据校验
-		Classroom classroom = classroomValidateHandler.validateClassroomLessonExist(lessonId,
-				UserInfoContext.getUserContext().getOrganizationId());
+		Classroom classroom = classroomMapper.selectByOrgAndLesson(
+				UserInfoContext.getUserContext().getOrganizationId(), lessonId);
 
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(
 				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());

@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class JyjWsEvent implements Serializable {
 
     @ApiModelProperty("攻击队伍名称")
-    private String sourceName;
+    private String name;
 
     @ApiModelProperty("攻击节点id")
     private String sourceId;

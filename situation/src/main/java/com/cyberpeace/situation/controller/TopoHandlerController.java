@@ -348,7 +348,7 @@ public class TopoHandlerController {
         List<ElementInfo> randomElements = topoHandlerService.getRandomElements(elements, 2);
         jyjWsEvent.setSourceId(randomElements.get(0).getElementId());
         jyjWsEvent.setTargetId(randomElements.get(1).getElementId());
-        jyjWsEvent.setSourceName("攻击队伍");
+        jyjWsEvent.setName("攻击队伍");
         jyjWsEvent.setDesc("攻击描述");
         jyjWsEvent.setLookAtTarget((new Random()).nextBoolean());
         jyjWsEvent.setLineStyle(topoHandlerService.getLineStyle());

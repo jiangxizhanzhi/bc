@@ -51,7 +51,9 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
     private static final String SCENE_KEY = "scene";
 
-    private static final String TOPE_KEY = "topo";
+    private static final String TOPO_KEY = "topo";
+
+    private static final String TEST_KEY = "test";
 
     private static final String LAST_TIME_KEY = "last_time";
 
@@ -159,9 +161,10 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
     @Override
     public void testWS(String sourceName, String targetName) {
         // ws推送大屏消息
-        ReportScoreConfig topoConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, TOPE_KEY, null);
+        ReportScoreConfig topoConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, TOPO_KEY, null);
+        ReportScoreConfig testConfig = reportScoreConfigMapper.getTypeConfig(TEST_KEY, TEST_KEY, null);
         JyjWsEvent jyjWsEvent = new JyjWsEvent();
-        jyjWsEvent.setSourceName(targetName);
+        jyjWsEvent.setName(targetName);
         jyjWsEvent.setLookAtTarget(true);
         jyjWsEvent.setSourceId(sourceName);
         jyjWsEvent.setTargetId(targetName);
@@ -170,7 +173,11 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         Integer code = enumByEnDesc.getCode();
         String attackType = enumByEnDesc.getCnDesc();
         jyjWsEvent.setAttackType(code);
+
         String desc = String.format("%s对%s发起%s", "test", "test服务器", attackType);
+        if (testConfig != null) {
+            desc = testConfig.getValue();
+        }
         jyjWsEvent.setDesc(desc);
 
         LineStyle lineStyle = new LineStyle();
@@ -197,7 +204,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         AttackLogPageContext attackLogPageContext = new AttackLogPageContext();
 
         ReportScoreConfig typeConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, SCENE_KEY, null);
-        ReportScoreConfig topoConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, TOPE_KEY, null);
+        ReportScoreConfig topoConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, TOPO_KEY, null);
 
         List<ReportScoreConfig> typeConfigs = reportScoreConfigMapper.getTypeConfigs(USER_TYPE);
         List<String> userIds = StreamApiUtils.map(typeConfigs, ReportScoreConfig::getKey);
@@ -314,7 +321,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
     private JyjWsEvent getWsEvent(JSONObject object, String userName) {
         JyjWsEvent jyjWsEvent = new JyjWsEvent();
-        jyjWsEvent.setSourceName(userName);
+        jyjWsEvent.setName(userName);
         jyjWsEvent.setLookAtTarget(true);
         jyjWsEvent.setSourceId(object.getString("source_node_name"));
         jyjWsEvent.setTargetId(object.getString("target_node_name"));

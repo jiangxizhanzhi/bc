@@ -29,6 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,6 +66,9 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
     @Autowired
     private TopoHandlerService topoHandlerService;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
     @Override
     public List<String> getUserIds() {
@@ -214,6 +220,11 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
         ReportScoreConfig lastTime = reportScoreConfigMapper.getTypeConfig(AUTO_TYPE, LAST_TIME_KEY, null);
 
+        if (lastTime == null) {
+            lastTime = new ReportScoreConfig();
+            lastTime.setType(AUTO_TYPE);
+            lastTime.setKey(LAST_TIME_KEY);
+         }
 
         for (JSONObject object : Lists.reverse(objects)) {
             AttackLogRes attackLogRes = new AttackLogRes();
@@ -235,9 +246,19 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
             arrayObjects.add(attackLogRes);
         }
+        if (lastTime.getValue() != null) {
+            ReportScoreConfig finalLastTime = lastTime;
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-        reportScoreConfigMapper.deleteByTypeAndKey(lastTime);
-        reportScoreConfigMapper.insertReportScoreConfig(lastTime);
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                    reportScoreConfigMapper.deleteByTypeAndKey(finalLastTime);
+                    reportScoreConfigMapper.insertReportScoreConfig(finalLastTime);
+                }
+            });
+
+        }
+
 
         return arrayObjects;
     }
@@ -250,10 +271,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
      * @pfram attackTime
      */
     private boolean checkLastTime(String attackTime, ReportScoreConfig lastTime) {
-        if (lastTime == null) {
-            lastTime = new ReportScoreConfig();
-            lastTime.setType(AUTO_TYPE);
-            lastTime.setKey(LAST_TIME_KEY);
+        if (lastTime.getValue() == null) {
             lastTime.setValue(attackTime);
 
             return true;

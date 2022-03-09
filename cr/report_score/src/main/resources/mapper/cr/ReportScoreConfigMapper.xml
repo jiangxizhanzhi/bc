@@ -22,7 +22,7 @@
     <delete id="deleteByTypeAndKey">
         DELETE FROM  `cr_report_score_config` WHERE
         `key` = #{key}
-        and `type` =  #{type}
+        and `type` = #{type}
     </delete>
 
     <select id="getTypeConfigs"

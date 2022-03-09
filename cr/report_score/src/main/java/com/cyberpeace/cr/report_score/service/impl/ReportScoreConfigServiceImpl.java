@@ -136,7 +136,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         AttackIpContext attackIpContext = new AttackIpContext();
         attackIpContext.setSceneId(sceneId);
         attackIpContext.setSourceIps(ips);
-        attackIpContext.setIps(ips);
+//        attackIpContext.setIps(ips);
         attackIpContext.setIpType(1);
 
         return remoteSituationService

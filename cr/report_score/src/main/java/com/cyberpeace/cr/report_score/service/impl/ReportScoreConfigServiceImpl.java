@@ -335,7 +335,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         Integer code = enumByEnDesc.getCode();
         String attackType = enumByEnDesc.getCnDesc();
         jyjWsEvent.setAttackType(code);
-        String desc = String.format("%s对%s发起%s", userName, object.getString("target_node_name"), attackType);
+        String desc = String.format("<color=#e6a23c>【%s】</color>对%s发起<color=#e6a23c> %s </color>", userName, object.getString("target_node_name"), attackType);
         jyjWsEvent.setDesc(desc);
 
         LineStyle lineStyle = new LineStyle();

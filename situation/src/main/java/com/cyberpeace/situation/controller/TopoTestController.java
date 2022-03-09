@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势消息推送测试")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation/ws")
 public class TopoTestController {
 

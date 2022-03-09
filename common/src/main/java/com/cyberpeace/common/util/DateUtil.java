@@ -8,6 +8,8 @@ public class DateUtil {
 
 	public static final String SHOT_PATTERN = "yyyy-MM-dd";
 
+	public static final String NORMAL_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
 	public static String DateToString(Date date, String pattern) {
 		if (date == null) {
 			return "";

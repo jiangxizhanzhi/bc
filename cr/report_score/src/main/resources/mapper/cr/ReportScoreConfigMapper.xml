@@ -8,6 +8,22 @@
         <result property="key" column="key" />
         <result property="value" column="value" />
     </resultMap>
+    <insert id="insertReportScoreConfig">
+        insert into cr_report_score_config  ( `type`, `key`, `value` )  values
+        (#{type},  #{key},  #{value} )
+    </insert>
+    <update id="updateByTypeAndKey">
+        update `cr_report_score_config`
+        set `value` = #{value}
+        where
+            `key` = #{key}
+            and `type` =  #{type}
+    </update>
+    <delete id="deleteByTypeAndKey">
+        DELETE FROM  `cr_report_score_config` WHERE
+        `key` = #{key}
+        and `type` =  #{type}
+    </delete>
 
     <select id="getTypeConfigs"
             resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig">

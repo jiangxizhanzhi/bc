@@ -2,8 +2,10 @@ package com.cyberpeace.cr.report_score.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -42,9 +44,13 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
     private static final String SYSTEM_TYPE = "system";
 
+    private static final String AUTO_TYPE = "auto";
+
     private static final String SCENE_KEY = "scene";
 
     private static final String TOPE_KEY = "topo";
+
+    private static final String LAST_TIME_KEY = "last_time";
 
     @Autowired
     private ReportScoreConfigMapper reportScoreConfigMapper;
@@ -93,6 +99,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         return typeConfigs.stream()
                 .collect(Collectors.toMap(ReportScoreConfig::getKey, ReportScoreConfig::getValue));
     }
+
     public JSONArray getAttackTypeCount(String sceneId) {
         String ips = getSourceIps();
         if (StringUtils.isBlank(ips) || StringUtils.isBlank(sceneId)) {
@@ -173,8 +180,8 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         List<ReportScoreConfig> typeConfigs = reportScoreConfigMapper.getTypeConfigs(USER_TYPE);
         String userIps = ListUtil.list2String(StreamApiUtils.map(typeConfigs, ReportScoreConfig::getValue));
 
-        if(userIps.endsWith(",")){
-            userIps = userIps.substring(0,userIps.length()-1);
+        if (userIps.endsWith(",")) {
+            userIps = userIps.substring(0, userIps.length() - 1);
         }
         return userIps;
     }
@@ -205,9 +212,10 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
         List<AttackLogRes> arrayObjects = Lists.newArrayList();
 
+        ReportScoreConfig lastTime = reportScoreConfigMapper.getTypeConfig(AUTO_TYPE, LAST_TIME_KEY, null);
 
 
-        for (JSONObject object : objects) {
+        for (JSONObject object : Lists.reverse(objects)) {
             AttackLogRes attackLogRes = new AttackLogRes();
             attackLogRes.setAttackTime(object.getString("time"));
             attackLogRes.setSourceIp(object.getString("source_ip"));
@@ -217,15 +225,51 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
             String userName = getUserNameByIp(object.getString("source_ip"), typeConfigs, userByIdList);
             attackLogRes.setUserName(userName);
 
-            // ws推送大屏消息
-            JyjWsEvent wsEvent = getWsEvent(object, userName);
-            JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
-            topoHandlerService.pushDataToRoom(data, topoConfig.getValue());
+            if (checkLastTime(attackLogRes.getAttackTime(), lastTime)) {
+                // ws推送大屏消息
+                JyjWsEvent wsEvent = getWsEvent(object, userName);
+                JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
+                topoHandlerService.pushDataToRoom(data, topoConfig.getValue());
+            }
+
 
             arrayObjects.add(attackLogRes);
         }
 
+        reportScoreConfigMapper.deleteByTypeAndKey(lastTime);
+        reportScoreConfigMapper.insertReportScoreConfig(lastTime);
+
         return arrayObjects;
+    }
+
+    /**
+     * 攻击时间晚于上次数据库记录的最大时间，返回true，否则返回false
+     *
+     * @param lastTime
+     * @return
+     * @pfram attackTime
+     */
+    private boolean checkLastTime(String attackTime, ReportScoreConfig lastTime) {
+        if (lastTime == null) {
+            lastTime = new ReportScoreConfig();
+            lastTime.setType(AUTO_TYPE);
+            lastTime.setKey(LAST_TIME_KEY);
+            lastTime.setValue(attackTime);
+
+            return true;
+        } else {
+            Date lastDate = DateUtil.StringToDate(lastTime.getValue(), DateUtil.NORMAL_PATTERN);
+            //数据库记录的最新时间早于攻击时间，发送消息
+            if (lastDate.before(DateUtil.StringToDate(attackTime, DateUtil.NORMAL_PATTERN))) {
+                lastTime.setValue(attackTime);
+
+                return true;
+                //数据库记录的最新时间晚于攻击时间，不发送消息
+            } else {
+                return false;
+            }
+
+        }
     }
 
     private String getUserNameByIp(String sourceIp, List<ReportScoreConfig> typeConfigs, List<UserInfo> userByIdList) {
@@ -234,7 +278,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         for (ReportScoreConfig typeConfig : typeConfigs) {
             if (typeConfig.getValue().contains(sourceIp)) {
                 return userMaps.getOrDefault(typeConfig.getKey(), "");
-             }
+            }
         }
 
         return "";

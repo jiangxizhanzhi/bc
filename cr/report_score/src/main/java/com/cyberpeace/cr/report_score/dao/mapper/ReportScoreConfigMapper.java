@@ -15,4 +15,10 @@ public interface ReportScoreConfigMapper extends BaseMapper<ReportScoreConfig> {
 	List<ReportScoreConfig> getTypeConfigs(@Param("type") String type);
 
 	ReportScoreConfig getTypeConfig(@Param("type") String type, @Param("key") String key, @Param("value") String value);
+
+	void updateByTypeAndKey(ReportScoreConfig lastTime);
+
+	void insertReportScoreConfig(ReportScoreConfig lastTime);
+
+	void deleteByTypeAndKey(ReportScoreConfig lastTime);
 }

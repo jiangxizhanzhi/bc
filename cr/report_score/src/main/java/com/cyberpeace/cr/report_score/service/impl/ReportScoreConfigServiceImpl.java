@@ -171,7 +171,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         String attackType = enumByEnDesc.getCnDesc();
         jyjWsEvent.setAttackType(code);
         String desc = String.format("%s对%s发起%s", "test", "test服务器", attackType);
-        jyjWsEvent.setDescription(desc);
+        jyjWsEvent.setDesc(desc);
 
         LineStyle lineStyle = new LineStyle();
         lineStyle.setLineType("dashed");
@@ -329,7 +329,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         String attackType = enumByEnDesc.getCnDesc();
         jyjWsEvent.setAttackType(code);
         String desc = String.format("%s对%s发起%s", userName, object.getString("target_node_name"), attackType);
-        jyjWsEvent.setDescription(desc);
+        jyjWsEvent.setDesc(desc);
 
         LineStyle lineStyle = new LineStyle();
         lineStyle.setLineType("dashed");

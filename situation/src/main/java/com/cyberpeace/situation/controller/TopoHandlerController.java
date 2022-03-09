@@ -349,7 +349,7 @@ public class TopoHandlerController {
         jyjWsEvent.setSourceId(randomElements.get(0).getElementId());
         jyjWsEvent.setTargetId(randomElements.get(1).getElementId());
         jyjWsEvent.setSourceName("攻击队伍");
-        jyjWsEvent.setDescription("攻击描述");
+        jyjWsEvent.setDesc("攻击描述");
         jyjWsEvent.setLookAtTarget((new Random()).nextBoolean());
         jyjWsEvent.setLineStyle(topoHandlerService.getLineStyle());
         JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(jyjWsEvent), JSONObject.class);

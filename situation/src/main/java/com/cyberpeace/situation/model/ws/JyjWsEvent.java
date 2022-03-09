@@ -25,7 +25,7 @@ public class JyjWsEvent implements Serializable {
     private LineStyle lineStyle;
 
     @ApiModelProperty("描述")
-    private String description;
+    private String desc;
 
     @ApiModelProperty("是否聚焦到被攻击节点")
     private Boolean lookAtTarget;

@@ -240,18 +240,21 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
             attackLogRes.setTargetIp(object.getString("target_ip"));
             attackLogRes.setTargetNodeName(object.getString("target_node_name"));
 
-            String userName = getUserNameByIp(object.getString("source_ip"), typeConfigs, userByIdList);
-            attackLogRes.setUserName(userName);
+            if(StringUtils.isNotEmpty(attackLogRes.getTargetNodeName())){
+                String userName = getUserNameByIp(object.getString("source_ip"), typeConfigs, userByIdList);
+                attackLogRes.setUserName(userName);
 
-            if (checkLastTime(object.getString("timestamp"), lastTime)) {
-                // ws推送大屏消息
-                JyjWsEvent wsEvent = getWsEvent(object, userName);
-                JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
-                topoHandlerService.pushDataToRoom(data, topoConfig.getValue());
+                if (checkLastTime(object.getString("timestamp"), lastTime)) {
+                    // ws推送大屏消息
+                    JyjWsEvent wsEvent = getWsEvent(object, userName);
+                    JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsEvent), JSONObject.class);
+                    topoHandlerService.pushDataToRoom(data, topoConfig.getValue());
+                }
+
+
+                arrayObjects.add(attackLogRes);
             }
 
-
-            arrayObjects.add(attackLogRes);
         }
         if (lastTime.getValue() != null) {
             ReportScoreConfig finalLastTime = lastTime;
@@ -330,7 +333,8 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         AttackType enumByEnDesc = AttackLogEnumUtils.getEnumByEnDesc(enDesc, AttackType.class);
         if (enumByEnDesc == null) {
             log.info(String.format("enDesc is %s, getEnumByEnDesc is null", enDesc));
-            return null;
+//            return null;
+            enumByEnDesc = AttackType.NOT_SUSPICIOUS;
         }
         Integer code = enumByEnDesc.getCode();
         String attackType = enumByEnDesc.getCnDesc();

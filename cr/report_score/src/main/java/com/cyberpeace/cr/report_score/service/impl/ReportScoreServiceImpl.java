@@ -133,7 +133,13 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
 
     @Override
     public RankingRep getRankScore(String userId) {
-        List<RankingRep> rankingRepList = reportScoreMapper.getRankScore();
+        List<RankingRep> rankingList = reportScoreMapper.getRankScore();
+
+        Map<String, String> rankScoreMap = rankingList.stream()
+                .collect(Collectors.toMap(RankingRep::getUserId, RankingRep::getSumScore));
+        List<UserInfo> userInfoList = getUsers();
+        List<RankingRep> rankingRepList = baseRanking(userInfoList, rankScoreMap);
+
         List<String> userIds = reportScoreConfigService.getUserIds();
         for (RankingRep rankingRep : rankingRepList) {
             if(rankingRep.getUserId().equals(userId) && userIds.contains(rankingRep.getUserId())) {

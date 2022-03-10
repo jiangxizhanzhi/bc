@@ -7,7 +7,7 @@ public enum AttackType implements AttackLogEnum {
     /**
      * 攻击类型
      */
-    NOT_SUSPICIOUS(9, "普通攻击", "非可疑流量", "Not Suspicious Traffic", "not-suspicious"),
+    NOT_SUSPICIOUS(9, "普通攻击", "可疑流量", "Not Suspicious Traffic", "not-suspicious"),
     UNKNOWN(9, "普通攻击", "未知流量", "Unknown Traffic", "unknown"),
     BAD_UNKNOWN(9, "普通攻击", "构造流量攻击", "Potentially Bad Traffic", "bad-unknown"),
     ATTEMPTED_RECON(5, "尝试攻击", "信息泄露", "Attempted Information Leak", "attempted-recon"),

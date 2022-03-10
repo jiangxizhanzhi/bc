@@ -19,4 +19,11 @@ public class RemoteHelpReq implements Serializable {
 	@NotBlank
 	private String nodeId;
 
+	public void setLesson_id(String lessonId) {
+		this.lessonId = lessonId;
+	}
+
+	public void setNode_id(String nodeId) {
+		this.nodeId = nodeId;
+	}
 }

@@ -44,6 +44,7 @@ import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "oj-后台实践操作练习相关api")
 @RestController
@@ -82,15 +83,20 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		PracticeOperation addOperation = BeanUtils.copy(addReq, PracticeOperation.class);
 		addOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
-		if (null != addReq.getFile() && !addReq.getFile().isEmpty()) {
-			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, addReq.getFile(), true);
-			addOperation.setAttachmentId(attachmentBo.getResourceId());
-		}
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
 				JsonUtil.toJsonObject(addReq.getSceneConfigData(), JSONObject.class), authContext);
 
 		return new BaseRsp(result);
+	}
+
+	@ApiOperation("实操习题附件上传")
+	@PostMapping("/upload_attachment")
+	public BaseRsp<String>
+			uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
+
+		AttachmentBo attachmentBo = attachmentService
+				.uploadDest(AttachmentPath.PRACTICE_ATTACHMENT.getDesc(), true, multipartFile);
+		return new BaseRsp<>(attachmentBo.getResourceId());
 	}
 
 	@ApiOperation("实践操作习题修改")
@@ -98,18 +104,6 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	public BaseRsp<Integer> update(@Validated(Update.class) OperationUpdateReq updateReq) {
 
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
-
-		// 文件路径为空则代表 前端页面删除了附件
-		if (StringUtils.isBlank(updateReq.getFileUrl())) {
-			updateOperation.setAttachmentId("");
-		}
-
-		// 文件不为空则 前端上传了新的附件
-		if (null != updateReq.getFile() && !updateReq.getFile().isEmpty()) {
-			AttachmentBo attachmentBo = attachmentService.uploadFile(
-					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, updateReq.getFile(), true);
-			updateOperation.setAttachmentId(attachmentBo.getResourceId());
-		}
 
 		Integer result = practiceOperationService.updateOperation(updateOperation,
 				JsonUtil.toJsonObject(updateReq.getSceneConfigData(), JSONObject.class));

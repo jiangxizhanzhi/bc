@@ -7,10 +7,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.mapper.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.expression.Operation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -58,14 +61,6 @@ import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
@@ -139,6 +134,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private PracticeRandomFlagMapper practiceRandomFlagMapper;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -245,7 +243,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// topo更新
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
-			updateOperation.setTopoId(localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId()));;
+			updateOperation.setTopoId(
+					localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId()));;
 		}
 
 		return practiceOperationMapper.updateById(updateOperation);
@@ -268,12 +267,66 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		// 获取附件信息
-		Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
+		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
+
+			// 随机flag文件查询
+			if (operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
+					.getCode().intValue()) {
+				// 查询是否已经分配附件
+				String attachmentId = practiceRandomFlagMapper.fileIdByUserAndPractice(
+						UserInfoContext.getUserContext().getUserId(), resourceId);
+
+				if (StringUtils.isBlank(attachmentId)) {
+					PracticeRandomFlag randomFlag = getRandomFlag(operation);
+					operationBo.setAttachmentId(randomFlag.getAttachmentId());
+					practiceRandomFlagMapper.insert(randomFlag);
+				} else {
+					operationBo.setAttachmentId(attachmentId);
+				}
+
+			}
+			setFile(operationBo);
+		}
+
+		return operationBo;
+	}
+
+	/**
+	 * 获取随机flag数据
+	 * @param operation
+	 * @return
+	 */
+	private PracticeRandomFlag getRandomFlag(PracticeOperation operation) {
+
+		if (StringUtils.isBlank(operation.getAttachmentId())) {
+			return null;
+		}
+
+		String[] strings = StringUtils.split(operation.getAttachmentId(),
+				CommonConstant.CODE_COMMA);
+		int index = MathUtils.randomRange(strings.length);
+
+		List<String> flags = JsonUtil.toJsonObjectArray(operation.getAnswer(), String.class);
+		PracticeRandomFlag randomFlag = new PracticeRandomFlag();
+		randomFlag.setFlag(flags.get(index));
+		randomFlag.setPracticeId(operation.getResourceId());
+		randomFlag.setUserId(UserInfoContext.getUserContext().getUserId());
+		randomFlag.setAttachmentId(strings[index]);
+
+		return randomFlag;
+	}
+
+	/**
+	 * 设置文件
+	 * @param operationBo
+	 */
+	private void setFile(OperationBo operationBo) {
+
+		Attachment attachment = attachmentMapper.selectById(operationBo.getAttachmentId());
 		if (null != attachment) {
 			operationBo.setFileName(attachment.getFileName());
 			operationBo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
 		}
-		return operationBo;
 	}
 
 	@Override
@@ -889,9 +942,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			// 场景flag类型
 			if (StringUtils.isBlank(flag)) {
-				operation.setDynamicFlag(CommonConstant.TRUE);
+				operation.setDynamicFlag(PracticeOperation.DynamicFlag.DYNAMIC.getCode());
 			} else {
-				operation.setDynamicFlag(CommonConstant.FALSE);
+				operation.setDynamicFlag(PracticeOperation.DynamicFlag.STATIC.getCode());
 				operation.setAnswer(flag);
 			}
 		}

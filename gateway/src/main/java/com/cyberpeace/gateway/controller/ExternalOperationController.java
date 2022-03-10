@@ -124,7 +124,8 @@ public class ExternalOperationController {
 		}
 
 		externalOperationBo.setIsDynamicEnv(operation.getDynamicEnv());
-		externalOperationBo.setIsDynamicFlag(operation.getDynamicFlag());
+		externalOperationBo.setIsDynamicFlag(operation.getDynamicFlag()
+				.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode().intValue());
 		externalOperationBo.setShareMode(operation.getSceneShareMode());
 
 		return externalOperationBo;

@@ -15,13 +15,6 @@ public class OperationUpdateReq extends OperationAddReq {
 	@NotBlank(groups = { Update.class })
 	private String resourceId;
 
-	@ApiModelProperty(name = "file_url", value = "附件路径")
-	private String fileUrl;
-
-	public void setFile_url(String filePath) {
-		this.fileUrl = filePath;
-	}
-
 	public void setResource_id(String resourceId) {
 		this.resourceId = resourceId;
 	}

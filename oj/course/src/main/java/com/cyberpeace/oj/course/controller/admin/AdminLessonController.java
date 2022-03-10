@@ -185,7 +185,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@DeleteMapping("/batch")
 	public BaseRsp<Boolean> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
-		// todo 新增课程编号传递
 		String lessonId = batchDeleteReq.getResourceIds().get(CommonConstant.ZERO);
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 

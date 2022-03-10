@@ -104,7 +104,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				sceneContext.getSharedType().intValue() == SceneShare.SHARED.getCode().intValue());
 
 		// flag设置
-		if (sceneContext.getDynamicFlag()) {
+		if (sceneContext.getDynamicFlag().intValue() == CommonConstant.TWO) {
 			String templateData = ConfigUtil.getContextProperty("oj.flag.template.data");
 			String flagPrefix = systemConfigService.getSystemConfig("flag_prefix");
 			String FLAG_TEMPLATE = String.format(templateData, flagPrefix, "%s");
@@ -113,7 +113,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			String flag = String.format(FLAG_TEMPLATE,
 					LocalStringUtil.getRandomStr(Integer.parseInt(FLAG_LENGTH)));
 			ojLocalScene.setFlags(JsonUtil.arrayToString(Arrays.asList(flag)));
-		} else {
+		} else if (sceneContext.getDynamicFlag().intValue() == CommonConstant.ZERO) {
 			ojLocalScene.setFlags(JsonUtil.toJsonString(sceneContext.getFlags()));
 		}
 

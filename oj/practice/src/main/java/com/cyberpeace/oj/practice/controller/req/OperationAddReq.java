@@ -42,8 +42,8 @@ public class OperationAddReq implements Serializable {
 	@NotBlank(groups = { Create.class })
 	private String content;
 
-	@ApiModelProperty("附件")
-	private MultipartFile file;
+	@ApiModelProperty("附件编号")
+	private String attachmentId;
 
 	@ApiModelProperty(name = "dynamic_env", value = "是否为动态环境")
 	@NotNull(groups = { Create.class })
@@ -58,8 +58,8 @@ public class OperationAddReq implements Serializable {
 	@ApiModelProperty(name = "scene_share_mode", value = "场景共享类型 1=个人 2=共享")
 	private Integer sceneShareMode;
 
-	@ApiModelProperty(name = "dynamic_flag", value = "是否为动态flag")
-	private Boolean dynamicFlag;
+	@ApiModelProperty(name = "dynamic_flag", value = "是否为动态flag 0=静态 1=动态 2=随机")
+	private Integer dynamicFlag;
 
 	@ApiModelProperty(name = "destroy_delay", value = "场景存活时间")
 	@NotNull(groups = { Create.class })
@@ -107,7 +107,7 @@ public class OperationAddReq implements Serializable {
 		this.sceneShareMode = sceneShareMode;
 	}
 
-	public void setDynamic_flag(Boolean dynamicFlag) {
+	public void setDynamic_flag(Integer dynamicFlag) {
 		this.dynamicFlag = dynamicFlag;
 	}
 

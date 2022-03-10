@@ -24,6 +24,7 @@ public interface ClassroomSignService extends IService<ClassroomSign> {
 	/**
 	 * 远程协助数据注销
 	 * @param classroomId
+	 * @param userId
 	 */
-	void toHelp(String classroomId);
+	void toHelp(String classroomId, String userId);
 }

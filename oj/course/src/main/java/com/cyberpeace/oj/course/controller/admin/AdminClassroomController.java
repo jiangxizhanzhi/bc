@@ -27,8 +27,7 @@ import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -138,9 +137,12 @@ public class AdminClassroomController {
 
 	@ApiOperation("进行远程协助")
 	@GetMapping("/to_help")
-	public BaseRsp toHelp(@RequestParam("resource_id") String classroomId) {
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
+			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	public BaseRsp toHelp(@RequestParam("resource_id") String classroomId,
+			@RequestParam("user_id") String userId) {
 
-		classroomSignService.toHelp(classroomId);
+		classroomSignService.toHelp(classroomId, userId);
 		return new BaseRsp();
 	}
 

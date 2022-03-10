@@ -219,6 +219,8 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 //		attackLogPageContext.setStartTime(startTime);
 //		attackLogPageContext.setEndTime(endTime);
         attackLogPageContext.setSourceIps(userIps);
+        attackLogPageContext.setPerPage(30);
+        attackLogPageContext.setFilterDestinationIps("8.8.8.8,239.255.255.250,169.254.169.254");
 
         JSONObject attackLog = remoteSituationService.getAttackLog(attackLogPageContext);
         List<JSONObject> objects = JsonUtil.toJsonObjectArray(attackLog.getJSONArray("list").toString(), JSONObject.class);
@@ -240,7 +242,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
             attackLogRes.setTargetIp(object.getString("target_ip"));
             attackLogRes.setTargetNodeName(object.getString("target_node_name"));
 
-            if(StringUtils.isNotEmpty(attackLogRes.getTargetNodeName())){
+            if (StringUtils.isNotEmpty(attackLogRes.getTargetNodeName())) {
                 String userName = getUserNameByIp(object.getString("source_ip"), typeConfigs, userByIdList);
                 attackLogRes.setUserName(userName);
 
@@ -252,7 +254,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
                 }
 
 
-                arrayObjects.add(attackLogRes);
+                arrayObjects.add(0,attackLogRes);
             }
 
         }
@@ -270,7 +272,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         }
 
 
-        return arrayObjects;
+        return arrayObjects.size() > 10 ? arrayObjects.subList(0, 10) : arrayObjects;
     }
 
     /**
@@ -303,13 +305,23 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
     private String getUserNameByIp(String sourceIp, List<ReportScoreConfig> typeConfigs, List<UserInfo> userByIdList) {
         Map<String, String> userMaps = StreamApiUtils.toMap(userByIdList, UserInfo::getUserId, UserInfo::getName);
 
+        List<String> userNames = Lists.newArrayList();
+
         for (ReportScoreConfig typeConfig : typeConfigs) {
             if (typeConfig.getValue().contains(sourceIp)) {
-                return userMaps.getOrDefault(typeConfig.getKey(), "");
+                userNames.add(userMaps.getOrDefault(typeConfig.getKey(), ""));
             }
         }
 
-        return "";
+        return getRamdom(userNames);
+    }
+
+    private String getRamdom(List<String> userNames) {
+        if (userNames.size() == 0) {
+            return "";
+        } else {
+            return userNames.get((int) Math.floor(Math.random() * userNames.size()));
+        }
     }
 
     private String getUserName(String sourceIp) {
@@ -328,8 +340,13 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         jyjWsEvent.setLookAtTarget(true);
         jyjWsEvent.setSourceId(object.getString("source_node_name"));
         jyjWsEvent.setTargetId(object.getString("target_node_name"));
+        JSONObject attackInfo = object.getObject("attack_info", JSONObject.class);
 
-        String enDesc = object.getObject("attack_info", JSONObject.class).getString("attack_type");
+        String enDesc = "";
+        if (attackInfo != null) {
+            enDesc = attackInfo.getString("attack_type");
+        }
+
         AttackType enumByEnDesc = AttackLogEnumUtils.getEnumByEnDesc(enDesc, AttackType.class);
         if (enumByEnDesc == null) {
             log.info(String.format("enDesc is %s, getEnumByEnDesc is null", enDesc));

@@ -20,4 +20,8 @@ public class AttackLogPageContext implements Serializable {
 
     private String sourceIps;
 
+    private String filterDestinationIps;
+
+    private Integer perPage;
+
 }

@@ -72,4 +72,5 @@ public interface OjBusinessErrorCode {
 
 	String OTHER_NODE_IN_ASSISTANCE = "102022";
 
+	String NON_DYNAMIC_ENVIRONMENT = "102023";
 }

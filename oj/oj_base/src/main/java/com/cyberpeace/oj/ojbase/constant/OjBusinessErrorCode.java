@@ -62,4 +62,6 @@ public interface OjBusinessErrorCode {
 	String LESSON_HANDOUT_CONTENT_ERROR = "102019";
 
 	String LESSON_DIR_NAME_ERROR = "102020";
+
+	String NON_DYNAMIC_ENVIRONMENT = "102023";
 }

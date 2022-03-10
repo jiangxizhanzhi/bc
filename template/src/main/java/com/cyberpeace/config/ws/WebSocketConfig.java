@@ -26,9 +26,6 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
 	@Autowired
 	private JwtHandShake jwtHandShake;
 
-	@Autowired
-	private NoAuthHandShake noAuthHandShake;
-
 	@Qualifier("chatWebSocketHandler")
 	@Autowired
 	private ChatWebSocketHandler chatWebSocketHandler;
@@ -41,7 +38,5 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
 				.setAllowedOrigins("*");
 		webSocketHandlerRegistry.addHandler(handler, "/ws/**").addInterceptors(jwtHandShake)
 				.setAllowedOrigins("*");
-		webSocketHandlerRegistry.addHandler(handler, "/ws/situation/**")
-				.addInterceptors(noAuthHandShake).setAllowedOrigins("*");
 	}
 }

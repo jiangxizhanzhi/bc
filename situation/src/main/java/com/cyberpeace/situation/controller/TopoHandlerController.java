@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势拓扑")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation")
 public class TopoHandlerController {
 
@@ -51,7 +53,7 @@ public class TopoHandlerController {
 
 		// 处理流量日志
 		List<JSONObject> wsMultiNodeDynamics = topoHandlerService
-				.getWsMultiNodeDynamicList(flowLogs, flowLogReq.getSceneId());
+				.getAttackEventList(flowLogs, flowLogReq.getSceneId());
 
 		return wsMultiNodeDynamics;
 	}

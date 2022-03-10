@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势消息推送测试")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation/ws")
 public class TopoTestController {
 
@@ -62,9 +64,9 @@ public class TopoTestController {
 		return data;
 	}
 
-	@ApiOperation("随机推送多点动效信息")
-	@GetMapping("multi_message")
-	public JSONObject sendMultiMessage(@ApiParam(name = "scene_id",
+	@ApiOperation("随机推送攻击动效信息")
+	@GetMapping("attack_event")
+	public JSONObject sendAttackEvent(@ApiParam(name = "scene_id",
 			value = "场景编号") @RequestParam(value = "scene_id", required = true) String sceneId) {
 
 		JSONArray elements = getElements(sceneId);
@@ -95,7 +97,7 @@ public class TopoTestController {
 				String.format("%s对%s发起%s", sourceName, targetName, actionType.getDesc()));
 
 		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(
-				MessageType.MultiNodeDynamic.getDesc(), wsEvent);
+				MessageType.AttackEvent.getDesc(), wsEvent);
 		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
 		topoHandlerService.pushDataToRoom(data, sceneId);
 		return data;

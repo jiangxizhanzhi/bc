@@ -67,4 +67,9 @@ public interface OjBusinessErrorCode {
 	/** 课时目录名称错误*/
 	String LESSON_DIR_NAME_ERROR = "102020";
 
+	/** 课堂未签到*/
+	String CLASS_NOT_SIGN = "102021";
+
+	String OTHER_NODE_IN_ASSISTANCE = "102022";
+
 }

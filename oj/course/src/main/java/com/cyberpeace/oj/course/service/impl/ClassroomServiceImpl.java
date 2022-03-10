@@ -359,7 +359,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 			JSONArray nodeSessions = remoteSceneService.getNodeSessions(sceneIds, nodeIds, null,
 					ClassroomSign.SessionType.ASSISTANCE.getType());
-			Map<String, String> userAssistanceMap = StreamApiUtils.toMap(nodeSessions,
+			List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
+					.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
+			Map<String, String> userAssistanceMap = StreamApiUtils.toMap(filterList,
 					object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
 					object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
 

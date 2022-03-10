@@ -72,7 +72,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(
 				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
 		if (null == classroomSign) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
 		}
 
 		// 已存在相同虚拟机远程协助不管
@@ -83,8 +83,8 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 		// 不能同时两台虚拟机都远程协助
 		if (StringUtils.isNotBlank(classroomSign.getNodeId())
-				&& classroomSign.getNodeId().equals(nodeId)) {
-			throw new BusinessException(OjBusinessErrorCode.SCENE_START_FAIL);
+				&& !classroomSign.getNodeId().equals(nodeId)) {
+			throw new BusinessException(OjBusinessErrorCode.OTHER_NODE_IN_ASSISTANCE);
 		}
 
 		// 数据填写到数据库

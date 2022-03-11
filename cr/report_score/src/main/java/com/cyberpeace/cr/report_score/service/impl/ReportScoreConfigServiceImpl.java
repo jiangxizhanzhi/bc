@@ -2,10 +2,8 @@ package com.cyberpeace.cr.report_score.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -15,9 +13,7 @@ import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreConfigMapper;
 import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.utils.AttackLogEnumUtils;
 import com.cyberpeace.integratation.model.AttackLogPageContext;
-import com.cyberpeace.integratation.model.context.AttackCountContext;
 import com.cyberpeace.integratation.model.context.AttackIpContext;
-import com.cyberpeace.integratation.model.mp.MpAttackCount;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.situation.constant.ws.AttackType;
@@ -159,7 +155,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
     }
 
     @Override
-    public void testWS(String sourceName, String targetName, String userName, String defaultAttackDesc) {
+    public void testWS(String sourceName, String targetName, String userName, String defaultAttackDesc, Integer defaultAttackCode) {
         // ws推送大屏消息
         ReportScoreConfig topoConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, TOPO_KEY, null);
         ReportScoreConfig testConfig = reportScoreConfigMapper.getTypeConfig(TEST_KEY, TEST_KEY, null);
@@ -169,8 +165,11 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         jyjWsEvent.setSourceId(sourceName);
         jyjWsEvent.setTargetId(targetName);
 
-        Integer attackCodes = (int)(Math.random()*9+1);
-        jyjWsEvent.setAttackType(attackCodes);
+        Integer attackCode = (int)(Math.random()*9+1);
+        if (defaultAttackCode != null) {
+            attackCode = defaultAttackCode;
+        }
+        jyjWsEvent.setAttackType(attackCode);
 
         String attackDesc = "可疑流量";
         if (StringUtils.isNotEmpty(defaultAttackDesc)) {

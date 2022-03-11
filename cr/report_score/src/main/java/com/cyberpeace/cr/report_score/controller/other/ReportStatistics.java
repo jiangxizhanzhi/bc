@@ -113,9 +113,10 @@ public class ReportStatistics {
 			@ApiParam(name = "sourceName", value = "源节点", required = true) String sourceName,
 			@ApiParam(name = "targetName", value = "目标节点", required = true) String targetName,
 			@ApiParam(name = "userName", value = "攻击用户", required = true) String userName,
-			@ApiParam(name = "attackDesc", value = "攻击描述", required = false) String attackDesc
-	) {
-		reportScoreConfigService.testWS(sourceName, targetName, userName, attackDesc);
+			@ApiParam(name = "attackDesc", value = "攻击描述", required = false) String attackDesc,
+			@ApiParam(name = "attackCode", value = "攻击特效", required = false) Integer attackCode
+			) {
+		reportScoreConfigService.testWS(sourceName, targetName, userName, attackDesc, attackCode);
 
 		return new BaseRsp<>("test over");
 	}

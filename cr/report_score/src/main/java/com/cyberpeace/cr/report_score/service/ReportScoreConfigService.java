@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.report_score.service;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.report_score.controller.res.AttackLogRes;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig;
@@ -26,5 +25,5 @@ public interface ReportScoreConfigService extends IService<ReportScoreConfig> {
 
 	JSONArray getAttackIpCount(String sceneId);
 
-	void testWS(String sourceName, String targetName, String userName, String attackDesc);
+	void testWS(String sourceName, String targetName, String userName, String attackDesc, Integer attackCode);
 }

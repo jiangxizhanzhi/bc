@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -252,7 +253,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public OperationBo selectById(String resourceId) {
+	public OperationBo selectById(String resourceId, AuthContext authContext) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
@@ -269,19 +270,33 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 获取附件信息
 		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
 
+			if (!authContext.getIsWeb()) {
+				List<String> attachmentIds = Lists
+						.newArrayList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
+				List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds, false);
+
+				List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachments, attachment -> {
+					PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
+					fileBo.setFileName(attachment.getFileName());
+					fileBo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
+					return fileBo;
+				});
+				operationBo.setFiles(fileBos);
+			}
+
 			// 随机flag文件查询
 			if (operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
 					.getCode().intValue()) {
 				// 查询是否已经分配附件
-				String attachmentId = practiceRandomFlagMapper.fileIdByUserAndPractice(
+				PracticeRandomFlag randomFlag = practiceRandomFlagMapper.fileIdByUserAndPractice(
 						UserInfoContext.getUserContext().getUserId(), resourceId);
 
-				if (StringUtils.isBlank(attachmentId)) {
-					PracticeRandomFlag randomFlag = getRandomFlag(operation);
+				if (null == randomFlag) {
+					randomFlag = getRandomFlag(operation);
 					operationBo.setAttachmentId(randomFlag.getAttachmentId());
 					practiceRandomFlagMapper.insert(randomFlag);
 				} else {
-					operationBo.setAttachmentId(attachmentId);
+					operationBo.setAttachmentId(randomFlag.getAttachmentId());
 				}
 
 			}
@@ -333,7 +348,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public WebOperationBo selectById(String resourceId, AuthContext authContext,
 			Boolean isCollected) {
 
-		OperationBo operationBo = selectById(resourceId);
+		OperationBo operationBo = selectById(resourceId, authContext);
 		WebOperationBo webOperationBo = BeanUtils.copy(operationBo, WebOperationBo.class);
 
 		// 收藏信息 解题状态查询

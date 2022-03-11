@@ -8,6 +8,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface PracticeRandomFlagMapper extends BaseMapper<PracticeRandomFlag> {
 
-	String fileIdByUserAndPractice(@Param("userId") String userId, @Param("practiceId") String practiceId);
+	PracticeRandomFlag fileIdByUserAndPractice(@Param("userId") String userId, @Param("practiceId") String practiceId);
 
 }

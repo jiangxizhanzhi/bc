@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.oj.practice.dao.entity.PracticeRandomFlag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,16 +70,9 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 		// 随机flag题目判断
 		if (practiceOperation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
 				.getCode().intValue()) {
-			String attachmentId = practiceRandomFlagMapper.fileIdByUserAndPractice(userId,
+			PracticeRandomFlag randomFlag = practiceRandomFlagMapper.fileIdByUserAndPractice(userId,
 					practiceOperation.getResourceId());
-
-			List<String> fileIds = Lists.newArrayList(
-					practiceOperation.getAttachmentId().split(CommonConstant.CODE_COMMA));
-			int index = fileIds.indexOf(attachmentId);
-
-			List<String> answers = JsonUtil.toJsonObjectArray(practiceOperation.getAnswer(),
-					String.class);
-			return JsonUtil.arrayToString(Lists.newArrayList(answers.get(index)));
+			return JsonUtil.arrayToString(Lists.newArrayList(randomFlag.getFlag()));
 		}
 
 		if (!practiceOperation.getDynamicEnv()

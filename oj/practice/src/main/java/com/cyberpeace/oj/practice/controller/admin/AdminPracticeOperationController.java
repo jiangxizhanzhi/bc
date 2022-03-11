@@ -69,7 +69,8 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	public BaseRsp<OperationBo> get(@ApiParam(name = "resource_id",
 			value = "资源编号") @RequestParam("resource_id") String resourceId) {
 
-		OperationBo operationBo = practiceOperationService.selectById(resourceId);
+		OperationBo operationBo = practiceOperationService.selectById(resourceId,
+				AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false));
 		return new BaseRsp(operationBo);
 	}
 

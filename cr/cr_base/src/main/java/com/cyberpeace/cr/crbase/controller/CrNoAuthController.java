@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchLoadMdReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -24,6 +25,7 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.resource.MDParser;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.LocalSceneService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,6 +55,9 @@ public class CrNoAuthController {
 	@Autowired
 	private AttachmentService attachmentService;
 
+	@Autowired
+	private LocalSceneService localSceneService;
+
 	@ApiOperation("批量导入资管模板")
 	@PostMapping("/batchLoadMD")
 	public BaseRsp<Boolean> batchLoadMd(@RequestBody @Valid BatchLoadMdReq req) {
@@ -77,6 +82,11 @@ public class CrNoAuthController {
 			BusinessTemplate template = mdParser.getBusinessTemplate();
 			List<MissionTemplate> missionTemplateList = mdParser.getMissionTemplates();
 			Map<String, String> attachments = mdParser.getImages();
+			// edit topo
+			JSONObject topoData = localSceneService.getTopoData(topoId);
+			localSceneService.saveTopo(topoData, businessTemplateService
+					.convertTypeToCode(template.getBusinessType()).getCode());
+
 			// get handler
 			BusinessTemplateHandler handler = businessTemplateHandler
 					.getHandler(template.getBusinessType());

@@ -33,4 +33,6 @@ public interface RbRoomMapper extends BaseMapper<RbRoom> {
 			@Param("endStatus") Integer endStatus);
 
 	Integer countByName(@Param("name") String name);
+
+    String getSceneIdsByNames(List<String> names);
 }

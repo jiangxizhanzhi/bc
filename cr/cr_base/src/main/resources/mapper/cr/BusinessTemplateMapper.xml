@@ -92,5 +92,8 @@
         end
         as result;
     </select>
+    <select id="getTemplateByName" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
+        select * from cr_business_template where `name` = #{name} order by `create_time` desc limit 1
+    </select>
 
 </mapper>

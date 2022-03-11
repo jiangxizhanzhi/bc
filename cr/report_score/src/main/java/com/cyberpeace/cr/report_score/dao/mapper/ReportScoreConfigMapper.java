@@ -21,4 +21,6 @@ public interface ReportScoreConfigMapper extends BaseMapper<ReportScoreConfig> {
 	void insertReportScoreConfig(ReportScoreConfig lastTime);
 
 	void deleteByTypeAndKey(ReportScoreConfig lastTime);
+
+    void deleteAll();
 }

@@ -7,6 +7,11 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.report_score.controller.req.ConfigAddReq;
+import com.cyberpeace.cr.report_score.controller.req.UserDataConfig;
 import com.cyberpeace.cr.report_score.controller.res.AttackLogRes;
 import com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig;
 import com.cyberpeace.cr.report_score.dao.mapper.ReportScoreConfigMapper;
@@ -67,6 +72,12 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
 
     @Autowired
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private BusinessTemplateService businessTemplateService;
+
+    @Autowired
+    private RbRoomService rbRoomService;
 
     @Override
     public List<String> getUserIds() {
@@ -187,6 +198,61 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         jyjWsEvent.setLineStyle(lineStyle);
         JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(jyjWsEvent), JSONObject.class);
         topoHandlerService.pushDataToRoom(data, topoConfig.getValue());
+    }
+
+    /**
+     * 请客配置数据
+     */
+    @Override
+    public void deleteAll() {
+        reportScoreConfigMapper.deleteAll();
+    }
+
+    @Override
+    public void saveConfig(ConfigAddReq configAddReq) {
+        String name = configAddReq.getName();
+        String topoName = configAddReq.getTopoName();
+        String scenesName = configAddReq.getScenesName();
+        List<UserDataConfig> usersData = configAddReq.getUsersData();
+
+
+        ArrayList<ReportScoreConfig> configLists = Lists.newArrayList();
+        ReportScoreConfig nameConfig = new ReportScoreConfig();
+        nameConfig.setType(SYSTEM_TYPE);
+        nameConfig.setKey("name");
+        nameConfig.setValue(name);
+
+        ReportScoreConfig topoConfig = new ReportScoreConfig();
+
+        topoConfig.setType(SYSTEM_TYPE);
+        topoConfig.setKey("topo");
+        BusinessTemplate businessTemplate = businessTemplateService.getTemplateByName(topoName);
+        topoConfig.setValue(businessTemplate.getTopoId());
+
+
+        ReportScoreConfig scenesConfig = new ReportScoreConfig();
+        scenesConfig.setType(SYSTEM_TYPE);
+        scenesConfig.setKey("scene");
+        String sceneIds = rbRoomService.getRbRoomDataByNames(scenesName);
+        scenesConfig.setValue(sceneIds);
+
+        configLists.add(nameConfig);
+        configLists.add(topoConfig);
+        configLists.add(scenesConfig);
+
+        for (UserDataConfig userDataConfig : usersData) {
+            ReportScoreConfig userConfig = new ReportScoreConfig();
+            userConfig.setType(USER_TYPE);
+            userConfig.setKey(userDataConfig.getUserId());
+            userConfig.setValue(userDataConfig.getIps());
+
+            configLists.add(userConfig);
+        }
+
+        for (ReportScoreConfig configList : configLists) {
+            reportScoreConfigMapper.insertReportScoreConfig(configList);
+        }
+
     }
 
     private String getSourceIps() {

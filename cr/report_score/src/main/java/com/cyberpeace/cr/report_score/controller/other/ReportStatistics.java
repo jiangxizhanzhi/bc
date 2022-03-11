@@ -3,6 +3,7 @@ package com.cyberpeace.cr.report_score.controller.other;
 import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.report_score.controller.req.ConfigAddReq;
 import com.cyberpeace.cr.report_score.controller.res.*;
 import com.cyberpeace.cr.report_score.service.ReportScoreConfigService;
 import com.cyberpeace.cr.report_score.service.ReportScoreService;
@@ -119,5 +120,19 @@ public class ReportStatistics {
 		reportScoreConfigService.testWS(sourceName, targetName, userName, attackDesc, attackCode);
 
 		return new BaseRsp<>("test over");
+	}
+
+	@ApiOperation("配置-添加")
+	@PostMapping("add/config")
+	public BaseRsp<String> addConfig(@RequestBody ConfigAddReq configAddReq) {
+		reportScoreConfigService.saveConfig(configAddReq);
+		return new BaseRsp<>("add over");
+	}
+
+	@ApiOperation("配置-重置")
+	@DeleteMapping("delete/config")
+	public BaseRsp<String> resetConfig() {
+		reportScoreConfigService.deleteAll();
+		return new BaseRsp<>("delete over");
 	}
 }

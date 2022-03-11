@@ -75,4 +75,6 @@ public interface RbRoomService extends IService<RbRoom> {
 	List<DashboardUser> getMembersInfo(String roleId, String roomId);
 
     void checkRoomUnclosed(String roomId);
+
+    String getRbRoomDataByNames(String scenesName);
 }

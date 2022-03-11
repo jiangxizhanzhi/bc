@@ -197,6 +197,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
+	public BusinessTemplate getTemplateByName(String name) {
+		return businessTemplateMapper.getTemplateByName(name);
+	}
+
+	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		return businessTemplateMapper.selectIdsByUserId(userId);
 	}

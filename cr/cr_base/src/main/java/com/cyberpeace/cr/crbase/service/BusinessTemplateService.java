@@ -123,4 +123,6 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * 创建或更新模板时校验是否重名
 	 */
 	void validateName(String name, Integer type, String resourceId);
+
+    BusinessTemplate getTemplateByName(String name);
 }

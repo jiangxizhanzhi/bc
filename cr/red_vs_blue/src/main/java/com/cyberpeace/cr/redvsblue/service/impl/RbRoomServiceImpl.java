@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -492,6 +493,13 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 
 		}
+	}
+
+	@Override
+	public String getRbRoomDataByNames(String scenesName) {
+		List<String> names = Arrays.asList(scenesName.split(","));
+		// 多个实例名称，返回对应的mp_scene_id， 多个使用逗号分割
+		return rbRoomMapper.getSceneIdsByNames(names);
 	}
 
 	@Override

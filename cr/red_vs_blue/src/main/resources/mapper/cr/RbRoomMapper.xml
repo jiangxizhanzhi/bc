@@ -136,5 +136,14 @@
         from cr_rb_room
         where `name` = #{name}
     </select>
+    <select id="getSceneIdsByNames" resultType="java.lang.String">
+        select group_concat(local_scene.mp_scene_id)
+        from local_scene, cr_rb_room
+        where local_scene.business_instance_id = cr_rb_room.resource_id
+          and cr_rb_room.name in
+        <foreach collection="names" item="name" separator="," open="(" close=")">
+            #{name}
+        </foreach>
+    </select>
 
 </mapper>

@@ -24,6 +24,9 @@
         `key` = #{key}
         and `type` = #{type}
     </delete>
+    <delete id="deleteAll">
+        TRUNCATE TABLE cr_report_score_config
+    </delete>
 
     <select id="getTypeConfigs"
             resultType="com.cyberpeace.cr.report_score.dao.entity.ReportScoreConfig">

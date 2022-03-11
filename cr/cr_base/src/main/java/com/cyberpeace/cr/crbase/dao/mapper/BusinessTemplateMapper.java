@@ -33,4 +33,6 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 */
 	Boolean existByNameAndTypeAndId(@Param("templateName") String templateName,
 			@Param("type") Integer type, @Param("templateId") String templateId);
+
+    BusinessTemplate getTemplateByName(String name);
 }

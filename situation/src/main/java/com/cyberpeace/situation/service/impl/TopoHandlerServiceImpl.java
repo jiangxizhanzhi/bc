@@ -1,12 +1,11 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.io.InputStream;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -21,17 +20,20 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.situation.constant.*;
+import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.model.*;
-import com.cyberpeace.situation.model.ws.SituationWsMessageIdentifier;
-import com.cyberpeace.situation.model.ws.WsMessage;
-import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
+import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class TopoHandlerServiceImpl implements TopoHandlerService {
 
@@ -62,7 +64,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 			extendElementInfo = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins")
 					.getJSONObject("cpcloud").getJSONObject("elements");
 		} else {
-			sceneTopo = remoteSceneService.getById(sceneId, null);
+			sceneTopo = getsceneTopoBySceneId(sceneId);
 			topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
 			extendElementInfo = sceneTopo.getJSONObject("scene").getJSONObject("plugins")
 					.getJSONObject("cpcloud").getJSONObject("elements");
@@ -93,6 +95,20 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		sceneData.setCategorieMap(categorieMap);
 
 		return sceneData;
+	}
+
+	@Override
+	public JSONObject getsceneTopoBySceneId(String sceneId) {
+		if ("demo".equals(sceneId)) {
+			return getDemoSceneTopo();
+		} else {
+			return remoteSceneService.getById(sceneId, null);
+		}
+	}
+
+	private JSONObject getDemoSceneTopo() {
+		InputStream inputStream = getClass().getResourceAsStream("/demo.json");
+		return JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
 	}
 
 	@Override
@@ -468,27 +484,21 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	}
 
 	@Override
-	public List<ElementInfo> getRandomElements(JSONArray elements, Integer num) {
+	public List<JSONObject> getRandomNodes(JSONArray nodes, Integer num) {
 		List<Integer> indexs = Lists.newArrayList();
-		List<ElementInfo> randomElements = Lists.newArrayList();
+		List<JSONObject> randomNodes = Lists.newArrayList();
 
 		for (int i = 0; i < num; i++) {
 			while (true) {
-				Integer j = (int) (Math.random() * elements.size());
+				Integer j = (int) (Math.random() * nodes.size());
 				if (!indexs.contains(j)) {
-					JSONObject element = elements.getJSONObject(j);
-					ElementInfo elementInfo = new ElementInfo();
-					elementInfo.setElementId(element.getString("id"));
-					elementInfo.setName(element.getString("name"));
-					elementInfo.setActionStatus(
-							ElementActionStatus.getRandomValue(ElementActionStatus.values()));
-					randomElements.add(elementInfo);
+					randomNodes.add(nodes.getJSONObject(j));
 					indexs.add(j);
 					break;
 				}
 			}
 		}
-		return randomElements;
+		return randomNodes;
 	}
 
 	@Override
@@ -513,7 +523,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		List<JSONObject> arrayObjects = Lists.newArrayList();
 
 		for (JSONObject flowLog : flowLogs) {
-			WsMultiNodeDynamic attackEvent = new WsMultiNodeDynamic();
+			WsMultiElementDynamic attackEvent = new WsMultiElementDynamic();
 
 			// 设置基础信息
 			attackEvent.setSceneId(sceneId);
@@ -537,20 +547,95 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 			// 设置事件描述
 			String sourceIp = flowLog.getString("source_ip");
+			String sourceName = flowLog.getString("source_node_name");
 			String targetIp = flowLog.getString("target_ip");
-			attackEvent.setDescription(
-					String.format("%s对%s发起%s", sourceIp, targetIp, attackType.getCnDesc()));
+			String targetName = flowLog.getString("target_node_name");
+			attackEvent.setDescription(String.format("%s(%s)对%s(%s)发起%s", sourceName, sourceIp,
+					targetName, targetIp, attackType.getCnDesc()));
 
 			// ws推送消息
-			WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(
-					MessageType.AttackEvent.getDesc(), attackEvent);
+			WsMessage<WsMultiElementDynamic> wsMessage = new WsMessage<>(
+					MessageType.AttackEventEE.getDesc(), attackEvent);
 			JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage),
 					JSONObject.class);
-			pushDataToRoom(data, sceneId);
 			arrayObjects.add(data);
 		}
 
 		return arrayObjects;
+	}
+
+	@Override
+	public WsMultiNodeDynamic getRandomWsMultNodeDynamic(String sceneId, Integer actionCode) {
+
+		// 处理事件类型
+		ActionType actionType = null;
+		if (actionCode != null) {
+			actionType = ActionType.getEnumByCode(actionCode, ActionType.class);
+		} else {
+			actionType = ActionType.getRandom(ActionType.values());
+		}
+
+		JSONObject sceneTopo = getsceneTopoBySceneId(sceneId);
+		JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
+		JSONArray elements = (JSONArray) topology.getOrDefault("elements",
+				JSONArray.parseArray(Lists.newArrayList().toString()));
+		JSONArray areas = (JSONArray) topology.getOrDefault("areas",
+				JSONArray.parseArray(Lists.newArrayList().toString()));
+
+		WsMultiNodeDynamic wsEvent = null;
+		if ("compound".equals(actionType.getType()) && !areas.isEmpty() && !elements.isEmpty()
+				&& new Random().nextBoolean()) {
+			wsEvent = getRandomWsMultiAreaDynamic(elements, areas);
+		} else if (elements.size() >= 2) {
+			wsEvent = getRandomWsMultiElementDynamic(elements);
+		} else {
+
+		}
+
+		wsEvent.setSceneId(sceneId);
+		wsEvent.setTime((new Date()).toString());
+		wsEvent.setCategory("attack");
+
+		wsEvent.setType(actionType.getCode());
+		wsEvent.setName(actionType.getDesc());
+
+		// 设置动效配置
+		wsEvent.setLineStyle(new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));
+		wsEvent.setLookAtTarget(new Random().nextBoolean());
+
+		// 补充动态描述
+		wsEvent.setDescription(wsEvent.getDescription().replace("$攻击$", actionType.getDesc()));
+
+		return wsEvent;
+	}
+
+	private WsMultiAreaDynamic getRandomWsMultiAreaDynamic(JSONArray elements, JSONArray areas) {
+
+		JSONObject sourceNode = getRandomNodes(elements, 1).get(0);
+		JSONObject targetNode = getRandomNodes(areas, 1).get(0);
+		WsMultiAreaDynamic wsMultiAreaDynamic = new WsMultiAreaDynamic();
+		wsMultiAreaDynamic.setNodeInfo(new ElementInfo(sourceNode), new AreaInfo(targetNode));
+
+		// 设置事件描述
+		wsMultiAreaDynamic.setDescription(
+				String.format("%s对%s发起$攻击$", wsMultiAreaDynamic.getSourceElementInfo().getName(),
+						("区域<" + wsMultiAreaDynamic.getTargetAreaInfo().getAreaId() + ">")));
+
+		return wsMultiAreaDynamic;
+	}
+
+	private WsMultiElementDynamic getRandomWsMultiElementDynamic(JSONArray elements) {
+		List<JSONObject> nodes = getRandomNodes(elements, 2);
+		WsMultiElementDynamic wsMultiElementDynamic = new WsMultiElementDynamic();
+		wsMultiElementDynamic.setNodeInfo(new ElementInfo(nodes.get(0)),
+				new ElementInfo(nodes.get(1)));
+
+		// 设置事件描述
+		wsMultiElementDynamic.setDescription(
+				String.format("%s对%s发起$攻击$", wsMultiElementDynamic.getSourceElementInfo().getName(),
+						wsMultiElementDynamic.getTargetElementInfo().getName()));
+
+		return wsMultiElementDynamic;
 	}
 
 	@Override
@@ -564,6 +649,25 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 				.messageIdentifier(identifier).build();
 
 		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	@SneakyThrows
+	@Async
+	@Override
+	public void batchPushDataToRoom(String sceneId, List<JSONObject> datas, Integer number,
+			Integer interval) {
+
+		Integer circle = (int) Math.ceil((double) datas.size() / number);
+
+		for (int i = 0; i < circle; i++) {
+
+			for (int j = 0; j < number && !datas.isEmpty(); j++) {
+				pushDataToRoom(datas.remove(0), sceneId);
+			}
+
+			// 延时发送
+			Thread.sleep(interval * 1000);
+		}
 	}
 
 }

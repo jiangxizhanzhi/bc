@@ -2,7 +2,6 @@ package com.cyberpeace.situation.model.ws;
 
 import java.io.Serializable;
 
-import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.LineStyle;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -38,17 +37,11 @@ public class WsMultiNodeDynamic implements Serializable {
 	@ApiModelProperty("源队伍名称")
 	private String sourceGroupName;
 
-	@ApiModelProperty("源节点信息（更新部分）")
-	private ElementInfo sourceElementInfo;
-
 	@ApiModelProperty("目的节点id")
 	private String targetId;
 
 	@ApiModelProperty("目的队伍名称")
 	private String targetGroupName;
-
-	@ApiModelProperty("目的节点信息（更新部分）")
-	private ElementInfo targetElementInfo;
 
 	@ApiModelProperty("是否聚焦到目的节点")
 	private Boolean lookAtTarget;

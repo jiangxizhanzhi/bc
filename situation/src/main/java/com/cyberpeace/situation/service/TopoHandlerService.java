@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 
 /**
  * 5.3版本场景拓扑数据到3D拓扑格式转换
@@ -20,6 +21,13 @@ public interface TopoHandlerService {
 	 * @return SceneData
 	 */
 	SceneData getSceneData(String sceneId, String topoId);
+
+	/**
+	 * 获取中台场景数据
+	 * @param sceneId
+	 * @return JSONObject
+	 */
+	JSONObject getsceneTopoBySceneId(String sceneId);
 
 	/**
 	 * 获取处理后的态势数据
@@ -111,13 +119,7 @@ public interface TopoHandlerService {
 	 */
 	List<String> getElementAreas(Float x, Float y, Map<String, AreaInfo> areasInfo);
 
-	/**
-	 * 随机获取节点
-	 * @param elements 节点数据
-	 * @param num 节点数量
-	 * @return List<ElementInfo>
-	 */
-	List<ElementInfo> getRandomElements(JSONArray elements, Integer num);
+	List<JSONObject> getRandomNodes(JSONArray nodes, Integer num);
 
 	/**
 	 * 获取流量日志
@@ -135,11 +137,29 @@ public interface TopoHandlerService {
 	List<JSONObject> getAttackEventList(List<JSONObject> flowLogs, String sceneId);
 
 	/**
+	 * 随机获取动态消息
+	 * @param sceneId 场景id
+	 * @param actionCode 动效类型
+	 * @return 无
+	 */
+	WsMultiNodeDynamic getRandomWsMultNodeDynamic(String sceneId, Integer actionCode);
+
+	/**
 	 * 推送消息至房间
 	 * @param data 消息
 	 * @param sceneId 场景id
 	 * @return 无
 	 */
 	void pushDataToRoom(JSONObject data, String sceneId);
+
+	/**
+	 * 批量推送消息至房间
+	 * @param sceneId 场景id
+	 * @param datas 消息列表
+	 * @param number 每批次推送数量
+	 * @param interval 批次间隔时间
+	 * @return 无
+	 */
+	void batchPushDataToRoom(String sceneId, List<JSONObject> datas, Integer number, Integer interval);
 
 }

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -46,4 +48,10 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("节点层级")
 	private Integer hierarchy;
 
+	public ElementInfo(JSONObject element) {
+		this.setElementId(element.getString("id"));
+		this.setName(element.getString("name"));
+	}
+
+	public ElementInfo() {}
 }

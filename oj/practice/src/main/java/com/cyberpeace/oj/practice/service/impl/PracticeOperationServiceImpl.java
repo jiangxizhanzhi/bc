@@ -273,14 +273,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			if (!authContext.getIsWeb()) {
 				List<String> attachmentIds = Lists
 						.newArrayList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
-				List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds, false);
+				List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds,
+						false);
 
-				List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachments, attachment -> {
-					PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
-					fileBo.setFileName(attachment.getFileName());
-					fileBo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
-					return fileBo;
-				});
+				List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachments,
+						attachment -> {
+							PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
+							fileBo.setFileName(attachment.getFileName());
+							fileBo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
+							return fileBo;
+						});
 				operationBo.setFiles(fileBos);
 			}
 
@@ -288,11 +290,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			if (operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
 					.getCode().intValue()) {
 				// 查询是否已经分配附件
-				PracticeRandomFlag randomFlag = practiceRandomFlagMapper.fileIdByUserAndPractice(
-						UserInfoContext.getUserContext().getUserId(), resourceId);
+				PracticeRandomFlag randomFlag = practiceRandomFlagMapper.selectByUserAndPractice(
+						UserInfoContext.getUserContext().getUserId(), resourceId,
+						PracticeRandomFlag.FlagType.PRACTICE.getCode());
 
 				if (null == randomFlag) {
 					randomFlag = getRandomFlag(operation);
+					// 更改处
 					operationBo.setAttachmentId(randomFlag.getAttachmentId());
 					practiceRandomFlagMapper.insert(randomFlag);
 				} else {
@@ -302,6 +306,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			}
 			setFile(operationBo);
 		}
+
+		// 前面做了更改 这时候要重新设置一下
+		operationBo.setAttachmentId(operation.getAttachmentId());
 
 		return operationBo;
 	}
@@ -327,6 +334,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		randomFlag.setPracticeId(operation.getResourceId());
 		randomFlag.setUserId(UserInfoContext.getUserContext().getUserId());
 		randomFlag.setAttachmentId(strings[index]);
+		randomFlag.setType(PracticeRandomFlag.FlagType.PRACTICE.getCode());
 
 		return randomFlag;
 	}

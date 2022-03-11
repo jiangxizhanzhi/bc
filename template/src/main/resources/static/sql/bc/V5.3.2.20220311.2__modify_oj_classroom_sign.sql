@@ -1,0 +1,1 @@
+alter table oj_classroom_sign add column `node_id` varchar(64) DEFAULT NULL;

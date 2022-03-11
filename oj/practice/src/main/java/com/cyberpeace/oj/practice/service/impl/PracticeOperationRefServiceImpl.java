@@ -1,10 +1,13 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.cs.dao.entity.Attachment;
@@ -13,6 +16,8 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeRandomFlagMapper;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +52,9 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	@Autowired
+	private PracticeRandomFlagMapper practiceRandomFlagMapper;
+
 	@Override
 	public List<OperationLessonBo> selectByPaperId(String lessonId, String paperId,
 			Boolean viewAnswer, Boolean simpleData, AuthContext authContext) {
@@ -63,6 +71,24 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 
 					// 附件内容查询
 					if (!simpleData && StringUtils.isNotBlank(operation.getAttachmentId())) {
+
+						// 随机flag
+						if (operation.getDynamicFlag()
+								.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode()
+										.intValue()) {
+							PracticeRandomFlag randomFlag = practiceRandomFlagMapper
+									.selectByUserAndPractice(authContext.getUserId(),
+											operation.getResourceId(),
+											PracticeRandomFlag.FlagType.LESSON_PRACTICE.getCode()
+													.intValue());
+							if (null == randomFlag) {
+								randomFlag = getRandomFlag(operation, authContext.getUserId());
+								practiceRandomFlagMapper.insert(randomFlag);
+							}
+
+							operation.setAttachmentId(randomFlag.getAttachmentId());
+						}
+
 						Attachment attachment = attachmentMapper
 								.selectById(operation.getAttachmentId());
 
@@ -102,6 +128,26 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 				});
 
 		return operationLessonBos;
+	}
+
+	private PracticeRandomFlag getRandomFlag(PracticeOperation operation, String userId) {
+
+		PracticeRandomFlag randomFlag = new PracticeRandomFlag();
+
+		// 随机选取对应的flag
+		List<String> fileIds = Lists
+				.newArrayList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
+		int index = MathUtils.randomRange(fileIds.size());
+
+		// 数据组装
+		randomFlag.setPracticeId(operation.getResourceId());
+		randomFlag.setFlag(
+				JsonUtil.toJsonObjectArray(operation.getAnswer(), String.class).get(index));
+		randomFlag.setAttachmentId(fileIds.get(index));
+		randomFlag.setUserId(userId);
+		randomFlag.setType(PracticeRandomFlag.FlagType.LESSON_PRACTICE.getCode());
+
+		return randomFlag;
 	}
 
 	@Override

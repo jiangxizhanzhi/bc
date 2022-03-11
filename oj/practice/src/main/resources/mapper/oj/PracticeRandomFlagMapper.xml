@@ -5,9 +5,10 @@
 
     <resultMap id="base" type="com.cyberpeace.oj.practice.dao.entity.PracticeRandomFlag"/>
 
-    <select id="fileIdByUserAndPractice" resultMap="base">
+    <select id="selectByUserAndPractice" resultMap="base">
         select * from oj_practice_random_flag
         where user_id = #{userId}
         and practice_id = #{practiceId}
+        and type = #{type}
     </select>
 </mapper>

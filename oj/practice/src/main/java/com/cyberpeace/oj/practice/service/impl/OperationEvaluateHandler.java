@@ -70,8 +70,9 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 		// 随机flag题目判断
 		if (practiceOperation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
 				.getCode().intValue()) {
-			PracticeRandomFlag randomFlag = practiceRandomFlagMapper.fileIdByUserAndPractice(userId,
-					practiceOperation.getResourceId());
+			PracticeRandomFlag randomFlag = practiceRandomFlagMapper.selectByUserAndPractice(userId,
+					practiceOperation.getResourceId(),
+					PracticeRandomFlag.FlagType.PRACTICE.getCode());
 			return JsonUtil.arrayToString(Lists.newArrayList(randomFlag.getFlag()));
 		}
 

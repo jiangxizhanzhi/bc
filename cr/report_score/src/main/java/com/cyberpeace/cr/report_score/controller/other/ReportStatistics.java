@@ -111,9 +111,11 @@ public class ReportStatistics {
 	@GetMapping("/test/ws")
 	public BaseRsp<String> testWS(
 			@ApiParam(name = "sourceName", value = "源节点", required = true) String sourceName,
-			@ApiParam(name = "targetName", value = "目标节点", required = true) String targetName
+			@ApiParam(name = "targetName", value = "目标节点", required = true) String targetName,
+			@ApiParam(name = "userName", value = "攻击用户", required = true) String userName,
+			@ApiParam(name = "attackDesc", value = "攻击描述", required = false) String attackDesc
 	) {
-		reportScoreConfigService.testWS(sourceName, targetName);
+		reportScoreConfigService.testWS(sourceName, targetName, userName, attackDesc);
 
 		return new BaseRsp<>("test over");
 	}

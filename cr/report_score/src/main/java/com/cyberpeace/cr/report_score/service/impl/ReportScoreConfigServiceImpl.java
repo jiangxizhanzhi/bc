@@ -159,25 +159,26 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
     }
 
     @Override
-    public void testWS(String sourceName, String targetName) {
+    public void testWS(String sourceName, String targetName, String userName, String defaultAttackDesc) {
         // ws推送大屏消息
         ReportScoreConfig topoConfig = reportScoreConfigMapper.getTypeConfig(SYSTEM_TYPE, TOPO_KEY, null);
         ReportScoreConfig testConfig = reportScoreConfigMapper.getTypeConfig(TEST_KEY, TEST_KEY, null);
         JyjWsEvent jyjWsEvent = new JyjWsEvent();
-        jyjWsEvent.setName(targetName);
+        jyjWsEvent.setName(userName);
         jyjWsEvent.setLookAtTarget(true);
         jyjWsEvent.setSourceId(sourceName);
         jyjWsEvent.setTargetId(targetName);
 
-        AttackType enumByEnDesc = AttackLogEnumUtils.getEnumByEnDesc("Not Suspicious Traffic", AttackType.class);
-        Integer code = enumByEnDesc.getCode();
-        String attackType = enumByEnDesc.getCnDesc();
-        jyjWsEvent.setAttackType(code);
+        Integer attackCodes = (int)(Math.random()*9+1);
+        jyjWsEvent.setAttackType(attackCodes);
 
-        String desc = String.format("%s对%s发起%s", "test", "test服务器", attackType);
-        if (testConfig != null) {
-            desc = testConfig.getValue();
+        String attackDesc = "可疑流量";
+        if (StringUtils.isNotEmpty(defaultAttackDesc)) {
+            attackDesc = defaultAttackDesc;
         }
+
+        String desc = String.format("<color=#e6a23c>【%s】</color>对%s发起<color=#e6a23c> %s </color>", userName, targetName, attackDesc);
+
         jyjWsEvent.setDesc(desc);
 
         LineStyle lineStyle = new LineStyle();

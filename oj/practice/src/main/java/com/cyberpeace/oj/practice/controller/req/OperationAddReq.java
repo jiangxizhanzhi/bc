@@ -42,7 +42,7 @@ public class OperationAddReq implements Serializable {
 	@NotBlank(groups = { Create.class })
 	private String content;
 
-	@ApiModelProperty("附件编号")
+	@ApiModelProperty(name = "attachment_id", value = "附件编号")
 	private String attachmentId;
 
 	@ApiModelProperty(name = "dynamic_env", value = "是否为动态环境")
@@ -121,5 +121,9 @@ public class OperationAddReq implements Serializable {
 
 	public void setWriteup_public(Boolean writeupPublic) {
 		this.writeupPublic = writeupPublic;
+	}
+
+	public void setAttachment_id(String attachmentId) {
+		this.attachmentId = attachmentId;
 	}
 }

@@ -6,9 +6,15 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +39,13 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	private ClassroomSignMapper classroomSignMapper;
 
 	@Autowired
-	private ClassroomValidateHandler classroomValidateHandler;
+	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
+	@Autowired
+	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
 
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
@@ -68,6 +80,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		// 课堂数据校验
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(
 				UserInfoContext.getUserContext().getOrganizationId(), lessonId);
+		if (classroom == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(
 				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
@@ -85,6 +100,22 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		if (StringUtils.isNotBlank(classroomSign.getNodeId())
 				&& !classroomSign.getNodeId().equals(nodeId)) {
 			throw new BusinessException(OjBusinessErrorCode.OTHER_NODE_IN_ASSISTANCE);
+		}
+
+		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(
+				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
+		if (null == groupInfo) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
+		if (null == ojLocalScene) {
+			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		if (localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
+			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_PAUSE);
 		}
 
 		// 数据填写到数据库

@@ -70,7 +70,15 @@ public interface OjBusinessErrorCode {
 	/** 课堂未签到*/
 	String CLASS_NOT_SIGN = "102021";
 
+	/** 其他机器正在进行远程协助*/
 	String OTHER_NODE_IN_ASSISTANCE = "102022";
 
+	/** 非动态环境，无法进行场景启动*/
 	String NON_DYNAMIC_ENVIRONMENT = "102023";
+
+	/** 场景未启动*/
+	String SCENE_NOT_RUNNING = "102024";
+
+	/** 场景暂停中*/
+	String SCENE_IS_PAUSE = "102025";
 }

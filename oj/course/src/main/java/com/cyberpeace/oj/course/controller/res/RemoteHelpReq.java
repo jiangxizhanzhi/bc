@@ -1,29 +1,34 @@
 package com.cyberpeace.oj.course.controller.res;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
-@Data
-@ApiModel
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.annotations.ApiModelProperty;
+
 public class RemoteHelpReq implements Serializable {
 
-	@ApiModelProperty("课时编号")
+	@ApiModelProperty(name = "lesson_id", value = "课时编号")
 	@NotBlank
-	private String lessonId;
+	private String lesson_id;
 
-	@ApiModelProperty("虚拟机节点编号")
+	@ApiModelProperty(name = "node_id", value = "虚拟机节点编号")
 	@NotBlank
-	private String nodeId;
+	private String node_id;
 
 	public void setLesson_id(String lessonId) {
-		this.lessonId = lessonId;
+		this.lesson_id = lessonId;
 	}
 
 	public void setNode_id(String nodeId) {
-		this.nodeId = nodeId;
+		this.node_id = nodeId;
+	}
+
+	public String getLessonId() {
+		return lesson_id;
+	}
+
+	public String getNodeId() {
+		return node_id;
 	}
 }

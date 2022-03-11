@@ -5,22 +5,21 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeRandomFlagMapper;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateService;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.springframework.stereotype.Service;
 
 @Service("operation")
 public class OperationEvaluateHandler implements PracticeEvaluateHandler {
@@ -34,6 +33,9 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	@Autowired
+	private PracticeRandomFlagMapper practiceRandomFlagMapper;
 
 	@Override
 	public EvaluateResult evaluateByBusiness(String userId, PracticeBase practiceBase,
@@ -64,7 +66,23 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 	 */
 	private String correctAnswer(String userId, PracticeOperation practiceOperation) {
 
-		if (!practiceOperation.getDynamicEnv() && StringUtils.isBlank(practiceOperation.getTopoId())) {
+		// 随机flag题目判断
+		if (practiceOperation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
+				.getCode().intValue()) {
+			String attachmentId = practiceRandomFlagMapper.fileIdByUserAndPractice(userId,
+					practiceOperation.getResourceId());
+
+			List<String> fileIds = Lists.newArrayList(
+					practiceOperation.getAttachmentId().split(CommonConstant.CODE_COMMA));
+			int index = fileIds.indexOf(attachmentId);
+
+			List<String> answers = JsonUtil.toJsonObjectArray(practiceOperation.getAnswer(),
+					String.class);
+			return JsonUtil.arrayToString(Lists.newArrayList(answers.get(index)));
+		}
+
+		if (!practiceOperation.getDynamicEnv()
+				&& StringUtils.isBlank(practiceOperation.getTopoId())) {
 			return practiceOperation.getAnswer();
 		}
 

@@ -170,6 +170,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		List<ClassroomSign> signList = StreamApiUtils.map(userIds, userId -> {
 			ClassroomSign classroomSign = classroomSignMapper
 					.selectByRoomAndUser(groupInfo.getClassroomId(), userId);
+			if (null == classroomSign) {
+				return null;
+			}
 			classroomSign.setNodeId("");
 			classroomSign.setNeedHelp(false);
 			return classroomSign;

@@ -114,12 +114,14 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-		if (localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
+		if (localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode()
+				.intValue()) {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_PAUSE);
 		}
 
 		// 数据填写到数据库
 		classroomSign.setNodeId(nodeId);
+		classroomSign.setNeedHelp(CommonConstant.TRUE);
 		classroomSignMapper.updateById(classroomSign);
 
 	}
@@ -128,7 +130,12 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	public void toHelp(String classroomId, String userId) {
 
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
+		if (null == classroomSign) {
+			return;
+		}
+
 		classroomSign.setNodeId("");
+		classroomSign.setNeedHelp(CommonConstant.FALSE);
 		classroomSignMapper.updateById(classroomSign);
 	}
 }

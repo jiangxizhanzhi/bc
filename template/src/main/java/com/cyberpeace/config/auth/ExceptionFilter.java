@@ -209,8 +209,8 @@ public class ExceptionFilter implements Filter {
 			// 不管是否配置了快速失败
 			if (StringUtils.isNoneBlank(field)) {
 				String desc = CommonContext.isChinese()
-						? ConfigUtil.getContextProperty(field + ".cn")
-						: ConfigUtil.getContextProperty(field + ".en");
+						? ConfigUtil.getContextProperty(error.getDefaultMessage() + ".cn")
+						: ConfigUtil.getContextProperty(error.getDefaultMessage() + ".en");
 				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID,
 						StringUtils.isNotBlank(desc) ? desc : field);
 

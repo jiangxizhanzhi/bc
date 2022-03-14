@@ -26,8 +26,8 @@ public class ReportScoreUpdateScoreReq implements Serializable {
     private String comment;
 
     @ApiModelProperty("得分")
-    @Positive(message="必须是正数")
-    @Max(value = 100000, message = "超出分数上限100000")
+    @Positive(message="101171")
+    @Max(value = 100000, message = "101170")
     private Float score;
 
 }

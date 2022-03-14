@@ -118,6 +118,12 @@ public class ExternalOperationController {
 				ExternalOperationBo.class);
 		externalOperationBo.setCreateUser(operation.getCreateUserId());
 
+		// 分类
+		PracticeCategory practiceCategory = practiceCategoryMapper.selectById(operation.getCategoryId());
+		if (null != practiceCategory) {
+			externalOperationBo.setCategoryInfo(practiceCategory.getName());
+		}
+
 		if (StringUtils.hasText(operation.getAttachmentId())) {
 			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId().split(CommonConstant.CODE_COMMA)[0]);
 			String fileUrl = utilService.handlerFileUrl(attachment.getFilePath());

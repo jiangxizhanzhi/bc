@@ -222,4 +222,10 @@ public interface CrBusinessErrorCode {
 
 	/** 只有超级管理员可以修改雷达图 */
 	String SUPERUSER_CAN_EDIT_RADAR = "101071";
+
+	/** 非法的标题长度 */
+	String ILLEGAL_TITLE_LEN = "101072";
+
+	/** 非法的描述长度 */
+	String ILLEGAL_DESC_LEN = "101073";
 }

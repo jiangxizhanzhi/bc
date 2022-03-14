@@ -77,4 +77,11 @@ public class CrCommonValidator {
 				errorCode);
 	}
 
+	/**
+	 * 默认描述长度 1~2048
+	 */
+	public static void validateDescLen(String target, String errorCode) {
+		validateLength(target, CrCommonConstants.MIN_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
+				errorCode);
+	}
 }

@@ -39,7 +39,11 @@ public class RbRoomModifyReq implements Serializable {
 	private Boolean enableRecording;
 
 	public void validate() {
-		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		if (name != null) {
+			CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
+		if (description != null) {
+			CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		}
 	}
 }

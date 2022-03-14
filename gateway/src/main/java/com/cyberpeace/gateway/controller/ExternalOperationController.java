@@ -2,6 +2,8 @@ package com.cyberpeace.gateway.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
@@ -117,7 +119,7 @@ public class ExternalOperationController {
 		externalOperationBo.setCreateUser(operation.getCreateUserId());
 
 		if (StringUtils.hasText(operation.getAttachmentId())) {
-			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
+			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId().split(CommonConstant.CODE_COMMA)[0]);
 			String fileUrl = utilService.handlerFileUrl(attachment.getFilePath());
 			externalOperationBo.setFileUrl(fileUrl);
 			externalOperationBo.setFileName(attachment.getFileName());

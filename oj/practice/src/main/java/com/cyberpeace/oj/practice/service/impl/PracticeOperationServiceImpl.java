@@ -248,7 +248,24 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId()));;
 		}
 
-		return practiceOperationMapper.updateById(updateOperation);
+		final Boolean updateRandom = operation.getDynamicFlag()
+				.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode().intValue()
+				&& !operation.getAttachmentId().equals(updateOperation.getAttachmentId());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				practiceOperationMapper.updateById(updateOperation);
+
+				if (updateRandom) {
+					practiceRandomFlagMapper.deleteByPractice(updateOperation.getResourceId(),
+							PracticeRandomFlag.FlagType.PRACTICE.getCode());
+				}
+			}
+		});
+
+		return null;
 
 	}
 

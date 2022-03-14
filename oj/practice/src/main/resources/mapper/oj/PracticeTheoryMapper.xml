@@ -7,7 +7,7 @@
         <result property="isPublic" column="public"/>
     </resultMap>
 
-    <select id="getList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+    <select id="getList" resultMap="theory">
         select * from oj_practice_theory
         <where>
             <if test="pattern != null and pattern != ''">

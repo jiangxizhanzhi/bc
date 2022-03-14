@@ -11,4 +11,10 @@
         and practice_id = #{practiceId}
         and type = #{type}
     </select>
+
+    <delete id="deleteByPractice">
+        delete from oj_practice_random_flag
+        where practice_id = #{practiceId}
+        and type = #{type}
+    </delete>
 </mapper>

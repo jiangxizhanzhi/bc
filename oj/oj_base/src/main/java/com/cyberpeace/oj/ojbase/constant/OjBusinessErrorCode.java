@@ -81,4 +81,7 @@ public interface OjBusinessErrorCode {
 
 	/** 场景暂停中*/
 	String SCENE_IS_PAUSE = "102025";
+
+	/** 请重新加载题目*/
+	String RELOAD_PRACTICE = "102026";
 }

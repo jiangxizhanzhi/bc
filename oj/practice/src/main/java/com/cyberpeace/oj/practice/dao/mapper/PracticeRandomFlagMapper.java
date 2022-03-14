@@ -11,4 +11,5 @@ public interface PracticeRandomFlagMapper extends BaseMapper<PracticeRandomFlag>
 	PracticeRandomFlag selectByUserAndPractice(@Param("userId") String userId,
 			@Param("practiceId") String practiceId, @Param("type") Integer type);
 
+	void deleteByPractice(@Param("practiceId") String resourceId, @Param("type") Integer code);
 }

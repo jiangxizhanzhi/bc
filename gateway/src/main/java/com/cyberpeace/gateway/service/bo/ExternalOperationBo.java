@@ -36,7 +36,7 @@ public class ExternalOperationBo implements Serializable {
     private String knowledge;
 
     @ApiModelProperty("分值")
-    private Integer score;
+    private Double score;
 
     @ApiModelProperty("创建人")
     private String createUser;
@@ -54,7 +54,7 @@ public class ExternalOperationBo implements Serializable {
     private Boolean isPublic;
 
     @ApiModelProperty("题解")
-    private String writeUp;
+    private String writeup;
 
     @ApiModelProperty("题解是否公开")
     private Boolean writeupPublic;

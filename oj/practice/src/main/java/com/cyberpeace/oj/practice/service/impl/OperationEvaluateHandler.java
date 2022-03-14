@@ -3,6 +3,8 @@ package com.cyberpeace.oj.practice.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.PracticeRandomFlag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +75,9 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 			PracticeRandomFlag randomFlag = practiceRandomFlagMapper.selectByUserAndPractice(userId,
 					practiceOperation.getResourceId(),
 					PracticeRandomFlag.FlagType.PRACTICE.getCode());
+			if (null == randomFlag) {
+				throw new BusinessException(OjBusinessErrorCode.RELOAD_PRACTICE);
+			}
 			return JsonUtil.arrayToString(Lists.newArrayList(randomFlag.getFlag()));
 		}
 

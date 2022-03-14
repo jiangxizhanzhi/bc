@@ -391,31 +391,31 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
 
     private static List<RankingRep> amountRank(List<RankingRep> rankingRepList) {
         log.info("amountRank sort start");
-        rankingRepList.sort((s1, s2) -> -Long.compare(Long.parseLong(s1.getSumScore()), Long.parseLong(s2.getSumScore())));
+        rankingRepList.sort((s1, s2) -> -Float.compare(Float.parseFloat(s1.getSumScore()), Float.parseFloat(s2.getSumScore())));
 
         int index = 0;
         int tmpSize = 0;
-        long lastSumScore = -1L;
+        float lastSumScore = -1f;
 
         List<RankingRep> tmpAmountRankList = new ArrayList<>();
         for (RankingRep rankingRep : rankingRepList) {
 
-            long sumScoreLong = Long.parseLong(rankingRep.getSumScore());
+            float sumScoreFloat = Float.parseFloat(rankingRep.getSumScore());
 
-            if (lastSumScore != sumScoreLong) {
-                lastSumScore = sumScoreLong;
+            if (lastSumScore != sumScoreFloat) {
+                lastSumScore = sumScoreFloat;
                 index = index + 1;
             }
             rankingRep.setRank(String.valueOf(index));
             //相同并列，不同则跳过，序号一次递增
             if (tmpSize > 0) {
-                if (sumScoreLong < Long.parseLong(rankingRepList.get(tmpSize - 1).getSumScore())) {
+                if (sumScoreFloat < Float.parseFloat(rankingRepList.get(tmpSize - 1).getSumScore())) {
                     index = tmpSize + 1;
                     rankingRep.setRank(String.valueOf(index));
                 }
             }
             log.info("amountRank rank is {} score is {}, userId is {}, userName is {}", index,
-                    sumScoreLong, rankingRep.getUserId(), rankingRep.getUserName());
+                    sumScoreFloat, rankingRep.getUserId(), rankingRep.getUserName());
             tmpAmountRankList.add(rankingRep);
             tmpSize = tmpAmountRankList.size();
         }

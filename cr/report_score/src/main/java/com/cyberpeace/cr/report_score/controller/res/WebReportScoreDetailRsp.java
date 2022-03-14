@@ -17,6 +17,6 @@ public class WebReportScoreDetailRsp extends WebReportScoreRsp{
     private String reportFileName;
 
     @ApiModelProperty("得分")
-    private Long score;
+    private Float score;
 
 }

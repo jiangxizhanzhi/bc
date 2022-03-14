@@ -51,7 +51,7 @@ public class ReportScore extends BaseTable {
     private String reportFileName;
 
     /**得分 */
-    private Long score;
+    private Float score;
 
     /**报告评语 */
     private String comment;

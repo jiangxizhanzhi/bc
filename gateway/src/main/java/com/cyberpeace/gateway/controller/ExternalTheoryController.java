@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -112,6 +113,12 @@ public class ExternalTheoryController {
 			PracticeRandomChoiceReq queryParams) {
 		allowAccess(key);
 		TheoryListQuery listQuery = BeanUtils.copy(queryParams, TheoryListQuery.class);
+		if (StringUtils.hasText(queryParams.getCategory())) {
+			listQuery.setCategoryIds(Lists.newArrayList(queryParams.getCategory()));
+		}
+
+		listQuery.setPracticeSetId(queryParams.getPracticeSet());
+
 		List<PracticeTheory> result = practiceTheoryMapper.randomChoice(listQuery,
 				queryParams.getCount());
 		for (PracticeTheory item : result) {

@@ -30,7 +30,7 @@
         order by id desc
     </select>
 
-    <select id="batchGet" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+    <select id="batchGet" resultMap="theory">
         select * from oj_practice_theory
         where resource_id in
         <foreach collection="resource_ids" item="resource_id" separator="," open="(" close=")">
@@ -38,7 +38,7 @@
         </foreach>
     </select>
 
-    <select id="randomChoice" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+    <select id="randomChoice" resultMap="theory">
         select * from oj_practice_theory
         <where>
             <if test="query.resourceIds != null and query.resourceIds.size() != 0">

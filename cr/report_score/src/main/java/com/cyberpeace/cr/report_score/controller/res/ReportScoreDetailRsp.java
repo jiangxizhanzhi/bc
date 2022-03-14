@@ -14,7 +14,7 @@ public class ReportScoreDetailRsp extends ReportScoreRsp{
     private String reportFileName;
 
     @ApiModelProperty("报告分数")
-    private Long score;
+    private Float score;
 
     @ApiModelProperty("报告评语")
     private String comment;

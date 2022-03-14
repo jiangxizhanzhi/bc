@@ -1,5 +1,6 @@
 package com.cyberpeace.gateway.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.cyberpeace.common.constant.CommonConstant;
@@ -8,8 +9,10 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -119,21 +122,40 @@ public class ExternalOperationController {
 		externalOperationBo.setCreateUser(operation.getCreateUserId());
 
 		// 分类
-		PracticeCategory practiceCategory = practiceCategoryMapper.selectById(operation.getCategoryId());
+		PracticeCategory practiceCategory = practiceCategoryMapper
+				.selectById(operation.getCategoryId());
 		if (null != practiceCategory) {
 			externalOperationBo.setCategoryInfo(practiceCategory.getName());
 		}
 
 		if (StringUtils.hasText(operation.getAttachmentId())) {
-			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId().split(CommonConstant.CODE_COMMA)[0]);
-			String fileUrl = utilService.handlerFileUrl(attachment.getFilePath());
-			externalOperationBo.setFileUrl(fileUrl);
-			externalOperationBo.setFileName(attachment.getFileName());
+			if (operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
+					.getCode().intValue()) {
+				List<String> fileIds = Arrays
+						.asList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
+				if (!CollectionUtils.isEmpty(fileIds)) {
+					List<Attachment> attachments = attachmentMapper.selectBatchIds(fileIds, false);
+					List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachments,
+							file -> {
+								PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
+								fileBo.setFileUrl(utilService.handlerFileUrl(file.getFilePath()));
+								fileBo.setFileName(file.getFileName());
+								return fileBo;
+							});
+					externalOperationBo.setAttachment(fileBos);
+				}
+
+			} else {
+				Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
+				String fileUrl = utilService.handlerFileUrl(attachment.getFilePath());
+				externalOperationBo.setFileUrl(fileUrl);
+				externalOperationBo.setFileName(attachment.getFileName());
+			}
+
 		}
 
 		externalOperationBo.setIsDynamicEnv(operation.getDynamicEnv());
-		externalOperationBo.setIsDynamicFlag(operation.getDynamicFlag()
-				.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode().intValue());
+		externalOperationBo.setIsDynamicFlag(operation.getDynamicFlag());
 		externalOperationBo.setShareMode(operation.getSceneShareMode());
 
 		return externalOperationBo;

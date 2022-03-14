@@ -548,10 +548,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	private void validateName(String name) {
-		// validate length
-		CrCommonValidator.validateLength(name, CrCommonConstants.MIN_TRAINING_NAME_LEN,
-				CrCommonConstants.MAX_TRAINING_NAME_LEN,
-				CrBusinessErrorCode.TRAINING_NAME_LEN_ERROR);
 		// check if duplicate
 		if (teamRoomMapper.existByName(name)) {
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);

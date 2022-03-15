@@ -78,7 +78,7 @@ public class ClassroomEventListener extends MessageListener {
 		}
 
 		// 推送数据组装
-		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
+		JSONObject dataObj = new JSONObject();
 		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC.getCode());
 
 		// 消息推送
@@ -143,10 +143,19 @@ public class ClassroomEventListener extends MessageListener {
 	 * @return
 	 */
 	private void pushMessageToWeb(JSONObject data, OjLocalScene ojLocalScene) {
-		data.getJSONObject(JsonKeyConstant.DATA).put(JsonKeyConstant.GROUP_ID,
+
+		// 计算data数据是否存在
+		JSONObject jsonData = data.getJSONObject(JsonKeyConstant.DATA);
+		if (null == jsonData) {
+			jsonData = new JSONObject();
+		}
+
+		jsonData.put(JsonKeyConstant.GROUP_ID,
 				ojLocalScene.getBusinessId());
+		data.put(JsonKeyConstant.DATA, jsonData);
 		pushMessageToClassroom(data, ojLocalScene);
 		pushMessageToUser(data, ojLocalScene);
+
 	}
 
 	/**

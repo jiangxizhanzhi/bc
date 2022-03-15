@@ -30,7 +30,7 @@ public class CommonJob {
 		log.info("clearLog end");
 	}
 
-	public void bigLog() {
+	private void bigLog() {
 		log.info("clearLog bigLog");
 		String command = "find %s -name 'catalina.out' -type f -size +300M -exec truncate -s 0 {} \\;";
 		shellLog(command);
@@ -38,7 +38,8 @@ public class CommonJob {
 
 	private void tomcatLog() {
 		log.info("clearLog tomcatLog");
-		String command = "find %s \\( -name 'gc*' -o -name 'catalina*' -o -name 'host-manager*' -o -name 'manager*' -o -name 'localhost*' \\) -type f -mtime +15 -exec rm -rf {} \\;";
+		String command = "find %s \\( -name 'gc*' -o -name 'catalina*' -o -name 'host-manager*' -o "
+				+ "-name 'manager*' -o -name 'localhost*' \\) -type f -mtime +15 -exec rm -rf {} \\;";
 		shellLog(command);
 	}
 

@@ -121,15 +121,8 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
 			RemoteServiceException e) {
-		BaseRsp<String> errorInfo = new BaseRsp<>();
-		errorInfo.setCode(getErrorCode(ErrorCode.REMOTE_SERVICE_EXCEPTION));
-
-		String message = e.getMessage();
-		if (StringUtils.isBlank(message)) {
-			message = BusinessException.getMessageByLanguage(ErrorCode.REMOTE_SERVICE_EXCEPTION);
-		}
-		errorInfo.setMessage(message);
-		flushErrorInfo(httpServletResponse, errorInfo);
+		BusinessException businessException = new BusinessException(ErrorCode.REMOTE_SERVICE_EXCEPTION, e.getMessage());
+		parseBusinessException(httpServletResponse, businessException);
 	}
 
 	/**

@@ -1,5 +1,8 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +50,9 @@ public class ClassroomEventListener extends MessageListener {
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	@Autowired
+	private RemoteUserService remoteUserService;
+
 	@Override
 	public Integer declareMessageType() {
 		return LocalScene.BusinessCode.CLASSROOM.getCode();
@@ -60,8 +66,16 @@ public class ClassroomEventListener extends MessageListener {
 			return true;
 		}
 
-		// 本地场景信息删除
-		classroomSceneService.deleteScene(ojLocalScene.getBusinessId(), null);
+		try {
+			UserInfo userInfo = remoteUserService.getById(context.getUserId());
+			UserInfoContext.setUserContext(userInfo);
+			classroomSceneService.deleteScene(ojLocalScene.getBusinessId(), null);
+		} catch (Exception e) {
+			log.error("ClassroomEventListener.onSceneDelete error:", e);
+			throw e;
+		} finally {
+			UserInfoContext.removeUserContext();
+		}
 
 		// 推送数据组装
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);

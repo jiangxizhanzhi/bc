@@ -3,6 +3,8 @@ package com.cyberpeace.situation.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -32,5 +34,12 @@ public class AreaInfo implements Serializable {
 
 	@ApiModelProperty("区域动效")
 	private List<String> effect;
+
+	public AreaInfo(JSONObject area) {
+		this.areaId = area.getString("id");
+		this.desc = area.getString("description");
+	}
+
+	public AreaInfo() {}
 
 }

@@ -1769,7 +1769,7 @@
 
 .word40 {
   flex         : 10;
-  width        : 700px;
+  width        : 690px;
   display      : block;
   overflow-wrap: break-word;
   color        : rgba(202, 211, 230, 1);
@@ -2016,7 +2016,7 @@
 
 .info21 {
   flex         : 1;
-  max-width: 835px;
+  max-width: 810px;
   display      : block;
   overflow-wrap: break-word;
   color        : rgba(255, 255, 255, 1);

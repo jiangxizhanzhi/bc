@@ -5,11 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +31,12 @@ import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -62,7 +59,10 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -246,6 +246,8 @@ public class TeamTrainRoomController {
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
+		// 校验
+		teamTrainRoomReq.validate();
 		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
 				TeamTrainRoomContext.class);
 		teamTrainRoomContext.setPreSkill(
@@ -264,7 +266,8 @@ public class TeamTrainRoomController {
 	@PutMapping()
 	public BaseRsp<TeamRoomRsp>
 			update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
-
+		// 校验
+		teamTrainRoomModifyReq.validate();
 		TeamRoom teamRoom = teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
 
 		if (teamRoom == null) {
@@ -285,8 +288,7 @@ public class TeamTrainRoomController {
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id,
-				UserInfoContext.getUserContext().getUserId());
+		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
 
 		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
@@ -371,7 +373,8 @@ public class TeamTrainRoomController {
 			List<TeamRoomRoleRes> rolesData = Lists.newArrayList();
 			crRoles.forEach(crRole -> {
 				TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
-				teamRoomRoleRes.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList()));
+				teamRoomRoleRes
+						.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList()));
 			});
 
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
@@ -545,7 +548,8 @@ public class TeamTrainRoomController {
 				RoleUsers roleUsers = new RoleUsers();
 				roleUsers.setRoleName(crRole.getName());
 				roleUsers.setRoleGroup(crRole.getRoleGroup());
-				String userNamesByRoleUsers = crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList());
+				String userNamesByRoleUsers = crRoleService
+						.getUserNamesByRoleUsers(crRole.getUserIdList());
 				roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
 				roleUsersList.add(roleUsers);
 			}

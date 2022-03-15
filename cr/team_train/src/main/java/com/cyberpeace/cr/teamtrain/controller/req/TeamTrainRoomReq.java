@@ -6,6 +6,8 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -56,4 +58,9 @@ public class TeamTrainRoomReq {
 
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
+
+	public void validate() {
+		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+	}
 }

@@ -1,16 +1,16 @@
 package com.cyberpeace.situation.constant;
 
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.google.common.collect.Lists;
-import lombok.Getter;
-
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import lombok.Getter;
+
 public enum Event {
-    /**
+
+	/**
      * 事件
      */
-
     UNUSE(-1, "未使用"),
     DEFAULT(0, "默认"),
     INITIATE(1, "初始化"),
@@ -29,24 +29,24 @@ public enum Event {
     @Getter
     private Integer code;
 
-    @Getter
-    private String desc;
+	@Getter
+	private String desc;
 
-    Event(Integer code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
+	Event(Integer code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
 
-    public static List<Integer> getUnstartedCodeList() {
-        return Lists.newArrayList(UNPAUSE.code, STOP.code, PAUSE.code, DELETE.code, SUSPEND.code);
-    }
+	public static List<Integer> getUnstartedCodeList() {
+		return Lists.newArrayList(UNPAUSE.code, STOP.code, PAUSE.code, DELETE.code, SUSPEND.code);
+	}
 
-    public static List<Integer> getCreatingCodeList() {
-        return Lists.newArrayList(CREATE.code, MODIFY.code);
-    }
+	public static List<Integer> getCreatingCodeList() {
+		return Lists.newArrayList(CREATE.code, MODIFY.code);
+	}
 
-    public static List<Integer> getStartingCodeList() {
-        return Lists.newArrayList(START.code, RESTART.code, UNPAUSE.code, RESUME.code);
-    }
+	public static List<Integer> getStartingCodeList() {
+		return Lists.newArrayList(START.code, RESTART.code, UNPAUSE.code, RESUME.code);
+	}
 
 }

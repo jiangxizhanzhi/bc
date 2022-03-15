@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 
@@ -28,11 +30,16 @@ public class SubmitEvaluationReq {
 	private Integer score;
 
 	public void setScore(String score) {
+		// 处理打分为空字符串的情况
+		if (StringUtils.isBlank(score)) {
+			this.score = 0;
+			return;
+		}
 		// 校验打分为非零整数
 		try {
 			this.score = new Integer(score);
 			if (this.score < 0) {
-				throw new BusinessException(CrBusinessErrorCode.INVALID_SCORE);
+				throw new RuntimeException();
 			}
 		} catch (Exception e) {
 			throw new BusinessException(CrBusinessErrorCode.INVALID_SCORE);

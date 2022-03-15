@@ -45,4 +45,9 @@ public interface PatternConstant {
 	 * 资管资源题解的图片
 	 */
 	String WRITEUP_IMG_MD = "!\\[[^]]*]\\((\\./%s/[0-9]+\\.(?:jpg|jpeg|png|bmp|webp|gif))\\)";
+
+	/**
+	 * 理论题导入关键字分隔符
+	 */
+	String VERTICAL_LINE = "\\|";
 }

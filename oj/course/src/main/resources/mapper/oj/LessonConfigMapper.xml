@@ -82,6 +82,7 @@
     <select id="selectByCourseAndLessonName" resultType="java.lang.String">
         select resource_id from oj_lesson_config
         where course_id = #{courseId}
-        and name = #{name}
+        and `name` = #{name}
+        and node_type != 0
     </select>
 </mapper>

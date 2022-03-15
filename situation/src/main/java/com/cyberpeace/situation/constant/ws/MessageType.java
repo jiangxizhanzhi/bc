@@ -3,22 +3,26 @@ package com.cyberpeace.situation.constant.ws;
 import lombok.Getter;
 
 public enum MessageType {
-    /**
-     * 消息类型
-     */
 
-    SingleNodeEffect(1, "single_node_effect"),
-    MultiNodeEffect(2, "multi_node_effect");
+	/**
+	 * 消息类型
+	 */
 
-    @Getter
-    private Integer code;
+	SingleNodeDynamic(1, "single_node_dynamic"),
+    MultiNodeDynamic(2, "multi_node_dynamic"),
+	AttackEvent(3, "attack_event"),
+	AttackEventEE(4, "attack_event_element-element"),
+	AttackEventEA(5, "attack_event_element-area");
 
-    @Getter
-    private String desc;
+	@Getter
+	private Integer code;
 
-    MessageType(Integer code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
+	@Getter
+	private String desc;
+
+	MessageType(Integer code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
 
 }

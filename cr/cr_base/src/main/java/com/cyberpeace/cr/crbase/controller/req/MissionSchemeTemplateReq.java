@@ -33,6 +33,10 @@ public class MissionSchemeTemplateReq implements Serializable {
 	private List<MissionSchemeStage> combatConfig;
 
 	public void validate() {
+		// 校验名称和描述长度
+		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+
 		List<String> stageNames = Lists.newArrayList();
 		for (MissionSchemeStage schemeStage : combatConfig) {
 			schemeStage.validate();

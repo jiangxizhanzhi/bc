@@ -200,7 +200,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			log.error(
 					"practice set type is inconsistent with the operation practice type! practice_set_id=[{}]",
 					practiceSetId);
-			throw new InvalidParamException("习题集类型与习题类型不一致！");
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_TYPE_ERROR);
 		}
 
 		return practiceSet;
@@ -216,7 +216,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeCategory category = practiceCategoryMapper.selectById(categoryId);
 		if (null == category) {
-			throw new InvalidParamException("习题分类不存在！");
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		if (category.getPracticeType().intValue() != PracticeCategory.PracticeType.OPERATION
@@ -224,7 +224,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			log.error(
 					"practice set type is inconsistent with the operation practice type! practice_category_id=[{}]",
 					categoryId);
-			throw new InvalidParamException("习题分类与习题类型不一致！");
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);
 		}
 
 		return category;
@@ -499,7 +499,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		if (!operation.getDynamicEnv() || StringUtils.isBlank(operation.getTopoId())) {
 			log.error("StartScene operation is not dynamic env! dynamic_env=[{}], topo_id=[{}]",
 					operation.getDynamicEnv(), operation.getTopoId());
-			throw new InvalidParamException("非动态环境，无法进行场景启动！");
+			throw new BusinessException(OjBusinessErrorCode.NON_DYNAMIC_ENVIRONMENT);
 		}
 
 		// 判断是否存在已启动场景

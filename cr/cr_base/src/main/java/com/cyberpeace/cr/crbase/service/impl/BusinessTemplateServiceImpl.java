@@ -124,6 +124,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
+		// validate length
+		baseInfo.validate();
 		// 1、从输入业务中解析公共模板
 		BusinessTemplate businessTemplate = new BusinessTemplate();
 		businessTemplate.setBusinessType(baseInfo.getType());
@@ -169,6 +171,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Override
 	public void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo) {
+		// validate length
+		baseInfo.validate();
 		// base info
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());

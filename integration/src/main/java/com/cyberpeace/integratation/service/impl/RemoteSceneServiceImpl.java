@@ -17,10 +17,7 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.integratation.model.scene.FlowOpsContext;
-import com.cyberpeace.integratation.model.scene.NodeOpsContext;
-import com.cyberpeace.integratation.model.scene.SceneOpsContext;
-import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +53,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String NODE_SESSION_URL;
 
+	private String FLOW_LOG_URL;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost()
@@ -89,6 +88,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		NODE_SESSION_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.session");
+
+		FLOW_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.log");
 
 	}
 
@@ -190,5 +191,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 			url = url + "&userIds=" + studentId;
 		}
 		return HttpClientUtil.rawGet(url, JSONArray.class);
+	}
+
+	@Override
+	public JSONObject getFlowLogs(FlowLogsPageContext flowLogsPageContext) {
+		return HttpClientUtil.rawGetByParam(flowLogsPageContext, FLOW_LOG_URL, JSONObject.class);
 	}
 }

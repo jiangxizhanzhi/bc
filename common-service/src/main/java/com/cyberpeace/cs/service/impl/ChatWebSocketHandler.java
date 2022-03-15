@@ -1,4 +1,4 @@
-package com.cyberpeace.common.component;
+package com.cyberpeace.cs.service.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -11,9 +11,13 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.ChatException;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.ws.*;
+import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -92,12 +96,16 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		WebSocketConnectionContext connectionContext = (WebSocketConnectionContext) session
 				.getAttributes().get("key");
 		String businessId = connectionContext.getOriginParams().get("business_id");
+		// 从 session 获取发送者信息
+		String senderId = connectionContext.getUserId();
+		UserInfo senderInfo = SpringContextUtil.getBeanByClass(RemoteUserService.class)
+				.getById(senderId);
 
 		String payload = (String) message.getPayload();
 		JSONObject chatData = JSON.parseObject(payload);
 		ChatContent chatContent = JSONObject.toJavaObject((JSON) chatData.get("data"),
 				ChatContent.class);
-		ChatMessage chatMessage = contentToMessage(chatContent);
+		ChatMessage chatMessage = contentToMessage(chatContent, senderInfo.getName());
 
 		ChatWebSocketHandler handler = getHandler(connectionContext);
 
@@ -123,7 +131,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		}
 	}
 
-	public ChatMessage contentToMessage(ChatContent chatContent) {
+	public ChatMessage contentToMessage(ChatContent chatContent, String senderName) {
 		ChatMineContent mine = chatContent.getMine();
 		ChatToContent toContent = chatContent.getTo();
 		String receiverId = mine.getId();
@@ -132,7 +140,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		}
 
 		ChatMessage chatMessage = new ChatMessage();
-		chatMessage.setUsername(mine.getUsername());
+		chatMessage.setUsername(senderName);
 		chatMessage.setAvatar(mine.getAvatar());
 		chatMessage.setId(receiverId);
 		chatMessage.setType(toContent.getType());

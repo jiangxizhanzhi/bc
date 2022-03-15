@@ -3,21 +3,22 @@ package com.cyberpeace.situation.constant;
 import lombok.Getter;
 
 public enum AreaStatus {
-    /**
-     *区域状态
-     */
 
-    NORMAL("normal", "正常");
+	/**
+	 * 区域状态
+	 */
 
-    @Getter
-    private String code;
+	NORMAL("normal", "正常");
 
-    @Getter
-    private String desc;
+	@Getter
+	private String code;
 
-    AreaStatus(String code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
+	@Getter
+	private String desc;
+
+	AreaStatus(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
 
 }

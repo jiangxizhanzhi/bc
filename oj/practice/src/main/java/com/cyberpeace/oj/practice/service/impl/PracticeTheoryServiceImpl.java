@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -549,9 +550,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
 				.getCode().intValue()) {
 			String shortAnswer = excelRowData.get(2);
+			String keywordsString = excelRowData.get(3);
 			List<String> keywords = Lists
-					.newArrayList(shortAnswer.split(CommonConstant.VERTICAL_LINE));
-			practiceTheory.setAnswer(JsonUtil.arrayToString(keywords));
+					.newArrayList(keywordsString.split(PatternConstant.VERTICAL_LINE));
+			practiceTheory.setAnswer(shortAnswer);
 			practiceTheory.setKeyword(JsonUtil.arrayToString(keywords));
 		}
 

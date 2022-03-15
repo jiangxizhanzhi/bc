@@ -70,14 +70,6 @@ public class ClassroomValidateHandler {
 		if (startTime.after(endTime) || startTime.getTime() == endTime.getTime()) {
 			throw new BusinessException(OjBusinessErrorCode.END_GT_START_TIME);
 		}
-
-		if (startTime.getHours() < MIN_START_TIME || endTime.getHours() > END_MAX_TIME) {
-			throw new BusinessException(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR);
-		} else if (endTime.getHours() == END_MAX_TIME
-				&& (endTime.getMinutes() != CommonConstant.ZERO
-						|| endTime.getSeconds() == CommonConstant.ZERO)) {
-			throw new BusinessException(OjBusinessErrorCode.CLASSROOM_TIME_RANGE_ERROR);
-		}
 	}
 
 	/**

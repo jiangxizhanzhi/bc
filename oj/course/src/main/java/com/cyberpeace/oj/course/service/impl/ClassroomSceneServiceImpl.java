@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -219,6 +220,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		ConcurrentMap<String, JSONObject> execGroupMap = Maps.newConcurrentMap();
 
 		UserInfo userInfo = UserInfoContext.getUserContext();
+		String ip = CommonContext.getIp();
+		String language = CommonContext.getLanguage();
 
 		// 场景启动
 		for (ClassroomGroupInfo groupInfo : groupInfoList) {
@@ -226,6 +229,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 				try {
 					// 设置当前用户
 					UserInfoContext.setUserContext(userInfo);
+					CommonContext.setIp(ip);
+					CommonContext.setLanguage(language);
 					// 有用户的组才可以启动场景
 					if (CollectionUtils.isNotEmpty(JsonUtil
 							.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class))) {
@@ -241,6 +246,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 				} finally {
 					downLatch.countDown();
 					UserInfoContext.removeUserContext();
+					CommonContext.removeIp();
+					CommonContext.removeLanguage();
 				}
 
 			});

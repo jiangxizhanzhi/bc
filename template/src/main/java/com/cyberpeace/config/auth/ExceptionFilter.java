@@ -121,15 +121,8 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
 			RemoteServiceException e) {
-		BaseRsp<String> errorInfo = new BaseRsp<>();
-		errorInfo.setCode(getErrorCode(ErrorCode.REMOTE_SERVICE_EXCEPTION));
-
-		String message = e.getMessage();
-		if (StringUtils.isBlank(message)) {
-			message = BusinessException.getMessageByLanguage(ErrorCode.REMOTE_SERVICE_EXCEPTION);
-		}
-		errorInfo.setMessage(message);
-		flushErrorInfo(httpServletResponse, errorInfo);
+		BusinessException businessException = new BusinessException(ErrorCode.REMOTE_SERVICE_EXCEPTION, e.getMessage());
+		parseBusinessException(httpServletResponse, businessException);
 	}
 
 	/**
@@ -209,8 +202,8 @@ public class ExceptionFilter implements Filter {
 			// 不管是否配置了快速失败
 			if (StringUtils.isNoneBlank(field)) {
 				String desc = CommonContext.isChinese()
-						? ConfigUtil.getContextProperty(field + ".cn")
-						: ConfigUtil.getContextProperty(field + ".en");
+						? ConfigUtil.getContextProperty(error.getDefaultMessage() + ".cn")
+						: ConfigUtil.getContextProperty(error.getDefaultMessage() + ".en");
 				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID,
 						StringUtils.isNotBlank(desc) ? desc : field);
 

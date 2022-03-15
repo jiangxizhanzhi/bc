@@ -26,7 +26,6 @@
                     </foreach>
                 </if>
                 <if test="listQuery.practiceSetId != null and listQuery.practiceSetId != ''">
-                    <bind name="listQuery.practiceSetId" value="listQuery.practiceSetId"/>
                     and practice_set_id = #{listQuery.practiceSetId}
                 </if>
                 <if test="listQuery.difficulty != null">
@@ -39,8 +38,8 @@
                     </foreach>
                 </if>
                 <if test="listQuery.pattern != null and listQuery.pattern != ''">
-                    <bind name="listQuery.pattern" value="'%' + listQuery.pattern + '%'"/>
-                    and title like #{listQuery.pattern}
+                    <bind name="title" value="'%' + listQuery.pattern + '%'"/>
+                    and title like #{title}
                 </if>
             </if>
             <if test="isPublic != null and isPublic">

@@ -26,7 +26,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -42,7 +41,6 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -53,7 +51,6 @@ import com.cyberpeace.cr.redvsblue.service.context.room.DashboardFriend;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardGroup;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
-import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -277,14 +274,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				dashboardUser.setId(userId);
 				dashboardUser.setStatus("online");
 				dashboardUser.setSign("");
-				dashboardUser.setUsername(getFullRoleName(crRole));
+				dashboardUser.setRole(getFullRoleName(crRole));
 
 				// 找到当前用户角色
 				if (userId.equals(currentUserId)) {
-					crRole.getRoomId();
 					mine = dashboardUser;
 				} else {
-
 					friend.add(dashboardUser);
 				}
 			}
@@ -313,7 +308,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		// 如果自己是红方或蓝方角色，再放入自己的角色
 		if (myRole.isRvbStudent()) {
-			DashboardGroup selfGroup = new DashboardGroup(groups.get(0).getGroupname() + "/" + myRole.getName());
+			DashboardGroup selfGroup = new DashboardGroup(
+					groups.get(0).getGroupname() + "/" + myRole.getName());
 			selfGroup.setId(myRole.getResourceId());
 			selfGroup.setMembers(myRole.getUserIdList());
 			groups.add(selfGroup);
@@ -323,15 +319,13 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
 
-		mine.setUsername(userInfoMap.get(mine.getId()).getUserName());
-		mine.setRole(userInfoMap.get(mine.getId()).getUserName());
+		mine.setUsername(userInfoMap.get(mine.getId()).getName());
 		mine.setAvatar(userInfoMap.get(mine.getId()).getAvatarUrl());
 
 		for (DashboardUser dashboardUser : friend) {
 			UserInfo userInfo = userInfoMap.getOrDefault(dashboardUser.getId(), new UserInfo());
-			dashboardUser.setRole(userInfo.getUserName());
 			dashboardUser.setAvatar(userInfo.getAvatarUrl());
-			dashboardUser.setUsername(userInfo.getUserName() + "/" + dashboardUser.getUsername());
+			dashboardUser.setUsername(userInfo.getName());
 
 		}
 
@@ -654,14 +648,15 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		// 获取蓝队的角色任务
 		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
 		for (int i = 0; i < blueRoles.size(); i++) {
-			CrRole crRole = getRoleByJson(roomId, i, blueRoles,	CrRole.RbRoleGroup.BLUE);
+			CrRole crRole = getRoleByJson(roomId, i, blueRoles, CrRole.RbRoleGroup.BLUE);
 			crRoleList.add(crRole);
 		}
 
 		return crRoleList;
 	}
 
-	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles, CrRole.RbRoleGroup roleGroup) {
+	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles,
+			CrRole.RbRoleGroup roleGroup) {
 		JSONObject rolesJSONObject = redRoles.getJSONObject(index);
 
 		CrRoleNodesData nodesData = new CrRoleNodesData();
@@ -674,7 +669,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		CrRole crRole = new CrRole(roleGroup, rolesJSONObject.get("name").toString());
 
-		crRole.setMissionStageSchemes(getNewRoomScheme(rolesJSONObject.get("missions_scheme").toString(), roomId));
+		crRole.setMissionStageSchemes(
+				getNewRoomScheme(rolesJSONObject.get("missions_scheme").toString(), roomId));
 		crRole.setNodesData(nodesData);
 
 		return crRole;
@@ -727,10 +723,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	private void validateName(String name) {
-		// validate length
-		CrCommonValidator.validateLength(name, CrCommonConstants.MIN_TRAINING_NAME_LEN,
-				CrCommonConstants.MAX_TRAINING_NAME_LEN,
-				CrBusinessErrorCode.TRAINING_NAME_LEN_ERROR);
 		// check if duplicate
 		Integer roomExist = rbRoomMapper.countByName(name);
 		if (roomExist > 0) {

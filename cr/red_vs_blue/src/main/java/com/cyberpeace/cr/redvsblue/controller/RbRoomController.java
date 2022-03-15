@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +52,10 @@ import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
 import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 
@@ -98,6 +98,8 @@ public class RbRoomController {
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
+		// 校验
+		rbRoomReq.validate();
 
 		RbRoomContext rbRoomContext = BeanUtils.copy(rbRoomReq, RbRoomContext.class);
 		rbRoomContext
@@ -118,8 +120,7 @@ public class RbRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id,
-				UserInfoContext.getUserContext().getUserId());
+		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
 
 		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
 
@@ -231,7 +232,8 @@ public class RbRoomController {
 			RoleUsers roleUsers = new RoleUsers();
 			roleUsers.setRoleName(crRole.getName());
 			roleUsers.setRoleGroup(crRole.getRoleGroup());
-			String userNamesByRoleUsers = crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList());
+			String userNamesByRoleUsers = crRoleService
+					.getUserNamesByRoleUsers(crRole.getUserIdList());
 			roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
 
 			roleUsersList.add(roleUsers);
@@ -289,6 +291,8 @@ public class RbRoomController {
 	@ApiOperation("修改")
 	@PutMapping()
 	public BaseRsp<RbRoomRsp> update(@RequestBody @Validated RbRoomModifyReq rbTrainRoomModifyReq) {
+		// 校验
+		rbTrainRoomModifyReq.validate();
 
 		RbRoom rbRoom = rbRoomService.getById(rbTrainRoomModifyReq.getResourceId());
 
@@ -395,7 +399,7 @@ public class RbRoomController {
 			log.error("Rate Value Error！rate=[{}]", rate);
 			throw new BusinessException(CrBusinessErrorCode.RATE_VALUE_RANGE_ERROR);
 		}
-		//创建时间管理
+		// 创建时间管理
 		RbTimeManagement timeManagement = BeanUtils.copy(rbTimeManagementReq,
 				RbTimeManagement.class);
 

@@ -172,6 +172,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId())
 				.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
 		sceneFilterService.filterVisibleTopo(topoData, nodes);
+		ret.setTopoId(room.getCopyedTopoId());
 		ret.setTopoData(topoData);
 		return ret;
 	}

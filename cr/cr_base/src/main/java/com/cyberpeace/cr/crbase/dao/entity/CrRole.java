@@ -141,25 +141,44 @@ public class CrRole extends BaseTable {
 		return BusinessTemplate.BusinessType.TRAINING_TEAM.getCode().equals(businessType);
 	}
 
-	public enum TeamRoleGroup implements GenericEnum, RoleGroup {
+	public enum TeamRoleGroup implements GenericEnum, RoleGroup, BaseI18n {
 
 		/***/
-		TEACHER(1, "教员"),
-		STUDENT(2, "学员");
+		TEACHER(1, "教员", "Teacher"),
+		STUDENT(2, "学员", "Student");
 
 		@Getter
 		private final Integer code;
 
 		@Getter
-		private final String desc;
+		private final String chinese;
 
-		TeamRoleGroup(Integer code, String desc) {
+		@Getter
+		private final String english;
+
+		TeamRoleGroup(Integer code, String chinese, String english) {
 			this.code = code;
-			this.desc = desc;
+			this.chinese = chinese;
+			this.english = english;
 		}
 
 		public boolean equals(Integer roleGroupCode) {
 			return getCode().equals(roleGroupCode);
+		}
+
+		@Override
+		public String getChinese() {
+			return this.chinese;
+		}
+
+		@Override
+		public String getEnglish() {
+			return this.english;
+		}
+
+		@Override
+		public String getDesc() {
+			return this.getMsg();
 		}
 	}
 

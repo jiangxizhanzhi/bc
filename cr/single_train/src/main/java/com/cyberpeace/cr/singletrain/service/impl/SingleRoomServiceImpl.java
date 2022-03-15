@@ -21,6 +21,7 @@ import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -123,7 +124,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		room.setIsFinish(false);
 
 		// setup single role
-		CrRole singleRole = new CrRole(CrRole.SINGLE_ROLE_GROUP_NAME, CrRole.SINGLE_ROLE_GROUP_CODE);
+		CrRole singleRole = new CrRole(CrRole.SINGLE_ROLE_GROUP_NAME,
+				CrRole.SINGLE_ROLE_GROUP_CODE);
 		singleRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 		singleRole.setUserIdList(Lists.newArrayList(userId));
 
@@ -457,6 +459,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.eq(MissionBase::getCreateUserId, userId).one();
 		if (mission == null) {
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+		// 多选题答案校验
+		if (mission.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
+			if (requestData.getAnswer().equals(CommonConstant.EMPTY_LIST_JSON)) {
+				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+			}
 		}
 
 		// 写入任务记录
@@ -801,7 +809,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			if (trainExtraData.isEmpty()) {
 				trainHistoryBo.setScore(0d);
 			} else {
-				trainHistoryBo.setScore(trainExtraData.getDouble(SingleRoom.CrTrainRecordFields.SCORE));
+				trainHistoryBo
+						.setScore(trainExtraData.getDouble(SingleRoom.CrTrainRecordFields.SCORE));
 			}
 
 			result.add(trainHistoryBo);
@@ -868,7 +877,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return singleRoom.getResourceId();
 	}
 
-	private Map<String, Mission> getMissionMapByScheme(List<MissionStageScheme> missionStageSchemes) {
+	private Map<String, Mission>
+			getMissionMapByScheme(List<MissionStageScheme> missionStageSchemes) {
 		List<String> missionIds = missionService.getMissionIdsByScheme(missionStageSchemes);
 
 		if (missionIds.isEmpty()) {

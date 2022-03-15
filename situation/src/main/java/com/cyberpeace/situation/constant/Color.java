@@ -3,30 +3,31 @@ package com.cyberpeace.situation.constant;
 import lombok.Getter;
 
 public enum Color {
-    /**
-     * 颜色
-     */
 
-    WHITE("#FFFFFF", "白色"),
-//    BLACK("#000000", "黑色"),
-    RED("#FF0000", "红色"),
-    BLUE("#0000FF", "蓝色");
+	/**
+	 * 颜色
+	 */
 
-    @Getter
-    private String code;
+	WHITE("#FFFFFF", "白色"),
+	// BLACK("#000000", "黑色"),
+	RED("#FF0000", "红色"),
+	BLUE("#0000FF", "蓝色");
 
-    @Getter
-    private String desc;
+	@Getter
+	private String code;
 
-    Color(String code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
+	@Getter
+	private String desc;
 
-    public static String getRandomValue(Color[] values) {
+	Color(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
 
-        return values[(int) (Math.random() * values.length)].code;
+	public static String getRandomValue(Color[] values) {
 
-    }
+		return values[(int) (Math.random() * values.length)].code;
+
+	}
 
 }

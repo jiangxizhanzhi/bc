@@ -1,5 +1,9 @@
 package com.cyberpeace.common.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,11 +13,17 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * json序列化和反序列化工具类
  */
+@Slf4j
 public class JsonUtil {
 
 	private JsonUtil() {}
@@ -40,6 +50,25 @@ public class JsonUtil {
 
 	public static <T> T toJsonObject(String text, Class<T> clazz) {
 		return JSONObject.parseObject(text, clazz);
+	}
+
+	@SneakyThrows
+	public static <T> T toJsonObject(InputStream inputStream, Class<T> clazz) {
+
+		BufferedReader bR = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
+		String line = "";
+		StringBuilder responseStrBuilder = new StringBuilder();
+		try {
+			while ((line = bR.readLine()) != null) {
+				responseStrBuilder.append(line);
+			}
+		} catch (IOException e) {
+			log.error("InputStream parse failed!", e);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+		} finally {
+			bR.close();
+		}
+		return JSONObject.parseObject(responseStrBuilder.toString(), clazz);
 	}
 
 	/**

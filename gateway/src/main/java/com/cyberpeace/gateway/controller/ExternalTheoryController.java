@@ -1,77 +1,91 @@
-package com.cyberpeace.oj.practice.controller;
+package com.cyberpeace.gateway.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.practice.controller.req.external.PracticeRandomChoiceReq;
-import com.cyberpeace.oj.practice.controller.req.external.PracticeTheoryListReq;
-import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.cyberpeace.oj.practice.service.externalBo.PracticeCategorySimple;
-import com.cyberpeace.oj.practice.service.externalBo.PracticeSetSimple;
-import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
-import java.util.List;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.gateway.service.bo.ExternalPracticeCategoryBo;
+import com.cyberpeace.gateway.service.bo.ExternalPracticeSetBo;
+import com.cyberpeace.oj.practice.controller.req.external.PracticeRandomChoiceReq;
+import com.cyberpeace.oj.practice.controller.req.external.PracticeTheoryListReq;
+import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.google.common.collect.Lists;
 
-@Api(tags = "oj-外部接口-题库引用")
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(tags = "外部接口-理论习题相关api")
 @RestController
-@RequestMapping("/oj/practice-external")
-public class ExternalController {
+@RequestMapping("/gateway/theory")
+public class ExternalTheoryController {
 
 	@Autowired
-	PracticeTheoryMapper practiceTheoryMapper;
+	private PracticeTheoryMapper practiceTheoryMapper;
 
 	@Autowired
-	PracticeSetMapper practiceSetMapper;
+	private PracticeSetMapper practiceSetMapper;
 
 	@Autowired
-	PracticeCategoryMapper practiceCategoryMapper;
-
-	private final String secretKey = "Cmycjs1bWUHsKb8r";
-
-	private final String headerKey = "OPT-OJ-KEY";
+	private PracticeCategoryMapper practiceCategoryMapper;
 
 	/**
 	 * 接口认证(key获取方式后续可能调整)
 	 * @param key headers: OPT-OJ-KEY
 	 */
 	private void allowAccess(String key) {
-		if (!key.equals(this.secretKey)) {
+		if (!key.equals(WebConstant.OJ_HEADER_KEY_VALUE)) {
 			throw new UnauthorizedException("secretKey is failed.");
 		}
 	}
 
-	@ApiOperation("理论基础习题集-全量获取")
-	@GetMapping("/theory/practice-set/list")
-	public BaseRsp<List<PracticeSetSimple>>
-			getPracticeSetList(@RequestHeader(headerKey) @NotBlank String key) {
+	@ApiOperation("理论基础习题集")
+	@GetMapping("/practice-set/list")
+	public BaseRsp<List<ExternalPracticeSetBo>>
+			getPracticeSetList(@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key) {
 		allowAccess(key);
-		return new BaseRsp<>(practiceSetMapper.getAll());
+
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), false);
+		List<ExternalPracticeSetBo> setBoList = BeanUtils.deepCopyList(practiceSets,
+				ExternalPracticeSetBo.class);
+		return new BaseRsp<>(setBoList);
 	}
 
 	@ApiOperation("理论基础分类-全量获取")
-	@GetMapping("/theory/category/list")
-	public BaseRsp<List<PracticeCategorySimple>>
-			getCategoryList(@RequestHeader(headerKey) @NotBlank String key) {
+	@GetMapping("/category/list")
+	public BaseRsp<List<ExternalPracticeCategoryBo>>
+			getCategoryList(@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key) {
 		allowAccess(key);
-		return new BaseRsp<>(practiceCategoryMapper.getAll());
+
+		List<PracticeCategory> categoryList = practiceCategoryMapper
+				.listByTypeAndName(PracticeCategory.PracticeType.THEORY.getCode(), null);
+		List<ExternalPracticeCategoryBo> categoryBoList = BeanUtils.deepCopyList(categoryList,
+				ExternalPracticeCategoryBo.class);
+
+		return new BaseRsp<>(categoryBoList);
 	}
 
 	@ApiOperation("理论基础题库-分页查询")
-	@GetMapping("/theory/list")
+	@GetMapping("/list")
 	public BaseRsp<ListRsp<PracticeTheory>> getTheoryList(
-			@RequestHeader(headerKey) @NotBlank String key, PracticeTheoryListReq queryParams) {
+			@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key,
+			PracticeTheoryListReq queryParams) {
 		allowAccess(key);
 		IPage<PracticeTheory> result = practiceTheoryMapper.getList(queryParams.toPageParam(),
 				queryParams.getPattern(), queryParams.getPracticeSet(), queryParams.getCategory(),
@@ -80,8 +94,9 @@ public class ExternalController {
 	}
 
 	@ApiOperation("理论基础题库-批量查询")
-	@GetMapping("/theory/batch-get")
-	public BaseRsp<List<PracticeTheory>> batchGet(@RequestHeader(headerKey) @NotBlank String key,
+	@GetMapping("/batch-get")
+	public BaseRsp<List<PracticeTheory>> batchGet(
+			@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key,
 			@RequestParam("resource_ids") @NotBlank List<String> resourceIds) {
 		allowAccess(key);
 		if (resourceIds == null) {
@@ -91,9 +106,10 @@ public class ExternalController {
 	}
 
 	@ApiOperation("理论基础题库-随机获取数条")
-	@GetMapping("/theory/random-choice")
+	@GetMapping("/random-choice")
 	public BaseRsp<List<PracticeTheory>> getTheoryRandom(
-			@RequestHeader(headerKey) @NotBlank String key, PracticeRandomChoiceReq queryParams) {
+			@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key,
+			PracticeRandomChoiceReq queryParams) {
 		allowAccess(key);
 		TheoryListQuery listQuery = BeanUtils.copy(queryParams, TheoryListQuery.class);
 		List<PracticeTheory> result = practiceTheoryMapper.randomChoice(listQuery,

@@ -127,6 +127,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 				|| StringUtils.isBlank(localScene.getMpSceneId())) {
 			JSONObject topoData = getTopoData(room.getCopyedTopoId(), nodes);
 			ret.setTopoData(topoData);
+			ret.setTopoId(room.getCopyedTopoId());
 			return ret;
 		}
 
@@ -146,6 +147,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			// 这时实际场景是没启动的，返回拓扑数据
 			JSONObject topoData = getTopoData(room.getCopyedTopoId(), nodes);
 			ret.setTopoData(topoData);
+			ret.setTopoId(room.getCopyedTopoId());
 		}
 
 		return ret;

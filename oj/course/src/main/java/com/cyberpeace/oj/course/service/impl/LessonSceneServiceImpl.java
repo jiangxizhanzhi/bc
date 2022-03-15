@@ -2,14 +2,8 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
-import com.cyberpeace.oj.course.service.ClassroomSignService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -24,6 +18,7 @@ import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
@@ -31,9 +26,13 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
+import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -152,13 +151,21 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	@Override
 	public Boolean restartNode(String lessonId, String nodeId, AuthContext authContext) {
 		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, authContext);
-		return localSceneService.restartNode(ojLocalScene.getLocalSceneId(), nodeId);
+		localSceneService.restartNode(ojLocalScene.getLocalSceneId(), nodeId);
+
+		// 清理远程协助信息
+		clearAssistance(ojLocalScene);
+		return CommonConstant.TRUE;
 	}
 
 	@Override
 	public Boolean recreateNode(String lessonId, String nodeId, AuthContext authContext) {
 		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, authContext);
-		return localSceneService.recreateNode(ojLocalScene.getLocalSceneId(), nodeId);
+		localSceneService.recreateNode(ojLocalScene.getLocalSceneId(), nodeId);
+
+		// 清理远程协助信息
+		clearAssistance(ojLocalScene);
+		return CommonConstant.TRUE;
 	}
 
 	@Override
@@ -170,33 +177,46 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 			// 场景暂停
 			localSceneService.pauseScene(ojLocalScene.getLocalSceneId());
-
-			// 清除远程协助信息
-			if (ojLocalScene.getBusinessType().intValue() == LocalScene.BusinessCode.CLASSROOM
-					.getCode().intValue()) {
-				ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
-						.selectById(ojLocalScene.getBusinessId());
-				if (null != groupInfo && StringUtils.isNotBlank(groupInfo.getGroupUserIds())) {
-					List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
-							String.class);
-					List<ClassroomSign> signList = StreamApiUtils.map(userIds, userId -> {
-						ClassroomSign classroomSign = classroomSignMapper
-								.selectByRoomAndUser(groupInfo.getClassroomId(), userId);
-						if (null == classroomSign) {
-							return null;
-						}
-						classroomSign.setNeedHelp(CommonConstant.FALSE);
-						classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
-						return classroomSign;
-					});
-
-					return classroomSignService.updateBatchById(signList);
-				}
-			}
+			clearAssistance(ojLocalScene);
 
 			return CommonConstant.TRUE;
 		} else {
 			return localSceneService.unpauseScene(ojLocalScene.getLocalSceneId());
+		}
+	}
+
+	/**
+	 * 清除远程协助信息
+	 * @param ojLocalScene
+	 */
+	private void clearAssistance(OjLocalScene ojLocalScene) {
+
+		if (ojLocalScene.getBusinessType().intValue() != LocalScene.BusinessCode.CLASSROOM.getCode()
+				.intValue()) {
+			return;
+		}
+
+		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
+				.selectById(ojLocalScene.getBusinessId());
+
+		if (null != groupInfo && StringUtils.isNotBlank(groupInfo.getGroupUserIds())) {
+			List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
+					String.class);
+
+			// 获取签到信息
+			List<ClassroomSign> signList = StreamApiUtils.map(userIds, userId -> {
+				ClassroomSign classroomSign = classroomSignMapper
+						.selectByRoomAndUser(groupInfo.getClassroomId(), userId);
+				if (null == classroomSign) {
+					return null;
+				}
+				classroomSign.setNeedHelp(CommonConstant.FALSE);
+				classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
+				return classroomSign;
+			});
+
+			// 清除远程协助数据
+			classroomSignService.updateBatchById(signList);
 		}
 	}
 

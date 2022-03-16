@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -64,6 +65,19 @@ public class ReportScoreController {
             @RequestParam("resource_id") @NotBlank String resourceId) {
         ReportScoreDetailRsp reportScoreDetailRsp = reportScoreService.selectById(resourceId);
         return new BaseRsp<>(reportScoreDetailRsp);
+    }
+
+    @ApiOperation("批量删除")
+    @DeleteMapping()
+    public BaseRsp<String> deleteReportScore(@RequestBody @Validated DeleteReq deleteReq) {
+        UserInfo userContext = UserInfoContext.getUserContext();
+        if(!userContext.getPermissions().contains(PERMISSION_KEY)) {
+            log.error("user {} not permission delete, use permission key is {}", userContext.getUserId(),PERMISSION_KEY);
+            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+        }
+        reportScoreService.removeByIds(deleteReq.getIds());
+
+        return new BaseRsp<>();
     }
 
     @ApiOperation("更新打分")

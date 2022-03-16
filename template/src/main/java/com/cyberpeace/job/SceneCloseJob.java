@@ -1,28 +1,18 @@
 package com.cyberpeace.job;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.scene.SceneMpContext;
-import com.cyberpeace.integratation.model.scene.SceneOpsContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 场景自动关闭定时任务

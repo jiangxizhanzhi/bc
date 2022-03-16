@@ -24,27 +24,33 @@
             <id>rtks</id>
 
             <properties>
-                <!-- lgd -->
+                <!-- lgd 只有rtks和实训-->
                 <package.environment>rtks</package.environment>
             </properties>
         </profile>
         <profile>
             <id>rtks_v5_2</id>
             <properties>
-                <!-- base5.2 -->
+                <!-- base5.2 不包含靶场，只有rtks和实训 -->
                 <package.environment>rtks_v5_2</package.environment>
             </properties>
         </profile>
-
         <profile>
-            <id>rtks_v5_3</id>
+            <id>prod</id>
+            <properties>
+                <!-- 生产环境 -->
+                <package.environment>prod</package.environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
             <activation>
                 <!-- 默认激活 -->
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <!-- base5.3 -->
-                <package.environment>rtks_v5_3</package.environment>
+                <!-- 开发环境 -->
+                <package.environment>dev</package.environment>
             </properties>
         </profile>
     </profiles>

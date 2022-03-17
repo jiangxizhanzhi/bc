@@ -934,8 +934,16 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				}
 
 				// 课堂相关
-				classroomIds.forEach(
-						classroomId -> classroomService.deleteClassroom(classroomId, authContext));
+				classroomIds.forEach(classroomId -> {
+					try {
+						// 删不掉就删不掉吧 不管
+						classroomService.deleteClassroom(classroomId, authContext);
+					} catch (Exception e) {
+						log.error("Classroom scene delete failed! classroom_id=[{}], catch error:",
+								classroomId, e);
+					}
+
+				});
 
 				// 课后练习
 				lessonList.forEach(courseLesson -> {
@@ -949,8 +957,16 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 				// 目录和场景
 				lessonConfigMapper.deleteByLessonIds(resourceIds);
-				adminOjLocalScenes.forEach(ojLocalScene -> ojLocalSceneService
-						.deleteLocalAndRemoteScene(ojLocalScene));
+				adminOjLocalScenes.forEach(ojLocalScene -> {
+					try {
+						// 删不掉算了
+						ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+					} catch (Exception e) {
+						log.error(
+								"Lesson scene delete failed! oj_local_scene_id=[{}], lesson_id=[{}], catch error:",
+								ojLocalScene.getResourceId(), ojLocalScene.getBusinessId(), e);
+					}
+				});
 
 				return courseLessonMapper.deleteBatchIds(resourceIds);
 			}

@@ -3,6 +3,8 @@ package com.cyberpeace.situation.service.impl;
 import java.io.InputStream;
 import java.util.*;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -55,20 +57,21 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		// 获取中台场景数据，优先获取场景拓扑
 		JSONObject sceneTopo;
 		JSONObject topology;
-		JSONObject extendElementInfo;
+		JSONObject plugins;
 
 		// 提取有效数据
 		if (StringUtils.isBlank(sceneId)) {
 			sceneTopo = remoteTopoService.getTopoById(topoId);
 			topology = sceneTopo.getJSONObject("scene_config").getJSONObject("topology");
-			extendElementInfo = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins")
-					.getJSONObject("cpcloud").getJSONObject("elements");
+			plugins = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins");
 		} else {
 			sceneTopo = getsceneTopoBySceneId(sceneId);
 			topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
-			extendElementInfo = sceneTopo.getJSONObject("scene").getJSONObject("plugins")
-					.getJSONObject("cpcloud").getJSONObject("elements");
+			plugins = sceneTopo.getJSONObject("scene").getJSONObject("plugins");
 		}
+
+		JSONObject extendElementInfo = (JSONObject) ((JSONObject) plugins.getOrDefault("cpcloud",
+				new JSONObject())).getOrDefault("elements", new JSONObject());
 
 		// 获取中台靶标类型数据
 		JSONObject deviceCategorie = remoteTerminalService.getAllCategorie();
@@ -396,10 +399,17 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	public List<PlaneCoordinate> getSceneScope(List<Float> xList, List<Float> yList) {
 
 		// 获取x、y坐标的极值
-		Float xMax = Collections.max(xList);
-		Float xMin = Collections.min(xList);
-		Float yMax = Collections.max(yList);
-		Float yMin = Collections.min(yList);
+		Float xMax = 0.0f;
+		Float xMin = 0.0f;
+		Float yMax = 0.0f;
+		Float yMin = 0.0f;
+
+		if (!xList.isEmpty() && !yList.isEmpty()){
+			xMax = Collections.max(xList);
+			xMin = Collections.min(xList);
+			yMax = Collections.max(yList);
+			yMin = Collections.min(yList);
+		}
 
 		// 构造拓扑最大坐标范围
 		List<PlaneCoordinate> sceneScope = Lists.newArrayList();
@@ -589,7 +599,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		} else if (elements.size() >= 2) {
 			wsEvent = getRandomWsMultiElementDynamic(elements);
 		} else {
-
+			throw new BusinessException(ErrorCode.LACK_OF_SCENE_NODE);
 		}
 
 		wsEvent.setSceneId(sceneId);

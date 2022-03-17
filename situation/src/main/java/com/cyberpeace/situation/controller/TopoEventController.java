@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势事件")
 @RestController
-@RequiresAuthentication
 @RequestMapping("/situation/simulation")
 public class TopoEventController {
 

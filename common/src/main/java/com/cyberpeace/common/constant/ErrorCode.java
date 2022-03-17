@@ -79,4 +79,9 @@ public interface ErrorCode {
 	 * 用户信息缺失/用户不存在
 	 */
 	String USER_INFO_MISSING = "100029";
+
+	/**
+	 * 场景节点不足
+	 */
+	String LACK_OF_SCENE_NODE = "100030";
 }

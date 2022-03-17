@@ -84,4 +84,11 @@ public interface ErrorCode {
 	 * 场景节点不足
 	 */
 	String LACK_OF_SCENE_NODE = "100030";
+
+	/** 无效的文件路径 */
+	String INVALID_FILE_PATH = "100031";
+
+	/** 文件为空 */
+	String EMPTY_FILE = "100032";
+
 }

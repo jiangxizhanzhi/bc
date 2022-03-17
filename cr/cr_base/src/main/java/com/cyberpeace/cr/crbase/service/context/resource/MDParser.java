@@ -9,8 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
@@ -279,14 +281,14 @@ public class MDParser {
 		Integer difficulty = ZiguanConstants.DIFFICULTY_CHOICE
 				.get(data.get(ZiguanConstants.DIFFICULTY));
 		if (difficulty == null) {
-			throw new RuntimeException("illegal difficulty");
+			throw new BusinessException(CrBusinessErrorCode.INVALID_DIFFICULTY);
 		}
 		businessTemplate.setDifficulty(difficulty);
 		// category
 		Integer category = ZiguanConstants.BUSINESS_CATEGORIES
 				.get(data.get(ZiguanConstants.CATEGORY));
 		if (category == null) {
-			throw new RuntimeException("illegal category");
+			throw new BusinessException(CrBusinessErrorCode.INVALID_TRAINING_CATEGORY);
 		}
 		templateContext.setSubType(category);
 		// duration time
@@ -371,14 +373,14 @@ public class MDParser {
 	 */
 	private GroupRoles parseRoles(String roleInfo) {
 		if (StringUtils.isBlank(roleInfo)) {
-			throw new RuntimeException("Invalid roles info.");
+			throw new BusinessException(CrBusinessErrorCode.INVALID_ROLE_INFO);
 		}
 		// 逐行读取
 		String[] lines = roleInfo.split(LINE_SEP);
 		Iterator<String> iter = Arrays.stream(lines).iterator();
 		String line = iter.next();
 		if (!line.startsWith(ENTRY_HEAD)) {
-			throw new RuntimeException("Illegal Riles info.");
+			throw new BusinessException(CrBusinessErrorCode.INVALID_ROLE_INFO);
 		}
 		GroupRoles groupRoles = new GroupRoles();
 		while (StringUtils.isNotBlank(line)) {
@@ -476,7 +478,7 @@ public class MDParser {
 		List<SchemeDatum> schemeData = Lists.newArrayList();
 		for (String stage : missionStages) {
 			// 角色任务为空
-			if(stage.isEmpty()){
+			if (stage.isEmpty()) {
 				break;
 			}
 			String[] stageParts = stage.split(LINE_SEP + H3, 2);

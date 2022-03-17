@@ -50,21 +50,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> implements CrTaskService {
 
+	private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
+			CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
+			CrTaskLog.ActionCode.MAN_SUCCESS.getCode(), CrTaskSubmit.EvaluateStatus.FAIL.getCode(),
+			CrTaskLog.ActionCode.MAN_FAILURE.getCode(),
+			CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
+			CrTaskLog.ActionCode.MAN_REJECT.getCode());
 	@Autowired
 	private CrTaskMapper crTaskMapper;
-
 	@Autowired
 	private MissionMapper missionMapper;
-
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
-
 	@Autowired
 	private TransactionTemplate transactionTemplate;
-
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
-
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
 
@@ -115,7 +116,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			Mission mission = missionMap.get(key);
 			CrTask crTask = crTaskMap.get(key);
 			if (mission == null || crTask == null) {
-				throw new BusinessException();
+				throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 			}
 
 			CrTaskSubmit crTaskSubmit = new CrTaskSubmit();
@@ -553,13 +554,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.builder().data(data).messageIdentifier(identifier).build();
 		webSocketHandler.pushMessage(messageContext, true);
 	}
-
-	private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
-			CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
-			CrTaskLog.ActionCode.MAN_SUCCESS.getCode(), CrTaskSubmit.EvaluateStatus.FAIL.getCode(),
-			CrTaskLog.ActionCode.MAN_FAILURE.getCode(),
-			CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
-			CrTaskLog.ActionCode.MAN_REJECT.getCode());
 
 	@Override
 	public Boolean isCorrectByObjective(String userAnswer, String missionAnswer,

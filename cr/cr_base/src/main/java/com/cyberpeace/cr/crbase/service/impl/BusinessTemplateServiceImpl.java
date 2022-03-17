@@ -210,7 +210,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		BusinessTemplate res = businessTemplateMapper.selectByLocalSceneId(localSceneId);
 		if (null == res) {
 			log.error("failed to find businessTemplate with localSceneId [{}]", localSceneId);
-			throw new RuntimeException();
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
 		}
 		return res;
 	}

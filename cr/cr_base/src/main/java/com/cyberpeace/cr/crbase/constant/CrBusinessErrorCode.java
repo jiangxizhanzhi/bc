@@ -228,4 +228,19 @@ public interface CrBusinessErrorCode {
 
 	/** 非法的描述长度 */
 	String ILLEGAL_DESC_LEN = "101073";
+
+	/** 导出模板失败 */
+	String FAILED_TO_DUMP_TEMPLATE = "101074";
+
+	/** 导出任务方案失败 */
+	String FAILED_TO_DUMP_COMBAT_TECH = "101075";
+
+	/** 非法的难度 */
+	String INVALID_DIFFICULTY = "101076";
+
+	/** 非法的训练类型 */
+	String INVALID_TRAINING_CATEGORY = "101077";
+
+	/** 无效的角色配置信息 */
+	String INVALID_ROLE_INFO = "101078";
 }

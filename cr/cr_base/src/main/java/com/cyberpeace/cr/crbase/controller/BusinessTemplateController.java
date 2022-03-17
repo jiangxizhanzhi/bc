@@ -17,9 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.alibaba.fastjson.parser.ParserConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -39,12 +36,14 @@ import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.Share;
+import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -141,52 +140,53 @@ public class BusinessTemplateController {
 		return new BaseRsp();
 	}
 
-//	/**
-//	 * 导入业务模板
-//	 * @return
-//	 */
-//	@ApiOperation("导入业务模板")
-//	@PostMapping("/batch_loads")
-//	public BaseRsp batchLoads(@RequestParam MultipartFile file) {
-//		try {
-//			File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
-//			String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
-//			File unzipFileDirectory = new File(unZipPath);
-//
-//			if (unzipFileDirectory.isDirectory()) {
-//				File[] unzipFiles = unzipFileDirectory.listFiles();
-//				Map<String, String> files = Maps.newHashMap();
-//				for (File unzipFile : unzipFiles) {
-//					if (unzipFile.isDirectory()) {
-//						searchFile(unzipFile, files);
-//						continue;
-//					}
-//
-//					if (!unzipFile.getName().endsWith(".json")) {
-//						log.error("find wrong file when loads, fileName=[{}]",
-//								unzipFile.getAbsolutePath());
-//						continue;
-//					}
-//
-//					ParserConfig parserConfig = new ParserConfig();
-//					parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
-//					LoadTemplate loadTemplate = JSON.parseObject(FileUtil.getContent(unzipFile),
-//							LoadTemplate.class, parserConfig);
-//
-//					businessTemplateService.batchLoads(loadTemplate, files);
-//				}
-//			}
-//		} catch (ZipException e) {
-//			log.error("unable unzip file！filename=[{}]", file.getOriginalFilename());
-//			throw new BusinessException(CrBusinessErrorCode.FILE_FORMAT_ERROR);
-//		} catch (IOException e) {
-//			log.error("unable save file！filename=[{}],path=[{}]", file.getOriginalFilename(),
-//					ZipUtil.generatePath());
-//			throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
-//		}
-//
-//		return new BaseRsp();
-//	}
+	// /**
+	// * 导入业务模板
+	// * @return
+	// */
+	// @ApiOperation("导入业务模板")
+	// @PostMapping("/batch_loads")
+	// public BaseRsp batchLoads(@RequestParam MultipartFile file) {
+	// try {
+	// File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+	// String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+	// File unzipFileDirectory = new File(unZipPath);
+	//
+	// if (unzipFileDirectory.isDirectory()) {
+	// File[] unzipFiles = unzipFileDirectory.listFiles();
+	// Map<String, String> files = Maps.newHashMap();
+	// for (File unzipFile : unzipFiles) {
+	// if (unzipFile.isDirectory()) {
+	// searchFile(unzipFile, files);
+	// continue;
+	// }
+	//
+	// if (!unzipFile.getName().endsWith(".json")) {
+	// log.error("find wrong file when loads, fileName=[{}]",
+	// unzipFile.getAbsolutePath());
+	// continue;
+	// }
+	//
+	// ParserConfig parserConfig = new ParserConfig();
+	// parserConfig.propertyNamingStrategy = PropertyNamingStrategy.SnakeCase;
+	// LoadTemplate loadTemplate = JSON.parseObject(FileUtil.getContent(unzipFile),
+	// LoadTemplate.class, parserConfig);
+	//
+	// businessTemplateService.batchLoads(loadTemplate, files);
+	// }
+	// }
+	// } catch (ZipException e) {
+	// log.error("unable unzip file！filename=[{}]", file.getOriginalFilename());
+	// throw new BusinessException(CrBusinessErrorCode.FILE_FORMAT_ERROR);
+	// } catch (IOException e) {
+	// log.error("unable save file！filename=[{}],path=[{}]",
+	// file.getOriginalFilename(),
+	// ZipUtil.generatePath());
+	// throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
+	// }
+	//
+	// return new BaseRsp();
+	// }
 
 	private void searchFile(File file, Map<String, String> map) {
 		File[] fs = file.listFiles();
@@ -323,8 +323,8 @@ public class BusinessTemplateController {
 			File zip = new File(zipPath);
 			FileUtil.setResponse(zip, false, response);
 		} catch (Exception e) {
-			log.error("failed to dump business template");
-			throw new RuntimeException(e);
+			log.error("failed to dump business template", e);
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_DUMP_TEMPLATE);
 		} finally {
 			// 3. delete temp dir
 			if (!FileUtil.deleteDir(new File(tempDir))) {

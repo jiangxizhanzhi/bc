@@ -172,7 +172,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
         ReportScoreConfig testConfig = reportScoreConfigMapper.getTypeConfig(TEST_KEY, TEST_KEY, null);
         JyjWsEvent jyjWsEvent = new JyjWsEvent();
         jyjWsEvent.setName(userName);
-        jyjWsEvent.setLookAtTarget(true);
+        jyjWsEvent.setLookAtTarget(false);
         jyjWsEvent.setSourceId(sourceName);
         jyjWsEvent.setTargetId(targetName);
 
@@ -403,7 +403,7 @@ public class ReportScoreConfigServiceImpl extends ServiceImpl<ReportScoreConfigM
     private JyjWsEvent getWsEvent(JSONObject object, String userName) {
         JyjWsEvent jyjWsEvent = new JyjWsEvent();
         jyjWsEvent.setName(userName);
-        jyjWsEvent.setLookAtTarget(true);
+        jyjWsEvent.setLookAtTarget(false);
         jyjWsEvent.setSourceId(object.getString("source_node_name"));
         jyjWsEvent.setTargetId(object.getString("target_node_name"));
         JSONObject attackInfo = object.getObject("attack_info", JSONObject.class);

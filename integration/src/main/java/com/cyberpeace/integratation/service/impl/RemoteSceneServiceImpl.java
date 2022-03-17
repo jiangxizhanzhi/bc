@@ -210,10 +210,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public JSONArray getMonitorSessions(String mpSceneId, String studentId) {
-
-		String url = NODE_SESSION_URL + mpSceneId;
+		String url;
 		if (StringUtils.isNotBlank(studentId)) {
-			url = url + "&userIds=" + studentId;
+			url = String.format(NODE_SESSION_URL, mpSceneId, "", studentId, "");
+		} else {
+			url = String.format(NODE_SESSION_URL, mpSceneId, "", "", "");
 		}
 		return HttpClientUtil.rawGet(url, JSONArray.class);
 	}

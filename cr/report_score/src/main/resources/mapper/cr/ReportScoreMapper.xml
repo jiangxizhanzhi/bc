@@ -28,7 +28,7 @@
     </select>
 
     <select id="listRecord" resultType="com.cyberpeace.cr.report_score.controller.res.ScoreRecordRsp">
-        select report_name, user_name as team_name, score_time, ROUND(score,2)  from cr_report_score
+        select report_name, user_name as team_name, score_time, score from cr_report_score
         <where>
             `score_time` is not null and `status` = 2
             <if test="listQuery.subject != null and listQuery.subject != ''">
@@ -77,7 +77,7 @@
     </select>
 
     <select id="getRankScore" resultType="com.cyberpeace.cr.report_score.controller.res.RankingRep">
-        select `user_id`, `avatar_url` as logo, `user_name`, ROUND(sum(`score`),2) as sum_score, row_number() over (order by sum_score desc) as rank
+        select `user_id`, `avatar_url` as logo, `user_name`, sum(`score`) as sum_score, row_number() over (order by sum_score desc) as rank
         from cr_report_score
         where status = 2
         group by user_id

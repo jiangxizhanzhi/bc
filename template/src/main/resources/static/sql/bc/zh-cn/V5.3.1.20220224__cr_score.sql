@@ -1,0 +1,1 @@
+ALTER TABLE cr_score MODIFY `comment` longtext;

@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -30,6 +29,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -105,7 +105,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("startScene: Scene start failed! localScene=[{}]",
 					JsonUtil.toJsonString(localScene));
-			throw new InvalidParamException("场景启动失败！");
+			throw new BusinessException(OjBusinessErrorCode.SCENE_START_FAIL);
 		}
 
 		localScene.setMpSceneId(sceneId);

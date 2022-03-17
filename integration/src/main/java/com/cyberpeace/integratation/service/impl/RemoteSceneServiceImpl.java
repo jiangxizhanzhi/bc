@@ -5,6 +5,7 @@ import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.xml.soap.Node;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,11 +211,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public JSONArray getMonitorSessions(String mpSceneId, String studentId) {
-		String url;
+		String url = NODE_SESSION_URL.split("%s", 2)[0];
+		url += mpSceneId;
 		if (StringUtils.isNotBlank(studentId)) {
-			url = String.format(NODE_SESSION_URL, mpSceneId, "", studentId, "");
-		} else {
-			url = String.format(NODE_SESSION_URL, mpSceneId, "", "", "");
+			url = url + "&userIds=" + studentId;
 		}
 		return HttpClientUtil.rawGet(url, JSONArray.class);
 	}

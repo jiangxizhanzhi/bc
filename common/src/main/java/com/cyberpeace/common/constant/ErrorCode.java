@@ -91,4 +91,13 @@ public interface ErrorCode {
 	/** 文件为空 */
 	String EMPTY_FILE = "100032";
 
+	/** 创建文件夹失败 */
+	String FAILED_TO_MAKE_DIR = "100033";
+
+	/** 重启节点失败 */
+	String FAILED_TO_RESTART_NODE = "100034";
+
+	/** 重建节点失败 */
+	String FAILED_TO_RECREATE_NODE = "100035";
+
 }

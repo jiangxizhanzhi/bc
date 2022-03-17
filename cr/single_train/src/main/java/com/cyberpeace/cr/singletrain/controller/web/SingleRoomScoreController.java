@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -52,16 +54,12 @@ public class SingleRoomScoreController {
 
 	@Autowired
 	SingleRoomService singleRoomService;
-
-	@Autowired
-	private CrRoleService crRoleService;
-
-	@Autowired
-	private CrScoreController crScoreController;
-
 	@Autowired
 	TrainRecordService trainRecordService;
-
+	@Autowired
+	private CrRoleService crRoleService;
+	@Autowired
+	private CrScoreController crScoreController;
 	@Autowired
 	private MissionService missionService;
 
@@ -134,9 +132,7 @@ public class SingleRoomScoreController {
 		if (!directory.exists()) {
 			boolean isCreated = directory.mkdirs();
 			if (!isCreated) {
-				throw new RuntimeException(
-						String.format("TMP directory [%s] create failed, maybe without permission.",
-								directory.getPath()));
+				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, directory.getPath());
 			}
 		}
 		String destHtmlPath = destHtmlPathObj.toString();

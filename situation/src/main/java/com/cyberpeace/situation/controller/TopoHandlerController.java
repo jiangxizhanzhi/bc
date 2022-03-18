@@ -191,16 +191,16 @@ public class TopoHandlerController {
             String role = categorieMap.getRole().getOrDefault(roleId, "其他");
 
             // 初次处理层级数据
-            Float hierarchy = getElementHierarchy(sceneData, elementId, elementName);
+            Integer hierarchy = getElementHierarchy(sceneData, elementId, elementName);
             if (hierarchy != null) {
                 log.info("Using specified parameters.");
             } else if ("外部网络".equals(role)) {
                 sceneData.getExternalNetwork().add(elementId);
-                hierarchy = 2.0f;
+                hierarchy = 2;
             } else if ("路由器".equals(secondType)) {
-                hierarchy = 1.0f;
+                hierarchy = 1;
             } else {
-                hierarchy = 0.0f;
+                hierarchy = 0;
             }
 
             // 处理坐标数据
@@ -245,7 +245,7 @@ public class TopoHandlerController {
         return elementsInfo;
     }
 
-    private Float getElementHierarchy(SceneData sceneData, String elementId, String elementName) {
+    private Integer getElementHierarchy(SceneData sceneData, String elementId, String elementName) {
 
         // 当前场景无配置时，返回null
         if (sceneData.getSituationConfigMap().isEmpty()) {
@@ -263,7 +263,7 @@ public class TopoHandlerController {
         for (SituationConfig situationConfig : situationConfigList) {
             if (SituationConfig.Attribute.HEIGHT.getCode().equals(situationConfig.getAttribute())) {
                 try {
-                    return Float.parseFloat(situationConfig.getAttributeValue());
+                    return Integer.parseInt(situationConfig.getAttributeValue());
                 } catch (Exception e) {
                     return null;
                 }

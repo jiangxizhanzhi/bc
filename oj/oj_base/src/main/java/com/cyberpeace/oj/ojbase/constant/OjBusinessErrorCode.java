@@ -86,4 +86,10 @@ public interface OjBusinessErrorCode {
 	String RELOAD_PRACTICE = "102026";
 
 	String PARENT_CATEGORY_NOT_EXIST = "102027";
+
+	/** 答案不能为空*/
+	String ANSWER_NOT_NULL = "102028";
+
+	/** 答案长度限制在xxx-xxx*/
+	String ANSWER_TOO_LONG = "102029";
 }

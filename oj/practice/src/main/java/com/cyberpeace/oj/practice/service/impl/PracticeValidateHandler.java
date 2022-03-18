@@ -1,9 +1,12 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.service.SystemConfigService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -15,6 +18,7 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.google.common.collect.Lists;
 import com.itextpdf.tool.xml.html.head.Title;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -42,6 +46,9 @@ public class PracticeValidateHandler {
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	@Autowired
+	private SystemConfigService systemConfigService;
 
 	/**
 	 * 字段数据长度校验
@@ -166,6 +173,28 @@ public class PracticeValidateHandler {
 					practiceSetId, practiceId, title);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
+	}
+
+	/**
+	 * 校验flag长度
+	 * @param flags
+	 */
+	public void validateFlagLength(String flags) {
+
+		Integer flagLength = Integer.parseInt(systemConfigService.getSystemConfig("flag_length"));
+		List<String> answers;
+		if (StringUtils.isBlank(flags) || CollectionUtils
+				.isEmpty(answers = JsonUtil.toJsonObjectArray(flags, String.class))) {
+			throw new BusinessException(OjBusinessErrorCode.ANSWER_NOT_NULL);
+		}
+
+		for (String answer : answers) {
+			if (answer.length() > flagLength.intValue()) {
+				throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG,
+						CommonConstant.ZERO, flagLength);
+			}
+		}
+
 	}
 
 	/**

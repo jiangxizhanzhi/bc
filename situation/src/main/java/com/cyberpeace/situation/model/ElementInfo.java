@@ -44,6 +44,6 @@ public class ElementInfo implements Serializable {
     private Map<String, PortInfo> ports;
 
     @ApiModelProperty("节点层级")
-    private Integer hierarchy;
+    private Float hierarchy;
 
 }

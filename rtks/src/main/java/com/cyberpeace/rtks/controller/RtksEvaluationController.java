@@ -3,6 +3,8 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,7 +188,7 @@ public class RtksEvaluationController {
 		boolean startValidate = TimeUtil.isValidDate(startTime);
 		boolean endValidate = TimeUtil.isValidDate(endTime);
 		if (!startValidate || !endValidate) {
-			throw new InvalidParamException("时间格式不正确！");
+			throw new BusinessException(RtksBusinessErrorCode.TIME_FORMAT_ERROR);
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();

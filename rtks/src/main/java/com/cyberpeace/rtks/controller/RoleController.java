@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.collections.SetUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.util.CollectionUtils;
@@ -216,7 +218,7 @@ public class RoleController {
 
 		// 课程数量需要保持一致
 		if (!SetUtils.isEqualSet(oldIds, inputIds)) {
-			throw new InvalidParamException("输入的课程不正确");
+			throw new BusinessException(RtksBusinessErrorCode.INPUT_COURSE_ERROR);
 		}
 
 		// 获取课程详情 同时去掉被删除的课程 必须在保存前执行

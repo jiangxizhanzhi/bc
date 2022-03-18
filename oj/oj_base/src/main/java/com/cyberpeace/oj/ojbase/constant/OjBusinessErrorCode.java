@@ -84,4 +84,6 @@ public interface OjBusinessErrorCode {
 
 	/** 请重新加载题目*/
 	String RELOAD_PRACTICE = "102026";
+
+	String PARENT_CATEGORY_NOT_EXIST = "102027";
 }

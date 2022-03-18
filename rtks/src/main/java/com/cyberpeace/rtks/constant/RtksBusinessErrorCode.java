@@ -52,4 +52,12 @@ public interface RtksBusinessErrorCode {
 	String KNOWLEDGE_CATEGORY_NAME_DUPLICATE = "103013";
 
 	String INVALID_WEIGHT = "103014";
+
+	String TIME_FORMAT_ERROR = "103015";
+
+	String INPUT_COURSE_ERROR = "103016";
+
+	String SINGLE_FRAME_DISABLE = "103017";
+
+	String MULTI_FRAME_DISABLE = "103018";
 }

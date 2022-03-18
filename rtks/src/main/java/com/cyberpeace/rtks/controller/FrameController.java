@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -67,13 +69,13 @@ public class FrameController {
 
 	private void multiFrameOnly() {
 		if (singleFrame) {
-			throw new InvalidParamException("单框架模式下禁用");
+			throw new BusinessException(RtksBusinessErrorCode.SINGLE_FRAME_DISABLE);
 		}
 	}
 
 	private void singleFrameOnly() {
 		if (!singleFrame) {
-			throw new InvalidParamException("多框架模式下禁用");
+			throw new BusinessException(RtksBusinessErrorCode.MULTI_FRAME_DISABLE);
 		}
 	}
 

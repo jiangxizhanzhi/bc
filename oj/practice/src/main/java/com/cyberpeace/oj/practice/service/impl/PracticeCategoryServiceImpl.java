@@ -128,7 +128,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		if (StringUtils.isNotBlank(parentId)) {
 			PracticeCategory parentCategory = practiceCategoryMapper.selectById(parentId);
 			if (null == parentCategory) {
-				throw new InvalidParamException("父级分类不存在！");
+				throw new BusinessException(OjBusinessErrorCode.PARENT_CATEGORY_NOT_EXIST);
 			}
 			return parentCategory.getCode() + CommonConstant.CODE_COMMA
 					+ parentCategory.getResourceId();

@@ -181,8 +181,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		}
 
 		String sceneIdStr = String.join(CommonConstant.CODE_COMMA, sceneIds);
-		return HttpClientUtil.rawGet(String.format(NODE_SESSION_URL, sceneIdStr, "", "", ""),
-				JSONArray.class);
+		return HttpClientUtil.rawGet(NODE_SESSION_URL + sceneIdStr, JSONArray.class);
 	}
 
 	@Override
@@ -192,27 +191,24 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 			return new JSONArray();
 		}
 
-		String sceneIdsStr = String.join(CommonConstant.CODE_COMMA, sceneIds);
-		String nodeIdsStr = "";
-		String userIdsStr = "";
-		String typeStr = StringUtils.isNotBlank(type) ? type : "";
+		String assistanceUrl = this.NODE_SESSION_URL
+				+ String.join(CommonConstant.CODE_COMMA, sceneIds);
 		if (!CollectionUtils.isEmpty(nodeIds)) {
-			nodeIdsStr = String.join(CommonConstant.CODE_COMMA, nodeIds);
+			assistanceUrl += "&nodeIds=" + String.join(CommonConstant.CODE_COMMA, nodeIds);
 		}
-
 		if (!CollectionUtils.isEmpty(userIds)) {
-			userIdsStr = String.join(CommonConstant.CODE_COMMA, userIds);
+			assistanceUrl += "&userIds=" + String.join(CommonConstant.CODE_COMMA, userIds);
+		}
+		if (StringUtils.isNotBlank(type)) {
+			assistanceUrl += "&type=" + type;
 		}
 
-		return HttpClientUtil.rawGet(
-				String.format(NODE_SESSION_URL, sceneIdsStr, nodeIdsStr, userIdsStr, typeStr),
-				JSONArray.class);
+		return HttpClientUtil.rawGet(assistanceUrl, JSONArray.class);
 	}
 
 	@Override
 	public JSONArray getMonitorSessions(String mpSceneId, String studentId) {
-		String url = NODE_SESSION_URL.split("%s", 2)[0];
-		url += mpSceneId;
+		String url = NODE_SESSION_URL + mpSceneId;
 		if (StringUtils.isNotBlank(studentId)) {
 			url = url + "&userIds=" + studentId;
 		}

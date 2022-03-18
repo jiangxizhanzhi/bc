@@ -2,6 +2,7 @@ package com.cyberpeace.situation.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.model.*;
 
 import java.util.List;
@@ -43,4 +44,6 @@ public interface TopoHandlerService {
     List<ElementInfo> getRandomElements(JSONArray elements, Integer num);
 
     void pushDataToRoom(JSONObject data, String sceneId);
+
+    Map<Integer, Map<String, List<SituationConfig>>> getSituationConfigMap(String scope);
 }

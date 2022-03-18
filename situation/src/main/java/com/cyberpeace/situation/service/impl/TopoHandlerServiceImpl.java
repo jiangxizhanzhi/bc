@@ -7,6 +7,9 @@ import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.*;
+import com.cyberpeace.situation.controller.req.SituationConfigFilterReq;
+import com.cyberpeace.situation.dao.entity.SituationConfig;
+import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.cyberpeace.situation.model.ws.SituationWsMessageIdentifier;
@@ -24,6 +27,9 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
     @Autowired
     private MyWebSocketHandler myWebSocketHandler;
+
+    @Autowired
+    private SituationConfigMapper situationConfigMapper;
 
     @Override
     public CategorieMap getCategorieMap(JSONObject deviceCategorie) {
@@ -214,6 +220,55 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
                 .messageIdentifier(identifier).build();
 
         myWebSocketHandler.pushMessage(messageContext, true);
+    }
+
+    @Override
+    public Map<Integer, Map<String, List<SituationConfig>>> getSituationConfigMap(String scope) {
+
+        Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap = Maps.newHashMap();
+
+        // 获取场景相关的态势配置
+        List<String> relatedIds = situationConfigMapper
+                .filterIds(new SituationConfigFilterReq(scope));
+        relatedIds.addAll(situationConfigMapper.filterIds(new SituationConfigFilterReq("[]")));
+
+        // 构造当前场景相关配置
+        if (!relatedIds.isEmpty()) {
+
+            List<SituationConfig> situationConfigList = situationConfigMapper
+                    .selectBatchIds(relatedIds);
+
+            for (SituationConfig situationConfig : situationConfigList) {
+
+                Map<String, List<SituationConfig>> nodeTypeMap = situationConfigMap
+                        .get(situationConfig.getNodeType());
+                if (nodeTypeMap == null) {
+                    nodeTypeMap = Maps.newHashMap();
+                    situationConfigMap.put(situationConfig.getNodeType(), nodeTypeMap);
+                }
+
+                // 获取节点id配置
+                String nodeId = situationConfig.getNodeId();
+                if (nodeId != null) {
+                    List<SituationConfig> nodeSituationConfigList = nodeTypeMap.getOrDefault(nodeId,
+                            Lists.newArrayList());
+                    nodeSituationConfigList.add(situationConfig);
+                    nodeTypeMap.put(nodeId, nodeSituationConfigList);
+                }
+
+                // 获取节点名称配置
+                String nodeName = situationConfig.getNodeName();
+                if (nodeName != null) {
+                    List<SituationConfig> nodeSituationConfigList = nodeTypeMap
+                            .getOrDefault(nodeName, Lists.newArrayList());
+                    nodeSituationConfigList.add(situationConfig);
+                    nodeTypeMap.put(nodeName, nodeSituationConfigList);
+                }
+            }
+
+        }
+
+        return situationConfigMap;
     }
 
 }

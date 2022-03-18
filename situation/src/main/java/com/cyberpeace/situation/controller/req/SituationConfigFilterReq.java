@@ -1,0 +1,29 @@
+package com.cyberpeace.situation.controller.req;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.io.Serializable;
+
+@Data
+public class SituationConfigFilterReq implements Serializable {
+
+	@ApiModelProperty(value = "作用域（拓扑/场景）列表")
+	private String scope;
+
+	@ApiModelProperty(value = "元素id")
+	private String nodeId;
+
+	@ApiModelProperty(value = "元素名称")
+	private String nodeName;
+
+	@ApiModelProperty(value = "元素类型 1-区域 2-节点")
+	private Integer nodeType;
+
+	public SituationConfigFilterReq() {};
+
+	public SituationConfigFilterReq(String scope) {
+		this.scope = scope;
+	};
+
+}

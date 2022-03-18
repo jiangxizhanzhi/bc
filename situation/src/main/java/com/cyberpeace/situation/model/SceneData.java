@@ -2,6 +2,7 @@ package com.cyberpeace.situation.model;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.situation.dao.entity.SituationConfig;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -47,5 +48,8 @@ public class SceneData implements Serializable {
 
     @ApiModelProperty("靶标类型映射")
     private CategorieMap categorieMap;
+
+    @ApiModelProperty("态势配置列表")
+    private Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap;
 
 }

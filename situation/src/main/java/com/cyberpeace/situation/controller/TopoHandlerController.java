@@ -10,6 +10,7 @@ import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.JyjWsEvent;
 import com.cyberpeace.situation.model.ws.WsEvent;
@@ -21,12 +22,14 @@ import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+@Log4j2
 @Api(tags = "态势拓扑接口")
 @RestController
 @RequestMapping("/situation")
@@ -59,6 +62,7 @@ public class TopoHandlerController {
         JSONObject sceneTopo;
         JSONObject topology;
         JSONObject extendElementInfo;
+        Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap;
 
         // 提取有效数据
         if (StringUtils.isBlank(sceneId)) {
@@ -66,11 +70,13 @@ public class TopoHandlerController {
             topology = sceneTopo.getJSONObject("scene_config").getJSONObject("topology");
             extendElementInfo = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins").
                     getJSONObject("cpcloud").getJSONObject("elements");
+            situationConfigMap = topoHandlerService.getSituationConfigMap(topoId);
         } else {
             sceneTopo = remoteSceneService.getById(sceneId, null);
             topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
             extendElementInfo = sceneTopo.getJSONObject("scene").getJSONObject("plugins").
                     getJSONObject("cpcloud").getJSONObject("elements");
+            situationConfigMap = topoHandlerService.getSituationConfigMap(sceneId);
         }
 
         // 获取中台靶标类型数据
@@ -95,6 +101,7 @@ public class TopoHandlerController {
         sceneData.setExternalNetwork(Lists.newArrayList());
         sceneData.setPortElementMap(Maps.newHashMap());
         sceneData.setCategorieMap(categorieMap);
+        sceneData.setSituationConfigMap(situationConfigMap);
 
         // 处理拓扑数据
         Map<String, AreaInfo> areasInfo = getAreas(sceneData);
@@ -184,8 +191,10 @@ public class TopoHandlerController {
             String role = categorieMap.getRole().getOrDefault(roleId, "其他");
 
             // 初次处理层级数据
-            Integer hierarchy;
-            if ("外部网络".equals(role)) {
+            Integer hierarchy = getElementHierarchy(sceneData, elementId, elementName);
+            if (hierarchy != null) {
+                log.info("Using specified parameters.");
+            } else if ("外部网络".equals(role)) {
                 sceneData.getExternalNetwork().add(elementId);
                 hierarchy = 2;
             } else if ("路由器".equals(secondType)) {
@@ -236,6 +245,29 @@ public class TopoHandlerController {
         return elementsInfo;
     }
 
+    private Integer getElementHierarchy(SceneData sceneData, String elementId, String elementName) {
+
+        // 当前场景无配置时，返回null
+        if (sceneData.getSituationConfigMap().isEmpty()) {
+            return null;
+        }
+
+        // 获取当前节点配置
+        Map<String, List<SituationConfig>> listMap = sceneData.getSituationConfigMap()
+                .getOrDefault(SituationConfig.NodeType.ELEMENT.getCode(), Maps.newHashMap());
+        List<SituationConfig> situationConfigList = listMap.getOrDefault(elementId,
+                Lists.newArrayList());
+        situationConfigList.addAll(listMap.getOrDefault(elementName, Lists.newArrayList()));
+
+        // 返回分析结果
+        for (SituationConfig situationConfig : situationConfigList) {
+            if (SituationConfig.Attribute.HEIGHT.getCode().equals(situationConfig.getAttribute())) {
+                return Integer.parseInt(situationConfig.getAttributeValue());
+            }
+        }
+        return null;
+    }
+
     private List<ConnectionInfo> getConnections(SceneData sceneData, Map<String, ElementInfo> elements) {
 
         JSONArray connections = sceneData.getConnections();
@@ -248,15 +280,6 @@ public class TopoHandlerController {
             JSONObject connection = connections.getJSONObject(i);
             String source = portElementMap.get(connection.getString("source"));
             String target = portElementMap.get(connection.getString("target"));
-
-            // 二次处理层级数据
-            if (externalNetwork.contains(source) && !"终端节点".equals(elements.get(target).getRole())) {
-                elements.get(target).setHierarchy(1);
-            }
-
-            if (externalNetwork.contains(target) && !"终端节点".equals(elements.get(source).getRole())) {
-                elements.get(source).setHierarchy(1);
-            }
 
             // 构造返回连线数据
             ConnectionInfo connectionInfo = new ConnectionInfo();

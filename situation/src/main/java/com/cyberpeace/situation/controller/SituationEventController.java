@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.controller;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,7 @@ import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiAreaDynamic;
 import com.cyberpeace.situation.model.ws.WsMultiElementDynamic;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
-import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,10 +22,10 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "态势事件")
 @RestController
 @RequestMapping("/situation/simulation")
-public class TopoEventController {
+public class SituationEventController {
 
 	@Autowired
-	private TopoHandlerService topoHandlerService;
+	private SituationHandlerService situationHandlerService;
 
 	@ApiOperation("随机推送攻击动效信息")
 	@GetMapping("attack_event")
@@ -37,7 +36,7 @@ public class TopoEventController {
 					required = false) Integer actionCode) {
 
 		// 获取动效数据
-		WsMultiNodeDynamic wsEvent = topoHandlerService.getRandomWsMultNodeDynamic(sceneId,
+		WsMultiNodeDynamic wsEvent = situationHandlerService.getRandomWsMultNodeDynamic(sceneId,
 				actionCode);
 
 		// 设置消息代码
@@ -51,7 +50,7 @@ public class TopoEventController {
 		// 推送ws消息
 		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(messageType, wsEvent);
 		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
-		topoHandlerService.pushDataToRoom(data, sceneId);
+		situationHandlerService.pushDataToRoom(data, sceneId);
 
 		// 返回消息数据
 		return data;

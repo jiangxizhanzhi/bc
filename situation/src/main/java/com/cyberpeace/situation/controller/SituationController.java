@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
+import com.cyberpeace.situation.service.TopoHandlerService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
-import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +22,10 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/situation")
-public class TopoHandlerController {
+public class SituationController {
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	@Autowired
 	private TopoHandlerService topoHandlerService;
@@ -39,7 +43,7 @@ public class TopoHandlerController {
 		SceneData sceneData = topoHandlerService.getSceneData(sceneId, topoId);
 
 		// 处理态势数据
-		SituationTopo situationTopo = topoHandlerService.getSituationTopo(sceneData);
+		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
 
 		return new BaseRsp<>(situationTopo);
 	}
@@ -52,11 +56,12 @@ public class TopoHandlerController {
 		List<JSONObject> flowLogs = topoHandlerService.getFlowLogs(flowLogReq);
 
 		// 处理流量日志
-		List<JSONObject> wsMultiNodeDynamics = topoHandlerService.getAttackEventList(flowLogs,
+		List<JSONObject> wsMultiNodeDynamics = situationHandlerService.getAttackEventList(flowLogs,
 				flowLogReq.getSceneId());
 
 		// 分批推送消息
-		topoHandlerService.batchPushDataToRoom(flowLogReq.getSceneId(), wsMultiNodeDynamics, 5, 5);
+		situationHandlerService.batchPushDataToRoom(flowLogReq.getSceneId(), wsMultiNodeDynamics, 5,
+				5);
 
 		return wsMultiNodeDynamics;
 	}

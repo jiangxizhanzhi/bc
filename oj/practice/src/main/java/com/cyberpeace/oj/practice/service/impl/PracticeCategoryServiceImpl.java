@@ -79,7 +79,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 			String categoryId = practiceCategoryMapper.selectByName(data.getPracticeType(),
 					category.getName());
 			if (StringUtils.isNotBlank(categoryId)) {
-				throw new InvalidParamException("分类名称已存在！");
+				throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 			}
 		}
 
@@ -115,7 +115,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		String categoryId = practiceCategoryMapper.selectByName(practiceCategory.getPracticeType(),
 				practiceCategory.getName());
 		if (StringUtils.isNotBlank(categoryId)) {
-			throw new InvalidParamException("分类名称已存在！");
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 
 		practiceCategory.setCreateUserId(userId);

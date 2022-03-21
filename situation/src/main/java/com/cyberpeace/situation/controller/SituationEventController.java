@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller;
 
+import com.cyberpeace.common.model.BaseRsp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,7 @@ public class SituationEventController {
 
 	@ApiOperation("随机推送攻击动效信息")
 	@GetMapping("attack_event")
-	public JSONObject sendAttackEvent(
+	public BaseRsp<WsMessage<WsMultiNodeDynamic>> sendAttackEvent(
 			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id",
 					required = true) String sceneId,
 			@ApiParam(name = "action_code", value = "事件类型") @RequestParam(value = "action_code",
@@ -53,7 +54,9 @@ public class SituationEventController {
 		situationHandlerService.pushDataToRoom(data, sceneId);
 
 		// 返回消息数据
-		return data;
+		BaseRsp<WsMessage<WsMultiNodeDynamic>> rsp = new BaseRsp<>(wsMessage);
+		rsp.setMessage("成功推送事件");
+		return rsp;
 	}
 
 }

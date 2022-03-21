@@ -51,7 +51,11 @@ public class HldRoom extends BaseTable {
 
 	public enum StatusCode {
 
-		UNOPENED(4, "未开始"), RUNNING(2, "已开始"), ENDED(0, "已结束"), PAUSE(1, "已暂停"), RECOVERY(3, "恢复");
+		ENDED(0, "已结束"),
+		PAUSE(1, "已暂停"),
+		RUNNING(2, "已开始"),
+		RECOVERY(3, "恢复"),
+		UNOPENED(4, "未开始");
 
 		@Getter
 		private Integer code;

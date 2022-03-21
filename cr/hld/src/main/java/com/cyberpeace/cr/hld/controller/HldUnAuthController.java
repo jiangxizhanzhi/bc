@@ -12,17 +12,22 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.hld.controller.req.HldSceneOpsReq;
 import com.cyberpeace.cr.hld.controller.rsp.HldTopoAssetsRsp;
+import com.cyberpeace.cr.hld.controller.rsp.HldTopoRsp;
+import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
+import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
 
 import io.swagger.annotations.Api;
@@ -41,6 +46,9 @@ public class HldUnAuthController {
 
 	@Autowired
 	private HldSceneService hldSceneService;
+
+	@Autowired
+	private HldRoomService hldRoomService;
 
 	@Autowired
 	private HldRoomMapper hldRoomMapper;
@@ -79,6 +87,25 @@ public class HldUnAuthController {
 			}
 		}
 		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("查询")
+	@GetMapping()
+	public BaseRsp<HldTopoRsp> get(
+			@ApiParam(name = "resource_id", value = "HLD拓扑id", required = true) String resource_id,
+			@ApiParam(name = "user_id", value = "用户id", required = false) String user_id) {
+
+		// 获取当前用户角色
+		CrRole userRole = hldRoomService.getUserRole(resource_id, user_id);
+		SceneViewContext context = hldSceneService.viewScene(resource_id, userRole);
+
+		// 构造返回数据
+		HldRoom hldRoom = hldRoomService.getById(resource_id);
+		HldTopoRsp hldTopoRsp = BeanUtils.copy(context, HldTopoRsp.class);
+		hldTopoRsp.setStatus(hldRoom.getStatus());
+		hldTopoRsp.setTaskName(hldRoom.getTaskName());
+
+		return new BaseRsp<>(hldTopoRsp);
 	}
 
 	@ApiOperation("启动场景")

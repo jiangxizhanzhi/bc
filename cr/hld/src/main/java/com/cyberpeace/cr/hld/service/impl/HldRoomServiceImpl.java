@@ -321,7 +321,10 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 	@Override
 	public CrRole getUserRole(String roomId, String userId) {
 
-		List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomIdAndUserId(roomId, userId);
+		List<CrRole> crRoles = Lists.newArrayList();
+		if (userId != null) {
+			crRoles = crRoleMapper.selectCrRoleByRoomIdAndUserId(roomId, userId);
+		}
 
 		// 临时指定取不到用户时返回管理员角色
 		if (crRoles.isEmpty()) {

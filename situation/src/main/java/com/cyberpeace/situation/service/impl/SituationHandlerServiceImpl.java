@@ -207,7 +207,11 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		// 返回分析结果
 		for (SituationConfig situationConfig : situationConfigList) {
 			if (SituationConfig.Attribute.HEIGHT.getCode().equals(situationConfig.getAttribute())) {
-				return Integer.parseInt(situationConfig.getAttributeValue());
+				try {
+					return Integer.parseInt(situationConfig.getAttributeValue());
+				} catch (Exception e) {
+					return null;
+				}
 			}
 		}
 		return null;

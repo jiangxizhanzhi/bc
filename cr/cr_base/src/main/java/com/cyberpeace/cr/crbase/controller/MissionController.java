@@ -257,8 +257,8 @@ public class MissionController {
 			File zip = new File(zipPath);
 			FileUtil.setResponse(zip, false, response);
 		} catch (Exception e) {
-			log.error("failed to dump combat techs");
-			throw new RuntimeException(e);
+			log.error("failed to dump combat techs", e);
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_DUMP_COMBAT_TECH);
 		} finally {
 			// 3. delete temp dir
 			if (!FileUtil.deleteDir(new File(tempDir))) {

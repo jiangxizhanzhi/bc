@@ -6,6 +6,9 @@ import java.util.Map;
 
 import javax.validation.constraints.NotEmpty;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +26,7 @@ public class BatchLoadMdReq implements Serializable {
 		File file = new File(path);
 		if (!file.exists() || !file.isDirectory()) {
 			log.error(String.format("invalid path [%s]", path));
-			throw new RuntimeException("Invalid path.");
+			throw new BusinessException(ErrorCode.INVALID_FILE_PATH);
 		}
 	}
 }

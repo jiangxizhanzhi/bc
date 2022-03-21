@@ -136,14 +136,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		LocalScene localScene = getById(localSceneId);
 		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
 			log.error("invalid localScene {}", localSceneId);
-			return false;
+			throw new BusinessException(ErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
 		Boolean result = remoteSceneService.restartNode(nodeOpsContext);
 		if (!result) {
 			log.error("failed to restart node [{}] in scene [{}]", nodeId,
 					localScene.getMpSceneId());
-			throw new RuntimeException();
+			throw new BusinessException(ErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		return true;
 	}
@@ -153,14 +153,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		LocalScene localScene = getById(localSceneId);
 		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
 			log.error("invalid localScene {}", localSceneId);
-			return false;
+			throw new BusinessException(ErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
 		Boolean result = remoteSceneService.recreateNode(nodeOpsContext);
 		if (!result) {
 			log.error("failed to recreate node [{}] in scene [{}]", nodeId,
 					localScene.getMpSceneId());
-			throw new RuntimeException();
+			throw new BusinessException(ErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return true;
 	}

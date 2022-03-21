@@ -80,8 +80,11 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	public AttachmentBo copyFile(String originPath, Integer type, Boolean insertDb,
 			Boolean renameFile) {
 		File origin = new File(originPath);
-		if (!origin.exists() || origin.isDirectory()) {
-			throw new InvalidParamException("不支持此类型文件上传！");
+		if (!origin.exists()) {
+			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+		}
+		if (origin.isDirectory()) {
+			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 		}
 
 		String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);

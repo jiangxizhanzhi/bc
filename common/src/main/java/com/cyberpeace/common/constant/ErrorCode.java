@@ -79,4 +79,25 @@ public interface ErrorCode {
 	 * 用户信息缺失/用户不存在
 	 */
 	String USER_INFO_MISSING = "100029";
+
+	/**
+	 * 场景节点不足
+	 */
+	String LACK_OF_SCENE_NODE = "100030";
+
+	/** 无效的文件路径 */
+	String INVALID_FILE_PATH = "100031";
+
+	/** 文件为空 */
+	String EMPTY_FILE = "100032";
+
+	/** 创建文件夹失败 */
+	String FAILED_TO_MAKE_DIR = "100033";
+
+	/** 重启节点失败 */
+	String FAILED_TO_RESTART_NODE = "100034";
+
+	/** 重建节点失败 */
+	String FAILED_TO_RECREATE_NODE = "100035";
+
 }

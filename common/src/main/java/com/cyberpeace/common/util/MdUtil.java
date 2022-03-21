@@ -82,7 +82,7 @@ public class MdUtil {
 		String[] titleArray = lineContent.split(" ");
 		if (titleArray.length < CommonConstant.TWO) {
 			log.error("parseJsonMarkdown: markdown_path=[{}]", path);
-			throw new InvalidParamException("md文件内容格式错误！");
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
 		}
 
 		return titleArray[1].trim();

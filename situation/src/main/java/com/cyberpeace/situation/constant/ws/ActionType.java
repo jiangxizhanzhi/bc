@@ -15,7 +15,7 @@ public enum ActionType {
 
 	NETWORK_SCANNING(0, "网络扫描", "compound"),
 	VIRUS_ATTACKS(1, "病毒攻击", "compound"),
-	TROJAN(2, "木马", "element"),
+	TROJAN(2, "木马攻击", "element"),
 	DDOS(3, "DDOS", "compound"),
 	HOST_ATTACK(4, "主机攻占", "element"),
 	TRY_ATTACK(5, "尝试攻击", "element"),

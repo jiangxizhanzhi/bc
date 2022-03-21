@@ -1,11 +1,5 @@
 package com.cyberpeace.cr.tool.controller.admin;
 
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.tool.dao.entity.ToolFile;
-import com.cyberpeace.cr.tool.service.ToolFileService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +7,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.tool.dao.entity.ToolFile;
+import com.cyberpeace.cr.tool.service.ToolFileService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "工具附件")
 @RestController
@@ -27,7 +30,7 @@ public class ToolFileController {
 	@PostMapping("/upload_tool_file")
 	public BaseRsp<ToolFile> updateToolFile(@RequestParam("file") MultipartFile file) {
 		if (file.isEmpty()) {
-			throw new InvalidParamException("上传文件为空");
+			throw new BusinessException(ErrorCode.EMPTY_FILE);
 		}
 
 		ToolFile toolFile = toolFileService.saveFile(file);

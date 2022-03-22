@@ -46,6 +46,6 @@ class MissionSchemeMission {
 
 	public void validate() {
 		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);
-		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_MISSION_DESC_LEN);
 	}
 }

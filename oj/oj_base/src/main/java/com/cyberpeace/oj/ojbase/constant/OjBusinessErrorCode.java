@@ -92,4 +92,7 @@ public interface OjBusinessErrorCode {
 
 	/** 答案长度限制在xxx-xxx*/
 	String ANSWER_TOO_LONG = "102029";
+
+	/** 场景启动成功xxx个，失败xxx个*/
+	String ROOM_SCENE_BATCH_FAILED = "102030";
 }

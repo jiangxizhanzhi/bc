@@ -3,8 +3,6 @@ package com.cyberpeace.cr.crbase.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -29,7 +27,6 @@ public class MissionSchemeTemplateReq implements Serializable {
 	private Integer color;
 
 	@ApiModelProperty(value = "任务编排", required = true)
-	@Valid
 	private List<MissionSchemeStage> combatConfig;
 
 	public void validate() {

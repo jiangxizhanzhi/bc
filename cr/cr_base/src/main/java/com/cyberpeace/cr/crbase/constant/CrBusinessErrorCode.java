@@ -243,4 +243,7 @@ public interface CrBusinessErrorCode {
 
 	/** 无效的角色配置信息 */
 	String INVALID_ROLE_INFO = "101078";
+
+	/** 非法的任务描述长度 */
+	String ILLEGAL_MISSION_DESC_LEN = "101079";
 }

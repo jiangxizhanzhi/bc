@@ -149,7 +149,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		validateCategory(practiceOperation.getCategoryId());
 		practiceValidateHandler.validateOperationTitleExist(practiceOperation.getPracticeSetId(),
 				practiceOperation.getTitle());
-		practiceValidateHandler.validateFlagLength(practiceOperation.getAnswer());
+		if (practiceOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC
+				.getCode().intValue()) {
+			practiceValidateHandler.validateFlagLength(practiceOperation.getAnswer());
+		}
+		
 
 		// 数据设置
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
@@ -236,9 +240,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 数据校验
 		PracticeOperation operation = practiceValidateHandler
 				.validateOperationExist(updateOperation.getResourceId());
-		practiceValidateHandler.validateFlagLength(updateOperation.getAnswer());
+		if (updateOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC.getCode().intValue()) {
+			practiceValidateHandler.validateFlagLength(updateOperation.getAnswer());
+		}
 		practiceValidateHandler.validateOperationUpdateTitleExist(operation,
 				updateOperation.getTitle());
+
 		if (operation.getDynamicEnv() && null != operation.getSceneShareMode()
 				&& StringUtils.isNotBlank(operation.getTopoId())) {
 			practiceValidateHandler.validateOperationUpdateSceneExist(operation);

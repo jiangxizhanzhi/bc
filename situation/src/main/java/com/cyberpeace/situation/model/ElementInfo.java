@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.situation.dao.entity.SituationConfig;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Data
 public class ElementInfo implements Serializable {
 
@@ -48,10 +51,40 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("节点层级")
 	private Integer hierarchy;
 
+	@ApiModelProperty("节点颜色")
+	private String color;
+
 	public ElementInfo(JSONObject element) {
 		this.setElementId(element.getString("id"));
 		this.setName(element.getString("name"));
 	}
 
 	public ElementInfo() {}
+
+	public void setConfig(Map<Integer, String> nodeConfig) {
+
+		// 设置节点名称
+		String name = nodeConfig.getOrDefault(SituationConfig.Attribute.NAME.getCode(), null);
+		if (name != null) {
+			this.name = name;
+		}
+
+		// 设置节点高度
+		String hierarchy = nodeConfig.getOrDefault(SituationConfig.Attribute.HEIGHT.getCode(),
+				null);
+		if (hierarchy != null) {
+			try {
+				this.hierarchy = Integer.parseInt(hierarchy);
+			} catch (Exception e) {
+				log.info(String.format("Fail to get the hierarchy of %s, the original value is %s.",
+						this.elementId, hierarchy));
+			}
+		}
+
+		// 设置节点颜色
+		String color = nodeConfig.getOrDefault(SituationConfig.Attribute.COLOR.getCode(), null);
+		if (color != null) {
+			this.color = color;
+		}
+	}
 }

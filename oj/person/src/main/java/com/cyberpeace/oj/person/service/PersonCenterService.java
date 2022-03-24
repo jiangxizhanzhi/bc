@@ -60,8 +60,6 @@ public interface PersonCenterService {
 	BaseRsp<BrokenLine> studyPeriodRecords(String userId, Date startTime, Date endTime,
 			AuthContext authContext);
 
-	List<ListSchedule> listSchedules(String userId, String type, AuthContext authContext);
-
 	/**
 	 * 查询收藏的习题信息
 	 * @param userId

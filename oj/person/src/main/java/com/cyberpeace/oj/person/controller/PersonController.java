@@ -149,20 +149,6 @@ public class PersonController {
 				TimeUtil.toDate1(endTime), authContext);
 	}
 
-	@ApiOperation("当前用户课程表")
-	@GetMapping("/class_schedule")
-	public BaseRsp<List<ListSchedule>> listSchedules(@ApiParam @Validated String type) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-
-		// 权限数据获取
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				true);
-
-		List<ListSchedule> listSchedules = personCenterService.listSchedules(userId, type,
-				authContext);
-		return new BaseRsp<>(listSchedules);
-	}
-
 	@ApiOperation("查询收藏习题列表")
 	@GetMapping("/my_all_collection_practice")
 	public BaseRsp<List<CollectionPracticeBo>> allCollectionPractice() {

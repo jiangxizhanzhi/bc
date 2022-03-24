@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class SituationConfigFilterReq implements Serializable {
 
-	@ApiModelProperty(value = "作用域（拓扑/场景）列表")
+	@ApiModelProperty(value = "作用域id（拓扑/场景）")
 	private String scope;
 
 	@ApiModelProperty(value = "元素id")

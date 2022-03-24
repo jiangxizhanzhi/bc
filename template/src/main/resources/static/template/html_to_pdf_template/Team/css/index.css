@@ -1339,6 +1339,7 @@
   overflow     : hidden;
   text-overflow: ellipsis;
   width:580px;
+  word-break: break-all;
 }
 
 .outer21 {

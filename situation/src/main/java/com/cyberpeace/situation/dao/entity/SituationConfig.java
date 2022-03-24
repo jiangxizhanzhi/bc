@@ -51,7 +51,9 @@ public class SituationConfig {
 
 	public enum Attribute {
 
-		HEIGHT(1, "高度");
+		HEIGHT(1, "高度", "hierarchy"),
+		NAME(2, "名称", "name"),
+		COLOR(3,"颜色","color");
 
 		@Getter
 		private Integer code;
@@ -59,9 +61,13 @@ public class SituationConfig {
 		@Getter
 		private String desc;
 
-		private Attribute(Integer code, String desc) {
+		@Getter
+		private String field;
+
+		private Attribute(Integer code, String desc, String field) {
 			this.code = code;
 			this.desc = desc;
+			this.field = field;
 		}
 
 	}

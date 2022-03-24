@@ -63,6 +63,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		JSONArray areas = sceneData.getAreas();
 		Map<String, AreaInfo> areasInfo = Maps.newHashMap();
+		Map<String, List<SituationConfig>> areaConfigMap = sceneData.getSituationConfigMap()
+				.getOrDefault(SituationConfig.NodeType.AREA.getCode(), Maps.newHashMap());
 
 		for (int i = 0; i < areas.size(); i++) {
 
@@ -99,6 +101,11 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			areaInfo.setStyle(getLineStyle());
 			areaInfo.setEffect(getLineEffect());
 
+			// 提取自定义配置
+			Map<Integer, String> areaConfig = getNodeConfig(areaConfigMap, area.getString("id"),
+					area.getString("name"));
+			areaInfo.setConfig(areaConfig);
+
 			areasInfo.put(area.getString("id"), areaInfo);
 		}
 		return areasInfo;
@@ -112,6 +119,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		JSONObject extendElementInfo = sceneData.getExtendElementInfo();
 		CategorieMap categorieMap = sceneData.getCategorieMap();
 		Map<String, ElementInfo> elementsInfo = Maps.newHashMap();
+		Map<String, List<SituationConfig>> elementConfigMap = sceneData.getSituationConfigMap()
+				.getOrDefault(SituationConfig.NodeType.ELEMENT.getCode(), Maps.newHashMap());
 
 		for (int i = 0; i < elements.size(); i++) {
 
@@ -136,10 +145,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			String role = categorieMap.getRole().getOrDefault(roleId, "其他");
 
 			// 初次处理层级数据
-			Integer hierarchy = getElementHierarchy(sceneData, elementId, elementName);
-			if (hierarchy != null) {
-				log.info("Using specified parameters.");
-			} else if ("外部网络".equals(role)) {
+			Integer hierarchy = null;
+			if ("外部网络".equals(role)) {
 				sceneData.getExternalNetwork().add(elementId);
 				hierarchy = 2;
 			} else if ("路由器".equals(secondType)) {
@@ -184,37 +191,36 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setPorts(portsInfo);
 			elementInfo.setHierarchy(hierarchy);
 
+			// 提取自定义配置
+			Map<Integer, String> elementConfig = getNodeConfig(elementConfigMap, elementId,
+					elementName);
+			elementInfo.setConfig(elementConfig);
+
 			elementsInfo.put(elementId, elementInfo);
 		}
 
 		return elementsInfo;
 	}
 
-	private Integer getElementHierarchy(SceneData sceneData, String elementId, String elementName) {
+	private Map<Integer, String> getNodeConfig(
+			Map<String, List<SituationConfig>> situationConfigMap, String nodeId, String nodeName) {
 
-		// 当前场景无配置时，返回null
-		if (sceneData.getSituationConfigMap().isEmpty()) {
-			return null;
+		Map<Integer, String> nodeConfig = Maps.newHashMap();
+
+		// 当前场景无配置时，返回空
+		if (situationConfigMap.isEmpty()) {
+			return nodeConfig;
 		}
 
-		// 获取当前节点配置
-		Map<String, List<SituationConfig>> listMap = sceneData.getSituationConfigMap()
-				.getOrDefault(SituationConfig.NodeType.ELEMENT.getCode(), Maps.newHashMap());
-		List<SituationConfig> situationConfigList = listMap.getOrDefault(elementId,
+		List<SituationConfig> situationConfigList = situationConfigMap.getOrDefault(nodeId,
 				Lists.newArrayList());
-		situationConfigList.addAll(listMap.getOrDefault(elementName, Lists.newArrayList()));
+		situationConfigList.addAll(situationConfigMap.getOrDefault(nodeName, Lists.newArrayList()));
 
-		// 返回分析结果
 		for (SituationConfig situationConfig : situationConfigList) {
-			if (SituationConfig.Attribute.HEIGHT.getCode().equals(situationConfig.getAttribute())) {
-				try {
-					return Integer.parseInt(situationConfig.getAttributeValue());
-				} catch (Exception e) {
-					return null;
-				}
-			}
+			nodeConfig.put(situationConfig.getAttribute(), situationConfig.getAttributeValue());
 		}
-		return null;
+
+		return nodeConfig;
 	}
 
 	private List<ConnectionInfo> getConnections(SceneData sceneData,

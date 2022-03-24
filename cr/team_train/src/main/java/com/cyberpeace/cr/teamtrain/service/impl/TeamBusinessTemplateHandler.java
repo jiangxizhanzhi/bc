@@ -101,22 +101,6 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public void realLoads(LoadTemplateData templateData,
-			List<MissionTemplate> missionTemplateList) {
-		// 1、替换任务方案中的mission字段
-		replaceMissions(templateData, missionTemplateList);
-
-		// 2、转换成新增基础数据结构
-		TeamTrainTemplateContext teamTrainTemplateContext = JSON.parseObject(
-				templateData.getTemplateData().toJSONString(), TeamTrainTemplateContext.class);
-		teamTrainTemplateContext.getBaseInfo()
-				.setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-
-		// 3、新增数据
-		businessTemplateService.addTemplate(teamTrainTemplateContext);
-	}
-
-	@Override
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<TeamTemplate> context = new ResourceDumpContext<>();
 		// 获取 teamTemplate

@@ -2,16 +2,17 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
-import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.Share;
+import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
-import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**
@@ -36,8 +37,6 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
 	void batchSetShares(ShareContext shareContext);
 
-	String addTemplate(BasicTemplate basicTemplate);
-
 	String addTemplate(BaseInfo baseInfo);
 
 	List<String> selectAuthIdsByUserId(String userId);
@@ -48,10 +47,6 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @return
 	 */
 	BusinessTemplate getByLocalSceneId(String resourceId);
-
-	void batchLoads(LoadTemplate loadTemplate, Map<String, String> files);
-
-	void batchDumps(String businessId);
 
 	/**
 	 * 训练模板删除

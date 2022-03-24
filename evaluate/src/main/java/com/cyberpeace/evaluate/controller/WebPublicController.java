@@ -3,21 +3,23 @@ package com.cyberpeace.evaluate.controller;
 import java.io.IOException;
 import java.util.List;
 
-import com.cyberpeace.common.exception.evaluate.FastDfsUploadException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.evaluate.controller.res.FileUploadRsp;
-import com.cyberpeace.evaluate.service.bo.CategoryInfoBO;
-import com.cyberpeace.integratation.service.CrService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.evaluate.controller.res.FileUploadRsp;
 import com.cyberpeace.evaluate.dao.entity.Appendix;
 import com.cyberpeace.evaluate.service.CategoryInfoService;
+import com.cyberpeace.evaluate.service.bo.CategoryInfoBO;
+import com.cyberpeace.integratation.service.CrService;
 import com.google.common.base.Preconditions;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "es-评估通用api")
 @RestController
@@ -44,7 +46,7 @@ public class WebPublicController {
 		try {
 			url = crService.uploadImage(file.getBytes(), originName);
 		} catch (IOException e) {
-			throw new FastDfsUploadException();
+			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 
 		FileUploadRsp fileUploadRsp = FileUploadRsp.builder().appendixUrl(url).build();

@@ -5,17 +5,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.exception.evaluate.AddTopoException;
-import com.cyberpeace.common.exception.evaluate.FastDfsUploadException;
-import com.cyberpeace.common.model.evaluation.ProbeOriginPageData;
-import com.cyberpeace.common.model.evaluation.ToolActionModel;
-import com.cyberpeace.common.model.evaluation.ToolActionParamModel;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.LocalClient;
-import com.cyberpeace.integratation.model.evaluation.ImageUploadRsp;
-import com.cyberpeace.integratation.service.CrService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,7 +19,19 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.evaluate.AddTopoException;
+import com.cyberpeace.common.model.evaluation.ProbeOriginPageData;
+import com.cyberpeace.common.model.evaluation.ToolActionModel;
+import com.cyberpeace.common.model.evaluation.ToolActionParamModel;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.LocalClient;
+import com.cyberpeace.integratation.model.evaluation.ImageUploadRsp;
+import com.cyberpeace.integratation.service.CrService;
 import com.google.common.collect.Lists;
 
 import lombok.Data;
@@ -99,11 +100,11 @@ public class CrServiceImpl implements CrService {
 
 				return rsp.getUrl();
 			} else {
-				throw new FastDfsUploadException();
+				throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 			}
 		} catch (IOException e) {
 			log.error("call url=[{}] error,", url, e);
-			throw new FastDfsUploadException();
+			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 
 	}

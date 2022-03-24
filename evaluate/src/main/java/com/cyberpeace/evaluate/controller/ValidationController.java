@@ -6,9 +6,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +26,9 @@ import com.cyberpeace.integratation.service.CrService;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "es-系统评估相关api")
@@ -103,7 +103,7 @@ public class ValidationController {
 
 			return rsp;
 		} catch (IOException e) {
-			log.error("add testinfo error, e");
+			log.error("add testinfo error:", e);
 			throw new RuntimeException();
 		}
 	}

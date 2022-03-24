@@ -7,28 +7,31 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.evaluate.controller.res.EstimateVariableConfigBody;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.evaluate.controller.res.EstimateVariableConfigBody;
 import com.cyberpeace.evaluate.dao.entity.EstimateInfo;
 import com.cyberpeace.evaluate.dao.entity.EstimateVariableLinks;
-import com.cyberpeace.integratation.service.CrService;
 import com.cyberpeace.evaluate.service.EstimateInfoService;
 import com.cyberpeace.evaluate.service.context.EstimateInfoContext;
+import com.cyberpeace.integratation.service.CrService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "es-装备评估相关api")
 @RestController
+@Slf4j
 @RequestMapping("/estimate/")
 @RequiresAuthentication
 public class EstimateController {
@@ -123,6 +126,7 @@ public class EstimateController {
 			});
 			estimateInfoContext.setEstimateVariableLinks(links);
 		} catch (IOException e) {
+			log.error("", e);
 			throw new RuntimeException();
 		}
 		return estimateInfoContext;

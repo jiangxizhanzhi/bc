@@ -48,7 +48,6 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -88,39 +87,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Autowired
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
-
-	@Override
-	public String addTemplate(BasicTemplate basicTemplate) {
-		// 1、从输入业务中解析公共模板
-		BusinessTemplate businessTemplate = getBusinessTemplate(basicTemplate);
-		// 拓扑场景id保存获取
-		SceneConfigData topoData = basicTemplate.getBaseInfo().getSceneConfigData();
-		JSONObject topoJson = new JSONObject();
-		topoJson.put("scene_config", topoData.getSceneConfig());
-		LocalScene.BusinessCode businessCode = convertTypeToCode(
-				basicTemplate.getBaseInfo().getType());
-		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
-
-		// 保存基础模板
-		businessTemplate.setTopoId(topoId);
-
-		// 2、执行实际的保存
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				// 1、保存公共模版数据
-				save(businessTemplate);
-
-				// 2、保存业务模板数据
-				String teamTemplateId = businessTemplateHandler.saveBusiness(basicTemplate,
-						businessTemplate.getResourceId());
-
-			}
-		});
-
-		return businessTemplate.getResourceId();
-	}
 
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
@@ -213,55 +179,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
 		}
 		return res;
-	}
-
-	@Override
-	public void batchLoads(LoadTemplate loadTemplate, Map<String, String> files) {
-		// 1、上传图片
-		for (Map.Entry<String, String> item : files.entrySet()) {
-			AttachmentBo attachmentBo = attachmentService.copyFile(item.getValue(),
-					AttachmentPath.MISSION.getCode(), true, true);
-			if (null != attachmentBo) {
-				item.setValue(attachmentBo.getFilePath());
-			}
-		}
-
-		// 2、设置要替换的目录
-		Map<String, String> replaced = Maps.newHashMap();
-		for (Map.Entry<String, String> item : files.entrySet()) {
-			String fileName = item.getKey();
-			for (Map.Entry<String, String> fileDesc : loadTemplate.getFile().entrySet()) {
-				if (fileDesc.getKey().contains(fileName)) {
-					replaced.put(fileDesc.getValue(), item.getValue());
-					fileDesc.setValue(item.getValue());
-					continue;
-				}
-			}
-		}
-
-		// 3、替换writeup中的文件
-		for (LoadMission mission : loadTemplate.getTemplateQuestions()) {
-			for (Map.Entry<String, String> item : replaced.entrySet()) {
-				String replacedWriteup = StringUtils.replace(mission.getWriteUp(), item.getKey(),
-						item.getValue());
-				mission.setWriteUp(replacedWriteup);
-			}
-		}
-
-		// 4、保存任务数据
-		List<MissionTemplate> missionTemplateList = missionService
-				.batchInsertMissionTemplate(loadTemplate.getTemplateQuestions());
-
-		// 5、按不同类型的导出数据，生成对应的业务数据
-		List<LoadTemplateData> items = loadTemplate.getItems();
-		for (LoadTemplateData item : items) {
-			businessTemplateHandler.loads(item, missionTemplateList);
-		}
-	}
-
-	@Override
-	public void batchDumps(String businessId) {
-
 	}
 
 	@Override

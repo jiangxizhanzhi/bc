@@ -2,7 +2,6 @@ package com.cyberpeace.common.util;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -19,10 +18,6 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.cyberpeace.common.constant.CommonConstant;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -128,7 +123,7 @@ public class FileUtil {
 		} catch (Exception e) {
 			// 文件读取失败
 			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
-			throw new RuntimeException();
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		} finally {
 			try {
 				br.close();
@@ -218,8 +213,8 @@ public class FileUtil {
 					new OutputStreamWriter(new FileOutputStream(destFilePath), "UTF-8"));
 			out.write(data);
 		} catch (IOException e) {
-			log.error("File read failed! dest_file_path=[{}], catch error:", destFilePath, e);
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+			log.error("File write failed! dest_file_path=[{}], catch error:", destFilePath, e);
+			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		} finally {
 			try {
 				out.close();
@@ -562,11 +557,10 @@ public class FileUtil {
 					digest.update(buffer, 0, numRead);
 				}
 			} while (numRead != -1);
-			value = new
-					String(org.apache.tomcat.util.codec.binary.Base64.encodeBase64(digest.digest()))
-			;
+			value = new String(
+					org.apache.tomcat.util.codec.binary.Base64.encodeBase64(digest.digest()));
 		}
-        return value;
+		return value;
 	}
 
 }

@@ -123,7 +123,7 @@ public class FileUtil {
 		} catch (Exception e) {
 			// 文件读取失败
 			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
-			throw new RuntimeException();
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		} finally {
 			try {
 				br.close();

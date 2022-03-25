@@ -90,10 +90,16 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			scope.add(new PlaneCoordinate(x + width, y + height));
 			scope.add(new PlaneCoordinate(x + width, y));
 
+			// 获取区域名称
+			String areaName = area.getString("name");
+			if (areaName.isEmpty()){
+				areaName = "区域" + (i + 1);
+			}
+
 			// 构造区域数据
 			AreaInfo areaInfo = new AreaInfo();
 			areaInfo.setAreaId(area.getString("id"));
-			areaInfo.setName("区域" + (i + 1));
+			areaInfo.setName(areaName);
 			areaInfo.setDesc(area.getString("description"));
 			areaInfo.setShape(getAreaShape(area));
 			areaInfo.setStatus(getAreaStatus(area));

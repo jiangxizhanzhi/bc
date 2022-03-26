@@ -26,7 +26,7 @@ public class LessonConfigBo implements Serializable {
 	private boolean isLearn;
 
 	@ApiModelProperty("是否必修")
-	private boolean isRequired;
+	private Integer compulsory;
 
 	@ApiModelProperty("课程编号")
 	private String lessonId;

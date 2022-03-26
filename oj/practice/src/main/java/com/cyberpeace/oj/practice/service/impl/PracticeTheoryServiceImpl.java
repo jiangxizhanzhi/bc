@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -252,7 +253,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer, Boolean isCollected) {
+	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer,
+			Boolean isCollected) {
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(theoryId);
 		if (null == practiceTheory) {
@@ -335,7 +337,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			return Lists.newArrayList();
 		}
 
-		return practiceTheoryMapper.selectBySetIds(setIds, authContext.getIsWeb());
+		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(setIds);
+		List<String> publicIds = practiceSets.stream()
+				.filter(practiceSet -> practiceSet.getIsPublic())
+				.map(practiceSet -> practiceSet.getResourceId()).collect(Collectors.toList());
+		if (CollectionUtils.isEmpty(publicIds)) {
+			return Lists.newArrayList();
+		}
+
+		return practiceTheoryMapper.selectBySetIds(publicIds, authContext.getIsWeb());
 	}
 
 	@Override
@@ -645,7 +655,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
 		String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
-				OperationType.EXERCISE, LogContent.THEORY.getMsg(),	content);
+				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
 	}
 
 }

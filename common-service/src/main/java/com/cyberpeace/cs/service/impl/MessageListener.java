@@ -6,7 +6,6 @@ import javax.annotation.PostConstruct;
 
 import com.alibaba.fastjson.JSONException;
 import org.apache.commons.lang3.StringUtils;
-import org.mybatis.spring.MyBatisSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -55,9 +54,6 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 		try {
 			dispatch(realMessage);
-		} catch (MyBatisSystemException e) {
-			log.warn("MessageListener: message is {}", realMessage);
-			log.warn("MessageListener: dispatch error {}", e.getMessage());
 		} catch (Exception e) {
 			log.error("MessageListener: dispatch error ", e);
 		} finally {

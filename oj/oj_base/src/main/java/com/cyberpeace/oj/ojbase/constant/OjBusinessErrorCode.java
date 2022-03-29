@@ -95,4 +95,14 @@ public interface OjBusinessErrorCode {
 
 	/** 场景启动成功xxx个，失败xxx个*/
 	String ROOM_SCENE_BATCH_FAILED = "102030";
+
+	/** 课程信息不能为空*/
+	String COURSE_INFORMATION_NOT_NULL = "102031";
+
+	/** 课时信息不能为空*/
+	String LESSON_INFORMATION_NOT_NULL = "102032";
+
+	/** 组织信息不能为空*/
+	String ORG_INFORMATION_NOT_NULL = "102033";
+
 }

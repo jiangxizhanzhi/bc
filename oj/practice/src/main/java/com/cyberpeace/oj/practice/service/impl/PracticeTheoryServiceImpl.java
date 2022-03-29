@@ -560,7 +560,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
 				.getCode().intValue()) {
 			String shortAnswer = excelRowData.get(2);
-			String keywordsString = excelRowData.get(3);
+			String keywordsString = "";
+			if (excelRowData.size() > 3) {
+				keywordsString = excelRowData.get(3);
+			}
 			List<String> keywords = Lists
 					.newArrayList(keywordsString.split(PatternConstant.VERTICAL_LINE));
 			practiceTheory.setAnswer(shortAnswer);

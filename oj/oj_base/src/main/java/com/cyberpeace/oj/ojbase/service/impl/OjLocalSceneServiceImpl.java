@@ -78,6 +78,10 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	@Override
 	public OjLocalScene selectOjLocalScene(String businessId, Integer shared,
 			AuthContext authContext) {
+		// 无共享类型 默认为无场景
+		if (null == shared) {
+			return null;
+		}
 
 		if (shared.intValue() == SceneShare.SHARED.getCode().intValue()) {
 			return ojLocalSceneMapper.selectPublicScene(businessId, CommonConstant.TRUE,

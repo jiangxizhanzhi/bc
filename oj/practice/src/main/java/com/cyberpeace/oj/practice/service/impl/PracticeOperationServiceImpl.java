@@ -153,7 +153,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.getCode().intValue()) {
 			practiceValidateHandler.validateFlagLength(practiceOperation.getAnswer());
 		}
-		
 
 		// 数据设置
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
@@ -240,7 +239,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 数据校验
 		PracticeOperation operation = practiceValidateHandler
 				.validateOperationExist(updateOperation.getResourceId());
-		if (updateOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC.getCode().intValue()) {
+		if (updateOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC
+				.getCode().intValue()) {
 			practiceValidateHandler.validateFlagLength(updateOperation.getAnswer());
 		}
 		practiceValidateHandler.validateOperationUpdateTitleExist(operation,
@@ -735,7 +735,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		if (CollectionUtils.isNotEmpty(localSceneIds)) {
 			List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
-			localScenes.forEach(localScene -> localSceneService.deleteRemoteScene(localScene));
+			for (LocalScene localScene : localScenes) {
+				try {
+					localSceneService.deleteRemoteScene(localScene);
+				} catch (Exception e) {
+					log.warn("Scene delete failed! local_scene_id=[{}]",
+							localScene.getResourceId());
+					continue;
+				}
+			}
 		}
 
 		String practiceId = practiceIds.get(CommonConstant.ZERO);
@@ -969,18 +977,18 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 知识点数据处理
 		String knowledgeStr = (String) operationData.remove("knowledge");
-		String[] knowledgeArray = knowledgeStr.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
-		// 经过剪切 第一个为空字符 删掉
-		if (knowledgeArray.length > CommonConstant.ZERO) {
-			String[] knowledges = Arrays.copyOfRange(knowledgeArray, CommonConstant.ONE,
-					knowledgeArray.length);
-			operation.setKnowledge(JsonUtil.toJsonString(knowledges));
-		}
+		operation.setKnowledge(handlerMultiContent(knowledgeStr));
 
 		// 场景flag相关操作
 		String flag = (String) operationData.remove("answer");
-		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
+		operation.setAnswer(handlerMultiContent(flag));
 
+		// 场景flag类型
+		operation.setDynamicFlag(
+				StringUtils.isBlank(flag) ? PracticeOperation.DynamicFlag.DYNAMIC.getCode()
+						: PracticeOperation.DynamicFlag.STATIC.getCode());
+
+		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
 		if (StringUtils.isNotBlank(topoId)) {
 			operation.setTopoId(topoId);
 			String sceneShareMode = (String) operationData.remove("scene_share_mode");
@@ -988,14 +996,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					sceneShareMode.equals(CommonConstant.RIGHT) ? SceneShare.SHARED.getCode()
 							: SceneShare.PRIVATE.getCode());
 			operation.setDestroyDelay(CommonConstant.TWO);
-
-			// 场景flag类型
-			if (StringUtils.isBlank(flag)) {
-				operation.setDynamicFlag(PracticeOperation.DynamicFlag.DYNAMIC.getCode());
-			} else {
-				operation.setDynamicFlag(PracticeOperation.DynamicFlag.STATIC.getCode());
-				operation.setAnswer(flag);
-			}
 		}
 
 		// 难度处理
@@ -1016,6 +1016,23 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		return operation;
 
+	}
+
+	private String handlerMultiContent(String filedContent) {
+
+		if (StringUtils.isBlank(filedContent)) {
+			return JsonUtil.arrayToString(Lists.newArrayList());
+		}
+
+		String[] multiContent = filedContent.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
+		// 经过剪切 第一个为空字符 删掉
+		if (multiContent.length > CommonConstant.ZERO) {
+			String[] knowledges = Arrays.copyOfRange(multiContent, CommonConstant.ONE,
+					multiContent.length);
+			return JsonUtil.toJsonString(knowledges);
+		}
+
+		return null;
 	}
 
 	/**

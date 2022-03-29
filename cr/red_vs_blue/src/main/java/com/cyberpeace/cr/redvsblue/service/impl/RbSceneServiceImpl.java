@@ -165,7 +165,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		if (sceneData != null) {
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
 			ret.setSceneData(sceneData);
-			ret.setLocalSceneId(ret.getLocalSceneId());
+			ret.setLocalSceneId(room.getLocalSceneId());
 			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
 			return ret;
 		}

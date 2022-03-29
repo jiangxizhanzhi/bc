@@ -17,6 +17,7 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.service.PaperService;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,8 +180,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 	}
 
 	@Override
-	public List<CourseLesson> parseRmLesson(Course course, String path,
-			Map<String, String> envReqs) {
+	public List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
+			Map<String, String> lessonPathMap) {
 
 		List<CourseLesson> allLessons = Lists.newArrayList();
 
@@ -194,8 +195,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 			// 目录课程数据解析
 			List<String> lessonPaths = FileUtil.listFileByFile(file, 1, true);
-			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths,
-					lessonPath -> parseLesson(lessonPath, course, envReqs));
+			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths, lessonPath -> {
+				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
+				lessonPathMap.put(lessonPath, courseLesson.getResourceId());
+				return courseLesson;
+			});
 			allLessons.addAll(courseLessons);
 		}
 
@@ -410,7 +414,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Override
 	public List<LessonConfig> parseRmLessonConfig(Course course, String path,
-			Map<String, String> nameMap) {
+			Map<String, String> lessonPathMap) {
 
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		// 设置根目录
@@ -462,13 +466,13 @@ public class CourseImportServiceImpl implements CourseImportService {
 				String name = nameArray.length > CommonConstant.ONE ? nameArray[CommonConstant.ONE]
 						: nameArray[0];
 
-				if (StringUtils.isBlank(nameMap.get(name))) {
+				if (StringUtils.isBlank(lessonPathMap.get(lessonPath))) {
 					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR);
 				}
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)
-						.lessonId(nameMap.get(name)).index(index).build();
+						.lessonId(lessonPathMap.get(lessonPath)).index(index).build();
 				lessonConfigs.add(lessonConfig);
 
 				// 索引加一
@@ -487,12 +491,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 		Course course = parseRmCourse(path);
 
 		// 课时信息组装
-		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs);
+		Map<String, String> lessonPathMap = Maps.newHashMap();
+		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs, lessonPathMap);
 
-		// 目录数据组装
-		Map<String, String> nameMap = StreamApiUtils.toMap(lessons, CourseLesson::getName,
-				CourseLesson::getResourceId);
-		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, nameMap);
+		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, lessonPathMap);
 
 		// 数据入库
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

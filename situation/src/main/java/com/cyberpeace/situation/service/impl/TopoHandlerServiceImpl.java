@@ -239,7 +239,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	@Override
 	public ElementStateRes getElementState(String sceneId, String elementId) {
 		ElementCommonContext elementCommonContext = new ElementCommonContext();
-		elementCommonContext.setElementIds(Lists.newArrayList(elementId));
+		elementCommonContext.setElementIds(elementId);
 		elementCommonContext.setSceneId(sceneId);
 
 		ElementStateRes elementStateRes = new ElementStateRes();

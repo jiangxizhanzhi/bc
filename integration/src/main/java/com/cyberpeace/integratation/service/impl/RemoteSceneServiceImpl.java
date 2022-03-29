@@ -6,10 +6,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.model.mp.MpEventAggr;
-import com.cyberpeace.integratation.model.mp.MpFlowTrend;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.model.mp.MpRiskCount;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +17,11 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.mp.MpEventAggr;
+import com.cyberpeace.integratation.model.mp.MpFlowTrend;
+import com.cyberpeace.integratation.model.mp.MpHostState;
+import com.cyberpeace.integratation.model.mp.MpRiskCount;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
@@ -103,13 +104,17 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		FLOW_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.log");
 
-		HOST_STATE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.host.state");
+		HOST_STATE_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.host.state");
 
-		FLOW_TREND_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.trend");
+		FLOW_TREND_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.flow.trend");
 
-		EVENT_AGGR_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.event.aggr");
+		EVENT_AGGR_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.event.aggr");
 
-		RISK_COUNT_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.risk.count");
+		RISK_COUNT_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.risk.count");
 
 	}
 
@@ -241,21 +246,27 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public List<MpHostState> getHostState(ElementCommonContext elementCommonContext) {
-		return HttpClientUtil.rawGetByParam(elementCommonContext, HOST_STATE_URL, List.class);
+		String mpHostStates = HttpClientUtil.rawGetByParam(elementCommonContext, HOST_STATE_URL,
+				String.class);
+		return JsonUtil.toJsonObjectArray(mpHostStates, MpHostState.class);
 	}
 
 	@Override
 	public List<MpFlowTrend> getFlowTrend(ElementCommonContext elementCommonContext) {
-		return HttpClientUtil.rawGetByParam(elementCommonContext, FLOW_TREND_URL, List.class);
+		String flowTrends = HttpClientUtil.rawGetByParam(elementCommonContext, FLOW_TREND_URL,
+				String.class);
+		return JsonUtil.toJsonObjectArray(flowTrends, MpFlowTrend.class);
 	}
 
 	@Override
 	public MpEventAggr getEventAggr(ElementCommonContext elementCommonContext) {
-		return HttpClientUtil.rawGetByParam(elementCommonContext, EVENT_AGGR_URL, MpEventAggr.class);
+		return HttpClientUtil.rawGetByParam(elementCommonContext, EVENT_AGGR_URL,
+				MpEventAggr.class);
 	}
 
 	@Override
 	public MpRiskCount getRiskCount(ElementCommonContext elementCommonContext) {
-		return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL, MpRiskCount.class);
+		return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL,
+				MpRiskCount.class);
 	}
 }

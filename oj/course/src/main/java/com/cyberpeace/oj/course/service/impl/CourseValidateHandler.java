@@ -110,7 +110,7 @@ public class CourseValidateHandler {
 
 		CourseLesson courseLesson = courseLessonMapper.selectByPublic(lessonId,
 				authContext.getIsWeb());
-		validateCoursePermission(courseLesson.getCourseId(), authContext);
+
 		if (null == courseLesson) {
 			log.error("Lesson not public! lesson_id=[{}]", lessonId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);

@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
+import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,5 +65,16 @@ public class SituationController {
 				5);
 
 		return wsMultiNodeDynamics;
+	}
+
+	@ApiOperation("节点信息")
+	@GetMapping("element")
+	public BaseRsp<ElementStateRes> element(
+			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id") String sceneId,
+			@ApiParam(name = "element_id", value = "节点编号") @RequestParam(value = "element_id") String elementId) {
+
+		ElementStateRes elementStateRes = topoHandlerService.getElementState(sceneId, elementId);
+
+		return new BaseRsp<>(elementStateRes);
 	}
 }

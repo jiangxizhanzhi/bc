@@ -5,6 +5,7 @@ import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -23,4 +24,7 @@ public class SaveCourseCategoryReq implements Serializable {
 	@ApiModelProperty(value = "课程类型", hidden = true)
 	private Integer courseType = CourseCategory.CourseType.BASE.getCode();
 
+	public String getName() {
+		return StringUtils.isNotBlank(name) ? name.trim() : name;
+	}
 }

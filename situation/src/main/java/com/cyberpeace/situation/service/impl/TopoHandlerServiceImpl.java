@@ -246,8 +246,6 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		List<MpHostState> mpHostStates = remoteSceneService.getHostState(elementCommonContext);
 		if (mpHostStates.size() == 1) {
 			elementStateRes.setHostState(mpHostStates.get(0));
-		} else {
-			elementStateRes.setHostState(new MpHostState());
 		}
 		elementStateRes.setEventAggr(remoteSceneService.getEventAggr(elementCommonContext));
 		elementStateRes.setFlowTrend(remoteSceneService.getFlowTrend(elementCommonContext));

@@ -987,6 +987,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operation.setDynamicFlag(
 				StringUtils.isBlank(flag) ? PracticeOperation.DynamicFlag.DYNAMIC.getCode()
 						: PracticeOperation.DynamicFlag.STATIC.getCode());
+		// 设置场景共享类型默认值
+		operation.setSceneShareMode(SceneShare.PRIVATE.getCode());
 
 		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
 		if (StringUtils.isNotBlank(topoId)) {

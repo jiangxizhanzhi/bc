@@ -129,7 +129,7 @@ public class ExternalOperationController {
 		}
 
 		if (StringUtils.hasText(operation.getAttachmentId())) {
-			if (operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
+			if (null != operation.getDynamicFlag() && operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
 					.getCode().intValue()) {
 				List<String> fileIds = Arrays
 						.asList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));

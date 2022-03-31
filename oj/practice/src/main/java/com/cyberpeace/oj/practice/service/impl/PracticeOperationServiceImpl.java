@@ -1126,9 +1126,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
+		sceneMeta.setTopoData(topoData);
 
 		// 动态环境flag设置
-		if (StringUtils.isNotBlank(operation.getTopoId())) {
+		if (null != operation.getDynamicFlag() && operation.getDynamicFlag()
+				.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode()) {
 			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
 					topoData);
 			sceneMeta.setTopoData(dynamicFlag);

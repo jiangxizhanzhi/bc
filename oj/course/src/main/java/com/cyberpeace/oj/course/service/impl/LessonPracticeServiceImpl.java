@@ -285,9 +285,10 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		String appResourceId = lesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
 				+ lesson.getResourceId() + CommonConstant.LEFT_OBLIQUE_LINE + lesson.getPaperId();
 		LocalSceneMeta sceneMeta = LocalSceneMeta.builder().appResourceId(appResourceId)
-				.isWeb(ojLocalScene.getFromWeb()).build();
+				.isWeb(ojLocalScene.getFromWeb()).topoData(topoData).build();
 
-		if (StringUtils.isNotBlank(operation.getTopoId())) {
+		if (null != operation.getDynamicFlag() && operation.getDynamicFlag()
+				.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode()) {
 			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
 					topoData);
 			sceneMeta.setTopoData(dynamicFlag);

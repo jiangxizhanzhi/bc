@@ -66,4 +66,7 @@ public interface OjBusinessErrorCode {
 	String NON_DYNAMIC_ENVIRONMENT = "102023";
 
 	String PARENT_CATEGORY_NOT_EXIST = "102027";
+
+	/** 场景启动成功xxx个，失败xxx个*/
+	String ROOM_SCENE_BATCH_FAILED = "102030";
 }

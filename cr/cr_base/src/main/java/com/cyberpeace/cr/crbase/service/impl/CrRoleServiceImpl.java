@@ -17,6 +17,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
@@ -26,7 +27,6 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
-import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -192,22 +192,23 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			}
 		}
 
-		List<Integer> raderPoints = getPoints();
+		List<Integer> radarPoints = getPoints();
 
 		for (int i = 0; i < successPoints.size(); i++) {
-			int raderPoint = 0;
+			int radarPoint = 0;
 			if (!allPoints.get(i).equals(0)) {
-				raderPoint = successPoints.get(i) * 100 / allPoints.get(i);
+				radarPoint = successPoints.get(i) * 100 / allPoints.get(i);
 			}
-			raderPoints.set(i, raderPoint);
+			radarPoints.set(i, radarPoint);
 		}
 
-		return raderPoints;
+		return radarPoints;
 	}
 
 	private List<Integer> getPoints() {
 		List<Integer> points = Lists.newArrayList();
-		for (int i = 0; i < 7; i++) {
+		int skillPointsSize = CrCommonConstants.SKILL_POINTS_SIZE;
+		for (int i = 0; i < skillPointsSize; i++) {
 			points.add(0);
 		}
 		return points;

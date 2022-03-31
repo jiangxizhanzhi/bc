@@ -9,6 +9,9 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+
 /**
  * 指代文件系统中的一个文件夹
  * path 相对路径
@@ -27,6 +30,16 @@ public class FileTree {
 	private final Map<String, File> fileMap;
 
 	private final Map<String, FileTree> dirMap;
+
+	public FileTree() {
+		this("");
+	}
+
+	public FileTree(String path) {
+		this.path = path;
+		dirMap = new HashMap<>();
+		fileMap = new HashMap<>();
+	}
 
 	private Map<String, File> getFileMap() {
 		return fileMap;
@@ -58,7 +71,7 @@ public class FileTree {
 	/**
 	 * 向文件夹中添加一个空文件/文件夹
 	 * @param filePath 文件/文件夹的相对路径
-	 * @return 添加的文件   
+	 * @return 添加的文件
 	 * */
 	public File addFile(String filePath) {
 		String[] pathList = filePath.split(SEPARATOR);
@@ -78,27 +91,17 @@ public class FileTree {
 	}
 
 	/**
-	 * 根据名称获取当前文件夹的子文件 
+	 * 根据名称获取当前文件夹的子文件
 	 * 不存在则报错
 	 * */
 	public File getFileByName(String name) {
 		File file = getFileMap().get(name);
 
 		if (file == null) {
-			throw new RuntimeException("File not found: " + name);
+			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
 		}
 
 		return file;
-	}
-
-	public FileTree() {
-		this("");
-	}
-
-	public FileTree(String path) {
-		this.path = path;
-		dirMap = new HashMap<>();
-		fileMap = new HashMap<>();
 	}
 
 	public void inputFromStream(InputStream inputStream) throws IOException {

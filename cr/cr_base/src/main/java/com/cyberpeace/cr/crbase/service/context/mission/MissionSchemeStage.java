@@ -2,9 +2,6 @@ package com.cyberpeace.cr.crbase.service.context.mission;
 
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -17,12 +14,9 @@ import lombok.Data;
 public class MissionSchemeStage {
 
 	@ApiModelProperty(required = true)
-	@NotEmpty
 	private String stage;
 
 	@ApiModelProperty(required = true)
-	@NotEmpty
-	@Valid
 	private List<MissionSchemeMission> templates;
 
 	public void validate() {
@@ -45,14 +39,13 @@ public class MissionSchemeStage {
 class MissionSchemeMission {
 
 	@ApiModelProperty(required = true)
-	@NotEmpty
 	private String title;
 
 	@ApiModelProperty(required = true)
-	@NotEmpty
 	private String description;
 
 	public void validate() {
 		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);
+		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_MISSION_DESC_LEN);
 	}
 }

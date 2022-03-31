@@ -100,4 +100,7 @@ public interface ErrorCode {
 	/** 重建节点失败 */
 	String FAILED_TO_RECREATE_NODE = "100035";
 
+	/** 写入文件失败 */
+	String FAILED_TO_WRITE_FILE = "100036";
+
 }

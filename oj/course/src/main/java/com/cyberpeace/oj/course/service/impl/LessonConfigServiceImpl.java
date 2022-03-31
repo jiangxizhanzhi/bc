@@ -300,8 +300,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			CourseLesson lesson = lessonMap.get(lessonConfig.getLessonId());
 			if (null != lesson) {
 				configBo.setType(lesson.getType());
-				configBo.setRequired(lesson.getCompulsory()
-						.intValue() == CourseLesson.CompulsoryType.REQUIRED.getCode());
+				configBo.setCompulsory(lesson.getCompulsory());
 			}
 		}
 

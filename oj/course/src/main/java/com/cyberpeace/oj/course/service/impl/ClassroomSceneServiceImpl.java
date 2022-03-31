@@ -262,7 +262,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		if (CollectionUtils.isNotEmpty(execFailGroupIds)) {
 			log.error("Classroom some group start scene failed! classroom_id=[{}], group_ids=[{}]",
 					classroomId, JsonUtil.arrayToString(execFailGroupIds));
-			throw new BusinessException(OjBusinessErrorCode.SCENE_START_FAIL);
+			throw new BusinessException(OjBusinessErrorCode.ROOM_SCENE_BATCH_FAILED,
+					groupInfoList.size() - execFailGroupIds.size(), execFailGroupIds.size());
 		}
 
 		return listEntityToBo(groupInfoList, execGroupMap);

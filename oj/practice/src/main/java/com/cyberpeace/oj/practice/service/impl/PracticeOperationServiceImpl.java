@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -138,6 +139,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
+
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -648,7 +652,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
 				operation.getResourceId(), operation.getSceneShareMode(), authContext);
 
-		return ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		pushMessageHandler.pushOperationMessage(pushMessageHandler.getDeleteMessage(),
+				ojLocalScene);
+
+		return CommonConstant.TRUE;
 	}
 
 	@Override

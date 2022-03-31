@@ -11,6 +11,7 @@ import com.cyberpeace.integratation.service.SystemConfigService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,10 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 	private LocalSceneMapper localSceneMapper;
 
 	@Autowired
-	private RemoteSceneService remoteSceneServicel;
+	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
 
 	@Override
 	public JSONObject startScene(String lessonId, String practiceId, AuthContext authContext) {
@@ -103,7 +107,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 			}
 		});
 
-		return remoteSceneServicel.getById(sceneId, authContext.getUserId());
+		return remoteSceneService.getById(sceneId, authContext.getUserId());
 	}
 
 	@Override
@@ -121,8 +125,11 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		String businessId = getBusinessId(courseLesson, operation);
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(businessId,
 				operation.getSceneShareMode(), authContext);
+		ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		pushMessageHandler.pushLessonPracticeMessage(pushMessageHandler.getDeleteMessage(),
+				ojLocalScene);
 
-		return ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		return CommonConstant.TRUE;
 	}
 
 	@Override

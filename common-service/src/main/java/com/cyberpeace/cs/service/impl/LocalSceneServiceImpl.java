@@ -126,6 +126,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean stopScene(LocalScene localScene) {
+		if (null == localScene) {
+			return false;
+		}
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 
 		return remoteSceneService.stopScene(sceneOpsContext);

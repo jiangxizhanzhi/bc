@@ -90,7 +90,7 @@ public class ReportScoreController {
         }
 
         ReportScore reportScoreById = reportScoreService.getById(reportScoreUpdateReq.getResourceId());
-        List<Integer> notAllowedModifyCode = Arrays.asList(ReportScore.StatusCode.PASS.getCode(),
+        List<Integer> notAllowedModifyCode = Arrays.asList(
                         ReportScore.StatusCode.REJECT.getCode());
         if (reportScoreById == null || notAllowedModifyCode.contains(reportScoreById.getStatus())){
             log.error("report score {} not allow modify by user {}, please check db status",
@@ -105,6 +105,7 @@ public class ReportScoreController {
         String userName = userContext.getUserName();
         reportScore.setRaterId(userId);
         reportScore.setRaterName(userName);
+        reportScore.setScore(reportScore.getNormalScore()+reportScore.getEstimateScore());
 
         log.info("update report score reportScore {}", reportScore);
 

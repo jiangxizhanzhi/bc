@@ -1,104 +1,107 @@
 package com.cyberpeace.cr.report_score.dao.entity;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+
 import lombok.Data;
 import lombok.Getter;
-
-import java.math.BigInteger;
-import java.util.Date;
 
 @Data
 @TableName("cr_report_score")
 public class ReportScore extends BaseTable {
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
 
-    /**报告名称 */
-    private String reportName;
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    /**报告简介 */
-    private String reportDescription;
+	/**报告名称 */
+	private String reportName;
 
-    /**所属科目 */
-    private Integer subject;
+	/**报告简介 */
+	private String reportDescription;
 
-    /**是否匿名 */
-    private Integer anonymous;
+	/**所属科目 */
+	private Integer subject;
 
-    /**提交时间 */
-    private Date submitTime;
+	/**是否匿名 */
+	private Integer anonymous;
 
-    /**提交者ID */
-    private String userId;
+	/**提交时间 */
+	private Date submitTime;
 
-    /**提交者姓名 用作队伍名称 */
-    private String userName;
+	/**提交者ID */
+	private String userId;
 
-    /**提交者头像 */
-    private String avatarUrl;
+	/**提交者姓名 用作队伍名称 */
+	private String userName;
 
-    /**状态 */
-    private Integer status;
+	/**提交者头像 */
+	private String avatarUrl;
 
-    /**报告附件 */
-    private String reportFile;
+	/**状态 */
+	private Integer status;
 
-    /**报告附件名称 */
-    private String reportFileName;
+	/**报告附件 */
+	private String reportFile;
 
-    /**得分 */
-    private Float score;
+	/**报告附件名称 */
+	private String reportFileName;
 
-    /**报告评语 */
-    private String comment;
+	/**普通得分 */
+	private Float normalScore;
 
-    /**评分时间 */
-    private Date scoreTime;
+	/**评估得分 */
+	private Float estimateScore;
 
-    /**评分人id */
-    private String raterId;
+	/**得分 */
+	private Float score;
 
-    /**评分人姓名 */
-    private String raterName;
+	/**报告评语 */
+	private String comment;
 
-    public enum SubjectCode implements GenericEnum {
-        INVESTIGATION(1, "网络侦查"),
-        ANALYSIS(2,"抵近分析"),
-        STORM(3, "外网突破"),
-        AMBUSH(4, "里应外合"),
-        ATTACK(5, "内网失陷");
+	/**评分时间 */
+	private Date scoreTime;
 
-        @Getter
-        private Integer code;
+	/**评分人id */
+	private String raterId;
 
-        @Getter
-        private String desc;
+	/**评分人姓名 */
+	private String raterName;
 
-        SubjectCode(Integer code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-    }
+	public enum SubjectCode implements GenericEnum {
 
-    public enum StatusCode implements GenericEnum {
-        REJECT(1, "驳回"),
-        PASS(2, "通过"),
-        APPROVING(3, "待审核"),
-        EDITING(4, "编辑中");
+		INVESTIGATION(1, "网络侦查"), ANALYSIS(2, "抵近分析"), STORM(3, "外网突破"), AMBUSH(4,
+				"里应外合"), ATTACK(5, "内网失陷");
 
-        @Getter
-        private Integer code;
+		@Getter
+		private Integer code;
 
-        @Getter
-        private String desc;
+		@Getter
+		private String desc;
 
-        StatusCode(Integer code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-    }
+		SubjectCode(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
+
+	public enum StatusCode implements GenericEnum {
+
+		REJECT(1, "驳回"), PASS(2, "通过"), APPROVING(3, "待审核"), EDITING(4, "编辑中");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		StatusCode(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 }

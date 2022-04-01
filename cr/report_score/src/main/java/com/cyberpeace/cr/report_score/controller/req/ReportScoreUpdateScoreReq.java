@@ -30,4 +30,14 @@ public class ReportScoreUpdateScoreReq implements Serializable {
     @Max(value = 100000, message = "101170")
     private Float score;
 
+    @ApiModelProperty("普通得分")
+    @Positive(message="101171")
+    @Max(value = 100000, message = "101170")
+    private Float normalScore;
+
+    @ApiModelProperty("评估得分")
+    @Positive(message="101171")
+    @Max(value = 100000, message = "101170")
+    private Float estimateScore;
+
 }

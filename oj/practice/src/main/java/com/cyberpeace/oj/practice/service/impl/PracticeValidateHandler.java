@@ -191,7 +191,7 @@ public class PracticeValidateHandler {
 		for (String answer : answers) {
 			if (answer.length() > flagLength.intValue()) {
 				throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG,
-						CommonConstant.ZERO, flagLength);
+						CommonConstant.FOUR, flagLength);
 			}
 		}
 

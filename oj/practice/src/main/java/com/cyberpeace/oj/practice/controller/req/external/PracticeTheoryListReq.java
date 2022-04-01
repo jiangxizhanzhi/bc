@@ -25,4 +25,7 @@ public class PracticeTheoryListReq extends PageReqBase {
     @ApiModelProperty(value = "理论基础题型查询: 0-单选, 1-多选, 2-判断, 3-填空, 4-简答", allowableValues = "0, 1, 2, 3, 4")
     private Integer questionType;
 
+    @ApiModelProperty(value = "用户编号")
+    private String userId;
+
 }

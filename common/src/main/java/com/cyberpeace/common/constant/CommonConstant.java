@@ -25,6 +25,8 @@ public interface CommonConstant {
 
 	int TWO = 2;
 
+	int FOUR = 4;
+
 	int NEGATIVE_ONE = -1;
 
 	Integer HUNDRED = 100;

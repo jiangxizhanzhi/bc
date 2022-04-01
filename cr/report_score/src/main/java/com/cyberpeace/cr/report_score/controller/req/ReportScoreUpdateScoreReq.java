@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 
 @Data
@@ -26,17 +27,17 @@ public class ReportScoreUpdateScoreReq implements Serializable {
     private String comment;
 
     @ApiModelProperty("得分")
-    @Positive(message="101171")
+    @PositiveOrZero(message="101171")
     @Max(value = 100000, message = "101170")
     private Float score;
 
     @ApiModelProperty("普通得分")
-    @Positive(message="101171")
+    @PositiveOrZero(message="101171")
     @Max(value = 100000, message = "101170")
     private Float normalScore;
 
     @ApiModelProperty("评估得分")
-    @Positive(message="101171")
+    @PositiveOrZero(message="101171")
     @Max(value = 100000, message = "101170")
     private Float estimateScore;
 

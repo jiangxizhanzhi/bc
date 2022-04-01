@@ -79,9 +79,15 @@ public class WebReportScoreController {
     @ApiOperation("更新报告")
     @PostMapping("/update")
     public BaseRsp<String> update(@RequestBody ReportScoreUpdateReq reportScoreUpdateReq) {
+        selectObj(reportScoreUpdateReq.getResourceId());
         ReportScore reportScore = BeanUtils.copy(reportScoreUpdateReq, ReportScore.class);
         reportScoreService.updateById(reportScore);
         return new BaseRsp<>();
+    }
+
+    private WebReportScoreDetailRsp selectObj(String resourceId) {
+        String userId = UserInfoContext.getUserContext().getUserId();
+        return reportScoreService.selectWebById(resourceId, userId);
     }
 
     @ApiOperation("报告详情")
@@ -89,7 +95,8 @@ public class WebReportScoreController {
     public BaseRsp<WebReportScoreDetailRsp> getDetail(
             @ApiParam(name = "resource_id", value = "查询id", required = true)
             @RequestParam("resource_id") @NotBlank String resourceId) {
-        WebReportScoreDetailRsp webReportScoreDetailRsp = reportScoreService.selectWebById(resourceId);
+        WebReportScoreDetailRsp webReportScoreDetailRsp = selectObj(resourceId);
+
         if (webReportScoreDetailRsp.getAnonymous() != null && webReportScoreDetailRsp.getAnonymous() == 1) {
             webReportScoreDetailRsp.setRaterName("匿名者");
         }

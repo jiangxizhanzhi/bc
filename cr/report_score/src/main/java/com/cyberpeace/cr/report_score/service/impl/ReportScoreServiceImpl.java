@@ -113,8 +113,12 @@ public class ReportScoreServiceImpl extends ServiceImpl<ReportScoreMapper, Repor
     }
 
     @Override
-    public WebReportScoreDetailRsp selectWebById(String resourceId) {
+    public WebReportScoreDetailRsp selectWebById(String resourceId, String userId) {
         ReportScore reportScore = getById(resourceId);
+        if (!reportScore.getUserId().equals(userId)){
+            log.error("reportId {} : submit user not current user {}", resourceId, userId);
+            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+        }
         WebReportScoreDetailRsp copy = BeanUtils.copy(reportScore, WebReportScoreDetailRsp.class);
         return copy;
     }

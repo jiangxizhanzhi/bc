@@ -29,7 +29,7 @@ public interface ReportScoreService extends IService<ReportScore> {
 
     IPage<WebReportScoreRsp> selectWebPage(Page page, WebReportScoreListReq webReportScoreListReq, String userId);
 
-    WebReportScoreDetailRsp selectWebById(@Param("resourceId") String resourceId);
+    WebReportScoreDetailRsp selectWebById(@Param("resourceId") String resourceId, String userId);
 
     String saveFile(MultipartFile multipartFile) throws IOException;
 

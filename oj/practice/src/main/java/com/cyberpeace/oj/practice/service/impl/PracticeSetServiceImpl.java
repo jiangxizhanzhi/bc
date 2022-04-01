@@ -186,7 +186,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		if (null != practiceSet.getPracticeType()) {
 			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()
 					&& existSet.getPracticeCount().intValue() != CommonConstant.ZERO.intValue()) {
-				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_TYPE_ERROR);
+				throw new BusinessException(OjBusinessErrorCode.SET_UNDER_EXIST_PRACTICE);
 			}
 		}
 

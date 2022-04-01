@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,9 @@ public class ExternalTheoryController {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private PracticeSetService practiceSetService;
+
 	/**
 	 * 接口认证(key获取方式后续可能调整)
 	 * @param key headers: OPT-OJ-KEY
@@ -87,7 +91,7 @@ public class ExternalTheoryController {
 	@GetMapping("/practice-set/list")
 	public BaseRsp<List<ExternalPracticeSetBo>> getPracticeSetList(
 			@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key,
-			@RequestParam("userId") String userId) {
+			@RequestParam("userId") @NotBlank(message = ErrorCode.USER_INFO_MISSING) String userId) {
 		// 数据校验
 		allowAccess(key);
 		UserInfo userInfo = validateUser(userId);
@@ -136,13 +140,19 @@ public class ExternalTheoryController {
 		// 数据校验
 		allowAccess(key);
 		UserInfo userInfo = validateUser(queryParams.getUserId());
-
 		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
-			return new BaseRsp<>(null);
+			return new BaseRsp<>(PageUtil.getNullResult());
+		}
+
+		// 习题集权限查询
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+		List<String> setIds = practiceSetService.getSetIds(authContext, queryParams.getPracticeSet());
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new BaseRsp<>(PageUtil.getNullResult());
 		}
 
 		IPage<PracticeTheory> result = practiceTheoryMapper.getList(queryParams.toPageParam(),
-				queryParams.getPattern(), queryParams.getPracticeSet(), queryParams.getCategory(),
+				queryParams.getPattern(), setIds, queryParams.getCategory(),
 				queryParams.getQuestionType(), queryParams.getDifficulty());
 		return new BaseRsp<>(PageUtil.getListResult(result));
 	}
@@ -164,13 +174,26 @@ public class ExternalTheoryController {
 	public BaseRsp<List<PracticeTheory>> getTheoryRandom(
 			@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key,
 			PracticeRandomChoiceReq queryParams) {
+
 		allowAccess(key);
+		UserInfo userInfo = validateUser(queryParams.getUserId());
+		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
+			return new BaseRsp<>(Lists.newArrayList());
+		}
+
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+		List<String> setIds = practiceSetService.getSetIds(authContext, queryParams.getPracticeSet());
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new BaseRsp<>(Lists.newArrayList());
+		}
+
 		TheoryListQuery listQuery = BeanUtils.copy(queryParams, TheoryListQuery.class);
 		if (StringUtils.hasText(queryParams.getCategory())) {
 			listQuery.setCategoryIds(Lists.newArrayList(queryParams.getCategory()));
 		}
-
-		listQuery.setPracticeSetId(queryParams.getPracticeSet());
+		listQuery.setPracticeSetIds(setIds);
+		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(setIds, true);
+		listQuery.setResourceIds(practiceIds);
 
 		List<PracticeTheory> result = practiceTheoryMapper.randomChoice(listQuery,
 				queryParams.getCount());

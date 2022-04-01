@@ -17,8 +17,11 @@
             <if test="category != null and category != ''">
                 and category_id = #{category}
             </if>
-            <if test="practice_set != null and practice_set != ''">
-                and practice_set_id = #{practice_set}
+            <if test="practice_set_ids != null and practice_set_ids.size() != 0">
+                and practice_set_id in
+                <foreach collection="practice_set_ids" close=")" open="(" item="setId" separator=",">
+                    #{setId}
+                </foreach>
             </if>
             <if test="question_type != null">
                 and theory_type = #{question_type}
@@ -26,6 +29,7 @@
             <if test="difficulty != null">
                 and difficulty = #{difficulty}
             </if>
+            and `public` = true
         </where>
         order by id desc
     </select>
@@ -47,8 +51,11 @@
                     #{resourceId}
                 </foreach>
             </if>
-            <if test="query.practiceSetId != null and query.practiceSetId != '' != null">
-                and practice_set_id = #{query.practiceSetId}
+            <if test="query.practiceSetIds != null and query.practiceSetIds.size() != 0">
+                and practice_set_id in
+                <foreach collection="query.practiceSetIds" open="(" close=")" separator="," item="setId">
+                    #{setId}
+                </foreach>
             </if>
             <if test="query.questionType != null">
                 and theory_type = #{query.questionType}

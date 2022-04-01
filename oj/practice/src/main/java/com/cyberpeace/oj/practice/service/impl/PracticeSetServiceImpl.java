@@ -109,6 +109,23 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 	}
 
+	@Override
+	public List<String> getSetIds(AuthContext authContext, String setId) {
+		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(setIds)) {
+			return Lists.newArrayList();
+		}
+
+		if (StringUtils.isNotBlank(setId)) {
+			if (!setIds.contains(setId)) {
+				return Lists.newArrayList();
+			}
+			setIds.clear();
+			setIds.add(setId);
+		}
+		return setIds;
+	}
+
 	/**
 	 * 实体类数据转换
 	 *

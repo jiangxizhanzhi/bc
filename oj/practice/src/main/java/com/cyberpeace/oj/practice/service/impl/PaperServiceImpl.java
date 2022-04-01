@@ -226,6 +226,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			// 执行数据查询
 			TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
 			theoryListQuery.setResourceIds(practiceIds);
+			theoryListQuery.setPracticeSetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()));
 			List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
 					practiceQuery.getCount());
 

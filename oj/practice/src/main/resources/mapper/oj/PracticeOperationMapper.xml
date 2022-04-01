@@ -25,8 +25,11 @@
                         #{resourceId}
                     </foreach>
                 </if>
-                <if test="listQuery.practiceSetId != null and listQuery.practiceSetId != ''">
-                    and practice_set_id = #{listQuery.practiceSetId}
+                <if test="listQuery.practiceSetIds != null and listQuery.practiceSetIds != ''">
+                    and practice_set_id in
+                    <foreach collection="listQuery.practiceSetIds" open="(" close=")" separator="," item="setId">
+                        #{setId}
+                    </foreach>
                 </if>
                 <if test="listQuery.difficulty != null">
                     and difficulty = #{listQuery.difficulty}

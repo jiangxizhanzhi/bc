@@ -5,46 +5,45 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.*;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
-import com.cyberpeace.oj.practice.service.PaperService;
-import com.cyberpeace.oj.practice.service.bo.PaperContext;
-import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.bo.PaperContext;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Slf4j
 @Service
@@ -197,8 +196,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 			List<String> lessonPaths = FileUtil.listFileByFile(file, 1, true);
 			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths, lessonPath -> {
 				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
-				lessonPathMap.put(lessonPath, courseLesson.getResourceId());
-				return courseLesson;
+				if (null != courseLesson) {
+					lessonPathMap.put(lessonPath, courseLesson.getResourceId());
+					return courseLesson;
+				}
+				return null;
 			});
 			allLessons.addAll(courseLessons);
 		}
@@ -248,16 +250,20 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 解析附件
 		List<String> attachmentList = FileUtil.listDirs(
 				new File(path, ResourceImportConstant.ATTACHMENT).getAbsolutePath(), true);
-		List<String> attachmentPaths = StreamApiUtils.map(attachmentList, attachmentPath -> {
-			File attachmentFile = new File(attachmentPath);
-			File destFile = new File(AttachmentPath.ATTACHMENT.getDesc(), attachmentFile.getName());
-			String filePath = FileUtil.copyFile(attachmentPath, destFile.getAbsolutePath(), true);
-			return utilService.replaceFileUrl(filePath);
-		});
+		if (CollectionUtils.isNotEmpty(attachmentList)) {
+			List<String> attachmentPaths = StreamApiUtils.map(attachmentList, attachmentPath -> {
+				File attachmentFile = new File(attachmentPath);
+				File destFile = new File(AttachmentPath.ATTACHMENT.getDesc(),
+						attachmentFile.getName());
+				String filePath = FileUtil.copyFile(attachmentPath, destFile.getAbsolutePath(),
+						true);
+				return utilService.replaceFileUrl(filePath);
+			});
 
-		List<String> attachmentIds = attachmentService.batchInsert(attachmentPaths);
-		String idStr = String.join(CommonConstant.CODE_COMMA, attachmentIds);
-		courseLesson.setAttachmentIds(idStr);
+			List<String> attachmentIds = attachmentService.batchInsert(attachmentPaths);
+			String idStr = String.join(CommonConstant.CODE_COMMA, attachmentIds);
+			courseLesson.setAttachmentIds(idStr);
+		}
 
 		// 解析课时视频
 		String videoPath = String.format(AttachmentPath.VIDEO.getDesc(), course.getResourceId());

@@ -21,7 +21,7 @@ FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for cr_report_score
 -- ----------------------------
-ALTER TABLE `bc_jyj`.`cr_report_score`
+ALTER TABLE `cr_report_score`
     ADD COLUMN `normal_score` decimal(10, 2) NOT NULL DEFAULT 000000000.00 AFTER `score`,
     ADD COLUMN `estimate_score` decimal(10, 2) NOT NULL DEFAULT 000000000.00 AFTER `normal_score`;
 

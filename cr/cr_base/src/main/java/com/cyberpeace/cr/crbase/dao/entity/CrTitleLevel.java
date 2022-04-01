@@ -17,4 +17,6 @@ public class CrTitleLevel extends BaseTable {
     private String resourceId;
 
     private String name;
+
+    private String createUserId;
 }

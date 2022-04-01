@@ -6,8 +6,11 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
+import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
+import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -43,18 +46,48 @@ public class AdminTitleController {
     @GetMapping("/level/list")
     @ApiOperation("称号等级分页查询")
     public BaseRsp<ListRsp<CrTitleLevel>> list(ListQuery queryParams) {
-        return new BaseRsp<>(PageUtil.getListResult(crTitleService.levelList(queryParams.toPageParam(), queryParams.getName())));
+        return new BaseRsp<>(PageUtil.getListResult(crTitleService.levelList(queryParams.toPageParam(), queryParams.getSearch())));
     }
 
     @DeleteMapping("/level/batch-delete")
     @ApiOperation("称号等级批量删除")
-    public BaseRsp<Boolean> batchDelete(@RequestBody BatchDeleteReq requestData) {
+    public BaseRsp<Boolean> levelBatchDelete(@RequestBody BatchDeleteReq requestData) {
         return new BaseRsp<>(crTitleService.levelBatchDelete(requestData));
     }
 
     @GetMapping("/level/all")
     @ApiOperation("称号等级批量删除")
     public BaseRsp<List<CrTitleLevel>> all() {
-        return new BaseRsp<>(crTitleService.levelFullGet());
+        return new BaseRsp<>(crTitleService.levelFullList());
+    }
+
+    @PostMapping("/create")
+    @ApiOperation("荣誉称号新增")
+    public BaseRsp<CrTitle> create(@RequestBody CrTitleReq requestData) {
+        return new BaseRsp<>(crTitleService.titleCreate(requestData));
+    }
+
+    @PatchMapping("/update")
+    @ApiOperation("荣誉称号更新")
+    public BaseRsp<CrTitle> update(@RequestBody CrTitleReq requestData) {
+        return new BaseRsp<>(crTitleService.titleUpdate(requestData));
+    }
+
+    @GetMapping("/get")
+    @ApiOperation("荣誉称号单个获取")
+    public BaseRsp<CrTitle> get(@RequestParam("resource_id") String resourceId) {
+        return new BaseRsp<>(crTitleService.titleGet(resourceId));
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("荣誉称号分页查询")
+    public BaseRsp<ListRsp<CrTitleBo>> create(ListQuery queryParams) {
+        return new BaseRsp<>(PageUtil.getListResult(crTitleService.titleList(queryParams.toPageParam(), queryParams.getSearch())));
+    }
+
+    @DeleteMapping("/batch-delete")
+    @ApiOperation("荣誉称号批量删除")
+    public BaseRsp<Boolean> titleBatchDelete(@RequestBody BatchDeleteReq requestData) {
+        return new BaseRsp<>(crTitleService.titleBatchDelete(requestData));
     }
 }

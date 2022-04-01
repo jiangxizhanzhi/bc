@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrTitleBusinessTemplateMapper">
+
+    <insert id="saveBatch">
+        insert into cr_title_business_template
+        (title_id, business_template_id, create_time, update_time)
+        values
+        <foreach collection="business_template_ids" item="business_template_id" separator=",">
+            (#{title_id}, #{business_template_id}, now(), now())
+        </foreach>
+    </insert>
+
+    <delete id="deleteBatch">
+        delete from cr_title_business_template
+        <where>
+            title_id = #{title_id} and
+            business_template_id in
+            <foreach collection="business_template_ids" item="business_template_id" separator="," open="(" close=")">
+                #{business_template_id}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="listByTitleId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate">
+        select * from cr_title_business_template where title_id = #{title_id};
+    </select>
+</mapper>

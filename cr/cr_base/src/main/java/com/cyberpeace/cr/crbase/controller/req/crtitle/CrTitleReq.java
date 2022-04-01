@@ -15,6 +15,9 @@ public class CrTitleReq implements Serializable {
     @ApiModelProperty("名称")
     private String name;
 
+    @ApiModelProperty("等级")
+    private String levelId;
+
     @ApiModelProperty("及格标准")
     private Integer score;
 

@@ -246,4 +246,19 @@ public interface CrBusinessErrorCode {
 
 	/** 非法的任务描述长度 */
 	String ILLEGAL_MISSION_DESC_LEN = "101079";
+
+	/**
+	 * 称号关联训练为空
+	 */
+	String TITLE_TRAIN_IS_NULL = "101080";
+
+	/**
+	 * 称号关联训练无效
+	 */
+	String TITLE_TRAIN_INVALID = "101081";
+
+	/**
+	 * 被使用称号等级删除错误
+	 */
+	String USING_TITLE_LEVEL_DELETE_ERROR = "101082";
 }

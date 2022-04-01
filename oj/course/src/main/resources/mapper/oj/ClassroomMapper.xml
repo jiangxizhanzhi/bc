@@ -19,8 +19,9 @@
         <where>
             <if test="listQuery != null">
                 <if test="listQuery.startTime != null and listQuery.endTime != null">
-                    ((start_time &lt; #{listQuery.endTime} and end_time &gt; #{listQuery.endTime})
-                    or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
+                    ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                    or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                    or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
                 </if>
                 <if test="listQuery.userId != null and listQuery.userId != ''">
                     and create_user_id = #{listQuery.userId}
@@ -46,8 +47,9 @@
             </if>
             <if test="listQuery != null">
                 <if test="listQuery.startTime != null and listQuery.endTime != null">
-                    and ((start_time &lt; #{listQuery.endTime} and end_time &gt; #{listQuery.endTime})
-                    or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
+                    and ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                    or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                    or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
                 </if>
                 <if test="listQuery.userId != null and listQuery.userId != ''">
                     and create_user_id = #{listQuery.userId}
@@ -62,11 +64,11 @@
                         </foreach>
                     </if>
                     <if test="listQuery.startTime != null and listQuery.endTime != null">
-                        and ( (start_time &lt; #{listQuery.endTime} and end_time &gt; #{listQuery.endTime})
-                        or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
+                        and ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                        or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                        or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
                     </if>
-                    and 1=1)
-
+                    )
                 </if>
             </if>
         </where>

@@ -101,6 +101,9 @@
             <if test="listQuery.questionType != null">
                 and theory_type = #{listQuery.questionType}
             </if>
+            <if test="listQuery.difficulty != null">
+                and difficulty = #{listQuery.difficulty}
+            </if>
             <if test="listQuery.pattern != null and listQuery.pattern != ''">
                 <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>
                 and content like #{pattern}

@@ -180,7 +180,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Override
 	public List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
-			Map<String, String> lessonPathMap) {
+			Map<String, String> nameMap) {
 
 		List<CourseLesson> allLessons = Lists.newArrayList();
 
@@ -197,8 +197,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths, lessonPath -> {
 				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
 				if (null != courseLesson) {
-					lessonPathMap.put(lessonPath, courseLesson.getResourceId());
-					return courseLesson;
+					if (null != nameMap.putIfAbsent(courseLesson.getName(),
+							courseLesson.getResourceId())) {
+						log.error("Lesson name exist! course_path=[{}], lesson_path=[{}]", path,
+								lessonPath);
+						throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+					}
 				}
 				return null;
 			});
@@ -420,7 +424,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Override
 	public List<LessonConfig> parseRmLessonConfig(Course course, String path,
-			Map<String, String> lessonPathMap) {
+			Map<String, String> lessonNameMap) {
 
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		// 设置根目录
@@ -472,13 +476,16 @@ public class CourseImportServiceImpl implements CourseImportService {
 				String name = nameArray.length > CommonConstant.ONE ? nameArray[CommonConstant.ONE]
 						: nameArray[0];
 
-				if (StringUtils.isBlank(lessonPathMap.get(lessonPath))) {
+				if (StringUtils.isBlank(lessonNameMap.get(name))) {
+					log.error(
+							"Course directory name and course name are inconsistent! course_path=[{}], lesson_dir=[{}]",
+							path, lessonPath);
 					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR);
 				}
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)
-						.lessonId(lessonPathMap.get(lessonPath)).index(index).build();
+						.lessonId(lessonNameMap.get(lessonPath)).index(index).build();
 				lessonConfigs.add(lessonConfig);
 
 				// 索引加一
@@ -497,10 +504,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 		Course course = parseRmCourse(path);
 
 		// 课时信息组装
-		Map<String, String> lessonPathMap = Maps.newHashMap();
-		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs, lessonPathMap);
+		Map<String, String> lessonNameMap = Maps.newHashMap();
+		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs, lessonNameMap);
 
-		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, lessonPathMap);
+		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, lessonNameMap);
 
 		// 数据入库
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

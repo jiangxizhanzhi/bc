@@ -464,7 +464,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 				String sortStr = new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
 						CommonConstant.TWO)[CommonConstant.ZERO];
 				return Integer
-						.parseInt(sortStr.split(PatternConstant.STRIGULA)[CommonConstant.ZERO]);
+						.parseInt(sortStr.split(PatternConstant.STRIGULA)[CommonConstant.ONE]);
 			});
 			for (String lessonPath : sortLessonList) {
 				String[] nameArray = new File(lessonPath).getName()

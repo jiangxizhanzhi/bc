@@ -25,7 +25,7 @@
                         #{resourceId}
                     </foreach>
                 </if>
-                <if test="listQuery.practiceSetIds != null and listQuery.practiceSetIds != ''">
+                <if test="listQuery.practiceSetIds != null and listQuery.practiceSetIds.size() != 0">
                     and practice_set_id in
                     <foreach collection="listQuery.practiceSetIds" open="(" close=")" separator="," item="setId">
                         #{setId}

@@ -487,7 +487,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)
-						.lessonId(lessonNameMap.get(lessonPath)).index(index).build();
+						.lessonId(lessonNameMap.get(name)).index(index).build();
 				lessonConfigs.add(lessonConfig);
 
 				// 索引加一

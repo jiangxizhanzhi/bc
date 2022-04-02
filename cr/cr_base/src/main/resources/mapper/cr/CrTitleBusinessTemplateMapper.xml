@@ -26,4 +26,22 @@
     <select id="listByTitleId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate">
         select * from cr_title_business_template where title_id = #{title_id};
     </select>
+
+    <select id="listTrain" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo">
+        select *
+        from cr_business_template
+        <where>
+            <if test="title_id != null and title_id != ''">
+                and resource_id in (select business_template_id from cr_title_business_template where title_id = #{title_id})
+            </if>
+            <if test="search != null and search != ''">
+                <bind name="search" value="'%' + search + '%'"/>
+                and name like #{search}
+            </if>
+            <if test="type != null and type != ''">
+                and business_type = #{type}
+            </if>
+        </where>
+        order by id desc
+    </select>
 </mapper>

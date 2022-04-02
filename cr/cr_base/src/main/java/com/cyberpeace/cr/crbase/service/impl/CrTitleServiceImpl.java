@@ -5,12 +5,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
+import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleTrainReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate;
@@ -21,6 +24,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTitleLevelMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTitleMapper;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -96,8 +100,19 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     }
 
     @Override
-    public List<CrTitleLevel> levelFullList() {
+    public List<CrTitleLevel> levelFullList(String title) {
         return crTitleLevelMapper.selectList(null);
+    }
+
+    @Override
+    public List<CrTitle> titleFullList(String levelId, Boolean isDistinct) {
+        List<CrTitle> querySet = levelId != null ? lambdaQuery().eq(CrTitle::getLevelId, levelId).list() : lambdaQuery().list();
+        return isDistinct ? StreamApiUtils.distinctByColumn(querySet, CrTitle::getName) : querySet;
+    }
+
+    @Override
+    public List<CrTitle> titleFullList(String levelId) {
+        return titleFullList(levelId, true);
     }
 
     @Override
@@ -182,14 +197,18 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         return titleGet(origin.getResourceId());
     }
 
+    private Map<String, String> generateUserMap(List<String> userIds) {
+        return remoteUserService.getByIdList(userIds).stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
+    }
+
     @Override
     public IPage<CrTitleBo> titleList(Page page, String name) {
         IPage<CrTitleBo> origin = this.getBaseMapper().list(page, name);
 
         // 创建用户名称获取
-        Map<String, String> usersMap = remoteUserService.getByIdList(
+        Map<String, String> usersMap = generateUserMap(
                 origin.getRecords().stream().map(CrTitleBo::getCreateUserId).collect(Collectors.toList())
-        ).stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
+        );
 
         origin.getRecords().forEach(item -> item.setCreateUser(usersMap.get(item.getCreateUserId())));
         return origin;
@@ -199,5 +218,30 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     public Boolean titleBatchDelete(BatchDeleteReq requestData) {
         // todo 级联数据删除
         return removeByIds(requestData.getIds());
+    }
+
+    @Override
+    public IPage<CrTitleTrainBo> eventsList(Page page, Integer businessType, String search) {
+        return eventsExtraData(crTitleBusinessTemplateMapper.listTrain(page, businessType, search, null));
+    }
+
+    @Override
+    public IPage<CrTitleTrainBo> usingEventsList(String resourceId, Page page, Integer businessType, String search) {
+        return eventsExtraData(crTitleBusinessTemplateMapper.listTrain(page, businessType, search, resourceId));
+    }
+
+    private IPage<CrTitleTrainBo> eventsExtraData(IPage<CrTitleTrainBo> selectResult) {
+        Map<String, String> usersMap = generateUserMap(
+                selectResult.getRecords().stream().map(CrTitleTrainBo::getCreateUserId).collect(Collectors.toList())
+        );
+
+        selectResult.getRecords().forEach(crTitleTrainBo -> crTitleTrainBo.setCreateUser(usersMap.get(crTitleTrainBo.getCreateUserId())));
+
+        return selectResult;
+    }
+
+    @Override
+    public IPage<CrTitleBo> userTitle(Page page, String levelId, String title) {
+        return this.getBaseMapper().listUserTitle(page, UserInfoContext.getUserContext().getUserId(), levelId, title);
     }
 }

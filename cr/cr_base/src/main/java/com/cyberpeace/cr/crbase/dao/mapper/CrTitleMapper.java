@@ -14,4 +14,9 @@ import org.springframework.stereotype.Repository;
 public interface CrTitleMapper extends BaseMapper<CrTitle> {
 
     IPage<CrTitleBo> list(@Param("page") Page page, @Param("name") String name);
+
+    IPage<CrTitleBo> listUserTitle(@Param("page") Page page,
+                                   @Param("user_id") String userId,
+                                   @Param("level_id") String levelId,
+                                   @Param("title") String title);
 }

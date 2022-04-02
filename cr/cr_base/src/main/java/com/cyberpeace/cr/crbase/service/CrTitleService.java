@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public interface CrTitleService {
 
     /**
      * 获取单个称号等级
+     *
      * @param resourceId 称号等级resource_id
      * @return entity object
      */
@@ -22,36 +24,57 @@ public interface CrTitleService {
 
     /**
      * 称号等级新增
+     *
      * @return entity object
      */
     CrTitleLevel levelCreate(CrTitleLevelReq requestData);
 
     /**
      * 称号等级更新
+     *
      * @return entity object
      */
     CrTitleLevel levelUpdate(CrTitleLevelReq requestData);
 
     /**
      * 称号等级分页查询
+     *
      * @return 分页结构等级数据
      */
     IPage<CrTitleLevel> levelList(Page page, String name);
 
     /**
      * 等级批量删除
+     *
      * @return 是否成功删除
      */
     Boolean levelBatchDelete(BatchDeleteReq requestData);
 
     /**
      * 等级全量获取
+     *
      * @return 全量等级列表
      */
-    List<CrTitleLevel> levelFullList();
+    List<CrTitleLevel> levelFullList(String title);
+
+    /**
+     * 称号全量获取
+     * @param levelId 等级id
+     * @param isDistinct 是否名称重复去重
+     * @return 全量称号列表
+     */
+    List<CrTitle> titleFullList(String levelId, Boolean isDistinct);
+
+    /**
+     * 根据名称去重后的称号全量获取
+     * @param levelId 等级id
+     * @return 全量称号列表
+     */
+    List<CrTitle> titleFullList(String levelId);
 
     /**
      * 获取称号
+     *
      * @param resourceId 称号resource_id
      * @return entity object
      */
@@ -59,6 +82,7 @@ public interface CrTitleService {
 
     /**
      * 称号新增
+     *
      * @param requestData
      * @return entity object
      */
@@ -66,6 +90,7 @@ public interface CrTitleService {
 
     /**
      * 称号更新
+     *
      * @param requestData
      * @return
      */
@@ -73,6 +98,7 @@ public interface CrTitleService {
 
     /**
      * 称号分页查询
+     *
      * @param page
      * @param name
      * @return
@@ -81,10 +107,32 @@ public interface CrTitleService {
 
     /**
      * 称号批量删除
+     *
      * @param requestData
      * @return 是否成功删除
      */
     Boolean titleBatchDelete(BatchDeleteReq requestData);
+
+    /**
+     * 称号训练分页查询
+     *
+     * @param page
+     * @param search
+     * @return
+     */
+    IPage<CrTitleTrainBo> eventsList(Page page, Integer businessType, String search);
+
+    /**
+     * 称号已关联训练分页查询
+     *
+     * @param resourceId 称号ID
+     * @param page
+     * @param search
+     * @return
+     */
+    IPage<CrTitleTrainBo> usingEventsList(String resourceId, Page page, Integer businessType, String search);
+
+    IPage<CrTitleBo> userTitle(Page page, String levelId, String title);
 
 
 }

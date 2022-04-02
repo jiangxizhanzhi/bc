@@ -15,4 +15,17 @@
         group by T1.resource_id
         order by T1.id desc
     </select>
+    <select id="listUserTitle" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo">
+        select * from cr_title_user T1
+        left join cr_title T2 on T1.title_id = T2.resource_id
+        <where>
+            T1.user_id = #{user_id}
+            <if test="level_id != null and level_id != ''">
+                and T1.level_id = #{level_id}
+            </if>
+            <if test="title != null and title != ''">
+                and T2.name = #{title}
+            </if>
+        </where>
+    </select>
 </mapper>

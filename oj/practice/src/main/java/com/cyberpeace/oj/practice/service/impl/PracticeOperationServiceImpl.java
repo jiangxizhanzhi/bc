@@ -464,6 +464,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 根据习题集过滤习题编号
 		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+			authIds.clear();
+			authIds.add(listQuery.getPracticeSetId());
+		}
+
 		List<String> operationIds = practiceOperationMapper.selectBySetIds(authIds,
 				authContext.getIsWeb());
 		if (CollectionUtils.isEmpty(operationIds)) {

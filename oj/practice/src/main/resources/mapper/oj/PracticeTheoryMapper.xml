@@ -86,8 +86,11 @@
                     #{id}
                 </foreach>
             </if>
-            <if test="listQuery.practiceSetId != null and listQuery.practiceSetId != ''">
-                and practice_set_id = #{listQuery.practiceSetId}
+            <if test="listQuery.practiceSetIds != null and listQuery.practiceSetIds.size() != 0">
+                and practice_set_id in
+                <foreach collection="listQuery.practiceSetIds" open="(" close=")" item="setId" separator=",">
+                    #{setId}
+                </foreach>
             </if>
             <if test="listQuery.categoryIds != null and listQuery.categoryIds.size() != 0">
                 and category_id in

@@ -203,6 +203,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 								lessonPath);
 						throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 					}
+
+					return courseLesson;
 				}
 				return null;
 			});

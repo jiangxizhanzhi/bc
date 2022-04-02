@@ -32,6 +32,10 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 	@Override
 	public void pushLessonPracticeMessage(JSONObject data, OjLocalScene ojLocalScene) {
+
+		if (null == ojLocalScene) {
+			return;
+		}
 		// 组装业务编号
 		String[] businessIdArray = ojLocalScene.getBusinessId().split(CommonConstant.CODE_COMMA);
 		LessonPracticeWsMessageIdentifier messageIdentifier = LessonPracticeWsMessageIdentifier
@@ -51,6 +55,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 	@Override
 	public void pushLessonMessage(JSONObject data, OjLocalScene ojLocalScene) {
+		if (null == ojLocalScene) {
+			return;
+		}
 
 		LessonWsMessageIdentifier identifier = new LessonWsMessageIdentifier();
 		identifier.setFromWeb(ojLocalScene.getFromWeb());
@@ -66,6 +73,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 	@Override
 	public void pushOperationMessage(JSONObject data, OjLocalScene ojLocalScene) {
+		if (null == ojLocalScene) {
+			return;
+		}
 
 		OperationWsMessageIdentifier identifier = new OperationWsMessageIdentifier();
 		identifier.setFromWeb(ojLocalScene.getFromWeb());
@@ -82,6 +92,10 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 	@Override
 	public void pushClassroomMessage(JSONObject data, OjLocalScene ojLocalScene) {
+
+		if (null == ojLocalScene) {
+			return;
+		}
 		// 计算data数据是否存在
 		JSONObject jsonData = data.getJSONObject(JsonKeyConstant.DATA);
 		if (null == jsonData) {
@@ -100,7 +114,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 * @param ojLocalScene
 	 */
 	private void pushMessageToUser(JSONObject data, OjLocalScene ojLocalScene) {
-
+		if (null == ojLocalScene) {
+			return;
+		}
 		ClassroomWsMessageIdentifier identifier = new ClassroomWsMessageIdentifier();
 		identifier.setUserId(ojLocalScene.getUserId());
 
@@ -122,6 +138,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 */
 	private void pushMessageToClassroom(JSONObject data, OjLocalScene ojLocalScene) {
 
+		if (null == ojLocalScene) {
+			return;
+		}
 		ClassroomWsMessageIdentifier identifier = new ClassroomWsMessageIdentifier();
 		identifier.setUserId(ojLocalScene.getUserId());
 

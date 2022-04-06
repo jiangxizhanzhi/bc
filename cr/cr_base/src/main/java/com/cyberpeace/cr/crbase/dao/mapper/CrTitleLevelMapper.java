@@ -8,9 +8,13 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface CrTitleLevelMapper extends BaseMapper<CrTitleLevel> {
 
     IPage<CrTitleLevel> list(@Param("page") Page page, @Param("name") String name);
+
+    List<CrTitleLevel> selectLevelFullList(@Param("title") String title);
 }

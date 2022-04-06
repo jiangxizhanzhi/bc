@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -13,7 +12,6 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
-import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleTrainReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate;
@@ -101,12 +99,14 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public List<CrTitleLevel> levelFullList(String title) {
-        return crTitleLevelMapper.selectList(null);
+        return crTitleLevelMapper.selectLevelFullList(title);
     }
 
     @Override
     public List<CrTitle> titleFullList(String levelId, Boolean isDistinct) {
-        List<CrTitle> querySet = levelId != null ? lambdaQuery().eq(CrTitle::getLevelId, levelId).list() : lambdaQuery().list();
+        List<CrTitle> querySet = levelId != null
+                ? lambdaQuery().eq(CrTitle::getLevelId, levelId).orderByDesc(CrTitle::getId).list()
+                : lambdaQuery().orderByDesc(CrTitle::getId).list();
         return isDistinct ? StreamApiUtils.distinctByColumn(querySet, CrTitle::getName) : querySet;
     }
 

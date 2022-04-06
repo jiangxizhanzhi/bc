@@ -12,4 +12,13 @@
         </where>
         order by id desc
     </select>
+    <select id="selectLevelFullList" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel">
+        select * from cr_title_level
+        <if test="title != null and title != ''">
+            <where>
+                resource_id in (select level_id from cr_title where `name` = #{title})
+            </where>
+        </if>
+        order by id desc
+    </select>
 </mapper>

@@ -126,7 +126,8 @@ public class HldRoomController {
 		}
 
 		// 已开启的训练不允许修改
-		if (!hldRoom.isUnopened()) {
+		if (!hldRoom.isUnopened() || !"5".equals(hldRoomService.getTaskInfo(hldRoom.getTaskId())
+				.getJSONObject("baseInfo").getString("taskStatus"))) {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_HAS_BEGUN);
 		}
 

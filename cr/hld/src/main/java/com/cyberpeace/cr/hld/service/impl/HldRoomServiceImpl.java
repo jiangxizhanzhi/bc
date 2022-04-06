@@ -146,7 +146,16 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 	}
 
 	@Override
-	public void checkUserPermission(String roomId, String userId) {}
+	public void checkUserPermission(String roomId, String userId) {
+
+		// 只有导演允许操作场景
+		CrRole directorRole = crRoleMapper.getCrRoleByRoomIdAndRoleName(roomId,
+				HldRoleName.DIRECTOR.getCrName());
+
+		if (!directorRole.getUserIdList().contains(userId)) {
+			throw new BusinessException(CrBusinessErrorCode.INSUFFICIENT_ROLE_PERMISSIONS);
+		}
+	}
 
 	private void addCrRoles(List<CrRole> crRoleList, List<HldRoleConfig> hldRoleConfigs,
 			String roomId, CrRole.HldRoleGroup hldRoleGroup) {

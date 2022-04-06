@@ -11,7 +11,7 @@ public class HldSceneOpsReq implements Serializable {
 	@ApiModelProperty(value = "HLD拓扑id", required = true)
 	private String resourceId;
 
-	// @ApiModelProperty(value = "HLD用户id", required = true)
-	// private String userId;
+	 @ApiModelProperty(value = "HLD用户id", required = false)
+	 private String userId = "task";
 
 }

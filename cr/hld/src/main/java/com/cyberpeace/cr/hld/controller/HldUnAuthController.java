@@ -113,8 +113,8 @@ public class HldUnAuthController {
 	@PostMapping("")
 	public BaseRsp startScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
-		setUserInfo("task");
-		String sceneId = hldSceneService.startScene(hldSceneOpsReq.getResourceId(), "");
+		setUserInfo(hldSceneOpsReq.getUserId());
+		String sceneId = hldSceneService.startScene(hldSceneOpsReq.getResourceId(), hldSceneOpsReq.getUserId());
 
 		return new BaseRsp(new StartSceneRsp(sceneId));
 	}
@@ -123,7 +123,7 @@ public class HldUnAuthController {
 	@DeleteMapping("")
 	public BaseRsp stopScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
-		setUserInfo("task");
+		setUserInfo(hldSceneOpsReq.getUserId());
 		Boolean result = hldSceneService.stopScene(hldSceneOpsReq.getResourceId());
 
 		return new BaseRsp(result);
@@ -133,7 +133,7 @@ public class HldUnAuthController {
 	@PostMapping("/pause")
 	public BaseRsp<Boolean> pauseScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
-		setUserInfo("task");
+		setUserInfo(hldSceneOpsReq.getUserId());
 		Boolean ret = hldSceneService.pauseScene(hldSceneOpsReq.getResourceId());
 
 		return new BaseRsp<>(ret);
@@ -143,7 +143,7 @@ public class HldUnAuthController {
 	@PostMapping("/unpause")
 	public BaseRsp<Boolean> unpauseScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
-		setUserInfo("task");
+		setUserInfo(hldSceneOpsReq.getUserId());
 		Boolean ret = hldSceneService.unpauseScene(hldSceneOpsReq.getResourceId());
 
 		return new BaseRsp<>(ret);

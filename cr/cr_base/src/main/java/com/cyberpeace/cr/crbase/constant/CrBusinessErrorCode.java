@@ -256,4 +256,7 @@ public interface CrBusinessErrorCode {
 	// 写入HLD映射信息失败
 	String FAILED_TO_UPDATE_TASK_ZT = "101089";
 
+	// 角色权限不足
+	String INSUFFICIENT_ROLE_PERMISSIONS = "101090";
+
 }

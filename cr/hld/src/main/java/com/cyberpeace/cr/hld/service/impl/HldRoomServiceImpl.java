@@ -8,6 +8,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -22,10 +23,12 @@ import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
+import com.cyberpeace.cr.hld.constant.HldRoleName;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
 import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.context.*;
+import com.cyberpeace.integratation.service.HldTaskService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 
@@ -49,6 +52,9 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private HldTaskService hldTaskService;
 
 	@Override
 	public HldRoom create(HldRoomContext hldRoomContext) {
@@ -227,15 +233,17 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		admin.setId(userInfo.getUserId());
 		admin.setUserName(userInfo.getUserName());
 		List<TaskUserInfo> admins = Lists.newArrayList(admin);
-		TaskRoleContext adminRoleContext = getRoleFromUsers(admins, "admin");
+		TaskRoleContext adminRoleContext = getRoleFromUsers(admins, HldRoleName.ADMIN.getCrName());
 
 		// 获取导演数据
 		List<TaskUserInfo> directors = hldTaskContext.getControlUser();
-		TaskRoleContext directorRoleContext = getRoleFromUsers(directors, "director");
+		TaskRoleContext directorRoleContext = getRoleFromUsers(directors,
+				HldRoleName.DIRECTOR.getCrName());
 
 		// 获取裁判数据
 		List<TaskUserInfo> referees = hldTaskContext.getAssessUser();
-		TaskRoleContext refereeRoleContext = getRoleFromUsers(referees, "referee");
+		TaskRoleContext refereeRoleContext = getRoleFromUsers(referees,
+				HldRoleName.REFEREE.getCrName());
 
 		// 提取白方角色数据
 		List<TaskRoleContext> whiteUsers = Lists.newArrayList();
@@ -326,29 +334,48 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 			crRoles = crRoleMapper.selectCrRoleByRoomIdAndUserId(roomId, userId);
 		}
 
-		// 临时指定取不到用户时返回管理员角色
+		// 取不到用户角色信息时抛出异常
 		if (crRoles.isEmpty()) {
-			// throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-			try {
-				return crRoleMapper.getCrRoleByRoomIdAndRoleName(roomId, "admin");
-			} catch (Exception e) {
-				throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-			}
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 
-		// 优先取白方角色
-		for (CrRole crRole : crRoles) {
-			if (crRole.isHldWhite()) {
-				return crRole;
-			}
+		// 只取到一个角色时直接返回
+		if (crRoles.size() == 1) {
+			return crRoles.get(0);
 		}
 
-		// 当用户既无白方身份，角色数又大于1时，抛出角色冲突。
-		if (crRoles.size() != 1) {
+		// 当用户角色中不包含管理员且角色数大于2时，
+		CrRole adminRole = crRoleMapper.getCrRoleByRoomIdAndRoleName(roomId,
+				HldRoleName.ADMIN.getCrName());
+		if (adminRole != null && crRoles.remove(adminRole) && crRoles.size() == 1 ) {
+			return crRoles.get(0);
+		} else {
 			throw new BusinessException(CrBusinessErrorCode.TASK_ROLE_CONFLICT);
 		}
+	}
 
-		return crRoles.get(0);
+	@Override
+	public JSONObject getTaskInfo(String taskId) {
+
+		JSONObject taskInfo = hldTaskService.getTaskInfo(taskId);
+
+		// 获取不到数据时抛出异常
+		if (null == taskInfo) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_GET_TASK_INFO);
+		}
+
+		return taskInfo;
+	}
+
+	@Override
+	public String getHldRoleName(String crRoleName) {
+		if (HldRoleName.DIRECTOR.getCrName().equals(crRoleName)) {
+			return HldRoleName.DIRECTOR.getHldName();
+		} else if (HldRoleName.REFEREE.getCrName().equals(crRoleName)) {
+			return HldRoleName.REFEREE.getHldName();
+		} else {
+			return crRoleName;
+		}
 	}
 
 }

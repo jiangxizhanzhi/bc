@@ -104,6 +104,7 @@ public class HldUnAuthController {
 		HldTopoRsp hldTopoRsp = BeanUtils.copy(context, HldTopoRsp.class);
 		hldTopoRsp.setStatus(hldRoom.getStatus());
 		hldTopoRsp.setTaskName(hldRoom.getTaskName());
+		hldTopoRsp.setUserRole(hldRoomService.getHldRoleName(userRole.getName()));
 
 		return new BaseRsp<>(hldTopoRsp);
 	}

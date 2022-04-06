@@ -19,4 +19,10 @@ public class HldRoomRsp extends SceneViewContext implements Serializable {
 	@ApiModelProperty("任务名称")
 	private String taskName;
 
+	@ApiModelProperty("当前用户角色")
+	private String userRole;
+
+	@ApiModelProperty("任务状态")
+	private String taskStatus;
+
 }

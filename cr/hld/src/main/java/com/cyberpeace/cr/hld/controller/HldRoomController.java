@@ -95,6 +95,9 @@ public class HldRoomController {
 		hldRoomRsp.setRoomStatus(hldRoom.getStatus());
 		hldRoomRsp.setTemplateId(hldRoom.getTemplateId());
 		hldRoomRsp.setTaskName(hldRoom.getTaskName());
+		hldRoomRsp.setUserRole(hldRoomService.getHldRoleName(userRole.getName()));
+		hldRoomRsp.setTaskStatus(hldRoomService.getTaskInfo(hldRoom.getTaskId())
+				.getJSONObject("baseInfo").getString("taskStatus"));
 
 		return new BaseRsp<>(hldRoomRsp);
 	}
@@ -157,7 +160,7 @@ public class HldRoomController {
 			@ApiParam(name = "room_id", value = "HLD房间id") String room_id,
 			@ApiParam(name = "task_id", value = "HLD任务id") String task_id) {
 
-		if ( room_id != null && !room_id.isEmpty()) {
+		if (room_id != null && !room_id.isEmpty()) {
 
 			// 获取房间角色信息
 			HldRoom hldRoom = hldRoomService.getById(room_id);
@@ -185,17 +188,12 @@ public class HldRoomController {
 
 	private HldTaskContext getHldTaskContext(String taskId) {
 
-		JSONObject jsonObject = hldTaskService.getTaskInfo(taskId);
+		JSONObject taskInfo = hldRoomService.getTaskInfo(taskId);
 
-		// 获取不到数据时抛出异常
-		if (null == jsonObject) {
-			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_GET_TASK_INFO);
-		}
-
-		HldTaskContext hldTaskContext = jsonObject.toJavaObject(HldTaskContext.class);
-		hldTaskContext.setTaskName(jsonObject.getJSONObject("baseInfo").getString("taskName"));
+		HldTaskContext hldTaskContext = taskInfo.toJavaObject(HldTaskContext.class);
+		hldTaskContext.setTaskName(taskInfo.getJSONObject("baseInfo").getString("taskName"));
 		hldTaskContext.setAttackTaskSceneDes(
-				jsonObject.getJSONObject("baseInfo").getString("attackTaskSceneDes"));
+				taskInfo.getJSONObject("baseInfo").getString("attackTaskSceneDes"));
 
 		return hldTaskContext;
 	}

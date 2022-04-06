@@ -29,6 +29,9 @@ public class HldTopoRsp implements Serializable {
 	@ApiModelProperty("场景数据")
 	private JSONObject sceneData;
 
+	@ApiModelProperty("当前用户角色")
+	private String userRole;
+
 	@JsonIgnore
 	public void setRoomId(String resourceId){
 		this.resourceId = resourceId;

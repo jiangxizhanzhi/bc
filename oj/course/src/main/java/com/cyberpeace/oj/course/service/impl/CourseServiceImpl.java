@@ -315,15 +315,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 名称重复性查询
 		courseValidateHandler.validateCourseNameExist(course.getName());
-		courseValidateHandler.validateCourseNumExist(course.getCourseNum());
 
 		// 基本信息组装
 		course.setHeat(CommonConstant.ZERO);
 		course.setBuiltin(CommonConstant.FALSE);
 		course.setCreateUserId(userId);
 		course.setModifyUserId(userId);
-		course.setResourceId(StringUtils.isNotBlank(course.getCourseNum()) ? course.getCourseNum()
-				: IDGeneratorUtil.getID());
+		course.setResourceId(getRandomCourseNum(CommonConstant.TEN));
+		course.setCourseNum(course.getResourceId());
 
 		// 组装课程目录
 		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
@@ -785,5 +784,18 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		}
 
 		return courseDumpLoadBo;
+	}
+
+	@Override
+	public String getRandomCourseNum(int length) {
+		if (length == CommonConstant.ZERO) {
+			return "";
+		}
+
+		String courseNum;
+		for (int i = 1; courseMapper.selectByCourseNum(courseNum = MathUtils.randomStr(length)) != null; i++) {
+			log.warn("Failed to obtain the course number for the {} time", i);
+		}
+		return courseNum;
 	}
 }

@@ -41,6 +41,8 @@ public interface CommonConstant {
 
 	Integer NINE = 9;
 
+	int TEN = 10;
+
 	Boolean TRUE = true;
 
 	Boolean FALSE = false;

@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
 
 import java.util.List;
@@ -132,7 +133,37 @@ public interface CrTitleService {
      */
     IPage<CrTitleTrainBo> usingEventsList(String resourceId, Page page, Integer businessType, String search);
 
+    /**
+     * 用户已获取称号
+     * @param page 分页数据
+     * @param levelId 等级id
+     * @param title 称号名称
+     * @return
+     */
     IPage<CrTitleBo> userTitle(Page page, String levelId, String title);
 
+    /**
+     * 称号获取标准
+     * @param page 分页数据
+     * @param levelId 等级id
+     * @param title 称号名称
+     * @return
+     */
+    IPage<CrTitleStandardBo> titleStandard(Page page, String levelId, String title);
+
+    /**
+     * 称号详细信息
+     * @param levelId
+     * @param title
+     * @return
+     */
+    CrTitle titleDetail(String levelId, String title);
+
+    /**
+     * 训练结束后, 用户得分入库
+     * @param businessType 训练类型
+     * @param roomId 房间id
+     */
+    void saveScore(Integer businessType, String roomId);
 
 }

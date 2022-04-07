@@ -1,9 +1,15 @@
 package com.cyberpeace.cr.crbase.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.controller.req.crtitle.CrUserTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -39,22 +45,23 @@ public class TitleController {
 
     @GetMapping("/user")
     @ApiOperation("当前用户已获得称号")
-    public BaseRsp<CrTitle> userTitle(@RequestParam(value = "level_id", required = false) String levelId,
-                                      @RequestParam(value = "title", required = false) String title) {
-        return null;
+    public BaseRsp<ListRsp<CrTitleBo>> userTitle(CrUserTitleReq queryParams) {
+        return new BaseRsp<>(PageUtil.getListResult(
+                crTitleService.userTitle(queryParams.toPageParam(), queryParams.getLevelId(), queryParams.getTitle())
+        ));
     }
 
     @GetMapping("/standard")
     @ApiOperation("评级标准查询")
-    public BaseRsp<CrTitle> standardSearch(@RequestParam(value = "level_id", required = false) String levelId,
-                                           @RequestParam(value = "title", required = false) String title) {
-        return null;
+    public BaseRsp<ListRsp<CrTitleStandardBo>> standardSearch(CrUserTitleReq queryParams) {
+        return new BaseRsp<>(PageUtil.getListResult(
+                crTitleService.titleStandard(queryParams.toPageParam(), queryParams.getLevelId(), queryParams.getTitle())
+        ));
     }
 
     @GetMapping("/detail")
     @ApiOperation("称号基础信息")
-    public BaseRsp<CrTitle> titleDetail(@RequestParam(value = "title_id", required = false) String resourceId,
-                                        @RequestParam(value = "title", required = false) String title) {
-        return new BaseRsp<>(crTitleService.titleGet(resourceId));
+    public BaseRsp<CrTitle> titleDetail(CrUserTitleReq queryParams) {
+        return new BaseRsp<>(crTitleService.titleDetail(queryParams.getLevelId(), queryParams.getTitle()));
     }
 }

@@ -9,19 +9,20 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
-import com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTitleBusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTitleLevelMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTitleMapper;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Sets;
@@ -55,7 +56,13 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     private TransactionTemplate transactionTemplate;
 
     @Autowired
-    RemoteUserService remoteUserService;
+    private RemoteUserService remoteUserService;
+
+    @Autowired
+    private CrScoreController crScoreController;
+
+    @Autowired
+    private CrRoleService crRoleService;
 
     @Override
     public CrTitleLevel levelGet(String resourceId) {
@@ -244,4 +251,28 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     public IPage<CrTitleBo> userTitle(Page page, String levelId, String title) {
         return this.getBaseMapper().listUserTitle(page, UserInfoContext.getUserContext().getUserId(), levelId, title);
     }
+
+    @Override
+    public IPage<CrTitleStandardBo> titleStandard(Page page, String levelId, String title) {
+        CrTitle crTitle = titleDetail(levelId, title);
+        if (crTitle == null) {
+            // todo exception
+            throw new BusinessException();
+        }
+
+        return this.getBaseMapper().listTitleStandard(page, UserInfoContext.getUserContext().getUserId(), crTitle.getResourceId());
+    }
+
+    @Override
+    public CrTitle titleDetail(String levelId, String title) {
+        return this.getBaseMapper().titleDetail(levelId, title);
+    }
+
+    @Override
+    public void saveScore(Integer businessType, String roomId) {
+        // todo 未实现
+//        crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
+//        crScoreController.getTrainingRecord();
+    }
+
 }

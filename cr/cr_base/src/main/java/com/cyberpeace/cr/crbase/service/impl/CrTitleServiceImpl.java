@@ -111,7 +111,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public List<CrTitle> titleFullList(String levelId, Boolean isDistinct) {
-        List<CrTitle> querySet = levelId != null
+        List<CrTitle> querySet = (levelId != null && !"".equals(levelId))
                 ? lambdaQuery().eq(CrTitle::getLevelId, levelId).orderByDesc(CrTitle::getId).list()
                 : lambdaQuery().orderByDesc(CrTitle::getId).list();
         return isDistinct ? StreamApiUtils.distinctByColumn(querySet, CrTitle::getName) : querySet;
@@ -271,7 +271,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     @Override
     public void saveScore(Integer businessType, String roomId) {
         // todo 未实现
-//        crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
+        List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
 //        crScoreController.getTrainingRecord();
     }
 

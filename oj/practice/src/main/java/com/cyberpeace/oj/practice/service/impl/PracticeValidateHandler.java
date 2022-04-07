@@ -189,9 +189,9 @@ public class PracticeValidateHandler {
 		}
 
 		for (String answer : answers) {
-			if (answer.length() < CommonConstant.FOUR || answer.length() > flagLength.intValue()) {
+			if (answer.length() < CommonConstant.EIGHT || answer.length() > flagLength.intValue()) {
 				throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG,
-						CommonConstant.FOUR, flagLength);
+						CommonConstant.EIGHT, flagLength);
 			}
 		}
 

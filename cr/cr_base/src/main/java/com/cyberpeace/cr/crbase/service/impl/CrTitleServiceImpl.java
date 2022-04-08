@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
@@ -19,7 +19,9 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTitleBusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTitleLevelMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTitleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
@@ -27,6 +29,7 @@ import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,10 +37,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,10 +59,13 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     private RemoteUserService remoteUserService;
 
     @Autowired
-    private CrScoreController crScoreController;
+    private CrRoleService crRoleService;
 
     @Autowired
-    private CrRoleService crRoleService;
+    private CrTaskService crTaskService;
+
+    @Autowired
+    private MissionService missionService;
 
     @Override
     public CrTitleLevel levelGet(String resourceId) {
@@ -270,9 +273,65 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public void saveScore(Integer businessType, String roomId) {
-        // todo 未实现
+        // todo 训练类型区分
         List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
-//        crScoreController.getTrainingRecord();
+
+        // 全量训练任务
+        Map<String, Mission> missionsMap = missionService.batchGetByRoom(roomId).stream().collect(
+                Collectors.toMap(MissionBase::getResourceId, mission -> mission)
+        );
+
+        // 全量训练已下发任务
+        List<CrTask> taskList = crTaskService.getByRoomId(roomId);
+
+        List<String> users = Lists.newArrayList();
+        crRoles.forEach(crRole -> users.addAll(crRole.getUserIdList()));
+
+        List<CrTitleTrainProgress> usersTrain = Lists.newArrayList();
+
+        users.forEach(userId -> {
+            Integer maxScore = 0;
+            Integer score = 0;
+            List<Integer> missionSkillPoint = Arrays.asList(0, 0, 0, 0, 0, 0, 0);
+            List<Integer> userSkillPoint = Arrays.asList(0, 0, 0, 0, 0, 0, 0);
+
+            for (CrTask crTask : taskList) {
+                if (crTask.getUserId().equals(userId)) {
+                    Mission mission = missionsMap.get(crTask.getMissionId());
+
+                    maxScore += mission.getScore();
+                    score += crTask.getScore();
+
+                    List<Integer> skillPoint = JsonUtil.toJsonObjectArray(mission.getSkillPoints(), Integer.class);
+
+                    for (int i = 0; i < missionSkillPoint.size(); i++) {
+                        missionSkillPoint.set(i, missionSkillPoint.get(i) + skillPoint.get(i));
+                    }
+                    if (crTask.getStatus().equals(CrTask.TaskStatus.SUCCESS.getCode())) {
+                        for (int i = 0; i < userSkillPoint.size(); i++) {
+                            userSkillPoint.set(i, userSkillPoint.get(i) + skillPoint.get(i));
+                        }
+                    }
+                }
+            }
+            List<Integer> userSkillPointScore = Lists.newArrayList();
+            for (int i = 0; i < userSkillPoint.size(); i++) {
+                userSkillPointScore.add(
+                        (int) Math.ceil((double) userSkillPoint.get(i) / missionSkillPoint.get(i))
+                );
+            }
+
+            CrTitleTrainProgress crTitleTrainProgress = new CrTitleTrainProgress();
+            crTitleTrainProgress.setUserId(userId);
+            crTitleTrainProgress.setRoomId(roomId);
+            // todo business_template_id
+            crTitleTrainProgress.setScore((int) Math.ceil((double) score / maxScore));
+            crTitleTrainProgress.setSkillPointsScore(JsonUtil.toJsonString(userSkillPointScore));
+            usersTrain.add(crTitleTrainProgress);
+        });
+
+        this.getBaseMapper().insertScore(usersTrain);
+
     }
 
 }

@@ -55,4 +55,13 @@
     <select id="titleDetail" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitle">
         select * from cr_title where level_id = #{level_id} and name = #{title} limit 1
     </select>
+    <insert id="insertScore">
+        insert into cr_title_train_progress
+        (business_template_id, room_id, user_id, score, skill_points_score, create_time, update_time)
+        values
+        <foreach collection="objects" item="object" separator=",">
+            (#{object.businessTemplateId}, #{object.roomId}, #{object.userId}, #{object.score},
+             #{object.skillPointsScore}, now(), now())
+        </foreach>
+    </insert>
 </mapper>

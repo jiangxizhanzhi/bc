@@ -33,16 +33,22 @@ public class AdminTitleController {
     @Autowired
     private CrTitleService crTitleService;
 
-    @PostMapping("/level/create")
+    @PostMapping("/level")
     @ApiOperation("称号等级新增")
     public BaseRsp<CrTitleLevel> create(@RequestBody @Validated CrTitleLevelReq requestData) {
         return new BaseRsp<>(crTitleService.levelCreate(requestData));
     }
 
-    @PatchMapping("/level/update")
+    @PatchMapping("/level")
     @ApiOperation("称号等级更新")
     public BaseRsp<CrTitleLevel> update(@RequestBody @Validated CrTitleLevelReq requestData) {
         return new BaseRsp<>(crTitleService.levelUpdate(requestData));
+    }
+
+    @GetMapping("/level")
+    @ApiOperation("称号等级单个获取")
+    public BaseRsp<CrTitleLevel> getLevel(@RequestParam("resource_id") String resourceId) {
+        return new BaseRsp<>(crTitleService.levelGet(resourceId));
     }
 
     @GetMapping("/level/list")
@@ -63,19 +69,19 @@ public class AdminTitleController {
         return new BaseRsp<>(crTitleService.levelFullList(null));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     @ApiOperation("荣誉称号新增")
     public BaseRsp<CrTitle> create(@RequestBody CrTitleReq requestData) {
         return new BaseRsp<>(crTitleService.titleCreate(requestData));
     }
 
-    @PatchMapping("/update")
+    @PatchMapping()
     @ApiOperation("荣誉称号更新")
     public BaseRsp<CrTitle> update(@RequestBody CrTitleReq requestData) {
         return new BaseRsp<>(crTitleService.titleUpdate(requestData));
     }
 
-    @GetMapping("/get")
+    @GetMapping()
     @ApiOperation("荣誉称号单个获取")
     public BaseRsp<CrTitle> get(@RequestParam("resource_id") String resourceId) {
         return new BaseRsp<>(crTitleService.titleGet(resourceId));

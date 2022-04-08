@@ -191,6 +191,11 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		Map<Integer, String> role = Maps.newHashMap();
 		for (DeviceRole deviceRole : roles) {
 			role.put(deviceRole.getId(), deviceRole.getName());
+			if (deviceRole.getChild() != null) {
+				for (DeviceRole childDeviceRole : deviceRole.getChild()) {
+					role.put(childDeviceRole.getId(), deviceRole.getName());
+				}
+			}
 		}
 
 		// 构造返回数据

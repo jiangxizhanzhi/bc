@@ -64,4 +64,12 @@
              #{object.skillPointsScore}, now(), now())
         </foreach>
     </insert>
+    <insert id="insertTitle">
+        insert into cr_title_user
+        (title_id, user_id, create_time, update_time)
+        values
+        <foreach collection="objects" item="object" separator=",">
+            (#{object.titleId}, #{object.userId}, now(), now())
+        </foreach>
+    </insert>
 </mapper>

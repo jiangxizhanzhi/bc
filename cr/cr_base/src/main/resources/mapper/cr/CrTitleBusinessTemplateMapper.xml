@@ -44,4 +44,21 @@
         </where>
         order by id desc
     </select>
+    <select id="selectFinishTrain" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleUserTrainBo">
+        select
+            T1.resource_id as title_id,
+            T3.business_type,
+            T1.score as score,
+            T2.business_template_id,
+            max(T4.score) as user_score,
+            if(T4.score >= T1.score, TRUE, FALSE) as is_finish
+        from cr_title T1
+                 left join cr_title_business_template T2 on T1.resource_id = T2.title_id
+                 left join cr_business_template T3 on T2.business_template_id = T3.resource_id
+                 left join cr_title_train_progress T4 on T4.business_template_id = T2.business_template_id and T4.user_id = #{user_id}
+        where T1.resource_id in (select title_id from cr_title_business_template where business_template_id = #{business_template_id})
+          and T1.resource_id not in (select title_id from cr_title_user where user_id = #{user_id})
+        group by T2.id
+        order by T4.create_time
+    </select>
 </mapper>

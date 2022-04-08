@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleTrainProgress;
+import com.cyberpeace.cr.crbase.dao.entity.CrTitleUser;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import org.apache.ibatis.annotations.Mapper;
@@ -32,4 +33,6 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
                         @Param("title") String title);
 
     int insertScore(@Param("objects") List<CrTitleTrainProgress> objects);
+
+    int insertTitle(@Param("objects") List<CrTitleUser> objects);
 }

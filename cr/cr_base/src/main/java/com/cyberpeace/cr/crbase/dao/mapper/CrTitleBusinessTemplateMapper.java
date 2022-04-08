@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleUserTrainBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,7 @@ public interface CrTitleBusinessTemplateMapper extends BaseMapper<CrTitleBusines
                                     @Param("type") Integer businessType,
                                     @Param("search") String search,
                                     @Param("title_id") String titleId);
+
+    List<CrTitleUserTrainBo> selectFinishTrain(@Param("user_id") String userId,
+                                               @Param("business_template_id") String businessTemplateId);
 }

@@ -26,10 +26,13 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleUserTrainBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -114,7 +117,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public List<CrTitle> titleFullList(String levelId, Boolean isDistinct) {
-        List<CrTitle> querySet = (levelId != null && !"".equals(levelId))
+        List<CrTitle> querySet = !StringUtils.isEmpty(levelId)
                 ? lambdaQuery().eq(CrTitle::getLevelId, levelId).orderByDesc(CrTitle::getId).list()
                 : lambdaQuery().orderByDesc(CrTitle::getId).list();
         return isDistinct ? StreamApiUtils.distinctByColumn(querySet, CrTitle::getName) : querySet;
@@ -257,6 +260,9 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public IPage<CrTitleStandardBo> titleStandard(Page page, String levelId, String title) {
+        if (StringUtils.isEmpty(levelId) || StringUtils.isEmpty(title)) {
+            return null;
+        }
         CrTitle crTitle = titleDetail(levelId, title);
         if (crTitle == null) {
             // todo exception
@@ -272,9 +278,18 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     }
 
     @Override
-    public void saveScore(Integer businessType, String roomId) {
-        // todo 训练类型区分
-        List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
+    public void saveScore(Integer businessType, String roomId, String businessTemplateId) {
+        Integer roleType;
+        if (businessType.equals(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode())) {
+            roleType = CrRole.RbRoleGroup.RED_BLUE.getCode();
+        } else if (businessType.equals(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode())) {
+            roleType = CrRole.TeamRoleGroup.STUDENT.getCode();
+        } else {
+            roleType = CrRole.SINGLE_ROLE_GROUP_CODE;
+        }
+
+        // todo 红蓝对抗角色类型是否有效?
+        List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, roleType));
 
         // 全量训练任务
         Map<String, Mission> missionsMap = missionService.batchGetByRoom(roomId).stream().collect(
@@ -324,14 +339,35 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             CrTitleTrainProgress crTitleTrainProgress = new CrTitleTrainProgress();
             crTitleTrainProgress.setUserId(userId);
             crTitleTrainProgress.setRoomId(roomId);
-            // todo business_template_id
+            crTitleTrainProgress.setBusinessTemplateId(businessTemplateId);
             crTitleTrainProgress.setScore((int) Math.ceil((double) score / maxScore));
             crTitleTrainProgress.setSkillPointsScore(JsonUtil.toJsonString(userSkillPointScore));
             usersTrain.add(crTitleTrainProgress);
         });
 
-        this.getBaseMapper().insertScore(usersTrain);
-
+        if (!usersTrain.isEmpty()) {
+            this.getBaseMapper().insertScore(usersTrain);
+            List<CrTitleUser> pendingSaveTitle =  Lists.newArrayList();
+            users.forEach(user -> {
+                Map<String, Boolean> userTitle = Maps.newHashMap();
+                crTitleBusinessTemplateMapper.selectFinishTrain(user, businessTemplateId).forEach(item -> {
+                    if (item.getIsFinish()) {
+                        userTitle.putIfAbsent(item.getTitleId(), true);
+                    } else {
+                        userTitle.put(item.getTitleId(), false);
+                    }
+                });
+                userTitle.forEach((key, val) -> {
+                    if (val) {
+                        CrTitleUser crTitleUser = new CrTitleUser();
+                        crTitleUser.setTitleId(key);
+                        crTitleUser.setUserId(user);
+                        pendingSaveTitle.add(crTitleUser);
+                    }
+                });
+            });
+            this.getBaseMapper().insertTitle(pendingSaveTitle);
+        }
     }
 
 }

@@ -147,7 +147,7 @@ public interface CrTitleService {
      * @param page 分页数据
      * @param levelId 等级id
      * @param title 称号名称
-     * @return
+     * @returnx
      */
     IPage<CrTitleStandardBo> titleStandard(Page page, String levelId, String title);
 
@@ -163,7 +163,8 @@ public interface CrTitleService {
      * 训练结束后, 用户得分入库
      * @param businessType 训练类型
      * @param roomId 房间id
+     * @param businessTemplateId 训练模板id
      */
-    void saveScore(Integer businessType, String roomId);
+    void saveScore(Integer businessType, String roomId, String businessTemplateId);
 
 }

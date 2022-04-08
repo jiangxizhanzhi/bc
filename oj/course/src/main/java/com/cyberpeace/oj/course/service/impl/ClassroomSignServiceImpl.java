@@ -57,13 +57,14 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		if (!classroom.getCreateUserId().equals(authContext.getUserId())
+		if (!authContext.getIsSuperAdmin() && !classroom.getCreateUserId().equals(authContext.getUserId())
 				&& !classroom.getOrganizationIds().contains(authContext.getOrganization())) {
 			log.error("Current user is not permission! user_org_id=[{}]",
 					authContext.getOrganization());
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
+		// 仅存储该课堂组织下的用户签到信息
 		if (classroom.getOrganizationIds().contains(authContext.getOrganization())) {
 			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
 					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID()).signInTime(new Date())

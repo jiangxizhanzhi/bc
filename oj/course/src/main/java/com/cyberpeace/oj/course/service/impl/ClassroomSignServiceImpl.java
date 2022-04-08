@@ -6,6 +6,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
@@ -63,13 +64,15 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
-		ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
-				.classroomId(classroomId).resourceId(IDGeneratorUtil.getID()).signInTime(new Date())
-				.userId(authContext.getUserId()).build();
-		try {
-			classroomSignMapper.insert(sign);
-		} catch (DuplicateKeyException e) {
-			return true;
+		if (classroom.getOrganizationIds().contains(authContext.getOrganization())) {
+			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
+					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID()).signInTime(new Date())
+					.userId(authContext.getUserId()).build();
+			try {
+				return classroomSignMapper.insert(sign) > 0;
+			} catch (DuplicateKeyException e) {
+				return true;
+			}
 		}
 
 		return true;

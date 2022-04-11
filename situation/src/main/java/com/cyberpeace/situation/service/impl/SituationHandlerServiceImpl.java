@@ -442,7 +442,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			AttackType attackType = AttackType.getEnumByEnDesc(enDesc, AttackType.class);
 			attackEvent.setType(attackType.getActionType().getCode());
 
-			attackEvent.setName(enDesc);
+			// attackEvent.setName(enDesc);
 			attackEvent.setSourceId(flowLog.getString("source_node_id"));
 			attackEvent.setTargetId(flowLog.getString("target_node_id"));
 
@@ -503,7 +503,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		wsEvent.setCategory("attack");
 
 		wsEvent.setType(actionType.getCode());
-		wsEvent.setName(actionType.getDesc());
+		// wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
 		wsEvent.setLineStyle(new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));

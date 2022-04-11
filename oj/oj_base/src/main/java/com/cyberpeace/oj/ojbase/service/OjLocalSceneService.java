@@ -29,10 +29,10 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
 	 * 设置topo结构中注入flag命令
-	 * @param flags
+	 * @param ojLocalScene
 	 * @return
 	 */
-	JSONObject setDynamicFlag(String flags, JSONObject topoId);
+	JSONObject setDynamicFlag(OjLocalScene ojLocalScene, JSONObject topoId);
 
 	/**
 	 * 删除本地场景

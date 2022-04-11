@@ -106,25 +106,38 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		ojLocalScene.setShared(
 				sceneContext.getSharedType().intValue() == SceneShare.SHARED.getCode().intValue());
 
-		// flag设置
-		if (sceneContext.getDynamicFlag().intValue() == CommonConstant.ONE) {
-			String templateData = ConfigUtil.getContextProperty("oj.flag.template.data");
-			String flagPrefix = systemConfigService.getSystemConfig("flag_prefix");
-			String FLAG_TEMPLATE = String.format(templateData, flagPrefix, "%s");
-			String FLAG_LENGTH = systemConfigService.getSystemConfig("flag_length");
-
-			String flag = String.format(FLAG_TEMPLATE,
-					LocalStringUtil.getRandomStr(Integer.parseInt(FLAG_LENGTH)));
-			ojLocalScene.setFlags(JsonUtil.arrayToString(Arrays.asList(flag)));
-		} else if (sceneContext.getDynamicFlag().intValue() == CommonConstant.ZERO) {
+		// flag设置 静态flag设置为操作题答案 动态flag设置在修改topo时
+		if (sceneContext.getDynamicFlag().intValue() == CommonConstant.ZERO) {
 			ojLocalScene.setFlags(JsonUtil.toJsonString(sceneContext.getFlags()));
 		}
 
 		return ojLocalScene;
 	}
 
+	/**
+	 * 获取固定数量的flag
+	 * @param count 数量
+	 * @return
+	 */
+	private List<String> getDynamicFlags(int count) {
+
+		List<String> flags = Lists.newArrayList();
+
+		String templateData = ConfigUtil.getContextProperty("oj.flag.template.data");
+		for (int i = 0; i < count; i++) {
+			String flagPrefix = systemConfigService.getSystemConfig("flag_prefix");
+			String FLAG_LENGTH = systemConfigService.getSystemConfig("flag_length");
+
+			String flag = String.format(templateData, flagPrefix,
+					LocalStringUtil.getRandomStr(Integer.parseInt(FLAG_LENGTH)));
+			flags.add(flag);
+		}
+
+		return flags;
+	}
+
 	@Override
-	public JSONObject setDynamicFlag(String flags, JSONObject topo) {
+	public JSONObject setDynamicFlag(OjLocalScene ojLocalScene, JSONObject topo) {
 
 		if (null == topo || topo.isEmpty()) {
 			return topo;
@@ -144,6 +157,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		if (null == elements || elements.size() <= 0) {
 			return topo;
 		}
+
+		List<String> flags = Lists.newArrayList();
 
 		for (Object element : elements) {
 			JSONObject node = (JSONObject) element;
@@ -168,8 +183,10 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				String handlerCommand = replaceDynamicFlag(nodeCommand, flags);
 				node.put(JsonKeyConstant.NODE_COMMAND, handlerCommand);
 			}
-
 		}
+
+		// 设置答案
+		ojLocalScene.setFlags(JsonUtil.arrayToString(flags));
 
 		return topo;
 	}
@@ -181,7 +198,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	 * @param flags
 	 * @return
 	 */
-	private String replaceDynamicFlag(String dynamicFlagCommand, String flags) {
+	private String replaceDynamicFlag(String dynamicFlagCommand, List<String> flags) {
 
 		List<String> matchStr = LocalStringUtil.getMatchStr(dynamicFlagCommand,
 				PatternConstant.DYNAMIC_FLAG);
@@ -191,12 +208,9 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		}
 
 		// 补全flag与init_command长度
-		List<String> flagList = JsonUtil.toJsonObjectArray(flags, String.class);
-		for (int j = 0; j < (matchStr.size() - flagList.size()); j++) {
-			flagList.add(CommonConstant.EMPTY_STRING);
-		}
-
+		List<String> flagList = getDynamicFlags(matchStr.size());
 		String replaceCommand = LocalStringUtil.replaceAll(dynamicFlagCommand, matchStr, flagList);
+		flags.addAll(flagList);
 		return replaceCommand;
 	}
 

@@ -1144,7 +1144,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 动态环境flag设置
 		if (null != operation.getDynamicFlag() && operation.getDynamicFlag()
 				.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode()) {
-			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
+			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene,
 					topoData);
 			sceneMeta.setTopoData(dynamicFlag);
 		}

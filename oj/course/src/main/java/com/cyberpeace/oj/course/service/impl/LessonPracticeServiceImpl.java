@@ -296,8 +296,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 		if (null != operation.getDynamicFlag() && operation.getDynamicFlag()
 				.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode()) {
-			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
-					topoData);
+			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene, topoData);
 			sceneMeta.setTopoData(dynamicFlag);
 		}
 		localScene.setMeta(JsonUtil.toJsonString(sceneMeta));

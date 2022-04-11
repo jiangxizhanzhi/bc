@@ -290,7 +290,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		IPage<SingleRoomList> selectResult = singleRoomMapper.singleTrainSearch(
 				queryParams.toPageParam(), UserInfoContext.getUserContext().getUserId(),
 				queryParams.getPattern(), queryParams.getCategory(), queryParams.getDifficult(),
-				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), queryParams.getTitle());
 		if (selectResult.getRecords().isEmpty()) {
 			return new ListRsp<>();
 		}

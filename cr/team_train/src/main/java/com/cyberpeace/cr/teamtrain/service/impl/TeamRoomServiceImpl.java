@@ -294,13 +294,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public IPage<TeamRoomData> list(ListQuery listQuery) {
+	public IPage<TeamRoomData> list(ListQuery listQuery, String title) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Page page = listQuery.toPageParam();
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 
-		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery);
+		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery, title);
 
 		return data;
 	}

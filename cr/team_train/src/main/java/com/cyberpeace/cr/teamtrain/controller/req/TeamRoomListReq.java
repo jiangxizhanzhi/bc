@@ -26,4 +26,7 @@ public class TeamRoomListReq extends PageReqBase {
 
 	private List<String> ids;
 
+	@ApiModelProperty("称号查询")
+	private String title;
+
 }

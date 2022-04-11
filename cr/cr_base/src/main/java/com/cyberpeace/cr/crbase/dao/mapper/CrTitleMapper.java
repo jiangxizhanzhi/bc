@@ -35,4 +35,6 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
     int insertScore(@Param("objects") List<CrTitleTrainProgress> objects);
 
     int insertTitle(@Param("objects") List<CrTitleUser> objects);
+
+    List<CrTitleTrainProgress> listUserTrainSkill(@Param("user_id") String userId);
 }

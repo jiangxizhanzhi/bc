@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleSkillRadarBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,5 +64,11 @@ public class TitleController {
     @ApiOperation("称号基础信息")
     public BaseRsp<CrTitle> titleDetail(CrUserTitleReq queryParams) {
         return new BaseRsp<>(crTitleService.titleDetail(queryParams.getLevelId(), queryParams.getTitle()));
+    }
+
+    @GetMapping("/skill-radar")
+    @ApiOperation("技能树分值")
+    public BaseRsp<CrTitleSkillRadarBo> skillRadar() {
+        return new BaseRsp<>(crTitleService.userSkillRadar());
     }
 }

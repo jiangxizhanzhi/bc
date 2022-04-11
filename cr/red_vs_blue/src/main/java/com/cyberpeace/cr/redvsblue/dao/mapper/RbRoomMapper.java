@@ -24,7 +24,7 @@ public interface RbRoomMapper extends BaseMapper<RbRoom> {
 
 	RbRoomData getRbRoomDataByRoomId(String resourceId);
 
-	IPage<RbRoomData> listRbRoom(Page page, ListQuery listQuery);
+	IPage<RbRoomData> listRbRoom(Page page, ListQuery listQuery, String title);
 
 	TrainingCount getTrainingCount(@Param("roomIds") List<String> roomIds,
 			@Param("completedStatus") Integer completedStatus);

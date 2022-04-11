@@ -61,4 +61,11 @@
         group by T2.id
         order by T4.create_time
     </select>
+    <select id="selectAlreadyTrainUser" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleTrainProgress">
+        select * from cr_title_train_progress
+        where business_template_id in
+        <foreach collection="business_template_ids" item="business_template_id" separator="," open="(" close=")">
+            #{business_template_id}
+        </foreach>
+    </select>
 </mapper>

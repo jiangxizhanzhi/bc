@@ -24,9 +24,9 @@ import com.cyberpeace.cr.crbase.service.CrTitleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleSkillRadarBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleUserTrainBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -353,7 +353,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public void checkTitle(List<String> users, String businessTemplateId) {
-        List<CrTitleUser> pendingSaveTitle =  Lists.newArrayList();
+        List<CrTitleUser> pendingSaveTitle = Lists.newArrayList();
         users.forEach(user -> {
             Map<String, Boolean> userTitle = Maps.newHashMap();
             crTitleBusinessTemplateMapper.selectFinishTrain(user, businessTemplateId).forEach(item -> {
@@ -375,5 +375,26 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         if (!pendingSaveTitle.isEmpty()) {
             this.getBaseMapper().insertTitle(pendingSaveTitle);
         }
+    }
+
+    @Override
+    public CrTitleSkillRadarBo userSkillRadar() {
+        List<CrTitleTrainProgress> crTitleTrainProgresses = this.getBaseMapper().listUserTrainSkill(
+                UserInfoContext.getUserContext().getUserId()
+        );
+        List<Integer> score = Arrays.asList(0, 0, 0, 0, 0, 0, 0);
+        crTitleTrainProgresses.forEach(crTitleTrainProgress -> {
+            List<Integer> perTrain = JsonUtil.toJsonObjectArray(crTitleTrainProgress.getSkillPointsScore(), Integer.class);
+            for (int i = 0; i < score.size(); i++) {
+                score.set(i, score.get(i) + perTrain.get(i));
+            }
+        });
+        CrTitleSkillRadarBo crTitleSkillRadarBo = new CrTitleSkillRadarBo();
+        crTitleSkillRadarBo.setValue(
+                score.stream().map(item -> (int) Math.ceil((double) item / crTitleTrainProgresses.size())).collect(Collectors.toList())
+        );
+        crTitleSkillRadarBo.setLabel(StreamApiUtils.getColumn(missionService.getRadarLabel(), RadarLabel::getLabel));
+
+        return crTitleSkillRadarBo;
     }
 }

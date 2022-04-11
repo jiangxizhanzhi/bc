@@ -23,4 +23,7 @@ public class RbTemplateListReq extends PageReqBase {
 	private Integer difficult;
 
 	private List<String> ids;
+
+	@ApiModelProperty("称号名称查询")
+	private String title;
 }

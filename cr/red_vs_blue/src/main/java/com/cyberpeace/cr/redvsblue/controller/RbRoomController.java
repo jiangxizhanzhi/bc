@@ -148,7 +148,7 @@ public class RbRoomController {
 		// 默认时间排序
 		listQuery.setSort("-cr_rb_room.create_time");
 
-		IPage<RbRoomData> data = rbRoomService.list(listQuery);
+		IPage<RbRoomData> data = rbRoomService.list(listQuery, listReq.getTitle());
 
 		// 训练场景拓扑节点数量获取
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(

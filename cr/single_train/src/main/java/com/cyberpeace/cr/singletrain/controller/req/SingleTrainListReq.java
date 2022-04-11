@@ -18,4 +18,7 @@ public class SingleTrainListReq extends PageReqBase implements Serializable {
 
     // todo 作用...
     private Integer withInstance;
+
+    @ApiModelProperty("称号名称查询")
+    private String title;
 }

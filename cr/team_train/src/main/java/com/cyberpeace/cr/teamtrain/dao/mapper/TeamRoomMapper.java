@@ -23,7 +23,7 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 
 	TeamRoomData getTeamRoomRspByRoomId(String resourceId);
 
-	IPage<TeamRoomData> listTeamRoom(Page page, ListQuery listQuery);
+	IPage<TeamRoomData> listTeamRoom(Page page, ListQuery listQuery, String title);
 
 	TeamRoom selectByLocalSceneId(String localSceneId);
 

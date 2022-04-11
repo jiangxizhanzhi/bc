@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleSkillRadarBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
 
@@ -173,5 +174,11 @@ public interface CrTitleService {
      * @param businessTemplateId
      */
     void checkTitle(List<String> users, String businessTemplateId);
+
+    /**
+     * 获取用户技能分值
+     * @return
+     */
+    CrTitleSkillRadarBo userSkillRadar();
 
 }

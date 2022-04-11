@@ -110,6 +110,15 @@
             <if test="listQuery.category != null and listQuery.category != ''">
                 and cr_team_room.sub_type = #{listQuery.category}
             </if>
+            <if test="title != null and title != ''">
+                and cr_team_room.team_template_id in (
+                    select resource_id from cr_team_template where business_template_id in (
+                        select distinct business_template_id from cr_title_business_template where title_id in (
+                            select resource_id from cr_title where name = #{title}
+                        )
+                    )
+                )
+            </if>
         </where>
         ORDER BY
         order_status

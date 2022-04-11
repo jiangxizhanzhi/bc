@@ -105,7 +105,7 @@ public class TeamTrainStudentsController {
 		// 默认时间排序
 		listQuery.setSort("-cr_team_room.create_time");
 
-		IPage<TeamRoomData> data = teamRoomService.list(listQuery);
+		IPage<TeamRoomData> data = teamRoomService.list(listQuery, listReq.getTitle());
 
 		// 训练场景拓扑节点数量获取
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(

@@ -112,13 +112,13 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
-	public IPage<RbRoomData> list(ListQuery listQuery) {
+	public IPage<RbRoomData> list(ListQuery listQuery, String title) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Page page = listQuery.toPageParam();
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 
-		IPage<RbRoomData> data = rbRoomMapper.listRbRoom(page, listQuery);
+		IPage<RbRoomData> data = rbRoomMapper.listRbRoom(page, listQuery, title);
 
 		return data;
 	}

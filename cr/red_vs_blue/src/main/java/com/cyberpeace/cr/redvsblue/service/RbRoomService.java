@@ -35,7 +35,7 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @param listQuery
 	 * @return
 	 */
-	IPage<RbRoomData> list(ListQuery listQuery);
+	IPage<RbRoomData> list(ListQuery listQuery, String title);
 
 	/**
 	 * 获取当前红蓝房间数量

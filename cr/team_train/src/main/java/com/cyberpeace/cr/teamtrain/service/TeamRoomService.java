@@ -40,7 +40,7 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param listQuery
 	 * @return
 	 */
-	IPage<TeamRoomData> list(ListQuery listQuery);
+	IPage<TeamRoomData> list(ListQuery listQuery, String title);
 
 	/** 修改团队训练状态
 	 * @param roomId

@@ -511,7 +511,16 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
 						.getCode().intValue()) {
-			practiceTheory.setAnswer(excelRowData.get(2));
+			String answer = excelRowData.get(2);
+			if (!(answer.matches("^[a-zA-Z|]+$"))) {
+				log.error("The format of the answer:[{}] is wrong", answer);
+				return null;
+			}
+			if (answer.length() > 1 && !answer.contains("|")){
+				String[] answerArray = answer.split("");
+				answer = String.join("|", answerArray);
+			}
+			practiceTheory.setAnswer(answer);
 			JSONObject option = new JSONObject();
 			option.put("A", excelRowData.get(3));
 			option.put("B", excelRowData.get(4));

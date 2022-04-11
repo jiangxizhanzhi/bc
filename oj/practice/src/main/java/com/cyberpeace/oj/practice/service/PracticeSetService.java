@@ -32,6 +32,14 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	void enableAccess(String resourceId, AuthContext authContext);
 
 	/**
+	 * 获取可访问习题集
+	 * @param authContext
+	 * @param setId
+	 * @return
+	 */
+	List<String> getSetIds(AuthContext authContext, String setId);
+
+	/**
 	 * 分页查询习题集列表
 	 *
 	 * @param page

@@ -397,6 +397,10 @@ public class FileUtil {
 	public static List<String> listDirs(String path, boolean includeFile) {
 
 		File rootFile = new File(path);
+		if (!rootFile.exists()) {
+			log.error("File not exist! path=[{}]", path);
+			return Lists.newArrayList();
+		}
 		File[] files = rootFile.listFiles();
 
 		List<String> directions = Arrays.stream(files)

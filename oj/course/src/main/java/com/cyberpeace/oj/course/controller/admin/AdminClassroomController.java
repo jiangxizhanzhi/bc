@@ -21,12 +21,13 @@ import com.cyberpeace.oj.course.controller.req.ClassroomReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
+import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -48,6 +49,9 @@ public class AdminClassroomController {
 
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
+
+	@Autowired
+	private ClassroomSignService classroomSignService;
 
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
@@ -129,6 +133,17 @@ public class AdminClassroomController {
 				monitorReq.getClassroomId());
 		return new BaseRsp(classroomMonitorBoList);
 
+	}
+
+	@ApiOperation("进行远程协助")
+	@GetMapping("/to_help")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
+			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	public BaseRsp toHelp(@RequestParam("resource_id") String classroomId,
+			@RequestParam("user_id") String userId) {
+
+		classroomSignService.toHelp(classroomId, userId);
+		return new BaseRsp();
 	}
 
 	@ApiOperation("查询课堂实验报告列表")

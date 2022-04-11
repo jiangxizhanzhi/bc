@@ -208,9 +208,7 @@ public class MissionController {
 	@PutMapping("/combat_techs")
 	public BaseRsp<?> editSchemeTemplate(
 			@RequestBody @Validated MissionSchemeTemplateModifyReq templateModifyReq) {
-		if (templateModifyReq.getCombatConfig() != null) {
-			templateModifyReq.validate();
-		}
+		templateModifyReq.validate();
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
 

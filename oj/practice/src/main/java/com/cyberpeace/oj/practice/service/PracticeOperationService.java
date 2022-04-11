@@ -41,7 +41,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param resourceId
 	 * @return
 	 */
-	OperationBo selectById(String resourceId);
+	OperationBo selectById(String resourceId, AuthContext authContext);
 
 	/**
 	 * 前台查询习题详细信息

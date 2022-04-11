@@ -83,6 +83,7 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 			for (CourseName courseName : courseNames) {
 
 				CourseInfoBo course = BeanUtils.copy(courseName, CourseInfoBo.class);
+				course.setCategoryId(courseName.getDirection());
 
 				courseList.add(course);
 
@@ -119,6 +120,8 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 
 				if (courseInfoBo != null) {
 					org.springframework.beans.BeanUtils.copyProperties(courseInfoBo, relatedCourse);
+
+					relatedCourse.setDirection(courseInfoBo.getCategoryId());
 					relatedCourse.setEBook(courseInfoBo.getCourseType());
 					relatedCourse.setWeight(weight);
 				}

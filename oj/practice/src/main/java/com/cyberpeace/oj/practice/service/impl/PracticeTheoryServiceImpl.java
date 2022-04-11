@@ -124,8 +124,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
 		// 根据习题集过滤习题编号
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+			authSetIds.clear();
+			authSetIds.add(listQuery.getPracticeSetId());
+		}
 		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
 				authContext.getIsWeb());
+
 		if (CollectionUtils.isEmpty(practiceIds)) {
 			return null;
 		}

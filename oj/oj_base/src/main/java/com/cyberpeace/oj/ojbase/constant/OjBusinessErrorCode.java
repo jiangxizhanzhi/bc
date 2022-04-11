@@ -37,8 +37,8 @@ public interface OjBusinessErrorCode {
 	/** 结束时间必须大于开始时间*/
 	String END_GT_START_TIME = "102010";
 
-	/** 课程表时间范围为上午八点-晚上21点*/
-	String CLASSROOM_TIME_RANGE_ERROR = "102011";
+	/** 习题集下存在习题*/
+	String SET_UNDER_EXIST_PRACTICE = "102011";
 
 	/** 选择组织下无用户*/
 	String ORGANIZATION_IS_NO_USERS = "102012";
@@ -55,18 +55,54 @@ public interface OjBusinessErrorCode {
 	/** 存在运行的场景*/
 	String SCENE_IS_RUNNING = "102016";
 
+	/** 场景运行过多*/
 	String SCENE_RUNNING_TOO_MUCH = "102017";
 
+	/** 字段数据过长*/
 	String FIELD_TOO_LONG = "102018";
 
+	/** 讲义内容错误*/
 	String LESSON_HANDOUT_CONTENT_ERROR = "102019";
 
+	/** 课时目录名称错误*/
 	String LESSON_DIR_NAME_ERROR = "102020";
 
+	/** 课堂未签到*/
+	String CLASS_NOT_SIGN = "102021";
+
+	/** 其他机器正在进行远程协助*/
+	String OTHER_NODE_IN_ASSISTANCE = "102022";
+
+	/** 非动态环境，无法进行场景启动*/
 	String NON_DYNAMIC_ENVIRONMENT = "102023";
+
+	/** 场景未启动*/
+	String SCENE_NOT_RUNNING = "102024";
+
+	/** 场景暂停中*/
+	String SCENE_IS_PAUSE = "102025";
+
+	/** 请重新加载题目*/
+	String RELOAD_PRACTICE = "102026";
 
 	String PARENT_CATEGORY_NOT_EXIST = "102027";
 
+	/** 答案不能为空*/
+	String ANSWER_NOT_NULL = "102028";
+
+	/** 答案长度限制在xxx-xxx*/
+	String ANSWER_TOO_LONG = "102029";
+
 	/** 场景启动成功xxx个，失败xxx个*/
 	String ROOM_SCENE_BATCH_FAILED = "102030";
+
+	/** 课程信息不能为空*/
+	String COURSE_INFORMATION_NOT_NULL = "102031";
+
+	/** 课时信息不能为空*/
+	String LESSON_INFORMATION_NOT_NULL = "102032";
+
+	/** 组织信息不能为空*/
+	String ORG_INFORMATION_NOT_NULL = "102033";
+
 }

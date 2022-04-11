@@ -17,7 +17,6 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.CommonContext;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -60,8 +59,10 @@ public class DebounceFilter implements Filter {
 			// JSONObject obj = JSONObject.parseObject(s, Feature.OrderedField);
 			// String c = JSONObject.toJSONString(obj);
 
-			// 用 ip 做用户识别
-			String key = getSha256(body) + "_" + CommonContext.getIp();;
+			String requestUri = requestWrapper.getRequestURI();
+
+			// 用 ip 做用户识别不能避免两个用户启动同一个场景 CommonContext.getIp()
+			String key = getSha256(body) + "_" + requestUri;
 			if (cache.getIfPresent(key) != null) {
 				throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
 			}

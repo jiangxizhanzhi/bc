@@ -53,11 +53,13 @@ public class ClassroomValidateHandler {
 	 * @param lessonId
 	 * @param orgId
 	 */
-	public void validateClassroomLessonExist(String lessonId, String orgId) {
+	public Classroom validateClassroomLessonExist(String lessonId, String orgId) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
 		if (null != classroom) {
 			throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
 		}
+
+		return classroom;
 	}
 
 	/**

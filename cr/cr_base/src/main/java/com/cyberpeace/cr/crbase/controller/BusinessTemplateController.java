@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -159,6 +160,13 @@ public class BusinessTemplateController {
 	public BaseRsp testScene(@RequestBody TestSceneReq testSceneReq) {
 
 		String templateId = testSceneReq.getBusinessTemplateId();
+
+		// 增加重复性校验
+		LocalScene instanceId = localSceneService.getByBusinessInstanceId(templateId);
+		if (null != instanceId) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
+		}
+
 		// 1、检查权限
 		checkBeforeTestingScene(templateId);
 		// 2、获取模板
@@ -181,9 +189,11 @@ public class BusinessTemplateController {
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 					localSceneService.save(localScene);
 					businessTemplateService.updateById(businessTemplate);
-					// todo log
 				}
 			});
+		} catch (DuplicateKeyException e) {
+			log.error("Data duplication. catch error:", e);
+			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
 		} catch (Exception e) {
 			// 保存失败，删除远程场景
 			log.error("db error when testing scene: ", e);

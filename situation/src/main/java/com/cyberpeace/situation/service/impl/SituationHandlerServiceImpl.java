@@ -90,10 +90,16 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			scope.add(new PlaneCoordinate(x + width, y + height));
 			scope.add(new PlaneCoordinate(x + width, y));
 
+			// 获取区域名称
+			String areaName = area.getString("name");
+			if (areaName.isEmpty()){
+				areaName = "区域" + (i + 1);
+			}
+
 			// 构造区域数据
 			AreaInfo areaInfo = new AreaInfo();
 			areaInfo.setAreaId(area.getString("id"));
-			areaInfo.setName("区域" + (i + 1));
+			areaInfo.setName(areaName);
 			areaInfo.setDesc(area.getString("description"));
 			areaInfo.setShape(getAreaShape(area));
 			areaInfo.setStatus(getAreaStatus(area));
@@ -436,7 +442,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			AttackType attackType = AttackType.getEnumByEnDesc(enDesc, AttackType.class);
 			attackEvent.setType(attackType.getActionType().getCode());
 
-			attackEvent.setName(enDesc);
+			// attackEvent.setName(enDesc);
 			attackEvent.setSourceId(flowLog.getString("source_node_id"));
 			attackEvent.setTargetId(flowLog.getString("target_node_id"));
 
@@ -497,7 +503,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		wsEvent.setCategory("attack");
 
 		wsEvent.setType(actionType.getCode());
-		wsEvent.setName(actionType.getDesc());
+		// wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
 		wsEvent.setLineStyle(new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));

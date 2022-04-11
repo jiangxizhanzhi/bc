@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -27,8 +24,27 @@ public class ClassroomSign extends BaseTable {
 
 	private Boolean signIn;
 
+	private Boolean needHelp;
+
 	private Date signInTime;
 
-	private Boolean needHelp;
+	private String nodeId;
+
+	public enum SessionType {
+
+		ALL("all", "监控路径和与远程协助路径"), ASSISTANCE("assistance", "仅获取远程协助路径");
+
+		@Getter
+		private String type;
+
+		@Getter
+		private String desc;
+
+		SessionType(String type, String desc) {
+			this.type = type;
+			this.desc = desc;
+		}
+
+	}
 
 }

@@ -247,6 +247,9 @@ public interface CrBusinessErrorCode {
 	/** 非法的任务描述长度 */
 	String ILLEGAL_MISSION_DESC_LEN = "101079";
 
+	/** 训练已暂停，不能删除场景 */
+	String TRAINING_PAUSED = "101080";
+
 	// 任务角色冲突
 	String TASK_ROLE_CONFLICT = "101087";
 

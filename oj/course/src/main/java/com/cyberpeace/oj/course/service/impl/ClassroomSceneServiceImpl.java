@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
+import com.cyberpeace.oj.course.service.ClassroomSignService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -45,7 +48,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.GroupWsMessageIdentifier;
-import com.cyberpeace.oj.course.service.bo.LessonWsMessageIdentifier;
+import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.course.service.bo.SimpleUserData;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -96,6 +99,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	@Autowired
+	private ClassroomSignMapper classroomSignMapper;
+
+	@Autowired
+	private ClassroomSignService classroomSignService;
 
 	@Override
 	public JSONObject startScene(String groupId, AuthContext authContext) {
@@ -155,12 +164,27 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
 		localSceneService.deleteRemoteScene(localScene);
 
+		// 查询签到的用户
+		List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
+				String.class);
+		List<ClassroomSign> signList = StreamApiUtils.map(userIds, userId -> {
+			ClassroomSign classroomSign = classroomSignMapper
+					.selectByRoomAndUser(groupInfo.getClassroomId(), userId);
+			if (null == classroomSign) {
+				return null;
+			}
+			classroomSign.setNodeId("");
+			classroomSign.setNeedHelp(false);
+			return classroomSign;
+		});
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				ojLocalSceneMapper.deleteById(ojLocalScene);
 				localSceneMapper.deleteById(localScene);
+				classroomSignService.updateBatchById(signList);
 			}
 		});
 

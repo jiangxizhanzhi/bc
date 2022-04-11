@@ -15,6 +15,9 @@ public class AdminTheoryListReq extends PageReqBase {
 	@ApiModelProperty(name = "category_id", value = "方向")
 	private String categoryId;
 
+	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
+	private Integer difficulty;
+
 	public void setPractice_set_id(String practiceSetId) {
 		this.practiceSetId = practiceSetId;
 	}

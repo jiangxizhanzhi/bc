@@ -9,4 +9,10 @@
         select * from oj_classroom_sign
         where classroom_id= #{roomId}
     </select>
+
+    <select id="selectByRoomAndUser" resultMap="base">
+        select * from oj_classroom_sign
+        where classroom_id= #{roomId}
+        and user_id = #{userId}
+    </select>
 </mapper>

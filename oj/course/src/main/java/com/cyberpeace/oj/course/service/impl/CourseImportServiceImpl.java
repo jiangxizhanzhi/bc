@@ -5,45 +5,45 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.*;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
-import com.cyberpeace.oj.practice.service.PaperService;
-import com.cyberpeace.oj.practice.service.bo.PaperContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.bo.PaperContext;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Slf4j
 @Service
@@ -179,8 +179,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 	}
 
 	@Override
-	public List<CourseLesson> parseRmLesson(Course course, String path,
-			Map<String, String> envReqs) {
+	public List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
+			Map<String, String> nameMap) {
 
 		List<CourseLesson> allLessons = Lists.newArrayList();
 
@@ -194,8 +194,20 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 			// 目录课程数据解析
 			List<String> lessonPaths = FileUtil.listFileByFile(file, 1, true);
-			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths,
-					lessonPath -> parseLesson(lessonPath, course, envReqs));
+			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths, lessonPath -> {
+				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
+				if (null != courseLesson) {
+					if (null != nameMap.putIfAbsent(courseLesson.getName(),
+							courseLesson.getResourceId())) {
+						log.error("Lesson name exist! course_path=[{}], lesson_path=[{}]", path,
+								lessonPath);
+						throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+					}
+
+					return courseLesson;
+				}
+				return null;
+			});
 			allLessons.addAll(courseLessons);
 		}
 
@@ -244,16 +256,20 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 解析附件
 		List<String> attachmentList = FileUtil.listDirs(
 				new File(path, ResourceImportConstant.ATTACHMENT).getAbsolutePath(), true);
-		List<String> attachmentPaths = StreamApiUtils.map(attachmentList, attachmentPath -> {
-			File attachmentFile = new File(attachmentPath);
-			File destFile = new File(AttachmentPath.ATTACHMENT.getDesc(), attachmentFile.getName());
-			String filePath = FileUtil.copyFile(attachmentPath, destFile.getAbsolutePath(), true);
-			return utilService.replaceFileUrl(filePath);
-		});
+		if (CollectionUtils.isNotEmpty(attachmentList)) {
+			List<String> attachmentPaths = StreamApiUtils.map(attachmentList, attachmentPath -> {
+				File attachmentFile = new File(attachmentPath);
+				File destFile = new File(AttachmentPath.ATTACHMENT.getDesc(),
+						attachmentFile.getName());
+				String filePath = FileUtil.copyFile(attachmentPath, destFile.getAbsolutePath(),
+						true);
+				return utilService.replaceFileUrl(filePath);
+			});
 
-		List<String> attachmentIds = attachmentService.batchInsert(attachmentPaths);
-		String idStr = String.join(CommonConstant.CODE_COMMA, attachmentIds);
-		courseLesson.setAttachmentIds(idStr);
+			List<String> attachmentIds = attachmentService.batchInsert(attachmentPaths);
+			String idStr = String.join(CommonConstant.CODE_COMMA, attachmentIds);
+			courseLesson.setAttachmentIds(idStr);
+		}
 
 		// 解析课时视频
 		String videoPath = String.format(AttachmentPath.VIDEO.getDesc(), course.getResourceId());
@@ -410,7 +426,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Override
 	public List<LessonConfig> parseRmLessonConfig(Course course, String path,
-			Map<String, String> nameMap) {
+			Map<String, String> lessonNameMap) {
 
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		// 设置根目录
@@ -454,7 +470,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 				String sortStr = new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
 						CommonConstant.TWO)[CommonConstant.ZERO];
 				return Integer
-						.parseInt(sortStr.split(PatternConstant.STRIGULA)[CommonConstant.ZERO]);
+						.parseInt(sortStr.split(PatternConstant.STRIGULA)[CommonConstant.ONE]);
 			});
 			for (String lessonPath : sortLessonList) {
 				String[] nameArray = new File(lessonPath).getName()
@@ -462,13 +478,16 @@ public class CourseImportServiceImpl implements CourseImportService {
 				String name = nameArray.length > CommonConstant.ONE ? nameArray[CommonConstant.ONE]
 						: nameArray[0];
 
-				if (StringUtils.isBlank(nameMap.get(name))) {
+				if (StringUtils.isBlank(lessonNameMap.get(name))) {
+					log.error(
+							"Course directory name and course name are inconsistent! course_path=[{}], lesson_dir=[{}]",
+							path, lessonPath);
 					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR);
 				}
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 						.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)
-						.lessonId(nameMap.get(name)).index(index).build();
+						.lessonId(lessonNameMap.get(name)).index(index).build();
 				lessonConfigs.add(lessonConfig);
 
 				// 索引加一
@@ -487,12 +506,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 		Course course = parseRmCourse(path);
 
 		// 课时信息组装
-		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs);
+		Map<String, String> lessonNameMap = Maps.newHashMap();
+		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs, lessonNameMap);
 
-		// 目录数据组装
-		Map<String, String> nameMap = StreamApiUtils.toMap(lessons, CourseLesson::getName,
-				CourseLesson::getResourceId);
-		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, nameMap);
+		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, lessonNameMap);
 
 		// 数据入库
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

@@ -109,6 +109,23 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 	}
 
+	@Override
+	public List<String> getSetIds(AuthContext authContext, String setId) {
+		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(setIds)) {
+			return Lists.newArrayList();
+		}
+
+		if (StringUtils.isNotBlank(setId)) {
+			if (!setIds.contains(setId)) {
+				return Lists.newArrayList();
+			}
+			setIds.clear();
+			setIds.add(setId);
+		}
+		return setIds;
+	}
+
 	/**
 	 * 实体类数据转换
 	 *
@@ -184,8 +201,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 类型校验 防止习题集类型改变
 		if (null != practiceSet.getPracticeType()) {
-			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()) {
-				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_TYPE_ERROR);
+			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()
+					&& existSet.getPracticeCount().intValue() != CommonConstant.ZERO.intValue()) {
+				throw new BusinessException(OjBusinessErrorCode.SET_UNDER_EXIST_PRACTICE);
 			}
 		}
 

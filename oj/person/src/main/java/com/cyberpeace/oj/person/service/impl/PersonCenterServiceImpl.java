@@ -222,18 +222,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 	}
 
 	@Override
-	public List<ListSchedule> listSchedules(String userId, String type, AuthContext authContext) {
-		// 校验是否有用户信息
-		if (null != authContext) {
-			throw new RuntimeException();
-		}
-
-		List<ListSchedule> res = personCenterMapper.selectSchedules(userId);
-		return res;
-
-	}
-
-	@Override
 	public List<CollectionPracticeBo> selectCollectionPractice(String userId,
 			Integer practiceType) {
 

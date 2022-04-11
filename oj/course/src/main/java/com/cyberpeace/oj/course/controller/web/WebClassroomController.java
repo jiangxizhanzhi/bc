@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.oj.course.controller.res.RemoteHelpReq;
 import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -85,6 +86,16 @@ public class WebClassroomController {
 		Boolean result = classroomSignService.signIn(signInReq.getResourceId(), authContext);
 
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("请求远程协助")
+	@PatchMapping("/need_help")
+	public BaseRsp needHelp(@RequestBody @Validated RemoteHelpReq req) {
+
+		classroomSignService.needHelp(req.getLessonId(), req.getNodeId());
+
+		return new BaseRsp();
+
 	}
 
 }

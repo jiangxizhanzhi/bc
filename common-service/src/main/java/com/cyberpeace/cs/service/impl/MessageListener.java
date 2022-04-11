@@ -52,10 +52,14 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 		log.info("MessageListener: {}", realMessage);
 
-		boolean result = dispatch(realMessage);
-
-		// 不管数据处理是否成功，都直接ack消息
-		channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+		try {
+			dispatch(realMessage);
+		} catch (Exception e) {
+			log.error("MessageListener: dispatch error ", e);
+		} finally {
+			// 不管数据处理是否成功，都直接ack消息
+			channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+		}
 	}
 
 	/**
@@ -134,7 +138,14 @@ public class MessageListener implements ChannelAwareMessageListener {
 		try {
 			switch (type) {
 				case SCENE_DELETE:
-					realListener.onSceneDelete(object.getString("data"), businessId, context);
+					String sceneId = object.getString("data");
+					if (null == sceneId || !sceneId.equals(localScene.getMpSceneId())) {
+						log.warn(
+								"The scene id is null or does not match the database! business_id={}, message_scene_id={}, database_scene_id={}",
+								businessId, sceneId, localScene.getMpSceneId());
+						break;
+					}
+					realListener.onSceneDelete(sceneId, businessId, context);
 					break;
 				case SCENE:
 					// 判断是否是已删除场景的推送消息

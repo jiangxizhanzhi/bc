@@ -13,7 +13,7 @@ import lombok.Data;
 @ApiModel
 public class ExternalBatchReq implements Serializable {
 
-	@ApiModelProperty("资源编号数组")
+	@ApiModelProperty(name = "resource_ids", value = "资源编号数组")
 	@NotEmpty
 	private List<String> resourceIds;
 

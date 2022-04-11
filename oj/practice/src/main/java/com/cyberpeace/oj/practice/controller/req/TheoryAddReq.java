@@ -50,4 +50,8 @@ public class TheoryAddReq implements Serializable {
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
+	@NotNull(groups = { Create.class })
+	private Integer difficulty;
+
 }

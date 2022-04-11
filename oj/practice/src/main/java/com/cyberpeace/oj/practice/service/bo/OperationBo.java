@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @ApiModel
 public class OperationBo extends PracticeOperation {
@@ -19,5 +21,8 @@ public class OperationBo extends PracticeOperation {
 
 	@ApiModelProperty("场景配置信息")
 	private JSONObject sceneConfigData;
+
+	@ApiModelProperty("后台实操习题附件 主要针对随机flag")
+	private List<PracticeOperationFileBo> files;
 
 }

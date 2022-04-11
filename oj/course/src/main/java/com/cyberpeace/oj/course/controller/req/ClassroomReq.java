@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.req;
 
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,15 +21,15 @@ public class ClassroomReq implements Serializable {
 	private String resourceId;
 
 	@ApiModelProperty("课程编号")
-	@NotBlank(groups = { Create.class, Update.class })
+	@NotBlank(groups = { Create.class, Update.class }, message = OjBusinessErrorCode.COURSE_INFORMATION_NOT_NULL)
 	private String courseId;
 
 	@ApiModelProperty("课时编号")
-	@NotBlank(groups = { Create.class, Update.class })
+	@NotBlank(groups = { Create.class, Update.class }, message = OjBusinessErrorCode.LESSON_INFORMATION_NOT_NULL)
 	private String lessonId;
 
 	@ApiModelProperty("组织编号")
-	@NotBlank(groups = { Create.class, Update.class })
+	@NotBlank(groups = { Create.class, Update.class }, message = OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL)
 	private String organizationId;
 
 	@ApiModelProperty("开始时间")

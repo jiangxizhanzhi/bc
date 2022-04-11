@@ -25,6 +25,8 @@ public interface CommonConstant {
 
 	int TWO = 2;
 
+	int FOUR = 4;
+
 	int NEGATIVE_ONE = -1;
 
 	Integer HUNDRED = 100;
@@ -38,6 +40,10 @@ public interface CommonConstant {
 	Integer NINETY = 90;
 
 	Integer NINE = 9;
+
+	int EIGHT = 8;
+
+	int TEN = 10;
 
 	Boolean TRUE = true;
 

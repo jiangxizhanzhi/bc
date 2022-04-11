@@ -30,7 +30,7 @@ public class InitOjSceneContext implements Serializable {
 	private String userId;
 
 	/** 是否为动态flag*/
-	private Boolean dynamicFlag;
+	private Integer dynamicFlag;
 
 	/** flag数据 为动态则不使用该值*/
 	private String flags;

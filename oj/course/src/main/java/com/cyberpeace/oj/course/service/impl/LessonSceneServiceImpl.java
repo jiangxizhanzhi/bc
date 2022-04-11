@@ -17,6 +17,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
@@ -24,9 +25,13 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
+import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -34,6 +39,7 @@ import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.google.common.collect.Lists;
 
@@ -66,6 +72,18 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private ClassroomSignMapper classroomSignMapper;
+
+	@Autowired
+	private ClassroomSignService classroomSignService;
+
+	@Autowired
+	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
 
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
@@ -131,29 +149,81 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 				courseLesson.getSceneShareMode(), authContext);
-		return ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		pushMessageHandler.pushLessonMessage(pushMessageHandler.getDeleteMessage(), ojLocalScene);
+
+		return CommonConstant.TRUE;
 	}
 
 	@Override
 	public Boolean restartNode(String lessonId, String nodeId, AuthContext authContext) {
 		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, authContext);
-		return localSceneService.restartNode(ojLocalScene.getLocalSceneId(), nodeId);
+		localSceneService.restartNode(ojLocalScene.getLocalSceneId(), nodeId);
+
+		// 清理远程协助信息
+		clearAssistance(ojLocalScene);
+		return CommonConstant.TRUE;
 	}
 
 	@Override
 	public Boolean recreateNode(String lessonId, String nodeId, AuthContext authContext) {
 		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, authContext);
-		return localSceneService.recreateNode(ojLocalScene.getLocalSceneId(), nodeId);
+		localSceneService.recreateNode(ojLocalScene.getLocalSceneId(), nodeId);
+
+		// 清理远程协助信息
+		clearAssistance(ojLocalScene);
+		return CommonConstant.TRUE;
 	}
 
 	@Override
 	public Boolean updateSceneStatus(String resourceId, Integer status, AuthContext authContext) {
 
 		OjLocalScene ojLocalScene = nodeOperationCheck(resourceId, authContext);
+
 		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
-			return localSceneService.pauseScene(ojLocalScene.getLocalSceneId());
+
+			// 场景暂停
+			localSceneService.pauseScene(ojLocalScene.getLocalSceneId());
+			clearAssistance(ojLocalScene);
+
+			return CommonConstant.TRUE;
 		} else {
 			return localSceneService.unpauseScene(ojLocalScene.getLocalSceneId());
+		}
+	}
+
+	/**
+	 * 清除远程协助信息
+	 * @param ojLocalScene
+	 */
+	private void clearAssistance(OjLocalScene ojLocalScene) {
+
+		if (ojLocalScene.getBusinessType().intValue() != LocalScene.BusinessCode.CLASSROOM.getCode()
+				.intValue()) {
+			return;
+		}
+
+		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
+				.selectById(ojLocalScene.getBusinessId());
+
+		if (null != groupInfo && StringUtils.isNotBlank(groupInfo.getGroupUserIds())) {
+			List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
+					String.class);
+
+			// 获取签到信息
+			List<ClassroomSign> signList = StreamApiUtils.map(userIds, userId -> {
+				ClassroomSign classroomSign = classroomSignMapper
+						.selectByRoomAndUser(groupInfo.getClassroomId(), userId);
+				if (null == classroomSign) {
+					return null;
+				}
+				classroomSign.setNeedHelp(CommonConstant.FALSE);
+				classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
+				return classroomSign;
+			});
+
+			// 清除远程协助数据
+			classroomSignService.updateBatchById(signList);
 		}
 	}
 

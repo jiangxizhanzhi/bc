@@ -167,4 +167,11 @@ public interface CrTitleService {
      */
     void saveScore(Integer businessType, String roomId, String businessTemplateId);
 
+    /**
+     * 检查用户是否可获得训练包含称号
+     * @param users
+     * @param businessTemplateId
+     */
+    void checkTitle(List<String> users, String businessTemplateId);
+
 }

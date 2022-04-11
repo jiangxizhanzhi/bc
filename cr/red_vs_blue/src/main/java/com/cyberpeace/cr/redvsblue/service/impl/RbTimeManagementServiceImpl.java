@@ -3,6 +3,10 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.CrTitleService;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -30,6 +34,12 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 
 	@Autowired
 	RbRoomMapper rbRoomMapper;
+
+	@Autowired
+	private RbTemplateMapper rbTemplateMapper;
+
+	@Autowired
+	private CrTitleService crTitleService;
 
 	@Override
 	public RbTimeManagement getByRoomId(String roomId) {
@@ -86,6 +96,9 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 				rbRoomMapper.updateById(room);
 			}
 		});
+		// todo check insert
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(room.getTemplateId());
+		crTitleService.saveScore(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), room.getResourceId(), rbTemplate.getBusinessTemplateId());
 	}
 
 	@Override

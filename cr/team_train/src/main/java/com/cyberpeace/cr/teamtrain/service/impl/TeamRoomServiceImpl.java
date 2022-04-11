@@ -97,6 +97,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	@Autowired
+	private CrTitleService crTitleService;
+
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
 
@@ -325,6 +328,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
 					teamRoom.getCreateUserId(),
 					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+			// todo check insert
+			crTitleService.saveScore(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), roomId, businessTemplateId);
 		}
 
 		return teamRoom.getTrainingStatus();

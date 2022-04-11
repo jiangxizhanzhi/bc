@@ -98,6 +98,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Autowired
 	private CrRoleService crRoleService;
 
+	@Autowired
+	private CrTitleService crTitleService;
+
 	/**
 	 * 创建单兵训练
 	 *
@@ -873,6 +876,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				singleRoomMapper.updateById(singleRoom);
 			}
 		});
+
+		// todo check insert
+		crTitleService.saveScore(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), singleRoom.getResourceId(), singleRoom.getBusinessTemplateId());
 
 		return singleRoom.getResourceId();
 	}

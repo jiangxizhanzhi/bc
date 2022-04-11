@@ -279,17 +279,15 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public void saveScore(Integer businessType, String roomId, String businessTemplateId) {
-        Integer roleType;
+        List<CrRole> crRoles;
         if (businessType.equals(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode())) {
-            roleType = CrRole.RbRoleGroup.RED_BLUE.getCode();
+            crRoles = crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.RbRoleGroup.RED));
+            crRoles.addAll(crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.RbRoleGroup.BLUE)));
         } else if (businessType.equals(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode())) {
-            roleType = CrRole.TeamRoleGroup.STUDENT.getCode();
+            crRoles = crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
         } else {
-            roleType = CrRole.SINGLE_ROLE_GROUP_CODE;
+            crRoles = crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.SINGLE_ROLE_GROUP_CODE));
         }
-
-        // todo 红蓝对抗角色类型是否有效?
-        List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(new RoleQuery(roomId, roleType));
 
         // 全量训练任务
         Map<String, Mission> missionsMap = missionService.batchGetByRoom(roomId).stream().collect(
@@ -315,7 +313,9 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
                     Mission mission = missionsMap.get(crTask.getMissionId());
 
                     maxScore += mission.getScore();
-                    score += crTask.getScore();
+                    if (crTask.getScore() != null) {
+                        score += crTask.getScore();
+                    }
 
                     List<Integer> skillPoint = JsonUtil.toJsonObjectArray(mission.getSkillPoints(), Integer.class);
 
@@ -332,7 +332,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             List<Integer> userSkillPointScore = Lists.newArrayList();
             for (int i = 0; i < userSkillPoint.size(); i++) {
                 userSkillPointScore.add(
-                        (int) Math.ceil((double) userSkillPoint.get(i) / missionSkillPoint.get(i))
+                        (int) Math.ceil((double) userSkillPoint.get(i) / missionSkillPoint.get(i) * 100)
                 );
             }
 
@@ -340,34 +340,40 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             crTitleTrainProgress.setUserId(userId);
             crTitleTrainProgress.setRoomId(roomId);
             crTitleTrainProgress.setBusinessTemplateId(businessTemplateId);
-            crTitleTrainProgress.setScore((int) Math.ceil((double) score / maxScore));
+            crTitleTrainProgress.setScore((int) Math.ceil((double) score / maxScore * 100));
             crTitleTrainProgress.setSkillPointsScore(JsonUtil.toJsonString(userSkillPointScore));
             usersTrain.add(crTitleTrainProgress);
         });
 
         if (!usersTrain.isEmpty()) {
             this.getBaseMapper().insertScore(usersTrain);
-            List<CrTitleUser> pendingSaveTitle =  Lists.newArrayList();
-            users.forEach(user -> {
-                Map<String, Boolean> userTitle = Maps.newHashMap();
-                crTitleBusinessTemplateMapper.selectFinishTrain(user, businessTemplateId).forEach(item -> {
-                    if (item.getIsFinish()) {
-                        userTitle.putIfAbsent(item.getTitleId(), true);
-                    } else {
-                        userTitle.put(item.getTitleId(), false);
-                    }
-                });
-                userTitle.forEach((key, val) -> {
-                    if (val) {
-                        CrTitleUser crTitleUser = new CrTitleUser();
-                        crTitleUser.setTitleId(key);
-                        crTitleUser.setUserId(user);
-                        pendingSaveTitle.add(crTitleUser);
-                    }
-                });
-            });
-            this.getBaseMapper().insertTitle(pendingSaveTitle);
+            checkTitle(users, businessTemplateId);
         }
     }
 
+    @Override
+    public void checkTitle(List<String> users, String businessTemplateId) {
+        List<CrTitleUser> pendingSaveTitle =  Lists.newArrayList();
+        users.forEach(user -> {
+            Map<String, Boolean> userTitle = Maps.newHashMap();
+            crTitleBusinessTemplateMapper.selectFinishTrain(user, businessTemplateId).forEach(item -> {
+                if (item.getIsFinish()) {
+                    userTitle.putIfAbsent(item.getTitleId(), true);
+                } else {
+                    userTitle.put(item.getTitleId(), false);
+                }
+            });
+            userTitle.forEach((key, val) -> {
+                if (val) {
+                    CrTitleUser crTitleUser = new CrTitleUser();
+                    crTitleUser.setTitleId(key);
+                    crTitleUser.setUserId(user);
+                    pendingSaveTitle.add(crTitleUser);
+                }
+            });
+        });
+        if (!pendingSaveTitle.isEmpty()) {
+            this.getBaseMapper().insertTitle(pendingSaveTitle);
+        }
+    }
 }

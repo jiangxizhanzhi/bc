@@ -261,4 +261,14 @@ public interface CrBusinessErrorCode {
 	 * 被使用称号等级删除错误
 	 */
 	String USING_TITLE_LEVEL_DELETE_ERROR = "101082";
+
+	/**
+	 * 称号及格标准使用限制
+	 */
+	String TITLE_SCORE_VALUE_ERROR = "101083";
+
+	/**
+	 * 等级下称号重复
+	 */
+	String TITLE_IS_EXIST = "101084";
 }

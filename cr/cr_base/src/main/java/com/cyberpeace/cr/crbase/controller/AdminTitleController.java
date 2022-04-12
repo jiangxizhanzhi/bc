@@ -36,12 +36,14 @@ public class AdminTitleController {
     @PostMapping("/level")
     @ApiOperation("称号等级新增")
     public BaseRsp<CrTitleLevel> create(@RequestBody @Validated CrTitleLevelReq requestData) {
+        requestData.validate();
         return new BaseRsp<>(crTitleService.levelCreate(requestData));
     }
 
     @PatchMapping("/level")
     @ApiOperation("称号等级更新")
     public BaseRsp<CrTitleLevel> update(@RequestBody @Validated CrTitleLevelReq requestData) {
+        requestData.validate();
         return new BaseRsp<>(crTitleService.levelUpdate(requestData));
     }
 
@@ -72,12 +74,14 @@ public class AdminTitleController {
     @PostMapping()
     @ApiOperation("荣誉称号新增")
     public BaseRsp<CrTitle> create(@RequestBody CrTitleReq requestData) {
+        requestData.validate();
         return new BaseRsp<>(crTitleService.titleCreate(requestData));
     }
 
     @PatchMapping()
     @ApiOperation("荣誉称号更新")
     public BaseRsp<CrTitle> update(@RequestBody CrTitleReq requestData) {
+        requestData.validate();
         return new BaseRsp<>(crTitleService.titleUpdate(requestData));
     }
 

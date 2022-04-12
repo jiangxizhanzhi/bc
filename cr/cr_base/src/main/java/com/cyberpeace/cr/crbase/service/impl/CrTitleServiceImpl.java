@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -133,11 +134,29 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         return getById(resourceId);
     }
 
+    private void titleIsExist(CrTitle crTitle) {
+        LambdaQueryChainWrapper<CrTitle> querySet = lambdaQuery()
+                .eq(CrTitle::getLevelId, crTitle.getLevelId())
+                .eq(CrTitle::getName, crTitle.getName());
+
+        if (!StringUtils.isEmpty(crTitle.getResourceId())) {
+            querySet.ne(CrTitle::getResourceId, crTitle.getResourceId());
+        }
+
+        if (querySet.one() != null) {
+            CrTitleLevel crTitleLevel = levelGet(crTitle.getLevelId());
+            String levelName = crTitleLevel != null ? crTitleLevel.getName() : "Undefined";
+            throw new BusinessException(CrBusinessErrorCode.TITLE_IS_EXIST, levelName);
+        }
+    }
+
     @Override
     public CrTitle titleCreate(CrTitleReq requestData) {
         CrTitle crTitle = new CrTitle();
         BeanUtils.copyProperties(requestData, crTitle);
         crTitle.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+        titleIsExist(crTitle);
 
         List<String> pendingSaveTrains = requestData.getBusinessTemplateIds();
         if (pendingSaveTrains == null || pendingSaveTrains.isEmpty()) {
@@ -149,6 +168,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             }
         }
 
+        // todo 新增称号时, 存在已完成称号条件用户
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -168,6 +188,8 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         }
 
         BeanUtils.copyProperties(requestData, origin);
+
+        titleIsExist(origin);
 
         Set<String> addTrains = Sets.newHashSet();
         Set<String> delTrains = Sets.newHashSet();
@@ -206,6 +228,8 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
                 }
             }
         });
+
+        // todo 检查对象更新属性，更新用户称号
 
         return titleGet(origin.getResourceId());
     }

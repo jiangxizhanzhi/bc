@@ -1,9 +1,11 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -76,11 +78,30 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         return crTitleLevelMapper.selectById(resourceId);
     }
 
+    /**
+     * 称号等级重复性校验
+     * @param crTitleLevel entity
+     */
+    private void titleLevelIsExist(CrTitleLevel crTitleLevel) {
+        LambdaQueryChainWrapper<CrTitleLevel> querySet = ChainWrappers.lambdaQueryChain(crTitleLevelMapper)
+                .eq(CrTitleLevel::getName, crTitleLevel.getName());
+
+        if (!StringUtils.isEmpty(crTitleLevel.getResourceId())) {
+            querySet.ne(CrTitleLevel::getResourceId, crTitleLevel.getResourceId());
+        }
+
+        if (querySet.one() != null) {
+            throw new BusinessException(CrBusinessErrorCode.TITLE_LEVEL_IS_EXIST);
+        }
+    }
+
     @Override
     public CrTitleLevel levelCreate(CrTitleLevelReq requestData) {
         CrTitleLevel crTitleLevel = new CrTitleLevel();
         crTitleLevel.setName(requestData.getName());
         crTitleLevel.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+        titleLevelIsExist(crTitleLevel);
 
         boolean isCreated = SqlHelper.retBool(crTitleLevelMapper.insert(crTitleLevel));
         return isCreated ? levelGet(crTitleLevel.getResourceId()) : null;
@@ -94,6 +115,8 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         }
 
         crTitleLevel.setName(requestData.getName());
+        titleLevelIsExist(crTitleLevel);
+
         boolean isUpdated = SqlHelper.retBool(crTitleLevelMapper.updateById(crTitleLevel));
         return isUpdated ? levelGet(crTitleLevel.getResourceId()) : null;
     }
@@ -134,6 +157,10 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         return getById(resourceId);
     }
 
+    /**
+     * 称号重复性校验
+     * @param crTitle entity
+     */
     private void titleIsExist(CrTitle crTitle) {
         LambdaQueryChainWrapper<CrTitle> querySet = lambdaQuery()
                 .eq(CrTitle::getLevelId, crTitle.getLevelId())

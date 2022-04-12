@@ -271,4 +271,9 @@ public interface CrBusinessErrorCode {
 	 * 等级下称号重复
 	 */
 	String TITLE_IS_EXIST = "101084";
+
+	/**
+	 * 等级名称重复校验
+	 */
+	String TITLE_LEVEL_IS_EXIST = "101085";
 }

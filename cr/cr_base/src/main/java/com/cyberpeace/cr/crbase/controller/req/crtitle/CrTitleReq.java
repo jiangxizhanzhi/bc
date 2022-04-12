@@ -30,7 +30,7 @@ public class CrTitleReq implements Serializable {
 
     public void validate() {
         // 分值范围验证
-        if (score != null && (CrCommonConstants.TITLE_MIN_SCORE >= score || score >= CrCommonConstants.TITLE_MAX_SCORE)) {
+        if (score != null && (CrCommonConstants.TITLE_MIN_SCORE > score || score > CrCommonConstants.TITLE_MAX_SCORE)) {
             throw new BusinessException(
                     CrBusinessErrorCode.TITLE_SCORE_VALUE_ERROR,
                     CrCommonConstants.TITLE_MIN_SCORE,

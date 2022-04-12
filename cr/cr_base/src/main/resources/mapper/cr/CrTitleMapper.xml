@@ -38,19 +38,18 @@
     </select>
     <select id="listTitleStandard" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo">
         select
-               T1.business_template_id as resource_id,
-               T2.name as train_name,
-               T2.business_type,
-               count(T2.id) as train_count,
-               max(T1.score) as max_score
-        from cr_title_train_progress T1
-        left join cr_business_template T2 on T1.business_template_id = T2.resource_id
+            T1.resource_id,
+            T1.name as train_name,
+            T1.business_type,
+            count(T2.id) as train_count,
+            if(T2.score, max(T2.score), 0) as max_score
+        from cr_business_template T1
+        left join cr_title_train_progress T2 on T1.resource_id = T2.business_template_id and T2.user_id = #{user_id}
         <where>
-            T1.user_id = #{user_id} and
-            T1.business_template_id in (select business_template_id from cr_title_business_template where title_id = #{title_id})
+            T1.resource_id in (select business_template_id from cr_title_business_template where title_id = #{title_id})
         </where>
-        group by T1.business_template_id
-        order by T1.create_time desc
+        group by T1.resource_id
+        order by T2.create_time desc
     </select>
     <select id="titleDetail" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitle">
         select * from cr_title where level_id = #{level_id} and name = #{title} limit 1

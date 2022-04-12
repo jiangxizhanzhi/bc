@@ -289,7 +289,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         }
         CrTitle crTitle = titleDetail(levelId, title);
         if (crTitle == null) {
-            // todo exception
+            // 非法请求
             throw new BusinessException();
         }
 

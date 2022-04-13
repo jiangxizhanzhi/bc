@@ -356,6 +356,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     }
 
     @Override
+    @Async
     public void saveScore(Integer businessType, String roomId, String businessTemplateId) {
         List<CrRole> crRoles;
         if (businessType.equals(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode())) {

@@ -922,7 +922,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 						ResourceCollection.BusinessType.LESSON.getCode()))
 				.flatMap(List::stream).collect(Collectors.toList());
 
-		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+		transactionTemplate.execute(new TransactionCallback<Integer>() {
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
@@ -939,41 +939,53 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				// 课堂相关
 				classroomIds.forEach(classroomId -> {
 					try {
-						// 删不掉就删不掉吧 不管
 						classroomService.deleteClassroom(classroomId, authContext);
 					} catch (Exception e) {
+						// 删不掉就删不掉吧
 						log.error("Classroom scene delete failed! classroom_id=[{}], catch error:",
 								classroomId, e);
 					}
-
 				});
 
 				// 课后练习
 				lessonList.forEach(courseLesson -> {
-					List<String> practiceRefs = practiceOperationRefMapper
-							.selectByPaper(courseLesson.getPaperId());
-					practiceRefs.forEach(practiceId -> lessonPracticeSceneService
-							.deleteScene(courseLesson.getResourceId(), practiceId, authContext));
 					practiceOperationRefMapper.deleteByPaper(courseLesson.getPaperId());
 					practiceTheoryRefMapper.deleteByPaper(courseLesson.getPaperId());
 				});
 
 				// 目录和场景
 				lessonConfigMapper.deleteByLessonIds(resourceIds);
-				adminOjLocalScenes.forEach(ojLocalScene -> {
-					try {
-						// 删不掉算了
-						ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
-					} catch (Exception e) {
-						log.error(
-								"Lesson scene delete failed! oj_local_scene_id=[{}], lesson_id=[{}], catch error:",
-								ojLocalScene.getResourceId(), ojLocalScene.getBusinessId(), e);
-					}
-				});
-
 				return courseLessonMapper.deleteBatchIds(resourceIds);
 			}
 		});
+
+		adminOjLocalScenes.forEach(ojLocalScene -> {
+			try {
+				// 删不掉算了
+				ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+			} catch (Exception e) {
+				log.error(
+						"Lesson scene delete failed! oj_local_scene_id=[{}], lesson_id=[{}], catch error:",
+						ojLocalScene.getResourceId(), ojLocalScene.getBusinessId(), e);
+			}
+		});
+
+		// 场景删除
+		lessonList.forEach(courseLesson -> {
+			List<PracticeOperationRef> practiceRefs = practiceOperationRefMapper
+					.selectByPaperId(courseLesson.getPaperId());
+			practiceRefs.forEach(practiceRef -> {
+				try {
+					lessonPracticeSceneService.deleteScene(courseLesson.getResourceId(),
+							practiceRef.getOriginId(), authContext);
+				} catch (Exception e) {
+					// 场景删除失败不影响数据删除
+					log.error("Lesson practice scene delete failed! lesson_id={}, practice_id={}",
+							courseLesson.getResourceId(), practiceRef.getOriginId(), e);
+				}
+			});
+		});
+		return resourceIds.size();
 	}
 
 	@Override
@@ -1048,11 +1060,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		// 实操课后练习题数据导出
-		List<String> operationRefIds = practiceOperationRefMapper
-				.selectByPaper(courseLesson.getPaperId());
-		if (CollectionUtils.isNotEmpty(operationRefIds)) {
-			List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
-					.selectBatchIds(operationRefIds);
+		List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
+				.selectByPaperId(courseLesson.getPaperId());
+		if (CollectionUtils.isNotEmpty(operationRefs)) {
 			List<PracticeOperationDumpLoadBo> dumpLoadBos = StreamApiUtils.map(operationRefs,
 					practiceOperationRef -> {
 						PracticeOperation practiceOperation = JsonUtil.toJsonObject(

@@ -1,14 +1,13 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
-import com.cyberpeace.oj.practice.service.bo.TestPaperPractice;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
 
 @Mapper
 @Repository
@@ -23,4 +22,6 @@ public interface PracticeOperationRefMapper extends BaseMapper<PracticeOperation
 			@Param("practiceId") String practiceId);
 
 	List<String> selectByPaper(@Param("paperId") String paper);
+
+	List<PracticeOperationRef> selectByPaperId(@Param("paperId") String paperId);
 }

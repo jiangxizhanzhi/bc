@@ -113,7 +113,7 @@ public interface CrTitleService {
      * @param requestData
      * @return 是否成功删除
      */
-    Boolean titleBatchDelete(BatchDeleteReq requestData);
+    Boolean titleBatchDelete(List<String> ids);
 
     /**
      * 称号训练分页查询

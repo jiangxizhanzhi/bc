@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -38,8 +37,10 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -80,6 +81,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     /**
      * 称号等级重复性校验
+     *
      * @param crTitleLevel entity
      */
     private void titleLevelIsExist(CrTitleLevel crTitleLevel) {
@@ -159,6 +161,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     /**
      * 称号重复性校验
+     *
      * @param crTitle entity
      */
     private void titleIsExist(CrTitle crTitle) {
@@ -195,7 +198,6 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             }
         }
 
-        // todo 新增称号时, 存在已完成称号条件用户
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -203,21 +205,34 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
                 crTitleBusinessTemplateMapper.saveBatch(crTitle.getResourceId(), pendingSaveTrains);
             }
         });
+        // 新增称号时, 已完成称号条件用户获得称号
+        checkFinishTitle(requestData.getBusinessTemplateIds());
 
         return titleGet(crTitle.getResourceId());
     }
 
+    @Async
+    void checkFinishTitle(List<String> businessTemplateIds) {
+        crTitleBusinessTemplateMapper.selectAlreadyTrainUser(businessTemplateIds).forEach(
+                item -> checkTitle(Collections.singletonList(item.getUserId()), item.getBusinessTemplateId())
+        );
+    }
+
     @Override
     public CrTitle titleUpdate(CrTitleReq requestData) {
-        CrTitle origin = titleGet(requestData.getResourceId());
-        if (origin == null) {
+        CrTitle crTitle = titleGet(requestData.getResourceId());
+        if (crTitle == null) {
             throw new BusinessException();
         }
+        // 更新前对象属性
+        CrTitle origin = new CrTitle();
+        BeanUtils.copyProperties(crTitle, origin);
 
-        BeanUtils.copyProperties(requestData, origin);
+        BeanUtils.copyProperties(requestData, crTitle);
 
-        titleIsExist(origin);
+        titleIsExist(crTitle);
 
+        boolean isChanged = !origin.getScore().equals(crTitle.getScore());
         Set<String> addTrains = Sets.newHashSet();
         Set<String> delTrains = Sets.newHashSet();
         if (requestData.getBusinessTemplateIds() != null && requestData.getBusinessTemplateIds().size() > 0) {
@@ -225,10 +240,11 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
                     != businessTemplateMapper.selectBatchIds(requestData.getBusinessTemplateIds()).size()) {
                 throw new BusinessException(CrBusinessErrorCode.TITLE_TRAIN_INVALID);
             }
+            isChanged = true;
 
             // 原训练
             Set<String> originTrains = crTitleBusinessTemplateMapper.listByTitleId(
-                    origin.getResourceId()
+                    crTitle.getResourceId()
             ).stream().map(CrTitleBusinessTemplate::getBusinessTemplateId).collect(Collectors.toSet());
 
             // 当前请求新提交训练
@@ -246,19 +262,27 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                updateById(origin);
+                updateById(crTitle);
                 if (!addTrains.isEmpty()) {
-                    crTitleBusinessTemplateMapper.saveBatch(origin.getResourceId(), addTrains);
+                    crTitleBusinessTemplateMapper.saveBatch(crTitle.getResourceId(), addTrains);
                 }
                 if (!delTrains.isEmpty()) {
-                    crTitleBusinessTemplateMapper.deleteBatch(origin.getResourceId(), delTrains);
+                    crTitleBusinessTemplateMapper.deleteBatch(crTitle.getResourceId(), delTrains);
                 }
             }
         });
 
-        // todo 检查对象更新属性，更新用户称号
+        // 及格标准或关联训练更新, 重新生成称号
+        if (isChanged) {
+            this.getBaseMapper().deleteTitleUser(Collections.singletonList(crTitle.getResourceId()));
+            checkFinishTitle(
+                    crTitleBusinessTemplateMapper.listByTitleId(
+                            crTitle.getResourceId()
+                    ).stream().map(CrTitleBusinessTemplate::getBusinessTemplateId).collect(Collectors.toList())
+            );
+        }
 
-        return titleGet(origin.getResourceId());
+        return titleGet(crTitle.getResourceId());
     }
 
     private Map<String, String> generateUserMap(List<String> userIds) {
@@ -279,9 +303,15 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     }
 
     @Override
-    public Boolean titleBatchDelete(BatchDeleteReq requestData) {
-        // todo 级联数据删除
-        return removeByIds(requestData.getIds());
+    public Boolean titleBatchDelete(List<String> ids) {
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                // 级联删除用户已经获得的此称号
+                getBaseMapper().deleteTitleUser(ids);
+                return removeByIds(ids);
+            }
+        });
     }
 
     @Override
@@ -424,7 +454,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             });
         });
         if (!pendingSaveTitle.isEmpty()) {
-            this.getBaseMapper().insertTitle(pendingSaveTitle);
+            this.getBaseMapper().insertTitleUser(pendingSaveTitle);
         }
     }
 

@@ -100,7 +100,7 @@ public class AdminTitleController {
     @DeleteMapping("/batch-delete")
     @ApiOperation("荣誉称号批量删除")
     public BaseRsp<Boolean> titleBatchDelete(@RequestBody BatchDeleteReq requestData) {
-        return new BaseRsp<>(crTitleService.titleBatchDelete(requestData));
+        return new BaseRsp<>(crTitleService.titleBatchDelete(requestData.getIds()));
     }
 
     @GetMapping("/cr-events/list")

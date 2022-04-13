@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrTitleMapper">
+    <delete id="deleteTitleUser">
+        delete from cr_title_user
+        where title_id in
+        <foreach collection="title_ids" item="title_id" open="(" close=")" separator=",">#{title_id}</foreach>
+    </delete>
     <select id="list" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo">
         select T1.*, T2.name as level, count(T3.id) as trains_count from cr_title T1
         left join cr_title_level T2 on T1.level_id = T2.resource_id
@@ -83,7 +88,7 @@
              #{object.skillPointsScore}, now(), now())
         </foreach>
     </insert>
-    <insert id="insertTitle">
+    <insert id="insertTitleUser">
         insert into cr_title_user
         (title_id, user_id, create_time, update_time)
         values

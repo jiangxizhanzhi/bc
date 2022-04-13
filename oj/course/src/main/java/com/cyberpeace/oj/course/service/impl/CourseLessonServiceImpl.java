@@ -7,32 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.integratation.constant.LogContent;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.oj.course.dao.mapper.*;
-import com.cyberpeace.oj.course.service.*;
-import com.cyberpeace.oj.ojbase.dao.entity.Comment;
-import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
-import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
-import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
-import com.cyberpeace.oj.practice.service.*;
-import com.cyberpeace.oj.practice.service.impl.LessonOperationEvaluateHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,39 +16,64 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.*;
+import com.cyberpeace.oj.course.dao.mapper.*;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
+import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.service.*;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.impl.LessonOperationEvaluateHandler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -327,12 +326,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					lesson.getHandoutUrl().lastIndexOf(File.separatorChar) + CommonConstant.ONE));
 		}
 
-		// word或者ppt讲义处理
+		// office讲义处理
 		if (null != lesson.getHandoutType()
-				&& (lesson.getHandoutType().intValue() == CourseLesson.HandoutType.DOC.getCode()
-						.intValue()
-						|| lesson.getHandoutType().intValue() == CourseLesson.HandoutType.PPT
-								.getCode().intValue())
+				&& CourseLesson.HandoutType.isOfficeFile(lesson.getHandoutType())
 				&& StringUtils.isNotBlank(lesson.getHandoutUrl())) {
 			lessonInfoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
 			lessonInfoBo.setHandoutName(StringUtils.substring(lesson.getHandoutUrl(),
@@ -868,6 +864,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (suffix.equals(FileSunffixConstant.PPT.getDesc())
 				|| suffix.equals(FileSunffixConstant.PPTX.getDesc())) {
 			courseLesson.setHandoutType(CourseLesson.HandoutType.PPT.getCode());
+			courseLesson.setHandoutUrl(uploadHandout(courseLesson.getCourseId(), handout));
+		}
+
+		// xls文档
+		if (suffix.equals(FileSunffixConstant.XLS.getDesc())
+				|| suffix.equals(FileSunffixConstant.XLSX.getDesc())) {
+			courseLesson.setHandoutType(CourseLesson.HandoutType.XLS.getCode());
 			courseLesson.setHandoutUrl(uploadHandout(courseLesson.getCourseId(), handout));
 		}
 

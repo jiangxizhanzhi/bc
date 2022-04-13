@@ -47,7 +47,7 @@
                 <bind name="pattern" value="'%' + pattern + '%'"/>
                 and T1.name like #{pattern}
             </if>
-        <if test="title != null and title">
+        <if test="title != null and title != ''">
             and T1.resource_id in (
                 select distinct business_template_id from cr_title_business_template where title_id in (
                     select resource_id from cr_title where name = #{title}

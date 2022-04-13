@@ -19,5 +19,6 @@
         <if test="title != null and title != ''">
             and title like #{title}
         </if>
+        order by id desc
     </select>
 </mapper>

@@ -57,6 +57,23 @@
     <select id="listUserTrainSkill" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleTrainProgress">
         select *, max(score) as score from cr_title_train_progress where user_id = #{user_id} group by business_template_id
     </select>
+    <select id="listTitleNameByTrain" resultType="java.lang.String">
+        select distinct `name` from cr_title where resource_id in (
+            select title_id from cr_title_business_template where business_template_id = #{business_template_id}
+        )
+    </select>
+    <select id="listTitleNameByRbTemplate" resultType="java.lang.String">
+        select distinct `name` from cr_title where resource_id in (
+            select title_id from cr_title_business_template
+            where business_template_id = (select business_template_id from cr_rb_template where resource_id = #{template_id})
+        )
+    </select>
+    <select id="listTitleNameByTeamTemplate" resultType="java.lang.String">
+        select distinct `name` from cr_title where resource_id in (
+            select title_id from cr_title_business_template
+            where business_template_id = (select business_template_id from cr_team_template where resource_id = #{template_id})
+        )
+    </select>
     <insert id="insertScore">
         insert into cr_title_train_progress
         (business_template_id, room_id, user_id, score, skill_points_score, create_time, update_time)

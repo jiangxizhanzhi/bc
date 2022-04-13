@@ -25,4 +25,7 @@ public class SingleRoomListBo extends SingleRoomBo implements Serializable {
     // 分页接口不需要, 忽略
     @JsonIgnore
     private JSONObject missionsScheme;
+
+    @ApiModelProperty("涉及称号")
+    private List<String> titles;
 }

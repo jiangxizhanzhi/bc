@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,6 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -108,6 +105,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private TrainRecordService trainRecordService;
+
+	@Autowired
+	private CrTitleService crTitleService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -386,6 +386,13 @@ public class TeamTrainRoomController {
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+
+			teamRoomRsp.setTitles(
+					crTitleService.getTitleByTemplateId(
+							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
+							teamRoomData.getTemplate()
+					)
+			);
 
 			teamRoomRspList.add(teamRoomRsp);
 		}

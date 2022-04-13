@@ -372,6 +372,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			singleRoomListBo.setLastSevenDays(dateRangeForMonth);
 			singleRoomListBo.setTemplateUseCount(trainStats.getOrDefault(
 					singleRoomListBo.getResourceId(), Lists.newArrayList(0, 0, 0, 0, 0, 0, 0)));
+			singleRoomListBo.setTitles(crTitleService.getTitleByTrain(item.getBusinessTemplate().getResourceId()));
 
 			singleRoomListBoList.add(singleRoomListBo);
 		}

@@ -448,4 +448,17 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
         return crTitleSkillRadarBo;
     }
+
+    @Override
+    public List<String> getTitleByTrain(String businessTemplateId) {
+        return this.getBaseMapper().listTitleNameByTrain(businessTemplateId);
+    }
+
+    @Override
+    public List<String> getTitleByTemplateId(Integer businessType, String templateId) {
+        if (businessType.equals(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode())) {
+            return this.getBaseMapper().listTitleNameByTeamTemplate(templateId);
+        }
+        return this.getBaseMapper().listTitleNameByRbTemplate(templateId);
+    }
 }

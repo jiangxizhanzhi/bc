@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.CrTitleService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +97,9 @@ public class RbRoomController {
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	@Autowired
+	private CrTitleService crTitleService;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
@@ -169,6 +174,12 @@ public class RbRoomController {
 					JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
 			rbRoomRsp.setTrainSkill(
 					JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));
+			rbRoomRsp.setTitles(
+					crTitleService.getTitleByTemplateId(
+							BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
+							rbRoomData.getTemplate()
+					)
+			);
 
 			return rbRoomRsp;
 		});

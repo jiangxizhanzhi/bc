@@ -37,4 +37,10 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
     int insertTitle(@Param("objects") List<CrTitleUser> objects);
 
     List<CrTitleTrainProgress> listUserTrainSkill(@Param("user_id") String userId);
+
+    List<String> listTitleNameByTrain(@Param("business_template_id") String businessTemplateId);
+
+    List<String> listTitleNameByRbTemplate(@Param("template_id") String templateId);
+
+    List<String> listTitleNameByTeamTemplate(@Param("template_id") String templateId);
 }

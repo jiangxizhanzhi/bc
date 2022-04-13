@@ -181,4 +181,16 @@ public interface CrTitleService {
      */
     CrTitleSkillRadarBo userSkillRadar();
 
+    /**
+     * 根据训练模板涉及称号名称
+     * @return
+     */
+    List<String> getTitleByTrain(String businessTemplateId);
+
+    /**
+     * 根据训练房间模板获取称号名称(红蓝对抗、团队训练适用)
+     * @return
+     */
+    List<String> getTitleByTemplateId(Integer businessType, String templateId);
+
 }

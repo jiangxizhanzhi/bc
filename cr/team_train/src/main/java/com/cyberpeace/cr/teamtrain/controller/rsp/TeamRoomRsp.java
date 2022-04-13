@@ -54,4 +54,7 @@ public class TeamRoomRsp implements Serializable {
 
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
+
+	@ApiModelProperty("涉及称号")
+	private List<String> titles;
 }

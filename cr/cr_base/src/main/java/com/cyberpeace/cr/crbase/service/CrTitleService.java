@@ -7,10 +7,7 @@ import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleSkillRadarBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.*;
 
 import java.util.List;
 
@@ -158,7 +155,7 @@ public interface CrTitleService {
      * @param title
      * @return
      */
-    CrTitle titleDetail(String levelId, String title);
+    CrTitleDetailBo titleDetail(String levelId, String title);
 
     /**
      * 训练结束后, 用户得分入库

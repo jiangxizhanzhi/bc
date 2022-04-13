@@ -56,8 +56,16 @@
         group by T1.resource_id
         order by T2.create_time desc
     </select>
-    <select id="titleDetail" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitle">
-        select * from cr_title where level_id = #{level_id} and name = #{title} limit 1
+    <select id="titleDetail" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleDetailBo">
+        select T1.resource_id,
+               T1.name,
+               T1.create_user_id,
+               T1.score,
+               T2.resource_id as level_id,
+               T2.name as level
+        from cr_title T1
+        left join cr_title_level T2 on T1.level_id = T2.resource_id
+        where T1.level_id = #{level_id} and T1.name = #{title} limit 1
     </select>
     <select id="listUserTrainSkill" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleTrainProgress">
         select *, max(score) as score from cr_title_train_progress where user_id = #{user_id} group by business_template_id

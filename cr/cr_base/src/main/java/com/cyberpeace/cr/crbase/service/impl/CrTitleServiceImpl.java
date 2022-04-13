@@ -25,10 +25,7 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleSkillRadarBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.*;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -344,17 +341,17 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         if (StringUtils.isEmpty(levelId) || StringUtils.isEmpty(title)) {
             return null;
         }
-        CrTitle crTitle = titleDetail(levelId, title);
-        if (crTitle == null) {
+        CrTitleDetailBo crTitleDetailBo = titleDetail(levelId, title);
+        if (crTitleDetailBo == null) {
             // 非法请求
             throw new BusinessException();
         }
 
-        return this.getBaseMapper().listTitleStandard(page, UserInfoContext.getUserContext().getUserId(), crTitle.getResourceId());
+        return this.getBaseMapper().listTitleStandard(page, UserInfoContext.getUserContext().getUserId(), crTitleDetailBo.getResourceId());
     }
 
     @Override
-    public CrTitle titleDetail(String levelId, String title) {
+    public CrTitleDetailBo titleDetail(String levelId, String title) {
         return this.getBaseMapper().titleDetail(levelId, title);
     }
 

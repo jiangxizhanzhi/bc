@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleDetailBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleSkillRadarBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
 import io.swagger.annotations.Api;
@@ -62,7 +63,7 @@ public class TitleController {
 
     @GetMapping("/detail")
     @ApiOperation("称号基础信息")
-    public BaseRsp<CrTitle> titleDetail(CrUserTitleReq queryParams) {
+    public BaseRsp<CrTitleDetailBo> titleDetail(CrUserTitleReq queryParams) {
         return new BaseRsp<>(crTitleService.titleDetail(queryParams.getLevelId(), queryParams.getTitle()));
     }
 

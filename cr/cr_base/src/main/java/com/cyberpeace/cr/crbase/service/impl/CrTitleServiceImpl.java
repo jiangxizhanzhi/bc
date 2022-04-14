@@ -310,7 +310,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public Boolean titleBatchDelete(List<String> ids) {
-        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+        Boolean result = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
                 // 级联删除用户已经获得的此称号
@@ -318,6 +318,14 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
                 return removeByIds(ids);
             }
         });
+        if (result != null && result) {
+            ids.forEach(
+                    titleId -> FileUtil.deleteDir(
+                            Paths.get(AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(), titleId).toFile()
+                    )
+            );
+        }
+        return result;
     }
 
     @Override

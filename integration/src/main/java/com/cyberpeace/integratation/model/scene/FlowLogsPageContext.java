@@ -13,4 +13,6 @@ public class FlowLogsPageContext implements Serializable {
 
 	private String endTime;
 
+	private Integer perPage;
+
 }

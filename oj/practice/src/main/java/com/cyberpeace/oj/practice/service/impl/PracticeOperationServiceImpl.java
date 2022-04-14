@@ -1064,7 +1064,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		Integer difficulty = EnumUtils.getEnumCodeByDesc(difficultyStr, Difficulty.class);
 		operation.setDifficulty(difficulty);
 
-		operation.setScore(CommonConstant.ZERO.doubleValue());
+		operation.setScore(CommonConstant.ONE.doubleValue());
 		operation.setResourceId(IDGeneratorUtil.getID());
 		operation.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
 		operation.setBuiltin(CommonConstant.TRUE);

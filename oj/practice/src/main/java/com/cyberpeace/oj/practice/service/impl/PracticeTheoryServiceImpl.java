@@ -657,7 +657,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		}
 
-		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
+		practiceTheory.setScore(CommonConstant.ONE.doubleValue());
 		practiceTheory.setBuiltin(CommonConstant.TRUE);
 		practiceTheory.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
 		practiceTheory.setIsPublic(CommonConstant.TRUE);

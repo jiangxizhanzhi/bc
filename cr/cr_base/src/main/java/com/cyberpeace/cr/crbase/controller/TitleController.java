@@ -1,18 +1,21 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrUserTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleDetailBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleSkillRadarBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -22,6 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Api("前台-荣誉称号")
@@ -71,5 +78,41 @@ public class TitleController {
     @ApiOperation("技能树分值")
     public BaseRsp<CrTitleSkillRadarBo> skillRadar() {
         return new BaseRsp<>(crTitleService.userSkillRadar());
+    }
+
+    @GetMapping("/cert")
+    @ApiModelProperty("证书下载")
+    public void dumpCert(HttpServletResponse httpServletResponse, @RequestParam("title_id") String titleId) {
+        CrTitleCertBo crTitleCertBo = crTitleService.getTitleCertInfo(titleId);
+        Path htmlPath = Paths.get(
+                AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(),
+                String.format("%s-%s", crTitleCertBo.getTitleId(), crTitleCertBo.getUserId()),
+                String.format("%s%s.html", crTitleCertBo.getLevel(), crTitleCertBo.getTitle())
+        );
+
+        // 检查/创建上层目录
+        File directory = htmlPath.getParent().toFile();
+        if (!directory.exists()) {
+            boolean isCreated = directory.mkdirs();
+            if (!isCreated) {
+                throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, directory.getPath());
+            }
+        }
+
+        String htmlPathString = htmlPath.toString();
+        try {
+            // 生成文件
+            HtmlToPdfUtil.getHtmlTemplateInstance(crTitleCertBo, HtmlTemplateEnum.TITLE, htmlPathString);
+            String pdfPathString = htmlPathString.substring(0, htmlPathString.lastIndexOf("html")) + "pdf";
+            HtmlToPdfUtil.convert(htmlPathString, pdfPathString);
+            FileUtil.setResponse(new File(pdfPathString), false, httpServletResponse);
+        } catch (Exception e) {
+            log.error("failed to export pdf: {}", htmlPathString);
+            throw e;
+        } finally {
+            if (!FileUtil.deleteDir(directory)) {
+                log.error("failed to delete dir: {}", directory);
+            }
+        }
     }
 }

@@ -87,6 +87,10 @@
             where business_template_id = (select business_template_id from cr_team_template where resource_id = #{template_id})
         )
     </select>
+    <select id="getUserTitle" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleUser">
+        select *
+        from cr_title_user where user_id = #{user_id} and title_id = #{title_id} limit 1
+    </select>
     <insert id="insertScore">
         insert into cr_title_train_progress
         (business_template_id, room_id, user_id, score, skill_points_score, create_time, update_time)

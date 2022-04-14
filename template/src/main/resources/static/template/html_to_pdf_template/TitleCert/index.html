@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pdf</title>
+  <style>
+    *{
+      padding: 0;
+      margin: 0;
+      font-family: Microsoft YaHei;
+      color: #333333;
+    }
+    .pdf-content{
+      width: 1414px;
+      height: 1052px;
+      background: url("<#include './img/bg.txt'>") no-repeat;
+      margin: 0  auto;
+    }
+    .text-content{
+      text-align: center;
+      position: relative;
+    }
+    .text-font{
+      font-family: '宋体';
+      font-weight: bold;
+    }
+    .name{
+      font-size: 36px;
+      position: absolute;
+      top: 434px;
+      left: 260px;
+    }
+    .first{
+      position: absolute;
+      left: 329px;
+      top: 522px;
+      font-size: 32px;
+      font-weight: 400;
+    }
+    .title{
+      font-size: 36px;
+      padding-bottom: 4px;
+      padding: 0 25px 4px 25px;
+      border-bottom: 1px solid rgba(51, 51, 51, .4);
+      position: relative;
+      top: -3px;
+    }
+    .second{
+      position: absolute;
+      left: 263px;
+      top: 602px;
+      font-size: 32px;
+      font-weight: 400;
+    }
+    .card-number{
+      position: absolute;
+      left: 263px;
+      top: 748px;
+      font-size: 28px;
+      font-weight: 400;
+    }
+    .expire{
+      position: absolute;
+      left: 263px;
+      top: 794px;
+      font-size: 28px;
+      font-weight: 400;
+    }
+    .date{
+      position: absolute;
+      left: 943px;
+      top: 839px;
+      font-size: 28px;
+      font-weight: 400;
+    }
+
+
+
+  
+  </style>
+</head>
+<body>
+  <div class="pdf-content">
+    <div class="text-content">
+    <div class="name text-font">${username}:</div>
+    <div class="first">已完成 <span class="title text-font">${title} ${level}</span>培训课程，通过考试，</div>
+    <div class="second">获得网络安全作训平台<span class="title text-font">${level}</span>资格认证，特此证明。</div>
+    <div class="card-number">证书编号：${certNumber}</div>
+    <div class="expire">有效期至：${validityTime}</div>
+    <div class="date">${createTime}</div>
+  </div>
+  </div>
+</body>
+</html>

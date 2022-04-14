@@ -190,4 +190,10 @@ public interface CrTitleService {
      */
     List<String> getTitleByTemplateId(Integer businessType, String templateId);
 
+    /**
+     * 证书内容生成
+     * @return CrTitleCertBo
+     */
+    CrTitleCertBo getTitleCertInfo(String titleId);
+
 }

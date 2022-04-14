@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -32,6 +33,7 @@ import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -41,6 +43,9 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -489,4 +494,41 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         }
         return this.getBaseMapper().listTitleNameByRbTemplate(templateId);
     }
+
+    @Override
+    public CrTitleCertBo getTitleCertInfo(String titleId) {
+        String userId = UserInfoContext.getUserContext().getUserId();
+        CrTitleUser crTitleUser = getBaseMapper().getUserTitle(userId, titleId);
+        if (crTitleUser == null) {
+            throw new BusinessException();
+        }
+
+        CrTitle crTitle = titleGet(titleId);
+        CrTitleLevel crTitleLevel = levelGet(crTitle.getLevelId());
+
+        CrTitleCertBo crTitleCertBo = new CrTitleCertBo();
+
+        // 日期格式化
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy年MM月");
+        crTitleCertBo.setCreateTime(
+                DateUtil.StringToCnDateString(dateFormat1.format(crTitleUser.getCreateTime()))
+        );
+        DateFormat dateFormat2 = new SimpleDateFormat("yyyy年MM月dd日");
+        crTitleCertBo.setValidityTime(
+                dateFormat2.format(DateUtils.addYears(crTitleUser.getCreateTime(), 3))
+        );
+        DateFormat dateFormat3 = new SimpleDateFormat("yyyyMMdd");
+        // todo 编号待更新
+        crTitleCertBo.setCertNumber("CP" + dateFormat3.format(crTitleUser.getCreateTime()) + "001");
+
+        crTitleCertBo.setUserId(crTitleUser.getUserId());
+        crTitleCertBo.setUsername(remoteUserService.getById(userId).getName());
+        crTitleCertBo.setTitleId(crTitle.getResourceId());
+        crTitleCertBo.setTitle(crTitle.getName());
+        crTitleCertBo.setLevelId(crTitleLevel.getResourceId());
+        crTitleCertBo.setLevel(crTitleLevel.getName());
+
+        return crTitleCertBo;
+    }
+
 }

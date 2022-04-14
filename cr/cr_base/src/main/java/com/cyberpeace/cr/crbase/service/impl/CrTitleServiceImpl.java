@@ -236,7 +236,9 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
         titleIsExist(crTitle);
 
-        boolean isChanged = !origin.getScore().equals(crTitle.getScore());
+        boolean isChanged = !origin.getScore().equals(crTitle.getScore())
+                || !origin.getName().equals(crTitle.getName())
+                || !origin.getLevelId().equals(crTitle.getLevelId());
         Set<String> addTrains = Sets.newHashSet();
         Set<String> delTrains = Sets.newHashSet();
         if (requestData.getBusinessTemplateIds() != null && requestData.getBusinessTemplateIds().size() > 0) {

@@ -234,7 +234,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 习题数据导入
 		List<PracticeTheory> theoryList = practiceTheoryService.parseRmTheory(path, practiceSet);
-		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theoryList.size());
+
+		// 再查一次，防止数据解析时间过长
+		selectAndSetCount(practiceSet, theoryList.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
 
@@ -244,6 +246,17 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				return practiceTheoryService.saveBatch(theoryList);
 			}
 		});
+	}
+
+	private void selectAndSetCount(PracticeSet practiceSet, int count) {
+		// 再查一次，防止数据解析时间过长
+		String existSetId = practiceSetMapper.selectByName(practiceSet.getName());
+		if (StringUtils.isNotBlank(existSetId)) {
+			PracticeSet existPracticeSet = practiceSetMapper.selectById(existSetId);
+			practiceSet.setPracticeCount(existPracticeSet.getPracticeCount() + count);
+		} else {
+			practiceSet.setPracticeCount(count);
+		}
 	}
 
 	@Override
@@ -282,6 +295,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 数据去重
 		List<PracticeOperation> operations = StreamApiUtils.distinctByColumn(operationList,
 				PracticeOperation::getTitle);
+		// 再查一次防止数据解析过长
+		selectAndSetCount(practiceSet, operations.size());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -374,6 +389,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				List<PracticeTheory> theories = loadPracticeTheory(practiceSet.getResourceId(),
 						theoryDumpLoadBos, userId);
 				theoryList.addAll(theories);
+				practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theories.size());
 			}
 
 			// 实操习题
@@ -386,6 +402,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 						practiceSet.getResourceId(), operationDumpLoadBos, userId,
 						setDumpLoadBo.getFilePathMap(), filePath);
 				operationList.addAll(operations);
+				practiceSet.setPracticeCount(practiceSet.getPracticeCount() + operations.size());
 			}
 		}
 
@@ -460,6 +477,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		practiceSet.setCreateUserId(userId);
+		practiceSet.setPracticeCount(CommonConstant.ZERO);
 
 		// logo文件替换
 		if (StringUtils.isNotBlank(setDumpLoadBo.getLogo())) {

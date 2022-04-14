@@ -32,7 +32,12 @@
     </select>
 
     <select id="selectByPaper" resultType="java.lang.String">
-        select origin_id from oj_practice_operation_ref
+        select resource_id from oj_practice_operation_ref
+        where paper_id = #{paperId}
+    </select>
+
+    <select id="selectByPaperId" resultMap="operationRef">
+        select * from oj_practice_operation_ref
         where paper_id = #{paperId}
     </select>
 </mapper>

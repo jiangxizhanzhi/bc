@@ -105,4 +105,7 @@ public interface OjBusinessErrorCode {
 	/** 组织信息不能为空*/
 	String ORG_INFORMATION_NOT_NULL = "102033";
 
+	/** 对应的习题文件未找到*/
+	String PRACTICE_OPERATION_FILE_NOT_FOUNT = "102034";
+
 }

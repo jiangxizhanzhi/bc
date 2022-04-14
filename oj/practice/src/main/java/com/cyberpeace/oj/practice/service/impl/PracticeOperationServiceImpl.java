@@ -1015,9 +1015,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			String topoId) {
 
 		PracticeOperation operation = new PracticeOperation();
-
 		// 分类数据处理
 		String categoryName = (String) operationData.remove("category_id");
+		if (StringUtils.isBlank(categoryName = categoryName.trim())) {
+			log.error("Practice category is empty! operation_data=[{}]",
+					JsonUtil.toJsonString(operationData));
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);
+		}
 		String categoryId = practiceCategoryMapper
 				.selectByName(PracticeCategory.PracticeType.OPERATION.getCode(), categoryName);
 		if (StringUtils.isBlank(categoryId)) {
@@ -1064,7 +1068,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		Integer difficulty = EnumUtils.getEnumCodeByDesc(difficultyStr, Difficulty.class);
 		operation.setDifficulty(difficulty);
 
-		operation.setScore(CommonConstant.ZERO.doubleValue());
+		operation.setScore(CommonConstant.HUNDRED.doubleValue());
 		operation.setResourceId(IDGeneratorUtil.getID());
 		operation.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
 		operation.setBuiltin(CommonConstant.TRUE);

@@ -56,13 +56,13 @@ public class SituationController {
 	public List<JSONObject> attackDynamic(FlowLogReq flowLogReq) {
 
 		// 处理起始时间和结束时间
-		if (flowLogReq.getInterval() != null ) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Long endTime = (new Date()).getTime();
-			Long startTime = endTime - flowLogReq.getInterval()*1000;
-			flowLogReq.setEndTime(dateFormat.format(endTime));
-			flowLogReq.setStartTime(dateFormat.format(startTime));
-		}
+//		if (flowLogReq.getInterval() != null ) {
+//			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//			Long endTime = (new Date()).getTime();
+//			Long startTime = endTime - flowLogReq.getInterval()*1000;
+//			flowLogReq.setEndTime(dateFormat.format(endTime));
+//			flowLogReq.setStartTime(dateFormat.format(startTime));
+//		}
 
 		// 获取流量日志
 		List<JSONObject> flowLogs = topoHandlerService.getFlowLogs(flowLogReq);

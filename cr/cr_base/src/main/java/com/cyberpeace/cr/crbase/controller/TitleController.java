@@ -84,11 +84,23 @@ public class TitleController {
     @ApiModelProperty("证书下载")
     public void dumpCert(HttpServletResponse httpServletResponse, @RequestParam("title_id") String titleId) {
         CrTitleCertBo crTitleCertBo = crTitleService.getTitleCertInfo(titleId);
+        if (crTitleCertBo == null) {
+            return;
+        }
         Path htmlPath = Paths.get(
                 AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(),
-                String.format("%s-%s", crTitleCertBo.getTitleId(), crTitleCertBo.getUserId()),
+                crTitleCertBo.getTitleId(),
+                crTitleCertBo.getUserId(),
                 String.format("%s%s.html", crTitleCertBo.getLevel(), crTitleCertBo.getTitle())
         );
+        String htmlPathString = htmlPath.toString();
+        String pdfPathString = htmlPathString.substring(0, htmlPathString.lastIndexOf("html")) + "pdf";
+
+        // 证书已生成, 返回
+        if (new File(pdfPathString).exists()) {
+            FileUtil.setResponse(new File(pdfPathString), false, httpServletResponse);
+            return;
+        }
 
         // 检查/创建上层目录
         File directory = htmlPath.getParent().toFile();
@@ -99,21 +111,20 @@ public class TitleController {
             }
         }
 
-        String htmlPathString = htmlPath.toString();
         try {
             // 生成文件
             HtmlToPdfUtil.getHtmlTemplateInstance(crTitleCertBo, HtmlTemplateEnum.TITLE, htmlPathString);
-            String pdfPathString = htmlPathString.substring(0, htmlPathString.lastIndexOf("html")) + "pdf";
             HtmlToPdfUtil.convert(htmlPathString, pdfPathString);
             FileUtil.setResponse(new File(pdfPathString), false, httpServletResponse);
         } catch (Exception e) {
             log.error("failed to export pdf: {}", htmlPathString);
             throw e;
         } finally {
-            // todo 暂不删除
-//            if (!FileUtil.deleteDir(directory)) {
-//                log.error("failed to delete dir: {}", directory);
-//            }
+            // 删除生成的html文件
+            File originHtml = new File(htmlPathString);
+            if (!FileUtil.deleteDir(originHtml)) {
+                log.error("failed to origin html: {}", originHtml);
+            }
         }
     }
 }

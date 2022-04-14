@@ -37,7 +37,9 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
 
     int insertScore(@Param("objects") List<CrTitleTrainProgress> objects);
 
-    int insertTitleUser(@Param("objects") List<CrTitleUser> objects);
+    int getTodayIndex();
+
+    int insertTitleUser(@Param("objects") List<CrTitleUser> objects, @Param("today_index") Integer todayIndex);
 
     int deleteTitleUser(@Param("title_ids") List<String> titleIds);
 

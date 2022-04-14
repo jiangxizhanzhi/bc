@@ -10,4 +10,9 @@ public class CrTitleUser extends BaseTable {
     private String titleId;
 
     private String userId;
+
+    /**
+     * 每日发放称号序号
+     */
+    private Integer idx;
 }

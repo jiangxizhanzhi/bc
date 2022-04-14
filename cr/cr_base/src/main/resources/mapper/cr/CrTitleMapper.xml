@@ -91,6 +91,9 @@
         select *
         from cr_title_user where user_id = #{user_id} and title_id = #{title_id} limit 1
     </select>
+    <select id="getTodayIndex" resultType="java.lang.Integer">
+        select IF(max(idx) is null, 0, max(idx)) from cr_title_user where date(create_time) = date(now())
+    </select>
     <insert id="insertScore">
         insert into cr_title_train_progress
         (business_template_id, room_id, user_id, score, skill_points_score, create_time, update_time)
@@ -102,10 +105,12 @@
     </insert>
     <insert id="insertTitleUser">
         insert into cr_title_user
-        (title_id, user_id, create_time, update_time)
+        (title_id, user_id, create_time, update_time, idx)
         values
-        <foreach collection="objects" item="object" separator=",">
-            (#{object.titleId}, #{object.userId}, now(), now())
+        <foreach collection="objects" item="object" separator="," index="index">
+            (
+             #{object.titleId}, #{object.userId}, now(), now(), #{today_index} + #{index} + 1
+            )
         </foreach>
     </insert>
 </mapper>

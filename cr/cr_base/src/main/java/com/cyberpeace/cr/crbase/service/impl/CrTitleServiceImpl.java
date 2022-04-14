@@ -10,6 +10,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.DateUtil;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -27,6 +28,7 @@ import com.cyberpeace.cr.crbase.service.CrTitleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.impl.bo.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -43,7 +45,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.sql.Date;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -277,6 +279,8 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         // 及格标准或关联训练更新, 重新生成称号
         if (isChanged) {
             this.getBaseMapper().deleteTitleUser(Collections.singletonList(crTitle.getResourceId()));
+            // 删除当前称号的证书文件
+            FileUtil.deleteDir(Paths.get(AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(), crTitle.getResourceId()).toFile());
             checkFinishTitle(
                     crTitleBusinessTemplateMapper.listByTitleId(
                             crTitle.getResourceId()
@@ -457,7 +461,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             });
         });
         if (!pendingSaveTitle.isEmpty()) {
-            this.getBaseMapper().insertTitleUser(pendingSaveTitle);
+            this.getBaseMapper().insertTitleUser(pendingSaveTitle, this.getBaseMapper().getTodayIndex());
         }
     }
 
@@ -497,32 +501,38 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     @Override
     public CrTitleCertBo getTitleCertInfo(String titleId) {
-        String userId = UserInfoContext.getUserContext().getUserId();
-        CrTitleUser crTitleUser = getBaseMapper().getUserTitle(userId, titleId);
+        CrTitleUser crTitleUser = getBaseMapper().getUserTitle(
+                UserInfoContext.getUserContext().getUserId(), titleId
+        );
         if (crTitleUser == null) {
-            throw new BusinessException();
+            return null;
         }
 
         CrTitle crTitle = titleGet(titleId);
+        if (crTitle == null) {
+            return null;
+        }
         CrTitleLevel crTitleLevel = levelGet(crTitle.getLevelId());
 
         CrTitleCertBo crTitleCertBo = new CrTitleCertBo();
 
         // 日期格式化
-        DateFormat dateFormat1 = new SimpleDateFormat("yyyy年MM月");
-        crTitleCertBo.setCreateTime(
-                DateUtil.StringToCnDateString(dateFormat1.format(crTitleUser.getCreateTime()))
-        );
-        DateFormat dateFormat2 = new SimpleDateFormat("yyyy年MM月dd日");
+        crTitleCertBo.setCreateTime(DateUtil.DateToCnDateString(crTitleUser.getCreateTime()));
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy年MM月dd日");
         crTitleCertBo.setValidityTime(
-                dateFormat2.format(DateUtils.addYears(crTitleUser.getCreateTime(), 3))
+                dateFormat1.format(DateUtils.addYears(crTitleUser.getCreateTime(), 3))
         );
-        DateFormat dateFormat3 = new SimpleDateFormat("yyyyMMdd");
-        // todo 编号待更新
-        crTitleCertBo.setCertNumber("CP" + dateFormat3.format(crTitleUser.getCreateTime()) + "001");
+        DateFormat dateFormat2 = new SimpleDateFormat("yyyyMMdd");
+
+        // 生成证书编号
+        String serialNumber = crTitleUser.getIdx().toString();
+        if (serialNumber.length() < 3) {
+            serialNumber = StringUtils.repeat("0", (3 - serialNumber.length())) + serialNumber;
+        }
+        crTitleCertBo.setCertNumber("CP" + dateFormat2.format(crTitleUser.getCreateTime()) + serialNumber);
 
         crTitleCertBo.setUserId(crTitleUser.getUserId());
-        crTitleCertBo.setUsername(remoteUserService.getById(userId).getName());
+        crTitleCertBo.setUsername(remoteUserService.getById(crTitleUser.getUserId()).getName());
         crTitleCertBo.setTitleId(crTitle.getResourceId());
         crTitleCertBo.setTitle(crTitle.getName());
         crTitleCertBo.setLevelId(crTitleLevel.getResourceId());

@@ -110,9 +110,10 @@ public class TitleController {
             log.error("failed to export pdf: {}", htmlPathString);
             throw e;
         } finally {
-            if (!FileUtil.deleteDir(directory)) {
-                log.error("failed to delete dir: {}", directory);
-            }
+            // todo 暂不删除
+//            if (!FileUtil.deleteDir(directory)) {
+//                log.error("failed to delete dir: {}", directory);
+//            }
         }
     }
 }

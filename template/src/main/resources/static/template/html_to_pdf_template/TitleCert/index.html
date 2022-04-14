@@ -40,6 +40,7 @@
       font-weight: 400;
     }
     .title{
+      display: inline-block;
       font-size: 36px;
       padding-bottom: 4px;
       padding: 0 25px 4px 25px;
@@ -85,8 +86,8 @@
   <div class="pdf-content">
     <div class="text-content">
     <div class="name text-font">${username}:</div>
-    <div class="first">已完成 <span class="title text-font">${title} ${level}</span>培训课程，通过考试，</div>
-    <div class="second">获得网络安全作训平台<span class="title text-font">${level}</span>资格认证，特此证明。</div>
+    <div class="first">已完成 <div class="title text-font">${title} ${level}</div>培训课程，通过考试，</div>
+    <div class="second">获得网络安全作训平台<div class="title text-font">${level}</div>资格认证，特此证明。</div>
     <div class="card-number">证书编号：${certNumber}</div>
     <div class="expire">有效期至：${validityTime}</div>
     <div class="date">${createTime}</div>

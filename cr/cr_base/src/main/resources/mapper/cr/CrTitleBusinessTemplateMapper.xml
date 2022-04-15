@@ -51,7 +51,7 @@
             T1.score as score,
             T2.business_template_id,
             max(T4.score) as user_score,
-            if(T4.score >= T1.score, TRUE, FALSE) as is_finish
+            if(max(T4.score) >= T1.score, TRUE, FALSE) as is_finish
         from cr_title T1
                  left join cr_title_business_template T2 on T1.resource_id = T2.title_id
                  left join cr_business_template T3 on T2.business_template_id = T3.resource_id

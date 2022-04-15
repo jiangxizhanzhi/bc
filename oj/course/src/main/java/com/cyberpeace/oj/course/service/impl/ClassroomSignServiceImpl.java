@@ -6,6 +6,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
@@ -56,19 +57,23 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		if (!classroom.getOrganizationIds().contains(authContext.getOrganization())) {
+		if (!authContext.getIsSuperAdmin() && !classroom.getCreateUserId().equals(authContext.getUserId())
+				&& !classroom.getOrganizationIds().contains(authContext.getOrganization())) {
 			log.error("Current user is not permission! user_org_id=[{}]",
 					authContext.getOrganization());
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
-		ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
-				.classroomId(classroomId).resourceId(IDGeneratorUtil.getID()).signInTime(new Date())
-				.userId(authContext.getUserId()).build();
-		try {
-			classroomSignMapper.insert(sign);
-		} catch (DuplicateKeyException e) {
-			return true;
+		// 仅存储该课堂组织下的用户签到信息
+		if (classroom.getOrganizationIds().contains(authContext.getOrganization())) {
+			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
+					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID()).signInTime(new Date())
+					.userId(authContext.getUserId()).build();
+			try {
+				return classroomSignMapper.insert(sign) > 0;
+			} catch (DuplicateKeyException e) {
+				return true;
+			}
 		}
 
 		return true;

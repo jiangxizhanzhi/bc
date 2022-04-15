@@ -37,8 +37,8 @@ public interface OjBusinessErrorCode {
 	/** 结束时间必须大于开始时间*/
 	String END_GT_START_TIME = "102010";
 
-	/** 课程表时间范围为上午八点-晚上21点*/
-	String CLASSROOM_TIME_RANGE_ERROR = "102011";
+	/** 习题集下存在习题*/
+	String SET_UNDER_EXIST_PRACTICE = "102011";
 
 	/** 选择组织下无用户*/
 	String ORGANIZATION_IS_NO_USERS = "102012";
@@ -95,4 +95,17 @@ public interface OjBusinessErrorCode {
 
 	/** 场景启动成功xxx个，失败xxx个*/
 	String ROOM_SCENE_BATCH_FAILED = "102030";
+
+	/** 课程信息不能为空*/
+	String COURSE_INFORMATION_NOT_NULL = "102031";
+
+	/** 课时信息不能为空*/
+	String LESSON_INFORMATION_NOT_NULL = "102032";
+
+	/** 组织信息不能为空*/
+	String ORG_INFORMATION_NOT_NULL = "102033";
+
+	/** 对应的习题文件未找到*/
+	String PRACTICE_OPERATION_FILE_NOT_FOUNT = "102034";
+
 }

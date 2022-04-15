@@ -12,12 +12,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.mp.MpHostState;
+import com.cyberpeace.integratation.model.scene.ElementCommonContext;
 import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.req.SituationConfigFilterReq;
+import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
 import com.cyberpeace.situation.model.CategorieMap;
@@ -188,6 +191,11 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		Map<Integer, String> role = Maps.newHashMap();
 		for (DeviceRole deviceRole : roles) {
 			role.put(deviceRole.getId(), deviceRole.getName());
+			if (deviceRole.getChild() != null) {
+				for (DeviceRole childDeviceRole : deviceRole.getChild()) {
+					role.put(childDeviceRole.getId(), deviceRole.getName());
+				}
+			}
 		}
 
 		// 构造返回数据
@@ -224,6 +232,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		FlowLogsPageContext flowLogsPageContext = BeanUtils.copy(flowLogReq,
 				FlowLogsPageContext.class);
 		flowLogsPageContext.setId(flowLogReq.getSceneId());
+		flowLogsPageContext.setPerPage(10);
 
 		// 请求中台数据
 		JSONObject jsonObject = remoteSceneService.getFlowLogs(flowLogsPageContext);
@@ -231,5 +240,23 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 				.toJsonObjectArray(jsonObject.getJSONArray("list").toString(), JSONObject.class);
 
 		return flowLogs;
+	}
+
+	@Override
+	public ElementStateRes getElementState(String sceneId, String elementId) {
+		ElementCommonContext elementCommonContext = new ElementCommonContext();
+		elementCommonContext.setElementIds(elementId);
+		elementCommonContext.setSceneId(sceneId);
+
+		ElementStateRes elementStateRes = new ElementStateRes();
+		List<MpHostState> mpHostStates = remoteSceneService.getHostState(elementCommonContext);
+		if (mpHostStates.size() == 1) {
+			elementStateRes.setHostState(mpHostStates.get(0));
+		}
+		elementStateRes.setEventAggr(remoteSceneService.getEventAggr(elementCommonContext));
+		elementStateRes.setFlowTrend(remoteSceneService.getFlowTrend(elementCommonContext));
+		elementStateRes.setRiskCount(remoteSceneService.getRiskCount(elementCommonContext));
+
+		return elementStateRes;
 	}
 }

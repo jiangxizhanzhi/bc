@@ -3,11 +3,13 @@ package com.cyberpeace.oj.practice.service.bo;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class PracticeOperationDumpLoadBo extends PracticeDumpLoadBo {
 
 	/** 附件地址*/
-	private String attachmentPath;
+	private List<String> attachmentPath;
 
 	/** 题解*/
 	private String writeup;
@@ -22,7 +24,7 @@ public class PracticeOperationDumpLoadBo extends PracticeDumpLoadBo {
 	private Integer sceneShareMode;
 
 	/** 是否使用动态FLAG (拥有场景时使用)*/
-	private Boolean dynamicFlag;
+	private Integer dynamicFlag;
 
 	/** 场景存活时间 单位/h (拥有场景时使用)*/
 	private Integer destroyDelay;

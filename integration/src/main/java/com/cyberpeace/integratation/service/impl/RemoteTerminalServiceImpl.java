@@ -2,10 +2,10 @@ package com.cyberpeace.integratation.service.impl;
 
 import javax.annotation.PostConstruct;
 
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
@@ -45,7 +45,8 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 
 	@Override
 	public JSONObject getAllCategorie() {
-		String targetUrl = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.categorie");
+		String targetUrl = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("device.categorie") + "?isAll=true";
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 }

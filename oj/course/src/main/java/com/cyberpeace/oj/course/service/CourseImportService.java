@@ -24,7 +24,8 @@ public interface CourseImportService {
 	 * @param envReqs
 	 * @return
 	 */
-	List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs);
+	List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
+			Map<String, String> lessonPathMap);
 
 	/**
 	 * 组装课时路径信息

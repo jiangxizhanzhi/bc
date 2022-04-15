@@ -18,7 +18,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -165,7 +164,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		if (sceneData != null) {
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
 			ret.setSceneData(sceneData);
-			ret.setLocalSceneId(ret.getLocalSceneId());
+			ret.setLocalSceneId(room.getLocalSceneId());
 			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
 			return ret;
 		}
@@ -186,6 +185,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 		RbRoom room = rbRoomService.getById(roomId);
 
+		// 训练已暂停，不能删除场景
+		if (room.isPaused()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAINING_PAUSED);
+		}
 		// 2、如果场景已经停止，返回成功
 		if (StringUtils.isBlank(room.getLocalSceneId())) {
 			return true;

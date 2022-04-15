@@ -28,7 +28,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 				.collect(Collectors.toList());
 		JSONArray elements = topoData.getJSONObject("topology").getJSONArray("elements");
 		// topo 为空
-		if(elements.isEmpty()){
+		if (elements.isEmpty()) {
 			return;
 		}
 		JSONObject elementPorts = topoData.getJSONObject("plugins").getJSONObject("cpcloud")

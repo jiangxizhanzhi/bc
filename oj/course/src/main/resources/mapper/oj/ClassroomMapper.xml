@@ -19,9 +19,9 @@
         <where>
             <if test="listQuery != null">
                 <if test="listQuery.startTime != null and listQuery.endTime != null">
-                    ((start_time &gt;= #{listQuery.startTime} and end_time &lt;= #{listQuery.endTime})
-                    or (start_time &lt; #{listQuery.endTime} and end_time &lt; #{listQuery.endTime})
-                    or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
+                    ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                    or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                    or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
                 </if>
                 <if test="listQuery.userId != null and listQuery.userId != ''">
                     and create_user_id = #{listQuery.userId}
@@ -47,16 +47,16 @@
             </if>
             <if test="listQuery != null">
                 <if test="listQuery.startTime != null and listQuery.endTime != null">
-                    and ((start_time &gt;= #{listQuery.startTime} and end_time &lt;= #{listQuery.endTime})
-                    or (start_time &lt; #{listQuery.endTime} and end_time &lt; #{listQuery.endTime})
-                    or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
-                </if>
-                <if test="listQuery.userId != null and listQuery.userId != ''">
-                    and create_user_id = #{listQuery.userId}
+                    and ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                    or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                    or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
                 </if>
                 <if test="listQuery.orgId != null and listQuery.orgId != ''">
                     <bind name="likeOrg" value="'%' + listQuery.orgId + '%'"/>
-                    or (organization_ids like #{likeOrg}
+                    and organization_ids like #{likeOrg}
+                </if>
+                <if test="listQuery.userId != null and listQuery.userId != ''">
+                    or (create_user_id = #{listQuery.userId}
                     <if test="courseIds != null and courseIds.size() != 0">
                         and course_id in
                         <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
@@ -64,12 +64,11 @@
                         </foreach>
                     </if>
                     <if test="listQuery.startTime != null and listQuery.endTime != null">
-                        and ((start_time &gt;= #{listQuery.startTime} and end_time &lt;= #{listQuery.endTime})
-                        or (start_time &lt; #{listQuery.endTime} and end_time &lt; #{listQuery.endTime})
-                        or (end_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.startTime}))
+                        and ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                        or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                        or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
                     </if>
-                    and 1=1)
-
+                    )
                 </if>
             </if>
         </where>

@@ -1,5 +1,7 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
@@ -10,6 +12,39 @@ public class MathUtils {
 
 	// 默认除法运算精度
 	private static final Integer DEF_DIV_SCALE = 2;
+
+	private static char[] codes = { '0','1','2','3','4','5','6','7','8','9',
+			'A','B','C','D','E','F','G','H','I','J',
+			'K','L','M','N','O','P','Q','R','S','T',
+			'U','V','W','X','Y','Z'};
+
+	/**
+	 * 返回随机字符串，同时包含数字、大写字母
+	 * @param len 字符串长度
+	 * @return String 随机字符串
+	 */
+	public static String randomStr(int len){
+		if(len == CommonConstant.ZERO){
+			return "";
+		}
+		//数组，用于存放随机字符
+		char[] chArr = new char[len];
+		Random random = new Random();
+
+		for(int i = 0; i < len; i++){
+			chArr[i] = codes[random.nextInt(codes.length)];
+		}
+
+		//将数组chArr随机排序
+		for(int i = 0; i < len; i++){
+			int r = i + random.nextInt(len - i);
+			char temp = chArr[i];
+			chArr[i] = chArr[r];
+			chArr[r] = temp;
+		}
+
+		return new String(chArr);
+	}
 
 	/**
 	 * 提供精确的加法运算。

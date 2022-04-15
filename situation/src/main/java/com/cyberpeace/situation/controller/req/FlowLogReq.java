@@ -19,4 +19,7 @@ public class FlowLogReq implements Serializable {
 
 	@ApiModelProperty("结束时间")
 	private String endTime;
+
+	@ApiModelProperty("时间间隔（秒）")
+	private Integer interval;
 }

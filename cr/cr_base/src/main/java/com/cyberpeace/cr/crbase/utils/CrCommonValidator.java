@@ -15,6 +15,13 @@ public class CrCommonValidator {
 	 */
 	public static void validateLength(String target, Integer minLen, Integer maxLen,
 			String errorCode) {
+		if (target == null) {
+			if (minLen == 0) {
+				return;
+			} else {
+				throw new BusinessException(errorCode, minLen, maxLen);
+			}
+		}
 		try {
 			String targetStr = new String(target.getBytes("GBK"), "iso-8859-1");
 			int len = targetStr.length();

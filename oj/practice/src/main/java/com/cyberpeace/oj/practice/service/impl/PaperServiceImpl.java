@@ -163,6 +163,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		} else {
 			// 仅查询公开习题
 			OperationListQuery listQuery = BeanUtils.copy(queryBo, OperationListQuery.class);
+			if (StringUtils.isNotBlank(queryBo.getPracticeSetId())) {
+				listQuery.setPracticeSetIds(Lists.newArrayList(queryBo.getPracticeSetId()));
+			}
 			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
 					true);
 
@@ -226,6 +229,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			// 执行数据查询
 			TheoryListQuery theoryListQuery = BeanUtils.copy(practiceQuery, TheoryListQuery.class);
 			theoryListQuery.setResourceIds(practiceIds);
+			theoryListQuery.setPracticeSetIds(Lists.newArrayList(practiceQuery.getPracticeSetId()));
 			List<PracticeTheory> theories = practiceTheoryMapper.randomChoice(theoryListQuery,
 					practiceQuery.getCount());
 
@@ -273,6 +277,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	private IPage<LibPracticeListBo> theoryConvert(LibPracticeQueryBo queryBo, Page page) {
 
 		TheoryListQuery theoryListQuery = BeanUtils.copy(queryBo, TheoryListQuery.class);
+		if (StringUtils.isNotBlank(queryBo.getPracticeSetId())) {
+			theoryListQuery.setPracticeSetIds(Lists.newArrayList(queryBo.getPracticeSetId()));
+		}
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery, true);
 
 		IPage<LibPracticeListBo> convert = iPage

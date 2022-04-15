@@ -5,7 +5,6 @@ import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.xml.soap.Node;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,11 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.mp.MpEventAggr;
+import com.cyberpeace.integratation.model.mp.MpFlowTrend;
+import com.cyberpeace.integratation.model.mp.MpHostState;
+import com.cyberpeace.integratation.model.mp.MpRiskCount;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
@@ -56,6 +60,14 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String FLOW_LOG_URL;
 
+	private String HOST_STATE_URL;
+
+	private String FLOW_TREND_URL;
+
+	private String EVENT_AGGR_URL;
+
+	private String RISK_COUNT_URL;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost()
@@ -91,6 +103,18 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				+ ConfigUtil.getContextProperty("scene.node.session");
 
 		FLOW_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.log");
+
+		HOST_STATE_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.host.state");
+
+		FLOW_TREND_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.flow.trend");
+
+		EVENT_AGGR_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.event.aggr");
+
+		RISK_COUNT_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.risk.count");
 
 	}
 
@@ -218,5 +242,31 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONObject getFlowLogs(FlowLogsPageContext flowLogsPageContext) {
 		return HttpClientUtil.rawGetByParam(flowLogsPageContext, FLOW_LOG_URL, JSONObject.class);
+	}
+
+	@Override
+	public List<MpHostState> getHostState(ElementCommonContext elementCommonContext) {
+		String mpHostStates = HttpClientUtil.rawGetByParam(elementCommonContext, HOST_STATE_URL,
+				String.class);
+		return JsonUtil.toJsonObjectArray(mpHostStates, MpHostState.class);
+	}
+
+	@Override
+	public List<MpFlowTrend> getFlowTrend(ElementCommonContext elementCommonContext) {
+		String flowTrends = HttpClientUtil.rawGetByParam(elementCommonContext, FLOW_TREND_URL,
+				String.class);
+		return JsonUtil.toJsonObjectArray(flowTrends, MpFlowTrend.class);
+	}
+
+	@Override
+	public MpEventAggr getEventAggr(ElementCommonContext elementCommonContext) {
+		return HttpClientUtil.rawGetByParam(elementCommonContext, EVENT_AGGR_URL,
+				MpEventAggr.class);
+	}
+
+	@Override
+	public MpRiskCount getRiskCount(ElementCommonContext elementCommonContext) {
+		return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL,
+				MpRiskCount.class);
 	}
 }

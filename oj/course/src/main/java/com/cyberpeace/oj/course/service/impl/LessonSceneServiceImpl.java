@@ -39,6 +39,7 @@ import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.google.common.collect.Lists;
 
@@ -80,6 +81,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
 
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
@@ -145,7 +149,10 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 				courseLesson.getSceneShareMode(), authContext);
-		return ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		pushMessageHandler.pushLessonMessage(pushMessageHandler.getDeleteMessage(), ojLocalScene);
+
+		return CommonConstant.TRUE;
 	}
 
 	@Override

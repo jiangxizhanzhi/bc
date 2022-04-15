@@ -25,8 +25,11 @@
                         #{resourceId}
                     </foreach>
                 </if>
-                <if test="listQuery.practiceSetId != null and listQuery.practiceSetId != ''">
-                    and practice_set_id = #{listQuery.practiceSetId}
+                <if test="listQuery.practiceSetIds != null and listQuery.practiceSetIds.size() != 0">
+                    and practice_set_id in
+                    <foreach collection="listQuery.practiceSetIds" open="(" close=")" separator="," item="setId">
+                        #{setId}
+                    </foreach>
                 </if>
                 <if test="listQuery.difficulty != null">
                     and difficulty = #{listQuery.difficulty}
@@ -79,8 +82,11 @@
                     #{resourceId}
                 </foreach>
             </if>
-            <if test="query.practiceSetId != null and query.practiceSetId != '' != null">
-                and practice_set_id = #{query.practiceSetId}
+            <if test="query.practiceSetIds != null and query.practiceSetIds.size() != 0">
+                and practice_set_id in
+                <foreach collection="query.practiceSetIds" open="(" close=")" separator="," item="setId">
+                    #{setId}
+                </foreach>
             </if>
             <if test="query.difficulty != null">
                 and difficulty = #{query.difficulty}

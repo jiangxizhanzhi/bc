@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.course.service.bo;
+package com.cyberpeace.oj.ojbase.service.bo;
 
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import lombok.AllArgsConstructor;
@@ -10,14 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LessonPracticeWsMessageIdentifier extends WsMessageIdentifier {
+public class LessonWsMessageIdentifier extends WsMessageIdentifier {
 
 	private String lessonId;
 
-	private String practiceId;
+	private Boolean shared;
 
 	private Boolean fromWeb;
-
-	private Integer shared;
 
 }

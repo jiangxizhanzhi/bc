@@ -247,10 +247,8 @@ public interface CrBusinessErrorCode {
 	/** 非法的任务描述长度 */
 	String ILLEGAL_MISSION_DESC_LEN = "101079";
 
-	/**
-	 * 称号关联训练为空
-	 */
-	String TITLE_TRAIN_IS_NULL = "101080";
+	/** 训练已暂停，不能删除场景 */
+	String TRAINING_PAUSED = "101080";
 
 	/**
 	 * 称号关联训练无效
@@ -281,4 +279,9 @@ public interface CrBusinessErrorCode {
 	 * 称号未拥有
 	 */
 	String TITLE_NOT_OWNED = "101086";
+
+	/**
+	 * 称号关联训练为空
+	 */
+	String TITLE_TRAIN_IS_NULL = "101087";
 }

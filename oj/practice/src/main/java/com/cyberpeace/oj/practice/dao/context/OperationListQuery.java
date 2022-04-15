@@ -10,7 +10,7 @@ public class OperationListQuery implements Serializable {
 
 	private List<String> resourceIds;
 
-	private String practiceSetId;
+	private List<String> practiceSetIds;
 
 	private List<String> categoryIds;
 

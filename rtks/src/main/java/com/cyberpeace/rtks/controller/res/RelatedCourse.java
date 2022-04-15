@@ -20,8 +20,11 @@ public class RelatedCourse implements Serializable {
 	@ApiModelProperty("课程简介")
 	private String description;
 
-	@ApiModelProperty("课程方向")
+	@ApiModelProperty("之前使用的课程方向")
 	private String direction;
+
+	@ApiModelProperty("课程方向")
+	private String categoryId;
 
 	@ApiModelProperty("课程海报")
 	private String logo;

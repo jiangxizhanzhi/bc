@@ -71,7 +71,6 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		PracticeTheory practiceTheory = BeanUtils.copy(theoryAddReq, PracticeTheory.class);
 		practiceTheory.setTitle(theoryAddReq.getContent());
-		practiceTheory.setDifficulty(Difficulty.PRIMARY.getCode());
 
 		practiceTheory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

@@ -16,4 +16,6 @@ public class TheoryListQueryBo implements Serializable {
 
     private Boolean solved;
 
+    private Integer difficulty;
+
 }

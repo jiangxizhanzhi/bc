@@ -48,7 +48,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.GroupWsMessageIdentifier;
-import com.cyberpeace.oj.course.service.bo.LessonWsMessageIdentifier;
+import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.course.service.bo.SimpleUserData;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;

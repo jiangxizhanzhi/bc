@@ -2,22 +2,27 @@ package com.cyberpeace.gateway.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -43,6 +48,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "外部接口-实操习题相关api")
+@Slf4j
 @RestController
 @RequestMapping("/gateway/exercise")
 public class ExternalOperationController {
@@ -62,6 +68,12 @@ public class ExternalOperationController {
 	@Autowired
 	private UtilService utilService;
 
+	@Autowired
+	private PracticeSetService practiceSetService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
+
 	/**
 	 * 接口认证(key获取方式后续可能调整)
 	 * @param key headers: OPT-OJ-KEY
@@ -72,15 +84,42 @@ public class ExternalOperationController {
 		}
 	}
 
+	/**
+	 * 校验用户
+	 * @param userId
+	 */
+	private UserInfo validateUser(String userId) {
+		UserInfo userInfo = remoteUserService.getById(userId);
+		if (null == userInfo) {
+			log.error("User does not exist！user_id=[{}]", userInfo.getUserId());
+			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+		}
+
+		return userInfo;
+	}
+
 	@ApiOperation("习题集查询")
 	@GetMapping("/practice-set/list")
-	public BaseRsp practiceSetList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key) {
+	public BaseRsp practiceSetList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
+			@RequestParam("userId") String userId) {
 
 		allowAccess(key);
+		UserInfo userInfo = validateUser(userId);
+
+		List<String> practiceSetIds = practiceSetMapper
+				.selectByAuthContext(AuthContextUtils.constructAuth(userInfo, false));
+		if (CollectionUtils.isEmpty(practiceSetIds)) {
+			return new BaseRsp(Lists.newArrayList());
+		}
+
+		// 数据查询
 		List<PracticeSet> practiceSets = practiceSetMapper
 				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), false);
-		List<ExternalPracticeSetBo> practiceSetBos = BeanUtils.deepCopyList(practiceSets,
-				ExternalPracticeSetBo.class);
+		List<ExternalPracticeSetBo> practiceSetBos = practiceSets.stream()
+				.filter(practiceSet -> practiceSetIds.contains(practiceSet.getResourceId()))
+				.map(practiceSet -> BeanUtils.copy(practiceSet, ExternalPracticeSetBo.class))
+				.collect(Collectors.toList());
+
 		return new BaseRsp(practiceSetBos);
 	}
 
@@ -129,8 +168,8 @@ public class ExternalOperationController {
 		}
 
 		if (StringUtils.hasText(operation.getAttachmentId())) {
-			if (operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
-					.getCode().intValue()) {
+			if (null != operation.getDynamicFlag() && operation.getDynamicFlag()
+					.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode().intValue()) {
 				List<String> fileIds = Arrays
 						.asList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
 				if (!CollectionUtils.isEmpty(fileIds)) {
@@ -167,17 +206,26 @@ public class ExternalOperationController {
 			OperationPageReq req) {
 
 		allowAccess(key);
+		UserInfo userInfo = validateUser(req.getUserId());
 		Page page = req.toPageParam();
+
 		// 条件组装
 		OperationListQuery listQuery = BeanUtils.copy(req, OperationListQuery.class);
-		listQuery.setPracticeSetId(req.getPracticeSet());
+		List<String> setIds = practiceSetService.getSetIds(AuthContextUtils.constructAuth(userInfo, false), req.getPracticeSet());
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new BaseRsp(PageUtil.getNullResult());
+		}
+		listQuery.setPracticeSetIds(setIds);
+		List<String> practiceIds = practiceOperationMapper.selectBySetIds(setIds, true);
+		listQuery.setResourceIds(practiceIds);
+
 		if (StringUtils.hasText(req.getCategory())) {
 			listQuery.setCategoryIds(Lists.newArrayList(req.getCategory()));
 		}
 
 		// 条件查询
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
-				false);
+				true);
 		IPage<ExternalOperationBo> convert = iPage
 				.convert(practiceOperation -> entityToExternal(practiceOperation));
 		return new BaseRsp(PageUtil.getListResult(convert));

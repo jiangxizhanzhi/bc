@@ -1,7 +1,11 @@
 package com.cyberpeace.situation.service.impl;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+import com.cyberpeace.common.util.TimeUtil;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.DAYS)
+			.build();
 
 	@Override
 	public SituationTopo getSituationTopo(SceneData sceneData) {
@@ -428,7 +435,23 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		List<JSONObject> arrayObjects = Lists.newArrayList();
 
+		Date lastTime = lastTimeCache.getIfPresent(sceneId);
+
 		for (JSONObject flowLog : flowLogs) {
+
+			Date time = TimeUtil.toDate1(flowLog.getString("time"));
+
+			// 如果时间小于缓存值，跳过不处理
+			if (lastTime != null && (lastTime.after(time) || lastTime.equals(time))){
+				continue;
+			}
+
+			// 当缓存值为空或此日志时间大于缓存值时，更新缓存值
+			Date currentLastTime = lastTimeCache.getIfPresent(sceneId);
+			if (currentLastTime == null || currentLastTime.before(time)) {
+				lastTimeCache.put(sceneId, time);
+			}
+
 			WsMultiElementDynamic attackEvent = new WsMultiElementDynamic();
 
 			// 设置基础信息
@@ -442,7 +465,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			AttackType attackType = AttackType.getEnumByEnDesc(enDesc, AttackType.class);
 			attackEvent.setType(attackType.getActionType().getCode());
 
-			attackEvent.setName(enDesc);
+			// attackEvent.setName(enDesc);
 			attackEvent.setSourceId(flowLog.getString("source_node_id"));
 			attackEvent.setTargetId(flowLog.getString("target_node_id"));
 
@@ -503,7 +526,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		wsEvent.setCategory("attack");
 
 		wsEvent.setType(actionType.getCode());
-		wsEvent.setName(actionType.getDesc());
+		// wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
 		wsEvent.setLineStyle(new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));

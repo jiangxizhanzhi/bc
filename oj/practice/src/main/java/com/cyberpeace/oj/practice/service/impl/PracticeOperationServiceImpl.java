@@ -1,20 +1,16 @@
 package com.cyberpeace.oj.practice.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.dao.mapper.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.expression.Operation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -30,7 +26,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -58,10 +53,13 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
+import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
@@ -70,6 +68,9 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author chenz
+ */
 @Service
 @Slf4j
 public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationMapper, PracticeOperation> implements PracticeOperationService {
@@ -139,6 +140,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
 
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
+
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			JSONObject ojSceneConfig, AuthContext authContext) {
@@ -153,7 +157,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.getCode().intValue()) {
 			practiceValidateHandler.validateFlagLength(practiceOperation.getAnswer());
 		}
-		
 
 		// 数据设置
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
@@ -240,7 +243,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 数据校验
 		PracticeOperation operation = practiceValidateHandler
 				.validateOperationExist(updateOperation.getResourceId());
-		if (updateOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC.getCode().intValue()) {
+		if (updateOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC
+				.getCode().intValue()) {
 			practiceValidateHandler.validateFlagLength(updateOperation.getAnswer());
 		}
 		practiceValidateHandler.validateOperationUpdateTitleExist(operation,
@@ -460,6 +464,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 根据习题集过滤习题编号
 		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+			authIds.clear();
+			authIds.add(listQuery.getPracticeSetId());
+		}
+
 		List<String> operationIds = practiceOperationMapper.selectBySetIds(authIds,
 				authContext.getIsWeb());
 		if (CollectionUtils.isEmpty(operationIds)) {
@@ -648,7 +657,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
 				operation.getResourceId(), operation.getSceneShareMode(), authContext);
 
-		return ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
+		pushMessageHandler.pushOperationMessage(pushMessageHandler.getDeleteMessage(),
+				ojLocalScene);
+
+		return CommonConstant.TRUE;
 	}
 
 	@Override
@@ -735,7 +748,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		if (CollectionUtils.isNotEmpty(localSceneIds)) {
 			List<LocalScene> localScenes = localSceneMapper.selectBatchIds(localSceneIds);
-			localScenes.forEach(localScene -> localSceneService.deleteRemoteScene(localScene));
+			for (LocalScene localScene : localScenes) {
+				try {
+					localSceneService.deleteRemoteScene(localScene);
+				} catch (Exception e) {
+					log.warn("Scene delete failed! local_scene_id=[{}]",
+							localScene.getResourceId());
+					continue;
+				}
+			}
 		}
 
 		String practiceId = practiceIds.get(CommonConstant.ZERO);
@@ -814,22 +835,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		dumpLoadBo.setCategoryName(category.getName());
 
 		// 附件
-		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
-			Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
-			if (null != attachment) {
-				dumpLoadBo.setAttachmentPath(attachment.getFilePath());
-				// 重命名文件防止重复
-				String realPath = utilService.getRealPath(attachment.getFilePath());
-				String fileName = FileUtil.getFileName(realPath, true);
-				String destFilePath = fileStorePath + File.separatorChar
-						+ FileUtil.getNewName(fileName);
-				FileUtil.copyFile(realPath, destFilePath, false);
-
-				String relativePath = destFilePath.replace(fileStorePath,
-						CommonConstant.EMPTY_STRING);
-				filePathMap.put(attachment.getFilePath(), relativePath);
-			}
-		}
+		List<String> filePathList = dumpOperationFilePathList(operation, fileStorePath,
+				filePathMap);
+		dumpLoadBo.setAttachmentPath(filePathList);
 
 		// 场景
 		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
@@ -861,6 +869,74 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return dumpLoadBo;
 	}
 
+	/**
+	 * 导出附件列表 按顺序排序
+	 * @param operation
+	 * @param filePathMap
+	 * @return
+	 */
+	private List<String> dumpOperationFilePathList(PracticeOperation operation,
+			String fileStorePath, Map<String, String> filePathMap) {
+		if (StringUtils.isBlank(operation.getAttachmentId())) {
+			return Lists.newArrayList();
+		}
+
+		List<String> attachmentIdList = Arrays
+				.asList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
+		return StreamApiUtils.map(attachmentIdList, attachmentId -> {
+			Attachment attachment = attachmentMapper.selectById(attachmentId);
+			if (null == attachment) {
+				log.error(
+						"operation practice file not found！operation_practice_id={} title=[{}], attachment_id={}",
+						operation.getResourceId(), operation.getTitle(), attachmentId);
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_OPERATION_FILE_NOT_FOUNT);
+			}
+
+			// 重命名文件防止重复
+			String realPath = utilService.getRealPath(attachment.getFilePath());
+			String fileName = FileUtil.getFileName(realPath, true);
+			String destFilePath = fileStorePath + File.separatorChar
+					+ FileUtil.getNewName(fileName);
+			FileUtil.copyFile(realPath, destFilePath, false);
+
+			String relativePath = destFilePath.replace(fileStorePath, CommonConstant.EMPTY_STRING);
+			filePathMap.put(attachment.getFilePath(), relativePath);
+			return attachment.getFilePath();
+		});
+	}
+
+	/**
+	 * 加载附件列表
+	 * @param filePathList
+	 * @param filePathMap
+	 * @param filePath
+	 * @return
+	 */
+	public String loadOperationPathList(List<String> filePathList, Map<String, String> filePathMap,
+			String filePath) {
+
+		if (CollectionUtils.isEmpty(filePathList)) {
+			return CommonConstant.EMPTY_STRING;
+		}
+
+		List<String> fileIds = StreamApiUtils.map(filePathList, file -> {
+			String relativePath = filePathMap.get(file);
+			String attachmentPath = filePath + File.separatorChar + relativePath;
+
+			String fileSuffix = FileUtil.getFileSuffix(attachmentPath);
+			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+			String destFilePath = AttachmentPath.PRACTICE_ATTACHMENT.getDesc() + fileName;
+			FileUtil.copyFile(attachmentPath, destFilePath, false);
+			String fileUrl = utilService.replaceFileUrl(destFilePath);
+
+			AttachmentBo attachmentBo = attachmentService.create(fileName, fileUrl);
+			return attachmentBo.getResourceId();
+		});
+
+		return String.join(CommonConstant.CODE_COMMA, fileIds);
+
+	}
+
 	@Override
 	public PracticeOperation loadPracticeOperation(String practiceSetId,
 			PracticeOperationDumpLoadBo dumpBo, Map<String, String> filePathMap, String filePath,
@@ -887,19 +963,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operation.setCategoryId(categoryId);
 
 		// 附件
-		if (StringUtils.isNotBlank(dumpLoadBo.getAttachmentPath())) {
-			String relativePath = filePathMap.get(dumpLoadBo.getAttachmentPath());
-			String attachmentPath = filePath + File.separatorChar + relativePath;
+		String attachmentIds = loadOperationPathList(dumpLoadBo.getAttachmentPath(), filePathMap,
+				filePath);
+		operation.setAttachmentId(attachmentIds);
 
-			String fileSuffix = FileUtil.getFileSuffix(attachmentPath);
-			String fileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
-			String destFilePath = AttachmentPath.PRACTICE_ATTACHMENT.getDesc() + fileName;
-			FileUtil.copyFile(attachmentPath, destFilePath, false);
-			String fileUrl = utilService.replaceFileUrl(destFilePath);
-
-			AttachmentBo attachmentBo = attachmentService.create(fileName, fileUrl);
-			operation.setAttachmentId(attachmentBo.getResourceId());
-		}
 		// 场景
 		if (dumpLoadBo.getDynamicEnv()) {
 			String topoId = localSceneService.saveTopo(dumpLoadBo.getTopoConfig(),
@@ -948,9 +1015,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			String topoId) {
 
 		PracticeOperation operation = new PracticeOperation();
-
 		// 分类数据处理
 		String categoryName = (String) operationData.remove("category_id");
+		if (StringUtils.isBlank(categoryName = categoryName.trim())) {
+			log.error("Practice category is empty! operation_data=[{}]",
+					JsonUtil.toJsonString(operationData));
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);
+		}
 		String categoryId = practiceCategoryMapper
 				.selectByName(PracticeCategory.PracticeType.OPERATION.getCode(), categoryName);
 		if (StringUtils.isBlank(categoryId)) {
@@ -969,18 +1040,20 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 知识点数据处理
 		String knowledgeStr = (String) operationData.remove("knowledge");
-		String[] knowledgeArray = knowledgeStr.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
-		// 经过剪切 第一个为空字符 删掉
-		if (knowledgeArray.length > CommonConstant.ZERO) {
-			String[] knowledges = Arrays.copyOfRange(knowledgeArray, CommonConstant.ONE,
-					knowledgeArray.length);
-			operation.setKnowledge(JsonUtil.toJsonString(knowledges));
-		}
+		operation.setKnowledge(handlerMultiContent(knowledgeStr));
 
 		// 场景flag相关操作
 		String flag = (String) operationData.remove("answer");
-		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
+		operation.setAnswer(handlerMultiContent(flag));
 
+		// 场景flag类型
+		operation.setDynamicFlag(
+				StringUtils.isBlank(flag) ? PracticeOperation.DynamicFlag.DYNAMIC.getCode()
+						: PracticeOperation.DynamicFlag.STATIC.getCode());
+		// 设置场景共享类型默认值
+		operation.setSceneShareMode(SceneShare.PRIVATE.getCode());
+
+		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
 		if (StringUtils.isNotBlank(topoId)) {
 			operation.setTopoId(topoId);
 			String sceneShareMode = (String) operationData.remove("scene_share_mode");
@@ -988,14 +1061,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					sceneShareMode.equals(CommonConstant.RIGHT) ? SceneShare.SHARED.getCode()
 							: SceneShare.PRIVATE.getCode());
 			operation.setDestroyDelay(CommonConstant.TWO);
-
-			// 场景flag类型
-			if (StringUtils.isBlank(flag)) {
-				operation.setDynamicFlag(PracticeOperation.DynamicFlag.DYNAMIC.getCode());
-			} else {
-				operation.setDynamicFlag(PracticeOperation.DynamicFlag.STATIC.getCode());
-				operation.setAnswer(flag);
-			}
 		}
 
 		// 难度处理
@@ -1003,7 +1068,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		Integer difficulty = EnumUtils.getEnumCodeByDesc(difficultyStr, Difficulty.class);
 		operation.setDifficulty(difficulty);
 
-		operation.setScore(CommonConstant.ZERO.doubleValue());
+		operation.setScore(CommonConstant.HUNDRED.doubleValue());
 		operation.setResourceId(IDGeneratorUtil.getID());
 		operation.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
 		operation.setBuiltin(CommonConstant.TRUE);
@@ -1016,6 +1081,23 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		return operation;
 
+	}
+
+	private String handlerMultiContent(String filedContent) {
+
+		if (StringUtils.isBlank(filedContent)) {
+			return JsonUtil.arrayToString(Lists.newArrayList());
+		}
+
+		String[] multiContent = filedContent.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
+		// 经过剪切 第一个为空字符 删掉
+		if (multiContent.length > CommonConstant.ZERO) {
+			String[] knowledges = Arrays.copyOfRange(multiContent, CommonConstant.ONE,
+					multiContent.length);
+			return JsonUtil.toJsonString(knowledges);
+		}
+
+		return null;
 	}
 
 	/**
@@ -1107,11 +1189,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
+		sceneMeta.setTopoData(topoData);
 
 		// 动态环境flag设置
-		if (StringUtils.isNotBlank(operation.getTopoId())) {
-			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene.getFlags(),
-					topoData);
+		if (null != operation.getDynamicFlag() && operation.getDynamicFlag()
+				.intValue() == PracticeOperation.DynamicFlag.DYNAMIC.getCode()) {
+			JSONObject dynamicFlag = ojLocalSceneService.setDynamicFlag(ojLocalScene, topoData);
 			sceneMeta.setTopoData(dynamicFlag);
 		}
 		localScene.setMeta(JsonUtil.toJsonString(sceneMeta));

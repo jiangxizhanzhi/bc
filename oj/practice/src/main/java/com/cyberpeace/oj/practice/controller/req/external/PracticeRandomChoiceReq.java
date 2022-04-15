@@ -29,4 +29,7 @@ public class PracticeRandomChoiceReq {
     @NotBlank
     @ApiModelProperty("设置默认分值")
     private Double score;
+
+    @ApiModelProperty("用户编号")
+    private String userId;
 }

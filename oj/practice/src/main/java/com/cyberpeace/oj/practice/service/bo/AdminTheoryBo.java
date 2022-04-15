@@ -43,4 +43,7 @@ public class AdminTheoryBo implements Serializable {
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	@ApiModelProperty("难度")
+	private Integer difficulty;
+
 }

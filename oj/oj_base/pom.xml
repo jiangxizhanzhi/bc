@@ -26,6 +26,11 @@
             <artifactId>common-service</artifactId>
             <version>${common.service.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

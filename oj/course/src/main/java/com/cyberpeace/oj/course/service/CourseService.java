@@ -90,4 +90,10 @@ public interface CourseService extends IService<Course> {
 	 * @return
 	 */
 	Boolean loadCourse(String realPath, AuthContext authContext);
+
+	/**
+	 * 获取一个随机的课程编号
+	 * @return
+	 */
+	String getRandomCourseNum(int length);
 }

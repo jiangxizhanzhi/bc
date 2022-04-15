@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.req;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -28,5 +29,9 @@ public class CategoryUpdateReq implements Serializable {
 
     public void setParent_id(String parentId) {
         this.parentId = parentId;
+    }
+
+    public String getName() {
+        return StringUtils.isNotBlank(name) ? name.trim() : name;
     }
 }

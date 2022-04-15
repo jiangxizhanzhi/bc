@@ -1,11 +1,14 @@
 package com.cyberpeace.oj.course.dao.entity;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import com.google.common.collect.Lists;
 
 import lombok.Data;
 import lombok.Getter;
@@ -62,8 +65,8 @@ public class CourseLesson extends BaseTable {
 
 	public enum HandoutType implements GenericEnum {
 
-		NEITHER(0, "都不是"), MD(1, "markdown"), PPT(2, "ppt文件"),
-		PDF(4, "pdf"), DOC(3, "word文档");
+		NEITHER(0, "都不是"), MD(1, "markdown"), PPT(2, "ppt文件"), PDF(4, "pdf"), DOC(3,
+				"word文档"), XLS(4, "xls文件");
 
 		@Getter
 		private Integer code;
@@ -74,6 +77,12 @@ public class CourseLesson extends BaseTable {
 		HandoutType(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
+		}
+
+		public static Boolean isOfficeFile(Integer handoutType) {
+			List<Integer> officeTypeList = Lists.newArrayList(HandoutType.DOC.getCode(),
+					HandoutType.PPT.getCode(), HandoutType.XLS.getCode());
+			return officeTypeList.contains(handoutType);
 		}
 
 	}

@@ -68,7 +68,18 @@
         where T1.level_id = #{level_id} and T1.name = #{title} limit 1
     </select>
     <select id="listUserTrainSkill" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleTrainProgress">
-        select *, max(score) as score from cr_title_train_progress where user_id = #{user_id} group by business_template_id
+        select T1.*
+        from cr_title_train_progress T1
+            inner join (
+                select
+                       business_template_id,
+                       max(score) as score
+                from cr_title_train_progress
+                where user_id = #{user_id}
+                group by business_template_id
+            ) T2
+            on T1.business_template_id = T2.business_template_id and T1.score = T2.score
+        where T1.user_id = #{user_id}
     </select>
     <select id="listTitleNameByTrain" resultType="java.lang.String">
         select distinct `name` from cr_title where resource_id in (

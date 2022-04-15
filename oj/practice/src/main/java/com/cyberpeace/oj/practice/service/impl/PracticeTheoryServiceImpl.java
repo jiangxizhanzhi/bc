@@ -18,6 +18,7 @@ import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
@@ -481,6 +482,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	private PracticeTheory ojExcelDataToEntity(List<String> excelRowData, String practiceSetId,
 			String categoryId, String userId) {
 
+		if (StringUtils.isBlank(String.join("", excelRowData))) {
+			return null;
+		}
+
 		// 字段数据长度限制
 		String content = excelRowData.get(0);
 		practiceValidateHandler.validateFieldLength(content, MAX_CONTENT_LENGTH);
@@ -511,7 +516,16 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
 						.getCode().intValue()) {
-			practiceTheory.setAnswer(excelRowData.get(2));
+			String answer = excelRowData.get(2);
+			if (!(answer.matches("^[a-zA-Z|]+$"))) {
+				log.error("The format of the answer:[{}] is wrong", answer);
+				return null;
+			}
+			if (answer.length() > 1 && !answer.contains("|")) {
+				String[] answerArray = answer.split("");
+				answer = String.join("|", answerArray);
+			}
+			practiceTheory.setAnswer(answer);
 			JSONObject option = new JSONObject();
 			option.put("A", excelRowData.get(3));
 			option.put("B", excelRowData.get(4));
@@ -586,6 +600,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 */
 	private PracticeTheory rmExcelDataToEntity(List<String> excelRowData, PracticeSet practiceSet) {
 
+		// 数据长度为零 返回空过滤掉
+		if (StringUtils.isBlank(String.join("", excelRowData))) {
+			return null;
+		}
+
 		PracticeTheory practiceTheory = new PracticeTheory();
 		practiceTheory.setContent(excelRowData.get(0));
 		practiceTheory.setTitle(excelRowData.get(0));
@@ -602,8 +621,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setTheoryType(new Double(excelRowData.get(3)).intValue() - 1);
 
 		// 分类编号设置 不存在创建
+		String categoryName = excelRowData.get(1);
+		if (StringUtils.isBlank(categoryName = categoryName.trim())) {
+			log.error("Practice category is empty! operation_data=[{}]",
+					JsonUtil.toJsonString(excelRowData));
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);
+		}
+
 		String categoryId = practiceCategoryMapper
-				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), excelRowData.get(1));
+				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);
 		if (StringUtils.isBlank(categoryId)) {
 			PracticeCategory category = new PracticeCategory();
 			category.setResourceId(IDGeneratorUtil.getID());
@@ -648,7 +674,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		}
 
-		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
+		practiceTheory.setScore(CommonConstant.ONE.doubleValue());
 		practiceTheory.setBuiltin(CommonConstant.TRUE);
 		practiceTheory.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
 		practiceTheory.setIsPublic(CommonConstant.TRUE);

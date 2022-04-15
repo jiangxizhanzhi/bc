@@ -232,6 +232,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		FlowLogsPageContext flowLogsPageContext = BeanUtils.copy(flowLogReq,
 				FlowLogsPageContext.class);
 		flowLogsPageContext.setId(flowLogReq.getSceneId());
+		flowLogsPageContext.setPerPage(10);
 
 		// 请求中台数据
 		JSONObject jsonObject = remoteSceneService.getFlowLogs(flowLogsPageContext);

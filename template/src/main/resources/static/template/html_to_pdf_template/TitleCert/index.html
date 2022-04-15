@@ -34,10 +34,15 @@
     }
     .first{
       position: absolute;
-      left: 329px;
-      top: 522px;
+      left: 255px;
+      top: 500px;
       font-size: 32px;
       font-weight: 400;
+      word-wrap: break-word;
+      width: 870px;
+      line-height: 60px;
+      text-align: justify;
+      text-indent: 50px;
     }
     .title{
       font-size: 36px;
@@ -45,6 +50,8 @@
       padding: 0 25px 4px 25px;
       position: relative;
       top: -3px;
+
+
     }
     .title:before{
       content: '';
@@ -55,15 +62,8 @@
       border-bottom: 1px solid rgba(51, 51, 51, .4);
       position: absolute;
       width:100%;
-      padding-top: 46px;
+      padding-top: 52px;
       margin-left:-24px;
-    }
-    .second{
-      position: absolute;
-      left: 263px;
-      top: 602px;
-      font-size: 32px;
-      font-weight: 400;
     }
     .card-number{
       position: absolute;
@@ -89,19 +89,19 @@
 
 
 
-  
+
   </style>
 </head>
 <body>
-  <div class="pdf-content">
-    <div class="text-content">
+<div class="pdf-content">
+  <div class="text-content">
     <div class="name text-font">${username}:</div>
-    <div class="first">已完成 <span class="title text-font">${title} ${level}</span>培训课程，通过考试，</div>
-    <div class="second">获得网络安全作训平台<span class="title text-font">${level}</span>资格认证，特此证明。</div>
+    <div class="first">已完成 <span class="title text-font">${title} ${level}</span> 培训课程，通过考试，
+      获得网络安全作训平台<span class="title text-font">${level}</span> 资格认证，特此证明。</div>
     <div class="card-number">证书编号：${certNumber}</div>
     <div class="expire">有效期至：${validityTime}</div>
     <div class="date">${createTime}</div>
   </div>
-  </div>
+</div>
 </body>
 </html>

@@ -328,6 +328,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
 					teamRoom.getCreateUserId(),
 					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		}
+		// 关闭团队训练结束, 记录称号分值
+		if (teamRoom.isUnopened()) {
 			// todo check insert
 			crTitleService.saveScore(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), roomId, businessTemplateId);
 		}

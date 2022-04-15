@@ -98,8 +98,7 @@ public class TitleController {
         Path htmlPath = Paths.get(
                 AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(),
                 crTitleCertBo.getTitleId(),
-                crTitleCertBo.getUserId(),
-                String.format("%s%s.html", crTitleCertBo.getLevel(), crTitleCertBo.getTitle())
+                String.format("%s.html", crTitleCertBo.getUserId())
         );
         String htmlPathString = htmlPath.toString();
         String pdfPathString = htmlPathString.substring(0, htmlPathString.lastIndexOf("html")) + "pdf";

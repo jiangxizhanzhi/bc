@@ -47,7 +47,7 @@
             T1.name as train_name,
             T1.business_type,
             count(T2.id) as train_count,
-            if(T2.score, max(T2.score), 0) as max_score
+            ifnull(max(score), 0) as max_score
         from cr_business_template T1
         left join cr_title_train_progress T2 on T1.resource_id = T2.business_template_id and T2.user_id = #{user_id}
         <where>

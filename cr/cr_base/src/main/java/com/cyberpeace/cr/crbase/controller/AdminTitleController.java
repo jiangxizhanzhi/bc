@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api("后台-荣誉称号")
+@Api(tags = "后台-荣誉称号")
 @Slf4j
 @RequestMapping("/cr/admin/title")
 @RestController

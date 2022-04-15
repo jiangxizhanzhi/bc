@@ -36,7 +36,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Api("前台-荣誉称号")
+@Api(tags = "前台-荣誉称号")
 @Slf4j
 @RequestMapping("/cr/title")
 @RestController

@@ -330,7 +330,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		}
 		// 关闭团队训练结束, 记录称号分值
-		if (teamRoom.isUnopened()) {
+		if (teamRoom.isEnded()) {
 			// todo check insert
 			crTitleService.saveScore(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), roomId, businessTemplateId);
 		}

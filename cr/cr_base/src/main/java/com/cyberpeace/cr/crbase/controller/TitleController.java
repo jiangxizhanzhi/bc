@@ -22,6 +22,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,7 +91,9 @@ public class TitleController {
 
     @GetMapping("/cert")
     @ApiModelProperty("证书下载")
-    public void dumpCert(HttpServletResponse httpServletResponse, @RequestParam("title_id") String titleId) {
+    public void dumpCert(HttpServletResponse httpServletResponse,
+                         @RequestParam("title_id") String titleId,
+                         @RequestParam(value = "is_keep", required = false) String isKeepHtml) {
         CrTitleCertBo crTitleCertBo = crTitleService.getTitleCertInfo(titleId);
         if (crTitleCertBo == null) {
             throw new BusinessException(CrBusinessErrorCode.TITLE_NOT_OWNED);
@@ -134,10 +137,12 @@ public class TitleController {
             log.error("failed to export pdf: {}", htmlPathString);
             throw e;
         } finally {
-            // 删除生成的html文件
-            File originHtml = new File(htmlPathString);
-            if (!FileUtil.deleteDir(originHtml)) {
-                log.error("failed to origin html: {}", originHtml);
+            if (StringUtils.isEmpty(isKeepHtml) || !isKeepHtml.equals("y")) {
+                // 删除生成的html文件
+                File originHtml = new File(htmlPathString);
+                if (!FileUtil.deleteDir(originHtml)) {
+                    log.error("failed to origin html: {}", originHtml);
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
@@ -15,6 +16,8 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
 import com.cyberpeace.cr.crbase.service.impl.bo.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +34,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Api("前台-荣誉称号")
 @Slf4j
@@ -40,6 +44,9 @@ import java.util.List;
 public class TitleController {
     @Autowired
     private CrTitleService crTitleService;
+
+    Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(4, TimeUnit.SECONDS)
+            .build();
 
     @GetMapping("/level/list")
     @ApiOperation("称号等级获取")
@@ -102,6 +109,13 @@ public class TitleController {
             FileUtil.setResponse(new File(pdfPathString), false, httpServletResponse);
             return;
         }
+
+        // 证书生成防抖
+        String key = "TITLE-CERT_" + CommonContext.getIp();
+        if (cache.getIfPresent(key) != null) {
+            throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
+        }
+        cache.put(key, "whatever");
 
         // 检查/创建上层目录
         File directory = htmlPath.getParent().toFile();

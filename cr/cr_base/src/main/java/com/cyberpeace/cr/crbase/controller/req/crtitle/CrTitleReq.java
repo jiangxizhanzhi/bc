@@ -38,7 +38,11 @@ public class CrTitleReq implements Serializable {
             );
         }
         if (name != null) {
-            CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+            CrCommonValidator.validateLength(name,
+                    CrCommonConstants.MIN_STR_LEN,
+                    CrCommonConstants.TITLE_NAME_MAX_LEN,
+                    CrBusinessErrorCode.ILLEGAL_NAME_LEN
+            );
         }
     };
 

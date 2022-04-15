@@ -91,4 +91,8 @@ public class CrCommonValidator {
 		validateLength(target, CrCommonConstants.MIN_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
 				errorCode);
 	}
+
+	public static void validateTitleLen(String target, String errorCode) {
+
+	}
 }

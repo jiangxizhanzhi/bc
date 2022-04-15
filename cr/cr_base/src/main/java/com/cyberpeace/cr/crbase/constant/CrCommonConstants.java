@@ -56,4 +56,8 @@ public interface CrCommonConstants {
 	Integer TITLE_MIN_SCORE = ConfigReader.readInt("cr.title.score.min");
 
 	Integer TITLE_MAX_SCORE = ConfigReader.readInt("cr.title.score.max");
+
+	Integer TITLE_NAME_MAX_LEN = ConfigReader.readInt("cr.title.title.len.max");
+
+	Integer LEVEL_NAME_MAX_LEN = ConfigReader.readInt("cr.title.level.len.max");
 }

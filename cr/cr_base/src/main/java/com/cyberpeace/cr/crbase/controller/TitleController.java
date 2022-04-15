@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrUserTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
@@ -85,7 +86,7 @@ public class TitleController {
     public void dumpCert(HttpServletResponse httpServletResponse, @RequestParam("title_id") String titleId) {
         CrTitleCertBo crTitleCertBo = crTitleService.getTitleCertInfo(titleId);
         if (crTitleCertBo == null) {
-            return;
+            throw new BusinessException(CrBusinessErrorCode.TITLE_NOT_OWNED);
         }
         Path htmlPath = Paths.get(
                 AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(),

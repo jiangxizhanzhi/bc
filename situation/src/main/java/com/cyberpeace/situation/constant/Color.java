@@ -8,7 +8,7 @@ public enum Color {
 	 * 颜色
 	 */
 
-	WHITE("#FFFFFF", "白色"),
+	// WHITE("#FFFFFF", "白色"),
 	// BLACK("#000000", "黑色"),
 	RED("#FF0000", "红色"),
 	BLUE("#0000FF", "蓝色");

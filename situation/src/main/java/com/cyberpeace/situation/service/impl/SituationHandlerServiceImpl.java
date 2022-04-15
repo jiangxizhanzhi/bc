@@ -529,7 +529,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		// wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
-		wsEvent.setLineStyle(new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));
+		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()),
+				5, LineType.getRandomValue(LineType.values())));
 		wsEvent.setLookAtTarget(new Random().nextBoolean());
 
 		// 补充动态描述

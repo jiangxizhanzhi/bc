@@ -452,7 +452,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             List<Integer> userSkillPointScore = Lists.newArrayList();
             for (int i = 0; i < userSkillPoint.size(); i++) {
                 userSkillPointScore.add(
-                        (int) Math.ceil((double) userSkillPoint.get(i) / missionSkillPoint.get(i) * 100)
+                        (int) Math.round((double) userSkillPoint.get(i) / missionSkillPoint.get(i) * 100)
                 );
             }
 
@@ -460,7 +460,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             crTitleTrainProgress.setUserId(userId);
             crTitleTrainProgress.setRoomId(roomId);
             crTitleTrainProgress.setBusinessTemplateId(businessTemplateId);
-            crTitleTrainProgress.setScore((int) Math.ceil((double) score / maxScore * 100));
+            crTitleTrainProgress.setScore((int) Math.round((double) score / maxScore * 100));
             crTitleTrainProgress.setSkillPointsScore(JsonUtil.toJsonString(userSkillPointScore));
             usersTrain.add(crTitleTrainProgress);
         });

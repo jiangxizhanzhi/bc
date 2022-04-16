@@ -290,14 +290,13 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             }
         });
 
-        // 及格标准或关联训练更新, 重新生成称号
         List<String> title_ids = Collections.singletonList(crTitle.getResourceId());
+        // 称号属性更新, 删除当前称号的证书文件
         if (isAttrChanged) {
-            // 删除当前称号的证书文件
             deleteTitleCertFile(title_ids);
         }
+        // 及格标准或关联训练更新, 删除已获取并重新生成称号
         if (isStandardChanged) {
-            // 删除用户已获取的此称号, 并重新检查生成
             this.getBaseMapper().deleteTitleUser(title_ids);
             checkFinishTitle(
                     crTitleBusinessTemplateMapper.listByTitleId(

@@ -124,6 +124,14 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         titleLevelIsExist(crTitleLevel);
 
         boolean isUpdated = SqlHelper.retBool(crTitleLevelMapper.updateById(crTitleLevel));
+
+        // 称号等级更新, 删除保留称号文件
+        if (isUpdated) {
+            deleteTitleCertFile(
+                    lambdaQuery().eq(CrTitle::getLevelId, crTitleLevel.getResourceId()).list()
+                            .stream().map(CrTitle::getResourceId).collect(Collectors.toList())
+            );
+        }
         return isUpdated ? levelGet(crTitleLevel.getResourceId()) : null;
     }
 
@@ -236,9 +244,10 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
         titleIsExist(crTitle);
 
-        boolean isChanged = !origin.getScore().equals(crTitle.getScore())
-                || !origin.getName().equals(crTitle.getName())
+        boolean isAttrChanged = !origin.getName().equals(crTitle.getName())
                 || !origin.getLevelId().equals(crTitle.getLevelId());
+        boolean isStandardChanged = !origin.getScore().equals(crTitle.getScore());
+
         Set<String> addTrains = Sets.newHashSet();
         Set<String> delTrains = Sets.newHashSet();
         if (requestData.getBusinessTemplateIds() != null && requestData.getBusinessTemplateIds().size() > 0) {
@@ -246,7 +255,6 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
                     != businessTemplateMapper.selectBatchIds(requestData.getBusinessTemplateIds()).size()) {
                 throw new BusinessException(CrBusinessErrorCode.TITLE_TRAIN_INVALID);
             }
-            isChanged = true;
 
             // 原训练
             Set<String> originTrains = crTitleBusinessTemplateMapper.listByTitleId(
@@ -263,6 +271,10 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             // 需删除训练
             delTrains.addAll(originTrains);
             delTrains.removeAll(currentTrains);
+
+            if (!addTrains.isEmpty() || !delTrains.isEmpty()) {
+                isStandardChanged = true;
+            }
         }
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -279,10 +291,14 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         });
 
         // 及格标准或关联训练更新, 重新生成称号
-        if (isChanged) {
-            this.getBaseMapper().deleteTitleUser(Collections.singletonList(crTitle.getResourceId()));
+        List<String> title_ids = Collections.singletonList(crTitle.getResourceId());
+        if (isAttrChanged) {
             // 删除当前称号的证书文件
-            FileUtil.deleteDir(Paths.get(AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(), crTitle.getResourceId()).toFile());
+            deleteTitleCertFile(title_ids);
+        }
+        if (isStandardChanged) {
+            // 删除用户已获取的此称号, 并重新检查生成
+            this.getBaseMapper().deleteTitleUser(title_ids);
             checkFinishTitle(
                     crTitleBusinessTemplateMapper.listByTitleId(
                             crTitle.getResourceId()
@@ -291,6 +307,17 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         }
 
         return titleGet(crTitle.getResourceId());
+    }
+
+    /**
+     * 清除保留的称号证书文件
+     * @param title_ids 称号id
+     */
+    @Async
+    void deleteTitleCertFile(List<String> title_ids) {
+        title_ids.forEach(
+                titleId -> FileUtil.deleteDir(Paths.get(AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(), titleId).toFile())
+        );
     }
 
     private Map<String, String> generateUserMap(List<String> userIds) {
@@ -321,11 +348,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             }
         });
         if (result != null && result) {
-            ids.forEach(
-                    titleId -> FileUtil.deleteDir(
-                            Paths.get(AttachmentPath.TITLE_CERT_TEMPLATE.getDesc(), titleId).toFile()
-                    )
-            );
+            deleteTitleCertFile(ids);
         }
         return result;
     }

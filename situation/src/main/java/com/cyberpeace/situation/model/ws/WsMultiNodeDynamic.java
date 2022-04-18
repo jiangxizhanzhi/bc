@@ -26,7 +26,7 @@ public class WsMultiNodeDynamic implements Serializable {
 	private String category;
 
 	@ApiModelProperty("事件类型")
-	private Integer type;
+	private Integer attackType;
 
 	@ApiModelProperty("线型")
 	private LineStyle lineStyle;

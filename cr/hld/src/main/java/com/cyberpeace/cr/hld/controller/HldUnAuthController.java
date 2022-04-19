@@ -2,6 +2,7 @@ package com.cyberpeace.cr.hld.controller;
 
 import java.util.List;
 
+import com.cyberpeace.cr.hld.controller.req.HldDeleteReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -151,9 +151,9 @@ public class HldUnAuthController {
 
 	@ApiOperation("删除场景")
 	@DeleteMapping("/delete")
-	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+	public BaseRsp<String> batchDelete(@RequestBody @Validated HldDeleteReq deleteReq) {
 
-		setUserInfo("task");
+		setUserInfo(deleteReq.getUserId());
 		List<String> businessTemplateIds = hldRoomMapper
 				.listBusinessTemplateIds(deleteReq.getIds());
 		businessTemplateService.batchDelete(businessTemplateIds);

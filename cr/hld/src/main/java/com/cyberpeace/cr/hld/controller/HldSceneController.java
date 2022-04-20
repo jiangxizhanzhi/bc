@@ -62,7 +62,7 @@ public class HldSceneController {
 	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
 
 		String roomId = sceneStopReq.getRoomId();
-		Boolean result = hldSceneService.stopScene(roomId);
+		Boolean result = hldSceneService.stopScene(roomId, true);
 
 		return new BaseRsp(result);
 	}

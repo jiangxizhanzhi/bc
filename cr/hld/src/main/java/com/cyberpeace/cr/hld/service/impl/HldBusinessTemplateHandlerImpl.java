@@ -31,7 +31,7 @@ public class HldBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		HldRoom hldRoom = hldRoomMapper
 				.selectByBusinessTemplateId(businessTemplate.getResourceId());
-		hldSceneService.stopScene(hldRoom.getResourceId());
+		hldSceneService.stopScene(hldRoom.getResourceId(), false);
 		crRoleService.clearRoomRoles(hldRoom.getResourceId());
 		hldRoomMapper.deleteById(hldRoom);
 	}

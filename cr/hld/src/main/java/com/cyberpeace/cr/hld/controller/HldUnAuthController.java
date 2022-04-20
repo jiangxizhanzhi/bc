@@ -124,7 +124,7 @@ public class HldUnAuthController {
 	public BaseRsp stopScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
 		setUserInfo(hldSceneOpsReq.getUserId());
-		Boolean result = hldSceneService.stopScene(hldSceneOpsReq.getResourceId());
+		Boolean result = hldSceneService.stopScene(hldSceneOpsReq.getResourceId(), true);
 
 		return new BaseRsp(result);
 	}

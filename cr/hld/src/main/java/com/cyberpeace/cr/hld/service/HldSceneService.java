@@ -14,7 +14,7 @@ public interface HldSceneService {
 
 	SceneViewContext viewScene(String roomId, CrRole role);
 
-	Boolean stopScene(String roomId);
+	Boolean stopScene(String roomId, Boolean checkPermission);
 
 	void clearLocal(HldRoom room);
 

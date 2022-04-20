@@ -145,10 +145,13 @@ public class HldSceneServiceImpl implements HldSceneService {
 	}
 
 	@Override
-	public Boolean stopScene(String roomId) {
+	public Boolean stopScene(String roomId, Boolean checkPermission) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		hldRoomService.checkUserPermission(roomId, userId);
+
+		if (checkPermission) {
+			hldRoomService.checkUserPermission(roomId, userId);
+		}
 
 		HldRoom room = hldRoomService.getById(roomId);
 

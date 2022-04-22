@@ -8,12 +8,12 @@ import java.util.List;
 public interface TrainCommentService extends IService<TrainComment> {
     /**
      * 提交评论
-     * @param templateId 训练模板id {@link TrainComment#templateId}
+     * @param trainId 训练模板id {@link TrainComment#trainId}
      * @param businessType 业务类型 {@link TrainComment#businessType}
      * @param content 评论内容 {@link TrainComment#content}
      * @return entity object
      */
-    TrainComment postComment(String templateId, Integer businessType, String content);
+    TrainComment postComment(String trainId, Integer businessType, String content);
 
-    List<TrainComment> fullList(String templateId);
+    List<TrainComment> fullList(String trainId);
 }

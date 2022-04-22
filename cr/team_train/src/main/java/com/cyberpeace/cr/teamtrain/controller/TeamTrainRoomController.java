@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.controller.req.*;
+import com.cyberpeace.cr.crbase.dao.entity.TrainComment;
 import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -25,10 +27,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
-import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
-import com.cyberpeace.cr.crbase.controller.req.ListQuery;
-import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
-import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
@@ -108,6 +106,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private CrTitleService crTitleService;
+
+	@Autowired
+	private TrainCommentService trainCommentService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -565,6 +566,21 @@ public class TeamTrainRoomController {
 		baseRole.setRoleDataList(roleUsersList);
 
 		return baseRole;
+	}
+
+	@ApiOperation("留言")
+	@PostMapping("/comment")
+	public BaseRsp<TrainComment> comment(@RequestBody TrainCommentReq requestData) {
+		if (teamRoomService.getById(requestData.getTrainId()) == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return new BaseRsp<>(
+				trainCommentService.postComment(
+						requestData.getTrainId(),
+						BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
+						requestData.getContent()
+				)
+		);
 	}
 
 }

@@ -26,7 +26,7 @@ public class TrainCommentController {
 
     @GetMapping("/list")
     @ApiOperation("训练评论列表")
-    public BaseRsp<List<TrainComment>> list(@RequestParam("template_id") String templateId) {
-        return new BaseRsp<>(trainCommentService.fullList(templateId));
+    public BaseRsp<List<TrainComment>> list(@RequestParam("train_id") String trainId) {
+        return new BaseRsp<>(trainCommentService.fullList(trainId));
     }
 }

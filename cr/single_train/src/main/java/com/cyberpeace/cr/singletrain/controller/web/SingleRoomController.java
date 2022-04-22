@@ -205,12 +205,12 @@ public class SingleRoomController {
 	@ApiOperation("留言")
 	@PostMapping("/comment")
 	public BaseRsp<TrainComment> comment(@RequestBody TrainCommentReq requestData) {
-		if (singleTemplateService.getById(requestData.getTemplateId()) == null) {
+		if (singleTemplateService.getById(requestData.getTrainId()) == null) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		return new BaseRsp<>(
 				trainCommentService.postComment(
-						requestData.getTemplateId(),
+						requestData.getTrainId(),
 						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
 						requestData.getContent()
 				)

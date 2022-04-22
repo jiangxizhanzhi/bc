@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.controller.req.TrainCommentReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.TrainComment;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
+import com.cyberpeace.cr.crbase.service.TrainCommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +102,9 @@ public class RbRoomController {
 
 	@Autowired
 	private CrTitleService crTitleService;
+
+	@Autowired
+	private TrainCommentService trainCommentService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -441,5 +447,20 @@ public class RbRoomController {
 				standard_device);
 
 		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("留言")
+	@PostMapping("/comment")
+	public BaseRsp<TrainComment> comment(@RequestBody TrainCommentReq requestData) {
+		if (rbRoomService.getById(requestData.getTrainId()) == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return new BaseRsp<>(
+				trainCommentService.postComment(
+						requestData.getTrainId(),
+						BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
+						requestData.getContent()
+				)
+		);
 	}
 }

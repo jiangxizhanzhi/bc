@@ -4,11 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.req.TrainCommentReq;
-import com.cyberpeace.cr.crbase.dao.entity.TrainComment;
-import com.cyberpeace.cr.crbase.service.TrainCommentService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -81,9 +76,6 @@ public class TeamTrainTemplateController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
-
-	@Autowired
-	private TrainCommentService trainCommentService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -252,20 +244,4 @@ public class TeamTrainTemplateController {
 
 		return teamTemplate;
 	}
-
-	@ApiOperation("留言")
-	@PostMapping("/comment")
-	public BaseRsp<TrainComment> comment(@RequestBody TrainCommentReq requestData) {
-		if (teamTemplateService.getById(requestData.getTemplateId()) == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		}
-		return new BaseRsp<>(
-				trainCommentService.postComment(
-						requestData.getTemplateId(),
-						BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
-						requestData.getContent()
-				)
-		);
-	}
-
 }

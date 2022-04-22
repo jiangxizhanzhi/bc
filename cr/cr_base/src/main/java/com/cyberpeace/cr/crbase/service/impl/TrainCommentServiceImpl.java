@@ -24,9 +24,9 @@ public class TrainCommentServiceImpl extends ServiceImpl<TrainCommentMapper, Tra
     private RemoteUserService remoteUserService;
 
     @Override
-    public TrainComment postComment(String templateId, Integer businessType, String content) {
+    public TrainComment postComment(String trainId, Integer businessType, String content) {
         TrainComment trainComment = TrainComment.builder()
-                .templateId(templateId)
+                .trainId(trainId)
                 .businessType(businessType)
                 .content(content)
                 .userId(UserInfoContext.getUserContext().getUserId()).build();
@@ -35,8 +35,8 @@ public class TrainCommentServiceImpl extends ServiceImpl<TrainCommentMapper, Tra
     }
 
     @Override
-    public List<TrainComment> fullList(String templateId) {
-        List<TrainComment> trainComments = lambdaQuery().eq(TrainComment::getTemplateId, templateId).orderByDesc(BaseTable::getCreateTime).list();
+    public List<TrainComment> fullList(String trainId) {
+        List<TrainComment> trainComments = lambdaQuery().eq(TrainComment::getTrainId, trainId).orderByDesc(BaseTable::getCreateTime).list();
         Map<String, String> usernameMap = remoteUserService.getIdNameMap(trainComments.stream().map(TrainComment::getUserId).collect(Collectors.toList()));
 
         trainComments.forEach(trainComment -> trainComment.setUsername(usernameMap.get(trainComment.getUserId())));

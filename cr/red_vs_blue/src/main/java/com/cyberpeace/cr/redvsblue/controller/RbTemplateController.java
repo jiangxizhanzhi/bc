@@ -4,15 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.req.TrainCommentReq;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.TrainComment;
-import com.cyberpeace.cr.crbase.service.TrainCommentService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -48,9 +44,6 @@ public class RbTemplateController {
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
-
-	@Autowired
-	private TrainCommentService trainCommentService;
 
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
@@ -124,21 +117,6 @@ public class RbTemplateController {
 		rbTemplateListRsp.setRoleInfo(rbTemplateRoleRsps);
 
 		return rbTemplateListRsp;
-	}
-
-	@ApiOperation("留言")
-	@PostMapping("/comment")
-	public BaseRsp<TrainComment> comment(@RequestBody TrainCommentReq requestData) {
-		if (rbTemplateService.getById(requestData.getTemplateId()) == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		}
-		return new BaseRsp<>(
-				trainCommentService.postComment(
-						requestData.getTemplateId(),
-						BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
-						requestData.getContent()
-				)
-		);
 	}
 
 }

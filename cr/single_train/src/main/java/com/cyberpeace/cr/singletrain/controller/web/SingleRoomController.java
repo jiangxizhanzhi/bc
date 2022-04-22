@@ -2,6 +2,11 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.controller.req.TrainCommentReq;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.TrainComment;
+import com.cyberpeace.cr.crbase.service.TrainCommentService;
+import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -45,6 +50,12 @@ public class SingleRoomController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private SingleTemplateService singleTemplateService;
+
+	@Autowired
+	private TrainCommentService trainCommentService;
 
 	@PostMapping
 	@ApiOperation("创建")
@@ -189,6 +200,21 @@ public class SingleRoomController {
 	public BaseRsp<String>
 			submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
 		return new BaseRsp<>(singleRoomService.submitTrain(requestBody.getResourceId()));
+	}
+
+	@ApiOperation("留言")
+	@PostMapping("/comment")
+	public BaseRsp<TrainComment> comment(@RequestBody TrainCommentReq requestData) {
+		if (singleTemplateService.getById(requestData.getTemplateId()) == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return new BaseRsp<>(
+				trainCommentService.postComment(
+						requestData.getTemplateId(),
+						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+						requestData.getContent()
+				)
+		);
 	}
 
 }

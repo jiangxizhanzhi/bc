@@ -60,4 +60,6 @@ public interface CrCommonConstants {
 	Integer TITLE_NAME_MAX_LEN = ConfigReader.readInt("cr.title.title.len.max");
 
 	Integer LEVEL_NAME_MAX_LEN = ConfigReader.readInt("cr.title.level.len.max");
+
+	Integer COMMENT_MAX_LEN = ConfigReader.readInt("cr.comment.len.max");
 }

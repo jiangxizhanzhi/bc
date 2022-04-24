@@ -284,4 +284,9 @@ public interface CrBusinessErrorCode {
 	 * 称号关联训练为空
 	 */
 	String TITLE_TRAIN_IS_NULL = "101087";
+
+	/**
+	 * 留言长度非法
+	 */
+	String TRAIN_COMMENT_IS_ILLEGAL = "101088";
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.dao.entity.TrainComment;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainCommentMapper;
@@ -37,9 +38,16 @@ public class TrainCommentServiceImpl extends ServiceImpl<TrainCommentMapper, Tra
     @Override
     public List<TrainComment> fullList(String trainId) {
         List<TrainComment> trainComments = lambdaQuery().eq(TrainComment::getTrainId, trainId).orderByDesc(BaseTable::getCreateTime).list();
-        Map<String, String> usernameMap = remoteUserService.getIdNameMap(trainComments.stream().map(TrainComment::getUserId).collect(Collectors.toList()));
+        Map<String, UserInfo> usernameMap = remoteUserService.getIdUserInfoMap(
+                trainComments.stream().map(TrainComment::getUserId).collect(Collectors.toList())
+        );
 
-        trainComments.forEach(trainComment -> trainComment.setUsername(usernameMap.get(trainComment.getUserId())));
+        trainComments.forEach(trainComment -> {
+            UserInfo user = usernameMap.get(trainComment.getUserId());
+            trainComment.setUsername(user.getName());
+            trainComment.setAvatarUrl(user.getAvatarUrl());
+
+        });
         return trainComments;
     }
 }

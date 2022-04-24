@@ -45,4 +45,7 @@ public class TrainComment extends BaseTable {
 
     @TableField(exist = false)
     private String username;
+
+    @TableField(exist = false)
+    private String avatarUrl;
 }

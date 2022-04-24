@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.dao.entity.TrainComment;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainCommentMapper;
 import com.cyberpeace.cr.crbase.service.TrainCommentService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class TrainCommentServiceImpl extends ServiceImpl<TrainCommentMapper, Tra
     public List<TrainComment> fullList(String trainId) {
         List<TrainComment> trainComments = lambdaQuery().eq(TrainComment::getTrainId, trainId).orderByDesc(BaseTable::getCreateTime).list();
         Map<String, UserInfo> usernameMap = remoteUserService.getIdUserInfoMap(
-                trainComments.stream().map(TrainComment::getUserId).collect(Collectors.toList())
+                Lists.newArrayList(trainComments.stream().map(TrainComment::getUserId).collect(Collectors.toSet()))
         );
 
         trainComments.forEach(trainComment -> {

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -12,6 +13,9 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +29,9 @@ public class TrainCommentServiceImpl extends ServiceImpl<TrainCommentMapper, Tra
     @Autowired
     private RemoteUserService remoteUserService;
 
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
     @Override
     public TrainComment postComment(String trainId, Integer businessType, String content) {
         TrainComment trainComment = TrainComment.builder()
@@ -33,7 +40,26 @@ public class TrainCommentServiceImpl extends ServiceImpl<TrainCommentMapper, Tra
                 .content(content)
                 .userId(UserInfoContext.getUserContext().getUserId()).build();
 
-        return save(trainComment) ? getById(trainComment.getResourceId()) : null;
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                LambdaQueryChainWrapper<TrainComment> currentComment = lambdaQuery().eq(TrainComment::getTrainId, trainId);
+
+                // 当训练评论过超1000条时, 删除最早的评论
+                if (currentComment.count() >= 1000) {
+                    TrainComment firstComment = currentComment.orderByDesc(TrainComment::getId).last("LIMIT 999, 1").one();
+
+                    List<String> pendingDeleteComment = lambdaQuery()
+                            .eq(TrainComment::getTrainId, trainId)
+                            .le(TrainComment::getId, firstComment.getId())
+                            .list().stream().map(TrainComment::getResourceId).collect(Collectors.toList());
+                    removeByIds(pendingDeleteComment);
+                }
+                save(trainComment);
+            }
+        });
+
+        return getById(trainComment.getResourceId());
     }
 
     @Override

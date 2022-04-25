@@ -36,6 +36,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
@@ -68,6 +69,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Autowired
 	private MissionService missionService;
+
+	@Autowired
+	private MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
@@ -164,6 +168,29 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			log.error("template name already exist！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
 		}
+	}
+
+	@Override
+	public void updateMissionTemplateRelation(String businessTemplateId, String before,
+			String after) {
+		List<String> oldMissionTemplateIds = missionTemplateService
+				.getIdsByMissionsSchemeJson(before);
+		List<String> newMissionTemplateIds = missionTemplateService
+				.getIdsByMissionsSchemeJson(after);
+		// remove id in both list if both list contains the id
+		int i = 0;
+		while (i < oldMissionTemplateIds.size()) {
+			if (newMissionTemplateIds.remove(oldMissionTemplateIds.get(i))) {
+				oldMissionTemplateIds.remove(i);
+			} else {
+				i++;
+			}
+		}
+		// delete
+		missionTemplateService.batchDelete(oldMissionTemplateIds);
+		// update
+		missionTemplateService.batchUpdateBusinessTemplateId(businessTemplateId,
+				newMissionTemplateIds);
 	}
 
 	@Override

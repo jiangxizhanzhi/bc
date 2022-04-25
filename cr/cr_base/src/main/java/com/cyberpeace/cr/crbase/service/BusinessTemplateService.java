@@ -118,4 +118,10 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * 创建或更新模板时校验是否重名
 	 */
 	void validateName(String name, Integer type, String resourceId);
+
+	/**
+	 * 创建或更新模板时，更新任务模板关联
+	 * 删除去除的任务，更新新增的任务
+	 */
+	void updateMissionTemplateRelation(String businessTemplateId, String before, String after);
 }

@@ -85,6 +85,9 @@ public class RbTemplateAdminController {
 				// save team template
 				rbTemplate.setBusinessTemplateId(businessTemplateId);
 				rbTemplateService.save(rbTemplate);
+				// update missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(businessTemplateId, "",
+						rbTemplate.getRoleConfig());
 			}
 		});
 		return new BaseRsp<>();
@@ -99,6 +102,7 @@ public class RbTemplateAdminController {
 		if (businessTemplate == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
+		String oldRoleConfig = rbTemplate.getRoleConfig();
 		// update
 		reqToRbTemplate(modifyReq, rbTemplate);
 
@@ -109,6 +113,9 @@ public class RbTemplateAdminController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo());
 				rbTemplateService.updateById(rbTemplate);
+				// delete&update missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(resourceId, oldRoleConfig,
+						rbTemplate.getRoleConfig());
 			}
 		});
 		return new BaseRsp<>();

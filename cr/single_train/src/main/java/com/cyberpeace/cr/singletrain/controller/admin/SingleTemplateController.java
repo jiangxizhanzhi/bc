@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -9,6 +8,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -73,6 +73,9 @@ public class SingleTemplateController {
 				String businessTemplateId = businessTemplateService.addTemplate(baseInfo);
 				singleTemplate.setBusinessTemplateId(businessTemplateId);
 				singleTemplateService.save(singleTemplate);
+				// update missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(businessTemplateId, "",
+						singleTemplate.getMissionsScheme());
 			}
 		});
 
@@ -94,6 +97,7 @@ public class SingleTemplateController {
 		SingleTemplate singleTemplate = singleTemplateService
 				.getByBusinessTemplateId(requestData.getResourceId());
 		// update single template
+		String oldMissionScheme = singleTemplate.getMissionsScheme();
 		reqToSingleTemplate(requestData, singleTemplate);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -101,6 +105,10 @@ public class SingleTemplateController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.updateTemplate(businessTemplate, baseInfo);
 				singleTemplateService.updateById(singleTemplate);
+				// delete&update missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(
+						businessTemplate.getResourceId(), oldMissionScheme,
+						singleTemplate.getMissionsScheme());
 			}
 		});
 		return new BaseRsp<>();

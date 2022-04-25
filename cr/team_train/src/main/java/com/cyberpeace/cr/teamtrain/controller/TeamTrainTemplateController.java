@@ -94,6 +94,9 @@ public class TeamTrainTemplateController {
 				// save team template
 				teamTemplate.setBusinessTemplateId(businessTemplateId);
 				teamTemplateService.save(teamTemplate);
+				// update related missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(businessTemplateId, "",
+						teamTemplate.getRoleConfig());
 			}
 		});
 		return new BaseRsp<>();
@@ -109,6 +112,7 @@ public class TeamTrainTemplateController {
 			throw new ResourceNotFoundException(resourceId);
 		}
 		// update
+		String oldRoleConfig = teamTemplate.getRoleConfig();
 		reqToTeamTemplate(modifyReq, teamTemplate);
 
 		// save
@@ -118,6 +122,9 @@ public class TeamTrainTemplateController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo());
 				teamTemplateService.updateById(teamTemplate);
+				// delete&update related missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(resourceId, oldRoleConfig,
+						teamTemplate.getRoleConfig());
 			}
 		});
 

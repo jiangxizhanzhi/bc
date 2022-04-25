@@ -21,4 +21,10 @@
             #{missionTemplate.templateId,jdbcType=VARCHAR}, #{missionTemplate.attachment})
         </foreach>
     </insert>
+    <update id="batchUpdateBusinessTemplateId">
+        update cr_mission_template set business_template_id = #{businessTemplateId} where resource_id in
+        <foreach collection="missionTemplateIds" item="missionTemplateId" separator="," open="(" close=")">
+            #{missionTemplateId}
+        </foreach>
+    </update>
 </mapper>

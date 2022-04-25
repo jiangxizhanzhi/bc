@@ -66,7 +66,17 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		missionTemplateMapper.deleteBatchIds(missionTemplateIds);
 	}
 
-	private List<String> getIdsByMissionsSchemeJson(String schemeJson) {
+	@Override
+	public void batchUpdateBusinessTemplateId(String businessTemplateId,
+			List<String> missionTemplateIds) {
+		if (missionTemplateIds == null || missionTemplateIds.isEmpty()) {
+			return;
+		}
+		missionTemplateMapper.batchUpdateBusinessTemplateId(businessTemplateId, missionTemplateIds);
+	}
+
+	@Override
+	public List<String> getIdsByMissionsSchemeJson(String schemeJson) {
 		String reg = String.format(PatternConstant.RESOURCE_ID,
 				CrCommonConstants.GENERATED_UUID_LENGTH);
 		return LocalStringUtil.getMatchStr(schemeJson, reg, 1);

@@ -15,4 +15,7 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 
 	void batchInsert(@Param("missionTemplates") List<MissionTemplate> missionTemplates);
 
+	void batchUpdateBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId,
+			@Param("missionTemplateIds") List<String> missionTemplateIds);
+
 }

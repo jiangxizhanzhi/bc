@@ -463,7 +463,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			String enDesc = flowLog.getObject("attack_info", JSONObject.class)
 					.getString("attack_type");
 			AttackType attackType = AttackType.getEnumByEnDesc(enDesc, AttackType.class);
-			attackEvent.setType(attackType.getActionType().getCode());
+			attackEvent.setAttackType(attackType.getActionType().getCode());
 
 			// attackEvent.setName(enDesc);
 			attackEvent.setSourceId(flowLog.getString("source_node_id"));
@@ -525,11 +525,12 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		wsEvent.setTime((new Date()).toString());
 		wsEvent.setCategory("attack");
 
-		wsEvent.setType(actionType.getCode());
+		wsEvent.setAttackType(actionType.getCode());
 		// wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
-		wsEvent.setLineStyle(new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));
+		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()),
+				5, LineType.getRandomValue(LineType.values())));
 		wsEvent.setLookAtTarget(new Random().nextBoolean());
 
 		// 补充动态描述

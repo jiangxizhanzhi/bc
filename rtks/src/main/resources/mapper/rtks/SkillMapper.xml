@@ -61,9 +61,9 @@
 
     <select id="getAllSkills" resultType="com.cyberpeace.rtks.controller.res.SkillRes">
         select rtks_skill.id,
-               rtks_skill.resource_id,
-               rtks_skill.system_id,
-               rtks_skill.category_id,
+        rtks_skill.resource_id,
+        rtks_skill.system_id,
+        rtks_skill.category_id,
         rtks_skill.content,
         rtks_skill.courses,
         rtks_skill.create_time,
@@ -79,42 +79,5 @@
             </where>
         </if>
 
-    </select>
-
-    <select id="getAllSkillsBySkillSystemId" resultType="com.cyberpeace.rtks.controller.res.SkillRes">
-        select rtks_skill.id,
-        rtks_skill.resource_id,
-        rtks_skill.system_id,
-        rtks_skill.category_id,
-        rtks_skill.content,
-        rtks_skill.courses,
-        rtks_skill.create_time,
-        rtks_skill.update_time,
-        rtks_skill_category.content category,
-        rtks_skill_system.content system
-        from rtks_skill
-        left join rtks_skill_category on rtks_skill.category_id = rtks_skill_category.resource_id
-        left join rtks_skill_system on rtks_skill.system_id = rtks_skill_system.resource_id
-        <if test="skill_system_id != null and skill_system_id != ''">
-            <where>
-                rtks_skill_system.resource_id = #{skill_system_id}
-            </where>
-        </if>
-    </select>
-
-    <select id="getSkillByCourseId" resultType="com.cyberpeace.rtks.controller.res.CourseRelatedRes">
-        select rtks_course_related.related_id,
-        rtks_course_related.resource_id,
-        rtks_skill.content,
-        rtks_course_related.weight
-        from rtks_course_related
-        left join rtks_skill on rtks_course_related.related_id = rtks_skill.resource_id
-        <where>
-            rtks_course_related.type = 2
-            and rtks_course_related.resource_id in
-            <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
-                #{id}
-            </foreach>
-        </where>
     </select>
 </mapper>

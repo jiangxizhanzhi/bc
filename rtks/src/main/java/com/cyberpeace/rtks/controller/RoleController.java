@@ -1,18 +1,14 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.collections.SetUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.util.CollectionUtils;
@@ -22,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -30,6 +27,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
@@ -44,6 +42,13 @@ import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+interface Fields {
+
+	String KNOWLEDGE = "knowledge";
+
+	String SKILL = "skill";
+}
 
 class RoleListReq<T> extends PageReqBase {
 
@@ -75,13 +80,6 @@ class Helper {
 	}
 }
 
-interface Fields {
-
-	String KNOWLEDGE = "knowledge";
-
-	String SKILL = "skill";
-}
-
 @Api(tags = "TRKS-岗位管理")
 @RestController
 @RequestMapping("/rtks/role")
@@ -105,9 +103,6 @@ public class RoleController {
 
 	@Autowired
 	private RoleService roleService;
-
-	@Autowired
-	private SkillSystemService skillSystemService;
 
 	@Autowired
 	private CourseNameService courseNameService;
@@ -352,13 +347,13 @@ public class RoleController {
 			originSkillIdsStr = originEntity.getSkillIds();
 		}
 
-		Helper skillHelper = handlerInputWithCourse(isModify, input.getSkillIds(),
-				originSkillIdsStr, skillService::getCourseConfigs);
-
-		if (skillHelper != null) {
-			role.setSkillIds(skillHelper.getIdStr());
-			role.setSkillCourses(skillHelper.getCourseStr());
-		}
+		// Helper skillHelper = handlerInputWithCourse(isModify, input.getSkillIds(),
+		// originSkillIdsStr, skillService::getCourseConfigs);
+		//
+		// if (skillHelper != null) {
+		// role.setSkillIds(skillHelper.getIdStr());
+		// role.setSkillCourses(skillHelper.getCourseStr());
+		// }
 
 		role.setSkillIdWeights(JsonUtil.toJsonString(input.getSkillIdWeights()));
 
@@ -425,10 +420,10 @@ public class RoleController {
 		// 技能体系
 		String categoryId = role.getCategory();
 		output.setCategory(categoryId);
-		SkillSystem skillSystem = skillSystemService.getById(categoryId);
-		if (skillSystem != null) {
-			output.setCategoryName(skillSystem.getContent());
-		}
+		// SkillSystem skillSystem = skillSystemService.getById(categoryId);
+		// if (skillSystem != null) {
+		// output.setCategoryName(skillSystem.getContent());
+		// }
 
 		List<String> taskIds = stringToList(role.getTaskIds());
 		output.setTaskIds(taskIds);

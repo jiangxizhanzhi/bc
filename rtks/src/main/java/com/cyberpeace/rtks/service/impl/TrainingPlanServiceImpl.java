@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -39,6 +37,8 @@ import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -92,23 +92,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 				.collect(Collectors.groupingBy(RoleOutput::getLevelId));
 
 		parseTreeNode(frame, roleListMap);
-	}
-
-	@Override
-	public List<SkillTreeRes> getSkillTree(String skillSystemId) {
-		List<SkillTreeRes> skillTreeResList = Lists.newArrayList();
-		List<SkillRes> skillResList = skillService.getAllSkillsBySkillSystemId(skillSystemId);
-
-		Map<String, List<SkillRes>> skillResMap = skillResList.stream()
-				.collect(Collectors.groupingBy(SkillRes::getCategory));
-		for (String key : skillResMap.keySet()) {
-			SkillTreeRes skillTreeRes = new SkillTreeRes();
-			skillTreeRes.setCategory(key);
-			skillTreeRes.setSkillResList(skillResMap.get(key));
-			skillTreeResList.add(skillTreeRes);
-		}
-
-		return skillTreeResList;
 	}
 
 	@Override
@@ -259,7 +242,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 			}
 		}
 		if (index >= 10 || index == 1) {
-			log.error("level Loop is out of range！levelId=[{}],loop is [{}]", level.getResourceId(),index-1);
+			log.error("level Loop is out of range！levelId=[{}],loop is [{}]", level.getResourceId(),
+					index - 1);
 			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 		}
 

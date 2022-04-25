@@ -1,10 +1,11 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,22 +17,20 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
-import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
-import com.cyberpeace.rtks.service.*;
-import com.cyberpeace.rtks.service.bo.KnowledgeUnderCourseBo;
+import com.cyberpeace.rtks.service.CourseRelatedService;
+import com.cyberpeace.rtks.service.RelatedCourseService;
+import com.cyberpeace.rtks.service.SkillService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -51,12 +50,6 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	private RelatedCourseService relatedCourseDao;
 
 	@Autowired
-	private SkillCategoryService skillCategoryService;
-
-	@Autowired
-	private SkillSystemService skillSystemService;
-
-	@Autowired
 	private CourseRelatedService courseRelatedService;
 
 	@Override
@@ -69,20 +62,6 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
 
 		return PageUtil.getListResult(result);
-	}
-
-	@Override
-	public List<String> getCourseByIds(List<String> skillIds) {
-		if (CollectionUtils.isEmpty(skillIds)) {
-			return Lists.newArrayList();
-		}
-		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
-		List<String> courseIds = skills.stream()
-				.map(skill -> JsonUtil.toJsonObjectArray(skill.getCourses(),
-						KnowledgeUnderCourseBo.class))
-				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId).distinct()
-				.collect(Collectors.toList());
-		return courseIds;
 	}
 
 	@Override
@@ -102,7 +81,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			// 修改关联表
 			String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
 					skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
-			skill.setCourses(courses);
+			// skill.setCourses(courses);
 
 			updateById(skill);
 		} else {
@@ -111,18 +90,6 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		}
 
 		return skillRes;
-	}
-
-	@Override
-	public void validate(Skill skill) {
-		if (skillCategoryService.getById(skill.getCategoryId()) == null) {
-			log.error("Skill Category not exist！CategoryId=[{}]", skill.getCategoryId());
-			throw new BusinessException(RtksBusinessErrorCode.CATEGORY_NOT_EXIST);
-		}
-		if (skillSystemService.getById(skill.getSystemId()) == null) {
-			log.error("Skill System not exist！SystemId=[{}]", skill.getSystemId());
-			throw new BusinessException(RtksBusinessErrorCode.CATEGORY_NOT_EXIST);
-		}
 	}
 
 	@Override
@@ -176,7 +143,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 						BeanUtils.copyProperties(skillRes, skill);
 						courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
 								skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
-						skill.setCourses(courses);
+						// skill.setCourses(courses);
 
 						skillList.add(skill);
 					}
@@ -209,34 +176,6 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return skillResList;
 	}
 
-	@Override
-	public List<SkillRes> getSkillBySceneCategory(String scene_category_id) {
-		List<SkillRes> skillResList = skillMapper.getAllSkills(scene_category_id);
-
-		return skillResList;
-	}
-
-	@Override
-	public List<SkillRes> getAllSkillsBySkillSystemId(String skillSystemId) {
-		List<SkillRes> skillResList = skillMapper.getAllSkillsBySkillSystemId(skillSystemId);
-		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
-
-		return skillResList;
-	}
-
-	@Override
-	public Map<String, List<CourseRelatedRes>> getSkillByCourseId(List<String> ids) {
-		if (CollectionUtils.isEmpty(ids)) {
-			return Maps.newHashMap();
-		}
-		List<CourseRelatedRes> knowledgeList = skillMapper.getSkillByCourseId(ids);
-
-		Map<String, List<CourseRelatedRes>> courseKnowledgeResMap = knowledgeList.stream()
-				.collect(Collectors.groupingBy(CourseRelatedRes::getResourceId));
-
-		return courseKnowledgeResMap;
-	}
-
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,
 			List<RelatedCourse> relatedCourseList) {
 		Map<String, Integer> map = Maps.newHashMap();
@@ -260,9 +199,4 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		}
 	}
 
-	@Override
-	public List<CourseConfig> getCourseConfigs(String skillId) {
-		Skill skill = getOr404(skillId);
-		return JsonUtil.toJsonObjectArray(skill.getCourses(), CourseConfig.class);
-	}
 }

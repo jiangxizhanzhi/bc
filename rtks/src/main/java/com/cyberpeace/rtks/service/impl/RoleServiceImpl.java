@@ -70,14 +70,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 				role.setKnowledgeCourses(JsonUtil.toJsonString(courseIds));
 			});
 		}
-		if ("skill".equals(type)) {
-			roleList.forEach(role -> {
-				List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
-						String.class);
-				List<String> courseIds = skillService.getCourseByIds(skillIds);
-				role.setSkillCourses(JsonUtil.toJsonString(courseIds));
-			});
-		}
+		// if ("skill".equals(type)) {
+		// roleList.forEach(role -> {
+		// List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
+		// String.class);
+		// List<String> courseIds = skillService.getCourseByIds(skillIds);
+		// role.setSkillCourses(JsonUtil.toJsonString(courseIds));
+		// });
+		// }
 		this.updateBatchById(roleList);
 
 	}
@@ -97,15 +97,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 				role.setKnowledgeCourses(JsonUtil.toJsonString(courseIds));
 			});
 		}
-		if ("skill".equals(type)) {
-			roleList.forEach(role -> {
-				role.setSkillIds(deleteIds(role.getSkillIds(), deleteReq.getIds()));
-				List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
-						String.class);
-				List<String> courseIds = skillService.getCourseByIds(skillIds);
-				role.setSkillCourses(JsonUtil.toJsonString(courseIds));
-			});
-		}
+		// if ("skill".equals(type)) {
+		// roleList.forEach(role -> {
+		// role.setSkillIds(deleteIds(role.getSkillIds(), deleteReq.getIds()));
+		// List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
+		// String.class);
+		// List<String> courseIds = skillService.getCourseByIds(skillIds);
+		// role.setSkillCourses(JsonUtil.toJsonString(courseIds));
+		// });
+		// }
 		if ("ability".equals(type)) {
 			roleList.forEach(role -> {
 				role.setAbilityIds(deleteIds(role.getSkillIds(), deleteReq.getIds()));

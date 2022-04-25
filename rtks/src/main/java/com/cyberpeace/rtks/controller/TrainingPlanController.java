@@ -20,7 +20,6 @@ import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillTreeRes;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.service.FrameService;
@@ -51,16 +50,6 @@ public class TrainingPlanController {
 
 	@Autowired
 	private FrameService frameService;
-
-	@ApiOperation("技能体系")
-	@GetMapping("/skillTree")
-	public BaseRsp<List<SkillTreeRes>> skillTree(@ApiParam(name = "skillSystemId", value = "技能体系id",
-			required = false) String skillSystemId) {
-
-		List<SkillTreeRes> skillTreeRes = trainingPlanService.getSkillTree(skillSystemId);
-
-		return new BaseRsp<>(skillTreeRes);
-	}
 
 	@ApiOperation("知识体系")
 	@GetMapping("/knowledgeTree")

@@ -3,8 +3,6 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +11,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.res.PercentRes;
 import com.cyberpeace.rtks.service.RtksStatisticService;
-import com.cyberpeace.rtks.service.bo.*;
+import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
+import com.cyberpeace.rtks.service.bo.RoleStudyBo;
+import com.cyberpeace.rtks.service.bo.RtksRadarBo;
+import com.cyberpeace.rtks.service.bo.StudyRecordBo;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/rtks/statistic")
@@ -46,19 +51,6 @@ public class RtksEvaluationController {
 		return rsp;
 	}
 
-	@ApiOperation("岗位技能点学习记录")
-	@GetMapping("/role/skill/study_record")
-	public BaseRsp<RoleStudyBo> getRoleSkillRecord() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String existRoleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp<RoleStudyBo> rsp = new BaseRsp<>();
-		if (StringUtils.isNotBlank(existRoleId)) {
-			RoleStudyBo studyBo = rtksStatisticService.roleSkillStudyRecord(existRoleId, userId);
-			rsp.setData(studyBo);
-		}
-		return rsp;
-	}
-
 	@ApiOperation("岗位知识点六棱图统计")
 	@GetMapping("/role/knowledge/radar")
 	public BaseRsp<List<RtksRadarBo>> getRoleKnowledgeMatch() {
@@ -67,20 +59,6 @@ public class RtksEvaluationController {
 		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
 			List<RtksRadarBo> radarBos = rtksStatisticService.calculateRadar(existRoleId, userId);
-			baseRsp.setData(radarBos);
-		}
-		return baseRsp;
-	}
-
-	@ApiOperation("LGD岗位技能点六棱图统计")
-	@GetMapping("/role/skill/radar")
-	public BaseRsp<List<RtksRadarBo>> getLgdRoleSkillMatch() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String existRoleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
-		if (StringUtils.isNotBlank(existRoleId)) {
-			List<RtksRadarBo> radarBos = rtksStatisticService.calculateLgdRadar(existRoleId,
-					userId);
 			baseRsp.setData(radarBos);
 		}
 		return baseRsp;
@@ -100,20 +78,6 @@ public class RtksEvaluationController {
 			rsp.setData(percentFormatterTran(percentBos));
 		}
 
-		return rsp;
-	}
-
-	@ApiOperation("技能点完成度折线图")
-	@GetMapping("/role/skill/percent")
-	public BaseRsp<PercentRes> getSkillProcessByRole() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String existRoleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp<PercentRes> rsp = new BaseRsp<>();
-		if (StringUtils.isNotBlank(existRoleId)) {
-			List<KnowledgeStudyPercentBo> percentBos = rtksStatisticService
-					.calculateSkillPercent(existRoleId, userId);
-			rsp.setData(percentFormatterTran(percentBos));
-		}
 		return rsp;
 	}
 
@@ -144,37 +108,6 @@ public class RtksEvaluationController {
 		if (StringUtils.isNotBlank(existRoleId)) {
 			String percent = rtksStatisticService.roleMatchPercent(existRoleId, userId);
 			rsp.setData(percent);
-		}
-		return rsp;
-	}
-
-	@GetMapping("/skill/radar")
-	@ApiOperation("LGD技能点类别六棱图（与岗位无关，与技能体系有关）")
-	public BaseRsp<List<RtksRadarBo>> getSillRadar(@ApiParam(name = "skillSystemId",
-			value = "技能体系id", required = false) String skillSystemId) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-
-		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
-		if (StringUtils.isNotBlank(skillSystemId)) {
-			List<RtksRadarBo> radarBos = rtksStatisticService.calculateLgdSkillRadar(userId,
-					skillSystemId);
-			baseRsp.setData(radarBos);
-		}
-
-		return baseRsp;
-	}
-
-	@GetMapping("/role/skill/score")
-	@ApiOperation("岗位技能评分详情")
-	public BaseRsp<List<CategorySkillBo>> getRoleSillScore() {
-
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String roleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp<List<CategorySkillBo>> rsp = new BaseRsp<>();
-		if (StringUtils.isNotBlank(roleId)) {
-			List<CategorySkillBo> categorySkills = rtksStatisticService.getRoleSkillScores(userId,
-					roleId);
-			rsp.setData(categorySkills);
 		}
 		return rsp;
 	}

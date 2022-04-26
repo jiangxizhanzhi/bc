@@ -6,19 +6,42 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.room.DashboardFriend;
+import com.cyberpeace.common.model.room.DashboardGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
-import com.cyberpeace.oj.course.service.ClassroomSceneService;
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
@@ -32,31 +55,9 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.service.ClassroomService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -463,6 +464,83 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				return classroomMapper.deleteById(classroomId);
 			}
 		});
+	}
+
+	@Override
+	public DashboardInfo getChatUsers(String roomId, UserInfo userContext) {
+
+		Classroom classroom = classroomMapper.selectById(roomId);
+		if (null == classroom) {
+			log.error("classroom not found! classroom_id=[{}]", roomId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper.selectByRoom(roomId);
+		List<String> userIds = StreamApiUtils.distinctFlatMap(groupInfoList,
+				groupInfo -> JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class));
+		if (CollectionUtils.isEmpty(userIds)) {
+			log.error("Classroom user is null! classroom_id=[{}]", roomId);
+			return null;
+		}
+
+		// 获取用户组装
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		DashboardInfo dashboardInfo = new DashboardInfo();
+		List<DashboardUser> friendUsers = Lists.newArrayList();
+
+		for (String userId : userIds) {
+			UserInfo userInfo = userInfoMap.get(userId);
+			if (userInfo == null) {
+				log.error("Some users are missing! user_id=[{}]", userId);
+				continue;
+			}
+			DashboardUser dashboardUser = userToDashUser(userInfo, ClassroomRole.STUDENT.getDesc());
+
+			// 如果用户为课程表创建者则为教员
+			if (userId.equals(classroom.getCreateUserId())) {
+				dashboardUser.setRole(ClassroomRole.TEACHER.getDesc());
+			}
+
+			// 如果是当前用户不加进朋友列表 进入下一次循环
+			if (userContext.getUserId().equals(userId)) {
+				dashboardInfo.setMine(dashboardUser);
+				continue;
+			}
+
+			friendUsers.add(dashboardUser);
+		}
+
+		// 好友列表组装
+		DashboardFriend dashboardFriend = new DashboardFriend();
+		dashboardFriend.setGroupname(DashboardFriend.GROUP_NAME.FRIEND_LIST.getDesc());
+		dashboardFriend.setId(CommonConstant.ONE);
+		dashboardFriend.setList(friendUsers);
+		dashboardInfo.setFriend(Lists.newArrayList(dashboardFriend));
+
+		// 群组组装
+		DashboardGroup group = new DashboardGroup(ClassroomRole.CLASSROOM.getDesc());
+		group.setId(classroom.getResourceId());
+		group.setMembers(userIds);
+		dashboardInfo.setGroup(Lists.newArrayList(group));
+
+		return dashboardInfo;
+	}
+
+	/**
+	 * 用户转换为聊天用户格式
+	 * @param userInfo
+	 * @param roleName
+	 * @return
+	 */
+	private DashboardUser userToDashUser(UserInfo userInfo, String roleName) {
+		DashboardUser dashboardUser = new DashboardUser();
+		dashboardUser.setAvatar(userInfo.getAvatarUrl());
+		dashboardUser.setUsername(userInfo.getName());
+		dashboardUser.setId(userInfo.getUserId());
+		dashboardUser.setRole(roleName);
+		dashboardUser.setStatus(CommonConstant.ONLINE);
+		dashboardUser.setSign(CommonConstant.EMPTY_STRING);
+		return dashboardUser;
 	}
 
 	/**

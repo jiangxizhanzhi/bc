@@ -3,8 +3,6 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.oj.course.controller.res.RemoteHelpReq;
-import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.oj.course.controller.req.ClassroomSignInReq;
+import com.cyberpeace.oj.course.controller.res.RemoteHelpReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
@@ -96,6 +96,15 @@ public class WebClassroomController {
 
 		return new BaseRsp();
 
+	}
+
+	@ApiOperation("获取课堂聊天用户信息")
+	@GetMapping("/chat/users")
+	public BaseRsp<DashboardInfo> chatUsers(@RequestParam("room_id") String roomId) {
+
+		DashboardInfo dashboardInfo = classroomService.getChatUsers(roomId,
+				UserInfoContext.getUserContext());
+		return new BaseRsp<>(dashboardInfo);
 	}
 
 }

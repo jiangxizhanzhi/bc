@@ -11,8 +11,8 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
-import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
-import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 
 public interface RbRoomService extends IService<RbRoom> {
 

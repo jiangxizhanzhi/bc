@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.service.context.room;
+package com.cyberpeace.common.model.room;
 
 import lombok.Data;
 

@@ -17,6 +17,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
+import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.SkillService;
@@ -30,6 +31,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	@Autowired
 	private KnowledgeService knowledgeService;
+
+	@Autowired
+	private RoleSkillRelationMapper roleSkillRelationMapper;
 
 	@Autowired
 	private SkillService skillService;
@@ -119,6 +123,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 		this.updateBatchById(roleList);
 
+	}
+
+	@Override
+	public void deleteSkillRelBySkillIds(List<String> skillIds) {
+		if (skillIds.isEmpty()) {
+			return;
+		}
+		roleSkillRelationMapper.deleteBySkillIds(skillIds);
 	}
 
 	private String deleteIds(String Ids, List<String> ids) {

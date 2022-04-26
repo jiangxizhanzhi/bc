@@ -1,38 +1,35 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
-import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
-import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.SkillMissionRelation;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMissionRelationMapper;
-import com.cyberpeace.rtks.service.CourseRelatedService;
-import com.cyberpeace.rtks.service.RelatedCourseService;
 import com.cyberpeace.rtks.service.SkillService;
+import com.cyberpeace.rtks.service.bo.skill.MissionBo;
+import com.cyberpeace.rtks.service.bo.skill.MissionRes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -49,10 +46,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	private SkillMapper skillMapper;
 
 	@Autowired
-	private RelatedCourseService relatedCourseDao;
-
-	@Autowired
-	private CourseRelatedService courseRelatedService;
+	private TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private SkillMissionRelationMapper skillMissionRelationMapper;
@@ -62,38 +56,23 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		Page page = skillListReq.toPageParam();
 
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
-
-		List<SkillRes> skillResList = result.getRecords();
-		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
-
+		// fill missions
+		for (SkillRes skillRes : result.getRecords()) {
+			skillRes.setMissionList(skillMissionRelationMapper
+					.batchSelectMissionResBySkillId(skillRes.getResourceId()));
+		}
 		return PageUtil.getListResult(result);
 	}
 
 	@Override
-	public SkillRes getSkillByResourceId(String id) {
-		UserInfo userInfo = UserInfoContext.getUserContext();
-		SkillRes skillRes = skillMapper.getSkillByResourceId(id);
-		List<RelatedCourse> relatedCourseList = Lists.newArrayList();
-		List<CourseStudyProcessBo> processBos = Lists.newArrayList();
+	public SkillRes getSkillByResourceId(String skillId) {
+		Skill skill = skillMapper.selectById(skillId);
+		// 查询关联任务，时间倒序
+		List<MissionRes> missionResList = skillMissionRelationMapper
+				.batchSelectMissionResBySkillId(skillId);
 
-		if (relatedCourseDao.setCourseResult(userInfo, skillRes.getCourses(), relatedCourseList,
-				processBos, RoleDetailRes.RELATED_COURSE_COURSE)) {
-			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-			skillRes.setCourseList(relatedCourseList);
-
-			Skill skill = new Skill();
-			BeanUtils.copyProperties(skillRes, skill);
-			// 修改关联表
-			String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
-					skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
-			// skill.setCourses(courses);
-
-			updateById(skill);
-		} else {
-			// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-			skillRes.setCourseList(relatedCourseList);
-		}
-
+		SkillRes skillRes = BeanUtils.copy(skill, SkillRes.class);
+		skillRes.setMissionList(missionResList);
 		return skillRes;
 	}
 
@@ -108,91 +87,16 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public void checkSkillRes(List<SkillRes> skillResList, String related_course_type) {
-		List<Skill> skillList = Collections.synchronizedList(new ArrayList<>());
-		UserInfo userInfo = UserInfoContext.getUserContext(); // 创建一个线程池
-		ExecutorService exec = new ThreadPoolExecutor(10, 100, 60L, TimeUnit.SECONDS,
-				new LinkedBlockingQueue<Runnable>());
-		// 定义一个任务集合
-		List<Callable<Integer>> tasks = new ArrayList<>();
-		Callable<Integer> task = null;
-
-		for (SkillRes skillRes : skillResList) {
-			task = new Callable<Integer>() {
-
-				@Override
-				public Integer call() throws Exception {
-					String courses = skillRes.getCourses();
-
-					List<RelatedCourse> relatedCourseList = Lists.newArrayList();
-					List<CourseStudyProcessBo> processBos = Lists.newArrayList();
-
-					boolean isDeleted = relatedCourseDao.setCourseResult(userInfo, courses,
-							relatedCourseList, processBos, related_course_type);
-					// skillRes.setCourses(JsonUtil.toJsonString(relatedCourseList));
-					skillRes.setCourseList(relatedCourseList);
-					if (RoleDetailRes.RELATED_COURSE_STUDY.equals(related_course_type)) {
-						skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
-						skillRes.setCourses("");
-						skillRes.setCourseList(null);
-						skillRes.setCourseStudyProcessBoList(processBos);
-					} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(related_course_type)) {
-						skillRes.setProcess(calculateProcess(processBos, relatedCourseList));
-						skillRes.setCourseStudyProcessBoList(processBos);
-					}
-
-					if (isDeleted) {
-
-						// 修改关联表
-						Skill skill = new Skill();
-						BeanUtils.copyProperties(skillRes, skill);
-						courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
-								skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
-						// skill.setCourses(courses);
-
-						skillList.add(skill);
-					}
-
-					return 123;
-				}
-
-			};
-			tasks.add(task);
-
-		}
-
-		try {
-			List<Future<Integer>> results = exec.invokeAll(tasks);
-			results.isEmpty();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		// 关闭线程池
-		exec.shutdown();
-		updateBatchById(skillList);
-	}
-
-	@Override
-	public List<SkillRes> getAllSkills() {
-		List<SkillRes> skillResList = skillMapper.getAllSkills("");
-		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
-
-		return skillResList;
-	}
-
-	@Override
-	public void addMissionRelation(String skillId, List<String> missionTemplateIds) {
-		if (missionTemplateIds.isEmpty()) {
+	public void addMissionRelation(String skillId, List<MissionBo> missionTemplates) {
+		if (missionTemplates.isEmpty()) {
 			return;
 		}
 		List<SkillMissionRelation> relations = Lists.newArrayList();
-		for (String missionTemplateId : missionTemplateIds) {
+		for (MissionBo missionBo : missionTemplates) {
 			SkillMissionRelation relation = new SkillMissionRelation();
 			relation.setSkillId(skillId);
-			relation.setMissionTemplateId(missionTemplateId);
-			// todo
-			relation.setWeight(1);
+			relation.setMissionTemplateId(missionBo.getResourceId());
+			relation.setWeight(missionBo.getWeight());
 		}
 		// 插入前检查是否存在任务。 todo
 		skillMissionRelationMapper.insertBatch(relations);
@@ -201,6 +105,69 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	@Override
 	public void deleteMissionRelation(String skillId, List<String> missionTemplateIds) {
 		skillMissionRelationMapper.batchDeleteBySkillAndMissions(skillId, missionTemplateIds);
+	}
+
+	@Override
+	public void checkResourceId(String resourceId) {
+		CrCommonValidator.validateIdLen(resourceId, RtksBusinessErrorCode.INVALID_SKILL_ID);
+		if (skillMapper.existByResourceId(resourceId)) {
+			throw new BusinessException(RtksBusinessErrorCode.SKILL_ID_OCCUPIED);
+		}
+	}
+
+	@Override
+	public void updateMissionRelations(String skillId, List<MissionBo> missions) {
+		List<SkillMissionRelation> relations = skillMissionRelationMapper.batchSelect(skillId);
+		// 删除的关联
+		List<String> deleted = Lists.newArrayList();
+		// 编辑权重的关联
+		List<SkillMissionRelation> modified = Lists.newArrayList();
+
+		boolean flag;
+		int i;
+		MissionBo missionBo;
+		for (SkillMissionRelation relation : relations) {
+			flag = false;
+			i = 0;
+			while (i < missions.size()) {
+				missionBo = missions.get(i);
+				if (relation.getMissionTemplateId().equals(missionBo.getResourceId())) {
+					flag = true;
+					// 编辑了权重的
+					if (!relation.getWeight().equals(missionBo.getWeight())) {
+						modified.add(relation);
+					}
+					// 去掉既存的，剩下的就是新增的
+					missions.remove(i);
+					break;
+				} else {
+					i++;
+				}
+			}
+			// 没有在新列表中找到，删除
+			if (!flag) {
+				deleted.add(relation.getMissionTemplateId());
+			}
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				addMissionRelation(skillId, missions);
+				deleteMissionRelation(skillId, deleted);
+				for (SkillMissionRelation relation : modified) {
+					skillMissionRelationMapper.updateById(relation);
+				}
+			}
+		});
+	}
+
+	@Override
+	public void clearMissionRel(List<String> skillIds) {
+		if (skillIds.isEmpty()) {
+			return;
+		}
+		skillMissionRelationMapper.clearBySkillIds(skillIds);
 	}
 
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,

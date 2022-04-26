@@ -60,4 +60,11 @@ public interface RtksBusinessErrorCode {
 	String SINGLE_FRAME_DISABLE = "103017";
 
 	String MULTI_FRAME_DISABLE = "103018";
+
+	/** 技能编号已被占用 */
+	String SKILL_ID_OCCUPIED = "103019";
+
+	String INVALID_SKILL_ID = "103020";
+
+	String INVALID_CONTENT = "103021";
 }

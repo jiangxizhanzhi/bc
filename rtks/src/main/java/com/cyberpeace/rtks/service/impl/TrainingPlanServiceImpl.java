@@ -131,7 +131,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
 		List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList, SkillRes.class);
 
-		skillService.checkSkillRes(skillResList, type);
+		// skillService.checkSkillRes(skillResList, type);
+		// todo
 		roleDetailRes.setSkillResDataList(skillResList);
 
 		return roleDetailRes;
@@ -181,15 +182,16 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		roleDetailRes.setBasicCourseList(basicCourseList);
 
 		// 获取技能的课程列表
-		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
-		List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList, SkillRes.class);
-
-		skillService.checkSkillRes(skillResList, type);
-		List<RelatedCourse> skillCourseList = Lists.newArrayList();
-		for (SkillRes skillRes : skillResList) {
-			skillCourseList.addAll(skillRes.getCourseList());
-		}
-		roleDetailRes.setSkillCourseList(skillCourseList);
+		// List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
+		// List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList,
+		// SkillRes.class);
+		//
+		// skillService.checkSkillRes(skillResList, type);
+		// List<RelatedCourse> skillCourseList = Lists.newArrayList();
+		// for (SkillRes skillRes : skillResList) {
+		// skillCourseList.addAll(skillRes.getCourseList());
+		// }
+		// roleDetailRes.setSkillCourseList(skillCourseList);
 
 		return roleDetailRes;
 	}

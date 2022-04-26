@@ -8,10 +8,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 
 public interface MissionService extends IService<Mission> {
 
@@ -142,4 +144,11 @@ public interface MissionService extends IService<Mission> {
 	List<Mission> batchGetByRoomAndCrRoles(String roomId, List<CrRole> crRoleList);
 
 	List<String> getMissionIdsByScheme(List<MissionStageScheme> missionStageSchemes);
+
+	/**
+	 * 后台任务模版
+	 * @param pageReq
+	 * @return
+	 */
+	ListRsp<MissionTemplateRes> pageMissionTemplate(MissionTemplatePageReq pageReq);
 }

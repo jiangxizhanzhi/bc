@@ -2,11 +2,14 @@ package com.cyberpeace.rtks.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.Skill;
+import com.cyberpeace.rtks.service.bo.skill.MissionBo;
 
 /**
  *
@@ -30,19 +33,12 @@ public interface SkillService extends IService<Skill> {
 	 * */
 	Skill getOr404(String skillId);
 
-	void checkSkillRes(List<SkillRes> skillResList, String type);
-
-	/**获取全部技能
-	 * @return
-	 */
-	List<SkillRes> getAllSkills();
-
 	/**
 	 * 新增技能和任务的关联关系
 	 * @param skillId
-	 * @param missionTemplateIds
+	 * @param missionTemplates
 	 */
-	void addMissionRelation(String skillId, List<String> missionTemplateIds);
+	void addMissionRelation(String skillId, List<MissionBo> missionTemplates);
 
 	/**
 	 * 删除技能和任务的关联关系
@@ -50,4 +46,23 @@ public interface SkillService extends IService<Skill> {
 	 * @param missionTemplateIds
 	 */
 	void deleteMissionRelation(String skillId, List<String> missionTemplateIds);
+
+	/**
+	 * 校验技能编号是否可用
+	 * @param resourceId
+	 */
+	void checkResourceId(@Param("resourceId") String resourceId);
+
+	/**
+	 * 编辑技能保存时更新任务关联
+	 * @param resourceId
+	 * @param missions
+	 */
+	void updateMissionRelations(String resourceId, List<MissionBo> missions);
+
+	/**
+	 * 删除技能时删除任务关联
+	 * @param skillIds
+	 */
+	void clearMissionRel(List<String> skillIds);
 }

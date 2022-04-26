@@ -3,40 +3,19 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.SkillMapper">
-    <insert id="addMissionRelation">
-
-    </insert>
 
     <select id="listSkill" resultType="com.cyberpeace.rtks.controller.res.SkillRes">
         <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
             <bind name="pattern" value="'%' + skillListReq.pattern + '%'"/>
         </if>
         select
-        rtks_skill.id,
-        rtks_skill.resource_id,
-        rtks_skill.system_id,
-        rtks_skill.category_id,
-        rtks_skill.content,
-        rtks_skill.courses,
-        rtks_skill.create_time,
-        rtks_skill.update_time,
-        rtks_skill_category.content category,
-        rtks_skill_system.content system
+        resource_id, content
         from
         rtks_skill
-        left join rtks_skill_category on rtks_skill.category_id = rtks_skill_category.resource_id
-        left join rtks_skill_system on rtks_skill.system_id = rtks_skill_system.resource_id
         <where>
-            1=1
             <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
-                and ( rtks_skill.resource_id like #{pattern}
-                or rtks_skill.content like #{pattern} )
-            </if>
-            <if test="skillListReq.systemId != null and skillListReq.systemId != ''">
-                and rtks_skill.system_id = #{skillListReq.systemId}
-            </if>
-            <if test="skillListReq.categoryId != null and skillListReq.categoryId != ''">
-                and rtks_skill.category_id = #{skillListReq.categoryId}
+                rtks_skill.resource_id like #{pattern}
+                or rtks_skill.content like #{pattern}
             </if>
         </where>
     </select>
@@ -82,5 +61,15 @@
             </where>
         </if>
 
+    </select>
+    <select id="existByResourceId" resultType="java.lang.Boolean">
+        select case
+                   when exists(select 1
+                               from bc.rtks_skill
+                               where resource_id = #{resourceId})
+                       then 1
+                   else 0
+                   end
+                   as result;
     </select>
 </mapper>

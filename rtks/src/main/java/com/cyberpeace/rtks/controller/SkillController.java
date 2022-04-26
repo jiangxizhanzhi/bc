@@ -2,22 +2,24 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.SkillAddReq;
 import com.cyberpeace.rtks.controller.req.SkillListReq;
-import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.controller.res.SkillRes;
-import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Skill;
-import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.SkillService;
 
@@ -35,7 +37,7 @@ public class SkillController {
 	private SkillService skillService;
 
 	@Autowired
-	private CourseRelatedService courseRelatedService;
+	private TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private RoleService roleService;
@@ -52,42 +54,70 @@ public class SkillController {
 	@ApiOperation("新增单条")
 	@PostMapping()
 	public BaseRsp<String> addSkill(@RequestBody @Validated SkillAddReq skillAddReq) {
+		skillService.checkResourceId(skillAddReq.getResourceId());
 		Skill skill = new Skill();
-		BeanUtils.copyProperties(skillAddReq, skill);
+		skill.setResourceId(skillAddReq.getResourceId());
+		skill.setContent(skillAddReq.getContent());
 
-		List<RelatedCourse> relatedCourseList = skillAddReq.getCourseList();
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
-				skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
-
-		skillService.save(skill);
-
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// save skill
+				skillService.save(skill);
+				// save skill-mission relation
+				skillService.addMissionRelation(skill.getResourceId(), skillAddReq.getMissions());
+			}
+		});
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("修改单条")
 	@PutMapping()
 	public BaseRsp<String> modifySkill(@RequestBody @Validated SkillAddReq skillAddReq) {
-		Skill skill = new Skill();
-		BeanUtils.copyProperties(skillAddReq, skill);
+		String newContent = skillAddReq.getContent();
+		Skill skill = skillService.getById(skillAddReq.getResourceId());
+		// 校验 content
+		if (StringUtils.isNotBlank(newContent) && !skill.getContent().equals(newContent)) {
+			CrCommonValidator.validateDescLen(skillAddReq.getContent(),
+					RtksBusinessErrorCode.INVALID_CONTENT);
+			skill.setContent(newContent);
 
-		List<RelatedCourse> relatedCourseList = skillAddReq.getCourseList();
-		String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
-				skill.getResourceId(), CourseRelated.RELATED_TYPE_SKILL);
-		roleService.updateBatchByModifyRelatedIds(skillAddReq.getResourceId(), "knowledge");
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		skillService.updateById(skill);
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// update mission relations
+				skillService.updateMissionRelations(skillAddReq.getResourceId(),
+						skillAddReq.getMissions());
+				// update content
+				skillService.updateById(skill);
 
+			}
+		});
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> deleteSkill(@RequestBody @Validated DeleteReq deleteReq) {
-		skillService.removeByIds(deleteReq.getIds());
-		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds(),
-				CourseRelated.RELATED_TYPE_SKILL);
-		roleService.updateBatchByDeleteRelatedIds(deleteReq, "skill");
+		List<String> skillIds = deleteReq.getIds();
+		if (!skillIds.isEmpty()) {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					// delete skills
+					skillService.removeByIds(skillIds);
+					// delete mission relations
+					skillService.clearMissionRel(skillIds);
+					// delete role relations
+					roleService.deleteSkillRelBySkillIds(skillIds);
+				}
+			});
+		}
+
 		return new BaseRsp<>();
 	}
 

@@ -31,6 +31,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
@@ -244,7 +245,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<MissionCategoryCache> missionCategories = Lists.newArrayList(categoryCache.values());
 		// return
 		return StreamApiUtils.map(missionCategories,
-				category -> new MissionCategory(category.getResourceId(), category.selectI18nName()));
+				category -> new MissionCategory(category.getResourceId(),
+						category.selectI18nName()));
 	}
 
 	@Override
@@ -399,7 +401,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public String getTeamTrainingManual(String roomId) {
-		List<CrRole> roles = crRoleMapper.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
+		List<CrRole> roles = crRoleMapper
+				.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
 		List<CrRoleMissionSchemeStage> allStages = Lists.newArrayList();
 		for (CrRole role : roles) {
 			List<CrRoleMissionSchemeStage> stages = JsonUtil
@@ -656,6 +659,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<String> missionIds = Lists.newArrayList();
 		missionStageSchemes.forEach(stage -> missionIds.addAll(stage.getMissions()));
 		return missionIds;
+	}
+
+	@Override
+	public ListRsp<MissionTemplateRes> pageMissionTemplate(MissionTemplatePageReq pageReq) {
+		Page page = pageReq.toPageParam();
+		IPage<MissionTemplateRes> iPage = missionTemplateMapper.pageWithBusiness(page,
+				pageReq.getType(), pageReq.getDifficulty(), pageReq.getPattern());
+		return PageUtil.getListResult(iPage);
 	}
 
 	@Override

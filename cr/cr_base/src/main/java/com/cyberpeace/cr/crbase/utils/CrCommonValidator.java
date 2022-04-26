@@ -91,4 +91,14 @@ public class CrCommonValidator {
 		validateLength(target, CrCommonConstants.MIN_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
 				errorCode);
 	}
+
+	/**
+	 * id、编号长度 1~32
+	 * @param target
+	 * @param errorCode
+	 */
+	public static void validateIdLen(String target, String errorCode) {
+		validateLength(target, CrCommonConstants.MIN_STR_LEN,
+				CrCommonConstants.GENERATED_UUID_LENGTH, errorCode);
+	}
 }

@@ -39,4 +39,10 @@ public interface RoleService extends IService<Role> {
 	 * @param type 类型
 	 * */
 	void updateBatchByDeleteRelatedIds(DeleteReq deleteReq, String type);
+
+	/**
+	 * 删除技能点时删除岗位-技能关联
+	 * @param skillIds
+	 */
+	void deleteSkillRelBySkillIds(List<String> skillIds);
 }

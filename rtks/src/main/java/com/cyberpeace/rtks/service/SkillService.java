@@ -36,4 +36,18 @@ public interface SkillService extends IService<Skill> {
 	 * @return
 	 */
 	List<SkillRes> getAllSkills();
+
+	/**
+	 * 新增技能和任务的关联关系
+	 * @param skillId
+	 * @param missionTemplateIds
+	 */
+	void addMissionRelation(String skillId, List<String> missionTemplateIds);
+
+	/**
+	 * 删除技能和任务的关联关系
+	 * @param skillId
+	 * @param missionTemplateIds
+	 */
+	void deleteMissionRelation(String skillId, List<String> missionTemplateIds);
 }

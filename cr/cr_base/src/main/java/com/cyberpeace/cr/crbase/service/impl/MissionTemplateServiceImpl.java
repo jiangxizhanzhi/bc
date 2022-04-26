@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.PatternConstant;
@@ -14,6 +17,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -25,6 +29,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 
 	@Autowired
 	MissionTemplateMapper missionTemplateMapper;
+
+	@Autowired
+	TransactionTemplate transactionTemplate;
+
+	@Autowired
+	RtksRelatedService rtksRelatedService;
 
 	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
@@ -63,7 +73,15 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		if (missionTemplateIds.isEmpty()) {
 			return;
 		}
-		missionTemplateMapper.deleteBatchIds(missionTemplateIds);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				missionTemplateMapper.deleteBatchIds(missionTemplateIds);
+				rtksRelatedService.deleteSkillMissionRelation(missionTemplateIds);
+			}
+		});
+
 	}
 
 	@Override

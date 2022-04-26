@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.rtks.dao.mapper.SkillMissionRelationMapper">
+    <insert id="insertBatch">
+        insert into rtks_skill_mission_relation
+        (skill_id, mission_template_id, weight, create_time, update_time)
+        values
+        <foreach collection="relations" item="relation" separator=",">
+            (#{relation.skillId}, #{relation.missionTemplateId}, #{relation.weight}, now(), now())
+        </foreach>
+    </insert>
+    <delete id="batchDeleteByMissionTemplateIds">
+        delete from rtks_skill_mission_relation where mission_template_id in
+        <foreach collection="missionTemplateIds" item="missionTemplateId" separator="," open="(" close=")">
+            #{missionTemplateId}
+        </foreach>
+    </delete>
+    <delete id="batchDeleteBySkillAndMissions">
+        delete from rtks_skill_mission_relation
+        where skill_id = #{skillId}
+        and mission_template_id in
+        <foreach collection="missionTemplateIds" item="missionTemplateId" separator="," open="(" close=")">
+            #{missionTemplateId}
+        </foreach>
+    </delete>
+</mapper>

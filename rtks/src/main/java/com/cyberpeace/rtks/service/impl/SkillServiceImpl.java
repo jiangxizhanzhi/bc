@@ -27,7 +27,9 @@ import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Skill;
+import com.cyberpeace.rtks.dao.entity.SkillMissionRelation;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
+import com.cyberpeace.rtks.dao.mapper.SkillMissionRelationMapper;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.RelatedCourseService;
 import com.cyberpeace.rtks.service.SkillService;
@@ -51,6 +53,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Autowired
 	private CourseRelatedService courseRelatedService;
+
+	@Autowired
+	private SkillMissionRelationMapper skillMissionRelationMapper;
 
 	@Override
 	public ListRsp<SkillRes> page(SkillListReq skillListReq) {
@@ -174,6 +179,28 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		checkSkillRes(skillResList, RoleDetailRes.RELATED_COURSE_ALL);
 
 		return skillResList;
+	}
+
+	@Override
+	public void addMissionRelation(String skillId, List<String> missionTemplateIds) {
+		if (missionTemplateIds.isEmpty()) {
+			return;
+		}
+		List<SkillMissionRelation> relations = Lists.newArrayList();
+		for (String missionTemplateId : missionTemplateIds) {
+			SkillMissionRelation relation = new SkillMissionRelation();
+			relation.setSkillId(skillId);
+			relation.setMissionTemplateId(missionTemplateId);
+			// todo
+			relation.setWeight(1);
+		}
+		// 插入前检查是否存在任务。 todo
+		skillMissionRelationMapper.insertBatch(relations);
+	}
+
+	@Override
+	public void deleteMissionRelation(String skillId, List<String> missionTemplateIds) {
+		skillMissionRelationMapper.batchDeleteBySkillAndMissions(skillId, missionTemplateIds);
 	}
 
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,

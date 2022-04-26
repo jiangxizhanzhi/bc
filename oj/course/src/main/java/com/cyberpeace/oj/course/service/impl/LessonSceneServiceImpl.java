@@ -217,7 +217,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 				if (null == classroomSign) {
 					return null;
 				}
-				classroomSign.setNeedHelp(CommonConstant.FALSE);
+				classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.NO_HELP.getCode());
 				classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
 				return classroomSign;
 			});

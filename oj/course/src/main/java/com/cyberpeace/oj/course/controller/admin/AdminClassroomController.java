@@ -146,6 +146,17 @@ public class AdminClassroomController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("结束远程协助")
+	@GetMapping("")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
+			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	public BaseRsp endHelp(@RequestParam("resource_id") String classroomId,
+						   @RequestParam("user_id") String userId) {
+
+		classroomSignService.endHelp(classroomId, userId);
+		return new BaseRsp();
+	}
+
 	@ApiOperation("查询课堂实验报告列表")
 	@GetMapping("/classroom_report")
 	public BaseRsp<ListRsp<ClassroomReportBo>> classroomReport(ClassroomMonitorReq reportReq) {

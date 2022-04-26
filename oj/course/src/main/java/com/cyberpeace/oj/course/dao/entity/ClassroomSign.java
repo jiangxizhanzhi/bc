@@ -3,9 +3,11 @@ package com.cyberpeace.oj.course.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
@@ -24,7 +26,7 @@ public class ClassroomSign extends BaseTable {
 
 	private Boolean signIn;
 
-	private Boolean needHelp;
+	private Integer needHelp;
 
 	private Date signInTime;
 
@@ -45,6 +47,26 @@ public class ClassroomSign extends BaseTable {
 			this.desc = desc;
 		}
 
+	}
+
+	public enum NEED_HELP implements GenericEnum {
+
+		/** 协助状态*/
+		NO_HELP(0, "未请求协助"),
+		NEED_HELP(1, "请求协助"),
+		IN_HELP(2, "协助中"),
+		END_HELP(3, "结束协助");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		NEED_HELP(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
 	}
 
 }

@@ -20,6 +20,7 @@ import com.cyberpeace.oj.course.controller.res.RemoteHelpReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
 import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
 
 import io.swagger.annotations.Api;
@@ -96,6 +97,14 @@ public class WebClassroomController {
 
 		return new BaseRsp();
 
+	}
+
+	@ApiOperation("获取远程协助状态")
+	@GetMapping("/help_status")
+	public BaseRsp getHelpStatus(RemoteHelpReq req) {
+		HelpStatusBo helpStatus = classroomSignService.getHelpStatus(req.getLessonId(),
+				req.getNodeId());
+		return new BaseRsp(helpStatus);
 	}
 
 	@ApiOperation("获取课堂聊天用户信息")

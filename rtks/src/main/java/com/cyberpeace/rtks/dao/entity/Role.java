@@ -25,11 +25,6 @@ public class Role extends BaseTable {
 	@TableField(value = "level_id")
 	private String levelId;
 
-	/**
-	 * 技能体系
-	 */
-	private String category;
-
 	@TableField(value = "task_ids")
 	private String taskIds;
 
@@ -39,19 +34,14 @@ public class Role extends BaseTable {
 	@TableField(value = "knowledge_id_weights")
 	private String knowledgeIdWeights;
 
-	@TableField(value = "skill_ids")
-	private String skillIds;
-
-	@TableField(value = "skill_id_weights")
-	private String skillIdWeights;
-
 	@TableField(value = "ability_ids")
 	private String abilityIds;
 
 	@TableField(value = "knowledge_courses")
 	private String knowledgeCourses;
 
-	@TableField(value = "skill_courses")
-	private String skillCourses;
+	private Integer knowledgeWeight;
+
+	private String skillMissions;
 
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 
 public interface MissionTemplateService extends IService<MissionTemplate> {
 
@@ -54,4 +55,10 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * @return
 	 */
 	List<String> getIdsByMissionsSchemeJson(String missionSchemeJson);
+
+	/**
+	 * @param missionTemplateIds
+	 * @return
+	 */
+	Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds);
 }

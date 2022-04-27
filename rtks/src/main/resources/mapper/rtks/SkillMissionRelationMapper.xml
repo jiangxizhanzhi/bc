@@ -38,7 +38,7 @@
     </select>
     <select id="batchSelectMissionRes" resultType="com.cyberpeace.rtks.service.bo.skill.MissionRes">
         select cr_mission_template.resource_id    as resource_id,
-               cr_mission_template.title          as name,
+               cr_mission_template.title          as title,
                cr_business_template.name          as scene_name,
                cr_business_template.business_type as scene_type,
                cr_business_template.difficulty    as scene_difficulty
@@ -47,7 +47,7 @@
     </select>
     <select id="batchSelectMissionResBySkillId" resultType="com.cyberpeace.rtks.service.bo.skill.MissionRes">
         select cr_mission_template.resource_id    as resource_id,
-               cr_mission_template.title          as name,
+               cr_mission_template.title          as title,
                cr_business_template.name          as scene_name,
                cr_business_template.business_type as scene_type,
                cr_business_template.difficulty    as scene_difficulty,

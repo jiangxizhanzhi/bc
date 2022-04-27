@@ -2,11 +2,15 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,14 +18,22 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.entity.RoleSkillRelation;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.SkillService;
+import com.cyberpeace.rtks.service.bo.Difference;
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
+import com.cyberpeace.rtks.util.RtksCommonUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
@@ -34,6 +46,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private SkillService skillService;
@@ -74,14 +89,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 				role.setKnowledgeCourses(JsonUtil.toJsonString(courseIds));
 			});
 		}
-		// if ("skill".equals(type)) {
-		// roleList.forEach(role -> {
-		// List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
-		// String.class);
-		// List<String> courseIds = skillService.getCourseByIds(skillIds);
-		// role.setSkillCourses(JsonUtil.toJsonString(courseIds));
-		// });
-		// }
 		this.updateBatchById(roleList);
 
 	}
@@ -101,18 +108,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 				role.setKnowledgeCourses(JsonUtil.toJsonString(courseIds));
 			});
 		}
-		// if ("skill".equals(type)) {
-		// roleList.forEach(role -> {
-		// role.setSkillIds(deleteIds(role.getSkillIds(), deleteReq.getIds()));
-		// List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
-		// String.class);
-		// List<String> courseIds = skillService.getCourseByIds(skillIds);
-		// role.setSkillCourses(JsonUtil.toJsonString(courseIds));
-		// });
-		// }
 		if ("ability".equals(type)) {
 			roleList.forEach(role -> {
-				role.setAbilityIds(deleteIds(role.getSkillIds(), deleteReq.getIds()));
+				role.setAbilityIds(deleteIds(role.getAbilityIds(), deleteReq.getIds()));
 			});
 		}
 		if ("task".equals(type)) {
@@ -131,6 +129,91 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 			return;
 		}
 		roleSkillRelationMapper.deleteBySkillIds(skillIds);
+	}
+
+	@Override
+	public void addSkillRelation(String resourceId, List<IdWeight> skillIdWeights) {
+		if (skillIdWeights.isEmpty()) {
+			return;
+		}
+		List<RoleSkillRelation> relations = Lists.newArrayList();
+		for (IdWeight skill : skillIdWeights) {
+			RoleSkillRelation relation = new RoleSkillRelation();
+			relation.setRoleId(resourceId);
+			relation.setSkillId(skill.getId());
+			relation.setWeight(skill.getWeight());
+			relations.add(relation);
+		}
+		roleSkillRelationMapper.batchInsert(relations);
+	}
+
+	@Override
+	public void updateSkillRel(String resourceId, List<IdWeight> skillIdWeights) {
+		List<RoleSkillRelation> relations = roleSkillRelationMapper.batchGetByRoleId(resourceId);
+		Difference<RoleSkillRelation> difference = RtksCommonUtil.differ(relations, "skill_id",
+				skillIdWeights);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// add relations
+				addSkillRelation(resourceId, difference.getAdded());
+				// delete
+				roleSkillRelationMapper.deleteByRoleIdAndSkillIds(resourceId,
+						difference.getDeleted());
+				// update
+				for (RoleSkillRelation relation : difference.getModified()) {
+					roleSkillRelationMapper.updateById(relation);
+				}
+			}
+		});
+	}
+
+	@Override
+	public void updateSkillRelSimple(String roleId, List<IdWeight> skillIdWeights) {
+		// compare
+		List<IdWeight> idWeightList = roleSkillRelationMapper.listByRoleId(roleId);
+		if (ListUtil.compare2List(idWeightList, skillIdWeights)) {
+			return;
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// delete all
+				roleSkillRelationMapper.deleteByRoleId(roleId);
+				// create all
+				addSkillRelation(roleId, skillIdWeights);
+			}
+		});
+	}
+
+	@Override
+	public List<SkillWeightRes> listSkillByRoleId(String roleId) {
+		return roleSkillRelationMapper.listSkillByRoleId(roleId);
+	}
+
+	@Override
+	public void deleteSkillRelByRoleIds(List<String> roleIds) {
+		if (roleIds.isEmpty()) {
+			return;
+		}
+		roleSkillRelationMapper.deleteByRoleIds(roleIds);
+	}
+
+	@Override
+	public Map<String, RoleSkillRes> mapRoleSkillCount(List<String> roleIds) {
+		List<RoleSkillRes> resList = roleSkillRelationMapper.countByRoleIds(roleIds);
+		Map<String, RoleSkillRes> mapping = Maps.newHashMap();
+		resList.forEach((res) -> {
+			mapping.put(res.getRoleId(), res);
+		});
+		return mapping;
+	}
+
+	@Override
+	public List<String> getRelMissionIds(String roleId) {
+		return roleSkillRelationMapper.getMissionIdsByRoleId(roleId);
 	}
 
 	private String deleteIds(String Ids, List<String> ids) {

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.SkillMapper">
 
-    <select id="listSkill" resultType="com.cyberpeace.rtks.controller.res.SkillRes">
+    <select id="listSkill" resultType="com.cyberpeace.rtks.service.bo.skill.SkillRes">
         <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
             <bind name="pattern" value="'%' + skillListReq.pattern + '%'"/>
         </if>
@@ -20,7 +20,7 @@
         </where>
     </select>
 
-    <select id="getSkillByResourceId" resultType="com.cyberpeace.rtks.controller.res.SkillRes">
+    <select id="getSkillByResourceId" resultType="com.cyberpeace.rtks.service.bo.skill.SkillRes">
         select
         rtks_skill.id,
         rtks_skill.resource_id,
@@ -41,7 +41,7 @@
         </where>
     </select>
 
-    <select id="getAllSkills" resultType="com.cyberpeace.rtks.controller.res.SkillRes">
+    <select id="getAllSkills" resultType="com.cyberpeace.rtks.service.bo.skill.SkillRes">
         select rtks_skill.id,
         rtks_skill.resource_id,
         rtks_skill.system_id,
@@ -71,5 +71,25 @@
                    else 0
                    end
                    as result;
+    </select>
+    <select id="pageSimple" resultType="com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes">
+        <if test="reqBase.pattern != null and reqBase.pattern != ''">
+            <bind name="pattern" value="'%' + reqBase.pattern + '%'"/>
+        </if>
+        select
+        rtks_skill.resource_id as resource_id,
+        rtks_skill.content as content,
+        count(rtks_skill_mission_relation.id) as mission_count
+        from
+        rtks_skill left join rtks_skill_mission_relation
+        on rtks_skill.resource_id = rtks_skill_mission_relation.skill_id
+        <where>
+            <if test="reqBase.pattern != null and reqBase.pattern != ''">
+                rtks_skill.resource_id like #{pattern}
+                or rtks_skill.content like #{pattern}
+            </if>
+        </where>
+        group by rtks_skill_mission_relation.skill_id
+        order by rtks_skill.resource_id
     </select>
 </mapper>

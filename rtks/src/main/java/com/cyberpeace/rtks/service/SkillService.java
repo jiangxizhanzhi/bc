@@ -6,10 +6,11 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.rtks.controller.req.SkillListReq;
-import com.cyberpeace.rtks.controller.res.SkillRes;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.dao.entity.Skill;
-import com.cyberpeace.rtks.service.bo.skill.MissionBo;
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import com.cyberpeace.rtks.service.bo.skill.SkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
 
 /**
  *
@@ -20,7 +21,14 @@ public interface SkillService extends IService<Skill> {
 	 * @param  skillListReq
 	 * @return 分页查询结果
 	 */
-	ListRsp<SkillRes> page(SkillListReq skillListReq);
+	ListRsp<SkillRes> page(PageReqBase skillListReq);
+
+	/**
+	 * 创建、编辑岗位时 添加技能的列表查询接口
+	 * @param reqBase
+	 * @return
+	 */
+	ListRsp<SkillSimpleRes> pageSimple(PageReqBase reqBase);
 
 	/**通过id获取查询结果
 	 * @param id
@@ -38,7 +46,7 @@ public interface SkillService extends IService<Skill> {
 	 * @param skillId
 	 * @param missionTemplates
 	 */
-	void addMissionRelation(String skillId, List<MissionBo> missionTemplates);
+	void addMissionRelation(String skillId, List<IdWeight> missionTemplates);
 
 	/**
 	 * 删除技能和任务的关联关系
@@ -58,11 +66,12 @@ public interface SkillService extends IService<Skill> {
 	 * @param resourceId
 	 * @param missions
 	 */
-	void updateMissionRelations(String resourceId, List<MissionBo> missions);
+	void updateMissionRelations(String resourceId, List<IdWeight> missions);
 
 	/**
 	 * 删除技能时删除任务关联
 	 * @param skillIds
 	 */
 	void clearMissionRel(List<String> skillIds);
+
 }

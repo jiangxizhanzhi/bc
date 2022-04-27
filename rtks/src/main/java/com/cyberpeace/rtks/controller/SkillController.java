@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.SkillAddReq;
-import com.cyberpeace.rtks.controller.req.SkillListReq;
-import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.SkillService;
+import com.cyberpeace.rtks.service.bo.skill.SkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -123,10 +124,17 @@ public class SkillController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
-	public BaseRsp<List<SkillRes>> list(@Validated SkillListReq skillListReq) {
-		ListRsp<SkillRes> data = skillService.page(skillListReq);
+	public BaseRsp<List<SkillRes>> list(@Validated PageReqBase reqBase) {
+		ListRsp<SkillRes> data = skillService.page(reqBase);
 
 		return new BaseRsp(data);
+	}
+
+	@ApiOperation("添加技能时分页展示")
+	@GetMapping("/list/simple")
+	public BaseRsp<List<SkillSimpleRes>> listSimple(@Validated PageReqBase reqBase) {
+		ListRsp<SkillSimpleRes> res = skillService.pageSimple(reqBase);
+		return new BaseRsp(res);
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.rtks.service.bo.skill.MissionBo;
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -23,6 +23,6 @@ public class SkillAddReq implements Serializable {
 	private String content;
 
 	@ApiModelProperty("关联任务")
-	private List<MissionBo> missions;
+	private List<IdWeight> missions;
 
 }

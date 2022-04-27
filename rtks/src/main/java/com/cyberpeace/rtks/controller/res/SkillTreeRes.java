@@ -3,6 +3,8 @@ package com.cyberpeace.rtks.controller.res;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.rtks.service.bo.skill.SkillRes;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

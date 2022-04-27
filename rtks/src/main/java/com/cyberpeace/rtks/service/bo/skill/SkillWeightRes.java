@@ -6,11 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class MissionBo implements Serializable {
+public class SkillWeightRes extends SkillSimpleRes implements Serializable {
 
-	@ApiModelProperty("任务id")
-	private String resourceId;
-
-	@ApiModelProperty("任务权重")
+	@ApiModelProperty("权重")
 	private Integer weight;
 }

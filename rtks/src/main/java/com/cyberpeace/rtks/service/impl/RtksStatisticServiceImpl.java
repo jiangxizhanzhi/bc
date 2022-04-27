@@ -525,24 +525,25 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		if (null == role) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
-
-		List<String> resourceIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
-		if (CollectionUtils.isNotEmpty(resourceIds)) {
-			List<WeightBo> weights = JsonUtil.toJsonObjectArray(role.getSkillIdWeights(),
-					WeightBo.class);
-
-			Map<String, Integer> weightMap = weights.stream()
-					.collect(Collectors.toMap(WeightBo::getId, WeightBo::getWeight));
-			List<Skill> skills = skillMapper.selectBatchIds(resourceIds);
-
-			skills.forEach(skill -> {
-				// 无权重时 赋值为1
-				Integer weight = weightMap.get(skill.getResourceId());
-				// skill.setWeight(null != weight ? weight : 1);
-			});
-
-			return skills;
-		}
+		// todo
+		// List<String> resourceIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
+		// String.class);
+		// if (CollectionUtils.isNotEmpty(resourceIds)) {
+		// List<WeightBo> weights = JsonUtil.toJsonObjectArray(role.getSkillIdWeights(),
+		// WeightBo.class);
+		//
+		// Map<String, Integer> weightMap = weights.stream()
+		// .collect(Collectors.toMap(WeightBo::getId, WeightBo::getWeight));
+		// List<Skill> skills = skillMapper.selectBatchIds(resourceIds);
+		//
+		// skills.forEach(skill -> {
+		// // 无权重时 赋值为1
+		// Integer weight = weightMap.get(skill.getResourceId());
+		// // skill.setWeight(null != weight ? weight : 1);
+		// });
+		//
+		// return skills;
+		// }
 		return Lists.newArrayList();
 	}
 

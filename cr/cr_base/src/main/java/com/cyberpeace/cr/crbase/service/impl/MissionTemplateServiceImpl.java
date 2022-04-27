@@ -18,11 +18,15 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.RtksRelatedService;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author SN
+ */
 @Service
 @Slf4j
 public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMapper, MissionTemplate> implements MissionTemplateService {
@@ -98,5 +102,19 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		String reg = String.format(PatternConstant.RESOURCE_ID,
 				CrCommonConstants.GENERATED_UUID_LENGTH);
 		return LocalStringUtil.getMatchStr(schemeJson, reg, 1);
+	}
+
+	@Override
+	public Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds) {
+		Map<String, MissionTemplateRes> mapping = Maps.newHashMap();
+		if (missionTemplateIds.isEmpty()) {
+			return mapping;
+		}
+		List<MissionTemplateRes> missionTemplateResList = missionTemplateMapper
+				.listWithBusiness(missionTemplateIds);
+		missionTemplateResList.forEach((missionTemplateRes) -> {
+			mapping.put(missionTemplateRes.getResourceId(), missionTemplateRes);
+		});
+		return mapping;
 	}
 }

@@ -34,7 +34,7 @@
         </if>
         select
         cr_mission_template.resource_id as resource_id,
-        cr_mission_template.title as name,
+        cr_mission_template.title as title,
         cr_business_template.name as scene_name,
         cr_business_template.business_type as scene_type,
         cr_business_template.difficulty as scene_difficulty
@@ -52,5 +52,19 @@
             </if>
         </where>
         order by cr_mission_template.update_time desc
+    </select>
+    <select id="listWithBusiness"
+            resultType="com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes">
+        select cr_mission_template.resource_id as resource_id,
+        cr_mission_template.title as title,
+        cr_business_template.name as scene_name,
+        cr_business_template.business_type as scene_type,
+        cr_business_template.difficulty as scene_difficulty
+        from cr_mission_template
+        left join cr_business_template on cr_mission_template.template_id = cr_mission_template.resource_id
+        where cr_mission_template.resource_id in
+        <foreach collection="missionTemplateIds" item="missionTemplateId" open="(" close=")" separator=",">
+            #{missionTemplateId}
+        </foreach>
     </select>
 </mapper>

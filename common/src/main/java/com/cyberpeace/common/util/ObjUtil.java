@@ -88,7 +88,7 @@ public class ObjUtil {
 	 * @param fieldName 对象要设置值的field
 	 * @param value     需要设置的值
 	 */
-	public static void setCertainFieldValue(Object obj, String fieldName, String value) {
+	public static void setCertainFieldValue(Object obj, String fieldName, Object value) {
 		Field[] fields = getFields(obj);
 
 		for (int i = 0; i < fields.length; i++) {

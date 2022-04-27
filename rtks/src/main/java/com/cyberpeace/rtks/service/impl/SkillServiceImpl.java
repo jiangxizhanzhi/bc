@@ -14,22 +14,23 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import com.cyberpeace.rtks.controller.req.SkillListReq;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
-import com.cyberpeace.rtks.controller.res.SkillRes;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.SkillMissionRelation;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMissionRelationMapper;
 import com.cyberpeace.rtks.service.SkillService;
-import com.cyberpeace.rtks.service.bo.skill.MissionBo;
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.cyberpeace.rtks.service.bo.skill.MissionRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -52,7 +53,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	private SkillMissionRelationMapper skillMissionRelationMapper;
 
 	@Override
-	public ListRsp<SkillRes> page(SkillListReq skillListReq) {
+	public ListRsp<SkillRes> page(PageReqBase skillListReq) {
 		Page page = skillListReq.toPageParam();
 
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
@@ -62,6 +63,11 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 					.batchSelectMissionResBySkillId(skillRes.getResourceId()));
 		}
 		return PageUtil.getListResult(result);
+	}
+
+	@Override
+	public ListRsp<SkillSimpleRes> pageSimple(PageReqBase reqBase) {
+		return skillMapper.pageSimple(reqBase);
 	}
 
 	@Override
@@ -87,16 +93,16 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public void addMissionRelation(String skillId, List<MissionBo> missionTemplates) {
+	public void addMissionRelation(String skillId, List<IdWeight> missionTemplates) {
 		if (missionTemplates.isEmpty()) {
 			return;
 		}
 		List<SkillMissionRelation> relations = Lists.newArrayList();
-		for (MissionBo missionBo : missionTemplates) {
+		for (IdWeight idWeight : missionTemplates) {
 			SkillMissionRelation relation = new SkillMissionRelation();
 			relation.setSkillId(skillId);
-			relation.setMissionTemplateId(missionBo.getResourceId());
-			relation.setWeight(missionBo.getWeight());
+			relation.setMissionTemplateId(idWeight.getId());
+			relation.setWeight(idWeight.getWeight());
 		}
 		// 插入前检查是否存在任务。 todo
 		skillMissionRelationMapper.insertBatch(relations);
@@ -116,7 +122,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public void updateMissionRelations(String skillId, List<MissionBo> missions) {
+	public void updateMissionRelations(String skillId, List<IdWeight> missions) {
 		List<SkillMissionRelation> relations = skillMissionRelationMapper.batchSelect(skillId);
 		// 删除的关联
 		List<String> deleted = Lists.newArrayList();
@@ -125,16 +131,17 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 		boolean flag;
 		int i;
-		MissionBo missionBo;
+		IdWeight idWeight;
 		for (SkillMissionRelation relation : relations) {
 			flag = false;
 			i = 0;
 			while (i < missions.size()) {
-				missionBo = missions.get(i);
-				if (relation.getMissionTemplateId().equals(missionBo.getResourceId())) {
+				idWeight = missions.get(i);
+				if (relation.getMissionTemplateId().equals(idWeight.getId())) {
 					flag = true;
 					// 编辑了权重的
-					if (!relation.getWeight().equals(missionBo.getWeight())) {
+					if (!relation.getWeight().equals(idWeight.getWeight())) {
+						relation.setWeight(idWeight.getWeight());
 						modified.add(relation);
 					}
 					// 去掉既存的，剩下的就是新增的

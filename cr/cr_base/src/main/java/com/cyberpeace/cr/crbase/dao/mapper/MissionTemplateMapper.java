@@ -24,4 +24,7 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	IPage<MissionTemplateRes> pageWithBusiness(@Param("page") Page page,
 			@Param("type") Integer type, @Param("difficulty") Integer difficulty,
 			@Param("pattern") String pattern);
+
+	List<MissionTemplateRes>
+			listWithBusiness(@Param("missionTemplateIds") List<String> missionTemplateIds);
 }

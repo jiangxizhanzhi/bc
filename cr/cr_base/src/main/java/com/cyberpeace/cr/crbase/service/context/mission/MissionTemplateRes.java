@@ -9,10 +9,10 @@ import lombok.Data;
 public class MissionTemplateRes implements Serializable {
 
 	@ApiModelProperty("任务id")
-	private String missionTemplateId;
+	private String resourceId;
 
 	@ApiModelProperty("任务名称")
-	private String name;
+	private String title;
 
 	@ApiModelProperty("场景名称")
 	private String sceneName;

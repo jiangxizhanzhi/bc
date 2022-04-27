@@ -8,6 +8,7 @@ import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.Task;
+import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

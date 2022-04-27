@@ -22,6 +22,7 @@
         <module>red_vs_blue</module>
         <module>team_train</module>
         <module>single_train</module>
+        <module>evaluation</module>
     </modules>
 
     <properties/>

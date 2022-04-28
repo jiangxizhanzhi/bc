@@ -58,6 +58,7 @@
                            on rtks_skill_mission_relation.mission_template_id = cr_mission_template.resource_id
                  left join cr_business_template
                            on cr_mission_template.business_template_id = cr_business_template.resource_id
+        where rtks_skill_mission_relation.skill_id = #{skillId}
         order by rtks_skill_mission_relation.create_time desc
     </select>
     <select id="batchSelect" resultType="com.cyberpeace.rtks.dao.entity.SkillMissionRelation">

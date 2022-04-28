@@ -74,7 +74,10 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public ListRsp<SkillSimpleRes> pageSimple(PageReqBase reqBase) {
-		return skillMapper.pageSimple(reqBase);
+		Page page = reqBase.toPageParam();
+
+		IPage<SkillSimpleRes> result = skillMapper.pageSimple(page, reqBase);
+		return PageUtil.getListResult(result);
 	}
 
 	@Override

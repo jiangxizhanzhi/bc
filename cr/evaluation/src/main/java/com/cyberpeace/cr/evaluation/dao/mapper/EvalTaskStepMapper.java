@@ -7,12 +7,12 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.TaskStep;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 
 @Mapper
 @Repository
-public interface TaskStepMapper extends BaseMapper<TaskStep> {
+public interface EvalTaskStepMapper extends BaseMapper<EvalTaskStep> {
 
-	List<TaskStep> selectStepsByTaskId(@Param("taskId") String taskId);
+	List<EvalTaskStep> selectStepsByTaskId(@Param("taskId") String taskId);
 
 }

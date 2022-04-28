@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.evaluation.controller.req.TaskStepReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalTaskStepReq;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 
 import io.swagger.annotations.Api;
@@ -25,7 +25,7 @@ public class EvalTaskController {
 
 	@ApiOperation("启动步骤")
 	@PostMapping("/step/start")
-	public BaseRsp<Boolean> startStep(@RequestBody TaskStepReq taskStepReq) {
+	public BaseRsp<Boolean> startStep(@RequestBody EvalTaskStepReq evalTaskStepReq) {
 
 		Boolean result = taskService.getStepsByTaskId("11");
 
@@ -34,7 +34,7 @@ public class EvalTaskController {
 
 	@ApiOperation("完成步骤")
 	@PostMapping("/step/finish")
-	public BaseRsp<Boolean> finishStep(@RequestBody TaskStepReq taskStepReq) {
+	public BaseRsp<Boolean> finishStep(@RequestBody EvalTaskStepReq evalTaskStepReq) {
 		return new BaseRsp<>(true);
 	}
 

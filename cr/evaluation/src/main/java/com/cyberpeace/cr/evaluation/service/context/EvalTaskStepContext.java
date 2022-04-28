@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TaskStepContext {
+public class EvalTaskStepContext {
 
 	@ApiModelProperty("步骤Id")
 	private String stepId;

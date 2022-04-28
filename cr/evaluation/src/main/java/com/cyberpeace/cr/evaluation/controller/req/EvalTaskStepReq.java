@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TaskStepReq {
+public class EvalTaskStepReq {
 
 	@ApiModelProperty(value = "步骤Id", required = true)
 	@NotNull

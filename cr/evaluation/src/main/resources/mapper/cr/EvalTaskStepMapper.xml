@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.TaskStepMapper">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskStepMapper">
 
-    <resultMap id="taskStep" type="com.cyberpeace.cr.evaluation.dao.entity.TaskStep"/>
+    <resultMap id="taskStep" type="com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep"/>
 
     <select id="selectStepsByTaskId" resultMap="taskStep">
         select *

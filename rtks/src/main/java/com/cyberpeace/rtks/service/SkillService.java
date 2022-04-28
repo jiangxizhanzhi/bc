@@ -74,4 +74,11 @@ public interface SkillService extends IService<Skill> {
 	 */
 	void clearMissionRel(List<String> skillIds);
 
+	/**
+	 * 计算用户的技能得分
+	 * @param skillId
+	 * @param userId
+	 * @return score
+	 */
+	Double calculateScore(String skillId, String userId);
 }

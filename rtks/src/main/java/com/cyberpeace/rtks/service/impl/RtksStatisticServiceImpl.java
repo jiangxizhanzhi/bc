@@ -3,15 +3,16 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.DataTransferUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -22,13 +23,13 @@ import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.*;
-import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
-import com.cyberpeace.rtks.dao.mapper.LevelMapper;
-import com.cyberpeace.rtks.dao.mapper.RoleMapper;
-import com.cyberpeace.rtks.dao.mapper.SkillMapper;
+import com.cyberpeace.rtks.dao.mapper.*;
 import com.cyberpeace.rtks.service.RtksStatisticService;
+import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TreeService;
 import com.cyberpeace.rtks.service.bo.*;
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private SkillMapper skillMapper;
 
 	@Autowired
+	private SkillService skillService;
+
+	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	@Autowired
@@ -66,33 +70,27 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	@Autowired
 	private LevelMapper levelMapper;
 
-	/**
-	 * 角色评分中技能所占百分比
-	 */
-	private Integer skillWeight;
-
-	@PostConstruct
-	public void init() {
-		String skillWeightString = ConfigUtil.getContextProperty("skillWeight");
-		skillWeight = Integer.parseInt(skillWeightString);
-	}
+	@Autowired
+	private RoleSkillRelationMapper roleSkillRelationMapper;
 
 	@Override
 	public String roleMatchPercent(String roleId, String userId) {
 		Integer knowledgeScore = 0;
 		Integer skillScore = 0;
+		Role role = roleMapper.selectById(roleId);
+		Integer knowledgeWeight = role.getKnowledgeWeight();
 		// 1、计算知识点得分
-		if (skillWeight.intValue() != MAX_PERCENT.intValue()) {
+		if (knowledgeWeight != 0) {
 			knowledgeScore = calculateKnowledgeScore(roleId, userId);
 		}
 
 		// 2、计算技能得分
-		if (skillWeight != 0) {
+		if (knowledgeWeight != MAX_PERCENT.intValue()) {
 			skillScore = calculateSkillScore(roleId, userId);
 		}
 
 		// 3、技能得分和知识点得分加权平均
-		Integer result = knowledgeScore * (100 - skillWeight) + skillScore * skillWeight;
+		Integer result = knowledgeScore * knowledgeWeight + skillScore * (100 - knowledgeWeight);
 
 		Integer ret = floor(result);
 
@@ -300,16 +298,16 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private Integer calculateSkillScore(String roleId, String userId) {
 		// 1、获取当前角色的所有技能点及权重
-		List<Skill> skills = getSkills(roleId);
-		// 2、计算每个技能点的得分
-		// 连接靶场数据库，没有数据点技能点算0分
-		List<SkillScore> skillScore = getSkillScore(userId, skills);
-		Map<String, String> scoreMap = skillScore.stream()
-				.collect(Collectors.toMap(SkillScore::getSkillId, SkillScore::getScore));
-
-		Integer result = 1;
-		// 3、2中的数据根据每个技能点的权重加权平均
-		return result;
+		List<IdWeight> skillWeights = roleSkillRelationMapper.listByRoleId(roleId);
+		WeightedCalculation calculation = new WeightedCalculation();
+		for (IdWeight skillWight : skillWeights) {
+			// 2、获取单个技能得分
+			Double skillScore = skillService.calculateScore(skillWight.getId(), userId);
+			// 3、统计
+			calculation.feed(skillWight.getWeight(), skillScore);
+		}
+		// 4、返回向上取整的分数
+		return MathUtils.ceil(calculation.solve());
 	}
 
 	/**

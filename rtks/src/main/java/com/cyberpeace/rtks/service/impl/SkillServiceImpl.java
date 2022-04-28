@@ -2,6 +2,7 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
@@ -31,6 +34,7 @@ import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.cyberpeace.rtks.service.bo.skill.MissionRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
+import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -51,6 +55,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Autowired
 	private SkillMissionRelationMapper skillMissionRelationMapper;
+
+	@Autowired
+	private CrTaskMapper crTaskMapper;
 
 	@Override
 	public ListRsp<SkillRes> page(PageReqBase skillListReq) {
@@ -175,6 +182,34 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			return;
 		}
 		skillMissionRelationMapper.clearBySkillIds(skillIds);
+	}
+
+	@Override
+	public Double calculateScore(String skillId, String userId) {
+		List<IdWeight> missionWeights = skillMissionRelationMapper.listBySkillId(skillId);
+		if (missionWeights.isEmpty()) {
+			return 0.0;
+		}
+		// read task scores
+		List<String> missionTemplateIds = missionWeights.stream().map(IdWeight::getId)
+				.collect(Collectors.toList());
+		List<CrTaskScore> crTaskScoreList = crTaskMapper
+				.getScoreByMissionTemplateIdAndUserId(userId, missionTemplateIds);
+		Map<String, CrTaskScore> scoreMap = Maps.newHashMap();
+		crTaskScoreList.forEach((score) -> {
+			scoreMap.put(score.getMissionTemplateId(), score);
+		});
+		// calculate
+		WeightedCalculation calculation = new WeightedCalculation();
+		for (IdWeight mission : missionWeights) {
+			CrTaskScore crTaskScore = scoreMap.get(mission.getId());
+			if (crTaskScore == null) {
+				calculation.feed(mission.getWeight(), 0.0);
+			} else {
+				calculation.feed(mission.getWeight(), crTaskScore.getPercent());
+			}
+		}
+		return calculation.solve();
 	}
 
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,

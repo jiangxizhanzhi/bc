@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.rtks.dao.entity.SkillMissionRelation;
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.cyberpeace.rtks.service.bo.skill.MissionRes;
 
 @Mapper
@@ -32,4 +33,6 @@ public interface SkillMissionRelationMapper extends BaseMapper<SkillMissionRelat
 	List<SkillMissionRelation> batchSelect(@Param("resourceId") String resourceId);
 
 	void clearBySkillIds(@Param("skillIds") List<String> skillIds);
+
+	List<IdWeight> listBySkillId(@Param("skillId") String skillId);
 }

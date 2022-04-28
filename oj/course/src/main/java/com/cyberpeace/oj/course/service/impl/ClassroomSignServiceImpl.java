@@ -1,7 +1,19 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.Date;
+import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.cs.service.context.ChatWsMessageIdentifier;
+import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.oj.ojbase.constant.OjEvent;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -30,6 +42,9 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author chenzhuo
+ */
 @Slf4j
 @Service
 public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, ClassroomSign> implements ClassroomSignService {
@@ -48,6 +63,12 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private ChatWebSocketHandler chatWebSocketHandler;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
@@ -134,31 +155,55 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.NEED_HELP.getCode());
 		classroomSignMapper.updateById(classroomSign);
 
+		// 请求协助消息发送
+		String needHelpMessage = getNeedHelpMessage(localScene.getMpSceneId(), nodeId,
+				classroomSign.getUserId());
+		pushChatMessage(classroom, needHelpMessage, classroom.getCreateUserId());
+
 	}
 
 	@Override
 	public void toHelp(String classroomId, String userId) {
 
-		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
-		if (null == classroomSign) {
-			return;
-		}
+		// 数据校验
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
+		ClassroomSign classroomSign = classroomValidateHandler.validateSign(classroomId, userId);
 
+		// 更新状态
 		classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.IN_HELP.getCode());
 		classroomSignMapper.updateById(classroomSign);
+
+		// 聊天框消息推送
+		pushChatMessage(classroom, ConfigUtil.getContextProperty("to.remote.help"),
+				classroomSign.getUserId());
+
+		// 协助开始倒计时推送
+		JSONObject toHelpMessage = new JSONObject();
+		toHelpMessage.put(JsonKeyConstant.CODE, OjEvent.TO_NEED_HELP_SYNC.getCode());
+		JSONObject countDown = new JSONObject();
+		countDown.put(JsonKeyConstant.REMAIN_TIME,
+				ConfigUtil.getContextProperty("to.help.countdown"));
+		toHelpMessage.put(JsonKeyConstant.DATA, countDown);
+
+		pushChatMessage(classroom, JsonUtil.toJsonString(toHelpMessage), classroomSign.getUserId());
+
 	}
 
 	@Override
 	public void endHelp(String classroomId, String userId) {
 
-		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
-		if (null == classroomSign) {
-			return;
-		}
+		// 数据校验
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
+		ClassroomSign classroomSign = classroomValidateHandler.validateSign(classroomId, userId);
 
+		// 更新远程协助状态
 		classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
 		classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.END_HELP.getCode());
 		classroomSignMapper.updateById(classroomSign);
+
+		// 结束消息推送
+		pushChatMessage(classroom, ConfigUtil.getContextProperty("end.remote.help"),
+				classroomSign.getUserId());
 
 	}
 
@@ -166,17 +211,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	public HelpStatusBo getHelpStatus(String lessonId, String nodeId) {
 
 		// 课堂数据校验
-		Classroom classroom = classroomMapper.selectByOrgAndLesson(
-				UserInfoContext.getUserContext().getOrganizationId(), lessonId);
-		if (classroom == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(lessonId,
+				UserInfoContext.getUserContext().getOrganizationId());
+		ClassroomSign classroomSign = classroomValidateHandler.validateSign(
 				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
-		if (null == classroomSign) {
-			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
-		}
 
 		// 可能部分数据没用，
 		HelpStatusBo helpStatusBo = new HelpStatusBo();
@@ -186,5 +224,52 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		helpStatusBo.setNodeId(nodeId);
 		return helpStatusBo;
 
+	}
+
+	/**
+	 * 协助状态更新消息推送
+	 * @param classroom
+	 * @param message
+	 */
+	private void pushChatMessage(Classroom classroom, String message, String toUserId) {
+		ChatWsMessageIdentifier messageIdentifier = new ChatWsMessageIdentifier();
+		messageIdentifier.setPath(WsPath.CLASSROOM_CHAT);
+		messageIdentifier.setBusinessId(classroom.getResourceId());
+		messageIdentifier.setBusinessType(ChatWebSocketHandler.CHAT_TYPE.COMMON.getCode());
+		messageIdentifier.setUserId(toUserId);
+
+		chatWebSocketHandler.pushChatMessage(messageIdentifier, UserInfoContext.getUserContext(),
+				message);
+	}
+
+	/**
+	 * 获取远程协助信息
+	 * @param sceneId
+	 * @param nodeId
+	 * @param userId
+	 * @return
+	 */
+	private String getNeedHelpMessage(String sceneId, String nodeId, String userId) {
+
+		// 获取链接地址
+		Map<String, String> assistanceMap = remoteSceneService.getAssistanceMap(
+				Lists.newArrayList(sceneId), Lists.newArrayList(nodeId),
+				Lists.newArrayList(userId));
+
+		// 拼接链接地址
+		String needHelpMessage = ConfigUtil.getContextProperty("need.remote.help");
+		if (StringUtils.isBlank(needHelpMessage)) {
+			log.error("The remote assistance template is not configured！properties_key=[{}]",
+					"need.remote.help");
+			return CommonConstant.EMPTY_STRING;
+		}
+
+		if (StringUtils.isBlank(assistanceMap.get(userId))) {
+			log.error("No remote assistance address was obtained！ user_id=[{}], assistanceMap=[{}]",
+					userId, JsonUtil.toJsonString(assistanceMap));
+			return needHelpMessage;
+		}
+
+		return String.format(needHelpMessage, assistanceMap.get(userId));
 	}
 }

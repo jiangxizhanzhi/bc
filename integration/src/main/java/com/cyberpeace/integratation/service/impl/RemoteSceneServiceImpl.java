@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service.impl;
 import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -14,10 +15,13 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.constant.SessionType;
 import com.cyberpeace.integratation.model.mp.MpEventAggr;
 import com.cyberpeace.integratation.model.mp.MpFlowTrend;
 import com.cyberpeace.integratation.model.mp.MpHostState;
@@ -228,6 +232,20 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		}
 
 		return HttpClientUtil.rawGet(assistanceUrl, JSONArray.class);
+	}
+
+	@Override
+	public Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
+			List<String> userIds) {
+
+		JSONArray nodeSessions = getNodeSessions(sceneIds, nodeIds, userIds,
+				SessionType.ASSISTANCE.type);
+		List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
+				.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
+		Map<String, String> userAssistanceMap = StreamApiUtils.toMap(filterList,
+				object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
+				object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
+		return userAssistanceMap;
 	}
 
 	@Override

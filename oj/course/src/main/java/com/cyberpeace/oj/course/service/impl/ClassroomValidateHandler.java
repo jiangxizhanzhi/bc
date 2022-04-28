@@ -6,11 +6,14 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.omg.CORBA.ORB;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +50,24 @@ public class ClassroomValidateHandler {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private ClassroomSignMapper classroomSignMapper;
+
+	/**
+	 * 课堂签到校验
+	 * @param classroomId
+	 * @param userId
+	 * @return
+	 */
+	public ClassroomSign validateSign(String classroomId, String userId) {
+		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
+		if (null == classroomSign) {
+			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
+		}
+
+		return classroomSign;
+	}
 
 	/**
 	 * 校验课时和组织相同的课时存在
@@ -100,6 +121,21 @@ public class ClassroomValidateHandler {
 		Classroom classroom = classroomMapper.selectById(classroomId);
 		if (null == classroom) {
 			log.error("Classroom is not found! classroom_id=[{}]", classroomId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		return classroom;
+	}
+
+	/**
+	 * 校验课程表是否存在
+	 * @param lessonId
+	 * @param orgId
+	 * @return
+	 */
+	public Classroom validateClassroomExist(String lessonId, String orgId) {
+		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
+		if (classroom == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 

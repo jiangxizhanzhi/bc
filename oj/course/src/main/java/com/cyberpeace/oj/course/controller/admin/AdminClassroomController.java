@@ -147,7 +147,7 @@ public class AdminClassroomController {
 	}
 
 	@ApiOperation("结束远程协助")
-	@GetMapping("")
+	@GetMapping("/end_help")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
 			@ApiImplicitParam(name = "user_id", value = "用户编号") })
 	public BaseRsp endHelp(@RequestParam("resource_id") String classroomId,

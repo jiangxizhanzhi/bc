@@ -1,14 +1,14 @@
 package com.cyberpeace.oj.course.dao.entity;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import lombok.*;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.*;
 
 @Data
 @Builder
@@ -31,23 +31,6 @@ public class ClassroomSign extends BaseTable {
 	private Date signInTime;
 
 	private String nodeId;
-
-	public enum SessionType {
-
-		ALL("all", "监控路径和与远程协助路径"), ASSISTANCE("assistance", "仅获取远程协助路径");
-
-		@Getter
-		private String type;
-
-		@Getter
-		private String desc;
-
-		SessionType(String type, String desc) {
-			this.type = type;
-			this.desc = desc;
-		}
-
-	}
 
 	public enum NEED_HELP implements GenericEnum {
 

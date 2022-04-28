@@ -15,8 +15,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -42,7 +40,6 @@ import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
-import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
@@ -358,14 +355,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				return localScene.getMpSceneId();
 			});
 
-			JSONArray nodeSessions = remoteSceneService.getNodeSessions(sceneIds, nodeIds, null,
-					ClassroomSign.SessionType.ASSISTANCE.getType());
-			List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
-					.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
-			Map<String, String> userAssistanceMap = StreamApiUtils.toMap(filterList,
-					object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
-					object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
-
+			Map<String, String> userAssistanceMap = remoteSceneService.getAssistanceMap(sceneIds,
+					nodeIds, null);
 			monitorBos.forEach(classroomMonitorBo -> classroomMonitorBo
 					.setHelpUrl(classroomMonitorBo.getNeedHelp()
 							? userAssistanceMap.get(classroomMonitorBo.getUserId())

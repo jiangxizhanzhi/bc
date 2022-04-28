@@ -1,10 +1,13 @@
 package com.cyberpeace.cs.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cs.service.context.ChatWsMessageIdentifier;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketMessage;
@@ -161,6 +164,38 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	}
 
+	/**
+	 * 好友消息推送 默认推送给好友
+	 * @param identifier
+	 * @param mine
+	 * @param message
+	 */
+	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message) {
+		ChatMessage chatMessage = convertToChatMessage(mine, identifier.getUserId(), message,
+				MESSAGE_TYPE.FRIEND);
+		doPushChatMessage(identifier, chatMessage, Lists.newArrayList(identifier.getUserId()));
+	}
+
+	/**
+	 * 可选择推送消息类型
+	 * @param identifier 里面包含发送给谁
+	 * @param mine
+	 * @param message
+	 * @param messageType
+	 */
+	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message,
+			MESSAGE_TYPE messageType) {
+		ChatMessage chatMessage = convertToChatMessage(mine, identifier.getUserId(), message,
+				messageType);
+		doPushChatMessage(identifier, chatMessage, Lists.newArrayList(identifier.getUserId()));
+	}
+
+	/**
+	 * 前端推送信息转换为消息
+	 * @param chatContent
+	 * @param senderName
+	 * @return
+	 */
 	public ChatMessage contentToMessage(ChatContent chatContent, String senderName) {
 		ChatMineContent mine = chatContent.getMine();
 		ChatToContent toContent = chatContent.getTo();
@@ -182,9 +217,67 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		return chatMessage;
 	}
 
+	/**
+	 * 消息发送
+	 * @param identifier
+	 * @param chatMessage
+	 * @param userIds
+	 */
+	private void doPushChatMessage(WsMessageIdentifier identifier, ChatMessage chatMessage,
+			List<String> userIds) {
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().messageIdentifier(identifier).data(chatMessage).build();
+		pushMessageToUsers(messageContext, userIds);
+	}
+
+	/**
+	 * 根据发送者和接受者进行消息组装
+	 * @param mine
+	 * @param toUser
+	 * @param message
+	 * @param messageType
+	 * @return
+	 */
+	private ChatMessage convertToChatMessage(UserInfo mine, String toUser, String message,
+			MESSAGE_TYPE messageType) {
+
+		ChatMessage chatMessage = new ChatMessage();
+		chatMessage.setUsername(mine.getName());
+		chatMessage.setAvatar(mine.getAvatarUrl());
+		chatMessage.setId(toUser);
+		chatMessage.setType(messageType.desc);
+		chatMessage.setContent(message);
+		chatMessage.setFromid(mine.getUserId());
+		chatMessage.setTimestamp(System.currentTimeMillis());
+		chatMessage.setTime(TimeUtil.format1(new Date()));
+
+		return chatMessage;
+	}
+
+	public enum MESSAGE_TYPE implements GenericEnum {
+
+		/** 信息类型*/
+		FRIEND(0, "friend"), GROUP(1, "group");
+
+		private Integer type;
+
+		@Getter
+		private String desc;
+
+		MESSAGE_TYPE(int type, String desc) {
+			this.type = type;
+			this.desc = desc;
+		}
+
+		@Override
+		public Integer getCode() {
+			return type;
+		}
+	}
+
 	public enum CHAT_TYPE implements GenericEnum {
 
-		/** 聊天类型*/
+		/** 聊天室类型*/
 		RED_VS_BLUE(4, "红蓝对抗"), COMMON(0, "通用");
 
 		private Integer type;

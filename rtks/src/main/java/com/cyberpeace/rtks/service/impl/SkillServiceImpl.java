@@ -80,6 +80,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	@Override
 	public SkillRes getSkillByResourceId(String skillId) {
 		Skill skill = skillMapper.selectById(skillId);
+		if (skill == null) {
+			throw new BusinessException(RtksBusinessErrorCode.SKILL_NOT_EXIST);
+		}
 		// 查询关联任务，时间倒序
 		List<MissionRes> missionResList = skillMissionRelationMapper
 				.batchSelectMissionResBySkillId(skillId);
@@ -110,6 +113,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			relation.setSkillId(skillId);
 			relation.setMissionTemplateId(idWeight.getId());
 			relation.setWeight(idWeight.getWeight());
+			relations.add(relation);
 		}
 		// 插入前检查是否存在任务。 todo
 		skillMissionRelationMapper.insertBatch(relations);

@@ -77,7 +77,7 @@ public class SkillController {
 	@PutMapping()
 	public BaseRsp<String> modifySkill(@RequestBody @Validated SkillAddReq skillAddReq) {
 		String newContent = skillAddReq.getContent();
-		Skill skill = skillService.getById(skillAddReq.getResourceId());
+		Skill skill = skillService.getOr404(skillAddReq.getResourceId());
 		// 校验 content
 		if (StringUtils.isNotBlank(newContent) && !skill.getContent().equals(newContent)) {
 			CrCommonValidator.validateDescLen(skillAddReq.getContent(),

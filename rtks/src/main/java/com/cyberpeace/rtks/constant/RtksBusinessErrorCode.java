@@ -64,8 +64,10 @@ public interface RtksBusinessErrorCode {
 	/** 技能编号已被占用 */
 	String SKILL_ID_OCCUPIED = "103019";
 
+	/** 技能编号过长 */
 	String INVALID_SKILL_ID = "103020";
 
+	/** 技能内容过长 */
 	String INVALID_CONTENT = "103021";
 
 	/** 只允许在二级层级关联岗位 */

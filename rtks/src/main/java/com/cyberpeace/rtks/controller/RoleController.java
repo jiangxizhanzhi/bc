@@ -412,7 +412,7 @@ public class RoleController {
 			}
 			List<Level> childLevels = levelService.getChildLevelsByLevelId(levelId);
 			if (!CollectionUtils.isEmpty(childLevels)) {
-				throw new BusinessException(RtksBusinessErrorCode.LEVEL_HAS_CHILD);
+				throw new BusinessException(RtksBusinessErrorCode.LEVEL_HAS_CHILD, levelId);
 			}
 		}
 

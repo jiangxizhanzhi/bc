@@ -1,5 +1,8 @@
-package com.cyberpeace.oj.ojbase.constant;
+package com.cyberpeace.common.constant;
 
+/**
+ * Json key定义，复用切易查找
+ */
 public interface JsonKeyConstant {
 
 	/** 倒计时*/
@@ -64,4 +67,11 @@ public interface JsonKeyConstant {
 	/** 录屏*/
 	String SCREEN_RECORDING = "screen_recording";
 
+	/** 业务编号*/
+	String BUSINESS_ID = "business_id";
+
+	/**  业务类型*/
+	String BUSINESS_TYPE = "business_type";
+
+	String KEY = "key";
 }

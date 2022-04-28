@@ -2,7 +2,7 @@ package com.cyberpeace.oj.course.service.impl;
 
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;

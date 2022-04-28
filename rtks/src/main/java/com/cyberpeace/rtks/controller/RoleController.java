@@ -221,9 +221,13 @@ public class RoleController {
 			RoleOutput output = getListOutputFromEntity(record);
 			// fill count data
 			RoleSkillRes res = mapping.get(output.getResourceId());
-			output.setSkillCount(res.getSkillCount());
-			output.setSkillMissionCount(res.getMissionCount());
-
+			if (res != null) {
+				output.setSkillCount(res.getSkillCount());
+				output.setSkillMissionCount(res.getMissionCount());
+			} else {
+				output.setSkillCount(0);
+				output.setSkillMissionCount(0);
+			}
 			outputs.add(output);
 		}
 

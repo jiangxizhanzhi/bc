@@ -10,24 +10,26 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 @Data
-@TableName("cr_eval_task_step")
-public class TaskStep extends BaseTable {
+@TableName("cr_eval_task")
+public class EvalTask extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	private String taskId;
-
-	private Integer stage;
+	private String templateId;
 
 	private String name;
 
-	private String process;
+	private String localSceneId;
 
-	private String type;
+	private String copyedTopoId;
 
 	private Date startTime;
 
 	private Date endTime;
+
+	private Boolean enableRecording;
+
+	private String createUserId;
 
 }

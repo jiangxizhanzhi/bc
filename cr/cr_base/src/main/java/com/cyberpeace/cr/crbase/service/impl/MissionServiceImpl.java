@@ -162,6 +162,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			task.setRoomId(mission.getRoomId());
 			task.setRoleId(role.getResourceId());
 			task.setBusinessType(role.getBusinessType());
+			task.setMissionTemplateId(mission.getMissionTemplateId());
 
 			tasks.add(task);
 		}
@@ -198,6 +199,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			CrTask task = new CrTask();
 
 			task.setMissionId(mission.getResourceId());
+			task.setMissionTemplateId(mission.getMissionTemplateId());
 			task.setUserId(currentUserId);
 			task.setStatus(CrTask.TaskStatus.RELEASED.getCode());
 			task.setReleaseTime(new Date());
@@ -290,6 +292,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 					mission.setShowWriteup(false);
 					mission.setCreateUserId(userId);
 					mission.setRoomId(roomId);
+					mission.setMissionTemplateId(missionTemplate.getResourceId());
 					mission.setResourceId(IDGeneratorUtil.getID());
 
 					missions.add(mission);

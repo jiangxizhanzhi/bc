@@ -1,12 +1,12 @@
 package com.cyberpeace.integratation.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
-import org.checkerframework.checker.guieffect.qual.UI;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface RemoteUserService {
 
@@ -40,5 +40,7 @@ public interface RemoteUserService {
 	 * @return
 	 */
 	List<UserInfo> ListByOrgId(String organizationId, boolean children);
+
+	Set<String> getUserPermission(String userId);
 
 }

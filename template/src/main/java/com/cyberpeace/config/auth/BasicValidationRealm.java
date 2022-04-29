@@ -6,7 +6,6 @@ import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.rtks.dao.entity.UserRole;
 import com.cyberpeace.rtks.service.UserRelateService;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -19,6 +18,8 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -35,11 +36,9 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
         // 设置角色 todo roles非string
         // simpleAuthorizationInfo.addRoles(userInfo.getRoles());
-        // todo
-        // 用户的角色就是该用户当前拥有的菜单
 
-        // 默认不设置权限
-        simpleAuthorizationInfo.addStringPermissions(Lists.newArrayList());
+        // 以菜单作为权限控制
+        simpleAuthorizationInfo.addStringPermissions(userInfo.getPermissions());
 
         return simpleAuthorizationInfo;
     }
@@ -63,6 +62,10 @@ public class BasicValidationRealm extends AuthorizingRealm {
                     .getBeanByClass(RemoteUserService.class);
 
             userInfo = remoteUserService.doAuthentication(token);
+            Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());
+            userInfo.setPermissions(userPermission);
+
+            // rtks相关角色
             UserRole roleInfo = userRelateService.getUserRoleInfo(userInfo.getUserId());
 
             if (null != roleInfo) {

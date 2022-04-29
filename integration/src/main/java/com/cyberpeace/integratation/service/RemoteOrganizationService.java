@@ -1,9 +1,9 @@
 package com.cyberpeace.integratation.service;
 
-import com.alibaba.fastjson.JSONArray;
-
 import java.util.List;
 import java.util.Map;
+
+import com.alibaba.fastjson.JSONArray;
 
 public interface RemoteOrganizationService {
 

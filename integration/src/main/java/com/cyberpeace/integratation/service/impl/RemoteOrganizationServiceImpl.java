@@ -1,17 +1,11 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +14,13 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 public class RemoteOrganizationServiceImpl implements RemoteOrganizationService {
@@ -114,7 +113,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	}
 
 	/**
-	 * 会返回控制 请自己判断
+	 * 会返回空值 请自己判断
 	 * @param orgStr
 	 * @param orgTree
 	 * @return
@@ -181,7 +180,6 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 		return childIdList;
 	}
-
 
 	@Override
 	public JSONArray classList() {

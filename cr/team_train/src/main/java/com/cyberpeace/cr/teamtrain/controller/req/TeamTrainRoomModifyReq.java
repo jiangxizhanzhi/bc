@@ -37,6 +37,9 @@ public class TeamTrainRoomModifyReq {
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
 
+	@ApiModelProperty(value = "LOGO")
+	private String logo;
+
 	public void validate() {
 		if (name != null) {
 			CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);

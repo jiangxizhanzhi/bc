@@ -83,5 +83,18 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param userContext
 	 * @return
 	 */
-    DashboardInfo getChatUsers(String roomId, UserInfo userContext);
+	DashboardInfo getChatUsers(String roomId, UserInfo userContext);
+
+	/**
+	 * 训练计划导入
+	 * @param realPath
+	 * @return
+	 */
+	List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover);
+
+	/**
+	 * 训练计划导出
+	 * @return 导出文件路径
+	 */
+	String exportTrainPlan(UserInfo userInfo);
 }

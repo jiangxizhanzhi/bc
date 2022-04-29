@@ -91,11 +91,13 @@ public class ExcelDataHandler {
 			log.error(
 					"Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}], catch error:",
 					filePath, sheetName, e);
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
-		} finally {
 			try {
 				fileInputStream.close();
-			} catch (IOException e) {}
+			} catch (IOException ioException) {
+				// 关不掉这个没办法了
+			}
+
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		}
 	}
 

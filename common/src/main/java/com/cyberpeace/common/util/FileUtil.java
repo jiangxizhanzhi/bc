@@ -533,6 +533,7 @@ public class FileUtil {
 		// 文件直接删除
 		if (file.isFile()) {
 			file.deleteOnExit();
+			return;
 		}
 
 		// 目录遍历删除

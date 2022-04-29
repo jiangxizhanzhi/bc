@@ -12,8 +12,10 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
+import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.omg.CORBA.ORB;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,16 @@ public class ClassroomValidateHandler {
 
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
+
+	@Autowired
+	private TrainPlanMapper trainPlanMapper;
+
+	public void validatePlanExistByName(String planName, String userId) {
+		TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
+		if (null != trainPlan) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
+		}
+	}
 
 	/**
 	 * 课堂签到校验

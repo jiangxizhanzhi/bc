@@ -74,4 +74,10 @@ public interface JsonKeyConstant {
 	String BUSINESS_TYPE = "business_type";
 
 	String KEY = "key";
+
+	String NAME = "name";
+
+	String ID = "id";
+
+	String CHILDREN = "children";
 }

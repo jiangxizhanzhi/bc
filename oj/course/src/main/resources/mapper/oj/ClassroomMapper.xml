@@ -86,4 +86,9 @@
         select * from oj_classroom
         where organization_id = #{orgId}
     </select>
+
+    <select id="selectByPlan" resultMap="base">
+        select * from oj_classroom
+        where train_plan_id = #{planId}
+    </select>
 </mapper>

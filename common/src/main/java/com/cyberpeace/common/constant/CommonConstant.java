@@ -25,7 +25,11 @@ public interface CommonConstant {
 
 	int TWO = 2;
 
+	int THREE = 3;
+
 	int FOUR = 4;
+
+	int FIVE = 5;
 
 	int NEGATIVE_ONE = -1;
 

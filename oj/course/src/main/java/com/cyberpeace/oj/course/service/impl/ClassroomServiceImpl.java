@@ -17,6 +17,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -110,6 +111,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private TrainPlanMapper trainPlanMapper;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -515,6 +519,192 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		dashboardInfo.setGroup(Lists.newArrayList(group));
 
 		return dashboardInfo;
+	}
+
+	@Override
+	public List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover) {
+
+		// excel数据读取
+		ExcelDataHandler dataHandler = new ExcelDataHandler(realPath, CommonConstant.ZERO);
+		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
+
+		// 数据解析
+		List<Classroom> classrooms = Lists.newArrayList();
+		List<TrainPlan> trainPlans = Lists.newArrayList();
+
+		for (int i = CommonConstant.ONE; i <= sheetData.size(); i++) {
+
+			// 空数据不管
+			if (!validateEmptyData(sheetData.get(i), i)) {
+				continue;
+			}
+
+			// 解析行
+			TrainPlan trainPlan = parseTrainPlan(sheetData.get(i), userInfo.getUserId(), cover, i);
+			trainPlans.add(trainPlan);
+			Classroom classroom = parseClassroom(sheetData.get(i), userInfo, i);
+			classrooms.add(classroom);
+		}
+
+		// 数据库插入前 最好再次校验训练计划 防止解析时间过长
+		List<Classroom> coverRoomList = StreamApiUtils.flatMap(trainPlans,
+				trainPlan -> getCoverRoomByPlan(trainPlan.getName(), trainPlan.getCreateUserId(),
+						cover));
+
+		// 数据库插入
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				coverRoomList.forEach(classroom -> deleteClassroom(classroom.getResourceId(),
+						AuthContextUtils.constructAuth(userInfo, false)));
+				trainPlans.forEach(trainPlan -> trainPlanMapper.insert(trainPlan));
+				saveBatch(classrooms);
+			}
+		});
+
+		return classrooms;
+	}
+
+	@Override
+	public String exportTrainPlan(UserInfo userInfo) {
+		List<TrainPlan> trainPlanList = trainPlanMapper.selectByUser(userInfo.getUserId());
+
+
+		return null;
+	}
+
+	/**
+	 * 获取需要覆盖的
+	 * @param planName
+	 * @param userId 
+	 * @param cover 
+	 * @return
+	 */
+	private List<Classroom> getCoverRoomByPlan(String planName, String userId, boolean cover) {
+		TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
+		if (!cover && null != trainPlan) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
+		}
+
+		if (null == trainPlan) {
+			return Lists.newArrayList();
+		}
+
+		List<Classroom> classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
+		return classroomList;
+	}
+
+	/**
+	 * 校验空数据
+	 * @param rowData
+	 * @return
+	 */
+	private boolean validateEmptyData(List<String> rowData, int rowIndex) {
+		if (CollectionUtils.isEmpty(rowData)
+				|| StringUtils.isBlank(String.join(CommonConstant.EMPTY_STRING, rowData))) {
+			log.error("Row data is null! rowIndex=[{}]", rowIndex);
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * 课堂数据解析
+	 * @param roomData
+	 * @param userInfo
+	 * @return
+	 */
+	private Classroom parseClassroom(List<String> roomData, UserInfo userInfo, int rowIndex) {
+		String courseName;
+		if (StringUtils.isBlank(courseName = roomData.get(CommonConstant.ONE))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_IS_NULL, rowIndex);
+		}
+
+		String courseId;
+		if (StringUtils.isBlank(courseId = courseMapper.selectByName(courseName))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
+		}
+
+		String lessonName;
+		if (StringUtils.isBlank(lessonName = roomData.get(CommonConstant.TWO))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_IS_NULL, rowIndex);
+		}
+
+		String lessonId;
+		if (StringUtils.isBlank(
+				lessonId = courseLessonMapper.selectByCourseAndName(courseId, lessonName))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_EXIST, rowIndex);
+		}
+
+		String startTime;
+		String endTime;
+		if (StringUtils.isBlank(startTime = roomData.get(CommonConstant.THREE))
+				|| StringUtils.isBlank(endTime = roomData.get(CommonConstant.FOUR))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
+		}
+		if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(startTime))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_END_GT_START_TIME, rowIndex);
+		}
+
+		String orgTree;
+		if (StringUtils.isBlank(orgTree = roomData.get(CommonConstant.FIVE))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL);
+		}
+
+		// 基本数据填充
+		Classroom classroom = new Classroom();
+		classroom.setCreateUserId(userInfo.getUserId());
+		classroom.setResourceId(IDGeneratorUtil.getID());
+		classroom.setCourseId(courseId);
+		classroom.setLessonId(lessonId);
+		classroom.setStartTime(TimeUtil.toDate1(startTime));
+		classroom.setEndTime(TimeUtil.toDate1(endTime));
+
+		// 组织数据获取
+		String orgId = remoteOrganizationService.getOrgIdByTree(orgTree);
+		if (StringUtils.isBlank(orgId)) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_NOT_EXIST);
+		}
+		classroom.setOrganizationId(orgId);
+		List<String> childrenList = remoteOrganizationService.childrenList(orgId, true);
+		classroom.setOrganizationIds(JsonUtil.arrayToString(childrenList));
+
+		return classroom;
+	}
+
+	/**
+	 * 训练计划解析
+	 * @param rowData
+	 * @param userId
+	 * @param cover
+	 * @return
+	 */
+	private TrainPlan parseTrainPlan(List<String> rowData, String userId, Boolean cover,
+			int rowIndex) {
+
+		// 数据校验
+		String planName;
+		if (StringUtils.isBlank(planName = rowData.get(CommonConstant.ZERO))) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NAME_IS_NULL, rowIndex);
+		}
+
+		TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
+		if (null != trainPlan && !cover) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST, rowIndex);
+		}
+
+		if (null != trainPlan) {
+			return trainPlan;
+		}
+
+		trainPlan = new TrainPlan();
+		trainPlan.setResourceId(IDGeneratorUtil.getID());
+		trainPlan.setName(planName);
+		trainPlan.setCreateUserId(userId);
+
+		return trainPlan;
 	}
 
 	/**

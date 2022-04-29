@@ -1,30 +1,33 @@
 package com.cyberpeace.cr.singletrain.service.bo;
 
-import com.alibaba.fastjson.JSONObject;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+
+import lombok.Data;
+
 @Data
 public class EventDataBo implements Serializable {
-    private String name;
 
-    private String description;
+	private String name;
 
-    private Integer category;
+	private String description;
 
-    private String createUser;
+	private Integer category;
 
-    private List<String> preSkill;
+	private String createUser;
 
-    private List<String> trainSkill;
+	private List<String> preSkill;
 
-    private JSONObject sceneConfigData;
+	private List<String> trainSkill;
 
-    private Integer difficult;
+	private JSONObject sceneConfigData;
 
-    private Integer durationTime;
+	private Integer difficult;
 
+	private Integer durationTime;
+
+	private String logo;
 
 }

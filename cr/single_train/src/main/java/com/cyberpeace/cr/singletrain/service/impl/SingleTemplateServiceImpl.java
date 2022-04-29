@@ -70,6 +70,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		eventData.setTrainSkill(
 				JsonUtil.toJsonObjectArray(trainObject.getTrainSkills(), String.class));
 		eventData.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
+		eventData.setLogo(businessTemplate.getLogo());
 
 		SingleTemplateBo singleTemplateBo = new SingleTemplateBo();
 

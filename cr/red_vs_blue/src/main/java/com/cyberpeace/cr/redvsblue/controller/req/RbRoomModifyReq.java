@@ -35,6 +35,8 @@ public class RbRoomModifyReq implements Serializable {
 
 	private String roleConfig;
 
+	private String logo;
+
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
 

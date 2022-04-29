@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +25,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -37,7 +35,6 @@ import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -47,7 +44,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -255,6 +251,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 		if (teamTrainRoomContext.getEnableRecording() != null) {
 			teamRoom.setEnableRecording(teamTrainRoomContext.getEnableRecording());
+		}
+		if (teamTrainRoomContext.getLogo() != null) {
+			teamRoom.setLogo(teamTrainRoomContext.getLogo());
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -492,8 +491,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 
 		} catch (Exception e) {
-			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]",
-					roomId, userId);
+			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]", roomId,
+					userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 

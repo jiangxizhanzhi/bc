@@ -1,24 +1,25 @@
 package com.cyberpeace.common.component;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.List;
-
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.FileUtil;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.FileUtil;
-import com.google.common.collect.Lists;
-
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * excel数据处理器 需要什么方法自己加
@@ -165,6 +166,64 @@ public class ExcelDataHandler {
 			// 关不掉没办法
 			log.error("fileInputStream close fail!", e);
 		}
+	}
+
+	public static  <T> File exportExcel(List<T> list, String fileName, String sheetName,
+										List<String> passFields, String [] headers, File file) {
+
+		try {
+			//创建HSSFWorkbook对象
+			HSSFWorkbook wb = new HSSFWorkbook();
+			//创建HSSFSheet对象
+			HSSFSheet sheet = wb.createSheet(sheetName);
+			//创建HSSFRow对象
+			HSSFRow row = sheet.createRow(0);
+			// 在excel表中添加表头
+			for (int i = 0; i < headers.length; i++) {
+				//创建HSSFCell对象
+				HSSFCell cell = row.createCell(i);
+				HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+				cell.setCellValue(text);
+			}
+			int rowNum = 1;
+			if(list.size() != 0){
+				T t = list.get(0);
+				Field[] fields = t.getClass().getDeclaredFields();
+				Field[] superClassFields = t.getClass().getSuperclass().getDeclaredFields();
+				Field[] allFields = ArrayUtils.addAll(fields, superClassFields);
+				for (T customersForm : list) {
+					int cellNum = 0;
+					HSSFRow dataRow = sheet.createRow(rowNum);
+					for (Field field : allFields) {
+						//设置允许通过反射访问私有变量
+						field.setAccessible(true);
+						// 过滤无用字段值
+						if (passFields.contains(field.getName())) {
+							continue;
+						}
+						//获取字段的值
+						String value = "";
+						Object obj = field.get(customersForm);
+						if (obj != null) {
+							value = obj.toString();
+						}
+						//获取字段属性名称
+						dataRow.createCell(cellNum).setCellValue(value); //设置单元格内容
+						cellNum++;
+					}
+					rowNum++;
+				}
+			}
+			//输出Excel文件
+			wb.write(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(
+					"Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}], catch error:",
+					fileName, sheetName, e);
+			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
+		}
+		return file;
 	}
 
 }

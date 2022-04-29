@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +116,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			queryParams.add(String.format("per_page=%s", perPage));
 		}
 		if (pattern != null) {
+			// 对特殊字符转义
+			try {
+				pattern = java.net.URLEncoder.encode(pattern, "utf-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 			queryParams.add(String.format("username=%s", pattern));
 		}
 		if (organization != null) {

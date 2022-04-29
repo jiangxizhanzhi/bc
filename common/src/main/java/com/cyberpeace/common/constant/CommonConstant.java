@@ -57,4 +57,8 @@ public interface CommonConstant {
 
 	String  ONLINE = "online";
 
+	Integer THRITY = 30;
+
+	Integer TWENTY_FOUR_MONTHS = 24 * 30;
+
 }

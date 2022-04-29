@@ -5,12 +5,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Data
 @ApiModel("用户学习统计信息")
-public class UserStatsBo implements Serializable {
+public class UserStatsBo extends PublicStatsBo {
 
     @ApiModelProperty("用户resource_id")
     private String resourceId;
@@ -27,16 +26,5 @@ public class UserStatsBo implements Serializable {
     @ApiModelProperty("用户角色")
     private List<JSONObject> roles;
 
-    @ApiModelProperty("完成课时数量")
-    private Integer lessonRecordCount = 0;
-
-    @ApiModelProperty("完成练习数量")
-    private Integer finishPracticeCount = 0;
-
-    @ApiModelProperty("完成实验数量")
-    private Integer finishReportCount = 0;
-
-    @ApiModelProperty("实验平均得分")
-    private float reportAverage = 0;
 
 }

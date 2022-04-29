@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,4 +120,25 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 		return childIdList;
 	}
+
+
+	@Override
+	public JSONArray classList() {
+
+		JSONArray orgs = HttpClientUtil.rawGet(MP_ORG_TREE_URL, JSONArray.class);
+
+		// 空数组校验
+		if (CollectionUtils.isEmpty(orgs)) {
+			return null;
+		}
+
+		// 空对象校验
+		JSONObject realOrgTree = orgs.getJSONObject(CommonConstant.ZERO);
+		if (realOrgTree.isEmpty()) {
+			return null;
+		}
+
+		return orgs;
+	}
+
 }

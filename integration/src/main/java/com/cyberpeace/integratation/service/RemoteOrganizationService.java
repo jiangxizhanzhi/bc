@@ -1,5 +1,7 @@
 package com.cyberpeace.integratation.service;
 
+import com.alibaba.fastjson.JSONArray;
+
 import java.util.List;
 import java.util.Map;
 
@@ -27,5 +29,11 @@ public interface RemoteOrganizationService {
 	 * @return key=orgId value=org_name
 	 */
 	Map<String, String>  childrenMap(String orgId, boolean self);
+
+	/**
+	 * 获取最低级班级的ids
+	 * @return
+	 */
+	JSONArray classList();
 
 }

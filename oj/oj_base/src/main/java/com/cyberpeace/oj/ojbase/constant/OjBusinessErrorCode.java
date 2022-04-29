@@ -108,4 +108,7 @@ public interface OjBusinessErrorCode {
 	/** 对应的习题文件未找到*/
 	String PRACTICE_OPERATION_FILE_NOT_FOUNT = "102034";
 
+	// 删除实例时没有传入resource_id字段
+	String RESOURCE_ID_MISSING = "102035";
+
 }

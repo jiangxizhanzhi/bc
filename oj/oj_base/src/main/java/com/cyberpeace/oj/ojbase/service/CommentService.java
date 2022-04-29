@@ -39,4 +39,27 @@ public interface CommentService {
 	 * @return
 	 */
 	Integer commentIsLike(String commentId, Boolean isLike, String userId);
+
+	/**
+	 * 删除留言
+	 * @param commentIds
+	 */
+	void bathDeleteComment(List<String> commentIds);
+
+	/**
+	 *后台分页查询一级留言
+	 * @param page
+	 * @param businessType
+	 * @param content
+	 * @return
+	 */
+	ListRsp<CommentBo> pageParentComment(Page page,Integer businessType,String content);
+
+	/**
+	 * 后台分页查询二级留言
+	 * @param page
+	 * @param resourceId  一级留言的id
+	 * @return
+	 */
+	ListRsp<CommentBo> pageChildrenComment(Page page,String resourceId);
 }

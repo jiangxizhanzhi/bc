@@ -49,6 +49,8 @@ public class RbRoom extends BaseTable {
 
 	private Boolean enableRecording;
 
+	private String logo;
+
 	public RbRoom() {
 
 	}
@@ -66,6 +68,7 @@ public class RbRoom extends BaseTable {
 		this.difficulty = input.getDifficult();
 		this.createUserId = createUserId;
 		this.localSceneId = localSceneId;
+		this.logo = input.getLogo();
 	}
 
 	public boolean isUnopened() {

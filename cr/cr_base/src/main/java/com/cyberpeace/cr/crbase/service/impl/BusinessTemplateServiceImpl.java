@@ -102,6 +102,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
+		businessTemplate.setLogo(baseInfo.getLogo());
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(), "");
 
@@ -147,6 +148,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
+		businessTemplate.setLogo(baseInfo.getLogo());
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(),
 				businessTemplate.getResourceId());

@@ -57,4 +57,6 @@ public class RbRoomContext {
 	private List<RoomRole> roleConfig;
 
 	private Boolean enableRecording;
+
+	private String logo;
 }

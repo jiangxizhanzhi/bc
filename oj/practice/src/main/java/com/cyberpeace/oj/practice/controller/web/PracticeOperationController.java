@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.web;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
@@ -14,6 +15,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "oj-前台实践操作练习相关api")
 @RequestMapping("/oj/practice/operation")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 public class PracticeOperationController {
 
 	@Autowired

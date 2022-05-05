@@ -8,10 +8,8 @@ public interface MenuConstant {
     /**
      * 前台页面
      */
-    String WEB_OJ_COURSE = "oj-course";
-
     // 我的职业
-    String WEB_MY_JOB = "oj-course";
+    String WEB_OJ_COURSE = "oj-course";
 
     // 全部课程
     String WEB_OJ_ALL_COURSE = "oj-all-course";

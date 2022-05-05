@@ -7,7 +7,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/cr/single_train/single_train")
 @Slf4j
+@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 public class SingleRoomScoreController {
 
 	@Autowired

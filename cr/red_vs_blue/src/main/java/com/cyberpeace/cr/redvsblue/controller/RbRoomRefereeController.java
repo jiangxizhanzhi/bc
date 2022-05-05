@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +42,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/referee/")
+@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 public class RbRoomRefereeController {
 
 	@Autowired

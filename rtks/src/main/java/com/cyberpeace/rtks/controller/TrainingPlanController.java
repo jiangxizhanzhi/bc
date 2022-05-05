@@ -3,9 +3,12 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.Set;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,8 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/rtks/training-plan")
 @RequiresAuthentication
+@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+		MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 public class TrainingPlanController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);

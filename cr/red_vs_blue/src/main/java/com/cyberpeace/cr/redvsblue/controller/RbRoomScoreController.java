@@ -7,7 +7,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +60,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 @Slf4j
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
+@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 public class RbRoomScoreController {
 
 	@Autowired

@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -77,6 +79,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/cr/team_train/room")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 public class TeamTrainRoomController {
 
 	@Autowired

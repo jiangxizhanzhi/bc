@@ -3,8 +3,11 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +34,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/oj/course/class/room")
 @RequiresAuthentication
+@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 public class WebClassroomController {
 
 	@Autowired

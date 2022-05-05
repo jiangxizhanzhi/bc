@@ -7,6 +7,7 @@ import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class CourseCategoryController {
 
 	@GetMapping("")
 	@ApiOperation("课程分类")
-	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp<List<CourseCategoryBo>>
 			listDirection(@RequestParam(value = "children", required = false) Boolean children) {
 		List<CourseCategoryBo> categories = courseCategoryService

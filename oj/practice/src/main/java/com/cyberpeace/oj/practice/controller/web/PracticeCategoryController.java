@@ -1,11 +1,14 @@
 package com.cyberpeace.oj.practice.controller.web;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
 import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
 import io.swagger.annotations.*;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +33,8 @@ public class PracticeCategoryController {
 			@ApiImplicitParam(name = "pattern", value = "模糊搜索内容"),
 			@ApiImplicitParam(name = "children", value = "是否查询子分类") })
 	@GetMapping("/list")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION},
+			logical = Logical.OR)
 	public BaseRsp<List<CategoryListBo>> list(
 			@RequestParam(value = "practice_type") Integer practiceType,
 			@RequestParam(value = "pattern", required = false) String pattern,

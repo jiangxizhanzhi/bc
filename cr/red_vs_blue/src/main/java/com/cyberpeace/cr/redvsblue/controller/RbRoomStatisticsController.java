@@ -3,8 +3,10 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/statistics/")
+@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 public class RbRoomStatisticsController {
 
 	@Autowired

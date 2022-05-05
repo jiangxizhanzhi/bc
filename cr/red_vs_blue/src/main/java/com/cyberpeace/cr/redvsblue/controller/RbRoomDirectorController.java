@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -64,6 +66,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/director/red_vs_blue/red_vs_blue/")
+@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 public class RbRoomDirectorController {
 
 	@Autowired

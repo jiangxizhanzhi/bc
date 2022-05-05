@@ -2,7 +2,9 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/single_train/room")
+@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 public class SingleRoomController {
 
 	@Autowired

@@ -1,7 +1,10 @@
 package com.cyberpeace.rtks.controller;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.rtks.controller.req.UserRoleAddReq;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/relate/user")
 @RequiresAuthentication
+@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 public class UserRelateController {
 
 	@Autowired

@@ -2,8 +2,11 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +28,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/course/train")
 @RequiresAuthentication
+@RequiresPermissions({MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER})
 public class CourseTrainController {
 
 	@Autowired
@@ -87,6 +91,8 @@ public class CourseTrainController {
 
 	@ApiOperation("职业路径课程")
 	@GetMapping("/role/path")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<List<RoleCourseBo>> getRoleCourse() {
 		String roleId = UserInfoContext.getUserContext().getRoleId();
 

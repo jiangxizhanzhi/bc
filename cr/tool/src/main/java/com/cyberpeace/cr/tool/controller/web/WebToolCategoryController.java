@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.tool.controller.web;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
@@ -8,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("cr/tool/category")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
 public class WebToolCategoryController {
 
     @Autowired

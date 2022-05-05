@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/user/")
+@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 public class RbRoomUserController {
 
 	@Autowired

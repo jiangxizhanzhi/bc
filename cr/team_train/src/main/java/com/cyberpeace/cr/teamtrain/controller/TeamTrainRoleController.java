@@ -3,6 +3,8 @@ package com.cyberpeace.cr.teamtrain.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "团队训练角色")
 @RestController
 @RequestMapping("/cr/team_train/role")
+@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 public class TeamTrainRoleController {
 
 	@Autowired

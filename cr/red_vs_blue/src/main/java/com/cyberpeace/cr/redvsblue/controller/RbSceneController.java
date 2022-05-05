@@ -2,8 +2,10 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/scene/")
+@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 public class RbSceneController {
 
 	@Autowired

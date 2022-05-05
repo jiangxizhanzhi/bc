@@ -3,8 +3,11 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +35,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rtks/statistic")
 @Api(tags = "RTKS-作战能力评估")
 @RequiresAuthentication
+@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 public class RtksEvaluationController {
 
 	@Autowired

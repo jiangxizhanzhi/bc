@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -12,7 +13,9 @@ import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +39,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/oj/note")
 @RequiresAuthentication
+@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+		MenuConstant.WEB_OJ_PRACTICE_OPERATION}, logical = Logical.OR)
 public class WebNoteController {
 
 	@Autowired

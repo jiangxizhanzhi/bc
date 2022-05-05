@@ -145,6 +145,6 @@ public interface OjBusinessErrorCode {
 	String RESOURCE_ID_MISSING = "102046";
 
 	/** 对应的课堂未找到*/
-	String CLASSROOM_NOT_FOUNT = "102043";
+	String CLASSROOM_NOT_FOUNT = "102047";
 
 }

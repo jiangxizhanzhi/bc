@@ -27,31 +27,19 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.oj.course.controller.req.ClassroomDeleteReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomReq;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
-import com.cyberpeace.oj.course.service.bo.ClassroomBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomReportBo;
-import com.cyberpeace.oj.course.service.bo.ClassroomStatisticBo;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台课程表api")
@@ -242,8 +230,7 @@ public class AdminClassroomController {
 				false);
 
 		// 操作权限校验
-		classroomValidateHandler.validateLessonPracticeAuth(classroomId,
-				authContext);
+		classroomValidateHandler.validateLessonPracticeAuth(classroomId, authContext);
 
 		ClassroomPracticeDetailBo classroomPracticeDetailBo = classroomService
 				.practiceDetail(classroomId, lessonId, userId);

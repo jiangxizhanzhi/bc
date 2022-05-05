@@ -45,7 +45,7 @@
                 and cr_business_template.business_type = #{type}
             </if>
             <if test="difficulty != null and difficulty != ''">
-                and cr_business_template.difficulty = #{type}
+                and cr_business_template.difficulty = #{difficulty}
             </if>
             <if test="pattern != null and pattern != ''">
                 and (cr_mission_template.title like #{pattern} or cr_business_template.name like #{pattern})

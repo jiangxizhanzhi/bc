@@ -7,6 +7,7 @@ import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.RtksRadarBo;
 import com.cyberpeace.rtks.service.bo.StudyRecordBo;
+import com.cyberpeace.rtks.service.bo.skill.TrainingBo;
 
 /**
  * rtks数据统计功能
@@ -54,4 +55,13 @@ public interface RtksStatisticService {
 	 * @return
 	 */
 	StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime, Date endTime);
+
+	/**
+	 * 查询当前用户的训练路径
+	 * @param userId
+	 * @param roleId
+	 * @return
+	 */
+	List<TrainingBo> getTrainingPath(String userId, String roleId);
+
 }

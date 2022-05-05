@@ -74,5 +74,20 @@
                  left join rtks_skill on rtks_role_skill_relation.skill_id = rtks_skill.resource_id
                  left join rtks_skill_mission_relation on rtks_skill.resource_id = rtks_skill_mission_relation.skill_id
         where rtks_role_skill_relation.role_id = #{roleId}
+        order by rtks_skill_mission_relation.id
+    </select>
+    <select id="getMissionContextsByRoleId" resultType="com.cyberpeace.rtks.service.bo.skill.MissionContext">
+        select rtks_skill_mission_relation.mission_template_id,
+               cr_mission_template.title,
+               cr_mission_template.business_template_id,
+               rtks_skill.resource_id as skill_id,
+               rtks_skill.content     as skill_content
+        from rtks_role_skill_relation
+                 left join rtks_skill on rtks_role_skill_relation.skill_id = rtks_skill.resource_id
+                 inner join rtks_skill_mission_relation on rtks_skill.resource_id = rtks_skill_mission_relation.skill_id
+                 inner join cr_mission_template
+                            on rtks_skill_mission_relation.mission_template_id = cr_mission_template.resource_id
+        where rtks_role_skill_relation.role_id = #{roleId}
+        order by rtks_skill_mission_relation.id
     </select>
 </mapper>

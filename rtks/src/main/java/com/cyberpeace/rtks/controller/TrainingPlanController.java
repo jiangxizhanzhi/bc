@@ -1,7 +1,9 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.slf4j.Logger;
@@ -16,16 +18,21 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
+import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
+import com.cyberpeace.rtks.controller.res.skill.TrainingPathRes;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
+import com.cyberpeace.rtks.service.bo.skill.TrainingBo;
+import com.google.common.collect.Sets;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -176,4 +183,41 @@ public class TrainingPlanController {
 
 		return rsp;
 	}
+
+	@ApiOperation("训练路径")
+	@GetMapping("/training/path")
+	public BaseRsp<TrainingPathRes> getTrainingPath() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		TrainingPathRes res = new TrainingPathRes();
+		if (StringUtils.isBlank(roleId)) {
+			res.setPath(Lists.newArrayList());
+			res.setRelated(Lists.newArrayList());
+			return new BaseRsp<>(res);
+		}
+		// get training path
+		List<TrainingBo> trainingBoList = rtksStatisticService.getTrainingPath(userId, roleId);
+		// get all training from training path
+		res.setRelated(getAllRelatedTraining(trainingBoList));
+		res.setPath(trainingBoList);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 从训练路径中解析出全部当前岗位相关训练， 去重
+	 * @param trainingPath 
+	 * @return
+	 */
+	private List<RelatedTrainingRes> getAllRelatedTraining(List<TrainingBo> trainingPath) {
+		Set<String> trainingIds = Sets.newHashSet();
+		List<RelatedTrainingRes> allRelated = Lists.newArrayList();
+		for (TrainingBo trainingBo : trainingPath) {
+			if (!trainingIds.contains(trainingBo.getTrainingId())) {
+				allRelated.add(BeanUtils.copy(trainingBo, RelatedTrainingRes.class));
+				trainingIds.add(trainingBo.getTrainingId());
+			}
+		}
+		return allRelated;
+	}
+
 }

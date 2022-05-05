@@ -9,10 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.DataTransferUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -28,9 +25,11 @@ import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TreeService;
 import com.cyberpeace.rtks.service.bo.*;
-import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import com.cyberpeace.rtks.service.bo.skill.*;
 import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,6 +71,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
+
+	@Autowired
+	private SkillTrainingMapper skillTrainingMapper;
 
 	@Override
 	public String roleMatchPercent(String roleId, String userId) {
@@ -243,6 +245,157 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		recordBo.setYCourses(yCourses);
 		recordBo.setYLessons(yLessons);
 		return recordBo;
+	}
+
+	@Override
+	public List<TrainingBo> getTrainingPath(String userId, String roleId) {
+		Role role = roleMapper.selectById(roleId);
+		if (role == null) {
+			return Lists.newArrayList();
+		}
+		// get missions and related business template ids
+		List<MissionContext> missionContextList = roleSkillRelationMapper
+				.getMissionContextsByRoleId(roleId);
+		// deduplicate, keep order
+		LinkedHashMap<String, MissionContext> missionMap = Maps.newLinkedHashMap();
+		Set<String> businessTemplateIds = Sets.newHashSet();
+		missionContextList.forEach((missionContext -> {
+			missionMap.put(missionContext.getMissionTemplateId(), missionContext);
+			// collect businessTemplate ids
+			businessTemplateIds.add(missionContext.getBusinessTemplateId());
+		}));
+		// collect mission-skill relations, one mission may be related to several skills
+		Map<String, List<MissionContext>> missionSkillRel = Maps.newHashMap();
+		missionContextList.forEach((missionContext) -> {
+			if (!missionSkillRel.containsKey(missionContext.getMissionTemplateId())) {
+				missionSkillRel.put(missionContext.getMissionTemplateId(), Lists.newArrayList());
+			}
+			missionSkillRel.get(missionContext.getMissionTemplateId()).add(missionContext);
+		});
+		// get single training todo:status
+		List<TrainingRaw> singles = skillTrainingMapper
+				.getSingleByBusinessTemplateIdsAndUserId(userId, businessTemplateIds);
+		// get team training
+		List<TrainingRaw> teams = skillTrainingMapper.getTeamByBusinessTemplateIdsAndUserId(userId,
+				businessTemplateIds);
+		// get rb training
+		List<TrainingRaw> rbs = skillTrainingMapper.getRbByBusinessTemplateIdsAndUserId(userId,
+				businessTemplateIds);
+		// unify status
+		handleRbStatus(rbs);
+		// collect trainings
+		Map<String, List<TrainingRaw>> trainingMap = Maps.newHashMap();
+		mapTrainings(trainingMap, singles);
+		mapTrainings(trainingMap, teams);
+		mapTrainings(trainingMap, rbs);
+		// get saved mission order
+		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
+		// generate new order by merge with saved order
+		List<TrainingBo> newOrder = Lists.newArrayList();
+		for (String missionTemplateId : order) {
+			// mission does not exist or skill-mission relation deleted
+			if (!missionMap.containsKey(missionTemplateId)) {
+				continue;
+			}
+			MissionContext missionContext = missionMap.get(missionTemplateId);
+			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder);
+			missionMap.remove(missionTemplateId);
+		}
+		// missions not in saved mission order
+		for (Map.Entry<String, MissionContext> entry : missionMap.entrySet()) {
+			MissionContext missionContext = entry.getValue();
+			// training template has no active training
+			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder);
+		}
+		return newOrder;
+	}
+
+	/**
+	 * 将 trainingRaw 训练数据 和  missionContext 任务数据组装成前端展示的内容 trainingBo
+	 * @param trainingMap 
+	 * @param missionSkillRel
+	 * @param missionContext
+	 * @param trainingBoList
+	 */
+	private void addMissionBoByOrder(Map<String, List<TrainingRaw>> trainingMap,
+			Map<String, List<MissionContext>> missionSkillRel, MissionContext missionContext,
+			List<TrainingBo> trainingBoList) {
+		// training template has no active training
+		if (!trainingMap.containsKey(missionContext.getBusinessTemplateId())) {
+			return;
+		}
+		// convert trainingRaw to trainingBo
+		for (TrainingRaw trainingRaw : trainingMap.get(missionContext.getBusinessTemplateId())) {
+			TrainingBo trainingBo = BeanUtils.deepCopy(trainingRaw, TrainingBo.class);
+			trainingBo.setMissionTitle(missionContext.getTitle());
+			trainingBo.setMissionTemplateId(missionContext.getMissionTemplateId());
+			trainingBo.setPreSkill(
+					JsonUtil.toJsonObjectArray(trainingRaw.getPreSkill(), String.class));
+			trainingBo.setTrainSkill(
+					JsonUtil.toJsonObjectArray(trainingRaw.getTrainSkill(), String.class));
+			trainingBo.setSkills(
+					getSkillsByMission(missionSkillRel.get(trainingBo.getMissionTemplateId())));
+
+			trainingBoList.add(trainingBo);
+		}
+	}
+
+	/** 获取任务对应的skill
+	 * @return
+	 */
+	private List<SkillResBase> getSkillsByMission(List<MissionContext> missionContexts) {
+		List<SkillResBase> skillResBaseList = Lists.newArrayList();
+		missionContexts.forEach((mission) -> {
+			SkillResBase skill = new SkillResBase();
+			skill.setResourceId(mission.getSkillId());
+			skill.setContent(mission.getSkillContent());
+			skillResBaseList.add(skill);
+		});
+		return skillResBaseList;
+	}
+
+	/**
+	 * 将查到的训练以businessTemplateId为键分类收集，一个businessTemplateId可能对应多个训练场景
+	 * @param map 
+	 * @param trainingRaws
+	 */
+	private void mapTrainings(Map<String, List<TrainingRaw>> map, List<TrainingRaw> trainingRaws) {
+		trainingRaws.forEach((training) -> {
+			String businessTemplateId = training.getBusinessTemplateId();
+			if (!map.containsKey(businessTemplateId)) {
+				map.put(businessTemplateId, Lists.newArrayList());
+			}
+			map.get(businessTemplateId).add(training);
+		});
+	}
+
+	/**
+	 * 将红蓝训练状态统一成单兵、团队的样子
+	 * UNOPENED(0, "未开始"), OPENING(1, "已开始"), ENDED(2, "已结束") PAUSE(3, "已暂停"), RECOVERY(4, "恢复");
+	 * @param rbs
+	 */
+	private void handleRbStatus(List<TrainingRaw> rbs) {
+		rbs.forEach((rb) -> {
+			Integer trainingStatus = rb.getTrainingStatus();
+			rb.setTrainingStatus(convert(trainingStatus));
+		});
+	}
+
+	private Integer convert(Integer rbStatus) {
+		switch (rbStatus) {
+			case 4:
+				return 0;
+			case 2:
+				return 1;
+			case 0:
+				return 2;
+			case 1:
+				return 3;
+			case 3:
+				return 4;
+			default:
+				return rbStatus;
+		}
 	}
 
 	/**

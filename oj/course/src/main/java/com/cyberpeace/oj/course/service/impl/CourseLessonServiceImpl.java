@@ -1,12 +1,15 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -762,6 +765,45 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 		Paper paper = paperService.update(paperContext);
 		return null != paper;
+	}
+
+	@Override
+	public Boolean markLessonPractice(String lessonId, String userId, Integer level, AuthContext authContext) {
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
+
+		// 课后练习评估数据查询
+		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
+				.selectByUserAndLesson(userId, lessonId);
+		if (null == paperEvaluate) {
+
+			return false;
+		}
+		paperEvaluate.setLevel(level);
+		paperEvaluate.setCorrector(authContext.getUserId());
+		lessonPaperEvaluateMapper.updateById(paperEvaluate);
+		return true;
+
+	}
+
+	@Override
+	public Boolean releaseLessonPractice(String lessonId, String authId, AuthContext authContext) {
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
+
+		// 下发课堂练习
+		Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+		String readAuthIds = paper.getReadAuthIds();
+		if (StringUtils.isBlank(readAuthIds)) {
+			readAuthIds = "[]";
+		}
+		JSONArray readAuthArray =   JsonUtil.stringToArray(readAuthIds);
+		if (!readAuthArray.contains(authId)){
+			readAuthArray.add(authId);
+			paper.setReadAuthIds(JsonUtil.arrayToString(readAuthArray));
+			paperMapper.updateById(paper);
+		}
+
+		return true;
+
 	}
 
 	@Override

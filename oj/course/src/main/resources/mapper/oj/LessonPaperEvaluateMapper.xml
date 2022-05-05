@@ -10,4 +10,14 @@
         where submit_user_id = #{userId}
         and lesson_id = #{lessonId}
     </select>
+
+    <select id="selectByLessonAndUsers" resultMap="paperEvaluate">
+        select * from oj_lesson_paper_evaluate
+        where lesson_id = #{lessonId}
+        and submit_user_id in
+            <foreach collection="userIds" item="userId" index="index" open="(" separator="," close=")">
+                #{userId}
+            </foreach>
+    </select>
+
 </mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper">
+
+    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.evaluation.dao.entity.EvalIndex">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="level" column="level" jdbcType="INTEGER"/>
+            <result property="evalSystemId" column="eval_system_id" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="INTEGER"/>
+            <result property="aggregatingAlgorithmId" column="aggregating_algorithm_id" jdbcType="VARCHAR"/>
+            <result property="aggregatingAlgorithmParams" column="aggregating_algorithm_params" jdbcType="VARCHAR"/>
+            <result property="childrenIds" column="children_ids" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,resource_id,name,
+        description,level,system_id,
+        type,aggregating_algorithm_id,aggregating_algorithm_params,
+        children_ids
+    </sql>
+    <select id="selectListBySystemIdAndLevel" resultMap="BaseResultMap">
+        select  * from  cr_eval_index
+        where level = #{level} and eval_system_id = #{systemId}
+    </select>
+</mapper>

@@ -3,6 +3,8 @@ package com.cyberpeace.integratation.service;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
+
 public interface RemoteOrganizationService {
 
 	/**
@@ -26,6 +28,19 @@ public interface RemoteOrganizationService {
 	 * @param self
 	 * @return key=orgId value=org_name
 	 */
-	Map<String, String>  childrenMap(String orgId, boolean self);
+	Map<String, String> childrenMap(String orgId, boolean self);
+
+	/**
+	 * 根据组织机构获取组织编号 查询到了就正常显示 查询不到就返回 null or 空字符串 自己进行判断
+	 * @param orgTree
+	 * @return
+	 */
+	String getOrgIdByTree(String orgTree);
+
+	/**
+	 * 获取最低级班级的ids
+	 * @return
+	 */
+	JSONArray classList();
 
 }

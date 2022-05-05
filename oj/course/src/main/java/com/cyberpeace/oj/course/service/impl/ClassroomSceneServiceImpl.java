@@ -8,10 +8,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
-import com.cyberpeace.oj.course.service.ClassroomSignService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -27,6 +23,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
@@ -41,22 +38,25 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
+import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.GroupWsMessageIdentifier;
-import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.course.service.bo.SimpleUserData;
-import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -173,8 +173,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 			if (null == classroomSign) {
 				return null;
 			}
-			classroomSign.setNodeId("");
-			classroomSign.setNeedHelp(false);
+			classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
+			classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.NEED_HELP.getCode());
 			return classroomSign;
 		});
 

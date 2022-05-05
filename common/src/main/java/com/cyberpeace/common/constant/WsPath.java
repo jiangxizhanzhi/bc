@@ -20,6 +20,8 @@ public class WsPath {
 
 	public static final String CR_CHAT = "/ws/cr/ce_base/chat";
 
+	public static final String CLASSROOM_CHAT = "/ws/oj/classroom/chat";
+
 	public static final String OPERATION_SCENE = "/ws/oj/operation/scene";
 
 	public static final String LESSON_SCENE = "/ws/course/lesson_scene";
@@ -44,6 +46,7 @@ public class WsPath {
 		cache.add(CLASSROOM_SCENE);
 		cache.add(CLASSROOM_GROUP_SCENE);
 		cache.add(SITUATION);
+		cache.add(CLASSROOM_CHAT);
 	}
 
 	public static boolean validPath(String path) {

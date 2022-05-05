@@ -22,6 +22,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,9 @@ public class CommentServiceImpl implements CommentService {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public Integer addNewComment(Comment comment) {
@@ -81,6 +87,11 @@ public class CommentServiceImpl implements CommentService {
 				return commentToBo(UserInfoContext.getUserContext().getUserId(), comment, reply);
 			});
 
+			if(boList!=null){
+				commentBo.setReplyCount(boList.size());
+			}else {
+				commentBo.setReplyCount(0);
+			}
 			commentBo.setCommentReply(boList);
 		}
 	}
@@ -123,5 +134,51 @@ public class CommentServiceImpl implements CommentService {
 
 		return isLike ? commentLikeMapper.insert(commentLike)
 				: commentLikeMapper.deleteByUserAndId(userId, commentId);
+	}
+
+	@Override
+	public void bathDeleteComment(List<String> commentIds) {
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				//获取所有应删除的id
+				List<String> childrenIds = commentMapper.selectIdsByParent(commentIds);
+				while (childrenIds!=null&&childrenIds.size()>0){
+					commentIds.addAll(childrenIds);
+					childrenIds = commentMapper.selectIdsByParent(childrenIds);
+				}
+
+				commentMapper.deleteBatchIds(commentIds);
+				commentLikeMapper.deleteByCommentIds(commentIds);
+			}
+		});
+	}
+
+	@Override
+	public ListRsp<CommentBo> pageParentComment(Page page,Integer businessType,String content){
+		IPage<Comment> iPage = commentMapper.selectParent(page,businessType,content);
+		IPage<CommentBo> convert = iPage.convert(comment -> commentToBo(null, comment, null));
+		setChildrenByFirst(convert.getRecords());
+		return PageUtil.getListResult(convert);
+	}
+
+	@Override
+	public ListRsp<CommentBo> pageChildrenComment(Page page,String resourceId){
+		IPage<Comment> iPage = commentMapper.selectAllByParent(page,resourceId);
+
+		Map<String, Comment> commentUserMap = StreamApiUtils.toMap(iPage.getRecords(),Comment::getResourceId, comment -> comment);
+		//获取一级留言
+		CommentBo commentBo = commentToBo(null,commentMapper.selectById(resourceId),null);
+		IPage<CommentBo> convert = iPage.convert(comment -> {
+			// 获取不到说明是父节点
+			Comment replyComment = commentUserMap.get(comment.getReplyId());
+			if (null == replyComment) {
+				return commentToBo(null, comment, commentBo);
+			}
+			CommentBo reply = commentToBo(UserInfoContext.getUserContext().getUserId(), replyComment, null);
+			return commentToBo(UserInfoContext.getUserContext().getUserId(), comment, reply);
+		});
+		return PageUtil.getListResult(convert);
 	}
 }

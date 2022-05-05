@@ -2,6 +2,7 @@ package com.cyberpeace.common.model.user;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
@@ -69,5 +70,10 @@ public class UserInfo implements Serializable {
      * 组织结构信息
      */
     private List<List<String>> orgpaths;
+
+    /**
+     * 用户菜单权限
+     */
+    private Set<String> permissions;
 
 }

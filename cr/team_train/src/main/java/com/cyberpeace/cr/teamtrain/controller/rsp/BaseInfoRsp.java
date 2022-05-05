@@ -42,6 +42,8 @@ public class BaseInfoRsp implements Serializable {
 
 	private JSONObject sceneConfigData;
 
+	private String logo;
+
 	public BaseInfoRsp(TeamTemplate template, BusinessTemplate businessTemplate) {
 		this.name = businessTemplate.getName();
 		this.category = template.getSubType();
@@ -53,6 +55,7 @@ public class BaseInfoRsp implements Serializable {
 		this.preSkill = JsonUtil.toJsonObjectArray(template.getPreSkills(), String.class);
 		this.trainSkill = JsonUtil.toJsonObjectArray(template.getTrainSkills(), String.class);
 		this.peopleNumber = template.getPeopleNumber();
+		this.logo = businessTemplate.getLogo();
 	}
 
 	public BaseInfoRsp(TeamTemplateData teamTemplateData) {
@@ -67,5 +70,6 @@ public class BaseInfoRsp implements Serializable {
 		this.trainSkill = JsonUtil.toJsonObjectArray(teamTemplateData.getTrainSkills(),
 				String.class);
 		this.peopleNumber = teamTemplateData.getPeopleNumber();
+		this.logo = teamTemplateData.getLogo();
 	}
 }

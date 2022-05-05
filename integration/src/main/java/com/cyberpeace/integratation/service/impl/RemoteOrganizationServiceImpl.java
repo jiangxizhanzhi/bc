@@ -1,13 +1,12 @@
 package com.cyberpeace.integratation.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -15,10 +14,13 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 public class RemoteOrganizationServiceImpl implements RemoteOrganizationService {
@@ -86,13 +88,70 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 		List<JSONObject> children = getChildrenIds(realOrgTree);
 
-		Map<String, String> orgMap = StreamApiUtils.toMap(children, org -> org.getString("id"),
-				org -> org.getString("name"));
+		Map<String, String> orgMap = StreamApiUtils.toMap(children,
+				org -> org.getString(JsonKeyConstant.ID),
+				org -> org.getString(JsonKeyConstant.NAME));
 		if (self) {
-			orgMap.put(realOrgTree.getString("id"), realOrgTree.getString("name"));
+			orgMap.put(realOrgTree.getString(JsonKeyConstant.ID),
+					realOrgTree.getString(JsonKeyConstant.NAME));
 		}
 
 		return orgMap;
+	}
+
+	@Override
+	public String getOrgIdByTree(String orgTree) {
+		if (StringUtils.isBlank(orgTree)) {
+			return CommonConstant.EMPTY_STRING;
+		}
+
+		List<String> orgNames = Arrays.asList(orgTree.split(CommonConstant.LEFT_OBLIQUE_LINE));
+		JSONArray orgTreeArray = HttpClientUtil.rawGet(MP_ORG_TREE_URL, JSONArray.class);
+
+		JSONObject org = getOrgIdByTree(orgNames, orgTreeArray);
+		return null != org ? org.getString(JsonKeyConstant.NAME) : CommonConstant.EMPTY_STRING;
+	}
+
+	/**
+	 * 会返回空值 请自己判断
+	 * @param orgStr
+	 * @param orgTree
+	 * @return
+	 */
+	private JSONObject getOrgIdByTree(List<String> orgStr, JSONArray orgTree) {
+
+		List<String> currentOrgList = Lists.newArrayList(orgStr);
+		String matchOrg = currentOrgList.remove(CommonConstant.ZERO.intValue());
+
+		// 数据判断
+		if (CollectionUtils.isEmpty(orgTree)) {
+			return null;
+		}
+
+		// 遍历进行匹配
+		for (Object child : orgTree) {
+			JSONObject childObj = (JSONObject) child;
+			String orgName = childObj.getString(JsonKeyConstant.NAME);
+
+			// 组织不为空 且是最后一级 且等于要匹配的数据
+			if (StringUtils.isNotBlank(orgName) && orgName.equals(matchOrg)
+					&& currentOrgList.size() == CommonConstant.ZERO.intValue()) {
+				return childObj;
+			}
+
+			// 非最后一级 递归匹配
+			if (StringUtils.isNotBlank(orgName) && orgName.equals(matchOrg)) {
+				JSONArray children = childObj.getJSONArray(JsonKeyConstant.CHILDREN);
+				if (CollectionUtils.isEmpty(children)) {
+					return null;
+				} else {
+					return getOrgIdByTree(currentOrgList, children);
+				}
+			}
+
+		}
+
+		return null;
 	}
 
 	/**
@@ -105,7 +164,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		List<JSONObject> childIdList = Lists.newArrayList();
 
 		// 获取子类数据
-		JSONArray children = orgTree.getJSONArray("children");
+		JSONArray children = orgTree.getJSONArray(JsonKeyConstant.CHILDREN);
 		if (CollectionUtils.isEmpty(children)) {
 			return childIdList;
 		}
@@ -121,4 +180,24 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 		return childIdList;
 	}
+
+	@Override
+	public JSONArray classList() {
+
+		JSONArray orgs = HttpClientUtil.rawGet(MP_ORG_TREE_URL, JSONArray.class);
+
+		// 空数组校验
+		if (CollectionUtils.isEmpty(orgs)) {
+			return null;
+		}
+
+		// 空对象校验
+		JSONObject realOrgTree = orgs.getJSONObject(CommonConstant.ZERO);
+		if (realOrgTree.isEmpty()) {
+			return null;
+		}
+
+		return orgs;
+	}
+
 }

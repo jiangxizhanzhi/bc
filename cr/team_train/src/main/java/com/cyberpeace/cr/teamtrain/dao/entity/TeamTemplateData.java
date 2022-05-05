@@ -46,4 +46,6 @@ public class TeamTemplateData implements Serializable {
 
 	private Integer peopleNumber;
 
+	private String logo;
+
 }

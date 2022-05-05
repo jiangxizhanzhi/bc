@@ -29,4 +29,16 @@
         and comment_id = #{commentId}
     </delete>
 
+    <delete id="deleteByCommentIds">
+        delete from oj_comment_like
+        <where>
+            <if test="commentIds != null and commentIds.size() != 0">
+                comment_id in
+                <foreach collection="commentIds" item="commentId" separator="," close=")" open="(">
+                    #{commentId}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+
 </mapper>

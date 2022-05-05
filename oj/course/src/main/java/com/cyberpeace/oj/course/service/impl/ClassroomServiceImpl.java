@@ -6,21 +6,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.room.DashboardFriend;
+import com.cyberpeace.common.model.room.DashboardGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
@@ -65,10 +87,6 @@ import com.cyberpeace.oj.course.service.ClassroomService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -136,6 +154,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
+
+	@Autowired
+	private TrainPlanMapper trainPlanMapper;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -381,14 +402,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				return localScene.getMpSceneId();
 			});
 
-			JSONArray nodeSessions = remoteSceneService.getNodeSessions(sceneIds, nodeIds, null,
-					ClassroomSign.SessionType.ASSISTANCE.getType());
-			List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
-					.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
-			Map<String, String> userAssistanceMap = StreamApiUtils.toMap(filterList,
-					object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
-					object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
-
+			Map<String, String> userAssistanceMap = remoteSceneService.getAssistanceMap(sceneIds,
+					nodeIds, null);
 			monitorBos.forEach(classroomMonitorBo -> classroomMonitorBo
 					.setHelpUrl(classroomMonitorBo.getNeedHelp()
 							? userAssistanceMap.get(classroomMonitorBo.getUserId())
@@ -723,6 +738,269 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				return classroomMapper.deleteById(classroomId);
 			}
 		});
+	}
+
+	@Override
+	public DashboardInfo getChatUsers(String roomId, UserInfo userContext) {
+
+		Classroom classroom = classroomMapper.selectById(roomId);
+		if (null == classroom) {
+			log.error("classroom not found! classroom_id=[{}]", roomId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper.selectByRoom(roomId);
+		List<String> userIds = StreamApiUtils.distinctFlatMap(groupInfoList,
+				groupInfo -> JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class));
+		if (CollectionUtils.isEmpty(userIds)) {
+			log.error("Classroom user is null! classroom_id=[{}]", roomId);
+			return null;
+		}
+
+		// 获取用户组装
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		DashboardInfo dashboardInfo = new DashboardInfo();
+		List<DashboardUser> friendUsers = Lists.newArrayList();
+
+		for (String userId : userIds) {
+			UserInfo userInfo = userInfoMap.get(userId);
+			if (userInfo == null) {
+				log.error("Some users are missing! user_id=[{}]", userId);
+				continue;
+			}
+			DashboardUser dashboardUser = userToDashUser(userInfo, ClassroomRole.STUDENT.getDesc());
+
+			// 如果用户为课程表创建者则为教员
+			if (userId.equals(classroom.getCreateUserId())) {
+				dashboardUser.setRole(ClassroomRole.TEACHER.getDesc());
+			}
+
+			// 如果是当前用户不加进朋友列表 进入下一次循环
+			if (userContext.getUserId().equals(userId)) {
+				dashboardInfo.setMine(dashboardUser);
+				continue;
+			}
+
+			friendUsers.add(dashboardUser);
+		}
+
+		// 好友列表组装
+		DashboardFriend dashboardFriend = new DashboardFriend();
+		dashboardFriend.setGroupname(DashboardFriend.GROUP_NAME.FRIEND_LIST.getDesc());
+		dashboardFriend.setId(CommonConstant.ONE);
+		dashboardFriend.setList(friendUsers);
+		dashboardInfo.setFriend(Lists.newArrayList(dashboardFriend));
+
+		// 群组组装
+		DashboardGroup group = new DashboardGroup(ClassroomRole.CLASSROOM.getDesc());
+		group.setId(classroom.getResourceId());
+		group.setMembers(userIds);
+		dashboardInfo.setGroup(Lists.newArrayList(group));
+
+		return dashboardInfo;
+	}
+
+	@Override
+	public List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover) {
+
+		// excel数据读取
+		ExcelDataHandler dataHandler = new ExcelDataHandler(realPath, CommonConstant.ZERO);
+		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
+
+		// 数据解析
+		List<Classroom> classrooms = Lists.newArrayList();
+		List<TrainPlan> trainPlans = Lists.newArrayList();
+
+		for (int i = CommonConstant.ONE; i <= sheetData.size(); i++) {
+
+			// 空数据不管
+			if (!validateEmptyData(sheetData.get(i), i)) {
+				continue;
+			}
+
+			// 解析行
+			TrainPlan trainPlan = parseTrainPlan(sheetData.get(i), userInfo.getUserId(), cover, i);
+			trainPlans.add(trainPlan);
+			Classroom classroom = parseClassroom(sheetData.get(i), userInfo, i);
+			classrooms.add(classroom);
+		}
+
+		// 数据库插入前 最好再次校验训练计划 防止解析时间过长
+		List<Classroom> coverRoomList = StreamApiUtils.flatMap(trainPlans,
+				trainPlan -> getCoverRoomByPlan(trainPlan.getName(), trainPlan.getCreateUserId(),
+						cover));
+
+		// 数据库插入
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				coverRoomList.forEach(classroom -> deleteClassroom(classroom.getResourceId(),
+						AuthContextUtils.constructAuth(userInfo, false)));
+				trainPlans.forEach(trainPlan -> trainPlanMapper.insert(trainPlan));
+				saveBatch(classrooms);
+			}
+		});
+
+		return classrooms;
+	}
+
+	@Override
+	public String exportTrainPlan(UserInfo userInfo) {
+		List<TrainPlan> trainPlanList = trainPlanMapper.selectByUser(userInfo.getUserId());
+
+
+		return null;
+	}
+
+	/**
+	 * 获取需要覆盖的
+	 * @param planName
+	 * @param userId
+	 * @param cover
+	 * @return
+	 */
+	private List<Classroom> getCoverRoomByPlan(String planName, String userId, boolean cover) {
+		TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
+		if (!cover && null != trainPlan) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
+		}
+
+		if (null == trainPlan) {
+			return Lists.newArrayList();
+		}
+
+		List<Classroom> classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
+		return classroomList;
+	}
+
+	/**
+	 * 校验空数据
+	 * @param rowData
+	 * @return
+	 */
+	private boolean validateEmptyData(List<String> rowData, int rowIndex) {
+		if (CollectionUtils.isEmpty(rowData)
+				|| StringUtils.isBlank(String.join(CommonConstant.EMPTY_STRING, rowData))) {
+			log.error("Row data is null! rowIndex=[{}]", rowIndex);
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * 课堂数据解析
+	 * @param roomData
+	 * @param userInfo
+	 * @return
+	 */
+	private Classroom parseClassroom(List<String> roomData, UserInfo userInfo, int rowIndex) {
+		String courseName;
+		if (StringUtils.isBlank(courseName = roomData.get(CommonConstant.ONE))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_IS_NULL, rowIndex);
+		}
+
+		String courseId;
+		if (StringUtils.isBlank(courseId = courseMapper.selectByName(courseName))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
+		}
+
+		String lessonName;
+		if (StringUtils.isBlank(lessonName = roomData.get(CommonConstant.TWO))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_IS_NULL, rowIndex);
+		}
+
+		String lessonId;
+		if (StringUtils.isBlank(
+				lessonId = courseLessonMapper.selectByCourseAndName(courseId, lessonName))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_EXIST, rowIndex);
+		}
+
+		String startTime;
+		String endTime;
+		if (StringUtils.isBlank(startTime = roomData.get(CommonConstant.THREE))
+				|| StringUtils.isBlank(endTime = roomData.get(CommonConstant.FOUR))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
+		}
+		if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(startTime))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_END_GT_START_TIME, rowIndex);
+		}
+
+		String orgTree;
+		if (StringUtils.isBlank(orgTree = roomData.get(CommonConstant.FIVE))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL);
+		}
+
+		// 基本数据填充
+		Classroom classroom = new Classroom();
+		classroom.setCreateUserId(userInfo.getUserId());
+		classroom.setResourceId(IDGeneratorUtil.getID());
+		classroom.setCourseId(courseId);
+		classroom.setLessonId(lessonId);
+		classroom.setStartTime(TimeUtil.toDate1(startTime));
+		classroom.setEndTime(TimeUtil.toDate1(endTime));
+
+		// 组织数据获取
+		String orgId = remoteOrganizationService.getOrgIdByTree(orgTree);
+		if (StringUtils.isBlank(orgId)) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_NOT_EXIST);
+		}
+		classroom.setOrganizationId(orgId);
+		List<String> childrenList = remoteOrganizationService.childrenList(orgId, true);
+		classroom.setOrganizationIds(JsonUtil.arrayToString(childrenList));
+
+		return classroom;
+	}
+
+	/**
+	 * 训练计划解析
+	 * @param rowData
+	 * @param userId
+	 * @param cover
+	 * @return
+	 */
+	private TrainPlan parseTrainPlan(List<String> rowData, String userId, Boolean cover,
+			int rowIndex) {
+
+		// 数据校验
+		String planName;
+		if (StringUtils.isBlank(planName = rowData.get(CommonConstant.ZERO))) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NAME_IS_NULL, rowIndex);
+		}
+
+		TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
+		if (null != trainPlan && !cover) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST, rowIndex);
+		}
+
+		if (null != trainPlan) {
+			return trainPlan;
+		}
+
+		trainPlan = new TrainPlan();
+		trainPlan.setResourceId(IDGeneratorUtil.getID());
+		trainPlan.setName(planName);
+		trainPlan.setCreateUserId(userId);
+
+		return trainPlan;
+	}
+
+	/**
+	 * 用户转换为聊天用户格式
+	 * @param userInfo
+	 * @param roleName
+	 * @return
+	 */
+	private DashboardUser userToDashUser(UserInfo userInfo, String roleName) {
+		DashboardUser dashboardUser = new DashboardUser();
+		dashboardUser.setAvatar(userInfo.getAvatarUrl());
+		dashboardUser.setUsername(userInfo.getName());
+		dashboardUser.setId(userInfo.getUserId());
+		dashboardUser.setRole(roleName);
+		dashboardUser.setStatus(CommonConstant.ONLINE);
+		dashboardUser.setSign(CommonConstant.EMPTY_STRING);
+		return dashboardUser;
 	}
 
 	/**

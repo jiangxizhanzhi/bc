@@ -108,6 +108,39 @@ public interface OjBusinessErrorCode {
 	/** 对应的习题文件未找到*/
 	String PRACTICE_OPERATION_FILE_NOT_FOUNT = "102034";
 
+	/** 训练计划不能为空*/
+	String TRAIN_PLAN_NAME_IS_NULL = "102035";
+
+	/**  训练计划已存在*/
+	String TRAIN_PLAN_EXIST = "102036";
+
+	/** 训练计划对应课程不存在*/
+	String PLAN_COURSE_IS_NULL = "102037";
+
+	/** 检索不到对应课程*/
+	String PLAN_COURSE_NOT_EXIST = "102038";
+
+	/** 训练计划对应课程不存在*/
+	String PLAN_LESSON_IS_NULL = "102037";
+
+	/** 检索不到对应课程*/
+	String PLAN_LESSON_NOT_EXIST = "102038";
+
+	/** 计划时间不能为空*/
+	String PLAN_TIME_IS_NULL = "102039";
+
+	/** 结束时间大于开始时间*/
+	String PLAN_END_GT_START_TIME = "102040";
+
+	/** 计划组织不能为空*/
+	String PLAN_ORG_IS_NULL = "102041";
+
+	/** 组织计划不存在*/
+	String PLAN_ORG_NOT_EXIST = "102042";
+
+	// 删除实例时没有传入resource_id字段
+	String RESOURCE_ID_MISSING = "102035";
+
 	/** 对应的课堂未找到*/
 	String CLASSROOM_NOT_FOUNT = "102043";
 

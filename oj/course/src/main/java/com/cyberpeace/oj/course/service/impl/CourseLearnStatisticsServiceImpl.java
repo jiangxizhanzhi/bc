@@ -145,22 +145,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	@Override
 	public ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
 																		  String lessonId, String usernameLike, Page page, String sort) {
-		List<String> userIds = new ArrayList<>();
-		// 根据用户名pattern + 组织id获取userids
-		if (StringUtils.isNotEmpty(organizationId)) {
-			if (organizationId.equals("all")) {
-				organizationId = "";
-			}
-			JSONObject userJsons = remoteUserService.getList(null, 0L, null, organizationId);
-			List<UserInfo> users = userJsons.getJSONArray("list").toJavaList(UserInfo.class);
-			if (StringUtils.isNotEmpty(usernameLike) && StringUtils.isNotBlank(usernameLike)) {
-				users = StreamApiUtils.filter(users,
-						userInfo -> StringUtils.isBlank(usernameLike)
-								|| userInfo.getUserName().contains(usernameLike)
-								|| userInfo.getName().contains(usernameLike));
-			}
-			userIds = StreamApiUtils.map(users, UserInfo::getUserId);
-		}
+		List<String> userIds = getUsers(organizationId, usernameLike);
 
 		if (userIds.size() == 0){
 			return PageUtil.getListResult(null);
@@ -186,5 +171,25 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		}).collect(Collectors.toList());
 		learnedUsers.setRecords(res);
 		return PageUtil.getListResult(learnedUsers);
+	}
+
+	public List<String> getUsers(String organizationId, String usernameLike) {
+		List<String> userIds = new ArrayList<>();
+		// 根据用户名pattern + 组织id获取userids
+		if (StringUtils.isNotEmpty(organizationId)) {
+			if (organizationId.equals("all")) {
+				organizationId = "";
+			}
+			JSONObject userJsons = remoteUserService.getList(null, 0L, null, organizationId);
+			List<UserInfo> users = userJsons.getJSONArray("list").toJavaList(UserInfo.class);
+			if (StringUtils.isNotEmpty(usernameLike) && StringUtils.isNotBlank(usernameLike)) {
+				users = StreamApiUtils.filter(users,
+						userInfo -> StringUtils.isBlank(usernameLike)
+								|| userInfo.getUserName().contains(usernameLike)
+								|| userInfo.getName().contains(usernameLike));
+			}
+			userIds = StreamApiUtils.map(users, UserInfo::getUserId);
+		}
+		return userIds;
 	}
 }

@@ -55,4 +55,41 @@
         select * from oj_comment
         where reply_id = #{replyId}
     </select>
+
+    <select id="selectIdsByParent" resultType="java.lang.String">
+        select resource_id from oj_comment
+        <where>
+            <if test="parents != null and parents.size() != 0">
+                root_id in
+                <foreach collection="parents" item="parent" separator="," close=")" open="(">
+                    #{parent}
+                </foreach>
+            </if>
+            <if test="parents != null and parents.size() != 0">
+                or reply_id in
+                <foreach collection="parents" item="parent" separator="," close=")" open="(">
+                    #{parent}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="selectAllByParent" resultMap="base">
+        select * from oj_comment
+        where root_id = #{parentId}
+        order by create_time asc
+    </select>
+
+    <select id="selectParent" resultMap="base">
+        select * from oj_comment
+        <where>
+            <if test="businessType != null and businessType != ''">
+                business_type = #{businessType}
+            </if>
+            <if test="content != null and content != ''">
+                <bind name="contentLike" value="'%' + content + '%'"/>
+                and content like #{contentLike}
+            </if>
+            and root_id is null
+        </where>
+    </select>
 </mapper>

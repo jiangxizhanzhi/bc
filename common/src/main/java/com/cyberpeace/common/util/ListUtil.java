@@ -1,6 +1,8 @@
 package com.cyberpeace.common.util;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -75,5 +77,22 @@ public class ListUtil {
 			return Lists.newArrayList();
 		}
 		return list.subList(startIndex, endIndex);
+	}
+
+	/**
+	 * 比较两个不重复的列表是否包含的元素一致
+	 * @param l1 
+	 * @param l2
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> Boolean compare2List(List<T> l1, List<T> l2) {
+		if (l1.size() != l2.size()) {
+			return false;
+		}
+		Set<T> set = new HashSet<>();
+		set.addAll(l1);
+		set.addAll(l2);
+		return set.size() == l1.size();
 	}
 }

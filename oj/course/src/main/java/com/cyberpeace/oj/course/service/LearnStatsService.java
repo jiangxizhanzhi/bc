@@ -2,21 +2,23 @@ package com.cyberpeace.oj.course.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CountBo;
-import com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CourseBo;
-import com.cyberpeace.oj.course.service.bo.UserStatsBo;
-import com.cyberpeace.oj.course.service.bo.UserStatsRankBo;
+import com.cyberpeace.oj.course.controller.res.HistogramRes;
+import com.cyberpeace.oj.course.service.bo.*;
+
+import java.util.List;
 
 public interface LearnStatsService {
 
     /**
      * 用户学习统计
      * @param page 分页信息
-     * @param organization 所属组织查询
      * @param pattern 用户姓名模糊查询
+     * @param organization 所属组织查询
+     * @param dateType
+     * @param isPage
      * @return 用户学习统计
      */
-    ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization);
+    ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization, String dateType, boolean isPage);
 
     /**
      * 用户学习排行
@@ -38,4 +40,24 @@ public interface LearnStatsService {
      */
     ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page page, String resourceId);
 
+    /**
+     * 获取班级积分排名Top10
+     * @return 统计信息
+     */
+    HistogramRes getClassIntegralTopTen(String ranking_type, String orgId);
+
+    /**
+     * 班级学习统计排行
+     * @return 统计信息
+     */
+    UserStatsRankBo getOrgLearnRank();
+
+    /**
+     * 用户学习统计
+     * @param page 分页信息
+     * @param organization 所属组织查询
+     * @param pattern 用户姓名模糊查询
+     * @return 用户学习统计
+     */
+    ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String dateType);
 }

@@ -49,4 +49,6 @@ public class TeamRoomData implements Serializable {
 
 	private Boolean enableRecording;
 
+	private String logo;
+
 }

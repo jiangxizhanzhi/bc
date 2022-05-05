@@ -58,6 +58,9 @@ public class RbRoomReq implements Serializable {
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
 
+	@ApiModelProperty(value = "LOGO")
+	private String logo;
+
 	public void validate() {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);

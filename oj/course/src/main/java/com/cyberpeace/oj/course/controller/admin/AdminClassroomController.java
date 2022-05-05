@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.admin;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
@@ -12,6 +13,10 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.*;
@@ -33,7 +38,9 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "oj-后台课程表api")
@@ -58,6 +65,12 @@ public class AdminClassroomController {
 	@Autowired
 	private CourseLessonService courseLessonService;
 
+
+	@Autowired
+	private AttachmentService attachmentService;
+
+	@Autowired
+	private UtilService utilService;
 
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
@@ -149,6 +162,17 @@ public class AdminClassroomController {
 			@RequestParam("user_id") String userId) {
 
 		classroomSignService.toHelp(classroomId, userId);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("结束远程协助")
+	@GetMapping("/end_help")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
+			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	public BaseRsp endHelp(@RequestParam("resource_id") String classroomId,
+			@RequestParam("user_id") String userId) {
+
+		classroomSignService.endHelp(classroomId, userId);
 		return new BaseRsp();
 	}
 
@@ -247,6 +271,36 @@ public class AdminClassroomController {
 		Boolean result = courseLessonService.releaseLessonPractice(practiceReq.getLessonId(),
 				practiceReq.getOrganizationId(), authContext);
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("训练计划导入")
+	@PostMapping("/train_plan/import")
+	public BaseRsp importTrainPlan(@RequestParam("file") MultipartFile excelFile,
+			@RequestParam("cover") Boolean cover) {
+
+		// 文件存储
+		AttachmentBo uploadFile = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(), true,
+				excelFile, true);
+		String realPath = utilService.getRealPath(uploadFile.getFilePath());
+		classroomService.importTrainPlan(realPath, UserInfoContext.getUserContext(), cover);
+
+		try {
+			FileUtil.deleteDir(realPath, CommonConstant.TRUE);
+		} catch (Exception e) {
+			// 不影响导入逻辑就行
+			log.error("Import train plan delete file failed! file_url=[{}]", realPath);
+		}
+
+		return new BaseRsp();
+	}
+
+	@ApiOperation("训练计划导出")
+	@GetMapping("/train_plan/export")
+	public BaseRsp exportTrainPlan(HttpServletResponse response) {
+
+		String excelFilePath = classroomService.exportTrainPlan(UserInfoContext.getUserContext());
+
+		return new BaseRsp();
 	}
 
 }

@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.controller.role;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -20,19 +21,22 @@ public class RoleInput implements Serializable {
 	@ApiModelProperty(value = "岗位所属层级id")
 	private String levelId;
 
-	@ApiModelProperty(value = "技能体系")
-	private String category;
-
+	@ApiModelProperty("职责清单")
 	private List<String> taskIds;
 
+	@ApiModelProperty("知识点清单")
 	private List<String> knowledgeIds;
 
+	@ApiModelProperty("知识点清单+权重")
 	private List<SkillKnowledgeWeight> knowledgeIdWeights = Lists.newArrayList();
 
-	private List<String> skillIds = Lists.newArrayList();
+	@ApiModelProperty("技能清单+权重")
+	private List<IdWeight> skillIdWeights = Lists.newArrayList();
 
-	private List<SkillKnowledgeWeight> skillIdWeights = Lists.newArrayList();
-
+	@ApiModelProperty("能力清单（暂无）")
 	private List<String> abilityIds = Lists.newArrayList();
+
+	@ApiModelProperty("知识点权重（百分比）")
+	private Integer knowledgeWeight;
 
 }

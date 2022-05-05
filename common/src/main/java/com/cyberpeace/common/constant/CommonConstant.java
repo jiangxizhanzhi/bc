@@ -25,7 +25,11 @@ public interface CommonConstant {
 
 	int TWO = 2;
 
+	int THREE = 3;
+
 	int FOUR = 4;
+
+	int FIVE = 5;
 
 	int NEGATIVE_ONE = -1;
 
@@ -54,5 +58,11 @@ public interface CommonConstant {
 	String RIGHT = "是";
 
 	String EMPTY_STRING = "";
+
+	String  ONLINE = "online";
+
+	Integer THRITY = 30;
+
+	Integer TWENTY_FOUR_MONTHS = 24 * 30;
 
 }

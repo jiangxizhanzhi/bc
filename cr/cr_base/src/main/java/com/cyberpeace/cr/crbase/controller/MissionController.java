@@ -30,6 +30,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.*;
+import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchDumpReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionTemplateRsp;
@@ -41,6 +42,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -280,6 +282,15 @@ public class MissionController {
 			log.error("failed to delete temp dir");
 		}
 		return new BaseRsp();
+	}
+
+	@ApiOperation("RTKS-获取任务模板列表")
+	@GetMapping("/mission_templates")
+	public BaseRsp<List<MissionSchemeTemplateRsp>>
+			listMissionTemplates(@Validated MissionTemplatePageReq pageReq) {
+		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService
+				.pageMissionTemplate(pageReq);
+		return new BaseRsp(missionTemplateRspListRsp);
 	}
 
 	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {

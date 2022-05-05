@@ -2,11 +2,13 @@ package com.cyberpeace.cr.crbase.dao.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
 
 @Mapper
 @Repository
@@ -58,4 +60,13 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 			List<Integer> statusList);
 
 	Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
+
+	/**
+	 * RTKS-读取任务得分（单兵取最新）
+	 * @param userId
+	 * @param missionTemplateIds
+	 * @return
+	 */
+	List<CrTaskScore> getScoreByMissionTemplateIdAndUserId(@Param("userId") String userId,
+			@Param("missionTemplateIds") List<String> missionTemplateIds);
 }

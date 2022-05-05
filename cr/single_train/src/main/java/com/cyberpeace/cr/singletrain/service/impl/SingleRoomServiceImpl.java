@@ -134,7 +134,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);
 		try {
-			// 单兵训练不进行任务复制, 引用原模板任务方案数据
+			// 单兵训练
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 				@Override

@@ -1,14 +1,14 @@
 package com.cyberpeace.oj.course.controller.web;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.course.dao.entity.CourseCategory;
-import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +28,7 @@ public class CourseCategoryController {
 
 	@GetMapping("")
 	@ApiOperation("课程分类")
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<List<CourseCategoryBo>>
 			listDirection(@RequestParam(value = "children", required = false) Boolean children) {
 		List<CourseCategoryBo> categories = courseCategoryService

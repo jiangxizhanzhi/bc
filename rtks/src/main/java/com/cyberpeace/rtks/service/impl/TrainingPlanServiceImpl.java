@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -25,20 +23,26 @@ import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.TrainingPlanController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.controller.res.*;
+import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
+import com.cyberpeace.rtks.controller.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
 import com.cyberpeace.rtks.controller.role.RoleOutput;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
+import com.cyberpeace.rtks.service.bo.skill.SkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -95,23 +99,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	}
 
 	@Override
-	public List<SkillTreeRes> getSkillTree(String skillSystemId) {
-		List<SkillTreeRes> skillTreeResList = Lists.newArrayList();
-		List<SkillRes> skillResList = skillService.getAllSkillsBySkillSystemId(skillSystemId);
-
-		Map<String, List<SkillRes>> skillResMap = skillResList.stream()
-				.collect(Collectors.groupingBy(SkillRes::getCategory));
-		for (String key : skillResMap.keySet()) {
-			SkillTreeRes skillTreeRes = new SkillTreeRes();
-			skillTreeRes.setCategory(key);
-			skillTreeRes.setSkillResList(skillResMap.get(key));
-			skillTreeResList.add(skillTreeRes);
-		}
-
-		return skillTreeResList;
-	}
-
-	@Override
 	public List<KnowledgeTreeRes> getKnowledgeTree() {
 		List<KnowledgeTreeRes> knowledgeTreeResList = Lists.newArrayList();
 		List<KnowledgeRes> knowledgeResList = knowledgeService.getAllKnowledge();
@@ -134,7 +121,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
-		roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
+		// roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
 
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();
@@ -145,10 +132,11 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		roleDetailRes.setKnowledgeResDataList(knowledgeResList);
 
 		// 获取技能的课程列表
-		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
+		List<SkillWeightRes> skillDataList = roleDetailOutput.getSkillDataList();
 		List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList, SkillRes.class);
 
-		skillService.checkSkillRes(skillResList, type);
+		// skillService.checkSkillRes(skillResList, type);
+		// todo
 		roleDetailRes.setSkillResDataList(skillResList);
 
 		return roleDetailRes;
@@ -198,15 +186,16 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		roleDetailRes.setBasicCourseList(basicCourseList);
 
 		// 获取技能的课程列表
-		List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
-		List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList, SkillRes.class);
-
-		skillService.checkSkillRes(skillResList, type);
-		List<RelatedCourse> skillCourseList = Lists.newArrayList();
-		for (SkillRes skillRes : skillResList) {
-			skillCourseList.addAll(skillRes.getCourseList());
-		}
-		roleDetailRes.setSkillCourseList(skillCourseList);
+		// List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
+		// List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList,
+		// SkillRes.class);
+		//
+		// skillService.checkSkillRes(skillResList, type);
+		// List<RelatedCourse> skillCourseList = Lists.newArrayList();
+		// for (SkillRes skillRes : skillResList) {
+		// skillCourseList.addAll(skillRes.getCourseList());
+		// }
+		// roleDetailRes.setSkillCourseList(skillCourseList);
 
 		return roleDetailRes;
 	}
@@ -259,7 +248,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 			}
 		}
 		if (index >= 10 || index == 1) {
-			log.error("level Loop is out of range！levelId=[{}],loop is [{}]", level.getResourceId(),index-1);
+			log.error("level Loop is out of range！levelId=[{}],loop is [{}]", level.getResourceId(),
+					index - 1);
 			throw new BusinessException(RtksBusinessErrorCode.INVALID_LEVEL);
 		}
 

@@ -36,4 +36,6 @@ public class RbTemplateData implements Serializable {
 
 	private Integer durationTime;
 
+	private String logo;
+
 }

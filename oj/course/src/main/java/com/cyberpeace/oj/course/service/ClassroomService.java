@@ -1,15 +1,16 @@
 package com.cyberpeace.oj.course.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.*;
-
-import java.util.Date;
-import java.util.List;
 
 public interface ClassroomService extends IService<Classroom> {
 
@@ -91,4 +92,25 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	Boolean updateClassroom(Classroom classroom, AuthContext authContext);
+
+	/**
+	 * 获取课堂聊天用户信息
+	 * @param roomId
+	 * @param userContext
+	 * @return
+	 */
+	DashboardInfo getChatUsers(String roomId, UserInfo userContext);
+
+	/**
+	 * 训练计划导入
+	 * @param realPath
+	 * @return
+	 */
+	List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover);
+
+	/**
+	 * 训练计划导出
+	 * @return 导出文件路径
+	 */
+	String exportTrainPlan(UserInfo userInfo);
 }

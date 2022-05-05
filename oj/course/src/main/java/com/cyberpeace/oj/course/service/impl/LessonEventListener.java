@@ -1,14 +1,13 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.util.JsonUtil;

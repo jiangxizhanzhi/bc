@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -66,6 +67,15 @@ public interface RemoteSceneService {
 	 */
 	JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds, List<String> userIds,
 			String type);
+
+	/**
+	 * 获取所有远程协助列表
+	 * @param sceneIds
+	 * @param nodeIds
+	 * @return key=userId value=地址
+	 */
+	Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
+			List<String> userIds);
 
 	/**
 	 * 获取场景监控会话

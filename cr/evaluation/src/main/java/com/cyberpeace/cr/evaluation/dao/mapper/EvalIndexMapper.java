@@ -11,6 +11,10 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
 public interface EvalIndexMapper extends BaseMapper<EvalIndex> {
 
     List<EvalIndex> selectListBySystemIdAndLevel(String systemId, Integer level);
+
+    List<String> selectIdsByEvalSystemIds(List<String> evalSystemIds);
+
+    void deleteBatchByEvalSystemId(String evalSystemId);
 }
 
 

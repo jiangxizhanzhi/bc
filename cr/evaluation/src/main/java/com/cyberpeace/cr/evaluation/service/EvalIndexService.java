@@ -12,4 +12,6 @@ import com.cyberpeace.cr.evaluation.service.context.IndexContext;
 public interface EvalIndexService extends IService<EvalIndex> {
 
     List<IndexContext> getIndexesByEvalSystemId(String systemId, Integer level);
+
+	void deleteBatchByEvalSystemId(String evalSystemId);
 }

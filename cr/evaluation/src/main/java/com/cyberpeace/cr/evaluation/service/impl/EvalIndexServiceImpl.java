@@ -43,4 +43,9 @@ public class EvalIndexServiceImpl extends ServiceImpl<EvalIndexMapper, EvalIndex
 
 		return indexContextList;
 	}
+
+	@Override
+	public void deleteBatchByEvalSystemId(String evalSystemId) {
+		evalIndexMapper.deleteBatchByEvalSystemId(evalSystemId);
+	}
 }

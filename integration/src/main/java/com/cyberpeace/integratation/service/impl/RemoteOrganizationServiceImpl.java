@@ -67,7 +67,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	@Override
 	public String getOrgPath(String orgId) {
 
-		JSONObject orgInfo = HttpClientUtil.rawGet(MP_ORG_TREE_URL + orgId, JSONObject.class);
+		JSONObject orgInfo = HttpClientUtil.rawGet(MP_ORG_INFO + orgId, JSONObject.class);
 
 		if (null == orgInfo) {
 			return CommonConstant.EMPTY_STRING;

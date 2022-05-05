@@ -217,7 +217,7 @@ public class ExcelDataHandler {
 	 * @param <T>
 	 * @return
 	 */
-	private static <T> File doExportExcel(List<T> dataList, String filePath, String sheetName,
+	private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
 			ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
 
 		// 创建HSSFSheet对象
@@ -233,13 +233,9 @@ public class ExcelDataHandler {
 			cell.setCellValue(text);
 		}
 
-		// 如果没数据直接返回
-		File file = new File(filePath);
-
 		try {
 			if (CollectionUtils.isEmpty(dataList)) {
 				workbook.write(new FileOutputStream(filePath));
-				return file;
 			}
 
 			Field[] allFields = ObjUtil.getFields(dataList.get(CommonConstant.ZERO));
@@ -258,7 +254,12 @@ public class ExcelDataHandler {
 					Object obj = ObjUtil.getFieldValueByName(field.getName(), t);
 
 					try {
-						JsonUtil.toJsonString(obj);
+						if (obj instanceof Date) {
+							dataRow.createCell(cellNum).setCellValue(TimeUtil.format1((Date) obj));
+						} else {
+							dataRow.createCell(cellNum).setCellValue(JsonUtil.toJsonString(obj));
+						}
+
 					} catch (JSONException e) {
 						// 如果对象不能格式化 则认为为基本数据类型
 						log.warn("ExcelDataHandler json parse error:", e);
@@ -276,6 +277,8 @@ public class ExcelDataHandler {
 				}
 			}
 
+			workbook.write(new FileOutputStream(filePath));
+
 		} catch (Exception e) {
 			log.error(
 					"Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}], catch error:",
@@ -288,7 +291,6 @@ public class ExcelDataHandler {
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		}
 
-		return file;
 	}
 
 	/**
@@ -299,14 +301,13 @@ public class ExcelDataHandler {
 	 * @param <T>
 	 * @return
 	 */
-	public static <T> File exportExcel(List<T> data, String filePath, ExcelHeader excelHeader) {
+	public static <T> void exportExcel(List<T> data, String filePath, ExcelHeader excelHeader) {
 
 		Workbook workbook = null;
-		File file;
 		try {
 			workbook = createWorkbook(filePath);
-			file = doExportExcel(data, filePath, CommonConstant.ONE.toString(), excelHeader,
-					workbook, null);
+			doExportExcel(data, filePath, CommonConstant.ONE.toString(), excelHeader, workbook,
+					null);
 		} finally {
 			try {
 				workbook.close();
@@ -314,9 +315,6 @@ public class ExcelDataHandler {
 				// 关闭
 			}
 		}
-
-		return file;
-
 	}
 
 	/**

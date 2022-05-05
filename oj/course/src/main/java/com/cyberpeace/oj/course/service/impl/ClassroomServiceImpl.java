@@ -1,13 +1,11 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +39,6 @@ import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
-import com.cyberpeace.oj.course.service.ClassroomSceneService;
-import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
@@ -61,33 +57,12 @@ import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
-import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
-import com.google.common.collect.Maps;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.service.ClassroomService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -315,8 +290,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper
 				.selectByRoom(classroom.getResourceId());
 		List<String> groupIds = StreamApiUtils.map(groupInfos, ClassroomGroupInfo::getResourceId);
-		List<OjLocalScene> localScenes = ojLocalSceneMapper.selectByGroupIds(groupIds);
 
+		// 无群组则无场景
+		if (CollectionUtils.isEmpty(groupIds)) {
+			return;
+		}
+
+		List<OjLocalScene> localScenes = ojLocalSceneMapper.selectByGroupIds(groupIds);
 		if (CollectionUtils.isNotEmpty(localScenes)) {
 			log.error("Classroom has scene is running! classroom_id=[{}]",
 					classroom.getResourceId());
@@ -497,7 +477,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @return
 	 */
 	private Map<String, LessonPracticeListBo> handlerPractice(LessonPaperEvaluate paperEvaluate,
-															  Paper paper, Boolean viewAnswer, AuthContext authContext, String lessonId) {
+			Paper paper, Boolean viewAnswer, AuthContext authContext, String lessonId) {
 
 		Map<String, PracticeSolvedBo> solvedBoMap = Maps.newHashMap();
 		if (null != paperEvaluate) {
@@ -562,10 +542,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			String userId) {
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
 
-
 		// 课后练习评估数据查询
-		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
-				.selectByUserAndLesson(userId, lessonId);
+		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper.selectByUserAndLesson(userId,
+				lessonId);
 
 		if (null == paperEvaluate) {
 			return null;
@@ -585,10 +564,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 习题总数
 		Integer practiceCount = 0;
-		for (LessonPracticeListBo item: handlerPractice.values()) {
+		for (LessonPracticeListBo item : handlerPractice.values()) {
 			practiceCount += item.getCount();
 		}
-
 
 		ClassroomPracticeDetailBo classroomPracticeDetailBo = ClassroomPracticeDetailBo.builder()
 				.lessonName(courseLesson.getName()).build();
@@ -836,6 +814,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				trainPlan -> getCoverRoomByPlan(trainPlan.getName(), trainPlan.getCreateUserId(),
 						cover));
 
+		List<TrainPlan> insertTrainPlan = StreamApiUtils.filter(trainPlanMap.values(),
+				trainPlan -> null == trainPlanMapper.selectById(trainPlan.getResourceId()));
+
 		// 数据库插入
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -843,7 +824,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				coverRoomList.forEach(classroom -> deleteClassroom(classroom.getResourceId(),
 						AuthContextUtils.constructAuth(userInfo, false)));
-				trainPlanMap.values().forEach(trainPlan -> trainPlanMapper.insert(trainPlan));
+				insertTrainPlan.forEach(trainPlan -> trainPlanMapper.insert(trainPlan));
 				saveBatch(classrooms);
 			}
 		});
@@ -852,14 +833,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	@Override
-	public File exportTrainPlan(UserInfo userInfo, String filePath) {
+	public void exportTrainPlan(UserInfo userInfo, String filePath) {
 		// 数据查询及转换
 		List<TrainPlan> trainPlanList = trainPlanMapper.selectByUser(userInfo.getUserId());
 		List<TrainPlanExportBo> exportBoList = StreamApiUtils.flatMap(trainPlanList,
 				trainPlan -> planToExportBo(trainPlan));
 
 		// 数据导出
-		return ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.TRAIN_PLAN);
+		ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.TRAIN_PLAN);
 	}
 
 	/** 数据转换*/
@@ -1037,6 +1018,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		if (null != trainPlan) {
+			trainPlanMap.put(planName, trainPlan);
 			return trainPlan;
 		}
 
@@ -1044,6 +1026,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		trainPlan.setResourceId(IDGeneratorUtil.getID());
 		trainPlan.setName(planName);
 		trainPlan.setCreateUserId(userId);
+		trainPlanMap.put(planName, trainPlan);
 
 		return trainPlan;
 	}

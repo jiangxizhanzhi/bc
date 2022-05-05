@@ -113,5 +113,5 @@ public interface ClassroomService extends IService<Classroom> {
 	 * 训练计划导出
 	 * @return 导出文件路径
 	 */
-	File exportTrainPlan(UserInfo userInfo, String filePath);
+	void exportTrainPlan(UserInfo userInfo, String filePath);
 }

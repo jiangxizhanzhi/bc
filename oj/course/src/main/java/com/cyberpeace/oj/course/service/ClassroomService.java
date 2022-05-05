@@ -61,6 +61,22 @@ public interface ClassroomService extends IService<Classroom> {
 	ClassroomStatisticBo classroomStatistic(String classroomId, AuthContext authContext);
 
 	/**
+	 * 课堂练习统计
+	 * @param classroomPracticeContext
+	 * @return
+	 */
+	ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext classroomPracticeContext, Page page);
+
+	/**
+	 * 课堂练习统计
+	 * @param classroomId
+	 * @param lessonId
+	 * @param userId
+	 * @return
+	 */
+	ClassroomPracticeDetailBo practiceDetail(String classroomId, String lessonId, String userId);
+
+	/**S
 	 * 课堂数据删除 课堂数据 场景数据 分组数据
 	 * @param classroomId
 	 * @param authContext

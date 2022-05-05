@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -148,4 +149,26 @@ public class ClassroomValidateHandler {
 			}
 		}
 	}
+
+	/**
+	 * 校验是否有权限操作课堂接口
+	 * @param classroomId
+	 * @param authContext
+	 */
+	public void validateLessonPracticeAuth(String classroomId, AuthContext authContext) {
+
+		boolean is_superuser = authContext.getIsSuperAdmin();
+		if (!is_superuser) {
+			Classroom classroom = classroomMapper.selectById(classroomId);
+			if (null == classroom) {
+				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_NOT_FOUNT);
+			}
+			if (!classroom.getCreateUserId().equals(authContext.getUserId())){
+				log.error("User=[{}] has no permission ! classroom_id=[{}]",authContext.getUserId(), classroomId);
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+			}
+		}
+
+	}
+
 }

@@ -14,17 +14,16 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.controller.req.ClassroomDeleteReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomReq;
+import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import io.swagger.annotations.*;
@@ -52,6 +51,13 @@ public class AdminClassroomController {
 
 	@Autowired
 	private ClassroomSignService classroomSignService;
+
+	@Autowired
+	private ClassroomValidateHandler classroomValidateHandler;
+
+	@Autowired
+	private CourseLessonService courseLessonService;
+
 
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
@@ -168,6 +174,79 @@ public class AdminClassroomController {
 		ClassroomStatisticBo statisticBo = classroomService.classroomStatistic(classroomId,
 				authContext);
 		return new BaseRsp<>(statisticBo);
+	}
+
+	@ApiOperation("课堂练习统计")
+	@GetMapping("/practice-statistic")
+	public BaseRsp<ClassroomPracticeBo>
+			classroomPracticeStatistic(@Validated ClassroomPracticeReq classroomPracticeReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 操作权限校验
+		classroomValidateHandler.validateLessonPracticeAuth(classroomPracticeReq.getClassroomId(),
+				authContext);
+
+		Page page = classroomPracticeReq.toPageParam();
+
+		ClassroomPracticeContext classroomPracticeContext = BeanUtils.copy(classroomPracticeReq,
+				ClassroomPracticeContext.class);
+		ClassroomPracticeBo classroomPracticeBo = classroomService
+				.practiceStatistic(classroomPracticeContext, page);
+
+		return new BaseRsp<>(classroomPracticeBo);
+	}
+
+	@ApiOperation("课堂练习详情")
+	@GetMapping("/practice-detail")
+	public BaseRsp<ClassroomPracticeDetailBo> classroomPracticeDetail(
+			@RequestParam("classroom_id") String classroomId,
+			@RequestParam("lesson_id") String lessonId, @RequestParam("user_id") String userId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 操作权限校验
+		classroomValidateHandler.validateLessonPracticeAuth(classroomId,
+				authContext);
+
+		ClassroomPracticeDetailBo classroomPracticeDetailBo = classroomService
+				.practiceDetail(classroomId, lessonId, userId);
+
+		return new BaseRsp<>(classroomPracticeDetailBo);
+	}
+
+	@ApiOperation("课后练习评分")
+	@PostMapping("/practice/mark")
+	public BaseRsp<Boolean>
+			markLessonPractice(@RequestBody @Validated MarkLessonPracticeReq practiceReq) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 操作权限校验
+		classroomValidateHandler.validateLessonPracticeAuth(practiceReq.getClassroomId(),
+				authContext);
+
+		Boolean result = courseLessonService.markLessonPractice(practiceReq.getLessonId(),
+				practiceReq.getUserId(), practiceReq.getLevel(), authContext);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("课后练习下发")
+	@PatchMapping("/practice/batch-auth")
+	public BaseRsp<Boolean> batchAuthLessonPractice(
+			@RequestBody @Validated BatchAuthLessonPracticeReq practiceReq) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 操作权限校验
+		classroomValidateHandler.validateLessonPracticeAuth(practiceReq.getClassroomId(),
+				authContext);
+
+		Boolean result = courseLessonService.releaseLessonPractice(practiceReq.getLessonId(),
+				practiceReq.getOrganizationId(), authContext);
+		return new BaseRsp<>(result);
 	}
 
 }

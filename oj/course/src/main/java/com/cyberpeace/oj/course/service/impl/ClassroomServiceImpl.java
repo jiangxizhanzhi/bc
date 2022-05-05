@@ -18,6 +18,7 @@ import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
+import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -32,6 +33,17 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
+import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
+import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.checkerframework.checker.units.qual.C;
@@ -112,6 +124,18 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private PaperMapper paperMapper;
+
+	@Autowired
+	private LessonPaperEvaluateMapper lessonPaperEvaluateMapper;
+
+	@Autowired
+	private PracticeTheoryRefService practiceTheoryRefService;
+
+	@Autowired
+	private PracticeOperationRefService practiceOperationRefService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -445,6 +469,242 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		ClassroomStatisticBo statisticBo = ClassroomStatisticBo.builder().signInfo(signInfoBo)
 				.top20(topNum).gradeDistribution(distributionBo).build();
 		return statisticBo;
+	}
+
+	/**
+	 * 课堂习题数据处理
+	 *
+	 * @param paperEvaluate
+	 * @param paper
+	 * @return
+	 */
+	private Map<String, LessonPracticeListBo> handlerPractice(LessonPaperEvaluate paperEvaluate,
+															  Paper paper, Boolean viewAnswer, AuthContext authContext, String lessonId) {
+
+		Map<String, PracticeSolvedBo> solvedBoMap = Maps.newHashMap();
+		if (null != paperEvaluate) {
+			// 获取解题记录
+			List<PracticeSolvedBo> solvedBos = JsonUtil.toJsonObjectArray(paperEvaluate.getRecord(),
+					PracticeSolvedBo.class);
+			solvedBoMap.putAll(StreamApiUtils.toMap(solvedBos, PracticeSolvedBo::getResourceId,
+					practiceSolvedBo -> practiceSolvedBo));
+		}
+
+		// 查询习题内容 转换数据类型
+		List<OperationLessonBo> operationLessonBos = practiceOperationRefService
+				.selectByPaperId(lessonId, paper.getResourceId(), viewAnswer, false, authContext);
+
+		// 实操习题转换
+		List<LessonOperationBo> lessonOperationBos = StreamApiUtils.map(operationLessonBos,
+				operationBo -> {
+					LessonOperationBo lessonOperationBo = BeanUtils.copy(operationBo,
+							LessonOperationBo.class);
+					lessonOperationBo
+							.setResolvedDetail(solvedBoMap.get(operationBo.getResourceId()));
+					return lessonOperationBo;
+				});
+
+		// 理论习题转换
+		List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService
+				.selectByPaper(paper.getResourceId(), viewAnswer);
+		List<LessonTheoryBo> theoryBoList = StreamApiUtils.map(theoryLessonBos, theoryLessonBo -> {
+			LessonTheoryBo theoryBo = BeanUtils.copy(theoryLessonBo, LessonTheoryBo.class);
+			theoryBo.setResolvedDetail(solvedBoMap.get(theoryBo.getResourceId()));
+			return theoryBo;
+		});
+
+		// 理论习题数据分组
+		Map<Integer, List<LessonTheoryBo>> practiceMap = StreamApiUtils.groupBy(theoryBoList,
+				TheoryLessonBo::getQuestionType);
+
+		// 新建map存储数据
+		Map<Integer, List<? extends TheoryLessonBo>> allMap = Maps.newHashMap();
+		allMap.putAll(practiceMap);
+		if (CollectionUtils.isNotEmpty(lessonOperationBos)) {
+			allMap.put(PracticeTheory.TheoryType.OPERATION.getCode(), lessonOperationBos);
+		}
+
+		// 组装习题数据
+		Map<String, LessonPracticeListBo> listBoMap = Maps.newHashMap();
+		allMap.forEach((key, value) -> {
+			Double totalScore = StreamApiUtils.mapToDouble(value, TheoryLessonBo::getScore);
+			LessonPracticeListBo practiceListBo = new LessonPracticeListBo();
+			practiceListBo.setPracticeBos(value);
+			practiceListBo.setCount(value.size());
+			practiceListBo.setTotalScore(totalScore);
+			listBoMap.put(EnumUtils.getEnumDescByCode(key, PracticeTheory.TheoryType.class),
+					practiceListBo);
+		});
+
+		return listBoMap;
+	}
+
+	@Override
+	public ClassroomPracticeDetailBo practiceDetail(String classroomId, String lessonId,
+			String userId) {
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
+
+
+		// 课后练习评估数据查询
+		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
+				.selectByUserAndLesson(userId, lessonId);
+
+		if (null == paperEvaluate) {
+			return null;
+		}
+
+		Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+
+		// 提交用户处理
+		UserInfo userInfo = remoteUserService.getById(userId);
+		AuthContext authContext = new AuthContext();
+		authContext.setUserId(userInfo.getUserId());
+		authContext.setIsWeb(false);
+
+		// 处理习题数据
+		Map<String, LessonPracticeListBo> handlerPractice = handlerPractice(paperEvaluate, paper,
+				true, authContext, lessonId);
+
+		// 习题总数
+		Integer practiceCount = 0;
+		for (LessonPracticeListBo item: handlerPractice.values()) {
+			practiceCount += item.getCount();
+		}
+
+
+		ClassroomPracticeDetailBo classroomPracticeDetailBo = ClassroomPracticeDetailBo.builder()
+				.lessonName(courseLesson.getName()).build();
+		classroomPracticeDetailBo.setAccuracy(paperEvaluate.getAccuracy());
+		classroomPracticeDetailBo.setLevel(paperEvaluate.getLevel());
+		classroomPracticeDetailBo.setSubmitUserName(userInfo.getName());
+		classroomPracticeDetailBo.setPracticeList(handlerPractice);
+		classroomPracticeDetailBo.setPracticeCount(practiceCount);
+		return classroomPracticeDetailBo;
+	}
+
+	@Override
+	public ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext cpContext, Page page) {
+
+		// 判断练习是否下发
+		CourseLesson courseLesson = courseValidateHandler
+				.validateLessonExist(cpContext.getLessonId(), false);
+
+		Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+		String readAuthIds = paper.getReadAuthIds();
+		if (null == readAuthIds) {
+			readAuthIds = "[]";
+		}
+
+		boolean isReleased = true;
+		boolean hasPractice = true;
+		if (!readAuthIds.contains(cpContext.getOrganizationId())) {
+			isReleased = false;
+			if (paper.getPracticeCount().equals(0)) {
+				hasPractice = false;
+			}
+		}
+
+		ClassroomPracticeBo classroomPracticeBo = ClassroomPracticeBo.builder()
+				.hasPractice(hasPractice).released(isReleased).build();
+
+		if (hasPractice) {
+			List<UserInfo> userInfoList = remoteUserService
+					.ListByOrgId(cpContext.getOrganizationId(), true);
+			List<String> userIds = Lists.newArrayList();
+
+			// 姓名搜索
+			String username = cpContext.getUsername();
+			boolean searchName = StringUtils.isNotBlank(username);
+			for (UserInfo userInfo : userInfoList) {
+				if (searchName) {
+					if (userInfo.getName().contains(username)) {
+						userIds.add(userInfo.getUserId());
+						break;
+					} else {
+						continue;
+					}
+				}
+				userIds.add(userInfo.getUserId());
+			}
+
+			if (userIds.isEmpty()) {
+				return classroomPracticeBo;
+			}
+
+			List<LessonPaperEvaluate> lessonPaperEvaluates = lessonPaperEvaluateMapper
+					.selectByLessonAndUsers(userIds, cpContext.getLessonId());
+
+			Map<String, LessonPaperEvaluate> idToObj = StreamApiUtils.toMap(lessonPaperEvaluates,
+					LessonPaperEvaluate::getSubmitUserId,
+					lessonPaperEvaluate -> lessonPaperEvaluate);
+
+			Map<String, String> userIdToName = Maps.newHashMap();
+			Map<String, String> OrgIdToName = Maps.newHashMap();
+
+			List<PracticePaperEvaluateBo> practiceInfos = Lists.newArrayList();
+			for (UserInfo userInfo : userInfoList) {
+				PracticePaperEvaluateBo practicePaperEvaluateBo = new PracticePaperEvaluateBo();
+
+				// 判断是否已提交
+				boolean isCommitted = cpContext.getIsCommit();
+
+				LessonPaperEvaluate lessonPaperEvaluate = idToObj.get(userInfo.getUserId());
+				if (null != lessonPaperEvaluate) {
+					// 判断是否已批改
+					boolean isMarked = cpContext.getIsMark();
+					Integer level = lessonPaperEvaluate.getLevel();
+					if (level == null && isMarked) {
+						continue;
+					} else if (level != null) {
+						practicePaperEvaluateBo.setCorrectTime(lessonPaperEvaluate.getUpdateTime());
+					}
+
+					practicePaperEvaluateBo.setSubmitState(true);
+					practicePaperEvaluateBo.setAccuracy(lessonPaperEvaluate.getAccuracy());
+					practicePaperEvaluateBo.setLevel(level);
+					practicePaperEvaluateBo.setSubmitTime(lessonPaperEvaluate.getCreateTime());
+
+					String corrector = lessonPaperEvaluate.getCorrector();
+					if (corrector != null) {
+						if (userIdToName.containsKey(corrector)) {
+							corrector = userIdToName.get(corrector);
+						} else {
+							String corrector_name = remoteUserService.getById(corrector).getName();
+							userIdToName.put(corrector, corrector_name);
+							corrector = corrector_name;
+						}
+					}
+					practicePaperEvaluateBo.setCorrector(corrector);
+
+				} else if (isCommitted) {
+					continue;
+				}
+
+				practicePaperEvaluateBo.setName(userInfo.getName());
+				practicePaperEvaluateBo.setUserId(userInfo.getUserId());
+				practicePaperEvaluateBo.setUsername(userInfo.getUserName());
+				// 组织信息查询
+				String organizationId = userInfo.getOrganizationId();
+				if (null != organizationId) {
+					String orgName = OrgIdToName.get(organizationId);
+					if (null == orgName) {
+						orgName = remoteOrganizationService
+								.orgNameById(userInfo.getOrganizationId());
+						OrgIdToName.put(organizationId, orgName);
+					}
+					practicePaperEvaluateBo.setOrganizationName(orgName);
+				}
+
+				practiceInfos.add(practicePaperEvaluateBo);
+
+			}
+			ListRsp<PracticePaperEvaluateBo> practiceInfosRsp = PageUtil
+					.getListResult(practiceInfos, page, practiceInfos.size());
+			classroomPracticeBo.setData(practiceInfosRsp);
+
+		}
+
+		return classroomPracticeBo;
 	}
 
 	@Override

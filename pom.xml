@@ -42,8 +42,8 @@
         <mysql.connector.version>8.0.25</mysql.connector.version>
         <lombok.version>1.18.20</lombok.version>
         <springboot.test.version>2.5.2</springboot.test.version>
-        <poi-ooxml.version>4.1.2</poi-ooxml.version>
-        <poi-version>5.0.0</poi-version>
+        <poi-ooxml.version>5.2.2</poi-ooxml.version>
+        <poi-version>5.2.2</poi-version>
         <freemarker.version>2.3.28</freemarker.version>
         <itextpdf.version>5.4.2</itextpdf.version>
         <xmlworker.version>5.4.1</xmlworker.version>

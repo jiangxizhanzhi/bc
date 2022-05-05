@@ -105,41 +105,44 @@ public interface OjBusinessErrorCode {
 	/** 组织信息不能为空*/
 	String ORG_INFORMATION_NOT_NULL = "102033";
 
-	/** 对应的习题文件未找到*/
+	/**  对应的习题文件未找到*/
 	String PRACTICE_OPERATION_FILE_NOT_FOUNT = "102034";
 
-	/** 训练计划不能为空*/
+	/** 第x行 训练计划不能为空*/
 	String TRAIN_PLAN_NAME_IS_NULL = "102035";
 
-	/**  训练计划已存在*/
+	/** 第x行 训练计划已存在*/
 	String TRAIN_PLAN_EXIST = "102036";
 
-	/** 训练计划对应课程不存在*/
+	/** 第x行 训练计划对应课程不存在*/
 	String PLAN_COURSE_IS_NULL = "102037";
 
-	/** 检索不到对应课程*/
+	/** 第x行 检索不到对应课程*/
 	String PLAN_COURSE_NOT_EXIST = "102038";
 
-	/** 训练计划对应课程不存在*/
-	String PLAN_LESSON_IS_NULL = "102037";
+	/** 第x行 训练计划对应课时不能为空*/
+	String PLAN_LESSON_IS_NULL = "102039";
 
-	/** 检索不到对应课程*/
-	String PLAN_LESSON_NOT_EXIST = "102038";
+	/** 第x行 检索不到对应课时*/
+	String PLAN_LESSON_NOT_EXIST = "102040";
 
-	/** 计划时间不能为空*/
-	String PLAN_TIME_IS_NULL = "102039";
+	/** 第x行 计划时间不能为空*/
+	String PLAN_TIME_IS_NULL = "102041";
 
-	/** 结束时间大于开始时间*/
-	String PLAN_END_GT_START_TIME = "102040";
+	/** 第x行 结束时间大于开始时间*/
+	String PLAN_END_GT_START_TIME = "102042";
 
-	/** 计划组织不能为空*/
-	String PLAN_ORG_IS_NULL = "102041";
+	/** 第x行 计划组织不能为空*/
+	String PLAN_ORG_IS_NULL = "102043";
 
-	/** 组织计划不存在*/
-	String PLAN_ORG_NOT_EXIST = "102042";
+	/** 第x行 组织计划不存在*/
+	String PLAN_ORG_NOT_EXIST = "102044";
+
+	/** 第x行 课时未公开*/
+	String PLAN_LESSON_NOT_PUBLIC = "102045";
 
 	// 删除实例时没有传入resource_id字段
-	String RESOURCE_ID_MISSING = "102035";
+	String RESOURCE_ID_MISSING = "102046";
 
 	/** 对应的课堂未找到*/
 	String CLASSROOM_NOT_FOUNT = "102043";

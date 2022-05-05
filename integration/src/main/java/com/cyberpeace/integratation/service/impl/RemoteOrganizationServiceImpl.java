@@ -65,6 +65,17 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	}
 
 	@Override
+	public String getOrgPath(String orgId) {
+
+		JSONObject orgInfo = HttpClientUtil.rawGet(MP_ORG_TREE_URL + orgId, JSONObject.class);
+
+		if (null == orgInfo) {
+			return CommonConstant.EMPTY_STRING;
+		}
+		return orgInfo.getString(JsonKeyConstant.NAME);
+	}
+
+	@Override
 	public String orgNameById(String orgId) {
 		JSONObject orgInfo = HttpClientUtil.rawGet(MP_ORG_INFO + orgId, JSONObject.class);
 		return null != orgInfo ? orgInfo.getString("name") : "";
@@ -109,7 +120,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		JSONArray orgTreeArray = HttpClientUtil.rawGet(MP_ORG_TREE_URL, JSONArray.class);
 
 		JSONObject org = getOrgIdByTree(orgNames, orgTreeArray);
-		return null != org ? org.getString(JsonKeyConstant.NAME) : CommonConstant.EMPTY_STRING;
+		return null != org ? org.getString(JsonKeyConstant.ID) : CommonConstant.EMPTY_STRING;
 	}
 
 	/**

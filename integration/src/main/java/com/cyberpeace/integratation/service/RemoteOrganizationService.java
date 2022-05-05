@@ -16,6 +16,12 @@ public interface RemoteOrganizationService {
 	List<String> childrenList(String orgId, boolean self);
 
 	/**
+	 * 根据组织编号获取对应组织树形结构 示例：计算机学院/大一/大一三班
+	 * @return
+	 */
+	String getOrgPath(String orgId);
+
+	/**
 	 * 获取组织名称
 	 * @param orgId
 	 * @return

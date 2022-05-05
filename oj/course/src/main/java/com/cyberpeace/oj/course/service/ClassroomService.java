@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service;
 
+import java.io.File;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -112,5 +113,5 @@ public interface ClassroomService extends IService<Classroom> {
 	 * 训练计划导出
 	 * @return 导出文件路径
 	 */
-	String exportTrainPlan(UserInfo userInfo);
+	File exportTrainPlan(UserInfo userInfo, String filePath);
 }

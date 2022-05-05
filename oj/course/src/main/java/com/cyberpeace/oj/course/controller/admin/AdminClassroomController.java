@@ -1,38 +1,10 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.controller.req.*;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
-import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.ClassroomSignService;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import io.swagger.annotations.*;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +12,47 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.oj.course.controller.req.ClassroomDeleteReq;
+import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
+import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
+import com.cyberpeace.oj.course.controller.req.ClassroomReq;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.controller.req.*;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.service.ClassroomService;
+import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.bo.ClassroomBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomReportBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomStatisticBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
+import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台课程表api")
 @RestController
@@ -64,7 +75,6 @@ public class AdminClassroomController {
 
 	@Autowired
 	private CourseLessonService courseLessonService;
-
 
 	@Autowired
 	private AttachmentService attachmentService;
@@ -296,11 +306,13 @@ public class AdminClassroomController {
 
 	@ApiOperation("训练计划导出")
 	@GetMapping("/train_plan/export")
-	public BaseRsp exportTrainPlan(HttpServletResponse response) {
+	public void exportTrainPlan(HttpServletResponse response) {
 
-		String excelFilePath = classroomService.exportTrainPlan(UserInfoContext.getUserContext());
+		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+				+ CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
+		classroomService.exportTrainPlan(UserInfoContext.getUserContext(), filePath);
+		FileUtil.setResponse(new File(filePath), true, response);
 
-		return new BaseRsp();
 	}
 
 }

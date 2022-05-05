@@ -182,7 +182,7 @@ public class ObjUtil {
 		}
 	}
 
-	private static Field[] getFields(Object obj) {
+	public static Field[] getFields(Object obj) {
 		Class<?> cls = obj.getClass();
 
 		List<Field[]> result = Lists.newArrayList();

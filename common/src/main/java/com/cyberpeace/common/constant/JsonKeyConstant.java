@@ -80,4 +80,6 @@ public interface JsonKeyConstant {
 	String ID = "id";
 
 	String CHILDREN = "children";
+
+	String PATH = "path";
 }

@@ -108,4 +108,7 @@ public interface OjBusinessErrorCode {
 	/** 对应的习题文件未找到*/
 	String PRACTICE_OPERATION_FILE_NOT_FOUNT = "102034";
 
+	/** 对应的课堂未找到*/
+	String CLASSROOM_NOT_FOUNT = "102043";
+
 }

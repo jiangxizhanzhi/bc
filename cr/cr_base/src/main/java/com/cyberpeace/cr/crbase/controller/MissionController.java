@@ -295,7 +295,7 @@ public class MissionController {
 
 	@ApiOperation("RTKS-获取任务模板列表")
 	@GetMapping("/mission_templates")
-	public BaseRsp<List<MissionSchemeTemplateRsp>>
+	public BaseRsp<List<MissionTemplateRes>>
 			listMissionTemplates(@Validated MissionTemplatePageReq pageReq) {
 		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService
 				.pageMissionTemplate(pageReq);

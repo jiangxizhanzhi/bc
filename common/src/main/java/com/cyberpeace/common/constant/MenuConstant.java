@@ -8,6 +8,9 @@ public interface MenuConstant {
     /**
      * 前台页面
      */
+    // 所有前端
+    String WEB_ALL = "front_all";
+
     // 我的职业
     String WEB_OJ_COURSE = "oj-course";
 
@@ -81,7 +84,7 @@ public interface MenuConstant {
     String CMS_THEORY_PRACTICE = "theory-base";
 
     //实践操作
-    String cms_PRACTICE_OPERATION = "flags-solve";
+    String CMS_PRACTICE_OPERATION = "flags-solve";
 
     //镜像管理
     String CMS_DEVICE_MANAGE = "image-manage";
@@ -114,7 +117,7 @@ public interface MenuConstant {
     String CMS_RED_VS_BLUE = "red-vs-blue-folder";
 
     //工具库
-    String cms_tool = "tool";
+    String CMS_TOOL = "tool";
 
     //系统配置
     String CMS_SYSTEM_CONFIG = "system-config";
@@ -165,11 +168,11 @@ public interface MenuConstant {
     String CMS_COMMENT_MANAGE = "message-management";
 
     //评估算法管理
-    String cms_cr_evaluation_algorithm = "assessment-algorithm";
+    String CMS_CR_EVALUATION_ALGORITHM = "assessment-algorithm";
 
     //指标项管理
-    String cms_cr_evaluation_indicator = "assessment-model";
+    String CMS_CR_EVALUATION_INDICATOR = "assessment-model";
 
     //指标体系管理
-    String cms_cr_evaluation_indicator_system = "assessment-indicators";
+    String CMS_CR_EVALUATION_INDICATOR_SYSTEM = "assessment-indicators";
 }

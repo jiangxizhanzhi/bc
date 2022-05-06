@@ -2,7 +2,9 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +32,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/rtks/knowledge")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 public class KnowledgeController {
 
 	@Autowired

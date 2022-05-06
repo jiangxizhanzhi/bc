@@ -2,9 +2,12 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +42,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/oj/admin/paper")
 @RequiresAuthentication
+@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
+		MenuConstant.CMS_COURSES}, logical = Logical.OR)
 public class AdminPaperController {
 
 	@Autowired

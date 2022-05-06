@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.admin;
 import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
@@ -20,6 +21,7 @@ import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -61,6 +63,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/oj/admin/lesson")
 @RequiresAuthentication
 @Slf4j
+@RequiresPermissions(MenuConstant.CMS_COURSES)
 public class AdminLessonController extends PublicController<CourseLessonService, CourseLesson> {
 
 	@Autowired

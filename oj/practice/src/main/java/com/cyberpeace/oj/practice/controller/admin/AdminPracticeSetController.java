@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -20,6 +21,7 @@ import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/oj/admin/practice/set")
 @RequiresAuthentication
 @Slf4j
+@RequiresPermissions(MenuConstant.CMS_EXERCISES)
 public class AdminPracticeSetController extends AuthAndPublicController<PracticeSetService, PracticeSet> {
 
 	@Autowired

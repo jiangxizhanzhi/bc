@@ -2,7 +2,9 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/rtks/knowledge-category")
 @RequiresAuthentication
 @Slf4j
+@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 public class KnowledgeCategoryController {
 
 	@Autowired

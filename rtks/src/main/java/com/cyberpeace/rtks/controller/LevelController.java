@@ -6,8 +6,10 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +35,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/rtks/frame/level")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 public class LevelController {
 
 	@Autowired

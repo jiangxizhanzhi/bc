@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -29,6 +31,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/admin/single_train/template")
+@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 public class SingleTemplateController {
 
 	@Autowired

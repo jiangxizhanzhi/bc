@@ -2,11 +2,13 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupArchiveMapper;
 import com.cyberpeace.oj.course.service.bo.ClassroomGroupArchiveBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/oj/admin/class/group_info")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 public class AdminClassroomGroupInfoController {
 
 	@Autowired

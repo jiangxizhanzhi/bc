@@ -3,8 +3,10 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -47,6 +49,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/admin/red_vs_blue/red_vs_blue_templates/")
+@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 public class RbTemplateAdminController {
 
 	@Autowired

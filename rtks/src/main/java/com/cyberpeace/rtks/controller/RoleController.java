@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -97,6 +99,7 @@ class Helper {
 @RestController
 @RequestMapping("/rtks/role")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 public class RoleController {
 
 	@Autowired

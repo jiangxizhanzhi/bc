@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ import net.lingala.zip4j.exception.ZipException;
 @RequestMapping("/cr/admin/mission")
 @RequiresAuthentication
 @Slf4j
+@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 public class MissionController {
 
 	@Autowired
@@ -73,6 +75,7 @@ public class MissionController {
 
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<List<Integer>> getRadar(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
@@ -83,6 +86,7 @@ public class MissionController {
 
 	@ApiOperation("获取任务技能点")
 	@GetMapping("/missions/radar_labels")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<JSONObject> getRadarLabel() {
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 
@@ -119,6 +123,7 @@ public class MissionController {
 
 	@ApiOperation("获取任务")
 	@GetMapping("/missions")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<MissionTemplateRsp>
 			getMission(@RequestParam("resource_id") @Validated String resourceId) {
 		MissionTemplate missionTemplate = missionService.getByMissionTemplateId(resourceId);
@@ -165,6 +170,7 @@ public class MissionController {
 
 	@ApiOperation("前台更新任务")
 	@PutMapping("/mission_update")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<Mission>
 			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		missionModifyReq.validate();
@@ -180,6 +186,7 @@ public class MissionController {
 
 	@ApiOperation("获取任务类型")
 	@GetMapping("/missions/get_category/")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<List<MissionCategory>> listCategories() {
 
 		List<MissionCategory> categories = missionService.listCategories();

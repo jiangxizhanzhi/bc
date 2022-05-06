@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.tool.controller.admin;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -14,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("cr/admin/tool/category")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_TOOL)
 public class ToolCategoryController {
 
 	@Autowired

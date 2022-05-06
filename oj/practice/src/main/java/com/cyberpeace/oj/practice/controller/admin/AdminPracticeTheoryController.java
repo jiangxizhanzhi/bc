@@ -3,12 +3,14 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.io.File;
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +49,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("oj/admin/theory")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 public class AdminPracticeTheoryController extends PublicController<PracticeTheoryService, PracticeTheory> {
 
 	@Autowired

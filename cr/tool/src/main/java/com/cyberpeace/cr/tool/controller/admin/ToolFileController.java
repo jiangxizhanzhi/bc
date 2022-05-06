@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.tool.controller.admin;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +30,7 @@ public class ToolFileController {
 
 	@ApiOperation("上传工具附件")
 	@PostMapping("/upload_tool_file")
+	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<ToolFile> updateToolFile(@RequestParam("file") MultipartFile file) {
 		if (file.isEmpty()) {
 			throw new BusinessException(ErrorCode.EMPTY_FILE);

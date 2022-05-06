@@ -4,6 +4,7 @@ import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ExcelHeader;
 import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -20,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,7 @@ import java.util.stream.Collectors;
 @RequiresAuthentication
 @RequestMapping("/oj/admin/course/personal-stats")
 @Slf4j
+@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 public class AdminPersonalStatsController {
 	// todo ------- 数据准确性待验证 -------
 

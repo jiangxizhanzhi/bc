@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,7 @@ import java.util.List;
 @RequestMapping("/oj/admin/statistic")
 @RequiresAuthentication
 @Slf4j
+@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 public class AdminLearnStatisticController {
 
 	@Autowired

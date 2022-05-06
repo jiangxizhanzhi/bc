@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.FileTypeContant;
@@ -18,6 +19,7 @@ import com.cyberpeace.cs.service.UtilService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +61,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/oj/admin/course")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_COURSES)
 public class AdminCourseController extends AuthAndPublicController<CourseService, Course> {
 
 	@Autowired

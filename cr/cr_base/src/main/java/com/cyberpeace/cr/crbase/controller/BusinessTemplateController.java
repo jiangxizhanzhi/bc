@@ -7,8 +7,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.TransactionStatus;
@@ -57,6 +60,8 @@ import net.lingala.zip4j.exception.ZipException;
 @Slf4j
 @RequestMapping("/admin/ceBase/crEvents")
 @RequiresAuthentication
+@RequiresPermissions(value = {MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
+		MenuConstant.CMS_CR_SINGLE_TRAIN}, logical = Logical.OR)
 public class BusinessTemplateController {
 
 	@Autowired

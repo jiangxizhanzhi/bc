@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,23 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 				cache.get(type).add(config);
 			}
 		}
+	}
+
+	@Override
+	public Boolean validateType(Integer type, Integer code) {
+		if (cache.isEmpty()) {
+			init();
+		}
+		if (cache.containsKey(type)) {
+
+			List<Integer> codeList = cache.get(type).stream()
+					.map(crConstantsConfig -> crConstantsConfig.getCode())
+					.collect(Collectors.toList());
+
+			if (codeList.contains(code)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

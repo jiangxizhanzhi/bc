@@ -249,4 +249,10 @@ public interface CrBusinessErrorCode {
 
 	/** 训练已暂停，不能删除场景 */
 	String TRAINING_PAUSED = "101080";
+
+	/** LOGO文件不存在 */
+	String LOGO_NOT_EXIST = "101081";
+
+	/** 测试靶场类型不存在 */
+	String EVAL_CATEGORY_NOT_EXIST = "101082";
 }

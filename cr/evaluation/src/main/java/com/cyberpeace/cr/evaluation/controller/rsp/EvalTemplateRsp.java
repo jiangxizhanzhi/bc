@@ -3,7 +3,7 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -16,7 +16,7 @@ public class EvalTemplateRsp extends EvalTemplateListRsp implements Serializable
 	private Boolean enableRecording;
 
 	@ApiModelProperty(value = "拓扑配置")
-	private SceneConfigData sceneConfigData;
+	private JSONObject sceneConfigData;
 
 	@ApiModelProperty(value = "步骤配置", required = true)
 	private List<EvalTaskStepConfig> stepConfig;

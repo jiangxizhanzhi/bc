@@ -21,11 +21,12 @@ public class EvaTemplateAddReq {
 	private String description;
 
 	@ApiModelProperty(value = "测试靶场Logo文件id", required = false)
+	@NotNull
 	private String logoId;
 
 	@ApiModelProperty(value = "测试靶场类型", required = true)
 	@NotNull
-	private String categoryCode;
+	private Integer categoryCode;
 
 	@ApiModelProperty(value = "是否录屏", required = true)
 	@NotNull

@@ -1,5 +1,8 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalTaskStopReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeLineRsp;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,6 +69,15 @@ public class EvalTaskController {
 	@DeleteMapping("")
 	public BaseRsp<Boolean> deleteEvalTask(@RequestBody EvalTaskDeleteReq evalTaskDeleteReq) {
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("查询测试任务步骤")
+	@GetMapping("/step/list")
+	public BaseRsp<List<EvalTaskStepContext>> getStepList(
+			@ApiParam(name = "template_id", value = "测试靶场模板id", required = true) String template_id,
+			@ApiParam(name = "task_id", value = "测试任务id", required = false) String task_id) {
+		List<EvalTaskStepContext> evalTaskStepContextList = Lists.newArrayList();
+		return new BaseRsp<>(evalTaskStepContextList);
 	}
 
 	@ApiOperation("查询测试任务时间线")

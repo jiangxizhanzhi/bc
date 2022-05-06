@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -285,9 +286,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		handleRbStatus(rbs);
 		// collect trainings
 		Map<String, List<TrainingRaw>> trainingMap = Maps.newHashMap();
-		mapTrainings(trainingMap, singles);
-		mapTrainings(trainingMap, teams);
-		mapTrainings(trainingMap, rbs);
+		mapTrainings(trainingMap, singles, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		// get saved mission order
 		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
 		// generate new order by merge with saved order
@@ -326,7 +327,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		}
 		// convert trainingRaw to trainingBo
 		for (TrainingRaw trainingRaw : trainingMap.get(missionContext.getBusinessTemplateId())) {
-			TrainingBo trainingBo = BeanUtils.deepCopy(trainingRaw, TrainingBo.class);
+			TrainingBo trainingBo = BeanUtils.copy(trainingRaw, TrainingBo.class);
 			trainingBo.setMissionTitle(missionContext.getTitle());
 			trainingBo.setMissionTemplateId(missionContext.getMissionTemplateId());
 			trainingBo.setPreSkill(
@@ -359,12 +360,14 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param map 
 	 * @param trainingRaws
 	 */
-	private void mapTrainings(Map<String, List<TrainingRaw>> map, List<TrainingRaw> trainingRaws) {
+	private void mapTrainings(Map<String, List<TrainingRaw>> map, List<TrainingRaw> trainingRaws,
+			Integer type) {
 		trainingRaws.forEach((training) -> {
 			String businessTemplateId = training.getBusinessTemplateId();
 			if (!map.containsKey(businessTemplateId)) {
 				map.put(businessTemplateId, Lists.newArrayList());
 			}
+			training.setTrainingType(type);
 			map.get(businessTemplateId).add(training);
 		});
 	}

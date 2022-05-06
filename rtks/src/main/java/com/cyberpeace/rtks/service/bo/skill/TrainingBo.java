@@ -19,7 +19,7 @@ public class TrainingBo implements Serializable {
 	private String trainingId;
 
 	@ApiModelProperty(value = "训练类型")
-	private String trainingType;
+	private Integer trainingType;
 
 	@ApiModelProperty(value = "训练名称")
 	private String trainingName;

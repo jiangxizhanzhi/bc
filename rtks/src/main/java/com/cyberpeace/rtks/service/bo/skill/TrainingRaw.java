@@ -24,4 +24,6 @@ public class TrainingRaw implements Serializable {
 	private Integer trainingStatus;
 
 	private String logo;
+
+	private Integer trainingType;
 }

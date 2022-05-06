@@ -4,20 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalAggregationMapper">
 
-    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="thirdIndexId" column="third_index_id" jdbcType="VARCHAR"/>
-            <result property="collectionIds" column="collection_ids" jdbcType="VARCHAR"/>
-            <result property="aggregatingAlgorithmId" column="aggregating_algorithm_id" jdbcType="VARCHAR"/>
-            <result property="aggregatingAlgorithmParams" column="aggregating_algorithm_params" jdbcType="VARCHAR"/>
-    </resultMap>
 
-    <sql id="Base_Column_List">
-        id,resource_id,name,
-        description,third_index_id,collection_ids,
-        aggregating_algorithm_id,aggregating_algorithm_params
-    </sql>
+    <select id="selectIdsByEvalIndicatorIds" resultType="java.lang.String">
+        select resource_id from cr_eval_aggregation
+        where eval_indicator_id in
+        <foreach collection="evalIndicatorIds" open="(" close=")" separator="," item="evalIndicatorId">
+            #{evalIndicatorId}
+        </foreach>
+    </select>
 </mapper>

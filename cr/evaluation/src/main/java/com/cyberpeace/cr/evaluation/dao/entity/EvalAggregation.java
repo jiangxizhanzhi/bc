@@ -11,44 +11,41 @@ import lombok.Data;
  * 
  * @TableName cr_eval_aggregation
  */
-@TableName(value ="cr_eval_aggregation")
+@TableName(value = "cr_eval_aggregation")
 @Data
 public class EvalAggregation extends BaseTable {
-    
 
-    @TableId(type = IdType.UUID, value = "resource_id")
+	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-    /**
-     * 名称
-     */
-    private String name;
+	/**
+	 * 名称
+	 */
+	private String name;
 
-    /**
-     * 描述
-     */
-    private String description;
+	/**
+	 * 描述
+	 */
+	private String description;
 
-    /**
-     * 关联三级指标id
-     */
-    private String thirdIndexId;
+	/**
+	 * 关联指标项id
+	 */
+	private String evalIndicatorId;
 
-    /**
-     * 关联采集变量id
-关联采集变量id
-     */
-    private String collectionIds;
+	/**
+	 * 关联采集变量id
+	 */
+	private String collectionIds;
 
-    /**
-     * 聚合算法id
-     */
-    private String aggregatingAlgorithmId;
+	/**
+	 * 聚合算法id
+	 */
+	private String aggregatingAlgorithmId;
 
-    /**
-     * 聚合算法参数
-     */
-    private String aggregatingAlgorithmParams;
+	/**
+	 * 聚合算法参数
+	 */
+	private String aggregatingAlgorithmParams;
 
-    
 }

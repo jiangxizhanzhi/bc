@@ -31,12 +31,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "后台-测试靶场-体系指标")
+@Api(tags = "后台-测试靶场-指标体系")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/system")
 @Slf4j
-public class EvalIndexAdminController {
+public class EvalSystemIndexAdminController {
 
 	@Autowired
 	private EvalIndexService evalIndexService;
@@ -58,15 +58,7 @@ public class EvalIndexAdminController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
-				evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getFirstIndexes(),
-						EvalIndex.Level.FIRST.getCode()));
-				evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getSecondIndexes(),
-						EvalIndex.Level.SECONDE.getCode()));
-				evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getThirdIndexes(),
-						EvalIndex.Level.THIRD.getCode()));
-
-				EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
-				evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
+				EvalSystem evalSystem = saveEvalIndex(evalSystemReq);
 				evalSystem.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 				evalSystemService.save(evalSystem);
 			}
@@ -93,21 +85,27 @@ public class EvalIndexAdminController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				evalIndexService.deleteBatchByEvalSystemId(evalSystemReq.getEvalSystemId());
 
-				evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getFirstIndexes(),
-						EvalIndex.Level.FIRST.getCode()));
-				evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getSecondIndexes(),
-						EvalIndex.Level.SECONDE.getCode()));
-				evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getThirdIndexes(),
-						EvalIndex.Level.THIRD.getCode()));
-
-				EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
-				evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
+				EvalSystem evalSystem = saveEvalIndex(evalSystemReq);
 
 				evalSystemService.updateById(evalSystem);
 			}
 		});
 
 		return new BaseRsp(connlist);
+	}
+
+	private EvalSystem saveEvalIndex(@Validated @RequestBody EvalSystemReq evalSystemReq) {
+		evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getFirstIndexes(),
+				EvalIndex.Level.FIRST.getCode()));
+		evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getSecondIndexes(),
+				EvalIndex.Level.SECONDE.getCode()));
+		evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getThirdIndexes(),
+				EvalIndex.Level.THIRD.getCode()));
+
+		EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
+		evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
+
+		return evalSystem;
 	}
 
 	@ApiOperation("查询体系指标")

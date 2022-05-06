@@ -4,21 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper">
 
-    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.evaluation.dao.entity.EvalCollection">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="formatAlgorithmId" column="format_algorithm_id" jdbcType="VARCHAR"/>
-            <result property="formatAlgorithmParams" column="format_algorithm_params" jdbcType="VARCHAR"/>
-            <result property="detectionAlgorithmId" column="detection_algorithm_id" jdbcType="VARCHAR"/>
-            <result property="detectionAlgorithmParams" column="detection_algorithm_params" jdbcType="VARCHAR"/>
-            <result property="scoreAlgorithmId" column="score_algorithm_id" jdbcType="VARCHAR"/>
-            <result property="scoreAlgorithmParams" column="score_algorithm_params" jdbcType="VARCHAR"/>
-    </resultMap>
 
-    <sql id="Base_Column_List">
-        id,resource_id,name,
-        format_algorithm_id,format_algorithm_params,detection_algorithm_id,
-        detection_algorithm_params,score_algorithm_id,score_algorithm_params
-    </sql>
+    <select id="selectIdsByEvalIndicatorIds" resultType="java.lang.String">
+        select resource_id from cr_eval_collection
+        where eval_indicator_id in
+        <foreach collection="evalIndicatorIds" open="(" close=")" separator="," item="evalIndicatorId">
+            #{evalIndicatorId}
+        </foreach>
+    </select>
 </mapper>

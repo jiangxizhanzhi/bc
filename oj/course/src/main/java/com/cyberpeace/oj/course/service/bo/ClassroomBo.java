@@ -53,4 +53,13 @@ public class ClassroomBo implements Serializable {
 	@ApiModelProperty("训练计划名称")
 	private String trainPlanName;
 
+	@ApiModelProperty("日程类型")
+	private Integer type;
+
+	@ApiModelProperty("日程名称")
+	private String name;
+
+	@ApiModelProperty("是否可进入")
+	private Boolean enter;
+
 }

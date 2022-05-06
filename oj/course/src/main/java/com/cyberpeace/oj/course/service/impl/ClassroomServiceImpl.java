@@ -1,12 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.integratation.service.RemoteAdService;
+import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.ExcelHeader;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardFriend;
 import com.cyberpeace.common.model.room.DashboardGroup;
@@ -136,6 +135,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private TrainPlanMapper trainPlanMapper;
+
+	@Autowired
+	private RemoteAdService remoteAdService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -328,11 +330,21 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			return Lists.newArrayList();
 		}
 
-		// 查询转换数据
+		// 课程表数据查询
 		List<Classroom> classrooms = classroomMapper.selectListByCourse(authCourseIds,
 				roomListQuery);
 		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
 				classroom -> entityToBo(classroom));
+
+		// 单兵 团队 红蓝对抗
+		List<ClassroomBo> crClassroom = crClassroom(roomListQuery.getStartTime(),
+				roomListQuery.getEndTime(), authContext.getUserId());
+		classroomBos.addAll(crClassroom);
+
+		// 竞赛赛事
+		List<ClassroomBo> adClassroom = adClassroom(roomListQuery.getStartTime(),
+				roomListQuery.getEndTime(), authContext.getUserId());
+		classroomBos.addAll(adClassroom);
 
 		// 根据开始时间转换为map
 		Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(classroomBos,
@@ -348,6 +360,34 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			scheduleBo.setClassrooms(startTimeMap.get(key));
 			return scheduleBo;
 		});
+	}
+
+	/**
+	 * 竞赛比赛
+	 * @param startTime
+	 * @param endTime
+	 * @param userId
+	 * @return
+	 */
+	private List<ClassroomBo> adClassroom(Date startTime, Date endTime, String userId) {
+
+		// TODO
+		List<CalendarCompetitionBo> competitionBos = remoteAdService.competitionList(startTime,
+				endTime, userId);
+		return StreamApiUtils.map(competitionBos,
+				calendar -> BeanUtils.copy(calendar, ClassroomBo.class));
+	}
+
+	/**
+	 * 团队训练 红蓝对抗
+	 * @param startTime
+	 * @param endTime
+	 * @param userId
+	 * @return
+	 */
+	private List<ClassroomBo> crClassroom(Date startTime, Date endTime, String userId) {
+		// TODO
+		return Lists.newArrayList();
 	}
 
 	@Override

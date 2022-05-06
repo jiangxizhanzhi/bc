@@ -23,6 +23,6 @@ public class CrTaskScore implements Serializable {
 		if (full == null || full == 0) {
 			return 100.0;
 		}
-		return (double) score / full;
+		return (double) score * 100 / full;
 	}
 }

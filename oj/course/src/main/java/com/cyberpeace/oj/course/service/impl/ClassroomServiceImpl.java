@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +151,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroom.getEndTime());
 		classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
 				classroom.getStartTime(), classroom.getEndTime());
+		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+			classroomValidateHandler.validatePlanExistById(classroom.getTrainPlanId());
+		}
 
 		// 课堂基本数据获取
 		List<String> orgIds = classroomValidateHandler
@@ -163,9 +167,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
 
 		// 如果课程无访问权限 把组织数据加入
-		authContext.setIsWeb(CommonConstant.TRUE);
-		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!authCourseIds.contains(classroom.getCourseId())) {
+		if (course.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode()
+				&& !course.getReadAuthIds().contains(classroom.getOrganizationId())) {
 			changeCourseOrg(course, orgIds);
 		}
 
@@ -211,7 +214,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			List<String> authOrgIds = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
 					String.class);
 			orgIds.addAll(authOrgIds);
-			List<String> distinctList = StreamApiUtils.distinct(authOrgIds);
+			List<String> distinctList = StreamApiUtils.distinct(orgIds);
 			course.setReadAuthIds(JsonUtil.arrayToString(distinctList));
 		}
 	}
@@ -228,6 +231,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
 		Classroom existRoom = classroomValidateHandler
 				.validateClassroomExist(classroom.getResourceId());
+		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+			classroomValidateHandler.validatePlanExistById(classroom.getTrainPlanId());
+		}
 		validateChangeClassroom(classroom);
 
 		CourseLesson courseLesson = courseValidateHandler
@@ -252,8 +258,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		// 课程修改
-		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!authCourseIds.contains(classroom.getCourseId())) {
+		if (course.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode()
+				&& !course.getReadAuthIds().contains(classroom.getOrganizationId())) {
 			changeCourseOrg(course, orgIds);
 		}
 
@@ -263,7 +269,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				if (!classroom.getResourceId().equals(existRoom.getResourceId())) {
+				if (!classroom.getOrganizationId().equals(existRoom.getOrganizationId())) {
 					courseMapper.updateById(course);
 				}
 				classroomMapper.updateById(classroom);
@@ -1287,6 +1293,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 组织信息
 		String orgName = remoteOrganizationService.orgNameById(classroom.getOrganizationId());
 		classroomBo.setOrganizationName(orgName);
+
+		// 计划数据
+		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+			TrainPlan trainPlan = trainPlanMapper.selectById(classroom.getTrainPlanId());
+			classroomBo.setTrainPlanName(trainPlan.getName());
+		}
 		return classroomBo;
 	}
 

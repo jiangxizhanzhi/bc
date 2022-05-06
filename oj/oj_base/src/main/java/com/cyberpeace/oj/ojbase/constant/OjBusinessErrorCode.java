@@ -147,4 +147,10 @@ public interface OjBusinessErrorCode {
 	/** 对应的课堂未找到*/
 	String CLASSROOM_NOT_FOUNT = "102047";
 
+	/** 训练计划不能为空*/
+	String TRAIN_PLAN_ID_NOT_NULL = "102048";
+
+	/** 检索不到对应的训练计划*/
+	String TRAIN_PLAN_NOT_FOUND = "102049";
+
 }

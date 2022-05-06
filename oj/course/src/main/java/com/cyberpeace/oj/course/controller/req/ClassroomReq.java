@@ -21,15 +21,18 @@ public class ClassroomReq implements Serializable {
 	private String resourceId;
 
 	@ApiModelProperty("课程编号")
-	@NotBlank(groups = { Create.class, Update.class }, message = OjBusinessErrorCode.COURSE_INFORMATION_NOT_NULL)
+	@NotBlank(groups = { Create.class, Update.class },
+			message = OjBusinessErrorCode.COURSE_INFORMATION_NOT_NULL)
 	private String courseId;
 
 	@ApiModelProperty("课时编号")
-	@NotBlank(groups = { Create.class, Update.class }, message = OjBusinessErrorCode.LESSON_INFORMATION_NOT_NULL)
+	@NotBlank(groups = { Create.class, Update.class },
+			message = OjBusinessErrorCode.LESSON_INFORMATION_NOT_NULL)
 	private String lessonId;
 
 	@ApiModelProperty("组织编号")
-	@NotBlank(groups = { Create.class, Update.class }, message = OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL)
+	@NotBlank(groups = { Create.class, Update.class },
+			message = OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL)
 	private String organizationId;
 
 	@ApiModelProperty("开始时间")
@@ -39,5 +42,10 @@ public class ClassroomReq implements Serializable {
 	@ApiModelProperty("结束时间")
 	@NotNull(groups = { Create.class, Update.class })
 	private Date endTime;
+
+	@ApiModelProperty("训练计划编号")
+	@NotBlank(groups = { Create.class, Update.class },
+			message = OjBusinessErrorCode.TRAIN_PLAN_ID_NOT_NULL)
+	private String trainPlanId;
 
 }

@@ -68,6 +68,20 @@ public class ClassroomValidateHandler {
 	}
 
 	/**
+	 * 训练计划存在性校验
+	 * @param planId
+	 * @return
+	 */
+	public TrainPlan validatePlanExistById(String planId) {
+		TrainPlan trainPlan = trainPlanMapper.selectById(planId);
+		if (null == trainPlan) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NOT_FOUND);
+		}
+
+		return trainPlan;
+	}
+
+	/**
 	 * 课堂签到校验
 	 * @param classroomId
 	 * @param userId
@@ -211,8 +225,9 @@ public class ClassroomValidateHandler {
 			if (null == classroom) {
 				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_NOT_FOUNT);
 			}
-			if (!classroom.getCreateUserId().equals(authContext.getUserId())){
-				log.error("User=[{}] has no permission ! classroom_id=[{}]",authContext.getUserId(), classroomId);
+			if (!classroom.getCreateUserId().equals(authContext.getUserId())) {
+				log.error("User=[{}] has no permission ! classroom_id=[{}]",
+						authContext.getUserId(), classroomId);
 				throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 			}
 		}

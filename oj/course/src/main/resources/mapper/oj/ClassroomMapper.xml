@@ -32,6 +32,9 @@
                         #{orgId}
                     </foreach>
                 </if>
+                <if test="listQuery.trainPlanId != null and listQuery.trainPlanId != ''">
+                    and train_plan_id = #{listQuery.trainPlanId}
+                </if>
             </if>
         </where>
     </select>

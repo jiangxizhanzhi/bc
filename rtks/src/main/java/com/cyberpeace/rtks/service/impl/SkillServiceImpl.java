@@ -124,6 +124,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public void deleteMissionRelation(String skillId, List<String> missionTemplateIds) {
+		if (missionTemplateIds.isEmpty()) {
+			return;
+		}
 		skillMissionRelationMapper.batchDeleteBySkillAndMissions(skillId, missionTemplateIds);
 	}
 

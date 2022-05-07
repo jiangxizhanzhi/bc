@@ -10,7 +10,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
  */
 public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 
-    List<String> selectIdsByEvalIndicatorIds(List<String> evalIndicatorIds);
+	List<EvalCollection> selectIdsByEvalIndicatorIds(List<String> evalIndicatorIds);
 }
 
 

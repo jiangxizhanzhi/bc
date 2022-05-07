@@ -29,6 +29,16 @@ public class EvalIndicator extends BaseTable {
 	private String description;
 
 	/**
+	 * 数据类型
+	 */
+	private String datatype;
+
+	/**
+	 * 连接线
+	 */
+	private String connlist;
+
+	/**
 	 * 聚合算法id
 	 */
 	private String aggregatingAlgorithmId;

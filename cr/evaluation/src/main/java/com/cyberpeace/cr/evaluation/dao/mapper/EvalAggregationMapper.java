@@ -10,7 +10,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
  */
 public interface EvalAggregationMapper extends BaseMapper<EvalAggregation> {
 
-	List<String> selectIdsByEvalIndicatorIds(List<String> evalIndicatorIds);
+	List<EvalAggregation> selectIdsByEvalIndicatorIds(List<String> evalIndicatorIds);
 }
 
 

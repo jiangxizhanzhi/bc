@@ -12,6 +12,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAggregationMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper;
@@ -38,24 +40,33 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 	private EvalCollectionMapper evalCollectionMapper;
 
 	@Override
-	public void saveBatchContext(List<EvalIndicatorContext> evalIndicators, String userId,
+	public void saveBatchContext(EvalIndicatorReq evalIndicatorReq, String userId,
 			List<String> collectionIds) {
 
-		List<EvalIndicator> evalIndicatorList = evalIndicators.stream()
+		List<EvalIndicator> evalIndicatorList = evalIndicatorReq.getEvalIndicators().stream()
 				.map(evalIndicatorContext -> {
-					EvalIndicator evalIndicator = BeanUtils.copy(evalIndicatorContext,
-							EvalIndicator.class);
-
-					evalIndicator.setResourceId(evalIndicatorContext.getEvalIndicatorId());
-					evalIndicator.setAggregationIds(
-							JsonUtil.arrayToString(evalIndicatorContext.getAggregationIds()));
-					evalIndicator.setCollectionIds(JsonUtil.arrayToString(collectionIds));
-					evalIndicator.setCreateUserId(userId);
-
-					return evalIndicator;
+					return convertEvalIndicatorReqToEvalIndicator(evalIndicatorContext,
+							evalIndicatorReq, userId, collectionIds);
 				}).collect(Collectors.toList());
 
 		this.saveBatch(evalIndicatorList);
+	}
+
+	private EvalIndicator convertEvalIndicatorReqToEvalIndicator(
+			EvalIndicatorContext evalIndicatorContext, EvalIndicatorReq evalIndicatorReq,
+			String userId, List<String> collectionIds) {
+		EvalIndicator evalIndicator = BeanUtils.copy(evalIndicatorContext, EvalIndicator.class);
+
+		evalIndicator.setResourceId(evalIndicatorContext.getEvalIndicatorId());
+		evalIndicator.setAggregationIds(
+				JsonUtil.arrayToString(evalIndicatorContext.getAggregationIds()));
+		evalIndicator.setCollectionIds(JsonUtil.arrayToString(collectionIds));
+		evalIndicator.setCreateUserId(userId);
+		evalIndicator.setDescription(evalIndicatorReq.getDescription());
+		evalIndicator.setDatatype(evalIndicatorReq.getDatatype());
+		evalIndicator.setConnlist(evalIndicatorReq.getConnlist());
+
+		return evalIndicator;
 	}
 
 	@Override
@@ -64,21 +75,43 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				List<String> evalAggregationIds = evalAggregationMapper
-						.selectIdsByEvalIndicatorIds(evalIndicatorIds);
-				List<String> evalCollectionIds = evalCollectionMapper
-						.selectIdsByEvalIndicatorIds(evalIndicatorIds);
 
+				deleteAggregationAndCollection(evalIndicatorIds);
 				evalIndicatorMapper.deleteBatchIds(evalIndicatorIds);
-				if (evalAggregationIds.size() > 0) {
-					evalAggregationMapper.deleteBatchIds(evalAggregationIds);
-				}
-				if (evalCollectionIds.size() > 0) {
-					evalCollectionMapper.deleteBatchIds(evalCollectionIds);
-				}
+
 			}
 		});
 
 		return true;
 	}
+
+	@Override
+	public void deleteAggregationAndCollection(List<String> evalIndicatorIds) {
+		List<String> evalAggregationIds = StreamApiUtils.map(
+				evalAggregationMapper.selectIdsByEvalIndicatorIds(evalIndicatorIds),
+				evalAggregation -> evalAggregation.getResourceId());
+		List<String> evalCollectionIds = StreamApiUtils.map(
+				evalCollectionMapper.selectIdsByEvalIndicatorIds(evalIndicatorIds),
+				evalCollectionContext -> evalCollectionContext.getResourceId());
+
+		if (evalAggregationIds.size() > 0) {
+			evalAggregationMapper.deleteBatchIds(evalAggregationIds);
+		}
+		if (evalCollectionIds.size() > 0) {
+			evalCollectionMapper.deleteBatchIds(evalCollectionIds);
+		}
+	}
+
+	@Override
+	public void updateBatchContext(EvalIndicatorReq evalIndicatorReq,
+			List<EvalIndicatorContext> evalIndicators, String userId, List<String> collectionIds) {
+		List<EvalIndicator> evalIndicatorList = evalIndicators.stream()
+				.map(evalIndicatorContext -> {
+					return convertEvalIndicatorReqToEvalIndicator(evalIndicatorContext,
+							evalIndicatorReq, userId, collectionIds);
+				}).collect(Collectors.toList());
+
+		this.updateBatchById(evalIndicatorList);
+	}
+
 }

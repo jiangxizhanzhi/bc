@@ -12,4 +12,6 @@ import com.cyberpeace.cr.evaluation.service.context.EvalCollectionContext;
 public interface EvalCollectionService extends IService<EvalCollection> {
 
 	void saveBatchContext(List<EvalCollectionContext> evalCollectionContexts);
+
+	List<EvalCollectionContext> getContextByEvalIndicatorId(String evalIndicatorId);
 }

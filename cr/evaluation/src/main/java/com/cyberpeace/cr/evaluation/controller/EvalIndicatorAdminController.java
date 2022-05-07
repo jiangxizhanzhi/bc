@@ -10,17 +10,27 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
 import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
 import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
+import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "后台-测试靶场-指标项管理")
@@ -48,9 +58,9 @@ public class EvalIndicatorAdminController {
 	@ApiOperation("新增指标项")
 	@PostMapping("")
 	public BaseRsp<String>
-			addEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalSystemReq) {
+			addEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
 
-		String connlist = evalSystemReq.getConnlist();
+		String connlist = evalIndicatorReq.getConnlist();
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -58,80 +68,98 @@ public class EvalIndicatorAdminController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 				// 获取所有的采集项列表
-				List<String> collectionIds = StreamApiUtils.map(evalSystemReq.getEvalCollections(),
+				List<String> collectionIds = StreamApiUtils.map(
+						evalIndicatorReq.getEvalCollections(),
 						evalCollectionContext -> evalCollectionContext.getEvalCollectionId());
-
-				evalIndicatorService.saveBatchContext(evalSystemReq.getEvalIndicators(),
+				// 获取所有的采集项列表，保存指标项
+				evalIndicatorService.saveBatchContext(evalIndicatorReq,
 						UserInfoContext.getUserContext().getUserId(), collectionIds);
-				evalAggregationService.saveBatchContext(evalSystemReq.getEvalAggregations());
-				evalCollectionService.saveBatchContext(evalSystemReq.getEvalCollections());
+				// 保存聚合项和采集项
+				evalAggregationService.saveBatchContext(evalIndicatorReq.getEvalAggregations());
+				evalCollectionService.saveBatchContext(evalIndicatorReq.getEvalCollections());
 
 			}
 		});
 		return new BaseRsp(connlist);
 	}
 
-	/*	@ApiOperation("编辑体系指标")
-		@PutMapping("")
-		public BaseRsp<String> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
-	
-			String connlist = evalSystemReq.getConnlist();
-	
-			EvalSystem evalSystem = indicatorService.getById(evalSystemReq.getEvalSystemId());
-			if (null == evalSystem) {
-				log.info("EvalSystem not found! EvalSystemId=[{}]", evalSystemReq.getEvalSystemId());
-				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+	@ApiOperation("编辑体系指标")
+	@PutMapping("")
+	public BaseRsp<String>
+			editEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
+
+		String connlist = evalIndicatorReq.getConnlist();
+
+		EvalIndicator evalIndicator = evalIndicatorService
+				.getById(evalIndicatorReq.getEvalIndicatorId());
+		if (null == evalIndicator) {
+			log.info("EvalIndicator not found! evalIndicatorId=[{}]",
+					evalIndicatorReq.getEvalIndicatorId());
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				evalIndicatorService.deleteAggregationAndCollection(
+						Lists.newArrayList(evalIndicatorReq.getEvalIndicatorId()));
+
+				// 获取所有的采集项列表
+				List<String> collectionIds = StreamApiUtils.map(
+						evalIndicatorReq.getEvalCollections(),
+						evalCollectionContext -> evalCollectionContext.getEvalCollectionId());
+
+				evalIndicatorService.updateBatchContext(evalIndicatorReq,
+						evalIndicatorReq.getEvalIndicators(),
+						UserInfoContext.getUserContext().getUserId(), collectionIds);
+				evalAggregationService.saveBatchContext(evalIndicatorReq.getEvalAggregations());
+				evalCollectionService.saveBatchContext(evalIndicatorReq.getEvalCollections());
 			}
-	
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-	
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					evalIndexService.deleteBatchByEvalSystemId(evalSystemReq.getEvalSystemId());
-	
-					evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getFirstIndexes(),
-							EvalIndex.Level.FIRST.getCode()));
-					evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getSecondIndexes(),
-							EvalIndex.Level.SECONDE.getCode()));
-					evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getThirdIndexes(),
-							EvalIndex.Level.THIRD.getCode()));
-	
-					EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
-					evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
-	
-					indicatorService.updateById(evalSystem);
-				}
-			});
-	
-			return new BaseRsp(connlist);
+		});
+
+		return new BaseRsp(connlist);
+	}
+
+	@ApiOperation("查询体系指标")
+	@GetMapping("")
+	public BaseRsp<EvalSystemRsp> getEvalIndex(
+			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
+
+		EvalIndicator evalIndicator = evalIndicatorService.getById(resource_id);
+		if (null == evalIndicator) {
+			log.info("EvalIndicator not found! evalIndicatorId=[{}]", resource_id);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+
+		EvalIndicatorRsp evalIndicatorRsp = convertEvalIndicatorToEvalSystemRsp(evalIndicator);
+
+		return new BaseRsp(evalIndicatorRsp);
+	}
+
+	private EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator) {
+		EvalIndicatorRsp evalSystemRsp = BeanUtils.copy(evalIndicator, EvalIndicatorRsp.class);
+
+		EvalIndicatorContext evalIndicatorContext = BeanUtils.copy(evalIndicator,
+				EvalIndicatorContext.class);
+		evalIndicatorContext.setAggregationIds(
+				JsonUtil.toJsonObjectArray(evalIndicator.getAggregationIds(), String.class));
+		evalIndicatorContext.setEvalIndicatorId(evalIndicator.getResourceId());
+
+		evalSystemRsp.setEvalIndicatorId(evalIndicator.getResourceId());
+		evalSystemRsp.setEvalCollections(
+				evalCollectionService.getContextByEvalIndicatorId(evalIndicator.getResourceId()));
+		evalSystemRsp.setEvalAggregations(
+				evalAggregationService.getContextByEvalIndicatorId(evalIndicator.getResourceId()));;
+		evalSystemRsp.setEvalIndicators(Lists.newArrayList(evalIndicatorContext));
+
+		return evalSystemRsp;
+	}
+
+	/*
 	
-		@ApiOperation("查询体系指标")
-		@GetMapping("")
-		public BaseRsp<EvalSystemRsp> getEvalIndex(
-				@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
+		
 	
-			EvalSystem evalSystem = indicatorService.getById(resource_id);
-			if (null == evalSystem) {
-				log.info("EvalSystem not found! EvalSystemId=[{}]", resource_id);
-				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-			}
-			EvalSystemRsp evalSystemRsp = convertEvalSystemToEvalSystemRsp(evalSystem);
-			return new BaseRsp(evalSystemRsp);
-		}
-	
-		private EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem) {
-			EvalSystemRsp evalSystemRsp = BeanUtils.copy(evalSystem, EvalSystemRsp.class);
-			evalSystemRsp.setEvalSystemId(evalSystem.getResourceId());
-			evalSystemRsp.setFirstIndexes(evalIndexService.getIndexesByEvalSystemId(
-					evalSystem.getResourceId(), EvalIndex.Level.FIRST.getCode()));
-			evalSystemRsp.setSecondIndexes(evalIndexService.getIndexesByEvalSystemId(
-					evalSystem.getResourceId(), EvalIndex.Level.SECONDE.getCode()));
-			evalSystemRsp.setThirdIndexes(evalIndexService.getIndexesByEvalSystemId(
-					evalSystem.getResourceId(), EvalIndex.Level.THIRD.getCode()));
-	
-			return evalSystemRsp;
-		}
 	
 		private List<EvalIndex> convertIndexReqToIndex(List<IndexContext> firstIndexes, Integer level) {
 	

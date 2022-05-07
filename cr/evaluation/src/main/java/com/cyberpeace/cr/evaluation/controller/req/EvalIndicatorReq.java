@@ -14,13 +14,17 @@ import lombok.Data;
 @Data
 public class EvalIndicatorReq {
 
-	@ApiModelProperty(value = "评估项Id", required = true)
+	@ApiModelProperty(value = "指标项Id", required = true)
 	@NotNull
 	private String evalIndicatorId;
 
 	@ApiModelProperty(value = "名称", required = true)
 	@NotNull
 	private String name;
+
+	@ApiModelProperty(value = "数据类型", required = true)
+	@NotNull
+	private String datatype;
 
 	@ApiModelProperty(value = "描述", required = true)
 	@NotNull

@@ -35,7 +35,7 @@ public class RtksCommonUtil {
 			String val = ObjUtil.getFieldValueByName(field, relation).toString();
 			while (i < added.size()) {
 				idWeight = added.get(i);
-				if (val.equals(idWeight.getId())) {
+				if (val.equals(idWeight.getResourceId())) {
 					flag = true;
 					// 编辑了权重的
 					if (!ObjUtil.getFieldValueByName("weight", relation)

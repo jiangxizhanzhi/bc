@@ -140,7 +140,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		for (IdWeight skill : skillIdWeights) {
 			RoleSkillRelation relation = new RoleSkillRelation();
 			relation.setRoleId(resourceId);
-			relation.setSkillId(skill.getId());
+			relation.setSkillId(skill.getResourceId());
 			relation.setWeight(skill.getWeight());
 			relations.add(relation);
 		}

@@ -114,7 +114,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		for (IdWeight idWeight : missionTemplates) {
 			SkillMissionRelation relation = new SkillMissionRelation();
 			relation.setSkillId(skillId);
-			relation.setMissionTemplateId(idWeight.getId());
+			relation.setMissionTemplateId(idWeight.getResourceId());
 			relation.setWeight(idWeight.getWeight());
 			relations.add(relation);
 		}
@@ -151,7 +151,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			i = 0;
 			while (i < missions.size()) {
 				idWeight = missions.get(i);
-				if (relation.getMissionTemplateId().equals(idWeight.getId())) {
+				if (relation.getMissionTemplateId().equals(idWeight.getResourceId())) {
 					flag = true;
 					// 编辑了权重的
 					if (!relation.getWeight().equals(idWeight.getWeight())) {
@@ -198,7 +198,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			return 0.0;
 		}
 		// read task scores
-		List<String> missionTemplateIds = missionWeights.stream().map(IdWeight::getId)
+		List<String> missionTemplateIds = missionWeights.stream().map(IdWeight::getResourceId)
 				.collect(Collectors.toList());
 		List<CrTaskScore> crTaskScoreList = crTaskMapper
 				.getScoreByMissionTemplateIdAndUserId(userId, missionTemplateIds);
@@ -209,7 +209,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		// calculate
 		WeightedCalculation calculation = new WeightedCalculation();
 		for (IdWeight mission : missionWeights) {
-			CrTaskScore crTaskScore = scoreMap.get(mission.getId());
+			CrTaskScore crTaskScore = scoreMap.get(mission.getResourceId());
 			if (crTaskScore == null) {
 				calculation.feed(mission.getWeight(), 0.0);
 			} else {

@@ -458,7 +458,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		WeightedCalculation calculation = new WeightedCalculation();
 		for (IdWeight skillWight : skillWeights) {
 			// 2、获取单个技能得分
-			Double skillScore = skillService.calculateScore(skillWight.getId(), userId);
+			Double skillScore = skillService.calculateScore(skillWight.getResourceId(), userId);
 			// 3、统计
 			calculation.feed(skillWight.getWeight(), skillScore);
 		}

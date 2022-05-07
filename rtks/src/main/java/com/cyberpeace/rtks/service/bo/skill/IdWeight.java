@@ -9,7 +9,7 @@ import lombok.Data;
 public class IdWeight implements Serializable {
 
 	@ApiModelProperty("id, 编号")
-	private String id;
+	private String resourceId;
 
 	@ApiModelProperty("权重")
 	private Integer weight;

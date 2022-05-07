@@ -39,7 +39,7 @@
         where role_id = #{roleId}
     </select>
     <select id="listByRoleId" resultType="com.cyberpeace.rtks.service.bo.skill.IdWeight">
-        select skill_id as id, weight
+        select skill_id as resource_id, weight
         from rtks_role_skill_relation
         where role_id = #{roleId}
     </select>

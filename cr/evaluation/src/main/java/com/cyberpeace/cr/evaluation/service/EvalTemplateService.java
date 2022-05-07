@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateListQuery;
@@ -17,5 +19,7 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	IPage<EvalTemplate> list(EvalTemplateListQuery evalTemplateListQuery);
 
 	String getLogoPath(String attachmentId);
+
+	Boolean batchDelete(List<String> templateIds);
 
 }

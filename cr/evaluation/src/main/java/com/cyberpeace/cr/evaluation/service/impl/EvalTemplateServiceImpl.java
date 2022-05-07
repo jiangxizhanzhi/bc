@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +45,18 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			return attachment.getFilePath();
 		}
 		return "";
+	}
+
+	@Override
+	public Boolean batchDelete(List<String> templateIds) {
+		List<EvalTemplate> evalTemplateList = listByIds(templateIds);
+
+		// 删除task及相关场景 todo
+
+		evalTemplateMapper.deleteBatchIds(templateIds);
+
+		return true;
+
 	}
 
 }

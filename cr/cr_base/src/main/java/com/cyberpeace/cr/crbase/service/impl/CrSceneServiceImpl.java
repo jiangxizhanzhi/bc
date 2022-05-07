@@ -19,10 +19,15 @@ public class CrSceneServiceImpl implements CrSceneService {
 	private RemoteTopoService remoteTopoService;
 
 	@Override
-	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode) {
+	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode, String topoId) {
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", sceneConfigData);
 		topoJson.put("reference_type", businessCode.getCode());
+
+		if (topoId != null){
+			topoJson.put("id", topoId);
+		}
+
 		return remoteTopoService.save(topoJson);
 	}
 }

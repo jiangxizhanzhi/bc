@@ -59,7 +59,12 @@ public class EvalTemplateController {
 	@PostMapping("")
 	public BaseRsp<String> addEvalTemplate(@RequestBody EvaTemplateAddReq evaTemplateAddReq) {
 
-		EvalTemplate evalTemplate = reqToTemplate(evaTemplateAddReq);
+		EvalTemplate evalTemplate = new EvalTemplate();
+
+		reqToTemplate(evaTemplateAddReq, evalTemplate);
+
+		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
+				LocalScene.BusinessCode.EVALUATION_RANGE, null));
 
 		evalTemplateService.save(evalTemplate);
 
@@ -93,6 +98,9 @@ public class EvalTemplateController {
 	@GetMapping("")
 	public BaseRsp<EvalTemplateRsp> getEvalTemplate(@ApiParam(name = "template_id",
 			value = "测试靶场id", required = true) @RequestParam("template_id") String templateId) {
+
+		// 权限校验 todo
+
 		EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getResourceId()));
@@ -105,16 +113,33 @@ public class EvalTemplateController {
 
 	@ApiOperation("模板修改")
 	@PutMapping("")
-	public BaseRsp<EvalTemplateRsp>
+	public BaseRsp<String>
 			modifyEvalTemplate(@RequestBody EvaTemplateModifyReq evaTemplateModifyReq) {
-		return new BaseRsp<>(new EvalTemplateRsp());
+
+		// 权限校验 todo
+
+		String templateId = evaTemplateModifyReq.getResourceId();
+
+		EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
+
+		reqToTemplate(evaTemplateModifyReq, evalTemplate);
+
+		crSceneService.saveTopo(evaTemplateModifyReq.getSceneConfigData(),
+				LocalScene.BusinessCode.EVALUATION_RANGE, evalTemplate.getTopoId());
+
+		evalTemplateService.updateById(evalTemplate);
+
+		return new BaseRsp<>(templateId);
 	}
 
 	@ApiOperation("模板删除")
 	@DeleteMapping("")
 	public BaseRsp<Boolean>
 			deleteEvalTemplate(@RequestBody EvalTemplateDeleteReq evalTemplateDeleteReq) {
-		return new BaseRsp<>(true);
+
+		Boolean result = evalTemplateService.batchDelete(evalTemplateDeleteReq.getTemplateIds());
+
+		return new BaseRsp<>(result);
 	}
 
 	private void validateReq(EvaTemplateAddReq evaTemplateAddReq) {
@@ -132,17 +157,17 @@ public class EvalTemplateController {
 		}
 	}
 
-	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq) {
+	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq,
+			EvalTemplate evalTemplate) {
 
 		validateReq(evaTemplateAddReq);
 
-		EvalTemplate evalTemplate = BeanUtils.copy(evaTemplateAddReq, EvalTemplate.class);
+		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
 
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
 
 		evalTemplate.setLogo(evaTemplateAddReq.getLogoId());
-		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
-				LocalScene.BusinessCode.EVALUATION_RANGE));
+
 		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		return evalTemplate;

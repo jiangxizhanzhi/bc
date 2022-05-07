@@ -62,4 +62,14 @@ public class BeanUtils {
 		return mapperFactory.getMapperFacade().mapAsList(source, target);
 	}
 
+	/**
+	 * 拷贝对象属性
+	 * @param source
+	 * @param target
+	 * @return
+	 */
+	public static void copyProperties(Object source, Object target){
+		org.springframework.beans.BeanUtils.copyProperties(source, target);
+	}
+
 }

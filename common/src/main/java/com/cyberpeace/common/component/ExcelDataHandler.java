@@ -334,7 +334,7 @@ public class ExcelDataHandler {
 		// 校验文件是否存在 不存在则新建
 		File parentFile = file.getParentFile();
 		if (!parentFile.exists()) {
-			boolean isCreated = file.mkdirs();
+			boolean isCreated = parentFile.mkdirs();
 			if (!isCreated) {
 				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, parentFile.getPath());
 			}

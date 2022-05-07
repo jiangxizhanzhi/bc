@@ -110,7 +110,7 @@ public class AdminPersonalStatsController {
 	@ApiOperation("学习数据-全部数据-导出")
 	@GetMapping(value = "/user-stats-data-export")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
-	public void userStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) throws IOException {
+	public void userStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
 		ListRsp<UserStatsBo> userStats = learnStatsService.getUserStats(userStatsReq.toPageParam(), null, null,
 				false, userStatsReq.getStartTime(), userStatsReq.getEndTime());
 
@@ -126,7 +126,7 @@ public class AdminPersonalStatsController {
 	}
     @ApiOperation("学习数据-组织数据-导出")
     @GetMapping(value = "/org-stats-data-export")
-    public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) throws IOException {
+    public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
         ListRsp<OrgStatsBo> orgStatsData = learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), null, null,
                 userStatsReq.getStartTime(), userStatsReq.getEndTime());
         List<String> passFields = Lists.newArrayList( "resourceId", "reportAverage");

@@ -327,20 +327,16 @@ public class ExcelDataHandler {
 	 * @return 文件流
 	 */
 	public static <T> File exportExcel(List<T> list, String filePath, String sheetName,
-			List<String> passFields, ExcelHeader excelHeader) throws IOException {
+			List<String> passFields, ExcelHeader excelHeader) {
 
 
 		File file = new File(filePath);
 		// 校验文件是否存在 不存在则新建
-		if(!file.getParentFile().exists()){
-			String destFileName = file.getAbsolutePath();
-			try{if(!file.createNewFile()) {
-				log.error("File" + destFileName + "create failed！");
-
-			}
-			}catch(IOException e) {
-				e.printStackTrace();
-				log.error("File" + destFileName + "create failed！" +e.getMessage());
+		File parentFile = file.getParentFile();
+		if (!parentFile.exists()) {
+			boolean isCreated = file.mkdirs();
+			if (!isCreated) {
+				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, parentFile.getPath());
 			}
 		}
 

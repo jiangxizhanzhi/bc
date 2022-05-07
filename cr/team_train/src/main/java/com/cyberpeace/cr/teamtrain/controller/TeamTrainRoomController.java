@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -17,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -35,10 +35,7 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -110,6 +107,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private TrainRecordService trainRecordService;
+
+	@Autowired
+	private BusinessTemplateService businessTemplateService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -381,6 +381,14 @@ public class TeamTrainRoomController {
 
 		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
 
+		// attack engage relation
+		List<String> businessTemplateIds = data.getRecords().stream()
+				.map(TeamRoomData::getBusinessTemplateId).collect(Collectors.toList());
+		List<String> attackRelatedIds = businessTemplateService
+				.getAttackRelatedIds(businessTemplateIds);
+		List<String> engageRelatedIds = businessTemplateService
+				.getEngageRelatedIds(businessTemplateIds);
+
 		for (TeamRoomData teamRoomData : data.getRecords()) {
 			RoleQuery roleQuery = new RoleQuery();
 			roleQuery.setRoomId(teamRoomData.getResourceId());
@@ -403,6 +411,11 @@ public class TeamTrainRoomController {
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+			// set attack engage relation
+			teamRoomRsp.setIsAttackRelated(
+					attackRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setIsEngageRelated(
+					engageRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
 
 			teamRoomRspList.add(teamRoomRsp);
 		}

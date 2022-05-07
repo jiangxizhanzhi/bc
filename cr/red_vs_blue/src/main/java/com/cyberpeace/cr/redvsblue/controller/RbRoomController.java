@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -18,10 +17,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -30,6 +32,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
@@ -52,8 +55,6 @@ import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
-import com.cyberpeace.common.model.room.DashboardInfo;
-import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -96,6 +97,9 @@ public class RbRoomController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private BusinessTemplateService businessTemplateService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -155,6 +159,14 @@ public class RbRoomController {
 
 		IPage<RbRoomData> data = rbRoomService.list(listQuery);
 
+		// attack engage relation
+		List<String> businessTemplateIds = data.getRecords().stream()
+				.map(RbRoomData::getBusinessTemplateId).collect(Collectors.toList());
+		List<String> attackRelatedIds = businessTemplateService
+				.getAttackRelatedIds(businessTemplateIds);
+		List<String> engageRelatedIds = businessTemplateService
+				.getEngageRelatedIds(businessTemplateIds);
+
 		// 训练场景拓扑节点数量获取
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
 				data.getRecords().stream().map(rbRoomData -> rbRoomData.getCopyedTopoId())
@@ -174,6 +186,12 @@ public class RbRoomController {
 					JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
 			rbRoomRsp.setTrainSkill(
 					JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));
+
+			// set attack engage relation
+			rbRoomRsp.setIsAttackRelated(
+					attackRelatedIds.contains(rbRoomRsp.getBusinessTemplateId()));
+			rbRoomRsp.setIsEngageRelated(
+					engageRelatedIds.contains(rbRoomRsp.getBusinessTemplateId()));
 
 			return rbRoomRsp;
 		});

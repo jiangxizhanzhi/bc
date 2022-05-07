@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -39,6 +40,8 @@ import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
+import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
+import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
@@ -193,6 +196,31 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		// update
 		missionTemplateService.batchUpdateBusinessTemplateId(businessTemplateId,
 				newMissionTemplateIds);
+	}
+
+	@Override
+	public List<String> getAttackRelatedIds(List<String> businessTemplateIds) {
+		if (businessTemplateIds.isEmpty()) {
+			return businessTemplateIds;
+		}
+		return businessTemplateMapper.getAttackRelatedIds(businessTemplateIds);
+	}
+
+	@Override
+	public List<String> getEngageRelatedIds(List<String> businessTemplateIds) {
+		if (businessTemplateIds.isEmpty()) {
+			return businessTemplateIds;
+		}
+		return businessTemplateMapper.getEngageRelatedIds(businessTemplateIds);
+	}
+
+	@Override
+	public ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq) {
+		Page page = btPageReq.toPageParam();
+
+		IPage<BusinessTemplateSimple> result = businessTemplateMapper.listSimple(page,
+				btPageReq.getType(), btPageReq.getDifficulty(), btPageReq.getPattern());
+		return PageUtil.getListResult(result);
 	}
 
 	@Override

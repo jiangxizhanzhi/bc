@@ -57,4 +57,13 @@ public class RbRoomRsp implements Serializable {
 
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
+
+	@ApiModelProperty(value = "后台模板id，用于查询职业框架关联")
+	private String businessTemplateId;
+
+	@ApiModelProperty(value = "是否关联 ATT&CK")
+	private Boolean isAttackRelated;
+
+	@ApiModelProperty(value = "是否关联 Engage")
+	private Boolean isEngageRelated;
 }

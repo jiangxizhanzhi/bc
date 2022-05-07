@@ -71,6 +71,7 @@
         cr_team_room.copyed_topo_id,
         cr_team_room.training_status,
         cr_team_template.duration_time,
+        cr_team_template.business_template_id,
         local_scene.start_time scene_start_time,
         local_scene.destroy_time scene_end_time,
         local_scene.scene_status,

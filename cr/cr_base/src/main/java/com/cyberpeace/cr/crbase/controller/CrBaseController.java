@@ -84,7 +84,7 @@ public class CrBaseController {
 		return new BaseRsp<>(rsp);
 	}
 
-	@ApiOperation("获取当前平台支持的训练类型")
+	@ApiOperation("获取当前用户拥有权限的训练类型")
 	@GetMapping("/authorized_type")
 	public BaseRsp<List<CodeNameRsp>> getAuthorizedType() {
 		Set<String> permissions = UserInfoContext.getUserContext().getPermissions();

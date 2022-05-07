@@ -43,4 +43,12 @@ public interface ClassroomSignService extends IService<ClassroomSign> {
 	 * @return
 	 */
 	HelpStatusBo getHelpStatus(String lessonId, String nodeId);
+
+	/**
+	 * 获取远程协助地址
+	 * @param classroomId
+	 * @param userId
+	 * @return
+	 */
+	String getHelpUrl(String classroomId, String userId);
 }

@@ -183,6 +183,17 @@ public class AdminClassroomController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("获取远程协助地址")
+	@GetMapping("/get_help")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
+			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	public BaseRsp<String> getHelpUrl(@RequestParam("resource_id") String classroomId,
+			@RequestParam("user_id") String userId) {
+		String helpUrl = classroomSignService.getHelpUrl(classroomId, userId);
+		return new BaseRsp<>(helpUrl);
+	}
+
 	@ApiOperation("查询课堂实验报告列表")
 	@GetMapping("/classroom_report")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)

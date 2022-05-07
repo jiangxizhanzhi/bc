@@ -3,31 +3,28 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.Date;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.cs.service.context.ChatWsMessageIdentifier;
-import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.oj.ojbase.constant.OjEvent;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.context.ChatWsMessageIdentifier;
+import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
@@ -37,8 +34,10 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -224,6 +223,47 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		helpStatusBo.setNodeId(nodeId);
 		return helpStatusBo;
 
+	}
+
+	@Override
+	public String getHelpUrl(String classroomId, String userId) {
+		// 房间校验
+		classroomValidateHandler.validateClassroomExist(classroomId);
+		ClassroomSign classroomSign = classroomValidateHandler.validateSign(classroomId, userId);
+
+		// 无节点信息 无协助状态 协助状态不符合
+		if (StringUtils.isBlank(classroomSign.getNodeId()) || null == classroomSign.getNeedHelp()
+				|| classroomSign.getNeedHelp().intValue() == ClassroomSign.NEED_HELP.END_HELP
+						.getCode().intValue()
+				|| classroomSign.getNeedHelp().intValue() == ClassroomSign.NEED_HELP.NO_HELP
+						.getCode().intValue()) {
+			throw new BusinessException(OjBusinessErrorCode.USER_NO_NEED_HELP);
+		}
+
+		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(classroomId,
+				userId);
+		if (null == groupInfo) {
+			throw new BusinessException(OjBusinessErrorCode.USER_CLASS_GROUP_NOT_FOUND);
+		}
+
+		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
+		if (null == ojLocalScene) {
+			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		if (null == localScene) {
+			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		Map<String, String> assistanceMap = remoteSceneService.getAssistanceMap(
+				Lists.newArrayList(localScene.getMpSceneId()),
+				Lists.newArrayList(classroomSign.getNodeId()), Lists.newArrayList(userId));
+		if (StringUtils.isBlank(assistanceMap.get(userId))) {
+			throw new BusinessException(OjBusinessErrorCode.HELP_URL_NOT_FOUND);
+		}
+
+		return assistanceMap.get(userId);
 	}
 
 	/**

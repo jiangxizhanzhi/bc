@@ -153,4 +153,13 @@ public interface OjBusinessErrorCode {
 	/** 检索不到对应的训练计划*/
 	String TRAIN_PLAN_NOT_FOUND = "102049";
 
+	/** 用户无课堂分组信息*/
+	String USER_CLASS_GROUP_NOT_FOUND = "102050";
+
+	/** 用户未进行远程协助请求或者协助已结束*/
+	String USER_NO_NEED_HELP = "102051";
+
+	/** 未获取到远程协助地址*/
+	String HELP_URL_NOT_FOUND = "102052";
+
 }

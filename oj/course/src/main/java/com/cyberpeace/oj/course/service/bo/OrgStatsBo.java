@@ -12,7 +12,7 @@ public class OrgStatsBo extends PublicStatsBo {
     private String resourceId;
 
     @ApiModelProperty("组织名")
-    private String orgName;
+    private String organizationData;
 
     @ApiModelProperty("组织人数")
     private Integer orgUserCount;

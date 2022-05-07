@@ -44,9 +44,9 @@ public interface RemoteOrganizationService {
 	String getOrgIdByTree(String orgTree);
 
 	/**
-	 * 获取最低级班级的ids
+	 * 获取当前组织的所有子级对象集合
 	 * @return
 	 */
-	JSONArray classList();
+	JSONArray classList(String orgId);
 
 }

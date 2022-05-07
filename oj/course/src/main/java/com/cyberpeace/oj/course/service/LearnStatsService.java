@@ -5,7 +5,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.oj.course.controller.res.HistogramRes;
 import com.cyberpeace.oj.course.service.bo.*;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 public interface LearnStatsService {
 
@@ -14,11 +14,12 @@ public interface LearnStatsService {
      * @param page 分页信息
      * @param pattern 用户姓名模糊查询
      * @param organization 所属组织查询
-     * @param dateType
-     * @param isPage
+     * @param isPage 是否分页 区分导出和分页查询
+     * @param startTime
+     * @param endTime
      * @return 用户学习统计
      */
-    ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization, String dateType, boolean isPage);
+    ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization, boolean isPage, String startTime, String endTime);
 
     /**
      * 用户学习排行
@@ -49,15 +50,18 @@ public interface LearnStatsService {
     /**
      * 班级学习统计排行
      * @return 统计信息
+     * @param request
      */
-    UserStatsRankBo getOrgLearnRank();
+    UserStatsRankBo getOrgLearnRank(HttpServletRequest request);
 
     /**
      * 用户学习统计
      * @param page 分页信息
-     * @param organization 所属组织查询
      * @param pattern 用户姓名模糊查询
+     * @param organization 所属组织查询
+     * @param startTime 起始时间
+     * @param endTime 截止时间
      * @return 用户学习统计
      */
-    ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String dateType);
+    ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String startTime, String endTime);
 }

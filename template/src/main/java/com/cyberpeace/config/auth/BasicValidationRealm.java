@@ -1,5 +1,6 @@
 package com.cyberpeace.config.auth;
 
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.SpringContextUtil;
@@ -62,6 +63,7 @@ public class BasicValidationRealm extends AuthorizingRealm {
                     .getBeanByClass(RemoteUserService.class);
 
             userInfo = remoteUserService.doAuthentication(token);
+            CommonContext.setAuthorization(token); // 调用竞赛接口时需要token
             Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());
             userInfo.setPermissions(userPermission);
 

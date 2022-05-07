@@ -9,6 +9,9 @@ public class UserStatsReq extends PageReqBase {
     @ApiModelProperty("组织查询")
     private String organization;
 
-    @ApiModelProperty("时间统计类型")
-    private String date_type;
+    @ApiModelProperty(name = "startTime", value = "开始日期")
+    private String startTime;
+
+    @ApiModelProperty(name = "endTime", value = "结束日期")
+    private String endTime;
 }

@@ -192,10 +192,19 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return childIdList;
 	}
 
+	/**
+	 * 获取当前组织下的所有子级组织对象集合
+	 * @param orgId 指定组织id
+	 * @return 子级对象的集合JSONArray
+	 */
 	@Override
-	public JSONArray classList() {
+	public JSONArray classList(String orgId) {
+		String url = MP_ORG_TREE_URL;
+		if(null != orgId && !orgId.isEmpty()){
+			url += orgId;
+		}
 
-		JSONArray orgs = HttpClientUtil.rawGet(MP_ORG_TREE_URL, JSONArray.class);
+		JSONArray orgs = HttpClientUtil.rawGet(url, JSONArray.class);
 
 		// 空数组校验
 		if (CollectionUtils.isEmpty(orgs)) {

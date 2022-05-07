@@ -22,18 +22,16 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Api(tags = "后台-学习统计-个人统计")
 @RestController
@@ -50,9 +48,8 @@ public class AdminPersonalStatsController {
 	@GetMapping("/person-stats")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<UserStatsBo>> personalStats(UserStatsReq userStatsReq) {
-		return new BaseRsp<>(learnStatsService.getUserStats(userStatsReq.toPageParam(),
-				userStatsReq.getPattern(), userStatsReq.getOrganization(),
-				userStatsReq.getDate_type(), true));
+		return new BaseRsp<>(learnStatsService.getUserStats(userStatsReq.toPageParam(), userStatsReq.getPattern(), userStatsReq.getOrganization(),
+				true, userStatsReq.getStartTime(), userStatsReq.getEndTime()));
 	}
 
 	@ApiOperation("个人统计排名")
@@ -80,14 +77,14 @@ public class AdminPersonalStatsController {
 				learnStatsService.getPersonalStatsDetail4Course(pageReq.toPageParam(), userId));
 	}
 
-	@ApiOperation("积分排名-组织积分排名Top5")
+	@ApiOperation("积分排名-组织积分排名Top10")
 	@GetMapping("/class_integral")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<HistogramRes> classIntegralTopTen() {
 		return new BaseRsp<>(learnStatsService.getClassIntegralTopTen("org", ""));
 	}
 
-	@ApiOperation("积分排名-个人积分排名Top5")
+	@ApiOperation("积分排名-个人积分排名Top10")
 	@GetMapping("/personal-integral")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<HistogramRes> personalIntegralTopTen() {
@@ -97,26 +94,24 @@ public class AdminPersonalStatsController {
 	@ApiOperation("学习统计排名-组织数据")
 	@GetMapping("/org-stats-rank")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
-	public BaseRsp<UserStatsRankBo> orgStatsRank() {
-		return new BaseRsp<>(learnStatsService.getOrgLearnRank());
+	public BaseRsp<UserStatsRankBo> orgStatsRank(HttpServletRequest request) {
+		return new BaseRsp<>(learnStatsService.getOrgLearnRank(request));
 	}
 
 	@ApiOperation("学习数据-组织数据")
 	@GetMapping("/org-stats-data")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<OrgStatsBo>> orgStatsData(UserStatsReq userStatsReq) {
-		return new BaseRsp<>(learnStatsService.getOrgStatsData(userStatsReq.toPageParam(),
-				userStatsReq.getPattern(), userStatsReq.getOrganization(),
-				userStatsReq.getDate_type()));
+        return new BaseRsp<>(learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), userStatsReq.getPattern(), userStatsReq.getOrganization(),
+                userStatsReq.getStartTime(), userStatsReq.getEndTime()));
 	}
 
 	@ApiOperation("学习数据-全部数据-导出")
 	@GetMapping(value = "/user-stats-data-export")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
-	public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
-		ListRsp<UserStatsBo> userStats = learnStatsService.getUserStats(userStatsReq.toPageParam(),
-				userStatsReq.getPattern(), userStatsReq.getOrganization(),
-				userStatsReq.getDate_type(), false);
+	public void userStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
+		ListRsp<UserStatsBo> userStats = learnStatsService.getUserStats(userStatsReq.toPageParam(), null, null,
+				false, userStatsReq.getStartTime(), userStatsReq.getEndTime());
 
 		List<String> passFields = Lists.newArrayList("roles", "reportAverage", "resourceId",
 				"username");
@@ -128,5 +123,20 @@ public class AdminPersonalStatsController {
 				passFields, ExcelHeader.STUDY_STATISTIC);
 		FileUtil.setResponse(file, true, response);
 	}
+    @ApiOperation("学习数据-组织数据-导出")
+    @GetMapping(value = "/org-stats-data-export")
+    public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
+        ListRsp<OrgStatsBo> orgStatsData = learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), null, null,
+                userStatsReq.getStartTime(), userStatsReq.getEndTime());
+        List<String> passFields = Lists.newArrayList( "resourceId", "reportAverage");
+        String sheetName = "学习数据";
+        String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+                + CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
+
+        File file = ExcelDataHandler.exportExcel(orgStatsData.getList(), filePath, sheetName,
+                passFields, ExcelHeader.ORG_STUDY_STATISTIC);
+        FileUtil.setResponse(file, true, response);
+    }
+
 
 }

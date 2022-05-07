@@ -97,6 +97,10 @@ public class HttpClientUtil {
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		String authorization = CommonContext.getAuthorization();
+		if (null != authorization){ // 调用竞赛接口需要
+			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
+		}
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(httpGet, resultType);
 	}

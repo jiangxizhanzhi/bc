@@ -71,7 +71,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
-@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 public class RbRoomController {
 
 	@Autowired
@@ -100,6 +99,7 @@ public class RbRoomController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
 		// 校验
 		rbRoomReq.validate();
@@ -119,6 +119,7 @@ public class RbRoomController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbRoomRsp> getRbRoom(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
@@ -144,6 +145,7 @@ public class RbRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<ListRsp<RbRoomRsp>> list(@Validated RbTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -258,6 +260,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取控制面板信息，好友信息")
 	@GetMapping("/dashboard_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<DashboardInfo> getDashboardInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -274,6 +277,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取群组成员列表")
 	@GetMapping("/members_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getMembersInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "id", value = "角色id", required = true) String id) {
@@ -293,6 +297,7 @@ public class RbRoomController {
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbRoomRsp> update(@RequestBody @Validated RbRoomModifyReq rbTrainRoomModifyReq) {
 		// 校验
 		rbTrainRoomModifyReq.validate();
@@ -318,6 +323,7 @@ public class RbRoomController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated SceneOpsReq opsReq) {
 		String roomId = opsReq.getRoomId();
 		if (StringUtils.isBlank(roomId)) {
@@ -342,6 +348,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取时间管理数据")
 	@GetMapping("/get_time_management")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbTimeManagementRsp> getTimeManagement(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
@@ -385,6 +392,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("创建时间管理")
 	@PostMapping("/create_time_management")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbTimeManagement>
 			addTimeManagement(@RequestBody @Validated RbTimeManagementReq rbTimeManagementReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -424,6 +432,7 @@ public class RbRoomController {
 
 	@ApiOperation("获取设备占用情况")
 	@GetMapping("/device")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbDeviceContext>> getDevices(
 			@ApiParam(value = "room_id", name = "红蓝对抗id", required = true) String room_id,
 			@ApiParam(value = "standard_device", name = "主机",

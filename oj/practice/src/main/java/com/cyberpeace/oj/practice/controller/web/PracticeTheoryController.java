@@ -42,7 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/oj/practice/theory")
 @RequiresAuthentication
 @Slf4j
-@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 public class PracticeTheoryController {
 
 	@Autowired
@@ -53,6 +52,7 @@ public class PracticeTheoryController {
 
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
 				UserInfoContext.getUserContext().getUserId(), Boolean.FALSE);

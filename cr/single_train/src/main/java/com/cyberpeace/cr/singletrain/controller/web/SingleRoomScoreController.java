@@ -52,7 +52,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/cr/single_train/single_train")
 @Slf4j
-@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 public class SingleRoomScoreController {
 
 	@Autowired
@@ -74,6 +73,7 @@ public class SingleRoomScoreController {
 
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<JSONObject> getHistoryDetail(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SINGLE_ROLE_GROUP_CODE);
@@ -120,6 +120,7 @@ public class SingleRoomScoreController {
 
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId) {
 		JSONObject data = getHistoryDetail(roomId).getData();

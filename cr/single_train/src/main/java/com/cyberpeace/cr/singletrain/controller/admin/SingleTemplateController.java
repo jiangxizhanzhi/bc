@@ -31,7 +31,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/admin/single_train/template")
-@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 public class SingleTemplateController {
 
 	@Autowired
@@ -48,6 +47,7 @@ public class SingleTemplateController {
 
 	@GetMapping
 	@ApiOperation("单兵训练模板获取")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleTemplateBo> get(@RequestParam("resource_id") String businessTemplateId) {
 		businessTemplateService.checkPermission(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
@@ -57,6 +57,7 @@ public class SingleTemplateController {
 
 	@PostMapping
 	@ApiOperation("单兵训练模板创建")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`
 		SingleTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,
@@ -87,6 +88,7 @@ public class SingleTemplateController {
 
 	@PatchMapping
 	@ApiOperation("单兵训练模板更新")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleTemplateBo>
 			update(@RequestBody SingleTrainTemplateUpdateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`

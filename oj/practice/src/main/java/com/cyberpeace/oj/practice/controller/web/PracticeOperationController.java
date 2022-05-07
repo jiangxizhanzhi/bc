@@ -46,7 +46,6 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "oj-前台实践操作练习相关api")
 @RequestMapping("/oj/practice/operation")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 public class PracticeOperationController {
 
 	@Autowired
@@ -69,6 +68,7 @@ public class PracticeOperationController {
 
 	@GetMapping("/list")
 	@ApiOperation("获取实践操作列表")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<ListRsp<AdminOperationListBo>> list(WebOperationListReq listReq) {
 
 		Page page = listReq.toPageParam();
@@ -150,6 +150,7 @@ public class PracticeOperationController {
 
 	@ApiOperation("场景节点重启")
 	@PostMapping("/scene_node_restart")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> sceneNodeRestart(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -163,6 +164,7 @@ public class PracticeOperationController {
 
 	@ApiOperation("场景节点重建")
 	@PostMapping("/scene_node_recreate")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> sceneNodeRecreate(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -188,6 +190,7 @@ public class PracticeOperationController {
 
 	@ApiOperation("获取场景和拓扑信息")
 	@GetMapping("/topo_scene")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
 			value = "课时编号") @RequestParam("resource_id") String operationId) {
 

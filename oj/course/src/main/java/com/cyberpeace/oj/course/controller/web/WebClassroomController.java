@@ -34,7 +34,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/oj/course/class/room")
 @RequiresAuthentication
-@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 public class WebClassroomController {
 
 	@Autowired
@@ -45,6 +44,7 @@ public class WebClassroomController {
 
 	@ApiOperation("前台课程表信息查询")
 	@GetMapping("/list")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp<List<TimeScheduleBo>> listCourseSchedule(
 			@ApiParam(name = "month", value = "月份 格式xxxx-xx") @RequestParam("month") String month) {
 
@@ -83,6 +83,7 @@ public class WebClassroomController {
 
 	@ApiOperation("课堂签到")
 	@PostMapping("/sign_in")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp<Boolean> classroomSignIn(@RequestBody @Validated ClassroomSignInReq signInReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -95,6 +96,7 @@ public class WebClassroomController {
 
 	@ApiOperation("请求远程协助")
 	@PatchMapping("/need_help")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp needHelp(@RequestBody @Validated RemoteHelpReq req) {
 
 		classroomSignService.needHelp(req.getLessonId(), req.getNodeId());
@@ -105,6 +107,7 @@ public class WebClassroomController {
 
 	@ApiOperation("获取远程协助状态")
 	@GetMapping("/help_status")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp getHelpStatus(RemoteHelpReq req) {
 		HelpStatusBo helpStatus = classroomSignService.getHelpStatus(req.getLessonId(),
 				req.getNodeId());
@@ -113,6 +116,7 @@ public class WebClassroomController {
 
 	@ApiOperation("获取课堂聊天用户信息")
 	@GetMapping("/chat/users")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp<DashboardInfo> chatUsers(@RequestParam("room_id") String roomId) {
 
 		DashboardInfo dashboardInfo = classroomService.getChatUsers(roomId,

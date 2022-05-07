@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/oj/admin/class/group_info")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 public class AdminClassroomGroupInfoController {
 
 	@Autowired
@@ -37,6 +36,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("查询课堂信息/进入课堂")
 	@GetMapping("/get")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<GroupInfoBo>> getGroupInfo(@RequestParam("classroom_id") String roomId) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -50,6 +50,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("课堂组信息更新")
 	@PostMapping("/update")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<GroupInfoBo>>
 			updateGroupInfo(@RequestBody @Validated ClassroomGroupReq groupReq) {
 
@@ -61,6 +62,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("保存当前分组模板信息")
 	@PostMapping("/save")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Integer>
 			saveGroupInfo(@RequestBody @Validated SaveGroupInfoReq saveGroupInfoReq) {
 
@@ -71,6 +73,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("删除课堂分组模板")
 	@DeleteMapping("/delete")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp deleteGroupInfo(@RequestBody @Validated ClassroomArchiveReq deleteReq) {
 
 		int result = classroomGroupInfoService.deleteClassroomArchive(deleteReq.getClassroomId(),
@@ -80,6 +83,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("使用课堂分组模板")
 	@PostMapping("/use")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<GroupInfoBo>> userGroupInfo(@RequestBody ClassroomArchiveReq archiveReq) {
 
 		List<GroupInfoBo> groupInfoBos = classroomGroupInfoService
@@ -89,6 +93,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("查询课堂分组模板列表")
 	@GetMapping("/archive")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<ClassroomGroupArchiveBo>>
 			getGroupArchive(@RequestParam("classroom_id") String classroomId) {
 		List<ClassroomGroupArchiveBo> archives = classroomGroupInfoService
@@ -98,6 +103,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("分组用户移动")
 	@PatchMapping("/move")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean>
 			moveGroupInfo(@RequestBody @Validated MoveGroupUserReq moveGroupUserReq) {
 		Boolean result = classroomGroupInfoService.moveGroupUser(moveGroupUserReq.getClassroomId(),
@@ -108,6 +114,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("设置场景延时")
 	@PatchMapping("/set_scene_destroy_delay")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean> setDestroyDelay(@RequestBody GroupSceneDelayReq delayReq) {
 
 		Boolean result = classroomGroupInfoService.setGroupSceneDelay(delayReq.getClassroomId(),
@@ -117,6 +124,7 @@ public class AdminClassroomGroupInfoController {
 
 	@ApiOperation("获取场景延时状态")
 	@GetMapping("/get_destroy_delay_status")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean> getDestroyDelay(@RequestParam("classroomId") String classroomId) {
 		Boolean result = classroomGroupInfoService.getGroupSceneDelayStatus(classroomId);
 		return new BaseRsp<>(result);

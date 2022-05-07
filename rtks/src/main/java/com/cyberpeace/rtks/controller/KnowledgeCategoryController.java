@@ -33,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/rtks/knowledge-category")
 @RequiresAuthentication
 @Slf4j
-@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 public class KnowledgeCategoryController {
 
 	@Autowired
@@ -44,6 +43,7 @@ public class KnowledgeCategoryController {
 
 	@ApiOperation("查询单条")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<KnowledgeCategory> getKnowledge(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		// ApiParam中的name和java参数String id的两个id必须同名
@@ -54,6 +54,7 @@ public class KnowledgeCategoryController {
 
 	@ApiOperation("新增单条")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			addKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
 		validate(knowledgeCategoryAddReq.getContent());
@@ -76,6 +77,7 @@ public class KnowledgeCategoryController {
 
 	@ApiOperation("修改单条")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			modifyKnowledge(@RequestBody @Validated AbilityAddReq knowledgeCatagaryOrSystemAddReq) {
 		validate(knowledgeCatagaryOrSystemAddReq.getContent());
@@ -88,6 +90,7 @@ public class KnowledgeCategoryController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteKnowledgeCategory(@RequestBody @Validated DeleteReq deleteReq) {
 		List<KnowledgeRes> skillList = knowledgeService.getAllKnowledge();
 		for (KnowledgeRes knowledgeRes : skillList) {
@@ -102,6 +105,7 @@ public class KnowledgeCategoryController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<KnowledgeCategory>> list(@Validated PageReqBase pageReqBase) {
 		ListRsp<KnowledgeCategory> data = knowledgeCategoryService.page(pageReqBase);
 

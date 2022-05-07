@@ -61,7 +61,6 @@ import net.lingala.zip4j.exception.ZipException;
 @RequestMapping("/cr/admin/mission")
 @RequiresAuthentication
 @Slf4j
-@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 public class MissionController {
 
 	@Autowired
@@ -100,6 +99,7 @@ public class MissionController {
 
 	@ApiOperation("后台更新任务技能点")
 	@PostMapping("/missions/radar_labels")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<MissionTemplate> updateRadarLabel(@RequestBody @Validated LabelReq labels) {
 		// 只有超级用户有权修改
 		UserInfo user = UserInfoContext.getUserContext();
@@ -142,6 +142,7 @@ public class MissionController {
 
 	@ApiOperation("新增任务")
 	@PostMapping("/missions")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<MissionTemplate>
 			addMission(@RequestBody @Validated MissionTemplateReq missionTemplateReq) {
 		missionTemplateReq.validate();
@@ -154,6 +155,7 @@ public class MissionController {
 
 	@ApiOperation("后台更新任务")
 	@PutMapping("/missions")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<MissionTemplate>
 			updateMissionTemplate(@RequestBody @Validated MissionTemplateModifyReq modifyReq) {
 		if (StringUtils.isBlank(modifyReq.getResourceId())) {
@@ -196,6 +198,7 @@ public class MissionController {
 
 	@ApiOperation("创建任务方案")
 	@PostMapping("/combat_techs")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<?>
 			createSchemeTemplate(@RequestBody @Validated MissionSchemeTemplateReq templateReq) {
 		// validate
@@ -209,6 +212,7 @@ public class MissionController {
 
 	@ApiOperation("批量删除任务方案")
 	@DeleteMapping("/combat_techs/batch_destroy/")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<?> batchDeleteSchemeTemplate(@RequestBody @Validated BatchDeleteReq deleteReq) {
 		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
 
@@ -217,6 +221,7 @@ public class MissionController {
 
 	@ApiOperation("编辑任务方案")
 	@PutMapping("/combat_techs")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<?> editSchemeTemplate(
 			@RequestBody @Validated MissionSchemeTemplateModifyReq templateModifyReq) {
 		templateModifyReq.validate();
@@ -228,6 +233,7 @@ public class MissionController {
 
 	@ApiOperation("分页查询任务方案")
 	@GetMapping("/combat_techs/list")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<List<MissionSchemeTemplateRsp>>
 			listSchemeTemplate(@Validated PageReqBase pageReqBase) {
 		ListRsp<MissionSchemeTemplateRsp> schemeTemplateListRsp = missionService
@@ -246,6 +252,7 @@ public class MissionController {
 
 	@ApiOperation("查询单个任务方案")
 	@GetMapping("/combat_techs")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<MissionSchemeTemplateRsp> getSchemeTemplate(@ApiParam(name = "resource_id",
 			value = "任务方案编号") @RequestParam("resource_id") @Valid @NotBlank String resourceId) {
 		MissionSchemeTemplateRsp templateRsp = missionService.getSchemeTemplateRspById(resourceId);
@@ -255,6 +262,7 @@ public class MissionController {
 
 	@ApiOperation("批量导出任务方案")
 	@PostMapping("/combat_techs/dump")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public void batchDump(HttpServletResponse response, @RequestBody BatchDumpReq dumpReq) {
 
 		List<String> templateIds = dumpReq.getIds();
@@ -278,6 +286,7 @@ public class MissionController {
 
 	@ApiOperation("批量导入任务方案")
 	@PutMapping("/combat_tech/load")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
 			throws IOException, ZipException {
 		// 1. save file to temp dir
@@ -295,6 +304,7 @@ public class MissionController {
 
 	@ApiOperation("RTKS-获取任务模板列表")
 	@GetMapping("/mission_templates")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<List<MissionTemplateRes>>
 			listMissionTemplates(@Validated MissionTemplatePageReq pageReq) {
 		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService

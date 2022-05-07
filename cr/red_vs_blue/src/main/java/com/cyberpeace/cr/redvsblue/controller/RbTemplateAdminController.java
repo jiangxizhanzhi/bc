@@ -49,7 +49,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/admin/red_vs_blue/red_vs_blue_templates/")
-@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 public class RbTemplateAdminController {
 
 	@Autowired
@@ -72,6 +71,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp create(@RequestBody @Validated RbTemplateAddReq addReq) {
 
 		// set type
@@ -98,6 +98,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("修改")
 	@PatchMapping()
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp update(@RequestBody @Validated RbTemplateModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		RbTemplate rbTemplate = rbTemplateService.getRbTemplateByBusinessId(resourceId);
@@ -126,6 +127,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
 		rbTemplateService.batchDelete(deleteReq.getIds());
@@ -135,6 +137,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<RbTemplateRsp> getRbTemplate(String resource_id) {
 
 		businessTemplateService.checkPermission(resource_id,

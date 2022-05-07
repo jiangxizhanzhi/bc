@@ -21,8 +21,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/relate/user")
 @RequiresAuthentication
-@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER },
-		logical = Logical.OR)
 public class UserRelateController {
 
 	@Autowired
@@ -30,7 +28,7 @@ public class UserRelateController {
 
 	@ApiOperation("用户新增或修改岗位")
 	@PostMapping("/role")
-	@RequiresPermissions(MenuConstant.WEB_OJ_COURSE)
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<UserRole>
 			relateUser(@ApiParam(name = "req", value = "岗位信息") @RequestBody UserRoleAddReq req) {
 
@@ -44,6 +42,7 @@ public class UserRelateController {
 
 	@ApiOperation("查询用户和岗位信息")
 	@GetMapping("/role/info")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<UserRole> getUserAndRoleInfo() {
 		UserRole userRole = userRelateService
 				.getUserRoleInfo(UserInfoContext.getUserContext().getUserId());

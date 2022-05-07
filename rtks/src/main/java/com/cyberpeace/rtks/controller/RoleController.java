@@ -99,7 +99,6 @@ class Helper {
 @RestController
 @RequestMapping("/rtks/role")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 public class RoleController {
 
 	@Autowired
@@ -147,6 +146,7 @@ public class RoleController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
 		Role role = getEntityFromAddInput(input);
 
@@ -164,6 +164,7 @@ public class RoleController {
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 
@@ -185,6 +186,7 @@ public class RoleController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> retrieve(String resource_id) {
 		Role t = getOr404(resource_id);
 		return new BaseRsp<>(getOutputFromEntity(t));
@@ -192,6 +194,7 @@ public class RoleController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -212,6 +215,7 @@ public class RoleController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<ListRsp<RoleOutput>> list(RoleListReq<Role> listReq) {
 		IPage<Role> page = getPage(listReq);
 		// search skills missions
@@ -243,6 +247,7 @@ public class RoleController {
 
 	@ApiOperation("获取课程列表")
 	@GetMapping("/courses")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>> getSkillCourses(String resource_id,
 			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
 
@@ -257,6 +262,7 @@ public class RoleController {
 
 	@ApiOperation("编排课程列表")
 	@PostMapping("/courses")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>>
 			setSkillCourses(@RequestBody @Validated CourseLayoutInput courseLayoutInput) {
 		String roleId = courseLayoutInput.getResourceId();
@@ -286,6 +292,7 @@ public class RoleController {
 
 	@ApiOperation("获取任务列表")
 	@GetMapping("/missions")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<MissionTemplateSimple>>
 			getSkillMissions(@RequestParam("resource_id") String resource_id) {
 
@@ -324,6 +331,7 @@ public class RoleController {
 
 	@ApiOperation("编排任务列表")
 	@PostMapping("/missions")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>>
 			setSkillMissions(@RequestBody @Validated MissionLayout layout) {
 

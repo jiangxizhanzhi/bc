@@ -39,7 +39,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/red_vs_blue_templates/")
-@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 public class RbTemplateController {
 
 	@Autowired
@@ -50,6 +49,7 @@ public class RbTemplateController {
 
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<ListRsp<RbTemplateListRsp>> list(RbTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());

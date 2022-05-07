@@ -24,7 +24,6 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "团队训练实例")
 @RestController
 @RequestMapping("/cr/training_team/training_team_teacher")
-@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 public class TeamTrainTeacherController {
 
 	@Autowired
@@ -35,6 +34,7 @@ public class TeamTrainTeacherController {
 
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<MonitorSession>> getSessions(
 			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id,
 			@ApiParam(name = "student_id", value = "学员id", required = false) String student_id) {

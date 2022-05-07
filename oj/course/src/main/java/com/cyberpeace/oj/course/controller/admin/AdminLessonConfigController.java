@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/oj/admin/lessonconfig")
 @Api(tags = "oj-后台课程目录相关api")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.CMS_COURSES)
 public class AdminLessonConfigController {
 
 	@Autowired
@@ -30,6 +29,7 @@ public class AdminLessonConfigController {
 
 	@ApiOperation("后台课程目录查询")
 	@GetMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<LessonConfigBo> getLessonConfig(@ApiParam(name = "course_id",
 			value = "课程编号") @RequestParam("course_id") String courseId) {
 
@@ -42,6 +42,7 @@ public class AdminLessonConfigController {
 
 	@ApiOperation("编排课时")
 	@PutMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<LessonConfigBo> setLessonConfig(
 			@ApiParam(name = "configBo", value = "课程编排信息") @RequestBody LessonConfigBo configBo) {
 

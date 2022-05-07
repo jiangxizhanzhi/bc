@@ -45,7 +45,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/oj/person")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 public class PersonController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PersonController.class);
@@ -61,6 +60,7 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有评论")
 	@GetMapping("/comments")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonComment>> listComments(@ApiParam @Validated PageReqBase pageReq) {
 		Page page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -75,6 +75,7 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有回复")
 	@GetMapping("/replies")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonComment>> listReplies(@ApiParam @Validated PageReqBase pageReq) {
 		Page page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -89,6 +90,7 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有笔记")
 	@GetMapping("/notes")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonNote>> listNotes(@ApiParam @Validated PageReqBase pageReq) {
 		Page page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -101,6 +103,7 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有收藏")
 	@GetMapping("/collections")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonCollection>> listCollections(
 			@ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type) {
 		Page page = pageReq.toPageParam();
@@ -117,6 +120,7 @@ public class PersonController {
 
 	@ApiOperation("当前用户学习课程和练习记录")
 	@GetMapping("/study_records")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<StudyRecord> courseAndPracticeRecords() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 权限数据获取
@@ -127,6 +131,7 @@ public class PersonController {
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam(value = "user_id", required = false)String userId) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date(System.currentTimeMillis());
@@ -152,6 +157,7 @@ public class PersonController {
 
 	@ApiOperation("查询收藏习题列表")
 	@GetMapping("/my_all_collection_practice")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<List<CollectionPracticeBo>> allCollectionPractice() {
 
 		// 查询收藏的理论习题
@@ -171,6 +177,7 @@ public class PersonController {
 
 	@ApiOperation("收藏理论题详情页")
 	@GetMapping("/collection_theory_practice_detail")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<WebTheoryBo> collectionTheoryRetrieve(@RequestParam(value = "resource_id") String resourceId) {
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
 				UserInfoContext.getUserContext().getUserId(), Boolean.TRUE);
@@ -179,6 +186,7 @@ public class PersonController {
 
 	@ApiOperation("收藏实操题详情页")
 	@GetMapping("/collection_operate_practice_detail")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<WebOperationBo> collectionOperateRetrieve(@RequestParam(value = "resource_id") String resourceId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);

@@ -38,8 +38,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/oj/admin/practice/category")
-@RequiresPermissions(value = { MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION },
-		logical = Logical.OR)
 public class AdminPracticeCategoryController {
 
 	@Autowired

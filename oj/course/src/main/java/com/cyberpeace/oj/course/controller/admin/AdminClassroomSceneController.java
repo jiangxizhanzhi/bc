@@ -29,7 +29,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/oj/admin/classroom/scene")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 public class AdminClassroomSceneController {
 
 	@Autowired
@@ -37,6 +36,7 @@ public class AdminClassroomSceneController {
 
 	@ApiOperation("课堂组场景启动")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<JSONObject> startScene(@RequestBody @Validated GroupSceneReq groupSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -48,6 +48,7 @@ public class AdminClassroomSceneController {
 
 	@ApiOperation("课堂场景删除")
 	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated GroupSceneReq groupSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -59,6 +60,7 @@ public class AdminClassroomSceneController {
 
 	@ApiOperation("课堂课堂场景一键启动")
 	@PostMapping("/batch")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<GroupInfoBo>>
 			batchStartScene(@RequestBody @Validated ClassroomSceneReq classroomSceneReq)
 					throws InterruptedException {
@@ -72,6 +74,7 @@ public class AdminClassroomSceneController {
 
 	@ApiOperation("课堂场景一键清除")
 	@DeleteMapping("/batch")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean>
 			batchDeleteScene(@RequestBody @Validated ClassroomSceneReq classroomSceneReq) {
 
@@ -83,6 +86,7 @@ public class AdminClassroomSceneController {
 
 	@ApiOperation("课堂场景监控")
 	@GetMapping("/classroom_monitor")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<SceneMonitorBo>> classroomMonitor(@ApiParam(name = "classroom_id",
 			value = "课堂编号") @RequestParam("classroom_id") String classroomId) {
 

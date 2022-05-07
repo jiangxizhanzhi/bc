@@ -56,7 +56,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/team_train/template")
-@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 public class TeamTrainTemplateController {
 
 	@Autowired
@@ -82,6 +81,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
 		// set type
 		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
@@ -107,6 +107,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("修改")
 	@PatchMapping()
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp update(@RequestBody @Validated TeamTrainTemplateModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		TeamTemplate teamTemplate = teamTemplateService.getByTemplateBusinessId(resourceId);
@@ -136,6 +137,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
 		businessTemplateService.checkPermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());
@@ -181,6 +183,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		teamTemplateService.batchDelete(deleteReq.getIds());
 		return new BaseRsp<>();

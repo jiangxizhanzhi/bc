@@ -38,8 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 @RequestMapping("/oj/lesson")
 @Slf4j
-@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
-		logical = Logical.OR)
 public class WebLessonController {
 
 	@Autowired
@@ -104,6 +102,7 @@ public class WebLessonController {
 
 	@ApiOperation("前台课时获取拓扑信息")
 	@GetMapping("/scene_topo")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
 			value = "课时编号") @RequestParam("resource_id") String lessonId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

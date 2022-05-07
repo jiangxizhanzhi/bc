@@ -39,8 +39,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/oj/note")
 @RequiresAuthentication
-@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-		MenuConstant.WEB_OJ_PRACTICE_OPERATION }, logical = Logical.OR)
 public class WebNoteController {
 
 	@Autowired
@@ -143,6 +141,8 @@ public class WebNoteController {
 
 	@ApiOperation("实验报告/笔记文件上传")
 	@PostMapping("/upload_attachment")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+			MenuConstant.WEB_OJ_PRACTICE_OPERATION}, logical = Logical.OR)
 	public BaseRsp<AttachmentBo> uploadAttachment(NoteAttachmentReq attachmentReq) {
 
 		Integer type;

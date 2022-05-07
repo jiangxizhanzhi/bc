@@ -40,8 +40,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/oj/course")
 @RequiresAuthentication
-@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
-		logical = Logical.OR)
 public class WebCourseController {
 
 	@Autowired

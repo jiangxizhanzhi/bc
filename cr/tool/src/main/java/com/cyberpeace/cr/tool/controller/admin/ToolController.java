@@ -33,7 +33,6 @@ import java.util.Date;
 @RestController
 @RequestMapping("/cr/admin/tools")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.CMS_TOOL)
 public class ToolController {
 
     @Autowired
@@ -41,6 +40,7 @@ public class ToolController {
 
     @ApiOperation("工具库列表")
     @GetMapping("/list")
+    @RequiresPermissions(MenuConstant.CMS_TOOL)
     public BaseRsp<ListRsp<ToolRsp>> getList(
             @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
 		Boolean isAdmin = true;
@@ -52,6 +52,7 @@ public class ToolController {
 
     @ApiOperation("工具详情")
     @GetMapping()
+    @RequiresPermissions(MenuConstant.CMS_TOOL)
     public BaseRsp<ToolRsp> getDetail(
             @ApiParam(name = "resource_id", value = "查询id", required = true)
             @RequestParam("resource_id") @NotBlank String resourceId) {
@@ -61,6 +62,7 @@ public class ToolController {
 
     @ApiOperation("工具创建")
     @PostMapping()
+    @RequiresPermissions(MenuConstant.CMS_TOOL)
     public BaseRsp<String> create(@RequestBody ToolAddReq toolReq) {
         Tool tool = BeanUtils.copy(toolReq, Tool.class);
         if (!StringUtils.isBlank(toolReq.getPublishTime())) {
@@ -74,6 +76,7 @@ public class ToolController {
 
     @ApiOperation("工具更新")
     @PatchMapping()
+    @RequiresPermissions(MenuConstant.CMS_TOOL)
     public BaseRsp<String> update(@RequestBody ToolUpdateReq toolupdateReq) {
         Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
         if (!StringUtils.isBlank(toolupdateReq.getPublishTime())) {
@@ -86,6 +89,7 @@ public class ToolController {
 
     @ApiOperation("工具删除")
     @DeleteMapping()
+    @RequiresPermissions(MenuConstant.CMS_TOOL)
     public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
         toolService.removeByIds(deleteReq.getIds());
         return new BaseRsp<>();

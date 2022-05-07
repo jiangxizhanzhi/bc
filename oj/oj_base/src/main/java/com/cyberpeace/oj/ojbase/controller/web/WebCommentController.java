@@ -31,8 +31,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/oj/comment/")
 @RequiresAuthentication
-@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-		MenuConstant.WEB_OJ_PRACTICE_OPERATION }, logical = Logical.OR)
 public class WebCommentController {
 
 	@Autowired

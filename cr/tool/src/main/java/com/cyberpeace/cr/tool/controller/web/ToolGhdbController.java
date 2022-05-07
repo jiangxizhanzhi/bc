@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/cr/tool/ghdb")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.WEB_CR_TOOL_GHDB)
 public class ToolGhdbController {
 
 	@Autowired
@@ -31,6 +30,7 @@ public class ToolGhdbController {
 
 	@ApiOperation("ghdb列表")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_GHDB)
 	public BaseRsp<ListRsp<ToolGhdb>> list(@Validated ToolGhdbListReq toolGhdbListReq) {
 		ToolGhdbRsp toolGhdbRsp = BeanUtils.copy(toolGhdbListReq, ToolGhdbRsp.class);
 		ListRsp<ToolGhdb> data = toolGhdbService.listGhdb(toolGhdbListReq, toolGhdbRsp);
@@ -39,6 +39,7 @@ public class ToolGhdbController {
 
 	@ApiOperation("ghdb详情")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_GHDB)
 	public BaseRsp<ToolGhdb> detail(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		ToolGhdb toolGhdb = toolGhdbService.getById(resource_id);

@@ -25,7 +25,6 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/cr/tool/shellcode")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.WEB_CR_TOOL_SHELLCODE)
 public class ToolShellcodeController {
 
 	@Autowired
@@ -33,6 +32,7 @@ public class ToolShellcodeController {
 
 	@GetMapping("/list")
 	@ApiOperation("shellcode列表")
+	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_SHELLCODE)
 	public BaseRsp<ListRsp<ToolShellCode>> getList(
 			@Validated ToolShellCodeListReq toolShellCodeListReq) {
 		ToolShellCodeRsp toolShellCodeRsp = BeanUtils
@@ -44,6 +44,7 @@ public class ToolShellcodeController {
 
 	@GetMapping()
 	@ApiOperation("shellcode详情")
+	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_SHELLCODE)
 	public BaseRsp<ToolShellCode> getDetail(
 			@ApiParam(name = "resource_id", value = "查询id", required = true)
 			@RequestParam("resource_id") @NotBlank String resourceId) {

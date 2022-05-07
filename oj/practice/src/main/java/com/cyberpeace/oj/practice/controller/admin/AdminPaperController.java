@@ -42,8 +42,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/oj/admin/paper")
 @RequiresAuthentication
-@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
-		MenuConstant.CMS_COURSES}, logical = Logical.OR)
 public class AdminPaperController {
 
 	@Autowired
@@ -57,6 +55,8 @@ public class AdminPaperController {
 
 	@ApiOperation("获取习题库习题列表")
 	@GetMapping("/practice/list")
+	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_COURSES}, logical = Logical.OR)
 	public BaseRsp<ListRsp<LibPracticeListBo>>
 			selectPracticeInfo(LibPracticeListReq practiceListReq) {
 
@@ -83,6 +83,8 @@ public class AdminPaperController {
 	@GetMapping("/select_info")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_set_id", value = "习题集编号"),
 			@ApiImplicitParam(name = "children", value = "分类是否查询子类") })
+	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_COURSES}, logical = Logical.OR)
 	public BaseRsp<LibSelectRes> get(
 			@RequestParam(value = "practice_set_id", required = false) String practiceSetId,
 			@RequestParam(value = "children", required = false) Boolean children) {
@@ -113,6 +115,8 @@ public class AdminPaperController {
 
 	@ApiOperation("获取随机数量题目")
 	@PostMapping("/random/practice")
+	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_COURSES}, logical = Logical.OR)
 	public BaseRsp<List<LibPracticeListBo>>
 			getRandomPractice(@RequestBody @Validated RandomPracticeReq randomPracticeReq) {
 

@@ -28,7 +28,6 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "团队训练角色")
 @RestController
 @RequestMapping("/cr/team_train/role")
-@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 public class TeamTrainRoleController {
 
 	@Autowired
@@ -39,6 +38,7 @@ public class TeamTrainRoleController {
 
 	@ApiOperation("团队实例查询角色")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<CrRoleContext<RoleMissionRsp>> getRoles(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id, CrRole.TeamRoleGroup.STUDENT);

@@ -49,7 +49,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/oj/admin/practice/operation")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 public class AdminPracticeOperationController extends PublicController<PracticeOperationService, PracticeOperation> {
 
 	@Autowired
@@ -94,6 +93,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("实操习题附件上传")
 	@PostMapping("/upload_attachment")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<String>
 			uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
 
@@ -223,6 +223,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("后台场景节点重启")
 	@PostMapping("/scene_node_restart")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> sceneNodeRestart(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -234,6 +235,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("后台场景节点重建")
 	@PostMapping("/scene_node_recreate")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> sceneNodeRecreate(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

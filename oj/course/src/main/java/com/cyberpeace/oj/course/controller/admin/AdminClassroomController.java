@@ -49,7 +49,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/oj/admin/course/classroom")
 @RequiresAuthentication
 @Slf4j
-@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 public class AdminClassroomController {
 
 	@Autowired
@@ -162,6 +161,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("进行远程协助")
 	@GetMapping("/to_help")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
 			@ApiImplicitParam(name = "user_id", value = "用户编号") })
 	public BaseRsp toHelp(@RequestParam("resource_id") String classroomId,
@@ -173,6 +173,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("结束远程协助")
 	@GetMapping("/end_help")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
 			@ApiImplicitParam(name = "user_id", value = "用户编号") })
 	public BaseRsp endHelp(@RequestParam("resource_id") String classroomId,
@@ -184,6 +185,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("查询课堂实验报告列表")
 	@GetMapping("/classroom_report")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ListRsp<ClassroomReportBo>> classroomReport(ClassroomMonitorReq reportReq) {
 
 		Page page = reportReq.toPageParam();
@@ -195,6 +197,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课堂学习统计")
 	@GetMapping("/classroom_statistic")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ClassroomStatisticBo>
 			classroomStatistic(@RequestParam("classroom_id") String classroomId) {
 
@@ -208,6 +211,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课堂练习统计")
 	@GetMapping("/practice-statistic")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ClassroomPracticeBo>
 			classroomPracticeStatistic(@Validated ClassroomPracticeReq classroomPracticeReq) {
 
@@ -230,6 +234,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课堂练习详情")
 	@GetMapping("/practice-detail")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ClassroomPracticeDetailBo> classroomPracticeDetail(
 			@RequestParam("classroom_id") String classroomId,
 			@RequestParam("lesson_id") String lessonId, @RequestParam("user_id") String userId) {
@@ -248,6 +253,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课后练习评分")
 	@PostMapping("/practice/mark")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean>
 			markLessonPractice(@RequestBody @Validated MarkLessonPracticeReq practiceReq) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -264,6 +270,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课后练习下发")
 	@PatchMapping("/practice/batch-auth")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean> batchAuthLessonPractice(
 			@RequestBody @Validated BatchAuthLessonPracticeReq practiceReq) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -280,6 +287,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("训练计划导入")
 	@PostMapping("/train_plan/import")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp importTrainPlan(@RequestParam("file") MultipartFile excelFile,
 			@RequestParam("cover") Boolean cover) {
 
@@ -301,6 +309,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("训练计划导出")
 	@GetMapping("/train_plan/export")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public void exportTrainPlan(HttpServletResponse response) {
 
 		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()

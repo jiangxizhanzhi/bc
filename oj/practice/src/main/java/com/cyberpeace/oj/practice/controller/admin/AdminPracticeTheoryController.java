@@ -49,7 +49,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("oj/admin/theory")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 public class AdminPracticeTheoryController extends PublicController<PracticeTheoryService, PracticeTheory> {
 
 	@Autowired
@@ -114,6 +113,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("获取理论基础习题详情")
 	@GetMapping("")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<AdminTheoryBo> get(@RequestParam("resource_id") String resourceId) {
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
@@ -124,6 +124,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("基础理论习题资源删除")
 	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
 		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());

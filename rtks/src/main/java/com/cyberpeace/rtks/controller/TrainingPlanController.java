@@ -45,8 +45,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/rtks/training-plan")
 @RequiresAuthentication
-@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
-		MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
 public class TrainingPlanController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
@@ -65,7 +63,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("知识体系")
 	@GetMapping("/knowledgeTree")
-	@RequiresPermissions(MenuConstant.WEB_OJ_KNOWLEDGE_COURSE)
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<List<KnowledgeTreeRes>> knowledgeTree() {
 		List<KnowledgeTreeRes> knowledgeTreeRes = trainingPlanService.getKnowledgeTree();
 
@@ -74,7 +73,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("职业框架管理")
 	@GetMapping("/tree")
-	@RequiresPermissions(MenuConstant.WEB_OJ_COURSE)
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<LevelTreeOutput> tree(
 			@ApiParam(name = "resource_id", value = "框架id", required = true) String resource_id) {
 		// 如果前端没有获取框架，尝试获取默认角色的框架
@@ -117,6 +117,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleDetailRes> learningPath(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
 		RoleDetailRes roleOutput = trainingPlanService.getLearningPathTree(resource_id,
@@ -127,6 +129,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
 	@GetMapping("/roleMap")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleDetailRes> getRoleOutputByRoleId() {
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
@@ -140,6 +144,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("分页获取知识点以及课程")
 	@GetMapping("/getKnowledgeCourseList")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<ListRsp<KnowledgeRes>> page(@Validated PageReqBase pageReqBase) {
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<ListRsp<KnowledgeRes>> rsp = new BaseRsp<>();
@@ -153,6 +159,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("查询技能和知识点关联的课程学习情况")
 	@GetMapping("/getRelatedCourseList")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleDetailRes> getRelatedCourseList() {// @ApiParam(name = "course_type", value =
 															// "查询课程类型(skill/knowledge)", required =
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
@@ -174,7 +182,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("查询个人能力评估")
 	@GetMapping("/getRoleDetailRes")
-	@RequiresPermissions(MenuConstant.WEB_OJ_COURSE)
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleDetailRes> getRoleDetailRes() {// @ApiParam(name = "course_type", value =
 		// "查询课程类型(skill/knowledge)", required =
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
@@ -194,6 +203,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("训练路径")
 	@GetMapping("/training/path")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<TrainingPathRes> getTrainingPath() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();

@@ -54,7 +54,6 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "学员团队训练")
 @RestController
 @RequestMapping("/cr/training_team/training_team_students")
-@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 public class TeamTrainStudentsController {
 
 	@Autowired
@@ -77,6 +76,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -101,6 +101,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -157,6 +158,7 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("获取任务列表")
 	@GetMapping("/get_mission_scheme")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<MissionSchemeObject<SchemeListMissionRsp>>> getMissionScheme(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -182,6 +184,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
 			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		CrCommonValidator.checkStringExist(submitMissionsReq.getAnswer(),
@@ -202,6 +205,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("获取任务详情")
 	@GetMapping("/get_mission_detail")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<MissionRsp> getMissionDetail(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "mission_id", value = "任务id", required = true) String mission_id) {
@@ -233,6 +237,7 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<StudentsTimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 

@@ -35,7 +35,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rtks/statistic")
 @Api(tags = "RTKS-作战能力评估")
 @RequiresAuthentication
-@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 public class RtksEvaluationController {
 
 	@Autowired
@@ -43,6 +42,7 @@ public class RtksEvaluationController {
 
 	@ApiOperation("岗位知识点学习进度统计")
 	@GetMapping("/role/knowledge/study_record")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleStudyBo> getRoleStudyRecord() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
@@ -57,6 +57,7 @@ public class RtksEvaluationController {
 
 	@ApiOperation("岗位知识点六棱图统计")
 	@GetMapping("/role/knowledge/radar")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<List<RtksRadarBo>> getRoleKnowledgeMatch() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
@@ -70,6 +71,7 @@ public class RtksEvaluationController {
 
 	@ApiOperation("知识点完成进度折线图")
 	@GetMapping("/role/knowledge/percent")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<PercentRes> getKnowledgeProcessByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
@@ -105,6 +107,7 @@ public class RtksEvaluationController {
 
 	@ApiOperation("岗位匹配度计算")
 	@GetMapping("/role/match")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<String> getMatchByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
@@ -118,6 +121,7 @@ public class RtksEvaluationController {
 
 	@ApiOperation("岗位课程学习记录")
 	@GetMapping("/role/course/study")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "start_time", value = "开始时间"),
 			@ApiImplicitParam(name = "end_time", value = "结束时间") })
 	public BaseRsp<StudyRecordBo> getStudyRecord(@RequestParam("start_time") String startTime,

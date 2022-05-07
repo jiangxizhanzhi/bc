@@ -29,7 +29,6 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/cr/tools")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
 public class WebToolController {
 
     @Autowired
@@ -37,6 +36,7 @@ public class WebToolController {
 
     @ApiOperation("工具库列表")
     @GetMapping("/list")
+    @RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
     public BaseRsp<ListRsp<WebToolRsp>> getList(
             @ApiParam(name = "listReq", value = "查询条件") @Validated WebToolListReq webToolListReq) {
 
@@ -58,6 +58,7 @@ public class WebToolController {
 
     @ApiOperation("工具详情")
     @GetMapping()
+    @RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
     public BaseRsp<ToolRsp> getDetail(
             @ApiParam(name = "resource_id", value = "查询id", required = true)
             @RequestParam("resource_id") @NotBlank String resourceId) {

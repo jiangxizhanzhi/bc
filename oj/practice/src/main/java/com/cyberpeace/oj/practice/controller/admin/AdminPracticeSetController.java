@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/oj/admin/practice/set")
 @RequiresAuthentication
 @Slf4j
-@RequiresPermissions(MenuConstant.CMS_EXERCISES)
 public class AdminPracticeSetController extends AuthAndPublicController<PracticeSetService, PracticeSet> {
 
 	@Autowired
@@ -114,6 +114,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("习题集详细信息查询")
 	@GetMapping("")
+	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
 	public BaseRsp<AdminPracticeSetBo> get(@ApiParam(name = "resource_id",
 			value = "习题集编号") @RequestParam("resource_id") String resourceId) {
 
@@ -141,8 +142,8 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("分页查询习题集")
 	@GetMapping("/list")
-	@RequiresPermissions({ MenuConstant.CMS_EXERCISES, MenuConstant.CMS_THEORY_PRACTICE,
-			MenuConstant.CMS_PRACTICE_OPERATION })
+	@RequiresPermissions(value = { MenuConstant.CMS_EXERCISES, MenuConstant.CMS_THEORY_PRACTICE,
+			MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<ListRsp<AdminPracticeSetBo>> list(PracticeSetPageReq setPageReq) {
 
 		// 设置默认排序
@@ -161,6 +162,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@GetMapping("/all")
 	@ApiOperation("获取全部的习题集信息")
+	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
 	public BaseRsp<List<PracticeSetRes>>
 			allList(@ApiParam(name = "practice_type", value = "习题集类型 0=理论基础 2=实操练习") @RequestParam(
 					value = "practice_type", required = false) Integer practiceType) {

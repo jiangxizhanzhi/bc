@@ -35,7 +35,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/rtks/frame/level")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 public class LevelController {
 
 	@Autowired
@@ -49,6 +48,7 @@ public class LevelController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> create(@RequestBody @Validated LevelAddInput input) {
 		Level entity = getEntityFromAddInput(input);
 
@@ -59,6 +59,7 @@ public class LevelController {
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> update(@RequestBody @Validated LevelModifyInput input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 
@@ -73,6 +74,7 @@ public class LevelController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> retrieve(String resource_id) {
 		Level t = getOr404(resource_id);
 		return new BaseRsp<>(getOutputFromEntity(t));
@@ -80,6 +82,7 @@ public class LevelController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		performBatchDelete(deleteReq.getIds());
 		return new BaseRsp<>();

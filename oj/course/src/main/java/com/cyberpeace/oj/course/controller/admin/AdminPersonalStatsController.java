@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 @RequiresAuthentication
 @RequestMapping("/oj/admin/course/personal-stats")
 @Slf4j
-@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 public class AdminPersonalStatsController {
 	// todo ------- 数据准确性待验证 -------
 
@@ -49,6 +48,7 @@ public class AdminPersonalStatsController {
 
 	@ApiOperation("个人统计")
 	@GetMapping("/person-stats")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<UserStatsBo>> personalStats(UserStatsReq userStatsReq) {
 		return new BaseRsp<>(learnStatsService.getUserStats(userStatsReq.toPageParam(),
 				userStatsReq.getPattern(), userStatsReq.getOrganization(),
@@ -57,12 +57,14 @@ public class AdminPersonalStatsController {
 
 	@ApiOperation("个人统计排名")
 	@GetMapping("/person-stats-rank")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<UserStatsRankBo> personalStatsRank() {
 		return new BaseRsp<>(learnStatsService.getUserLearnRank());
 	}
 
 	@ApiOperation("个人课程学习数量统计")
 	@GetMapping("/person-stats-detail/count")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<PersonalStatsDetail4CountBo>
 			personalStatsDetail4Count(@RequestParam("user_id") String resourceId) {
 		return new BaseRsp<>(learnStatsService.getPersonalStatsDetail4Count(resourceId));
@@ -70,6 +72,7 @@ public class AdminPersonalStatsController {
 
 	@ApiOperation("个人课程学习统计")
 	@GetMapping("/person-stats-detail/course")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<PersonalStatsDetail4CourseBo>> personalStatsDetail4Course(
 			PageReqBase pageReq,
 			@ApiParam("用户resource_id") @RequestParam(value = "user_id") String userId) {
@@ -79,24 +82,28 @@ public class AdminPersonalStatsController {
 
 	@ApiOperation("积分排名-组织积分排名Top5")
 	@GetMapping("/class_integral")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<HistogramRes> classIntegralTopTen() {
 		return new BaseRsp<>(learnStatsService.getClassIntegralTopTen("org", ""));
 	}
 
 	@ApiOperation("积分排名-个人积分排名Top5")
 	@GetMapping("/personal-integral")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<HistogramRes> personalIntegralTopTen() {
 		return new BaseRsp<>(learnStatsService.getClassIntegralTopTen("person", ""));
 	}
 
 	@ApiOperation("学习统计排名-组织数据")
 	@GetMapping("/org-stats-rank")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<UserStatsRankBo> orgStatsRank() {
 		return new BaseRsp<>(learnStatsService.getOrgLearnRank());
 	}
 
 	@ApiOperation("学习数据-组织数据")
 	@GetMapping("/org-stats-data")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<OrgStatsBo>> orgStatsData(UserStatsReq userStatsReq) {
 		return new BaseRsp<>(learnStatsService.getOrgStatsData(userStatsReq.toPageParam(),
 				userStatsReq.getPattern(), userStatsReq.getOrganization(),
@@ -105,6 +112,7 @@ public class AdminPersonalStatsController {
 
 	@ApiOperation("学习数据-全部数据-导出")
 	@GetMapping(value = "/user-stats-data-export")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
 		ListRsp<UserStatsBo> userStats = learnStatsService.getUserStats(userStatsReq.toPageParam(),
 				userStatsReq.getPattern(), userStatsReq.getOrganization(),

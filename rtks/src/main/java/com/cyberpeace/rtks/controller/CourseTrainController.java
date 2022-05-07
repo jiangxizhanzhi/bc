@@ -28,7 +28,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/course/train")
 @RequiresAuthentication
-@RequiresPermissions({ MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER })
 public class CourseTrainController {
 
 	@Autowired
@@ -36,7 +35,7 @@ public class CourseTrainController {
 
 	@ApiOperation("课程训练-职业课程课程学习进度")
 	@GetMapping("/knowledge")
-	@RequiresPermissions(MenuConstant.WEB_OJ_COURSE)
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<OccupationCourseRes> courseKnowledge() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();
@@ -47,6 +46,7 @@ public class CourseTrainController {
 
 	@ApiOperation("学习路径-专业课程")
 	@GetMapping("/getCourseKnowledgeByRoleId")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<OccupationCourseRes> getCourseKnowledgeByRoleId(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
 		List<CourseKnowledgeSkillBo> courseKnowledges = courseTrainService

@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("cr/tool/category")
 @RequiresAuthentication
-@RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
 public class WebToolCategoryController {
 
     @Autowired
@@ -28,6 +27,7 @@ public class WebToolCategoryController {
 
     @GetMapping("/list")
     @ApiOperation("工具分类列表")
+    @RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
     public BaseRsp<List<ToolCategory>> getList(
             @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
         List<ToolCategory> courseInfos = toolCategoryService.selectAll();

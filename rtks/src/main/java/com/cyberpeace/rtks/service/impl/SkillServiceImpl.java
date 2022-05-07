@@ -66,7 +66,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
 		// fill missions
 		for (SkillRes skillRes : result.getRecords()) {
-			skillRes.setMissionList(skillMissionRelationMapper
+			skillRes.setMissions(skillMissionRelationMapper
 					.batchSelectMissionResBySkillId(skillRes.getResourceId()));
 		}
 		return PageUtil.getListResult(result);
@@ -91,7 +91,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 				.batchSelectMissionResBySkillId(skillId);
 
 		SkillRes skillRes = BeanUtils.copy(skill, SkillRes.class);
-		skillRes.setMissionList(missionResList);
+		skillRes.setMissions(missionResList);
 		return skillRes;
 	}
 

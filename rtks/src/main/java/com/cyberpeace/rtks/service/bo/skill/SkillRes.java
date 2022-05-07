@@ -10,5 +10,5 @@ import lombok.Data;
 public class SkillRes extends SkillResBase implements Serializable {
 
 	@ApiModelProperty("技能关联任务")
-	private List<MissionRes> missionList;
+	private List<MissionRes> missions;
 }

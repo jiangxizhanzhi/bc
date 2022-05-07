@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = "后台-学习统计-个人统计")
@@ -109,7 +110,7 @@ public class AdminPersonalStatsController {
 	@ApiOperation("学习数据-全部数据-导出")
 	@GetMapping(value = "/user-stats-data-export")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
-	public void userStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
+	public void userStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) throws IOException {
 		ListRsp<UserStatsBo> userStats = learnStatsService.getUserStats(userStatsReq.toPageParam(), null, null,
 				false, userStatsReq.getStartTime(), userStatsReq.getEndTime());
 
@@ -125,7 +126,7 @@ public class AdminPersonalStatsController {
 	}
     @ApiOperation("学习数据-组织数据-导出")
     @GetMapping(value = "/org-stats-data-export")
-    public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
+    public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) throws IOException {
         ListRsp<OrgStatsBo> orgStatsData = learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), null, null,
                 userStatsReq.getStartTime(), userStatsReq.getEndTime());
         List<String> passFields = Lists.newArrayList( "resourceId", "reportAverage");

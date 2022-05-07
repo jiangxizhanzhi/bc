@@ -319,17 +319,31 @@ public class ExcelDataHandler {
 
 	/**
 	 * excel 文件导出
-	 * @param list
-	 * @param sheetName
-	 * @param passFields
-	 * @param excelHeader
-	 * @param <T>
-	 * @return
+	 * @param list 导出数据
+	 * @param sheetName sheet名
+	 * @param passFields 过滤字段
+	 * @param excelHeader 导出列头
+	 * @param <T> 数据bean
+	 * @return 文件流
 	 */
 	public static <T> File exportExcel(List<T> list, String filePath, String sheetName,
-			List<String> passFields, ExcelHeader excelHeader) {
+			List<String> passFields, ExcelHeader excelHeader) throws IOException {
+
 
 		File file = new File(filePath);
+		// 校验文件是否存在 不存在则新建
+		if(!file.getParentFile().exists()){
+			String destFileName = file.getAbsolutePath();
+			try{if(!file.createNewFile()) {
+				log.error("File" + destFileName + "create failed！");
+
+			}
+			}catch(IOException e) {
+				e.printStackTrace();
+				log.error("File" + destFileName + "create failed！" +e.getMessage());
+			}
+		}
+
 		// 创建HSSFWorkbook对象
 		HSSFWorkbook wb = new HSSFWorkbook();
 

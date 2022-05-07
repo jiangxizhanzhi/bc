@@ -356,6 +356,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("查询课程下课时简易数据")
 	@GetMapping("/simple/list")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<SimpleDataRes>>
 			selectAllLesson(@RequestParam("course_id") String courseId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

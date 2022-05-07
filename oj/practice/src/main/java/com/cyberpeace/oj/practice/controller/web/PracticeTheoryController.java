@@ -1,5 +1,16 @@
 package com.cyberpeace.oj.practice.controller.web;
 
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -21,19 +32,10 @@ import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Api(tags = "oj-前台理论基础练习相关")
 @RestController
@@ -60,6 +62,7 @@ public class PracticeTheoryController {
 
 	@GetMapping("/list")
 	@ApiOperation("分页查询理论基础习题")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<ListRsp<PracticeTheoryListBo>> getList(WebTheoryListReq listReq) {
 
 		// 设置默认排序字段
@@ -85,14 +88,16 @@ public class PracticeTheoryController {
 
 	@ApiOperation("理论基础练习题提交")
 	@PostMapping("/submit_answer")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<EvaluateResult> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
 		EvaluateResult evaluateResult = practiceTheoryService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
-				answerReq.getSubmitAnswer(),Boolean.FALSE);
+				answerReq.getSubmitAnswer(), Boolean.FALSE);
 
 		// 记录远程操作日志
-		LogContent logContent = evaluateResult.getSolved()? LogContent.CORRECT:LogContent.INCORRECT;
+		LogContent logContent = evaluateResult.getSolved() ? LogContent.CORRECT
+				: LogContent.INCORRECT;
 		practiceTheoryService.createMpLog(answerReq.getResourceId(), logContent);
 
 		return new BaseRsp<>(evaluateResult);
@@ -100,6 +105,7 @@ public class PracticeTheoryController {
 
 	@ApiOperation("获取所有理论习题编号列表")
 	@GetMapping("/list/ids")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<String>> getPracticeListId() {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

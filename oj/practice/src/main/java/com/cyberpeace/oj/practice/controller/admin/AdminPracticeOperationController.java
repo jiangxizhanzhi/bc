@@ -2,7 +2,6 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -18,6 +17,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -66,6 +66,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<OperationBo> get(@ApiParam(name = "resource_id",
 			value = "资源编号") @RequestParam("resource_id") String resourceId) {
 
@@ -76,6 +77,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("实践操作习题新增")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp add(@Validated(Create.class) OperationAddReq addReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -102,6 +104,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("实践操作习题修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Integer> update(@Validated(Update.class) OperationUpdateReq updateReq) {
 
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
@@ -113,6 +116,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("实践操作习题删除")
 	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -123,6 +127,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("分页查询实践操作习题")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<ListRsp<AdminOperationListBo>> list(AdminOperationListReq listReq) {
 
 		OperationListQueryBo listQuery = BeanUtils.copy(listReq, OperationListQueryBo.class);
@@ -148,6 +153,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("批量公开/隐藏题解")
 	@PatchMapping("/writeup_public")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> writeupPublic(@RequestBody @Validated ResourcePublicReq publicReq) {
 
 		List<PracticeOperation> operations = StreamApiUtils.map(publicReq.getResourceIds(),
@@ -165,6 +171,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("获取场景拓扑信息")
 	@GetMapping("/scene_topo")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp sceneTopo(@ApiParam(name = "resource_id",
 			value = "习题编号") @RequestParam("resource_id") String operationId) {
 
@@ -176,6 +183,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("隔离模式设置")
 	@PatchMapping("/scene_share_mode")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Boolean>
 			updateSceneShare(@RequestBody @Validated SceneShareModeReq sceneShareModeReq) {
 
@@ -190,6 +198,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("后台场景启动测试")
 	@PostMapping("/start_scene")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<JSONObject> startScene(@RequestBody @Validated SceneOperationReq operationReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -202,6 +211,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("后台场景删除")
 	@DeleteMapping("/delete_scene")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp deleteScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -237,6 +247,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("后台场景暂停与恢复")
 	@PatchMapping("/scene_update_status")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp sceneUpdateStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

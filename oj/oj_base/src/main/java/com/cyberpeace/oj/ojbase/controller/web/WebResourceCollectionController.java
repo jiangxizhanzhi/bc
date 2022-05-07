@@ -32,8 +32,10 @@ public class WebResourceCollectionController {
 
 	@ApiOperation("资源收藏或取消收藏")
 	@PostMapping("")
-	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-			MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION}, logical = Logical.OR)
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+					MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
+			logical = Logical.OR)
 	public BaseRsp<Boolean> add(@RequestBody @Validated CollectionReq collectionReq) {
 
 		CollectionContext collectionContext = BeanUtils.copy(collectionReq,

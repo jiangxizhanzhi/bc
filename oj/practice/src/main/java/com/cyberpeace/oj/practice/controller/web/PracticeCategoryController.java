@@ -1,11 +1,7 @@
 package com.cyberpeace.oj.practice.controller.web;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
-import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
-import io.swagger.annotations.*;
+import java.util.List;
+
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -15,9 +11,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
+import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
 
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "oj-前台练习分类相关api")
 @RestController
@@ -33,7 +37,8 @@ public class PracticeCategoryController {
 			@ApiImplicitParam(name = "pattern", value = "模糊搜索内容"),
 			@ApiImplicitParam(name = "children", value = "是否查询子分类") })
 	@GetMapping("/list")
-	@RequiresPermissions(value = {MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION},
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
 			logical = Logical.OR)
 	public BaseRsp<List<CategoryListBo>> list(
 			@RequestParam(value = "practice_type") Integer practiceType,

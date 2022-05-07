@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -19,6 +18,7 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -75,6 +75,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<ClassroomBo>> list(@Validated ClassroomListReq classroomListReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -106,6 +107,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表创建")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp
 			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
 
@@ -123,6 +125,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表信息修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean>
 			updateClassRoom(@RequestBody @Validated(Update.class) ClassroomReq classroomReq) {
 
@@ -136,6 +139,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表信息删除")
 	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Integer> deleteClassroom(@RequestBody @Validated ClassroomDeleteReq delReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -146,6 +150,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课堂监控获取用户签到列表")
 	@GetMapping("/classroom_monitor")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ListRsp<ClassroomMonitorBo>> classroomMonitor(ClassroomMonitorReq monitorReq) {
 
 		Page page = monitorReq.toPageParam();

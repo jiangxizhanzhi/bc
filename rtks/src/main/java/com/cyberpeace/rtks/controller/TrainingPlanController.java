@@ -3,7 +3,6 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.Set;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -45,8 +45,8 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/rtks/training-plan")
 @RequiresAuthentication
-@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
-		MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
+@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+		MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
 public class TrainingPlanController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
@@ -65,6 +65,7 @@ public class TrainingPlanController {
 
 	@ApiOperation("知识体系")
 	@GetMapping("/knowledgeTree")
+	@RequiresPermissions(MenuConstant.WEB_OJ_KNOWLEDGE_COURSE)
 	public BaseRsp<List<KnowledgeTreeRes>> knowledgeTree() {
 		List<KnowledgeTreeRes> knowledgeTreeRes = trainingPlanService.getKnowledgeTree();
 
@@ -73,6 +74,7 @@ public class TrainingPlanController {
 
 	@ApiOperation("职业框架管理")
 	@GetMapping("/tree")
+	@RequiresPermissions(MenuConstant.WEB_OJ_COURSE)
 	public BaseRsp<LevelTreeOutput> tree(
 			@ApiParam(name = "resource_id", value = "框架id", required = true) String resource_id) {
 		// 如果前端没有获取框架，尝试获取默认角色的框架
@@ -172,6 +174,7 @@ public class TrainingPlanController {
 
 	@ApiOperation("查询个人能力评估")
 	@GetMapping("/getRoleDetailRes")
+	@RequiresPermissions(MenuConstant.WEB_OJ_COURSE)
 	public BaseRsp<RoleDetailRes> getRoleDetailRes() {// @ApiParam(name = "course_type", value =
 		// "查询课程类型(skill/knowledge)", required =
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();

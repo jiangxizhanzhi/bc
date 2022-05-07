@@ -69,6 +69,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论基础习题新增")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Integer>
 			add(@RequestBody @Validated({ Create.class }) TheoryAddReq theoryAddReq) {
 
@@ -98,6 +99,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论基础习题修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Integer>
 			update(@RequestBody @Validated({ Update.class }) TheoryUpdateReq theoryUpdateReq) {
 
@@ -130,6 +132,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("分页查询理论基础习题")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<ListRsp<PracticeTheoryListBo>> list(AdminTheoryListReq listReq) {
 
 		Page page = listReq.toPageParam();
@@ -154,6 +157,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论习题资源导入")
 	@PostMapping("/import")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Boolean> importTheory(@Validated TheoryImportReq theoryImportReq) {
 
 		// 文件先上传临时目录

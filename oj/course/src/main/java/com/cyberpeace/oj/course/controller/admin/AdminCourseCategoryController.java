@@ -1,33 +1,5 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.course.controller.req.BatchDeleteReq;
-import com.cyberpeace.oj.course.controller.req.CourseCategoryListReq;
-import com.cyberpeace.oj.course.controller.req.SaveCourseCategoryReq;
-import com.cyberpeace.oj.course.controller.req.UpdateCategoryReq;
-import com.cyberpeace.oj.course.controller.res.CategoryRes;
-import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
-import com.cyberpeace.oj.course.service.CourseCategoryService;
-import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
-import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
-import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -36,13 +8,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.controller.req.BatchDeleteReq;
+import com.cyberpeace.oj.course.controller.req.CourseCategoryListReq;
+import com.cyberpeace.oj.course.controller.req.SaveCourseCategoryReq;
+import com.cyberpeace.oj.course.controller.req.UpdateCategoryReq;
+import com.cyberpeace.oj.course.controller.res.CategoryRes;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
+import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
+import com.cyberpeace.oj.course.service.CourseCategoryService;
+import com.cyberpeace.oj.course.service.bo.CategoryAddBo;
+import com.cyberpeace.oj.course.service.bo.CourseCategoryBo;
+import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 
 import io.swagger.annotations.Api;
-
-import javax.validation.Valid;
-import java.util.List;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "oj-后台课程分类api")
 @RestController
@@ -62,6 +56,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类分页查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<ListRsp<CourseCategoryBo>> list(@Validated CourseCategoryListReq listReq) {
 		Page page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
@@ -87,6 +82,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类批量删除")
 	@DeleteMapping("/batch")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Integer> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
 		Integer row = courseCategoryService.batchDeleteByIds(batchDeleteReq.getResourceIds());
@@ -95,6 +91,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类新增")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CategoryRes>
 			add(@RequestBody @Validated(Create.class) SaveCourseCategoryReq categoryReq) {
 
@@ -115,6 +112,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CategoryRes>
 			patch(@RequestBody @Validated(Update.class) UpdateCategoryReq updateCategoryReq) {
 

@@ -6,6 +6,8 @@ import java.util.function.Function;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.constant.MenuConstant;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,6 +38,8 @@ public abstract class PublicController<T extends IService<E>, E> {
 
 	@PatchMapping("/batch-public")
 	@ApiOperation("资源公开/隐藏")
+	@RequiresPermissions({ MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES,
+			MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
 	public BaseRsp<Boolean> batchPublic(@RequestBody @Validated ResourcePublicReq requestData) {
 
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {

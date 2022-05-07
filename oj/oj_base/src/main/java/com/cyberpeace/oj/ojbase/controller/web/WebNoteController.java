@@ -1,17 +1,5 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.ojbase.controller.req.NoteAttachmentReq;
-import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
-import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
-import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
-import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -20,14 +8,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.ojbase.controller.req.GetNoteReq;
 import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
+import com.cyberpeace.oj.ojbase.controller.req.NoteAttachmentReq;
 import com.cyberpeace.oj.ojbase.controller.req.NoteUpdateReq;
+import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
@@ -39,8 +39,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/oj/note")
 @RequiresAuthentication
-@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-		MenuConstant.WEB_OJ_PRACTICE_OPERATION}, logical = Logical.OR)
+@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+		MenuConstant.WEB_OJ_PRACTICE_OPERATION }, logical = Logical.OR)
 public class WebNoteController {
 
 	@Autowired
@@ -60,6 +60,9 @@ public class WebNoteController {
 
 	@ApiOperation("笔记、实验报告新增")
 	@PostMapping("")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
+			logical = Logical.OR)
 	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
 
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
@@ -73,6 +76,9 @@ public class WebNoteController {
 
 	@ApiOperation("实验报告笔记修改")
 	@PatchMapping("")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
+			logical = Logical.OR)
 	public BaseRsp<Integer> update(@RequestBody @Validated NoteUpdateReq noteUpdateReq) {
 
 		Note note = BeanUtils.copy(noteUpdateReq, Note.class);
@@ -85,6 +91,9 @@ public class WebNoteController {
 
 	@ApiOperation("单条笔记查询")
 	@GetMapping("")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
+			logical = Logical.OR)
 	public BaseRsp<WebNoteRes> getNote(@Validated GetNoteReq getNoteReq) {
 
 		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()

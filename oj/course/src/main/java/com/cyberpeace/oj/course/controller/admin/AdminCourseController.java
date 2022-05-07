@@ -112,6 +112,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<List<CourseInfoBo>>
 			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
 
@@ -143,6 +144,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程新增")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> add(@ApiParam(name = "addReq",
 			value = "课程基本信息") @Validated(Create.class) @RequestBody CourseAddReq addReq) {
 
@@ -195,6 +197,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("批量删除课程信息")
 	@DeleteMapping("/batch")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -237,6 +240,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp exportCourse(
 			@ApiParam(name = "ids",
 					value = "课程编号") @RequestParam("ids") @NotEmpty List<String> courseIds,
@@ -250,8 +254,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp importCourse(@Validated LoadCourseReq loadCourseReq) {
-		FileUtil.validateFileSuffix(loadCourseReq.getFile().getOriginalFilename(), FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
+		FileUtil.validateFileSuffix(loadCourseReq.getFile().getOriginalFilename(),
+				FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
 
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
 				false, loadCourseReq.getFile(), true);

@@ -12,7 +12,7 @@ public interface JsonKeyConstant {
 	String GROUP_ID = "group_id";
 
 	/** 场景状态*/
-	String SCENE_STATUS = "status";
+	String STATUS = "status";
 
 	/** 场景类型 1=私有 2=共享 3=小组*/
 	String SCENE_SHARE_MODE = "scene_share_mode";
@@ -82,4 +82,16 @@ public interface JsonKeyConstant {
 	String CHILDREN = "children";
 
 	String PATH = "path";
+
+	String RESOURCE_ID = "resource_id";
+
+	String CREATE_USER_ID = "create_user_id";
+
+	String START_TIME = "start_time";
+
+	String END_TIME = "end_time";
+
+	String CLASSIFY = "classify";
+
+	String TYPE = "type";
 }

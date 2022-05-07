@@ -3,8 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.integratation.service.RemoteAdService;
-import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +30,11 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
@@ -42,6 +42,7 @@ import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
+import com.cyberpeace.oj.ojbase.constant.ClassroomType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
@@ -343,7 +344,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 竞赛赛事
 		List<ClassroomBo> adClassroom = adClassroom(roomListQuery.getStartTime(),
-				roomListQuery.getEndTime(), authContext.getUserId());
+				roomListQuery.getEndTime(),
+				authContext.getSuperAdmin() ? CommonConstant.EMPTY_STRING
+						: authContext.getUserId());
 		classroomBos.addAll(adClassroom);
 
 		// 根据开始时间转换为map
@@ -371,7 +374,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 */
 	private List<ClassroomBo> adClassroom(Date startTime, Date endTime, String userId) {
 
-		// TODO
 		List<CalendarCompetitionBo> competitionBos = remoteAdService.competitionList(startTime,
 				endTime, userId);
 		return StreamApiUtils.map(competitionBos,
@@ -1339,6 +1341,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			TrainPlan trainPlan = trainPlanMapper.selectById(classroom.getTrainPlanId());
 			classroomBo.setTrainPlanName(trainPlan.getName());
 		}
+
+		// 日程类型
+		classroomBo.setClassify(ClassroomType.CLASS.getCode());
 		return classroomBo;
 	}
 

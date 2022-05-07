@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
@@ -31,7 +32,6 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.SystemConfigService;
-import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -340,7 +340,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 				localScene.getUserId());
 		// 设置类型
 		sceneData.put(JsonKeyConstant.REFERENCE_TYPE, localScene.getBusinessCode());
-		sceneData.put(JsonKeyConstant.SCENE_STATUS, localScene.getSceneStatus());
+		sceneData.put(JsonKeyConstant.STATUS, localScene.getSceneStatus());
 
 		// 设置场景共享类型
 		Integer share = localScene.getBusinessCode().intValue() == LocalScene.BusinessCode.CLASSROOM

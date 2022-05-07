@@ -54,7 +54,7 @@ public class ClassroomBo implements Serializable {
 	private String trainPlanName;
 
 	@ApiModelProperty("日程类型")
-	private Integer type;
+	private Integer classify;
 
 	@ApiModelProperty("日程名称")
 	private String name;

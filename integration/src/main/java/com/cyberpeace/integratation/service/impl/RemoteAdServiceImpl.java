@@ -1,7 +1,10 @@
 package com.cyberpeace.integratation.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +31,12 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	@Autowired
 	private AdEnvService adEnvService;
 
-	private String AD_HOST;
-
-	private String AD_PORT;
-
 	private String EXAM_USER_FINISH_COUNT_URL;
 
 	@PostConstruct
 	public void init() {
-		AD_HOST = SystemPropUtil.getProp("AD_HOST");
-		AD_PORT = SystemPropUtil.getProp("AD_PORT");
-		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost() + ConfigUtil.getContextProperty("ad.theory_race.statistic") + "?";
+		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.theory_race.statistic") + "?";
 	}
 
 	@Override
@@ -76,7 +74,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	}
 
 	@Override
-	public List<JSONObject> competitionListWithMinScore(String startTime, String endTime, List<String> userIds, Integer minScore) {
+	public List<JSONObject> competitionListWithMinScore(String startTime, String endTime,
+			List<String> userIds, Integer minScore) {
 
 		// 获取竞赛理论赛所有百分制换算后>=80分的数据
 		StringBuilder targetUrl = new StringBuilder(EXAM_USER_FINISH_COUNT_URL);

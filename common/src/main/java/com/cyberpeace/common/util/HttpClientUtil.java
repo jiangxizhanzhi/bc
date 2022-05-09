@@ -87,8 +87,7 @@ public class HttpClientUtil {
 	}
 
 	/**
-	 * 所有参数都放在url中都get方法
-	 *
+	 * 请求地址中包含特殊字符的可使用该方法 比如空格 * ｜
 	 * @param resultType
 	 * @param url
 	 * @param <T>

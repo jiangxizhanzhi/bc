@@ -91,6 +91,8 @@ public class CrCommonUtil {
 			if (j > -1) {
 				l1.remove(i);
 				l2.remove(j);
+			} else {
+				i++;
 			}
 		}
 	}

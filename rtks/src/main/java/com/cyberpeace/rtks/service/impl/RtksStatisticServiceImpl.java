@@ -257,6 +257,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// get missions and related business template ids
 		List<MissionContext> missionContextList = roleSkillRelationMapper
 				.getMissionContextsByRoleId(roleId);
+		if (missionContextList.isEmpty()) {
+			return Lists.newArrayList();
+		}
 		// deduplicate, keep order
 		LinkedHashMap<String, MissionContext> missionMap = Maps.newLinkedHashMap();
 		Set<String> businessTemplateIds = Sets.newHashSet();

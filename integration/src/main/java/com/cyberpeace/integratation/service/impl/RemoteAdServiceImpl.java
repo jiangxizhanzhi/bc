@@ -94,9 +94,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		targetUrl.append(String.join("&", queryParams));
 
 		JSONArray jsonResponse = HttpClientUtil.rawGet(targetUrl.toString(), JSONArray.class);
-		List jsonArray = (List) jsonResponse;
 		List<JSONObject> res = new ArrayList<>();
-		for (Object object : jsonArray) {
+		for (Object object : (List) jsonResponse) {
 			JSONObject obj = (JSONObject) object;
 			res.add(obj);
 		}

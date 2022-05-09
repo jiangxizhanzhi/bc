@@ -12,9 +12,9 @@ import com.cyberpeace.oj.course.dao.context.CourseContext;
 
 public interface CourseLearnStatisticsService {
 
-	HistogramRes courseHistogram();
+	HistogramRes courseHistogram(AuthContext authContext);
 
-	HistogramRes directionHistogram();
+	HistogramRes directionHistogram(AuthContext authContext);
 
 	ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page page,
 			AuthContext authContext);

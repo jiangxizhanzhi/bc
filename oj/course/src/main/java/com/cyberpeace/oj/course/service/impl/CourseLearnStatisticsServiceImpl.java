@@ -16,7 +16,6 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.LessonStatisticsListReq;
 import com.cyberpeace.oj.course.controller.res.AdminCourseStatisticsRes;
@@ -25,7 +24,6 @@ import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
 import com.cyberpeace.oj.course.controller.res.HistogramRes;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLearnStatisticsMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -47,14 +45,22 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	private CourseLearnStatisticsMapper courseLearnStatisticsMapper;
 
 	@Override
-	public HistogramRes courseHistogram() {
-		List<Course> courses = courseLearnStatisticsMapper.selectByHeat();
+	public HistogramRes courseHistogram(AuthContext authContext) {
+		List<String> courseIds = null;
+		if (null != authContext) {
+			courseIds = courseMapper.selectByAuth(authContext);
+		}
+		List<Course> courses = courseLearnStatisticsMapper.selectByHeat(courseIds);
 		return getCourseHistogramRes(courses);
 	}
 
 	@Override
-	public HistogramRes directionHistogram() {
-		List<Course> directions = courseLearnStatisticsMapper.sumHeatByDirection();
+	public HistogramRes directionHistogram(AuthContext authContext) {
+		List<String> courseIds = null;
+		if (null != authContext) {
+			courseIds = courseMapper.selectByAuth(authContext);
+		}
+		List<Course> directions = courseLearnStatisticsMapper.sumHeatByDirection(courseIds);
 		directions = directions.stream().map(direction -> {
 			String directionHeats = direction.getDescription();
 			if (null == directionHeats) {

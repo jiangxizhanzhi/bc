@@ -36,18 +36,29 @@
         <result property="record" column="record"/>
     </resultMap>
 
+    <sql id="filterByCourseIds">
+        <if test="null != courseIds and courseIds.size() > 0">
+            where oj_course.resource_id in
+            <foreach collection="courseIds" index="index" separator="," item="courseId" open="(" close=")">
+                #{courseId}
+            </foreach>
+        </if>
+    </sql>
+
 
     <select id="selectByHeat" resultMap="baseResultMap">
         select name, heat
         from oj_course
+        <include refid="filterByCourseIds"/>
         ORDER BY oj_course.heat DESC
         LIMIT 5
     </select>
 
     <select id="sumHeatByDirection" resultMap="baseResultMap">
-        select oj_course_category.resource_id, oj_course_category.name as name,ifnull(group_concat(oj_course.heat separator '_'),0) as description
+        select oj_course_category.resource_id, oj_course_category.name as name,ifnull(sum(oj_course.heat),0) as description
         from oj_course_category
                  left join oj_course on oj_course.category_id = oj_course_category.resource_id
+        <include refid="filterByCourseIds"/>
         group by  oj_course_category.resource_id
     </select>
 

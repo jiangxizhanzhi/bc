@@ -52,7 +52,9 @@ public class AdminLearnStatisticController {
 	@GetMapping("/course_histogram")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<HistogramRes> courseHistogram() {
-		HistogramRes res = courseLearnStatisticsService.courseHistogram();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		HistogramRes res = courseLearnStatisticsService.courseHistogram(authContext);
 		return new BaseRsp<>(res);
 	}
 
@@ -60,7 +62,9 @@ public class AdminLearnStatisticController {
 	@GetMapping("/direction_histogram")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<HistogramRes> directionHistogram() {
-		HistogramRes res = courseLearnStatisticsService.directionHistogram();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		HistogramRes res = courseLearnStatisticsService.directionHistogram(authContext);
 		return new BaseRsp<>(res);
 	}
 

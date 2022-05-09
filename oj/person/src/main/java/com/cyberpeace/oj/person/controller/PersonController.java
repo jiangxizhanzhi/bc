@@ -4,15 +4,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
@@ -25,6 +25,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -36,8 +37,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -57,6 +56,9 @@ public class PersonController {
 
 	@Autowired
 	private PracticeOperationService practiceOperationService;
+
+	@Autowired
+	RemoteUserService remoteUserService;
 
 	@ApiOperation("当前用户所有评论")
 	@GetMapping("/comments")
@@ -132,27 +134,23 @@ public class PersonController {
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
-	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam(value = "user_id", required = false)String userId) {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date date = new Date(System.currentTimeMillis());
-		String endTime = format.format(date);
-		Calendar now = Calendar.getInstance();
-		now.setTime(date);
-		now.add(Calendar.DAY_OF_MONTH, -30);
-		String startTime = format.format(now.getTime());
-		boolean startValidate = TimeUtil.isValidDate(startTime);
-		boolean endValidate = TimeUtil.isValidDate(endTime);
-		if (!startValidate || !endValidate) {
-			throw new InvalidParamException("incorrect time format！");
-		}
+	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam(value = "user_id", required = false) String userId,
+															   @RequestParam(value = "isWeb", required = false) Boolean isWeb) {
+		Date endTime = new Date();
+		Date startTime = DateUtils.addDays(endTime, -CommonConstant.THIRTY);
 		if (StringUtils.isEmpty(userId)){
 			userId = UserInfoContext.getUserContext().getUserId();
+		} else {
+			UserInfo userInfo = remoteUserService.getById(userId);
+			UserInfoContext.setUserContext(userInfo);
+		}
+		if (null == isWeb) {
+			isWeb = true;
 		}
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				true);
-		return personCenterService.studyPeriodRecords(userId, TimeUtil.toDate1(startTime),
-				TimeUtil.toDate1(endTime), authContext);
+				isWeb);
+		return personCenterService.studyPeriodRecords(userId, startTime, endTime, authContext);
 	}
 
 	@ApiOperation("查询收藏习题列表")

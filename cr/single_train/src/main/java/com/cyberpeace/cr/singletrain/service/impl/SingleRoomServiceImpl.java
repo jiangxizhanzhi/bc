@@ -336,6 +336,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 						.map(singleRoomList -> singleRoomList.getBusinessTemplate().getTopoId())
 						.collect(Collectors.toList()));
 
+		// get attack engage relation
+		List<String> attackRelatedIds = businessTemplateService.getAttackRelatedIds(template_ids);
+		List<String> engageRelatedIds = businessTemplateService.getEngageRelatedIds(template_ids);
+
 		// 拓展额外数据
 		List<SingleRoomListBo> singleRoomListBoList = Lists.newArrayList();
 		for (SingleRoomList item : selectResult.getRecords()) {
@@ -369,6 +373,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			singleRoomListBo.setLastSevenDays(dateRangeForMonth);
 			singleRoomListBo.setTemplateUseCount(trainStats.getOrDefault(
 					singleRoomListBo.getResourceId(), Lists.newArrayList(0, 0, 0, 0, 0, 0, 0)));
+
+			// set attack engage relation
+			singleRoomListBo.setIsAttackRelated(
+					attackRelatedIds.contains(singleRoomListBo.getResourceId()));
+			singleRoomListBo.setIsEngageRelated(
+					engageRelatedIds.contains(singleRoomListBo.getResourceId()));
 
 			singleRoomListBoList.add(singleRoomListBo);
 		}

@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -19,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +36,7 @@ public class AdminCommentController {
 
     @ApiOperation("留言新增")
     @PostMapping("")
+    @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
     public BaseRsp<Integer> addComment(@RequestBody @Validated CommentReq commentReq) {
 
         Comment comment = BeanUtils.copy(commentReq, Comment.class);
@@ -45,6 +48,7 @@ public class AdminCommentController {
 
     @ApiOperation("留言删除")
     @DeleteMapping("")
+    @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
     public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq){
 
         commentService.bathDeleteComment(deleteReq.getIds());
@@ -54,6 +58,7 @@ public class AdminCommentController {
 
     @ApiOperation("分页查询一级留言")
     @GetMapping("list")
+    @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
     public BaseRsp<ListRsp<CommentBo>> parentList(@ApiParam @Validated PageCommentReq pageCommentReq){
         Page page = pageCommentReq.toPageParam();
         if (CollectionUtils.isEmpty(page.getOrders())) {
@@ -65,6 +70,7 @@ public class AdminCommentController {
 
     @ApiOperation("分页查询二级留言")
     @GetMapping("children_list")
+    @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
     public BaseRsp<ListRsp<CommentBo>> childrenList(@ApiParam @Validated PageChildrenCommentReq pageChildrenCommentReq){
         Page page = pageChildrenCommentReq.toPageParam();
         if (CollectionUtils.isEmpty(page.getOrders())) {

@@ -1,9 +1,14 @@
 package com.cyberpeace.common.util;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -89,6 +94,43 @@ public class HttpClientUtil {
 	 * @param <T>
 	 * @return
 	 */
+	public static <T> T rawSpecialGet(String url, Class<T> resultType) {
+		// 1、设置请求线程数据
+		setContext(url);
+
+		// 2、生成get请求
+		URL httpUrl;
+		URI uri;
+		try {
+			httpUrl = new URL(url);
+			uri = new URI(httpUrl.getProtocol(), httpUrl.getHost(), httpUrl.getPath(),
+					httpUrl.getQuery(), null);
+		} catch (MalformedURLException | URISyntaxException e) {
+			LOG.error("URL contains special characters, encoding conversion failed！", e);
+			throw new RemoteServiceException();
+		}
+
+		HttpGet httpGet = new HttpGet(uri);
+		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+
+		String jwt;
+		if (StringUtils.isNotBlank(jwt = CommonContext.getAuthorization())) {
+			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + jwt);
+		}
+
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(httpGet, resultType);
+	}
+
+	/**
+	 * 所有参数都放在url中都get方法
+	 *
+	 * @param resultType
+	 * @param url
+	 * @param <T>
+	 * @return
+	 */
 	public static <T> T rawGet(String url, Class<T> resultType) {
 		// 1、设置请求线程数据
 		setContext(url);
@@ -98,7 +140,7 @@ public class HttpClientUtil {
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		String authorization = CommonContext.getAuthorization();
-		if (null != authorization){ // 调用竞赛接口需要
+		if (null != authorization) { // 调用竞赛接口需要
 			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
 		}
 		// 3、执行实际调用、返回序列化后的结果
@@ -159,8 +201,8 @@ public class HttpClientUtil {
 
 			if (!isSuccess(baseRsp)) {
 				// 只要中台的错误码不是000000，都认为是有问题的
-				LOG.error("url=[{}], result=[{}] error, code=[{}]", HttpclientContext.getContext().getUrl(),
-						httpResponse, baseRsp.getCode());
+				LOG.error("url=[{}], result=[{}] error, code=[{}]",
+						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode());
 				throw new RemoteServiceException(baseRsp.getMessage());
 			}
 			if (null == baseRsp.getData()) {

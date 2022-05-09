@@ -13,7 +13,7 @@ public enum ClassroomType implements GenericEnum {
 	AD(4, "攻防赛"),
 	PERMEATE(5, "渗透赛"),
 	CLASS(8, "课程表"),
-	TEAM(9, "单兵训练"),
+	TEAM(9, "团队训练"),
 	RB(10, "红蓝对抗");
 
 	@Getter

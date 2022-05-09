@@ -59,7 +59,7 @@ public class ClassroomBo implements Serializable {
 	@ApiModelProperty("日程名称")
 	private String name;
 
-	@ApiModelProperty("是否可进入")
-	private Boolean enter;
+	@ApiModelProperty("角色类型")
+	private Integer roleGroup;
 
 }

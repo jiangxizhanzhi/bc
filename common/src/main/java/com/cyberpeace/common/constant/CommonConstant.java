@@ -59,10 +59,12 @@ public interface CommonConstant {
 
 	String EMPTY_STRING = "";
 
-	String  ONLINE = "online";
+	String ONLINE = "online";
 
 	Integer THIRTY = 30;
 
 	Integer TWENTY_FOUR_MONTHS = 24 * 30;
+
+	String UTF_8 = "UTF-8";
 
 }

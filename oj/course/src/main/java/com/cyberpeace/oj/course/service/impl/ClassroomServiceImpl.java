@@ -28,6 +28,13 @@ import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteAdService;
@@ -139,6 +146,15 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private RemoteAdService remoteAdService;
+
+	@Autowired
+	private CrRoleMapper crRoleMapper;
+
+	@Autowired
+	private TeamRoomMapper teamRoomMapper;
+
+	@Autowired
+	private RbRoomMapper rbRoomMapper;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -388,8 +404,63 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @return
 	 */
 	private List<ClassroomBo> crClassroom(Date startTime, Date endTime, String userId) {
-		// TODO
-		return Lists.newArrayList();
+
+		List<ClassroomBo> classroomBos = Lists.newArrayList();
+
+		List<String> rbIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		if (CollectionUtils.isNotEmpty(rbIds)) {
+			List<RbRoom> rbRooms = rbRoomMapper.selectBatchIds(rbIds);
+			List<RbRoom> rooms = StreamApiUtils.filter(rbRooms,
+					rbRoom -> startTime.before(rbRoom.getStartTime())
+							&& endTime.after(rbRoom.getStartTime()));
+			classroomBos.addAll(StreamApiUtils.map(rooms, rbRoom -> rbClassroom(rbRoom, userId)));
+		}
+
+		List<String> teamIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		if (CollectionUtils.isNotEmpty(teamIds)) {
+			List<TeamRoom> teamRooms = teamRoomMapper.selectBatchIds(teamIds);
+			List<TeamRoom> filter = StreamApiUtils.filter(teamRooms,
+					teamRoom -> startTime.before(teamRoom.getStartTime())
+							&& endTime.after(teamRoom.getStartTime()));
+			classroomBos.addAll(
+					StreamApiUtils.map(filter, teamRoom -> teamClassroom(teamRoom, userId)));
+		}
+
+		return classroomBos;
+	}
+
+	/** 团队训练房间数据转换*/
+	private ClassroomBo teamClassroom(TeamRoom teamRoom, String userId) {
+		ClassroomBo classroomBo = new ClassroomBo();
+		classroomBo.setName(teamRoom.getName());
+		classroomBo.setResourceId(teamRoom.getResourceId());
+		classroomBo.setClassify(ClassroomType.TEAM.getCode());
+		classroomBo.setCreateUserId(teamRoom.getCreateUserId());
+		classroomBo.setStartTime(teamRoom.getStartTime());
+		classroomBo.setEndTime(teamRoom.getEndTime());
+
+		CrRole role = crRoleMapper.getCrRoleByRoomIdAndUserId(teamRoom.getResourceId(), userId);
+		classroomBo.setRoleGroup(role.getRoleGroup());
+		return classroomBo;
+	}
+
+	/** 红蓝房间转换*/
+	private ClassroomBo rbClassroom(RbRoom rbRoom, String userId) {
+		ClassroomBo classroomBo = new ClassroomBo();
+		classroomBo.setClassify(ClassroomType.RB.getCode());
+		classroomBo.setName(rbRoom.getName());
+		classroomBo.setResourceId(rbRoom.getResourceId());
+
+		classroomBo.setCreateUserId(rbRoom.getCreateUserId());
+		classroomBo.setStartTime(rbRoom.getStartTime());
+		classroomBo.setEndTime(rbRoom.getEndTime());
+
+		CrRole role = crRoleMapper.getCrRoleByRoomIdAndUserId(rbRoom.getResourceId(), userId);
+		classroomBo.setRoleGroup(role.getRoleGroup());
+
+		return classroomBo;
 	}
 
 	@Override

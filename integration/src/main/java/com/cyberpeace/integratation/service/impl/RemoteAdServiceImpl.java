@@ -1,22 +1,27 @@
 package com.cyberpeace.integratation.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteAdService;
-import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
-import com.google.common.collect.Lists;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.integratation.service.RemoteAdService;
+import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.google.common.collect.Lists;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class RemoteAdServiceImpl implements RemoteAdService {
 
@@ -52,7 +57,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 				TimeUtil.format1(endTime),
 				StringUtils.isNotBlank(userId) ? userId : CommonConstant.EMPTY_STRING);
 
-		JSONArray competitionArray = HttpClientUtil.rawGet(formatUrl, JSONArray.class);
+		JSONArray competitionArray = HttpClientUtil.rawSpecialGet(formatUrl, JSONArray.class);
 		return StreamApiUtils.map(competitionArray, obj -> jsonToBo((JSONObject) obj));
 	}
 

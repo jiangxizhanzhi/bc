@@ -20,7 +20,11 @@ public class EvalTask extends BaseTable {
 
 	private String name;
 
+	private String taskName;
+
 	private String localSceneId;
+
+	private String mpSceneId;
 
 	private String copyedTopoId;
 

@@ -24,4 +24,10 @@ public class PracticeSubmitReq implements Serializable {
     @NotBlank
     private String practiceId;
 
+    @ApiModelProperty("是否需要判题")
+    private Boolean needEvaluate = false;
+
+    @ApiModelProperty("题型")
+    private Integer questionType;
+
 }

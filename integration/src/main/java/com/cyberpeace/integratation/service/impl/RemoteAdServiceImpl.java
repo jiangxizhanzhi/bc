@@ -1,31 +1,40 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import com.cyberpeace.common.util.StreamApiUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.util.encoders.UrlBase64;
-import org.bouncycastle.util.encoders.UrlBase64Encoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class RemoteAdServiceImpl implements RemoteAdService {
 
 	@Autowired
 	private AdEnvService adEnvService;
+
+	private String AD_HOST;
+
+	private String AD_PORT;
+
+	private String EXAM_USER_FINISH_COUNT_URL;
+
+	@PostConstruct
+	public void init() {
+		AD_HOST = SystemPropUtil.getProp("AD_HOST");
+		AD_PORT = SystemPropUtil.getProp("AD_PORT");
+		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost() + ConfigUtil.getContextProperty("ad.theory_race.statistic") + "?";
+	}
 
 	@Override
 	public List<CalendarCompetitionBo> competitionList(Date startTime, Date endTime,
@@ -59,6 +68,35 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		bo.setStatus(json.getInteger(JsonKeyConstant.STATUS));
 		bo.setType(json.getInteger(JsonKeyConstant.TYPE));
 		return bo;
+	}
+
+	@Override
+	public List<JSONObject> competitionListWithMinScore(String startTime, String endTime, List<String> userIds, Integer minScore) {
+
+		// 获取竞赛理论赛所有百分制换算后>=80分的数据
+		StringBuilder targetUrl = new StringBuilder(EXAM_USER_FINISH_COUNT_URL);
+		List<String> queryParams = Lists.newArrayList();
+		// 拼接请求参数
+		if (minScore != null) {
+			queryParams.add(String.format("minScore=%s", minScore));
+		}
+		queryParams.add(String.format("start_time=%s", startTime));
+		queryParams.add(String.format("end_time=%s", endTime));
+		if (null != userIds && userIds.size() != 0) {
+			userIds.forEach(userId -> {
+				queryParams.add(String.format("user_ids=%s", userId));
+			});
+		}
+		targetUrl.append(String.join("&", queryParams));
+
+		JSONArray jsonResponse = HttpClientUtil.rawGet(targetUrl.toString(), JSONArray.class);
+		List jsonArray = (List) jsonResponse;
+		List<JSONObject> res = new ArrayList<>();
+		for (Object object : jsonArray) {
+			JSONObject obj = (JSONObject) object;
+			res.add(obj);
+		}
+		return res;
 	}
 
 }

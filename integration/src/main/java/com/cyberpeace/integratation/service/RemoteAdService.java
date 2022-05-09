@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 
 import java.util.Date;
@@ -18,5 +19,17 @@ public interface RemoteAdService {
 	 * @return
 	 */
 	List<CalendarCompetitionBo> competitionList(Date startTime, Date endTime, String userId);
+
+
+	/**
+	 * 查询指定用户在时间范围内不少于指定分数的理论赛次数
+	 *
+	 * @param startTime 起始时间
+	 * @param endTime   截至时间
+	 * @param userIds   用户ids
+	 * @param minScore  最低分数
+	 * @return 用户及其参与次数的map
+	 */
+	List<JSONObject> competitionListWithMinScore(String startTime, String endTime, List<String> userIds, Integer minScore);
 
 }

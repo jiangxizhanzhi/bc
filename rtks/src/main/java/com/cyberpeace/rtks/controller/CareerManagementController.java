@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.rtks.service.AttackService;
+import com.cyberpeace.rtks.service.EngageService;
+import com.cyberpeace.rtks.service.bo.EngageDetail;
 import com.cyberpeace.rtks.service.bo.career.*;
 
 import io.swagger.annotations.Api;
@@ -29,6 +31,9 @@ public class CareerManagementController {
 	@Autowired
 	private AttackService attackService;
 
+	@Autowired
+	private EngageService engageService;
+
 	@ApiOperation("ATT&CK框架后台")
 	@GetMapping("/attack/all")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
@@ -41,7 +46,7 @@ public class CareerManagementController {
 	@GetMapping("/attack")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
 	public BaseRsp<AttackDetail>
-			getDetail(@ApiParam(name = "resource_id", value = "技术id") String resource_id) {
+			getAttackDetail(@ApiParam(name = "resource_id", value = "技术id") String resource_id) {
 		AttackDetail res = attackService.getDetailById(resource_id);
 
 		return new BaseRsp<>(res);
@@ -50,7 +55,7 @@ public class CareerManagementController {
 	@ApiOperation("添加ATT&CK 关联")
 	@PostMapping("/attack")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
-	public BaseRsp updateTemplateRel(@Validated AttackUpdateReq updateReq) {
+	public BaseRsp updateAttackTemplateRel(@Validated AttackUpdateReq updateReq) {
 		attackService.updateRelations(updateReq.getResourceId(),
 				updateReq.getBusinessTemplateIds());
 		return new BaseRsp();
@@ -65,10 +70,39 @@ public class CareerManagementController {
 		return new BaseRsp<>(rsp);
 	}
 
-	@ApiOperation("Engage框架")
+	@ApiOperation("Engage框架后台")
+	@GetMapping("/engage/all")
+	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
+	public BaseRsp<List<EngageCategoryBo<EngageBackBo>>> getEngagesBack() {
+		List<EngageCategoryBo<EngageBackBo>> engages = engageService.getEngages();
+		return new BaseRsp<>(engages);
+	}
+
+	@ApiOperation("Engage详情页")
 	@GetMapping("/engage")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
-	public BaseRsp getEngages() {
+	public BaseRsp<EngageDetail>
+			getEngageDetail(@ApiParam(name = "resource_id", value = "技术id") String resource_id) {
+		EngageDetail res = engageService.getDetailById(resource_id);
+
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("添加ATT&CK 关联")
+	@PostMapping("/engage")
+	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
+	public BaseRsp updateEngageTemplateRel(@Validated EngageUpdateReq updateReq) {
+		engageService.updateRelations(updateReq.getResourceId(),
+				updateReq.getBusinessTemplateIds());
 		return new BaseRsp();
+	}
+
+	@ApiOperation("Engage 框架前台")
+	@GetMapping("/engage/related")
+	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
+	public BaseRsp<List<EngageCategoryBo<EngageFrontBo>>>
+			getEngagesFront(@ApiParam(name = "resource_id", value = "训练模板id") String resource_id) {
+		List<EngageCategoryBo<EngageFrontBo>> rsp = engageService.getEngagesByTraining(resource_id);
+		return new BaseRsp<>(rsp);
 	}
 }

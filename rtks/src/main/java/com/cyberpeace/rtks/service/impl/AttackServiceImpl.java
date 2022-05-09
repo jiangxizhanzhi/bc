@@ -43,6 +43,7 @@ public class AttackServiceImpl implements AttackService {
 		} else {
 			res = BeanUtils.deepCopy(cachedAttacks, AttackBackEn.class).getEn();
 		}
+		// count relation
 		List<RelCount> countList = attackMapper.countRelsByAttackId();
 		Map<String, Integer> countMap = Maps.newHashMap();
 		countList.forEach((count) -> {
@@ -72,9 +73,9 @@ public class AttackServiceImpl implements AttackService {
 		List<String> relatedAttackIds = attackMapper.getRelByBusinessTemplateId(businessTemplateId);
 		// set whether related
 		res.forEach((category -> {
-			category.getAttacks().forEach((attackBackBo -> {
-				if (relatedAttackIds.contains(attackBackBo.getResourceId())) {
-					attackBackBo.setRelated(true);
+			category.getAttacks().forEach((attackFrontBo -> {
+				if (relatedAttackIds.contains(attackFrontBo.getResourceId())) {
+					attackFrontBo.setRelated(true);
 				}
 			}));
 		}));

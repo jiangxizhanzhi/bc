@@ -13,6 +13,8 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 @Repository
 public interface EvalTaskStepMapper extends BaseMapper<EvalTaskStep> {
 
+	List<String> selectStepIdsByTaskId(@Param("taskId") String taskId);
+
 	List<EvalTaskStep> selectStepsByTaskId(@Param("taskId") String taskId);
 
 }

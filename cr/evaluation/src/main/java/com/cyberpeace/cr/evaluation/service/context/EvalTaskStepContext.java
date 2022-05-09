@@ -2,8 +2,10 @@ package com.cyberpeace.cr.evaluation.service.context;
 
 import java.util.Date;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class EvalTaskStepContext {
@@ -28,4 +30,39 @@ public class EvalTaskStepContext {
 
 	@ApiModelProperty("步骤状态")
 	private Integer status;
+
+	public void setStatus(){
+
+		if (this.startTime == null){
+			this.status = Status.INIT.getCode();
+		} else if (endTime == null ) {
+			this.status = Status.STARTED.getCode();
+		} else {
+			this.status = Status.FINISHED.getCode();
+		}
+
+	}
+
+	public enum Status {
+
+		INIT(0, "未开始", ""),
+		STARTED(1, "测试中", ""),
+		FINISHED(2, "已完成", "");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String cnDesc;
+
+		@Getter
+		private String enDesc;
+
+		Status(Integer code, String cnDesc, String enDesc) {
+			this.code = code;
+			this.cnDesc = cnDesc;
+			this.enDesc = enDesc;
+		}
+
+	}
 }

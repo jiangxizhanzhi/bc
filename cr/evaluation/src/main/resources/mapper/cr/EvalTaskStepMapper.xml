@@ -6,6 +6,12 @@
 
     <resultMap id="taskStep" type="com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep"/>
 
+    <select id="selectStepIdsByTaskId" resultType="java.lang.String">
+        select resource_id
+        from cr_eval_task_step
+        where task_id = #{taskId}
+    </select>
+
     <select id="selectStepsByTaskId" resultMap="taskStep">
         select *
         from cr_eval_task_step

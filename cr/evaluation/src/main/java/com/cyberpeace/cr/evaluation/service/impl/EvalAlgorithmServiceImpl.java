@@ -51,4 +51,9 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	public void updateStateById(String resourceId) {
 		evalAlgorithmMapper.updateStateById(resourceId);
 	}
+
+	@Override
+	public List<EvalAlgorithm> selectByType(String type) {
+		return evalAlgorithmMapper.selectByType(type);
+	}
 }

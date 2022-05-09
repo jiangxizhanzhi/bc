@@ -34,6 +34,10 @@ public class EvalIndicator extends BaseTable {
 	private String datatype;
 
 	/**
+	 * 指标属性
+	 */
+	private String attribute;
+	/**
 	 * 连接线
 	 */
 	private String connlist;

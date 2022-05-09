@@ -26,6 +26,10 @@ public class EvalIndicatorReq {
 	@NotNull
 	private String datatype;
 
+	@ApiModelProperty(value = "指标属性", required = true)
+	@NotNull
+	private String attribute;
+
 	@ApiModelProperty(value = "描述", required = true)
 	@NotNull
 	private String description;

@@ -1,5 +1,9 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -13,12 +17,15 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalAlgorithmRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -59,12 +66,12 @@ public class EvalAlgorithmAdminController {
 	}
 
 	/**
-	 * 修改算法
+	 * 编辑算法
 	 * @param req
 	 * @return
 	 */
-	@PatchMapping("")
-	@ApiOperation("修改算法")
+	@PutMapping("")
+	@ApiOperation("编辑算法")
 	public BaseRsp<String> editAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
 		EvalAlgorithm originEvalAlgorithm = evalAlgorithmService.getById(req.getEvalAlgorithmId());
@@ -101,9 +108,9 @@ public class EvalAlgorithmAdminController {
 	 * @return
 	 */
 
-	@DeleteMapping("/destroy")
-	@ApiOperation("算法删除")
-	public BaseRsp deleteAlgorithm(@RequestBody @Validated BatchDeleteReq deleteReq) {
+	@DeleteMapping("")
+	@ApiOperation("批量删除")
+	public BaseRsp batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
 		Integer useNum = evalAlgorithmService.selectUsedNum(deleteReq.getIds());
 
@@ -120,18 +127,21 @@ public class EvalAlgorithmAdminController {
 	 * 查询算法列表
 	 * @return
 	 */
-	/*
 	@GetMapping("/{type}")
 	@ApiOperation("根据类型查询算法列表")
-	public BaseRsp<List<EstimateAlgorithm>> algorithmList(
-		@ApiParam(name = "type", value = "算法类型") @PathVariable("type") String type) {
-	
-	Preconditions.checkArgument(StringUtils.isNotBlank(type), "type null");
-	List<EstimateAlgorithm> algorithms = evalAlgorithmService.selectByType(type);
-	BaseRsp<List<EstimateAlgorithm>> rsp = new BaseRsp<>();
-	rsp.setData(algorithms);
-	return rsp;
+	public BaseRsp<List<EvalAlgorithmRsp>> algorithmList(
+			@ApiParam(name = "type", value = "算法类型") @PathVariable("type") String type) {
+
+		Preconditions.checkArgument(StringUtils.isNotBlank(type), "type null");
+		List<EvalAlgorithm> algorithms = evalAlgorithmService.selectByType(type);
+		List<EvalAlgorithmRsp> rsp = algorithms.stream().map(evalAlgorithm -> {
+			return BeanUtils.copy(evalAlgorithm, EvalAlgorithmRsp.class);
+		}).collect(Collectors.toList());
+
+		return new BaseRsp(rsp);
 	}
+
+	/*
 	
 	@GetMapping("/list")
 	@ApiOperation("分页查询算法列表")

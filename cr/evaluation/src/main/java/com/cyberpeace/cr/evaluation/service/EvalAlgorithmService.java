@@ -15,4 +15,6 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	Boolean delete(List<String> ids);
 
 	void updateStateById(String resourceId);
+
+	List<EvalAlgorithm> selectByType(String type);
 }

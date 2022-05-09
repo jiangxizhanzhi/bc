@@ -33,7 +33,7 @@ public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMappe
 
 					evalAggregation.setResourceId(evalAggregationContext.getEvalAggregationId());
 					evalAggregation.setCollectionIds(
-							JsonUtil.arrayToString(evalAggregationContext.getCollectionIds()));
+							JsonUtil.arrayToString(evalAggregationContext.getAggregationIds()));
 
 					return evalAggregation;
 				}).collect(Collectors.toList());
@@ -52,7 +52,7 @@ public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMappe
 							EvalAggregationContext.class);
 
 					evalAggregationContext.setEvalAggregationId(evalAggregation.getResourceId());
-					evalAggregationContext.setCollectionIds(JsonUtil
+					evalAggregationContext.setAggregationIds(JsonUtil
 							.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class));
 
 					return evalAggregationContext;

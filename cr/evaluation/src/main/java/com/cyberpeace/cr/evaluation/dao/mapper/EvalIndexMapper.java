@@ -15,6 +15,8 @@ public interface EvalIndexMapper extends BaseMapper<EvalIndex> {
     List<String> selectIdsByEvalSystemIds(List<String> evalSystemIds);
 
     void deleteBatchByEvalSystemId(String evalSystemId);
+
+	Integer selectAlgorithmSum(List<String> algorithmIds);
 }
 
 

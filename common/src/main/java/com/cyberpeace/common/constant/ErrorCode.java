@@ -103,4 +103,6 @@ public interface ErrorCode {
 	/** 写入文件失败 */
 	String FAILED_TO_WRITE_FILE = "100036";
 
+	/** 算法已经使用 */
+	String ALGORITHM_ALREADY_USED = "100037";
 }

@@ -30,8 +30,8 @@ public class EvalAggregationContext {
 	@NotNull
 	private String aggregatingAlgorithmParams;
 
-	@ApiModelProperty(value = "关联采集变量id", required = true)
+	@ApiModelProperty(value = "关联采集变量id(前端统一命名，需要转换一下存数据库)", required = true)
 	@NotNull
-	private List<String> collectionIds;
+	private List<String> aggregationIds;
 
 }

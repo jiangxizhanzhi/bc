@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.dao.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.constant.SelectI18nName;
+
 import lombok.Data;
 import lombok.Getter;
 
@@ -29,7 +30,7 @@ public class CrConstantsConfig implements SelectI18nName {
 		MISSION_CATEGORY(1, "任务分类"),
 		DIFFICULTY(2, "训练难度"),
 		TRAINING_CATEGORY(3, "训练分类"),
-		EVALUATION_CATEGORY(4, "测试靶场分类");
+		EVALUATION_CATEGORY(4, "测试靶场分类"), ALGORITHM_TYPE(5, "算法分类");
 
 		@Getter
 		private final Integer code;

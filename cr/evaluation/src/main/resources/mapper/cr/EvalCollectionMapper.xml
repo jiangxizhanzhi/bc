@@ -12,4 +12,20 @@
             #{evalIndicatorId}
         </foreach>
     </select>
+    <select id="selectAlgorithmSum" resultType="java.lang.Integer"
+            parameterType="java.util.List">
+        select count(1) from cr_eval_collection
+        where score_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        or detection_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        or score_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

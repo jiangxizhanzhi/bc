@@ -11,6 +11,8 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
 public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 
 	List<EvalCollection> selectIdsByEvalIndicatorIds(List<String> evalIndicatorIds);
+
+	Integer selectAlgorithmSum(List<String> algorithmIds);
 }
 
 

@@ -8,6 +8,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
  */
 public interface EvalAlgorithmMapper extends BaseMapper<EvalAlgorithm> {
 
+	void updateStateById(String resourceId);
 }
 
 

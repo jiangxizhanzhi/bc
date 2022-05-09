@@ -45,6 +45,12 @@ public class EvalAlgorithm extends BaseTable {
      */
     private String code;
 
+	/**
+	 * 状态
+	 0：代表正常，1：代表编辑过，页面看不到
+	 */
+	private Integer state = 0;
+
     /**
      * 
      */

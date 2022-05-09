@@ -4,21 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper">
 
-    <resultMap id="BaseResultMap" type="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="type" column="type" jdbcType="INTEGER"/>
-            <result property="algorithmLanguage" column="algorithm_language" jdbcType="INTEGER"/>
-            <result property="code" column="code" jdbcType="VARCHAR"/>
-            <result property="params" column="params" jdbcType="VARCHAR"/>
-            <result property="paramsNum" column="params_num" jdbcType="INTEGER"/>
-    </resultMap>
 
-    <sql id="Base_Column_List">
-        id,resource_id,name,
-        description,type,algorithm_language,
-        code,params,params_num
-    </sql>
+    <update id="updateStateById" parameterType="java.lang.String">
+        update `cr_eval_algorithm`
+        set `state` = 1
+        where `resource_id` = #{resourceId}
+    </update>
+
 </mapper>

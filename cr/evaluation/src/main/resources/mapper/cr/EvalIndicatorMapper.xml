@@ -10,4 +10,12 @@
         description,third_index_id,aggregation_ids,
         collection_ids
     </sql>
+    <select id="selectAlgorithmSum" resultType="java.lang.Integer"
+            parameterType="java.util.List">
+        select count(1) from cr_eval_indicator
+        where aggregating_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

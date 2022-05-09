@@ -30,11 +30,8 @@ public class EvalIndicatorContext {
 	@NotNull
 	private List<String> aggregationIds;
 
-	@ApiModelProperty(value = "关联采集项id", required = true)
+	@ApiModelProperty(value = "关联采集项id", required = false)
 	@NotNull
 	private List<String> collectionIds;
 
-	@ApiModelProperty(value = "创建人", required = true)
-	@NotNull
-	private String createUserId;
 }

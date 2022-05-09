@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -18,6 +18,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSystemReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
@@ -97,15 +98,34 @@ public class EvalSystemIndexAdminController {
 	private EvalSystem saveEvalIndex(@Validated @RequestBody EvalSystemReq evalSystemReq) {
 		evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getFirstIndexes(),
 				EvalIndex.Level.FIRST.getCode()));
-		evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getSecondIndexes(),
-				EvalIndex.Level.SECONDE.getCode()));
-		evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getThirdIndexes(),
-				EvalIndex.Level.THIRD.getCode()));
+
+		// 保存新的三级指标，并与指标项关联
+		List<EvalIndex> thirdIndexList = convertIndexReqToIndex(evalSystemReq.getThirdIndexes(),
+				EvalIndex.Level.THIRD.getCode());
+		evalIndexService.saveBatch(thirdIndexList);
+
+		// 修改二级指标与新三级指标的关联
+		changeChildrenIds(evalSystemReq.getSecondIndexes(), thirdIndexList);
+
+		List<EvalIndex> secondIndexList = convertIndexReqToIndex(evalSystemReq.getSecondIndexes(),
+				EvalIndex.Level.SECONDE.getCode());
+		evalIndexService.saveBatch(secondIndexList);
 
 		EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
 		evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
 
 		return evalSystem;
+	}
+
+	private void changeChildrenIds(List<IndexContext> secondIndexList,
+			List<EvalIndex> thirdIndexList) {
+		Map<String, String> thirdIndexMaps = StreamApiUtils.toMap(thirdIndexList,
+				EvalIndex::getEvalIndicatorId, evalIndex -> evalIndex.getResourceId());
+
+		for (IndexContext indexContext : secondIndexList) {
+			indexContext.setChildrenIds(indexContext.getChildrenIds().stream()
+					.map(string -> thirdIndexMaps.get(string)).collect(Collectors.toList()));
+		}
 	}
 
 	@ApiOperation("查询体系指标")
@@ -124,6 +144,7 @@ public class EvalSystemIndexAdminController {
 
 	private EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem) {
 		EvalSystemRsp evalSystemRsp = BeanUtils.copy(evalSystem, EvalSystemRsp.class);
+
 		evalSystemRsp.setEvalSystemId(evalSystem.getResourceId());
 		evalSystemRsp.setFirstIndexes(evalIndexService.getIndexesByEvalSystemId(
 				evalSystem.getResourceId(), EvalIndex.Level.FIRST.getCode()));
@@ -145,7 +166,11 @@ public class EvalSystemIndexAdminController {
 			evalIndex.setAggregatingAlgorithmId(indexReq.getAlgorithmId());
 			evalIndex.setAggregatingAlgorithmParams(indexReq.getParams());
 			evalIndex.setLevel(level);
-
+			// 三级指标特殊，前台传过来的是指标项，这里新建一个，并建立关联关系
+			if (EvalIndex.Level.THIRD.getCode().equals(level)) {
+				evalIndex.setResourceId(null);
+				evalIndex.setEvalIndicatorId(indexReq.getIndexId());
+			}
 			return evalIndex;
 		}).collect(Collectors.toList());
 

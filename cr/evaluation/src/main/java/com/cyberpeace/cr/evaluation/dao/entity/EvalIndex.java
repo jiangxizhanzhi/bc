@@ -41,6 +41,11 @@ public class EvalIndex extends BaseTable {
 	private String evalSystemId;
 
 	/**
+	 * 三级指标项id
+	 */
+	private String evalIndicatorId;
+
+	/**
 	 * 归一化类型, 百分比:1,周期:2,延时:3
 	 */
 	private Integer type;

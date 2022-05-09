@@ -29,10 +29,10 @@ public class ClassroomPracticeReq extends PageReqBase {
 	private String organizationId;
 
 	@ApiModelProperty("是否提交")
-	private Boolean isCommit=false;
+	private Boolean isCommit=null;
 
 	@ApiModelProperty("是否批改")
-	private Boolean isMark=false;
+	private Boolean isMark=null;
 
 	@ApiModelProperty("姓名")
 	private String username;
@@ -42,7 +42,7 @@ public class ClassroomPracticeReq extends PageReqBase {
 	}
 	public void setLesson_id(String lessonId) {this.lessonId = lessonId;}
 	public void setOrganization_id(String organizationId) {this.organizationId = organizationId;}
-	public void setUsername(String username) {this.username = username;}
+	public void setName(String username) {this.username = username;}
 	public void setIs_commit(Boolean isCommit) {this.isCommit = isCommit;}
 	public void setIs_mark(Boolean isMark) {this.isMark = isMark;}
 }

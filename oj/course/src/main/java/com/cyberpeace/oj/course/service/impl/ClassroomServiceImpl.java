@@ -732,17 +732,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			boolean searchName = StringUtils.isNotBlank(username);
 			for (UserInfo userInfo : userInfoList) {
 				if (searchName) {
-					if (userInfo.getName().contains(username)) {
-						userIds.add(userInfo.getUserId());
-						break;
-					} else {
+					if (!userInfo.getName().contains(username)) {
 						continue;
 					}
 				}
 				userIds.add(userInfo.getUserId());
 			}
 
+			List<PracticePaperEvaluateBo> practiceInfos = Lists.newArrayList();
+
 			if (userIds.isEmpty()) {
+				ListRsp<PracticePaperEvaluateBo> practiceInfosRsp = PageUtil
+						.getListResult(practiceInfos, page, 0);
+				classroomPracticeBo.setData(practiceInfosRsp);
 				return classroomPracticeBo;
 			}
 
@@ -756,21 +758,43 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			Map<String, String> userIdToName = Maps.newHashMap();
 			Map<String, String> OrgIdToName = Maps.newHashMap();
 
-			List<PracticePaperEvaluateBo> practiceInfos = Lists.newArrayList();
 			for (UserInfo userInfo : userInfoList) {
+				if (!userIds.contains(userInfo.getUserId())) {
+					continue;
+				}
+
 				PracticePaperEvaluateBo practicePaperEvaluateBo = new PracticePaperEvaluateBo();
 
 				// 判断是否已提交
-				boolean isCommitted = cpContext.getIsCommit();
+				Boolean isCommitted = cpContext.getIsCommit();
+				// 判断是否已批改
+				Boolean isMarked = cpContext.getIsMark();
 
 				LessonPaperEvaluate lessonPaperEvaluate = idToObj.get(userInfo.getUserId());
-				if (null != lessonPaperEvaluate) {
-					// 判断是否已批改
-					boolean isMarked = cpContext.getIsMark();
-					Integer level = lessonPaperEvaluate.getLevel();
-					if (level == null && isMarked) {
+
+				if (null != isCommitted) {
+					if (isCommitted && null == lessonPaperEvaluate){
 						continue;
-					} else if (level != null) {
+					}
+					if (!isCommitted && null != lessonPaperEvaluate){
+						continue;
+					}
+				}
+
+				if (null != lessonPaperEvaluate) {
+
+					Integer level = lessonPaperEvaluate.getLevel();
+
+					if (null != isMarked) {
+						if (isMarked && null == level){
+							continue;
+						}
+						if (!isMarked && null != level){
+							continue;
+						}
+					}
+
+					if (level != null) {
 						practicePaperEvaluateBo.setCorrectTime(lessonPaperEvaluate.getUpdateTime());
 					}
 
@@ -791,7 +815,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 					}
 					practicePaperEvaluateBo.setCorrector(corrector);
 
-				} else if (isCommitted) {
+				} else if (null != isMarked && isMarked) {
 					continue;
 				}
 

@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -486,6 +486,8 @@ public class RoleController {
 		List<String> abilityIds = output.getAbilityIds();
 		List<Ability> abilityList = getRoleRelatedObjects(abilityIds, abilityService);
 		output.setAbilityDataList(abilityList);
+		// 详情返回知识-技能权重
+		output.setKnowledgeWeight(role.getKnowledgeWeight());
 
 		return output;
 	}

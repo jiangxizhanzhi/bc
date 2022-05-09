@@ -25,4 +25,7 @@ public class RoleDetailOutput extends RoleOutput {
 	@ApiModelProperty(value = "能力列表")
 	private List<Ability> abilityDataList;
 
+	@ApiModelProperty(value = "知识权重")
+	private Integer knowledgeWeight;
+
 }

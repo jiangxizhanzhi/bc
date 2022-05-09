@@ -1,13 +1,18 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateListQuery;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
@@ -49,7 +54,8 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Override
 	public Boolean batchDelete(List<String> templateIds) {
-		List<EvalTemplate> evalTemplateList = listByIds(templateIds);
+
+		List<EvalTemplate> evalTemplateList = listTemplate(templateIds);
 
 		// 删除task及相关场景 todo
 
@@ -57,6 +63,28 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		return true;
 
+	}
+
+	@Override
+	public EvalTemplate getTemplate(String templateId) {
+		EvalTemplate evalTemplate = getById(templateId);
+
+		if (evalTemplate == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		} else if (!Objects.equals(evalTemplate.getCreateUserId(),
+				UserInfoContext.getUserContext().getUserId())) {
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		} else {
+			return evalTemplate;
+		}
+	}
+
+	private List<EvalTemplate> listTemplate(List<String> templateIds) {
+		List<EvalTemplate> evalTemplateList = Lists.newArrayList();
+		for (String templateId : templateIds) {
+			evalTemplateList.add(getTemplate(templateId));
+		}
+		return evalTemplateList;
 	}
 
 }

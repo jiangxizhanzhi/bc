@@ -99,9 +99,9 @@ public class EvalTemplateController {
 	public BaseRsp<EvalTemplateRsp> getEvalTemplate(@ApiParam(name = "template_id",
 			value = "测试靶场id", required = true) @RequestParam("template_id") String templateId) {
 
-		// 权限校验 todo
+		// 权限校验
+		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
-		EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getResourceId()));
 		evalTemplateRsp.setStepConfig(
@@ -116,11 +116,10 @@ public class EvalTemplateController {
 	public BaseRsp<String>
 			modifyEvalTemplate(@RequestBody EvaTemplateModifyReq evaTemplateModifyReq) {
 
-		// 权限校验 todo
-
 		String templateId = evaTemplateModifyReq.getResourceId();
 
-		EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
+		// 权限校验
+		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
 		reqToTemplate(evaTemplateModifyReq, evalTemplate);
 
@@ -143,6 +142,8 @@ public class EvalTemplateController {
 	}
 
 	private void validateReq(EvaTemplateAddReq evaTemplateAddReq) {
+
+		// 校验名称、描述长度 todo
 
 		// 校验LOGO文件是否存在
 		if (!attachmentService.isExist(evaTemplateAddReq.getLogoId())) {

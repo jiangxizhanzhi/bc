@@ -22,4 +22,6 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 
 	Boolean batchDelete(List<String> templateIds);
 
+	EvalTemplate getTemplate(String templateId);
+
 }

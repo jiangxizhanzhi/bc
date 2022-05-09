@@ -11,7 +11,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.rtks.dao.mapper.EngageMapper;
@@ -40,9 +40,9 @@ public class EngageServiceImpl implements EngageService {
 		ensureEngageCache();
 		List<EngageCategoryBo<EngageBackBo>> res;
 		if (CommonContext.isChinese()) {
-			res = BeanUtils.copy(cachedEngages, EngageBackZh.class).getZh();
+			res = JsonUtil.toJsonObject(cachedEngages.getJson(), EngageBackZh.class).getZh();
 		} else {
-			res = BeanUtils.copy(cachedEngages, EngageBackEn.class).getEn();
+			res = JsonUtil.toJsonObject(cachedEngages.getJson(), EngageBackEn.class).getEn();
 		}
 		// count relation
 		List<RelCount> countList = engageMapper.countRelsByEngageId();
@@ -52,13 +52,13 @@ public class EngageServiceImpl implements EngageService {
 		});
 		// set count
 		res.forEach((category -> {
-			category.getSubCategories().forEach((subCategoryBo -> {
-				subCategoryBo.getEngages().forEach((engageBackBo -> {
+			category.getSubCategories().forEach((subCategoryBo) -> {
+				subCategoryBo.getEngages().forEach((engageBackBo) -> {
 					if (countMap.containsKey(engageBackBo.getResourceId())) {
 						engageBackBo.setCount(countMap.get(engageBackBo.getResourceId()));
 					}
-				}));
-			}));
+				});
+			});
 		}));
 		return res;
 	}
@@ -115,9 +115,9 @@ public class EngageServiceImpl implements EngageService {
 		ensureEngageCache();
 		List<EngageCategoryBo<EngageFrontBo>> res;
 		if (CommonContext.isChinese()) {
-			res = BeanUtils.deepCopy(cachedEngages, EngageFrontZh.class).getZh();
+			res = JsonUtil.toJsonObject(cachedEngages.getJson(), EngageFrontZh.class).getZh();
 		} else {
-			res = BeanUtils.deepCopy(cachedEngages, EngageFrontEn.class).getEn();
+			res = JsonUtil.toJsonObject(cachedEngages.getJson(), EngageFrontEn.class).getEn();
 		}
 		List<String> relatedEngageIds = engageMapper.getRelByBusinessTemplateId(businessTemplateId);
 		// set whether related
@@ -184,6 +184,8 @@ public class EngageServiceImpl implements EngageService {
 			subCategoryBoZh.getEngages().add(itemZh);
 			subCategoryBoEn.getEngages().add(itemEn);
 		}
+
+		cachedEngages.setJson(JsonUtil.toJsonString(cachedEngages));
 	}
 
 }
@@ -197,6 +199,9 @@ class EngageCache {
 	private List<EngageCategoryBo<FrameItemBase>> zh = Lists.newArrayList();
 
 	private List<EngageCategoryBo<FrameItemBase>> en = Lists.newArrayList();
+
+	private String json;
+
 }
 
 /**

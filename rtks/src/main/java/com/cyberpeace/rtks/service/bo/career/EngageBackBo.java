@@ -9,5 +9,5 @@ import lombok.Data;
 public class EngageBackBo extends FrameItemBase implements Serializable {
 
 	@ApiModelProperty("关联的训练模板数")
-	private Integer count;
+	private Integer count = 0;
 }

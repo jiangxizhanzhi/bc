@@ -7,7 +7,7 @@ import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.RtksRadarBo;
 import com.cyberpeace.rtks.service.bo.StudyRecordBo;
-import com.cyberpeace.rtks.service.bo.skill.TrainingBo;
+import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
 
 /**
  * rtks数据统计功能
@@ -62,6 +62,6 @@ public interface RtksStatisticService {
 	 * @param roleId
 	 * @return
 	 */
-	List<TrainingBo> getTrainingPath(String userId, String roleId);
+	List<MissionPathBo> getTrainingPath(String userId, String roleId);
 
 }

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
 import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
 
 @Mapper
@@ -69,4 +71,14 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 */
 	List<CrTaskScore> getScoreByMissionTemplateIdAndUserId(@Param("userId") String userId,
 			@Param("missionTemplateIds") List<String> missionTemplateIds);
+
+	/**
+	 * 读取任务完成状态： 用户提交答案即视为完成
+	 * @param userId 
+	 * @param missionTemplateIds
+	 * @return
+	 */
+	List<CompletionStatus> getCompletionStatusByUserIdAndMissionTemplateIds(
+			@Param("userId") String userId,
+			@Param("missionTemplateIds") Set<String> missionTemplateIds);
 }

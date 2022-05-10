@@ -34,7 +34,7 @@ import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
-import com.cyberpeace.rtks.service.bo.skill.TrainingBo;
+import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
 import com.google.common.collect.Sets;
 
 import io.swagger.annotations.Api;
@@ -215,7 +215,7 @@ public class TrainingPlanController {
 			return new BaseRsp<>(res);
 		}
 		// get training path
-		List<TrainingBo> trainingBoList = rtksStatisticService.getTrainingPath(userId, roleId);
+		List<MissionPathBo> trainingBoList = rtksStatisticService.getTrainingPath(userId, roleId);
 		// get all training from training path
 		res.setRelated(getAllRelatedTraining(trainingBoList));
 		res.setPath(trainingBoList);
@@ -227,14 +227,16 @@ public class TrainingPlanController {
 	 * @param trainingPath 
 	 * @return
 	 */
-	private List<RelatedTrainingRes> getAllRelatedTraining(List<TrainingBo> trainingPath) {
+	private List<RelatedTrainingRes> getAllRelatedTraining(List<MissionPathBo> trainingPath) {
 		Set<String> trainingIds = Sets.newHashSet();
 		List<RelatedTrainingRes> allRelated = Lists.newArrayList();
-		for (TrainingBo trainingBo : trainingPath) {
-			if (!trainingIds.contains(trainingBo.getTrainingId())) {
-				allRelated.add(BeanUtils.copy(trainingBo, RelatedTrainingRes.class));
-				trainingIds.add(trainingBo.getTrainingId());
-			}
+		for (MissionPathBo missionPathBo : trainingPath) {
+			missionPathBo.getRelatedTrainings().forEach((trainingBo -> {
+				if (!trainingIds.contains(trainingBo.getTrainingId())) {
+					allRelated.add(BeanUtils.copy(trainingBo, RelatedTrainingRes.class));
+					trainingIds.add(trainingBo.getTrainingId());
+				}
+			}));
 		}
 		return allRelated;
 	}

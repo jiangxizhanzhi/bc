@@ -42,6 +42,9 @@ public class TrainingBo implements Serializable {
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
+	@ApiModelProperty(value = "当前用户角色")
+	private Integer roleGroup;
+
 	@ApiModelProperty(value = "相关技能")
 	private List<SkillResBase> skills;
 }

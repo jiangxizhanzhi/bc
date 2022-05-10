@@ -26,4 +26,6 @@ public class TrainingRaw implements Serializable {
 	private String logo;
 
 	private Integer trainingType;
+
+	private Integer roleGroup;
 }

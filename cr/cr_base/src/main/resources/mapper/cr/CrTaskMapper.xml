@@ -214,5 +214,17 @@
         left join cr_mission_template as tem
         on a.mission_template_id = tem.resource_id
     </select>
+    <select id="getCompletionStatusByUserIdAndMissionTemplateIds"
+            resultType="com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus">
+        select mission_template_id as resource_id,
+        count(user_answer) as status
+        from cr_task
+        where user_id = #{userId}
+        and mission_template_id in
+        <foreach collection="missionTemplateIds" separator="," item="missionTemplateId" open="(" close=")">
+            #{missionTemplateId}
+        </foreach>
+        group by mission_template_id
+    </select>
 
 </mapper>

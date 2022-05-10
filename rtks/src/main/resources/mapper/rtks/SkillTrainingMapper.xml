@@ -13,7 +13,8 @@
         cr_rb_room.pre_skill,
         cr_rb_room.train_skill,
         cr_rb_room.training_status,
-        cr_rb_room.logo
+        cr_rb_room.logo,
+        cr_role.role_group
         from cr_rb_room
         inner join cr_rb_template
         on cr_rb_room.template_id = cr_rb_template.resource_id
@@ -37,7 +38,8 @@
         cr_team_room.pre_skills as pre_skill,
         cr_team_room.train_skills as train_skill,
         cr_team_room.training_status,
-        cr_team_room.logo
+        cr_team_room.logo,
+        cr_role.role_group
         from cr_team_room
         inner join cr_team_template
         on cr_team_room.team_template_id = cr_team_template.resource_id

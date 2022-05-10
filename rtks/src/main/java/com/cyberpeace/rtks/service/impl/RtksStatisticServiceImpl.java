@@ -12,7 +12,9 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
+import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -51,6 +53,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private RoleMapper roleMapper;
+
+	@Autowired
+	private CrTaskMapper crTaskMapper;
 
 	@Autowired
 	private SkillMapper skillMapper;
@@ -249,7 +254,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	}
 
 	@Override
-	public List<TrainingBo> getTrainingPath(String userId, String roleId) {
+	public List<MissionPathBo> getTrainingPath(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
 		if (role == null) {
 			return Lists.newArrayList();
@@ -276,7 +281,17 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			}
 			missionSkillRel.get(missionContext.getMissionTemplateId()).add(missionContext);
 		});
-		// get single training todo:status
+		// collect mission completion status; true or false
+		Set<String> missionTemplateIds = missionMap.keySet();
+		List<CompletionStatus> completionStatusList = crTaskMapper
+				.getCompletionStatusByUserIdAndMissionTemplateIds(userId, missionTemplateIds);
+		Map<String, Boolean> completionStatusMap = Maps.newHashMap();
+		for (CompletionStatus mission : completionStatusList) {
+			if (mission.getStatus() > 0) {
+				completionStatusMap.put(mission.getResourceId(), true);
+			}
+		}
+		// get single training
 		List<TrainingRaw> singles = skillTrainingMapper
 				.getSingleByBusinessTemplateIdsAndUserId(userId, businessTemplateIds);
 		// get team training
@@ -295,21 +310,23 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// get saved mission order
 		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
 		// generate new order by merge with saved order
-		List<TrainingBo> newOrder = Lists.newArrayList();
+		List<MissionPathBo> newOrder = Lists.newArrayList();
 		for (String missionTemplateId : order) {
 			// mission does not exist or skill-mission relation deleted
 			if (!missionMap.containsKey(missionTemplateId)) {
 				continue;
 			}
 			MissionContext missionContext = missionMap.get(missionTemplateId);
-			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder);
+			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder,
+					completionStatusMap);
 			missionMap.remove(missionTemplateId);
 		}
 		// missions not in saved mission order
 		for (Map.Entry<String, MissionContext> entry : missionMap.entrySet()) {
 			MissionContext missionContext = entry.getValue();
 			// training template has no active training
-			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder);
+			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder,
+					completionStatusMap);
 		}
 		return newOrder;
 	}
@@ -319,16 +336,17 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param trainingMap 
 	 * @param missionSkillRel
 	 * @param missionContext
-	 * @param trainingBoList
+	 * @param missionPathBoList
 	 */
 	private void addMissionBoByOrder(Map<String, List<TrainingRaw>> trainingMap,
 			Map<String, List<MissionContext>> missionSkillRel, MissionContext missionContext,
-			List<TrainingBo> trainingBoList) {
+			List<MissionPathBo> missionPathBoList, Map<String, Boolean> completionStatusMap) {
 		// training template has no active training
 		if (!trainingMap.containsKey(missionContext.getBusinessTemplateId())) {
 			return;
 		}
 		// convert trainingRaw to trainingBo
+		List<TrainingBo> trainings = Lists.newArrayList();
 		for (TrainingRaw trainingRaw : trainingMap.get(missionContext.getBusinessTemplateId())) {
 			TrainingBo trainingBo = BeanUtils.copy(trainingRaw, TrainingBo.class);
 			trainingBo.setMissionTitle(missionContext.getTitle());
@@ -340,8 +358,15 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			trainingBo.setSkills(
 					getSkillsByMission(missionSkillRel.get(trainingBo.getMissionTemplateId())));
 
-			trainingBoList.add(trainingBo);
+			trainings.add(trainingBo);
 		}
+		MissionPathBo missionPathBo = new MissionPathBo();
+		missionPathBo.setMissionTemplateId(missionContext.getMissionTemplateId());
+		missionPathBo.setCompletionStatus(
+				completionStatusMap.getOrDefault(missionContext.getMissionTemplateId(), false));
+		missionPathBo.setRelatedTrainings(trainings);
+
+		missionPathBoList.add(missionPathBo);
 	}
 
 	/** 获取任务对应的skill

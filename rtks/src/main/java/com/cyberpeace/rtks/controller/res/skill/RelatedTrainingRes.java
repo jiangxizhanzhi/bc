@@ -25,4 +25,7 @@ public class RelatedTrainingRes implements Serializable {
 
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
+
+	@ApiModelProperty(value = "当前用户在训练里的角色")
+	private Integer roleGroup;
 }

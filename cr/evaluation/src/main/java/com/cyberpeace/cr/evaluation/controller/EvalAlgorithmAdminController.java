@@ -130,7 +130,7 @@ public class EvalAlgorithmAdminController {
 	@GetMapping("")
 	@ApiOperation("根据类型查询算法列表")
 	public BaseRsp<List<EvalAlgorithmRsp>> algorithmList(
-			@ApiParam(name = "type", value = "算法类型") @PathVariable("type") String type) {
+			@ApiParam(name = "type", value = "算法类型", required = true) String type) {
 
 		Preconditions.checkArgument(StringUtils.isNotBlank(type), "type null");
 		List<EvalAlgorithm> algorithms = evalAlgorithmService.selectByType(type);

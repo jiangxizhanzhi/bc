@@ -127,7 +127,7 @@ public class EvalAlgorithmAdminController {
 	 * 查询算法列表
 	 * @return
 	 */
-	@GetMapping("/{type}")
+	@GetMapping("")
 	@ApiOperation("根据类型查询算法列表")
 	public BaseRsp<List<EvalAlgorithmRsp>> algorithmList(
 			@ApiParam(name = "type", value = "算法类型") @PathVariable("type") String type) {

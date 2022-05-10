@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
@@ -67,7 +68,8 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param classroomPracticeContext
 	 * @return
 	 */
-	ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext classroomPracticeContext, Page page);
+	ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext classroomPracticeContext,
+			Page page);
 
 	/**
 	 * 课堂练习统计
@@ -114,4 +116,12 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return 导出文件路径
 	 */
 	void exportTrainPlan(UserInfo userInfo, String filePath);
+
+	/**
+	 * 获取课堂聊天组信息
+	 * @param roomId
+	 * @param groupId
+	 * @return
+	 */
+	List<DashboardUser> getChatGroupUsers(String roomId, String groupId);
 }

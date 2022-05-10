@@ -925,6 +925,29 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	@Override
+	public List<DashboardUser> getChatGroupUsers(String roomId, String groupId) {
+
+		// 课堂数据校验
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(roomId);
+
+		// 用户信息获取
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
+				true);
+		if (CollectionUtils.isEmpty(userInfos)) {
+			return Lists.newArrayList();
+		}
+
+		// 数据转换
+		return StreamApiUtils.map(userInfos, userInfo -> {
+			DashboardUser dashboardUser = userToDashUser(userInfo, ClassroomRole.STUDENT.getDesc());
+			if (userInfo.getUserId().equals(classroom.getCreateUserId())) {
+				dashboardUser.setRole(ClassroomRole.TEACHER.getDesc());
+			}
+			return dashboardUser;
+		});
+	}
+
+	@Override
 	public List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover) {
 
 		// excel数据读取

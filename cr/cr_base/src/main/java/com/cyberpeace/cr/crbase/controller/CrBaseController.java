@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,6 +80,10 @@ public class CrBaseController {
 
 	@ApiOperation("获取当前服务器时间")
 	@GetMapping("/current_time")
+	@RequiresPermissions(
+			value = { MenuConstant.CMS_CLASS_ROOM, MenuConstant.WEB_OJ_COURSE,
+					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN },
+			logical = Logical.OR)
 	public BaseRsp<CurrentTimeRsp> getCurrentTime() {
 		CurrentTimeRsp rsp = new CurrentTimeRsp();
 		rsp.setCurrentTime(new Date());

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -15,6 +16,7 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.TimeUtil;
@@ -129,4 +131,13 @@ public class WebClassroomController {
 		return new BaseRsp<>(dashboardInfo);
 	}
 
+	@ApiOperation("获取聊天组用户信息")
+	@GetMapping("/chat/members_info")
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+			MenuConstant.CMS_CLASS_ROOM }, logical = Logical.OR)
+	public BaseRsp<List<DashboardUser>> getGroupUsers(@RequestParam("room_id") String roomId,
+			@Param("group_id") String groupId) {
+		List<DashboardUser> dashboardUsers = classroomService.getChatGroupUsers(roomId, groupId);
+		return new BaseRsp<>(dashboardUsers);
+	}
 }

@@ -16,4 +16,6 @@ public class SceneConfigData implements Serializable {
 	@NotNull
 	private JSONObject sceneConfig;
 
+	private String logo;
+
 }

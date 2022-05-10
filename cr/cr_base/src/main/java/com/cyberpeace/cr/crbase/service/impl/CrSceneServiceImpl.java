@@ -21,7 +21,8 @@ public class CrSceneServiceImpl implements CrSceneService {
 	@Override
 	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode, String topoId) {
 		JSONObject topoJson = new JSONObject();
-		topoJson.put("scene_config", sceneConfigData);
+		topoJson.put("scene_config", sceneConfigData.getSceneConfig());
+		topoJson.put("logo", sceneConfigData.getLogo());
 		topoJson.put("reference_type", businessCode.getCode());
 
 		if (topoId != null){

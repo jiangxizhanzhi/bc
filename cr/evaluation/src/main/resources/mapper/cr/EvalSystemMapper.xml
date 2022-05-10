@@ -5,14 +5,26 @@
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalSystemMapper">
 
     <resultMap id="BaseResultMap" type="com.cyberpeace.cr.evaluation.dao.entity.EvalSystem">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,resource_id,name,
+        id
+        ,resource_id,name,
         description
     </sql>
+
+    <select id="listEvalSystems" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalSystem">
+        select * from cr_eval_system
+        <where>
+            <if test="listQuery.name != null and listQuery.name != ''">
+                <bind name="name" value="'%' + listQuery.name + '%'"/>
+                name LIKE #{name}
+            </if>
+
+        </where>
+    </select>
 </mapper>

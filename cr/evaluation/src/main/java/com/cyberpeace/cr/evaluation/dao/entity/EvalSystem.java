@@ -11,29 +11,36 @@ import lombok.Data;
  * 
  * @TableName cr_eval_system
  */
-@TableName(value ="cr_eval_system")
+@TableName(value = "cr_eval_system")
 @Data
 public class EvalSystem extends BaseTable {
-    
 
-    @TableId(type = IdType.UUID, value = "resource_id")
+	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-    /**
-     * 名称
-     */
-    private String name;
+	/**
+	 * 名称
+	 */
+	private String name;
 
-    /**
-     * 描述
-     */
-    private String description;
-    /**
-     * 连接线
-     */
-    private String  connlist;
-    /**
-     * 创建人
-     */
-    private String createUserId;
+	/**
+	 * 描述
+	 */
+	private String description;
+
+	/**
+	 * 连接线
+	 */
+	private String connlist;
+
+	private Integer firstIndexNum;
+
+	private Integer secondIndexNum;
+
+	private Integer thirdIndexNum;
+
+	/**
+	 * 创建人
+	 */
+	private String createUserId;
 }

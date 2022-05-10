@@ -8,11 +8,14 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalSystemMapper;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 
 /**
  *
@@ -46,5 +49,15 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 		});
 
 		return true;
+	}
+
+	@Override
+	public IPage<EvalSystem> page(EvalListQuery listQuery) {
+
+		Page page = listQuery.toPageParam();
+
+		IPage<EvalSystem> data = evalSystemMapper.listEvalSystems(page, listQuery);
+
+		return data;
 	}
 }

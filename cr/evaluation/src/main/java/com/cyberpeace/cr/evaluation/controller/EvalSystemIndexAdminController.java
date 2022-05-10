@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -12,20 +13,26 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSystemReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
 import com.cyberpeace.cr.evaluation.service.EvalIndexService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
 
 import io.swagger.annotations.Api;
@@ -114,6 +121,9 @@ public class EvalSystemIndexAdminController {
 
 		EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
 		evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
+		evalSystem.setThirdIndexNum(thirdIndexList.size());
+		evalSystem.setSecondIndexNum(secondIndexList.size());
+		evalSystem.setFirstIndexNum(1);
 
 		return evalSystem;
 	}
@@ -187,4 +197,17 @@ public class EvalSystemIndexAdminController {
 		return new BaseRsp<>(result);
 	}
 
+	@ApiOperation("列表查询")
+	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
+	public BaseRsp<ListRsp<EvalSystemRsp>> list(EvalNameListReq listReq) {
+		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
+		listQuery.setPer_page(listReq.getPerPage());
+		// 默认时间排序
+		listQuery.setSort("-create_time");
+
+		IPage<EvalSystem> data = evalSystemService.page(listQuery);
+
+		return new BaseRsp(PageUtil.getListResult(data));
+	}
 }

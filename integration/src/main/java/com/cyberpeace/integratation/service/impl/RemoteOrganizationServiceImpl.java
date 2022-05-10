@@ -72,7 +72,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		if (null == orgInfo) {
 			return CommonConstant.EMPTY_STRING;
 		}
-		return orgInfo.getString(JsonKeyConstant.NAME);
+		return orgInfo.getString(JsonKeyConstant.PATH);
 	}
 
 	@Override
@@ -200,7 +200,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	@Override
 	public JSONArray classList(String orgId) {
 		String url = MP_ORG_TREE_URL;
-		if(null != orgId && !orgId.isEmpty()){
+		if (null != orgId && !orgId.isEmpty()) {
 			url += orgId;
 		}
 

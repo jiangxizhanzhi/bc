@@ -146,6 +146,10 @@ public class ExcelDataHandler {
 			List<String> columnList = Lists.newArrayList();
 
 			Row sheetRow = sheet.getRow(rowIndex);
+			if (null == sheetRow) {
+				break;
+			}
+
 			for (int cellIndex = 0; cellIndex < sheetRow.getLastCellNum(); cellIndex++) {
 				String cellData = getExcelDateByIndex(rowIndex, cellIndex);
 				columnList.add(cellData);
@@ -173,7 +177,7 @@ public class ExcelDataHandler {
 		if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
 			return TimeUtil.format1(cell.getDateCellValue());
 		}
-		return cell.toString();
+		return cell.toString().trim();
 	}
 
 	public void closeIO() {
@@ -328,7 +332,6 @@ public class ExcelDataHandler {
 	 */
 	public static <T> File exportExcel(List<T> list, String filePath, String sheetName,
 			List<String> passFields, ExcelHeader excelHeader) {
-
 
 		File file = new File(filePath);
 		// 校验文件是否存在 不存在则新建

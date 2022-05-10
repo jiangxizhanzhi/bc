@@ -162,4 +162,7 @@ public interface OjBusinessErrorCode {
 	/** 未获取到远程协助地址*/
 	String HELP_URL_NOT_FOUND = "102052";
 
+	/** 训练计划%s已开始，暂不支持导入*/
+	String CLASSROOM_START_NOT_COVER = "102053";
+
 }

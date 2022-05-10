@@ -773,10 +773,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				LessonPaperEvaluate lessonPaperEvaluate = idToObj.get(userInfo.getUserId());
 
 				if (null != isCommitted) {
-					if (isCommitted && null == lessonPaperEvaluate){
+					if (isCommitted && null == lessonPaperEvaluate) {
 						continue;
 					}
-					if (!isCommitted && null != lessonPaperEvaluate){
+					if (!isCommitted && null != lessonPaperEvaluate) {
 						continue;
 					}
 				}
@@ -786,10 +786,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 					Integer level = lessonPaperEvaluate.getLevel();
 
 					if (null != isMarked) {
-						if (isMarked && null == level){
+						if (isMarked && null == level) {
 							continue;
 						}
-						if (!isMarked && null != level){
+						if (!isMarked && null != level) {
 							continue;
 						}
 					}
@@ -948,6 +948,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo,
 					i);
+			Classroom existClassRoom = classroomMapper
+					.selectByOrgAndLesson(classroom.getOrganizationId(), classroom.getLessonId());
+			if (null != existClassRoom && (StringUtils.isBlank(existClassRoom.getTrainPlanId())
+					|| !existClassRoom.getTrainPlanId().equals(trainPlan.getResourceId()))) {
+				throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
+			}
 			classroom.setTrainPlanId(trainPlan.getResourceId());
 			classrooms.add(classroom);
 		}
@@ -1156,6 +1162,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		trainPlan = trainPlanMapper.selectByName(planName, userId);
+
+		// 训练计划是否可覆盖 任务是否存在开始的
+		if (null != trainPlan) {
+			classroomValidateHandler.validatePlanCover(trainPlan.getResourceId(),
+					trainPlan.getName());
+		}
+
 		if (null != trainPlan && !cover) {
 			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST, rowIndex);
 		}

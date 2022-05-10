@@ -5,28 +5,23 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
-import org.apache.commons.collections.CollectionUtils;
-import org.omg.CORBA.ORB;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
@@ -234,4 +229,17 @@ public class ClassroomValidateHandler {
 
 	}
 
+	/**
+	 * 校验训练计划下课堂表是否开始 开始则提醒
+	 * @param planId
+	 */
+	public void validatePlanCover(String planId, String planName) {
+		List<Classroom> classroomList = classroomMapper.selectByPlan(planId);
+		classroomList.forEach(classroom -> {
+			if (classroom.getStartTime().before(new Date())) {
+				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_START_NOT_COVER,
+						planName);
+			}
+		});
+	}
 }

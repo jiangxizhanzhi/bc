@@ -9,4 +9,16 @@ public interface RtksRelatedService {
 	 * @param missionTemplateIds
 	 */
 	void deleteSkillMissionRelation(List<String> missionTemplateIds);
+
+	/**
+	 * 删除场景模板时，删除attack关联
+	 * @param businessTemplateIds
+	 */
+	void clearAttackRel(List<String> businessTemplateIds);
+
+	/**
+	 * 删除场景模板时，删除 engage关联
+	 * @param businessTemplateIds
+	 */
+	void clearEngageRel(List<String> businessTemplateIds);
 }

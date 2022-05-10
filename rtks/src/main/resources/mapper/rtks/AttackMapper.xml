@@ -19,6 +19,14 @@
             #{businessTemplateId}
         </foreach>
     </delete>
+    <delete id="clearRel">
+        delete
+        from rtks_attack_train_relation
+        where business_template_id in
+        <foreach collection="businessTemplateIds" item="businessTemplateId" separator="," open="(" close=")">
+            #{businessTemplateId}
+        </foreach>
+    </delete>
     <select id="getAll" resultType="com.cyberpeace.rtks.service.bo.career.AttackContext">
         select rtks_attack_category.resource_id as category_id,
                rtks_attack_category.name_zh     as category_name_zh,

@@ -29,4 +29,7 @@ public interface EngageMapper {
 	List<String> getRelByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
 
 	List<BusinessTemplateSimple> getRelatedTemplates(@Param("resourceId") String resourceId);
+
+	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
+
 }

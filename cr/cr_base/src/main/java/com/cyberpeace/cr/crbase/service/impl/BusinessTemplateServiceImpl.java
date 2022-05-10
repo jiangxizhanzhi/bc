@@ -34,10 +34,7 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
@@ -90,6 +87,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private RtksRelatedService rtksRelatedService;
 
 	@Autowired
 	@Qualifier("businessTemplateHandler")
@@ -360,6 +360,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				}
 				// 删除模板
 				businessTemplateMapper.deleteBatchIds(businessTemplateIds);
+				// 删除attack、engage关联
+				rtksRelatedService.clearAttackRel(businessTemplateIds);
+				rtksRelatedService.clearEngageRel(businessTemplateIds);
 			}
 		});
 

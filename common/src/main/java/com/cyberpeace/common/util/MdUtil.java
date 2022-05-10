@@ -87,6 +87,10 @@ public class MdUtil {
 		return titleArray[1].trim();
 	}
 
+	public static void main(String[] args) {
+		parseMarkdown("/Users/chenzhuo/home/讲义.md");
+	}
+
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
 	 * @param markdownPath
@@ -114,13 +118,20 @@ public class MdUtil {
 				relativePath = imagePath.replaceFirst(CommonConstant.PERIOD,
 						CommonConstant.EMPTY_STRING);
 			}
+
 			File replaceFile = new File(currentDir, relativePath);
-			if (!replaceFile.exists()) {
-				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
-				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+			if (replaceFile.exists()) {
+				content = content.replace(imagePath, replaceFile.getAbsolutePath());
+			} else {
+				// 文件后缀匹配，如果文件无后缀则可能不是文件
+				String firstMatchStr = LocalStringUtil.getFirstMatchStr(relativePath,
+						PatternConstant.FILE_SUFFIX_MATCH);
+				if (StringUtils.isNotBlank(firstMatchStr)) {
+					log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
+					throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+				}
 			}
 
-			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 		}
 
 		return content;

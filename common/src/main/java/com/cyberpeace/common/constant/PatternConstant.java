@@ -50,4 +50,9 @@ public interface PatternConstant {
 	 * 理论题导入关键字分隔符
 	 */
 	String VERTICAL_LINE = "\\|";
+
+	/**
+	 * 文件后缀匹配
+	 */
+	String FILE_SUFFIX_MATCH = "(\\..[^\\/]{0,6})$";
 }

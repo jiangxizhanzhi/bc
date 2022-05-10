@@ -13,14 +13,17 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -51,6 +54,9 @@ public class EvalTemplateController {
 
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
+
+	@Autowired
+	private EvalTemplateMapper evalTemplateMapper;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -103,7 +109,7 @@ public class EvalTemplateController {
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
-		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getResourceId()));
+		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setStepConfig(
 				JsonUtil.toJsonObjectArray(evalTemplate.getStepConfig(), EvalTaskStepConfig.class));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
@@ -143,7 +149,26 @@ public class EvalTemplateController {
 
 	private void validateReq(EvaTemplateAddReq evaTemplateAddReq) {
 
-		// 校验名称、描述长度 todo
+		String templateId = null;
+		if (evaTemplateAddReq instanceof EvaTemplateModifyReq) {
+			templateId = ((EvaTemplateModifyReq) evaTemplateAddReq).getResourceId();
+		}
+
+		// 校验名称长度
+		CrCommonValidator.validateNameLen(evaTemplateAddReq.getName(),
+				CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+
+		// 校验名称重复
+		if (evalTemplateMapper.existByNameAndUserIdAndId(evaTemplateAddReq.getName(),
+				UserInfoContext.getUserContext().getUserId(), templateId)) {
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
+		}
+
+		// 校验描述长度
+
+		CrCommonValidator.validateLength(evaTemplateAddReq.getDescription(),
+				CrCommonConstants.ZERO_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
+				CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 
 		// 校验LOGO文件是否存在
 		if (!attachmentService.isExist(evaTemplateAddReq.getLogoId())) {

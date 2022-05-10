@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -14,5 +15,11 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 
 	IPage<EvalTemplate> listEvalTemplates(Page page, EvalTemplateListQuery evalTemplateListQuery);
+
+	/**
+	 * 校验模板名称
+	 */
+	Boolean existByNameAndUserIdAndId(@Param("templateName") String templateName,
+			@Param("createUserId") String userId, @Param("templateId") String templateId);
 
 }

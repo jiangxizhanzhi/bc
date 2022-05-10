@@ -47,6 +47,8 @@ public interface CrCommonConstants {
 
 	Integer MAX_TAG_COUNT = ConfigReader.readInt("cr.tag.count.max");
 
+	Integer ZERO_STR_LEN = ConfigReader.readInt("cr.str.len.zero");
+
 	Integer MIN_STR_LEN = ConfigReader.readInt("cr.str.len.min");
 
 	Integer MAX_NAME_STR_LEN = ConfigReader.readInt("cr.str.len.name.max");

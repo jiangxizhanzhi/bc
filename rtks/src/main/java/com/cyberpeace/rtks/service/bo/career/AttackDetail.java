@@ -1,8 +1,8 @@
 package com.cyberpeace.rtks.service.bo.career;
 
 import java.io.Serializable;
+import java.util.List;
 
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -24,5 +24,5 @@ public class AttackDetail implements Serializable {
 	private String name;
 
 	@ApiModelProperty("关联模板")
-	private ListRsp<BusinessTemplateSimple> templates;
+	private List<BusinessTemplateSimple> templates;
 }

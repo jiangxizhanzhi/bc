@@ -3,7 +3,6 @@ package com.cyberpeace.rtks.service;
 import java.util.List;
 
 import com.cyberpeace.rtks.service.bo.EngageDetail;
-import com.cyberpeace.rtks.service.bo.career.DetailPageReq;
 import com.cyberpeace.rtks.service.bo.career.EngageBackBo;
 import com.cyberpeace.rtks.service.bo.career.EngageCategoryBo;
 import com.cyberpeace.rtks.service.bo.career.EngageFrontBo;
@@ -18,10 +17,10 @@ public interface EngageService {
 
 	/**
 	 * 后台 获取Engage 详情
-	 * @param detailPageReq
+	 * @param resourceId
 	 * @return
 	 */
-	EngageDetail getDetailById(DetailPageReq detailPageReq);
+	EngageDetail getDetailById(String resourceId);
 
 	/**
 	 * 更新 engage 和后台训练模板关系

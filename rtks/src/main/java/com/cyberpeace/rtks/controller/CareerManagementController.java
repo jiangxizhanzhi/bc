@@ -43,8 +43,8 @@ public class CareerManagementController {
 	@GetMapping("/attack")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
 	public BaseRsp<AttackDetail>
-			getAttackDetail(@Validated DetailPageReq detailPageReq) {
-		AttackDetail res = attackService.getDetailById(detailPageReq);
+			getAttackDetail(@ApiParam(name = "resource_id", value = "技术id") String resource_id) {
+		AttackDetail res = attackService.getDetailById(resource_id);
 
 		return new BaseRsp<>(res);
 	}
@@ -79,8 +79,8 @@ public class CareerManagementController {
 	@GetMapping("/engage")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
 	public BaseRsp<EngageDetail>
-			getEngageDetail(@Validated DetailPageReq detailPageReq) {
-		EngageDetail res = engageService.getDetailById(detailPageReq);
+			getEngageDetail(@ApiParam(name = "resource_id", value = "技术id") String resource_id) {
+		EngageDetail res = engageService.getDetailById(resource_id);
 
 		return new BaseRsp<>(res);
 	}

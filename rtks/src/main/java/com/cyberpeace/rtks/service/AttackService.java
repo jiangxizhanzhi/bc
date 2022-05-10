@@ -2,7 +2,10 @@ package com.cyberpeace.rtks.service;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.service.bo.career.*;
+import com.cyberpeace.rtks.service.bo.career.AttackBackBo;
+import com.cyberpeace.rtks.service.bo.career.AttackCategoryBo;
+import com.cyberpeace.rtks.service.bo.career.AttackDetail;
+import com.cyberpeace.rtks.service.bo.career.AttackFrontBo;
 
 public interface AttackService {
 
@@ -21,10 +24,10 @@ public interface AttackService {
 
 	/**
 	 * 读取 ATT&CK 详情
-	 * @param detailPageReq
+	 * @param resourceId
 	 * @return
 	 */
-	AttackDetail getDetailById(DetailPageReq detailPageReq);
+	AttackDetail getDetailById(String resourceId);
 
 	/**
 	 * 更新ATT&CK-场景模板关联

@@ -24,6 +24,44 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileUtil {
 
+	/**
+	 * 校验允许的类型
+	 * @param file
+	 * @param fileSuffix
+	 */
+	public static void validateSuffix(MultipartFile file, String... fileSuffix) {
+		if (null == file) {
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+		}
+
+		String filename = file.getOriginalFilename();
+		for (String suffix : fileSuffix) {
+			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
+				return;
+			}
+		}
+
+		throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+	}
+
+	/**
+	 * 校验不允许的类型
+	 * @param file
+	 * @param fileSuffix
+	 */
+	public static void validateNotAccessFile(MultipartFile file, String... fileSuffix) {
+		if (null == file) {
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+		}
+
+		String filename = file.getOriginalFilename();
+		for (String suffix : fileSuffix) {
+			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
+				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+			}
+		}
+	}
+
 	public static File saveFile(MultipartFile file, String basePath) throws IOException {
 		String originalFilename = file.getOriginalFilename();
 		assert originalFilename != null;

@@ -13,7 +13,10 @@ public enum FileSunffixConstant implements GenericEnum {
 	HTML(2, "html"), ZIP(3, "zip"),
 	XLS(4, "xls"), XLSX(5, "xlsx"),
 	PPTX(6, "pptx"), PPT(7, "ppt"),
-	DOCX(8, "docx"), DOC(9,"doc");
+	DOCX(8, "docx"), DOC(9,"doc"),
+	PNG(10, "png"), JPEG(11, "jpeg"),
+	JPG(12, "jpg"), MP4(13, "mp4"),
+	M4V(13, "m4v");
 
 	@Getter
 	private Integer code;

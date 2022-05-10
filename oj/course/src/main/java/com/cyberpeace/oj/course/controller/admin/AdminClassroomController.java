@@ -302,6 +302,9 @@ public class AdminClassroomController {
 	public BaseRsp importTrainPlan(@RequestParam("file") MultipartFile excelFile,
 			@RequestParam("cover") Boolean cover) {
 
+		FileUtil.validateSuffix(excelFile, FileSunffixConstant.XLSX.getDesc(),
+				FileSunffixConstant.XLS.getDesc());
+
 		// 文件存储
 		AttachmentBo uploadFile = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(), true,
 				excelFile, true);

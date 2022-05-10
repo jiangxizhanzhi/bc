@@ -1,16 +1,18 @@
 package com.cyberpeace.oj.course.controller.req;
 
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.io.Serializable;
+import java.util.Date;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
+
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 @ApiModel
@@ -44,8 +46,6 @@ public class ClassroomReq implements Serializable {
 	private Date endTime;
 
 	@ApiModelProperty("训练计划编号")
-	@NotBlank(groups = { Create.class, Update.class },
-			message = OjBusinessErrorCode.TRAIN_PLAN_ID_NOT_NULL)
 	private String trainPlanId;
 
 }

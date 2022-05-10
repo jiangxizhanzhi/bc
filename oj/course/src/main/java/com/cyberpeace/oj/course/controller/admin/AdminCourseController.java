@@ -9,9 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
@@ -28,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -213,6 +210,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AttachmentBo>
 			upload_attachment(@RequestParam("file") MultipartFile outlineFile) {
+
+		// 文件校验
+		FileUtil.validateSuffix(outlineFile, FileSunffixConstant.JPG.getDesc(),
+				FileSunffixConstant.PNG.getDesc(), FileSunffixConstant.JPEG.getDesc());
+
+		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OUTLINE.getCode(),
 				false, outlineFile, true);
 

@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -993,14 +996,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public void uploadVideo(CourseLesson courseLesson, MultipartFile video) {
 
-		if (null == video) {
-			return;
-		}
+		if (null != video) {
+			FileUtil.validateSuffix(video, FileSunffixConstant.MP4.getDesc(),
+					FileSunffixConstant.M4V.getDesc());
 
-		String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
-				courseLesson.getCourseId());
-		AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video);
-		courseLesson.setVideoUrl(attachmentBo.getFilePath());
+			String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
+					courseLesson.getCourseId());
+			AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video);
+			courseLesson.setVideoUrl(attachmentBo.getFilePath());
+		}
 	}
 
 	@Override

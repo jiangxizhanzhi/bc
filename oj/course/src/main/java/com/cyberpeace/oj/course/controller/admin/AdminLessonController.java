@@ -2,9 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
@@ -35,7 +33,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;

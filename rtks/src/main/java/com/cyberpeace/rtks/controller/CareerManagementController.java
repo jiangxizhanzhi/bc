@@ -6,10 +6,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
@@ -55,7 +52,7 @@ public class CareerManagementController {
 	@ApiOperation("添加ATT&CK 关联")
 	@PostMapping("/attack")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
-	public BaseRsp updateAttackTemplateRel(@Validated AttackUpdateReq updateReq) {
+	public BaseRsp updateAttackTemplateRel(@Validated @RequestBody AttackUpdateReq updateReq) {
 		attackService.updateRelations(updateReq.getResourceId(),
 				updateReq.getBusinessTemplateIds());
 		return new BaseRsp();
@@ -91,7 +88,7 @@ public class CareerManagementController {
 	@ApiOperation("添加ATT&CK 关联")
 	@PostMapping("/engage")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
-	public BaseRsp updateEngageTemplateRel(@Validated EngageUpdateReq updateReq) {
+	public BaseRsp updateEngageTemplateRel(@Validated @RequestBody EngageUpdateReq updateReq) {
 		engageService.updateRelations(updateReq.getResourceId(),
 				updateReq.getBusinessTemplateIds());
 		return new BaseRsp();

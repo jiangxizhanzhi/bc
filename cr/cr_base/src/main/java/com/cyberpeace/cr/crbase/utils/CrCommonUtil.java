@@ -82,7 +82,7 @@ public class CrCommonUtil {
 	 * @param <T>
 	 */
 	public static <T> void differ2List(List<T> l1, List<T> l2) {
-		if (l1.isEmpty() || l2.isEmpty()) {
+		if (l1 == null || l1.isEmpty() || l2 == null || l2.isEmpty()) {
 			return;
 		}
 		int i = 0;

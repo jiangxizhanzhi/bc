@@ -10,8 +10,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.rtks.dao.mapper.EngageMapper;
@@ -64,7 +67,8 @@ public class EngageServiceImpl implements EngageService {
 	}
 
 	@Override
-	public EngageDetail getDetailById(String resourceId) {
+	public EngageDetail getDetailById(DetailPageReq detailPageReq) {
+		ensureEngageCache();
 		EngageDetail detail = new EngageDetail();
 		List<EngageCategoryBo<FrameItemBase>> cache;
 		if (CommonContext.isChinese()) {
@@ -72,6 +76,7 @@ public class EngageServiceImpl implements EngageService {
 		} else {
 			cache = cachedEngages.getEn();
 		}
+		String resourceId = detailPageReq.getResourceId();
 		// search
 		cache.forEach((category) -> {
 			category.getSubCategories().forEach((subCategory) -> {
@@ -87,8 +92,10 @@ public class EngageServiceImpl implements EngageService {
 		});
 
 		// get related business templates
-		List<BusinessTemplateSimple> templates = engageMapper.getRelatedTemplates(resourceId);
-		detail.setTemplates(templates);
+		Page page = detailPageReq.toPageParam();
+		IPage<BusinessTemplateSimple> templates = engageMapper.getRelatedTemplates(page, resourceId,
+				detailPageReq.getType(), detailPageReq.getDifficulty(), detailPageReq.getPattern());
+		detail.setTemplates(PageUtil.getListResult(templates));
 		return detail;
 	}
 

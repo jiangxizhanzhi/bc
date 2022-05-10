@@ -330,7 +330,7 @@ public class BusinessTemplateController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("")
+	@ApiOperation("职业框架-场景模板列表")
 	@GetMapping("/list/simple")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)

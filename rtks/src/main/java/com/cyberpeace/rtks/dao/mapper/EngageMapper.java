@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.rtks.service.bo.career.EngageContext;
 import com.cyberpeace.rtks.service.bo.career.RelCount;
@@ -18,8 +20,6 @@ public interface EngageMapper {
 
 	List<RelCount> countRelsByEngageId();
 
-	List<BusinessTemplateSimple> getRelatedTemplates(@Param("resourceId") String resourceId);
-
 	List<String> getRelatedTemplateIds(@Param("resourceId") String resourceId);
 
 	void deleteRel(@Param("resourceId") String resourceId,
@@ -29,4 +29,8 @@ public interface EngageMapper {
 			@Param("businessTemplateIds") List<String> businessTemplateIds);
 
 	List<String> getRelByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
+
+	IPage<BusinessTemplateSimple> getRelatedTemplates(@Param("page") Page page,
+			@Param("resourceId") String resourceId, @Param("type") Integer type,
+			@Param("difficulty") Integer difficulty, @Param("pattern") String pattern);
 }

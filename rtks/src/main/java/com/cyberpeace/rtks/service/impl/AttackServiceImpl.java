@@ -9,8 +9,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.rtks.dao.mapper.AttackMapper;
@@ -83,7 +86,8 @@ public class AttackServiceImpl implements AttackService {
 	}
 
 	@Override
-	public AttackDetail getDetailById(String resourceId) {
+	public AttackDetail getDetailById(DetailPageReq detailPageReq) {
+		ensureAttackCache();
 		AttackDetail detail = new AttackDetail();
 		List<AttackCategoryBo<FrameItemBase>> cache;
 		if (CommonContext.isChinese()) {
@@ -92,6 +96,7 @@ public class AttackServiceImpl implements AttackService {
 			cache = cachedAttacks.getEn();
 		}
 		// search
+		String resourceId = detailPageReq.getResourceId();
 		cache.forEach((category) -> {
 			category.getAttacks().forEach((attack) -> {
 				if (attack.getResourceId().equals(resourceId)) {
@@ -102,8 +107,10 @@ public class AttackServiceImpl implements AttackService {
 			});
 		});
 		// get related business templates
-		List<BusinessTemplateSimple> templates = attackMapper.getRelatedTemplates(resourceId);
-		detail.setTemplates(templates);
+		Page page = detailPageReq.toPageParam();
+		IPage<BusinessTemplateSimple> templates = attackMapper.getRelatedTemplates(page, resourceId,
+				detailPageReq.getType(), detailPageReq.getDifficulty(), detailPageReq.getPattern());
+		detail.setTemplates(PageUtil.getListResult(templates));
 		return detail;
 	}
 

@@ -1,13 +1,12 @@
 -- ----------------------------
 -- for rtks_skill
 -- ----------------------------
-ALTER TABLE `cr_mission_scheme_template`
+ALTER TABLE `cr_mission_template`
     ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE;
 
 ALTER TABLE `rtks_skill`
-    DROP COLUMN `system_id`,
-    DROP COLUMN `category_id`,
-    DROP COLUMN `courses`;
+    MODIFY COLUMN `resource_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    MODIFY COLUMN `content` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 
 CREATE TABLE `rtks_skill_mission_relation`
 (
@@ -52,10 +51,6 @@ CREATE TABLE `rtks_role_skill_relation`
 
 
 ALTER TABLE `rtks_role`
-    DROP COLUMN `category`,
-    DROP COLUMN `skill_id_weights`,
-    DROP COLUMN `skill_ids`,
-    DROP COLUMN `skill_courses`,
     ADD COLUMN `knowledge_weight` tinyint(4) NOT NULL DEFAULT 50,
     ADD COLUMN `skill_missions`   text       NULL     DEFAULT '[]';
 
@@ -67,8 +62,10 @@ CREATE TABLE `rtks_attack_category`
 (
     `id`          int          NOT NULL AUTO_INCREMENT,
     `resource_id` varchar(32)  NOT NULL,
-    `name`        varchar(255) NOT NULL,
-    PRIMARY KEY (`id`) USING BTREE
+    `name_zh`     varchar(255) NOT NULL,
+    `name_en`     varchar(255) NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `resource_id` (`resource_id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
@@ -80,8 +77,11 @@ CREATE TABLE `rtks_attack`
     `id`          int          NOT NULL AUTO_INCREMENT,
     `resource_id` varchar(32)  NOT NULL,
     `category_id` varchar(32)  NOT NULL,
-    `name`        varchar(255) NOT NULL,
-    PRIMARY KEY (`id`) USING BTREE
+    `name_zh`     varchar(255) NOT NULL,
+    `name_en`     varchar(255) NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `category_id` (`category_id`) USING BTREE,
+    INDEX `resource_id` (`resource_id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
@@ -90,11 +90,14 @@ CREATE TABLE `rtks_attack`
 CREATE TABLE `rtks_attack_train_relation`
 (
     `id`                   int(11)     NOT NULL AUTO_INCREMENT,
+    `resource_id`          varchar(32) NULL,
     `attack_id`            varchar(32) NOT NULL,
     `business_template_id` varchar(32) NOT NULL,
     `create_time`          datetime    NULL,
     `update_time`          datetime    NULL,
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `business_template_id` (`business_template_id`) USING BTREE,
+    INDEX `attack_id` (`attack_id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
@@ -105,7 +108,8 @@ CREATE TABLE `rtks_engage_category`
 (
     `id`          int          NOT NULL AUTO_INCREMENT,
     `resource_id` varchar(32)  NOT NULL,
-    `name`        varchar(255) NOT NULL,
+    `name_zh`     varchar(255) NOT NULL,
+    `name_en`     varchar(255) NOT NULL,
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
@@ -118,8 +122,10 @@ CREATE TABLE `rtks_engage_sub_category`
     `id`          int          NOT NULL AUTO_INCREMENT,
     `resource_id` varchar(32)  NOT NULL,
     `category_id` varchar(32)  NOT NULL,
-    `name`        varchar(255) NOT NULL,
-    PRIMARY KEY (`id`) USING BTREE
+    `name_zh`     varchar(255) NOT NULL,
+    `name_en`     varchar(255) NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `category_id` (`category_id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
@@ -131,8 +137,11 @@ CREATE TABLE `rtks_engage`
     `resource_id`     varchar(32)  NOT NULL,
     `category_id`     varchar(32)  NOT NULL,
     `sub_category_id` varchar(32)  NOT NULL,
-    `name`            varchar(255) NOT NULL,
-    PRIMARY KEY (`id`) USING BTREE
+    `name_zh`         varchar(255) NOT NULL,
+    `name_en`         varchar(255) NOT NULL,
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `sub_category_id` (`sub_category_id`) USING BTREE,
+    INDEX `resource_id` (`resource_id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
@@ -141,12 +150,34 @@ CREATE TABLE `rtks_engage`
 CREATE TABLE `rtks_engage_train_relation`
 (
     `id`                   int(11)     NOT NULL AUTO_INCREMENT,
+    `resource_id`          varchar(32) NULL,
     `engage_id`            varchar(32) NOT NULL,
     `business_template_id` varchar(32) NOT NULL,
     `create_time`          datetime    NULL,
     `update_time`          datetime    NULL,
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `business_template_id` (`business_template_id`) USING BTREE,
+    INDEX `engage_id` (`engage_id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
   COLLATE = utf8_general_ci;
+
+-- ----------------------------
+-- for constants
+-- ----------------------------
+
+UPDATE `cr_constants_config`
+SET `cn_name` = '初级'
+WHERE code = 1
+  AND type = 2;
+
+UPDATE `cr_constants_config`
+SET `cn_name` = '中级'
+WHERE code = 2
+  AND type = 2;
+
+UPDATE `cr_constants_config`
+SET `cn_name` = '高级'
+WHERE code = 3
+  AND type = 2;

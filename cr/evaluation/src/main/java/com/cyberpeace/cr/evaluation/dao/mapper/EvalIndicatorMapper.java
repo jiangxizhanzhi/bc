@@ -17,5 +17,5 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 
     IPage<EvalIndicator> listEvalIndicator(Page page, EvalListQuery listQuery);
 
-	boolean existByName(String name);
+	boolean existByName(String name, String resourceId);
 }

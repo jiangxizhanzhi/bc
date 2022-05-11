@@ -31,7 +31,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalSystemReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalSystemMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
@@ -53,7 +53,7 @@ public class EvalSystemIndexAdminController {
 	private EvalIndexService evalIndexService;
 
 	@Autowired
-	private EvalIndexMapper evalIndexMapper;
+	private EvalSystemMapper evalSystemMapper;
 	@Autowired
 	private EvalSystemService evalSystemService;
 
@@ -141,7 +141,7 @@ public class EvalSystemIndexAdminController {
 		CrCommonValidator.validateNameLen(req.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 
 		// 校验名称重复
-		if (evalIndexMapper.existByName(req.getName())) {
+		if (evalSystemMapper.existByName(req.getName(), resourceId)) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 

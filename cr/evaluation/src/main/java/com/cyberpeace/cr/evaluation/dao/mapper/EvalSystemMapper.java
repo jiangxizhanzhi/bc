@@ -12,6 +12,8 @@ import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 public interface EvalSystemMapper extends BaseMapper<EvalSystem> {
 
 	IPage<EvalSystem> listEvalSystems(Page page, EvalListQuery listQuery);
+
+    boolean existByName(String name, String resourceId);
 }
 
 

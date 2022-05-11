@@ -50,6 +50,7 @@ public class EvalAlgorithmAdminController {
 
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
+
 	/**
 	 * 新增算法
 	 * @param req
@@ -87,7 +88,7 @@ public class EvalAlgorithmAdminController {
 		CrCommonValidator.validateNameLen(req.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 
 		// 校验名称重复
-		if (evalAlgorithmMapper.existByName(req.getName())) {
+		if (evalAlgorithmMapper.existByName(req.getName(), resourceId)) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 

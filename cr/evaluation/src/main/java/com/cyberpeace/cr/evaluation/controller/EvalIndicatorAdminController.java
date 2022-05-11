@@ -103,7 +103,7 @@ public class EvalIndicatorAdminController {
 		CrCommonValidator.validateNameLen(req.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 
 		// 校验名称重复
-		if (evalIndicatorMapper.existByName(req.getName())) {
+		if (evalIndicatorMapper.existByName(req.getName(), resourceId)) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 

@@ -26,7 +26,7 @@ public interface EngageMapper {
 	void addRel(@Param("resourceId") String resourceId,
 			@Param("businessTemplateIds") List<String> businessTemplateIds);
 
-	List<String> getRelByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
+	List<String> getRelByBusinessTemplateId(@Param("resourceId") String resourceId);
 
 	List<BusinessTemplateSimple> getRelatedTemplates(@Param("resourceId") String resourceId);
 

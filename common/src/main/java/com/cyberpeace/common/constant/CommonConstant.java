@@ -55,4 +55,6 @@ public interface CommonConstant {
 
 	String EMPTY_STRING = "";
 
+	String MD_CODING_BLOCK = "```";
+
 }

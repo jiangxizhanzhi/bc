@@ -59,6 +59,8 @@ public interface CommonConstant {
 
 	String EMPTY_STRING = "";
 
+	String MD_CODING_BLOCK = "```";
+
 	String ONLINE = "online";
 
 	Integer THIRTY = 30;

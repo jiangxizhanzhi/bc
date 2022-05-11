@@ -4,13 +4,11 @@ import java.io.Serializable;
 
 import com.cyberpeace.common.model.PageReqBase;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class EvalNameListReq extends PageReqBase implements Serializable {
 
-	@ApiModelProperty(value = "名称", required = false)
-	private String name;
+
 
 }

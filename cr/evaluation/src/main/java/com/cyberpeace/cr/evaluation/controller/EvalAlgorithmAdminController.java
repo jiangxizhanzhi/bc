@@ -185,6 +185,8 @@ public class EvalAlgorithmAdminController {
 	public BaseRsp<ListRsp<EvalAlgorithmRsp>> list(EvalAlgorithmListReq listReq) {
 		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
+		listQuery.setName(listReq.getPattern());
+
 		// 默认时间排序
 		listQuery.setSort("-create_time");
 

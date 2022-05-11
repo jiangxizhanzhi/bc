@@ -10,9 +10,6 @@ import lombok.Data;
 @Data
 public class EvalAlgorithmListReq extends PageReqBase implements Serializable {
 
-	@ApiModelProperty(value = "名称", required = false)
-	private String name;
-
 	@ApiModelProperty(value = "算法类型", required = false)
 	private Integer type;
 }

@@ -203,7 +203,7 @@ public class EvalAlgorithmAdminController {
 	}
 
 	@ApiOperation("查询算法")
-	@GetMapping("")
+	@GetMapping("/get")
 	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
 			@ApiParam(name = "resource_id", value = "id", required = true) String resource_id) {
 

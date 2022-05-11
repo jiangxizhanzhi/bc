@@ -201,6 +201,26 @@ public class EvalAlgorithmAdminController {
 		});
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
+
+	@ApiOperation("查询算法")
+	@GetMapping("")
+	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
+			@ApiParam(name = "resource_id", value = "id", required = true) String resource_id) {
+
+		EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(resource_id);
+		if (null == evalAlgorithm) {
+			log.info("EvalAlgorithm not found! evalAlgorithmId=[{}]", resource_id);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		EvalAlgorithmRsp evalAlgorithmRsp = BeanUtils.copy(evalAlgorithm, EvalAlgorithmRsp.class);
+		evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithm.getResourceId());
+		evalAlgorithmRsp.setParams(
+				JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(), AlgorithmParamContext.class));
+		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
+
+		return new BaseRsp(evalAlgorithmRsp);
+	}
 	/*
 	
 	@GetMapping("/list")

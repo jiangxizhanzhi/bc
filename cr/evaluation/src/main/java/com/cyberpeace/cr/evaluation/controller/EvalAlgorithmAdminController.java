@@ -159,7 +159,7 @@ public class EvalAlgorithmAdminController {
 	 * 查询算法列表
 	 * @return
 	 */
-	@GetMapping("")
+	@GetMapping("/type")
 	@ApiOperation("根据类型查询算法列表")
 	public BaseRsp<List<EvalAlgorithmRsp>>
 			algorithmList(@ApiParam(name = "type", value = "算法类型", required = true) String type) {
@@ -203,7 +203,7 @@ public class EvalAlgorithmAdminController {
 	}
 
 	@ApiOperation("查询算法")
-	@GetMapping("/get")
+	@GetMapping("")
 	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
 			@ApiParam(name = "resource_id", value = "id", required = true) String resource_id) {
 

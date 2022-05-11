@@ -46,6 +46,7 @@
         select submit_user_id as user_id, count(*) as `count`
         from oj_lesson_paper_evaluate
         where submit_user_id in <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
+        and (level = 1 or level = 2)
         group by user_id
         <include refid="limit"/>;
     </select>
@@ -100,7 +101,7 @@
     </select>
 
     <select id="afterClassIntegral" resultType="com.alibaba.fastjson.JSONObject">
-    select submit_user_id as user_id, sum(case when score/total_score >= 0.8 then  1  else 0 ENd) as integral
+    select submit_user_id as user_id, sum(case when level = 1 then  1 when level = 2 then 1  else 0 ENd) as integral
     from oj_lesson_paper_evaluate where create_time &gt;= #{start_time} and create_time &lt;= #{end_time}
     and  submit_user_id in <foreach collection="user_ids" item="user_id" open="(" close=")" separator=",">#{user_id}</foreach>
     GROUP BY submit_user_id

@@ -162,8 +162,9 @@ public class AdminClassroomController {
 	@ApiOperation("进行远程协助")
 	@GetMapping("/to_help")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
-			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "resource_id", value = "课堂编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "user_id", value = "用户编号", dataTypeClass = String.class)})
 	public BaseRsp toHelp(@RequestParam("resource_id") String classroomId,
 			@RequestParam("user_id") String userId) {
 
@@ -174,8 +175,9 @@ public class AdminClassroomController {
 	@ApiOperation("结束远程协助")
 	@GetMapping("/end_help")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
-			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "resource_id", value = "课堂编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "user_id", value = "用户编号", dataTypeClass = String.class)})
 	public BaseRsp endHelp(@RequestParam("resource_id") String classroomId,
 			@RequestParam("user_id") String userId) {
 
@@ -186,8 +188,8 @@ public class AdminClassroomController {
 	@ApiOperation("获取远程协助地址")
 	@GetMapping("/get_help")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
-			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "user_id", value = "用户编号", dataTypeClass = String.class) })
 	public BaseRsp<String> getHelpUrl(@RequestParam("resource_id") String classroomId,
 			@RequestParam("user_id") String userId) {
 		String helpUrl = classroomSignService.getHelpUrl(classroomId, userId);

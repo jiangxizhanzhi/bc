@@ -81,8 +81,8 @@ public class AdminPaperController {
 
 	@ApiOperation("题库筛选条件查询")
 	@GetMapping("/select_info")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_set_id", value = "习题集编号"),
-			@ApiImplicitParam(name = "children", value = "分类是否查询子类") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_set_id", value = "习题集编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "children", value = "分类是否查询子类", dataTypeClass = Boolean.class) })
 	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_COURSES}, logical = Logical.OR)
 	public BaseRsp<LibSelectRes> get(

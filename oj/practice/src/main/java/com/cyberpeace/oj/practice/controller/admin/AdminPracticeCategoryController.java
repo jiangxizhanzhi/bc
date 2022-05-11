@@ -62,8 +62,8 @@ public class AdminPracticeCategoryController {
 	}
 
 	@ApiOperation("查询分类详情")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "分类编号"),
-			@ApiImplicitParam(name = "children", value = "是否查询子类") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "分类编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "children", value = "是否查询子类", dataTypeClass = Boolean.class) })
 	@GetMapping("")
 	public BaseRsp<CategoryListBo> get(@RequestParam("resource_id") String resourceId,
 			@RequestParam(value = "children", required = false) Boolean children) {

@@ -48,8 +48,8 @@ public class WebLessonController {
 
 	@ApiOperation("课时详情查询")
 	@GetMapping("")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号"),
-			@ApiImplicitParam(name = "course_id", value = "课程编号") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId,
 			@RequestParam("lesson_id") String lessonId) {
@@ -66,8 +66,8 @@ public class WebLessonController {
 
 	@ApiOperation("课后练习数据查询")
 	@GetMapping("/practice_after_class")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课时编号"),
-			@ApiImplicitParam(name = "course_id", value = "课程编号") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课时编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<LessonPracticeBo> lessonPractice(@RequestParam("resource_id") String resourceId,
 			@RequestParam("course_id") String courseId) {

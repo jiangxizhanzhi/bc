@@ -122,8 +122,8 @@ public class RtksEvaluationController {
 	@ApiOperation("岗位课程学习记录")
 	@GetMapping("/role/course/study")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "start_time", value = "开始时间"),
-			@ApiImplicitParam(name = "end_time", value = "结束时间") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "start_time", value = "开始时间", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "end_time", value = "结束时间", dataTypeClass = String.class) })
 	public BaseRsp<StudyRecordBo> getStudyRecord(@RequestParam("start_time") String startTime,
 			@RequestParam("end_time") String endTime) {
 		boolean startValidate = TimeUtil.isValidDate(startTime);

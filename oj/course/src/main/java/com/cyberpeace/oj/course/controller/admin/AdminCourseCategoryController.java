@@ -68,8 +68,9 @@ public class AdminCourseCategoryController {
 	}
 
 	@ApiOperation("课程分类详细信息查询")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "分类编号"),
-			@ApiImplicitParam(name = "children", value = "是否查询子类 true查询 false仅查当前级") })
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "resource_id", value = "分类编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "children", value = "是否查询子类 true查询 false仅查当前级", dataTypeClass = Boolean.class)})
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CourseCategoryBo> get(@RequestParam("resource_id") String resourceId,

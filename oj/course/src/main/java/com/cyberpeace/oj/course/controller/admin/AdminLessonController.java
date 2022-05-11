@@ -129,8 +129,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("后台课时详情查询接口")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号"),
-			@ApiImplicitParam(name = "course_id", value = "课程编号") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
 	public BaseRsp<AdminLessonBo> get(@RequestParam(value = "course_id") String courseId,
 			@RequestParam(value = "lesson_id") String lessonId) {
 

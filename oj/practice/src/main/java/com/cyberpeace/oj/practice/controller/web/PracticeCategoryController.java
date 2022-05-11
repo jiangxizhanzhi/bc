@@ -33,9 +33,10 @@ public class PracticeCategoryController {
 	private PracticeCategoryService categoryService;
 
 	@ApiOperation("查询习题分类列表")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_type", value = "分类类型 0=理论基础 2=实践操作"),
-			@ApiImplicitParam(name = "pattern", value = "模糊搜索内容"),
-			@ApiImplicitParam(name = "children", value = "是否查询子分类") })
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "practice_type", value = "分类类型 0=理论基础 2=实践操作", dataTypeClass = Integer.class),
+			@ApiImplicitParam(name = "pattern", value = "模糊搜索内容", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "children", value = "是否查询子分类", dataTypeClass = String.class)})
 	@GetMapping("/list")
 	@RequiresPermissions(
 			value = { MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },

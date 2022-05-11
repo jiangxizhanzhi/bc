@@ -1,17 +1,12 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.constant.*;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -44,6 +40,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
@@ -259,15 +256,23 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
+			ClassroomGroupInfo groupInfo = null;
 			if (authContext.getIsWeb()) {
-				ClassroomGroupInfo groupInfo = classroomGroupInfoService
-						.selectByLessonAndUser(lessonId, authContext);
+				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
 				if (null != groupInfo) {
 					// 存在课堂场景 则设置group_id用于前端简历websocket
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 					if (null != ojLocalScene) {
 						infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
 						infoBo.setGroupId(groupInfo.getResourceId());
+					}
+
+					// 设置课程表编号
+					Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
+					Date now = new Date();
+					if (null != classroom && classroom.getStartTime().before(now)
+							&& classroom.getEndTime().after(now)) {
+						infoBo.setRoomId(classroom.getResourceId());
 					}
 				}
 			}

@@ -337,6 +337,10 @@ public class MDParser {
 		// other
 		templateContext.setPeopleNumber(4);
 		templateContext.setTimeLineConfig("{}");
+		// add mission_template-business_template relation
+		for (MissionTemplate missionTemplate : missionTemplates) {
+			missionTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+		}
 
 	}
 

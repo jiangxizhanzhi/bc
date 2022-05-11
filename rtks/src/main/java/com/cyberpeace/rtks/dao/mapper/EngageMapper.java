@@ -32,6 +32,5 @@ public interface EngageMapper {
 
 	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
 
-	void updateTrainRel(@Param("resourceId") String resourceId,
-			@Param("deletedIds") List<String> deletedIds, @Param("addedIds") List<String> addedIds);
+	Integer lockRel();
 }

@@ -114,7 +114,7 @@ public class WebClassroomController {
 	@GetMapping("/help_status")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
 			logical = Logical.OR)
-	public BaseRsp getHelpStatus(RemoteHelpReq req) {
+	public BaseRsp<HelpStatusBo> getHelpStatus(RemoteHelpReq req) {
 		HelpStatusBo helpStatus = classroomSignService.getHelpStatus(req.getLessonId(),
 				req.getNodeId());
 		return new BaseRsp(helpStatus);

@@ -3,9 +3,11 @@ package com.cyberpeace.cr.evaluation.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * 
@@ -65,4 +67,22 @@ public class EvalAlgorithm extends BaseTable {
      * 创建人
      */
     private String createUserId;
+
+	public enum Type implements GenericEnum {
+
+		SCORING_ALGORITHM(1, "评分算法"), FORMAT_ALGORITHM(2, "格式化算法"), MATCHING_ALGORITHM(3,
+				"模型匹配算法"), AGGREGATING_ALGORITHM(4, "聚合算法");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		private Type(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
 }

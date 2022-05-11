@@ -20,12 +20,16 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
 import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
 import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
@@ -52,6 +56,9 @@ public class EvalIndicatorAdminController {
 	private EvalIndicatorService evalIndicatorService;
 
 	@Autowired
+	private EvalIndicatorMapper evalIndicatorMapper;
+
+	@Autowired
 	private EvalCollectionService evalCollectionService;
 
 	@Autowired
@@ -65,7 +72,7 @@ public class EvalIndicatorAdminController {
 	public BaseRsp<String>
 			addEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
 
-		String connlist = evalIndicatorReq.getConnlist();
+		validateReq(evalIndicatorReq);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -85,7 +92,24 @@ public class EvalIndicatorAdminController {
 
 			}
 		});
-		return new BaseRsp(connlist);
+
+		return new BaseRsp(evalIndicatorReq);
+	}
+
+	private void validateReq(EvalIndicatorReq req) {
+		String resourceId = req.getEvalIndicatorId();
+
+		// 校验名称长度
+		CrCommonValidator.validateNameLen(req.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+
+		// 校验名称重复
+		if (evalIndicatorMapper.existByName(req.getName())) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+
+		// 校验描述长度
+		CrCommonValidator.validateLength(req.getDescription(), CrCommonConstants.ZERO_STR_LEN,
+				CrCommonConstants.MAX_DESC_LEN, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 	}
 
 	@ApiOperation("编辑体系指标")
@@ -93,7 +117,7 @@ public class EvalIndicatorAdminController {
 	public BaseRsp<String>
 			editEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
 
-		String connlist = evalIndicatorReq.getConnlist();
+		validateReq(evalIndicatorReq);
 
 		EvalIndicator evalIndicator = evalIndicatorService
 				.getById(evalIndicatorReq.getEvalIndicatorId());
@@ -123,7 +147,7 @@ public class EvalIndicatorAdminController {
 			}
 		});
 
-		return new BaseRsp(connlist);
+		return new BaseRsp(evalIndicatorReq);
 	}
 
 	@ApiOperation("查询体系指标")

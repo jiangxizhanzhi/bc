@@ -13,6 +13,8 @@ public interface EvalAlgorithmMapper extends BaseMapper<EvalAlgorithm> {
 	void updateStateById(String resourceId);
 
 	List<EvalAlgorithm> selectByType(String type);
+
+	boolean existByName(String name);
 }
 
 

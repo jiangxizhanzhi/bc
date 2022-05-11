@@ -16,4 +16,6 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	Integer selectAlgorithmSum(List<String> algorithmIds);
 
     IPage<EvalIndicator> listEvalIndicator(Page page, EvalListQuery listQuery);
+
+	boolean existByName(String name);
 }

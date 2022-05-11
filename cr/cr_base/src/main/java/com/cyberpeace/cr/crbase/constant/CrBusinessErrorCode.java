@@ -255,4 +255,7 @@ public interface CrBusinessErrorCode {
 
 	/** 测试靶场类型不存在 */
 	String EVAL_CATEGORY_NOT_EXIST = "101082";
+
+	/** 算法已经使用 */
+	String ALGORITHM_ALREADY_USED = "101083";
 }

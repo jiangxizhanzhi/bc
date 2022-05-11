@@ -23,11 +23,15 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSystemReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
@@ -48,6 +52,8 @@ public class EvalSystemIndexAdminController {
 	@Autowired
 	private EvalIndexService evalIndexService;
 
+	@Autowired
+	private EvalIndexMapper evalIndexMapper;
 	@Autowired
 	private EvalSystemService evalSystemService;
 
@@ -102,6 +108,8 @@ public class EvalSystemIndexAdminController {
 	}
 
 	private EvalSystem saveEvalIndex(@Validated @RequestBody EvalSystemReq evalSystemReq) {
+		validateReq(evalSystemReq);
+
 		evalIndexService.saveBatch(convertIndexReqToIndex(evalSystemReq.getFirstIndexes(),
 				EvalIndex.Level.FIRST.getCode()));
 
@@ -124,6 +132,22 @@ public class EvalSystemIndexAdminController {
 		evalSystem.setFirstIndexNum(1);
 
 		return evalSystem;
+	}
+
+	private void validateReq(EvalSystemReq req) {
+		String resourceId = req.getEvalSystemId();
+
+		// 校验名称长度
+		CrCommonValidator.validateNameLen(req.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+
+		// 校验名称重复
+		if (evalIndexMapper.existByName(req.getName())) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+
+		// 校验描述长度
+		CrCommonValidator.validateLength(req.getDescription(), CrCommonConstants.ZERO_STR_LEN,
+				CrCommonConstants.MAX_DESC_LEN, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 	}
 
 	private void changeChildrenIds(List<IndexContext> secondIndexList,

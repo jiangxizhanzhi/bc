@@ -18,11 +18,15 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalAlgorithmRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
@@ -44,6 +48,8 @@ public class EvalAlgorithmAdminController {
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
 
+	@Autowired
+	private EvalAlgorithmMapper evalAlgorithmMapper;
 	/**
 	 * 新增算法
 	 * @param req
@@ -61,6 +67,9 @@ public class EvalAlgorithmAdminController {
 	}
 
 	private EvalAlgorithm convertEvalAlgorithmReqToEvalAlgorithm(EvalAlgorithmReq req) {
+
+		validateReq(req);
+
 		EvalAlgorithm evalAlgorithm = BeanUtils.copy(req, EvalAlgorithm.class);
 
 		evalAlgorithm.setResourceId(req.getEvalAlgorithmId());
@@ -69,6 +78,23 @@ public class EvalAlgorithmAdminController {
 		evalAlgorithm.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		return evalAlgorithm;
+	}
+
+	private void validateReq(EvalAlgorithmReq req) {
+		String resourceId = req.getEvalAlgorithmId();
+
+		// 校验名称长度
+		CrCommonValidator.validateNameLen(req.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+
+		// 校验名称重复
+		if (evalAlgorithmMapper.existByName(req.getName())) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+
+		// 校验描述长度
+		CrCommonValidator.validateLength(req.getDescription(), CrCommonConstants.ZERO_STR_LEN,
+				CrCommonConstants.MAX_DESC_LEN, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+
 	}
 
 	/**
@@ -123,7 +149,7 @@ public class EvalAlgorithmAdminController {
 		if (useNum > 0) {
 			log.info("Algorithm Already Used! algorithmIds=[{}]",
 					JsonUtil.arrayToString(deleteReq.getIds()));
-			throw new BusinessException(ErrorCode.ALGORITHM_ALREADY_USED);
+			throw new BusinessException(CrBusinessErrorCode.ALGORITHM_ALREADY_USED);
 		}
 
 		return new BaseRsp(evalAlgorithmService.delete(deleteReq.getIds()));

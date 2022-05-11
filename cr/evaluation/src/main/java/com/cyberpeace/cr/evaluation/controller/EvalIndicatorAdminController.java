@@ -170,6 +170,18 @@ public class EvalIndicatorAdminController {
 		listQuery.setSort("-create_time");
 
 		IPage<EvalIndicator> data = evalIndicatorService.page(listQuery);
+		data.convert(evalIndicator -> {
+			EvalIndicatorRsp evalAlgorithmRsp = BeanUtils.copy(evalIndicator,
+					EvalIndicatorRsp.class);
+			evalAlgorithmRsp.setEvalCollectionNum(JsonUtil
+					.toJsonObjectArray(evalIndicator.getCollectionIds(), String.class).size());
+			evalAlgorithmRsp.setEvalAggregationNum(JsonUtil
+					.toJsonObjectArray(evalIndicator.getAggregationIds(), String.class).size());
+
+			evalAlgorithmRsp.setEvalIndicatorId(evalIndicator.getResourceId());
+
+			return evalAlgorithmRsp;
+		});
 
 		return new BaseRsp(PageUtil.getListResult(data));
 	}

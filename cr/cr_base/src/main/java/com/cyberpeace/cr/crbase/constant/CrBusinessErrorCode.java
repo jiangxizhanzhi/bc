@@ -258,4 +258,16 @@ public interface CrBusinessErrorCode {
 
 	/** 算法已经使用 */
 	String ALGORITHM_ALREADY_USED = "101083";
+
+	/** 测试靶场存在运行任务 */
+	String RUNNING_EVAL_TASK_EXIST = "101084";
+
+	/** 测试靶场任务不在运行 */
+	String EVAL_TASK_NOT_RUNNING = "101085";
+
+	/** 测试靶场任务不存在 */
+	String EVAL_TASK_NOT_EXIST = "101086";
+
+	/** 测试靶场步骤不存在 */
+	String EVAL_STEP_NOT_EXIST = "101087";
 }

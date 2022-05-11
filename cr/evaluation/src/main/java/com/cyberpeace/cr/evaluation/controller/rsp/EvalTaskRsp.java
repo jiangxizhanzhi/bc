@@ -2,21 +2,39 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 
 import java.io.Serializable;
 
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.alibaba.fastjson.JSONObject;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class EvalTaskRsp extends SceneViewContext implements Serializable {
+public class EvalTaskRsp implements Serializable {
+
+	@ApiModelProperty("测试Id")
+	private String templateId;
 
 	@ApiModelProperty("测试名称")
-	private Integer templateName;
+	private String templateName;
 
 	@ApiModelProperty("任务Id")
 	private String taskId;
 
 	@ApiModelProperty("任务名称")
 	private String taskName;
+
+	@ApiModelProperty("场景管理器id")
+	private String localSceneId;
+
+	@ApiModelProperty("场景id")
+	private String mpSceneId;
+
+	@ApiModelProperty("拓扑id")
+	private String topoId;
+
+	@ApiModelProperty("拓扑模板数据")
+	private JSONObject topoData;
+
+	@ApiModelProperty("场景数据")
+	private JSONObject sceneData;
 
 }

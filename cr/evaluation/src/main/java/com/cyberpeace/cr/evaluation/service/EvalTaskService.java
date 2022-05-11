@@ -11,10 +11,12 @@ public interface EvalTaskService extends IService<EvalTask> {
 
 	Boolean getStepsByTaskId(String taskId);
 
+	EvalTask getTask(String taskId);
+
 	Boolean startTask(EvalTemplate evalTemplate);
 
-	Boolean stopTask(String taskId);
+	Boolean stopTask(EvalTask evalTask);
 
-	Boolean deleteTask(String taskId);
+	Boolean deleteTask(EvalTask evalTask);
 
 }

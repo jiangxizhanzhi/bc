@@ -12,9 +12,11 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
  */
 public interface EvalTaskStepService extends IService<EvalTaskStep> {
 
-	Boolean startStep(String stepId);
+	EvalTaskStep getTaskStep(String stepId);
 
-	Boolean stopStep(String stepId);
+	Boolean startStep(EvalTaskStep evalTaskStep);
+
+	Boolean stopStep(EvalTaskStep evalTaskStep);
 
 	Boolean removeByTaskId(String taskId);
 

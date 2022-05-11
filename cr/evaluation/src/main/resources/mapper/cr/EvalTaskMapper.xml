@@ -12,4 +12,28 @@
         where template_id = #{templateId}
     </select>
 
+    <select id="selectByTemplateIdAndStatus" resultMap="evalTask">
+        select *
+        from cr_eval_task
+        where template_id = #{templateId}
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTask$Status@RUNNING.getCode()">
+            and end_time is null
+        </if>
+        <if test="status != null and status == 2">
+            and end_time is not null
+        </if>
+    </select>
+
+    <select id="isNotFinished" resultType="java.lang.Boolean">
+        select case
+        when exists(select 1
+        from cr_eval_task
+        where resource_id = #{taskId}
+        and end_time is null)
+        then 1
+        else 0
+        end
+        as result;
+    </select>
+
 </mapper>

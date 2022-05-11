@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,8 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskStepMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
@@ -45,10 +48,16 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	private EvalTaskStepService evalTaskStepService;
 
 	@Autowired
+	private EvalTaskStepMapper evalTaskStepMapper;
+
+	@Autowired
 	private LocalSceneService localSceneService;
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private EvalTemplateMapper evalTemplateMapper;
 
 	@Override
 	public Boolean getStepsByTaskId(String taskId) {
@@ -56,13 +65,25 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
+	public EvalTask getTask(String taskId) {
+
+		EvalTask evalTask = getById(taskId);
+		if (evalTask == null) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
+		} else if (!Objects.equals(evalTask.getCreateUserId(),
+				UserInfoContext.getUserContext().getUserId())) {
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		} else {
+			return evalTask;
+		}
+	}
+
+	@Override
 	public Boolean startTask(EvalTemplate evalTemplate) {
 
 		String templateId = evalTemplate.getResourceId();
 
-		// 校验权限
-
-		// 校验模板下任务状态
+		// 校验模板下任务状态 todo 同一模板不允许启动多个场景
 		LocalScene localSceneExisted = localSceneService.getByBusinessInstanceId(templateId);
 
 		if (localSceneExisted != null && StringUtils.isNotBlank(localSceneExisted.getMpSceneId())) {
@@ -79,7 +100,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		evalTask.setCopyedTopoId(remoteTopoService.copyTopo(evalTemplate.getTopoId()));
 		evalTask.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTask.setEnableRecording(evalTemplate.getEnableRecording());
-		evalTask.setName(evalTemplate.getName());
+		evalTask.setTemplateName(evalTemplate.getName());
 		evalTask.setResourceId(IDGeneratorUtil.getID());
 
 		// 构建步骤对象
@@ -100,8 +121,14 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-		localScene.setStartTime(new Date());
+		Date startTime = new Date();
+		localScene.setStartTime(startTime);
+		evalTask.setStartTime(startTime);
 		evalTask.setLocalSceneId(localScene.getResourceId());
+		evalTask.setMpSceneId(sceneId);
+
+		// 更新模板信息
+		evalTemplate.setCurrentTaskId(evalTask.getResourceId());
 
 		try {
 			// 5、更新本地数据库数据
@@ -112,6 +139,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 					localSceneService.save(localScene);
 					save(evalTask);
 					evalTaskStepService.saveBatch(evalTaskSteps);
+					// evalTemplateMapper.updateById(evalTemplate);
 				}
 			});
 
@@ -138,7 +166,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
 		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
-		localScene.setSceneName(evalTask.getName());
+		localScene.setSceneName(evalTask.getTemplateName());
 		localScene.setMeta(JSON.toJSONString(
 				LocalSceneMeta.builder().appResourceId(evalTask.getResourceId()).build()));
 		localScene.setRecord(evalTask.getEnableRecording());
@@ -146,44 +174,52 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public Boolean stopTask(String taskId) {
-
-		EvalTask evalTask = getById(taskId);
+	public Boolean stopTask(EvalTask evalTask) {
 
 		LocalScene localScene = localSceneService.getById(evalTask.getLocalSceneId());
 
 		Boolean stopResult = localSceneService.stopScene(localScene);
 
-		// 停止场景失败时的处理
+		// 停止场景失败时的处理 todo
+		if (!stopResult) {
+			return false;
+		}
 
 		evalTask.setEndTime(new Date());
 		evalTask.setMpSceneId(localScene.getMpSceneId());
+		evalTask.setLocalSceneId("");
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				localSceneService.removeById(localScene);
-				save(evalTask);
+				updateById(evalTask);
 			}
 		});
-
-		save(evalTask);
 
 		return true;
 	}
 
 	@Override
-	public Boolean deleteTask(String taskId) {
+	public Boolean deleteTask(EvalTask evalTask) {
 
 		// 关闭任务关联场景
-		stopTask(taskId);
+		stopTask(evalTask);
 
-		// 删除任务相关的步骤记录
-		evalTaskStepService.removeByTaskId(taskId);
+		String taskId = evalTask.getResourceId();
 
-		// 删除任务记录
-		removeById(taskId);
+		// 查询任务相关的步骤记录
+		List<String> stepList = evalTaskStepMapper.selectStepIdsByTaskId(taskId);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				evalTaskStepService.removeByIds(stepList);
+				removeById(taskId);
+			}
+		});
 
 		return true;
 	}

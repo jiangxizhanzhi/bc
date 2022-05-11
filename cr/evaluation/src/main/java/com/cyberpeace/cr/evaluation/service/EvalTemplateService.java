@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateListQuery;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 
 /**
@@ -23,5 +24,7 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	Boolean batchDelete(List<String> templateIds);
 
 	EvalTemplate getTemplate(String templateId);
+
+	Boolean validateExistTask(String templateId, EvalTask.Status taskStatus);
 
 }

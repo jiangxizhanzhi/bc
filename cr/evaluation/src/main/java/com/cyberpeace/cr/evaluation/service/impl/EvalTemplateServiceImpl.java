@@ -14,7 +14,9 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateListQuery;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cs.dao.entity.Attachment;
@@ -28,6 +30,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Autowired
 	private EvalTemplateMapper evalTemplateMapper;
+
+	@Autowired
+	private EvalTaskMapper evalTaskMapper;
 
 	@Autowired
 	private AttachmentService attachmentService;
@@ -85,6 +90,16 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			evalTemplateList.add(getTemplate(templateId));
 		}
 		return evalTemplateList;
+	}
+
+	@Override
+	public Boolean validateExistTask(String templateId, EvalTask.Status taskStatus) {
+
+		List<EvalTask> evalTaskList = evalTaskMapper.selectByTemplateIdAndStatus(templateId,
+				taskStatus.getCode());
+
+		return !evalTaskList.isEmpty();
+
 	}
 
 }

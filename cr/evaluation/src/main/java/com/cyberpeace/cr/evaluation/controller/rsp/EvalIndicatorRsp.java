@@ -26,9 +26,13 @@ public class EvalIndicatorRsp {
 	@NotNull
 	private String description;
 
+	@ApiModelProperty(value = "指标属性", required = true)
+	@NotNull
+	private String attribute;
+
 	@ApiModelProperty(value = "数据类型", required = true)
 	@NotNull
-	private String datatype;
+	private Integer datatype;
 
 	@ApiModelProperty(value = "连接线", required = true)
 	@NotNull
@@ -45,4 +49,12 @@ public class EvalIndicatorRsp {
 	@ApiModelProperty(value = "指标项列表", required = true)
 	@NotNull
 	private List<EvalIndicatorContext> evalIndicators;
+
+	@ApiModelProperty(value = "聚合项数量", required = true)
+	@NotNull
+	private Integer evalAggregationNum;
+
+	@ApiModelProperty(value = "采集项数量", required = true)
+	@NotNull
+	private Integer evalCollectionNum;
 }

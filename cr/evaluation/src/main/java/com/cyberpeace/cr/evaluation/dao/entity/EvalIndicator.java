@@ -31,7 +31,7 @@ public class EvalIndicator extends BaseTable {
 	/**
 	 * 数据类型
 	 */
-	private String datatype;
+	private Integer datatype;
 
 	/**
 	 * 指标属性

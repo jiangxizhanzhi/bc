@@ -60,7 +60,7 @@ public class CareerManagementController {
 
 	@ApiOperation("ATT&CK 框架前台")
 	@GetMapping("/attack/related")
-	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
+	@RequiresPermissions(MenuConstant.WEB_ALL)
 	public BaseRsp<List<AttackCategoryBo<AttackFrontBo>>>
 			getAttacksFront(@ApiParam(name = "resource_id", value = "训练模板id") String resource_id) {
 		List<AttackCategoryBo<AttackFrontBo>> rsp = attackService.getAttacksByTraining(resource_id);
@@ -69,7 +69,7 @@ public class CareerManagementController {
 
 	@ApiOperation("Engage框架后台")
 	@GetMapping("/engage/all")
-	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
+	@RequiresPermissions(MenuConstant.CMS_ENGAGE_FRAME)
 	public BaseRsp<List<EngageCategoryBo<EngageBackBo>>> getEngagesBack() {
 		List<EngageCategoryBo<EngageBackBo>> engages = engageService.getEngages();
 		return new BaseRsp<>(engages);
@@ -77,7 +77,7 @@ public class CareerManagementController {
 
 	@ApiOperation("Engage详情页")
 	@GetMapping("/engage")
-	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
+	@RequiresPermissions(MenuConstant.CMS_ENGAGE_FRAME)
 	public BaseRsp<EngageDetail>
 			getEngageDetail(@ApiParam(name = "resource_id", value = "技术id") String resource_id) {
 		EngageDetail res = engageService.getDetailById(resource_id);
@@ -85,9 +85,9 @@ public class CareerManagementController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("添加ATT&CK 关联")
+	@ApiOperation("添加Engage 关联")
 	@PostMapping("/engage")
-	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
+	@RequiresPermissions(MenuConstant.CMS_ENGAGE_FRAME)
 	public BaseRsp updateEngageTemplateRel(@Validated @RequestBody EngageUpdateReq updateReq) {
 		engageService.updateRelations(updateReq.getResourceId(),
 				updateReq.getBusinessTemplateIds());
@@ -96,7 +96,7 @@ public class CareerManagementController {
 
 	@ApiOperation("Engage 框架前台")
 	@GetMapping("/engage/related")
-	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
+	@RequiresPermissions(MenuConstant.WEB_ALL)
 	public BaseRsp<List<EngageCategoryBo<EngageFrontBo>>>
 			getEngagesFront(@ApiParam(name = "resource_id", value = "训练模板id") String resource_id) {
 		List<EngageCategoryBo<EngageFrontBo>> rsp = engageService.getEngagesByTraining(resource_id);

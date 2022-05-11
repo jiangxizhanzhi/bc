@@ -9,6 +9,27 @@
             (#{resourceId}, #{businessTemplateId}, now(), now())
         </foreach>
     </insert>
+    <update id="updateTrainRel">
+        start transaction;
+        lock tables rtks_engage_train_relation write;
+        <if test="deletedIds.size() > 0">
+            delete from rtks_engage_train_relation
+            where business_template_id in
+            <foreach collection="deletedIds" item="deletedId" open="(" close=")" separator=",">
+                #{deletedId}
+            </foreach>;
+        </if>
+        <if test="addedIds.size() > 0">
+            insert into rtks_engage_train_relation
+            (engage_id, business_template_id, create_time, update_time)
+            values
+            <foreach collection="addedIds" item="addedId" separator=",">
+                (#{resourceId}, #{addedId}, now(), now())
+            </foreach>
+        </if>
+        commit;
+        unlock tables;
+    </update>
     <delete id="deleteRel">
         delete from rtks_engage_train_relation
         where business_template_id in

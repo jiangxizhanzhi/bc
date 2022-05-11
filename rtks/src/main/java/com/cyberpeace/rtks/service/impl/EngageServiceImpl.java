@@ -109,6 +109,7 @@ public class EngageServiceImpl implements EngageService {
 				if (!businessTemplateIds.isEmpty()) {
 					engageMapper.addRel(resourceId, businessTemplateIds);
 				}
+				engageMapper.unlockRel();
 			}
 		});
 	}

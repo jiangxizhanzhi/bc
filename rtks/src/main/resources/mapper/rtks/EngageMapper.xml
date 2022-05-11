@@ -62,8 +62,8 @@
         where engage_id = #{resourceId}
     </select>
     <select id="getRelByBusinessTemplateId" resultType="java.lang.String">
-        select business_template_id
+        select engage_id
         from rtks_engage_train_relation
-        where engage_id = #{resourceId}
+        where business_template_id = #{resourceId}
     </select>
 </mapper>

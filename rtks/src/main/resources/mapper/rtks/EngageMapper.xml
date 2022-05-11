@@ -66,11 +66,10 @@
         from rtks_engage_train_relation
         where business_template_id = #{resourceId}
     </select>
-    <select id="lockRel">
-        lock tables rtks_engage_train_relation write;
-    </select>
-    <select id="unlockRel">
-        unlock tables;
+    <select id="lockRel" resultType="java.lang.Integer">
+        select count(*)
+        from rtks_engage_train_relation for
+        update
     </select>
 
 </mapper>

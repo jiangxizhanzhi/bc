@@ -32,7 +32,5 @@ public interface EngageMapper {
 
 	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
 
-	void lockRel();
-
-	void unlockRel();
+	Integer lockRel();
 }

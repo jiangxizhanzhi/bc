@@ -94,4 +94,6 @@ public interface JsonKeyConstant {
 	String CLASSIFY = "classify";
 
 	String TYPE = "type";
+
+	String ROOM_ID = "room_id";
 }

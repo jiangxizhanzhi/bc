@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,10 +28,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -218,9 +215,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
 
 		String orgId = authContext.getOrganization();
-		if (null != paper.getReadAuthIds() && paper.getReadAuthIds().contains(orgId)){
+		if (null != paper.getReadAuthIds() && paper.getReadAuthIds().contains(orgId)) {
 			infoBo.setPaperPublic(true);
-		}else{
+		} else {
 			infoBo.setPaperPublic(false);
 		}
 		Integer countByPaper = paperService.practiceCountByPaper(lesson.getPaperId());
@@ -669,13 +666,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				boolean isObject = practiceTheory.getTheoryType()
 						.intValue() != PracticeTheory.TheoryType.FILL_BLANK.getCode().intValue()
 						&& practiceTheory.getTheoryType()
-						.intValue() != PracticeTheory.TheoryType.SHORT_ANSWER.getCode()
-						.intValue();
+								.intValue() != PracticeTheory.TheoryType.SHORT_ANSWER.getCode()
+										.intValue();
 
 				EvaluateResult evaluateResult = new EvaluateResult();
 				if (isObject || submitContext.getNeedEvaluate()) {
 					evaluateResult = theoryEvaluateHandler.evaluateByBusiness(
-							authContext.getUserId(), practiceTheory, submitContext.getSubmitAnswer());
+							authContext.getUserId(), practiceTheory,
+							submitContext.getSubmitAnswer());
 				} else {
 					// 主观题不再判题
 					evaluateResult.setResourceId(practiceTheory.getResourceId());
@@ -683,7 +681,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					evaluateResult.setTotalScore(CommonConstant.ZERO.doubleValue());
 					evaluateResult.setSolved(false);
 				}
-
 
 				PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult, PracticeSolvedBo.class);
 				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
@@ -868,7 +865,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			readAuthIds = "[]";
 		}
 
-		List<String> orgIds =  remoteOrganizationService.childrenList(authId, true);
+		List<String> orgIds = remoteOrganizationService.childrenList(authId, true);
 		Set<String> orgIdSet = new HashSet<>(orgIds);
 
 		JSONArray readAuthArray = JsonUtil.stringToArray(readAuthIds);
@@ -900,9 +897,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
+			ClassroomGroupInfo groupInfo = null;
+
 			if (authContext.getIsWeb()) {
-				ClassroomGroupInfo groupInfo = classroomGroupInfoService
-						.selectByLessonAndUser(lessonId, authContext);
+				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
 				if (null != groupInfo) {
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 				}
@@ -916,6 +914,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			if (null != ojLocalScene) {
 				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+				if (groupInfo != null) {
+					sceneData.put(JsonKeyConstant.ROOM_ID, groupInfo.getClassroomId());
+				}
 				topoSceneDataRes.setSceneData(sceneData);
 			}
 		}

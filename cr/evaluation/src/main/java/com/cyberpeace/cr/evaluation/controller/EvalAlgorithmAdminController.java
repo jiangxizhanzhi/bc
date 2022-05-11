@@ -155,7 +155,7 @@ public class EvalAlgorithmAdminController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<EvalAlgorithm>> list(EvalAlgorithmListReq listReq) {
+	public BaseRsp<ListRsp<EvalAlgorithmRsp>> list(EvalAlgorithmListReq listReq) {
 		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 		// 默认时间排序
@@ -163,6 +163,16 @@ public class EvalAlgorithmAdminController {
 
 		IPage<EvalAlgorithm> data = evalAlgorithmService.page(listQuery);
 
+		data.convert(evalAlgorithm -> {
+			EvalAlgorithmRsp evalAlgorithmRsp = BeanUtils.copy(evalAlgorithm,
+					EvalAlgorithmRsp.class);
+			evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithm.getResourceId());
+			evalAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(),
+					AlgorithmParamContext.class));
+			evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
+
+			return evalAlgorithmRsp;
+		});
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 	/*

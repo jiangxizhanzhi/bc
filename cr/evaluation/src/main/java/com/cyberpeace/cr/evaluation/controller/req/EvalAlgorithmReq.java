@@ -14,8 +14,7 @@ import lombok.Data;
 @Data
 public class EvalAlgorithmReq {
 
-	@ApiModelProperty(value = "算法Id", required = true)
-	@NotNull
+	@ApiModelProperty(value = "算法Id", required = false)
 	private String evalAlgorithmId;
 
 	@ApiModelProperty(value = "名称", required = true)

@@ -42,4 +42,8 @@ public class EvalAlgorithmRsp {
 	@NotNull
 	private List<AlgorithmParamContext> params = Lists.newArrayList();
 
+	@ApiModelProperty(value = "参数个数", required = true)
+	@NotNull
+	private Integer paramsNum;
+
 }

@@ -5,10 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 
 /**
  *
@@ -55,5 +58,15 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	@Override
 	public List<EvalAlgorithm> selectByType(String type) {
 		return evalAlgorithmMapper.selectByType(type);
+	}
+
+	@Override
+	public IPage<EvalAlgorithm> page(EvalListQuery listQuery) {
+
+		Page page = listQuery.toPageParam();
+
+		IPage<EvalAlgorithm> data = evalAggregationMapper.listEvalAlgorithm(page, listQuery);
+
+		return data;
 	}
 }

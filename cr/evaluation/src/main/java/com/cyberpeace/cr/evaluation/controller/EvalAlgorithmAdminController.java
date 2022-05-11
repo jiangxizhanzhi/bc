@@ -9,18 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalAlgorithmRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -148,6 +153,18 @@ public class EvalAlgorithmAdminController {
 		return new BaseRsp(rsp);
 	}
 
+	@ApiOperation("列表查询")
+	@GetMapping("/list")
+	public BaseRsp<ListRsp<EvalAlgorithm>> list(EvalAlgorithmListReq listReq) {
+		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
+		listQuery.setPer_page(listReq.getPerPage());
+		// 默认时间排序
+		listQuery.setSort("-create_time");
+
+		IPage<EvalAlgorithm> data = evalAlgorithmService.page(listQuery);
+
+		return new BaseRsp(PageUtil.getListResult(data));
+	}
 	/*
 	
 	@GetMapping("/list")

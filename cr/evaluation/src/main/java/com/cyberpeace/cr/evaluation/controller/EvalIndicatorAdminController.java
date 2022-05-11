@@ -10,15 +10,19 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
@@ -26,6 +30,7 @@ import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
 import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
 import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
 import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -154,6 +159,19 @@ public class EvalIndicatorAdminController {
 		evalSystemRsp.setEvalIndicators(Lists.newArrayList(evalIndicatorContext));
 
 		return evalSystemRsp;
+	}
+
+	@ApiOperation("列表查询")
+	@GetMapping("/list")
+	public BaseRsp<ListRsp<EvalIndicator>> list(EvalNameListReq listReq) {
+		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
+		listQuery.setPer_page(listReq.getPerPage());
+		// 默认时间排序
+		listQuery.setSort("-create_time");
+
+		IPage<EvalIndicator> data = evalIndicatorService.page(listQuery);
+
+		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
 	/*

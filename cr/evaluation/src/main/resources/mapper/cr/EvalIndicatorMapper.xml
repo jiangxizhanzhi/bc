@@ -18,4 +18,13 @@
             #{id}
         </foreach>
     </select>
+    <select id="listEvalIndicator" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator">
+        select * from cr_eval_indicator
+        <where>
+            <if test="listQuery.name != null and listQuery.name != ''">
+                <bind name="name" value="'%' + listQuery.name + '%'"/>
+                name LIKE #{name}
+            </if>
+        </where>
+    </select>
 </mapper>

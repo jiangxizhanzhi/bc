@@ -9,6 +9,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -20,6 +22,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
 import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 
 /**
  *
@@ -113,6 +116,15 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 				}).collect(Collectors.toList());
 
 		this.updateBatchById(evalIndicatorList);
+	}
+
+	@Override
+	public IPage<EvalIndicator> page(EvalListQuery listQuery) {
+		Page page = listQuery.toPageParam();
+
+		IPage<EvalIndicator> data = evalIndicatorMapper.listEvalIndicator(page, listQuery);
+
+		return data;
 	}
 
 }

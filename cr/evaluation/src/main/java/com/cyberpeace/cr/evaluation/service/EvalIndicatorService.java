@@ -2,10 +2,12 @@ package com.cyberpeace.cr.evaluation.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 
 /**
  *
@@ -21,4 +23,6 @@ public interface EvalIndicatorService extends IService<EvalIndicator> {
 
 	void updateBatchContext(EvalIndicatorReq evalIndicatorReq,
 			List<EvalIndicatorContext> evalIndicators, String userId, List<String> collectionIds);
+
+	IPage<EvalIndicator> page(EvalListQuery listQuery);
 }

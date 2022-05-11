@@ -4,7 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalAggregationMapper">
 
-
     <select id="selectIdsByEvalIndicatorIds" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation">
         select * from cr_eval_aggregation
         where eval_indicator_id in
@@ -12,6 +11,7 @@
             #{evalIndicatorId}
         </foreach>
     </select>
+
     <select id="selectAlgorithmNum" resultType="java.lang.Integer"
             parameterType="java.util.List">
         select count(1) from cr_eval_aggregation
@@ -19,5 +19,19 @@
         <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
             #{id}
         </foreach>
+    </select>
+
+    <select id="listEvalAlgorithm" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm">
+        select * from cr_eval_algorithm
+        <where>
+            1=1
+            <if test="listQuery.name != null and listQuery.name != ''">
+                <bind name="name" value="'%' + listQuery.name + '%'"/>
+                and `name` like #{name}
+            </if>
+            <if test="listQuery.type != null and listQuery.type != ''">
+                and `type` = #{listQuery.type}
+            </if>
+        </where>
     </select>
 </mapper>

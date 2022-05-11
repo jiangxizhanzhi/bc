@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -199,7 +197,7 @@ public class EvalSystemIndexAdminController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
+	// @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<ListRsp<EvalSystemRsp>> list(EvalNameListReq listReq) {
 		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());

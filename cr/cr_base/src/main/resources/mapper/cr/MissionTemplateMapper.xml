@@ -39,7 +39,7 @@
         cr_business_template.business_type as scene_type,
         cr_business_template.difficulty as scene_difficulty
         from cr_mission_template
-        left join cr_business_template on cr_mission_template.business_template_id = cr_business_template.resource_id
+        inner join cr_business_template on cr_mission_template.business_template_id = cr_business_template.resource_id
         <where>
             <if test="type != null and type != ''">
                 and cr_business_template.business_type = #{type}

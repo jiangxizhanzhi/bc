@@ -1,0 +1,33 @@
+package com.cyberpeace.cr.evaluation.service.context;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
+
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class EvalSystemIndexesContext implements Serializable {
+    @ApiModelProperty("ID")
+    private String resourceId;
+
+    @ApiModelProperty("名称")
+    private String name;
+
+    @ApiModelProperty("得分")
+    private Integer score;
+
+    @ApiModelProperty("下一级")
+    private List<EvalSystemIndexesContext> nextLevel;
+
+    @ApiModelProperty("评分方式")
+    private Integer type;
+
+    @ApiModelProperty("主机节点ID")
+    private String deviceId;
+
+    @ApiModelProperty("探针ID")
+    private String probeId;
+}

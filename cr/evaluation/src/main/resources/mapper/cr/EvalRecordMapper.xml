@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper">
+
+    <select id="pageList" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalRecord">
+        select * from cr_eval_record
+        <where>
+            room_id = #{room_id}
+            <if test="pattern != null and pattern != ''">
+                <bind name="pattern" value="'%' + page.pattern + '%'"/>
+                name like #{pattern}
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status}
+            </if>
+        </where>
+        order by id desc
+    </select>
+</mapper>

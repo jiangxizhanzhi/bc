@@ -3,6 +3,8 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.Objects;
 
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	@Autowired
 	private AttachmentService attachmentService;
 
+	@Autowired
+	private UtilService utilService;
+
 	@Override
 	public IPage<EvalTemplate> list(EvalTemplateListQuery evalTemplateListQuery) {
 
@@ -52,7 +57,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	public String getLogoPath(String attachmentId) {
 		Attachment attachment = attachmentService.getById(attachmentId);
 		if (attachment != null) {
-			return attachment.getFilePath();
+			return utilService.handlerFileUrl(attachment.getFilePath());
 		}
 		return "";
 	}

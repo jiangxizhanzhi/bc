@@ -30,7 +30,7 @@ public class AdminTrainPlanController {
 	@ApiOperation("训练计划列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp list() {
+	public BaseRsp<List<TrainPlanBo>> list() {
 		List<TrainPlanBo> trainPlanBos = trainPlanService
 				.trainPlanList(UserInfoContext.getUserContext());
 		return new BaseRsp(trainPlanBos);

@@ -1051,15 +1051,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				StringUtils.isBlank(flag) ? PracticeOperation.DynamicFlag.DYNAMIC.getCode()
 						: PracticeOperation.DynamicFlag.STATIC.getCode());
 		// 设置场景共享类型默认值
-		operation.setSceneShareMode(SceneShare.PRIVATE.getCode());
-
 		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
+		String sceneShareMode = (String) operationData.remove("scene_share_mode");
+		operation.setSceneShareMode(StringUtils.isNotBlank(sceneShareMode)
+				&& sceneShareMode.equals(CommonConstant.RIGHT) ? SceneShare.SHARED.getCode()
+						: SceneShare.PRIVATE.getCode());
+
 		if (StringUtils.isNotBlank(topoId)) {
 			operation.setTopoId(topoId);
-			String sceneShareMode = (String) operationData.remove("scene_share_mode");
-			operation.setSceneShareMode(
-					sceneShareMode.equals(CommonConstant.RIGHT) ? SceneShare.SHARED.getCode()
-							: SceneShare.PRIVATE.getCode());
 			operation.setDestroyDelay(CommonConstant.TWO);
 		}
 

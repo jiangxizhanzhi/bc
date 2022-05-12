@@ -120,12 +120,6 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
 		}
 
-		// 已存在相同虚拟机远程协助不管
-		if (StringUtils.isNotBlank(classroomSign.getNodeId())
-				&& classroomSign.getNodeId().equals(nodeId)) {
-			return;
-		}
-
 		// 不能同时两台虚拟机都远程协助
 		if (StringUtils.isNotBlank(classroomSign.getNodeId())
 				&& !classroomSign.getNodeId().equals(nodeId)) {
@@ -149,14 +143,17 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_PAUSE);
 		}
 
-		// 数据填写到数据库
-		classroomSign.setNodeId(nodeId);
-		classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.NEED_HELP.getCode());
-		classroomSignMapper.updateById(classroomSign);
+		// 修改远程协助信息
+		if (StringUtils.isBlank(classroomSign.getNodeId())) {
+			// 数据填写到数据库
+			classroomSign.setNodeId(nodeId);
+			classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.NEED_HELP.getCode());
+			classroomSignMapper.updateById(classroomSign);
+		}
 
 		// 请求协助消息发送
-		String needHelpMessage = getNeedHelpMessage(localScene.getMpSceneId(), nodeId,
-				classroomSign.getUserId());
+		String needHelpMessage = getNeedHelpMessage(classroomSign.getUserId(),
+				classroom.getResourceId());
 		pushChatMessage(classroom, needHelpMessage, classroom.getCreateUserId());
 
 	}
@@ -284,17 +281,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	/**
 	 * 获取远程协助信息
-	 * @param sceneId
-	 * @param nodeId
 	 * @param userId
 	 * @return
 	 */
-	private String getNeedHelpMessage(String sceneId, String nodeId, String userId) {
-
-		// 获取链接地址
-		Map<String, String> assistanceMap = remoteSceneService.getAssistanceMap(
-				Lists.newArrayList(sceneId), Lists.newArrayList(nodeId),
-				Lists.newArrayList(userId));
+	private String getNeedHelpMessage(String userId, String classRoomId) {
 
 		// 拼接链接地址
 		String needHelpMessage = ConfigUtil.getContextProperty("need.remote.help");
@@ -304,12 +294,6 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 			return CommonConstant.EMPTY_STRING;
 		}
 
-		if (StringUtils.isBlank(assistanceMap.get(userId))) {
-			log.error("No remote assistance address was obtained！ user_id=[{}], assistanceMap=[{}]",
-					userId, JsonUtil.toJsonString(assistanceMap));
-			return needHelpMessage;
-		}
-
-		return String.format(needHelpMessage, assistanceMap.get(userId));
+		return String.format(needHelpMessage, classRoomId, userId);
 	}
 }

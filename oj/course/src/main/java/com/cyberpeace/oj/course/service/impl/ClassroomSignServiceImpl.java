@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.Date;
 import java.util.Map;
 
+import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -289,7 +290,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		messageIdentifier.setUserId(toUserId);
 
 		chatWebSocketHandler.pushChatMessage(messageIdentifier, UserInfoContext.getUserContext(),
-				message);
+				message,
+				classroom.getCreateUserId().equals(toUserId) ? ClassroomRole.TEACHER.getDesc()
+						: ClassroomRole.STUDENT.getDesc());
 	}
 
 	/**

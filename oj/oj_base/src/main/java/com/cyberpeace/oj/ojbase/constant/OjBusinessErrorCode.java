@@ -165,4 +165,7 @@ public interface OjBusinessErrorCode {
 	/** 训练计划%s已开始，暂不支持导入*/
 	String CLASSROOM_START_NOT_COVER = "102053";
 
+	/** 资源正在导入*/
+	String RESOURCE_IN_IMPORT = "102054";
+
 }

@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cs.service.context.ChatWsMessageIdentifier;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketMessage;
@@ -23,6 +21,8 @@ import com.cyberpeace.common.exception.ChatException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.ws.*;
 import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cs.service.context.ChatWsMessageIdentifier;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -170,9 +170,9 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param mine
 	 * @param message
 	 */
-	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message) {
-		ChatMessage chatMessage = convertToChatMessage(mine, identifier.getUserId(), message,
-				MESSAGE_TYPE.FRIEND);
+	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message,
+			String role) {
+		ChatMessage chatMessage = convertToChatMessage(mine, message, MESSAGE_TYPE.FRIEND, role);
 		doPushChatMessage(identifier, chatMessage, Lists.newArrayList(identifier.getUserId()));
 	}
 
@@ -182,11 +182,11 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param mine
 	 * @param message
 	 * @param messageType
+	 * @param role
 	 */
 	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message,
-			MESSAGE_TYPE messageType) {
-		ChatMessage chatMessage = convertToChatMessage(mine, identifier.getUserId(), message,
-				messageType);
+			MESSAGE_TYPE messageType, String role) {
+		ChatMessage chatMessage = convertToChatMessage(mine, message, messageType, role);
 		doPushChatMessage(identifier, chatMessage, Lists.newArrayList(identifier.getUserId()));
 	}
 
@@ -233,23 +233,23 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	/**
 	 * 根据发送者和接受者进行消息组装
 	 * @param mine
-	 * @param toUser
 	 * @param message
 	 * @param messageType
 	 * @return
 	 */
-	private ChatMessage convertToChatMessage(UserInfo mine, String toUser, String message,
-			MESSAGE_TYPE messageType) {
+	private ChatMessage convertToChatMessage(UserInfo mine, String message,
+			MESSAGE_TYPE messageType, String role) {
 
-		ChatMessage chatMessage = new ChatMessage();
+		HelpChatMessage chatMessage = new HelpChatMessage();
 		chatMessage.setUsername(mine.getName());
 		chatMessage.setAvatar(mine.getAvatarUrl());
-		chatMessage.setId(toUser);
+		chatMessage.setId(mine.getUserId());
 		chatMessage.setType(messageType.desc);
 		chatMessage.setContent(message);
 		chatMessage.setFromid(mine.getUserId());
 		chatMessage.setTimestamp(System.currentTimeMillis());
 		chatMessage.setTime(TimeUtil.format1(new Date()));
+		chatMessage.setRole(role);
 
 		return chatMessage;
 	}

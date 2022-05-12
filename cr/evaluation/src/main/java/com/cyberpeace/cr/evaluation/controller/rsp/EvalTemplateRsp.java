@@ -24,7 +24,7 @@ public class EvalTemplateRsp extends EvalTemplateListRsp implements Serializable
 	@ApiModelProperty(value = "任务列表")
 	private List<String> taskList;
 
-	@ApiModelProperty(value = "当前任务")
+	@ApiModelProperty(value = "当前测评任务")
 	private String currentTask;
 
 }

@@ -13,18 +13,18 @@ import lombok.Data;
 @Data
 public class EvaTemplateAddReq {
 
-	@ApiModelProperty(value = "测试靶场名称", required = true)
+	@ApiModelProperty(value = "测评靶场模板名称", required = true)
 	@NotNull
 	private String name;
 
-	@ApiModelProperty(value = "测试靶场描述", required = false)
+	@ApiModelProperty(value = "测评靶场描述", required = false)
 	private String description;
 
-	@ApiModelProperty(value = "测试靶场Logo文件id", required = false)
+	@ApiModelProperty(value = "测评靶场Logo文件id", required = false)
 	@NotNull
 	private String logoId;
 
-	@ApiModelProperty(value = "测试靶场类型", required = true)
+	@ApiModelProperty(value = "测评靶场类型", required = true)
 	@NotNull
 	private Integer categoryCode;
 

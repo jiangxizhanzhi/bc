@@ -8,15 +8,15 @@ import lombok.Data;
 @Data
 public class EvalTaskStopReq {
 
-	@ApiModelProperty(value = "靶场测试模板Id", required = true)
+	@ApiModelProperty(value = "靶场测评模板Id", required = true)
 	@NotNull
 	private String templateId;
 
-	@ApiModelProperty(value = "任务Id", required = true)
+	@ApiModelProperty(value = "测评任务Id", required = true)
 	@NotNull
 	private String taskId;
 
-	@ApiModelProperty(value = "任务名称", required = false)
+	@ApiModelProperty(value = "测评任务名称", required = false)
 	@NotNull
 	private String taskName;
 

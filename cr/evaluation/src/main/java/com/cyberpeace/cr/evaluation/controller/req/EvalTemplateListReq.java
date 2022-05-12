@@ -12,7 +12,7 @@ import lombok.Data;
 @ApiModel("测试靶场模板分页查询")
 public class EvalTemplateListReq extends PageReqBase implements Serializable {
 
-	@ApiModelProperty("测试类型")
+	@ApiModelProperty("测评类型")
 	private Integer categoryCode;
 
 }

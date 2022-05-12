@@ -34,7 +34,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "测试靶场-任务")
+@Api(tags = "靶场测评-任务")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/task")
@@ -88,7 +88,7 @@ public class EvalTaskController {
 
 	}
 
-	@ApiOperation("启动测试任务")
+	@ApiOperation("启动测评任务")
 	@PostMapping("/start")
 	public BaseRsp<Boolean> startEvalTask(@RequestBody EvalTaskStartReq evalTaskStartReq) {
 
@@ -106,7 +106,7 @@ public class EvalTaskController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("关闭测试任务")
+	@ApiOperation("关闭测评任务")
 	@PostMapping("/stop")
 	public BaseRsp<Boolean> stopEvalTask(@RequestBody EvalTaskStopReq evalTaskStopReq) {
 
@@ -134,12 +134,12 @@ public class EvalTaskController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("查询测试任务")
+	@ApiOperation("查询测评任务")
 	@GetMapping("")
 	public BaseRsp<EvalTaskRsp> getEvalTask(
-			@ApiParam(name = "template_id", value = "测试靶场模板id",
+			@ApiParam(name = "template_id", value = "测评靶场模板id",
 					required = true) @RequestParam("template_id") String templateId,
-			@ApiParam(name = "task_id", value = "测试任务id", required = false) @RequestParam(
+			@ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(
 					value = "task_id", required = false) String taskId) {
 
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
@@ -171,7 +171,7 @@ public class EvalTaskController {
 		return new BaseRsp<>(evalTaskRsp);
 	}
 
-	@ApiOperation("删除测试任务")
+	@ApiOperation("删除测评任务")
 	@DeleteMapping("")
 	public BaseRsp<Boolean> deleteEvalTask(@RequestBody EvalTaskDeleteReq evalTaskDeleteReq) {
 
@@ -182,12 +182,12 @@ public class EvalTaskController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("查询测试任务步骤")
+	@ApiOperation("查询测评任务步骤")
 	@GetMapping("/step/list")
 	public BaseRsp<List<EvalTaskStepContext>> getStepList(
-			@ApiParam(name = "template_id", value = "测试靶场模板id",
+			@ApiParam(name = "template_id", value = "测评靶场模板id",
 					required = true) @RequestParam("template_id") String templateId,
-			@ApiParam(name = "task_id", value = "测试任务id", required = false) @RequestParam(
+			@ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(
 					value = "task_id", required = false) String taskId) {
 
 		if (taskId == null) {
@@ -200,12 +200,12 @@ public class EvalTaskController {
 		return new BaseRsp<>(evalTaskStepContextList);
 	}
 
-	@ApiOperation("查询测试任务时间线")
+	@ApiOperation("查询测评任务时间线")
 	@GetMapping("/time_line")
 	public BaseRsp<EvalTaskTimeLineRsp> getTimeLine(
-			@ApiParam(name = "template_id", value = "测试靶场模板id",
+			@ApiParam(name = "template_id", value = "测评靶场模板id",
 					required = true) @RequestParam("template_id") String templateId,
-			@ApiParam(name = "task_id", value = "测试任务id", required = false) @RequestParam(
+			@ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(
 					value = "task_id", required = false) String taskId) {
 
 		if (taskId == null) {

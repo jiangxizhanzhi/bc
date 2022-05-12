@@ -10,16 +10,16 @@ import lombok.Data;
 @Data
 public class EvalTaskRsp implements Serializable {
 
-	@ApiModelProperty("测试Id")
+	@ApiModelProperty("测评靶场模板Id")
 	private String templateId;
 
-	@ApiModelProperty("测试名称")
+	@ApiModelProperty("测评名称")
 	private String templateName;
 
-	@ApiModelProperty("任务Id")
+	@ApiModelProperty("测评任务Id")
 	private String taskId;
 
-	@ApiModelProperty("任务名称")
+	@ApiModelProperty("测评任务名称")
 	private String taskName;
 
 	@ApiModelProperty("场景管理器id")

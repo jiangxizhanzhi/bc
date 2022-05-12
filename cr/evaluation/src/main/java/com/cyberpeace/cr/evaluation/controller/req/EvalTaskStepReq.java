@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class EvalTaskStepReq {
 
-	@ApiModelProperty(value = "步骤Id", required = true)
+	@ApiModelProperty(value = "测评步骤Id", required = true)
 	@NotNull
 	private String stepId;
 

@@ -34,7 +34,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "测试靶场-模板")
+@Api(tags = "靶场测评-模板")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/template")
@@ -70,7 +70,7 @@ public class EvalTemplateController {
 		reqToTemplate(evaTemplateAddReq, evalTemplate);
 
 		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
-				LocalScene.BusinessCode.EVALUATION_RANGE, null));
+				LocalScene.BusinessCode.RANGE_EVALUATION, null));
 
 		evalTemplateService.save(evalTemplate);
 
@@ -93,7 +93,7 @@ public class EvalTemplateController {
 			EvalTemplateListRsp evalTemplateListRsp = BeanUtils.copy(evalTemplate,
 					EvalTemplateListRsp.class);
 			evalTemplateListRsp
-					.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getResourceId()));
+					.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 			return evalTemplateListRsp;
 		});
 
@@ -103,7 +103,7 @@ public class EvalTemplateController {
 	@ApiOperation("模板查询")
 	@GetMapping("")
 	public BaseRsp<EvalTemplateRsp> getEvalTemplate(@ApiParam(name = "template_id",
-			value = "测试靶场id", required = true) @RequestParam("template_id") String templateId) {
+			value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId) {
 
 		// 权限校验
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
@@ -130,7 +130,7 @@ public class EvalTemplateController {
 		reqToTemplate(evaTemplateModifyReq, evalTemplate);
 
 		crSceneService.saveTopo(evaTemplateModifyReq.getSceneConfigData(),
-				LocalScene.BusinessCode.EVALUATION_RANGE, evalTemplate.getTopoId());
+				LocalScene.BusinessCode.RANGE_EVALUATION, evalTemplate.getTopoId());
 
 		evalTemplateService.updateById(evalTemplate);
 

@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class EvalTaskDeleteReq {
 
-	@ApiModelProperty(value = "任务Ids", required = true)
+	@ApiModelProperty(value = "测评任务Ids", required = true)
 	@NotNull
 	private List<String> taskIds;
 

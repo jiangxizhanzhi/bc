@@ -10,20 +10,20 @@ import lombok.Data;
 @Data
 public class EvalTemplateListRsp implements Serializable {
 
-	@ApiModelProperty(value = "测试靶场模板id")
+	@ApiModelProperty(value = "测评靶场模板id")
 	private String resourceId;
 
-	@ApiModelProperty(value = "测试名称")
+	@ApiModelProperty(value = "测评名称")
 	@NotNull
 	private String name;
 
-	@ApiModelProperty(value = "测试描述")
+	@ApiModelProperty(value = "测评描述")
 	private String description;
 
 	@ApiModelProperty(value = "Logo文件路径")
 	private String logoPath;
 
-	@ApiModelProperty(value = "测试类型")
+	@ApiModelProperty(value = "测评类型")
 	private Integer categoryCode;
 
 }

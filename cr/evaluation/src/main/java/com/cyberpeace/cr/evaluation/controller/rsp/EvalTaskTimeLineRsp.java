@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class EvalTaskTimeLineRsp implements Serializable {
 
-	@ApiModelProperty("任务Id")
+	@ApiModelProperty("测评任务Id")
 	private String taskId;
 
 	@ApiModelProperty("开始时间")
@@ -21,7 +21,7 @@ public class EvalTaskTimeLineRsp implements Serializable {
 	@ApiModelProperty("结束时间")
 	private Date endTime;
 
-	@ApiModelProperty("测试步骤记录")
+	@ApiModelProperty("测评步骤记录")
 	private List<EvalTimeLineContext> data;
 
 	@ApiModelProperty("当前时间")

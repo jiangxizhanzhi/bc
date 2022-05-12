@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class EvaTemplateModifyReq extends EvaTemplateAddReq {
 
-	@ApiModelProperty("测试靶场模板id")
+	@ApiModelProperty("测评靶场模板id")
 	@NotEmpty
 	private String resourceId;
 

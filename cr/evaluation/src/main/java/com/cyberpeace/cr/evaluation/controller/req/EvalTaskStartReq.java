@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class EvalTaskStartReq {
 
-	@ApiModelProperty(value = "靶场测试模板Id", required = true)
+	@ApiModelProperty(value = "靶场测评模板Id", required = true)
 	@NotNull
 	private String templateId;
 

@@ -158,7 +158,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 		LocalScene localScene = new LocalScene();
 
-		localScene.setBusinessCode(LocalScene.BusinessCode.EVALUATION_RANGE.getCode());
+		localScene.setBusinessCode(LocalScene.BusinessCode.RANGE_EVALUATION.getCode());
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		localScene.setBusinessInstanceId(evalTask.getResourceId());
 		localScene.setTopoId(evalTask.getCopyedTopoId());

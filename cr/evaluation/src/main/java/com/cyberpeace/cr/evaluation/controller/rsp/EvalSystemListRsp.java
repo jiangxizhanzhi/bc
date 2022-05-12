@@ -16,8 +16,7 @@ public class EvalSystemListRsp {
 	@NotNull
 	private String name;
 
-	@ApiModelProperty(value = "描述", required = true)
-	@NotNull
+	@ApiModelProperty(value = "描述", required = false)
 	private String description;
 
 	@ApiModelProperty(value = "一级指标数量", required = true)

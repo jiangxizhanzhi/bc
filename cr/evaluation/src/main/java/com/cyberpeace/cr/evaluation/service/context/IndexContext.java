@@ -18,8 +18,7 @@ public class IndexContext {
 	@NotNull
 	private String name;
 
-	@ApiModelProperty(value = "描述", required = true)
-	@NotNull
+	@ApiModelProperty(value = "描述", required = false)
 	private String description;
 
 	@ApiModelProperty(value = "算法id", required = true)

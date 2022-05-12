@@ -12,8 +12,7 @@ public class AlgorithmParamContext {
 	@NotNull
 	private String paramName;
 
-	@ApiModelProperty(value = "描述", required = true)
-	@NotNull
+	@ApiModelProperty(value = "描述", required = false)
 	private String desc;
 
 	@ApiModelProperty(value = "参数类型", required = true)

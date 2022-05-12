@@ -21,17 +21,12 @@
         </foreach>
     </select>
 
-    <select id="listEvalAlgorithm" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm">
-        select * from cr_eval_algorithm
-        <where>
-            1=1
-            <if test="listQuery.name != null and listQuery.name != ''">
-                <bind name="name" value="'%' + listQuery.name + '%'"/>
-                and `name` like #{name}
-            </if>
-            <if test="listQuery.type != null and listQuery.type != ''">
-                and `type` = #{listQuery.type}
-            </if>
-        </where>
+
+    <select id="selectUsedAlgorithmIds" resultType="java.lang.String">
+        select aggregating_algorithm_id from cr_eval_aggregation
+        where aggregating_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
     </select>
 </mapper>

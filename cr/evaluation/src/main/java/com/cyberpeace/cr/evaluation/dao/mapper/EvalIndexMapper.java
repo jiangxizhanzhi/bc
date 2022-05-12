@@ -19,6 +19,8 @@ public interface EvalIndexMapper extends BaseMapper<EvalIndex> {
 	Integer selectAlgorithmSum(List<String> algorithmIds);
 
 	boolean existByName(String name, String resourceId);
+
+	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 }
 
 

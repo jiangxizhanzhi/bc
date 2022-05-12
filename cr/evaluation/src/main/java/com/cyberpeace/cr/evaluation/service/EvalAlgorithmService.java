@@ -21,4 +21,8 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	List<EvalAlgorithm> selectByType(String type);
 
 	IPage<EvalAlgorithm> page(EvalListQuery listQuery);
+
+	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
+
+	void updateStateByIds(List<String> selectUsedAlgorithmIds);
 }

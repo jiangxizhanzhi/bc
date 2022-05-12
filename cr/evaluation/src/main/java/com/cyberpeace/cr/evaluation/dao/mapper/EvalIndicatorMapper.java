@@ -18,4 +18,6 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
     IPage<EvalIndicator> listEvalIndicator(Page page, EvalListQuery listQuery);
 
 	boolean existByName(String name, String resourceId);
+
+	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 }

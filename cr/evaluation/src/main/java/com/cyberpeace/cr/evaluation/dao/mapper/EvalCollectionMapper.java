@@ -13,6 +13,8 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	List<EvalCollection> selectIdsByEvalIndicatorIds(List<String> evalIndicatorIds);
 
 	Integer selectAlgorithmSum(List<String> algorithmIds);
+
+	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 }
 
 

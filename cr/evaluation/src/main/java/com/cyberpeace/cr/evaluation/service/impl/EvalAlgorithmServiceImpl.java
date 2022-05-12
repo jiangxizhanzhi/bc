@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,8 +66,24 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 
 		Page page = listQuery.toPageParam();
 
-		IPage<EvalAlgorithm> data = evalAggregationMapper.listEvalAlgorithm(page, listQuery);
+		IPage<EvalAlgorithm> data = evalAlgorithmMapper.listEvalAlgorithm(page, listQuery);
 
 		return data;
+	}
+
+	@Override
+	public List<String> selectUsedAlgorithmIds(List<String> ids) {
+		List<String> usedAlgorithmIds = evalAggregationMapper.selectUsedAlgorithmIds(ids);
+
+		usedAlgorithmIds.addAll(evalCollectionMapper.selectUsedAlgorithmIds(ids));
+		usedAlgorithmIds.addAll(evalIndexMapper.selectUsedAlgorithmIds(ids));
+		usedAlgorithmIds.addAll(evalIndicatorMapper.selectUsedAlgorithmIds(ids));
+
+		return usedAlgorithmIds.stream().distinct().collect(Collectors.toList());
+	}
+
+	@Override
+	public void updateStateByIds(List<String> algorithmIds) {
+		evalAlgorithmMapper.updateStateByIds(algorithmIds);
 	}
 }

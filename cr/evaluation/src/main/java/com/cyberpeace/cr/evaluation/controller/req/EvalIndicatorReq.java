@@ -30,8 +30,7 @@ public class EvalIndicatorReq {
 	@NotNull
 	private String attribute;
 
-	@ApiModelProperty(value = "描述", required = true)
-	@NotNull
+	@ApiModelProperty(value = "描述", required = false)
 	private String description;
 
 	@ApiModelProperty(value = "连接线", required = true)

@@ -146,14 +146,17 @@ public class EvalAlgorithmAdminController {
 	public BaseRsp batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
 		Integer useNum = evalAlgorithmService.selectUsedNum(deleteReq.getIds());
+		List<String> selectUsedAlgorithmIds = evalAlgorithmService
+				.selectUsedAlgorithmIds(deleteReq.getIds());
 
-		if (useNum > 0) {
-			log.info("Algorithm Already Used! algorithmIds=[{}]",
-					JsonUtil.arrayToString(deleteReq.getIds()));
-			throw new BusinessException(CrBusinessErrorCode.ALGORITHM_ALREADY_USED);
+		// 未使用直接删除，已使用修改状态
+		if (selectUsedAlgorithmIds.size() > 0) {
+			evalAlgorithmService.updateStateByIds(selectUsedAlgorithmIds);
+		} else {
+			evalAlgorithmService.delete(deleteReq.getIds());
 		}
 
-		return new BaseRsp(evalAlgorithmService.delete(deleteReq.getIds()));
+		return new BaseRsp();
 	}
 
 	/**

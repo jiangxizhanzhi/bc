@@ -10,19 +10,45 @@
         set `state` = 1
         where `resource_id` = #{resourceId}
     </update>
+
+    <update id="updateStateByIds">
+        update `cr_eval_algorithm`
+        set `state` = 1
+        where `resource_id` in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
     <select id="selectByType" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm"
             parameterType="java.lang.String">
         select *
         from `cr_eval_algorithm`
 
-        where `type` = #{type}
+        where `state` = 0
+          and `type` = #{type}
 
     </select>
+
+    <select id="listEvalAlgorithm" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm">
+        select * from cr_eval_algorithm
+        <where>
+            `state` = 0
+            <if test="listQuery.name != null and listQuery.name != ''">
+                <bind name="name" value="'%' + listQuery.name + '%'"/>
+                and `name` like #{name}
+            </if>
+            <if test="listQuery.type != null and listQuery.type != ''">
+                and `type` = #{listQuery.type}
+            </if>
+        </where>
+    </select>
+
     <select id="existByName" resultType="java.lang.Boolean">
         select case
         when exists(select 1
         from cr_eval_algorithm
-        where `name` = #{name}
+        where `state` = 0 and `name` = #{name}
         <if test="resourceId != null and resourceId != ''">
             and resource_id != #{resourceId}
         </if>)

@@ -23,7 +23,24 @@
         <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
             #{id}
         </foreach>
-        or score_algorithm_id in
+        or format_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+    <select id="selectUsedAlgorithmIds" resultType="java.lang.String">
+        select score_algorithm_id from cr_eval_collection
+        where score_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        union select detection_algorithm_id from cr_eval_collection
+        where detection_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        union select format_algorithm_id from cr_eval_collection
+        where format_algorithm_id in
         <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
             #{id}
         </foreach>

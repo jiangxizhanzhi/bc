@@ -40,4 +40,11 @@
         end
         as result;
     </select>
+    <select id="selectUsedAlgorithmIds" resultType="java.lang.String">
+        select aggregating_algorithm_id from cr_eval_indicator
+        where aggregating_algorithm_id in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

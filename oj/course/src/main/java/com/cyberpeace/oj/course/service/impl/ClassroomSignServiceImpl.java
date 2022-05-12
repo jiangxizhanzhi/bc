@@ -3,7 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.Date;
 import java.util.Map;
 
-import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -20,7 +19,6 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.context.ChatWsMessageIdentifier;
@@ -38,6 +36,7 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -184,14 +183,20 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
 		ClassroomSign classroomSign = classroomValidateHandler.validateSign(classroomId, userId);
 
-		// 更新远程协助状态
-		classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
-		classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.END_HELP.getCode());
-		classroomSignMapper.updateById(classroomSign);
+		if (null != classroomSign) {
+			// 更新远程协助状态
+			classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
+			classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.END_HELP.getCode());
+			classroomSignMapper.updateById(classroomSign);
 
-		// 结束消息推送
-		pushChatMessage(classroom, ConfigUtil.getContextProperty("end.remote.help"),
-				classroomSign.getUserId());
+			JSONObject endMessage = new JSONObject();
+			endMessage.put(JsonKeyConstant.CODE, OjEvent.END_HELP_SYNC.getCode());
+			pushMessageHandler.pushHelpMessage(endMessage, classroomId, userId);
+
+			// 结束消息推送
+			pushChatMessage(classroom, ConfigUtil.getContextProperty("end.remote.help"),
+					classroomSign.getUserId());
+		}
 
 	}
 

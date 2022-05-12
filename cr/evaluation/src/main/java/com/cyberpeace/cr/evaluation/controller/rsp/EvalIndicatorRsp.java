@@ -27,7 +27,7 @@ public class EvalIndicatorRsp {
 
 	@ApiModelProperty(value = "指标属性", required = true)
 	@NotNull
-	private String attribute;
+	private Integer attribute;
 
 	@ApiModelProperty(value = "数据类型", required = true)
 	@NotNull

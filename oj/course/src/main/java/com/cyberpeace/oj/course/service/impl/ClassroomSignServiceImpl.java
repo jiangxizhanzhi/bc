@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.Date;
 import java.util.Map;
 
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -71,6 +72,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
+
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
 
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
@@ -166,23 +170,11 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		ClassroomSign classroomSign = classroomValidateHandler.validateSign(classroomId, userId);
 
 		// 更新状态
-		classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.IN_HELP.getCode());
-		classroomSignMapper.updateById(classroomSign);
-
-		// 聊天框消息推送
-		pushChatMessage(classroom, ConfigUtil.getContextProperty("to.remote.help"),
-				classroomSign.getUserId());
-
-		// 协助开始倒计时推送
-		JSONObject toHelpMessage = new JSONObject();
-		toHelpMessage.put(JsonKeyConstant.CODE, OjEvent.TO_NEED_HELP_SYNC.getCode());
-		JSONObject countDown = new JSONObject();
-		countDown.put(JsonKeyConstant.REMAIN_TIME,
-				ConfigUtil.getContextProperty("to.help.countdown"));
-		toHelpMessage.put(JsonKeyConstant.DATA, countDown);
-
-		pushChatMessage(classroom, JsonUtil.toJsonString(toHelpMessage), classroomSign.getUserId());
-
+		if (classroomSign.getNeedHelp().intValue() == ClassroomSign.NEED_HELP.NEED_HELP.getCode()
+				.intValue()) {
+			classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.IN_HELP.getCode());
+			classroomSignMapper.updateById(classroomSign);
+		}
 	}
 
 	@Override
@@ -225,7 +217,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	@Override
 	public String getHelpUrl(String classroomId, String userId) {
 		// 房间校验
-		classroomValidateHandler.validateClassroomExist(classroomId);
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
 		ClassroomSign classroomSign = classroomValidateHandler.validateSign(classroomId, userId);
 
 		// 无节点信息 无协助状态 协助状态不符合
@@ -258,6 +250,22 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 				Lists.newArrayList(classroomSign.getNodeId()), Lists.newArrayList(userId));
 		if (StringUtils.isBlank(assistanceMap.get(userId))) {
 			throw new BusinessException(OjBusinessErrorCode.HELP_URL_NOT_FOUND);
+		}
+
+		// 获取远程协助链接时 如果处于请求状态 则修改为协助状态
+		if (classroomSign.getNeedHelp().intValue() == ClassroomSign.NEED_HELP.NEED_HELP.getCode()) {
+			// 更新协助状态
+			classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.IN_HELP.getCode());
+			classroomSignMapper.updateById(classroomSign);
+
+			// 聊天框消息推送
+			pushChatMessage(classroom, ConfigUtil.getContextProperty("to.remote.help"),
+					classroomSign.getUserId());
+
+			// 协助开始消息推送
+			JSONObject toHelpMessage = new JSONObject();
+			toHelpMessage.put(JsonKeyConstant.CODE, OjEvent.TO_NEED_HELP_SYNC.getCode());
+			pushMessageHandler.pushHelpMessage(toHelpMessage, classroomId, userId);
 		}
 
 		return assistanceMap.get(userId);

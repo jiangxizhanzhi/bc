@@ -5,19 +5,22 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 
 public interface PushMessageHandler {
 
-    /** 向课后练习推送消息*/
-    void pushLessonPracticeMessage(JSONObject data, OjLocalScene ojLocalScene);
+	/** 向课后练习推送消息*/
+	void pushLessonPracticeMessage(JSONObject data, OjLocalScene ojLocalScene);
 
-    /** 向课时推送消息*/
-    void pushLessonMessage(JSONObject data, OjLocalScene ojLocalScene);
+	/** 向课时推送消息*/
+	void pushLessonMessage(JSONObject data, OjLocalScene ojLocalScene);
 
-    /** 向实操题推送消息*/
-    void pushOperationMessage(JSONObject data, OjLocalScene ojLocalScene);
+	/** 向实操题推送消息*/
+	void pushOperationMessage(JSONObject data, OjLocalScene ojLocalScene);
 
-    /** 向课堂推送场景信息*/
-    void pushClassroomMessage(JSONObject data, OjLocalScene ojLocalScene);
+	/** 向课堂推送场景信息*/
+	void pushClassroomMessage(JSONObject data, OjLocalScene ojLocalScene);
 
-    /** 获取删除消息*/
-    JSONObject getDeleteMessage();
+	/** 获取删除消息*/
+	JSONObject getDeleteMessage();
+
+	/** 推送进行远程协助消息*/
+	void pushHelpMessage(JSONObject data, String classroomId, String userId);
 
 }

@@ -212,8 +212,8 @@ public class EvalSystemIndexAdminController {
 
 				if (evalIndexService.getById(indexReq.getIndexId()) == null) {
 					evalIndex.setResourceId(null);
-					evalIndex.setEvalIndicatorId(indexReq.getIndexId());
 				}
+				evalIndex.setEvalIndicatorId(indexReq.getIndexId());
 
 			}
 			return evalIndex;

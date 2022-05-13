@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -220,4 +221,27 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return orgs;
 	}
 
+	@Override
+	public List<String> getParentIds(String orgId) {
+
+		if (StringUtils.isBlank(orgId)) {
+			return Lists.newArrayList();
+		}
+
+		List<String> orgIds = Lists.newArrayList(orgId);
+		JSONObject orgInfo = getById(orgId);
+
+		if (StringUtils.isBlank(orgInfo.getString(JsonKeyConstant.PARENT))) {
+			return orgIds;
+		}
+
+		List<String> parentIds = getParentIds(orgInfo.getString(JsonKeyConstant.PARENT));
+		parentIds.addAll(orgIds);
+		return parentIds;
+	}
+
+	@Override
+	public JSONObject getById(String orgId) {
+		return HttpClientUtil.rawGet(MP_ORG_INFO + orgId, JSONObject.class);
+	}
 }

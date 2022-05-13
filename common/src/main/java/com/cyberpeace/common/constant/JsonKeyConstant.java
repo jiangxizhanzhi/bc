@@ -96,4 +96,6 @@ public interface JsonKeyConstant {
 	String TYPE = "type";
 
 	String ROOM_ID = "room_id";
+
+	String PARENT = "parent";
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 public interface RemoteOrganizationService {
 
@@ -48,5 +49,18 @@ public interface RemoteOrganizationService {
 	 * @return
 	 */
 	JSONArray classList(String orgId);
+
+	/**
+	 * 获取父组织编号
+	 * @param orgId
+	 * @return
+	 */
+	List<String> getParentIds(String orgId);
+
+	/**
+	 * 获取组织信息
+	 * @return
+	 */
+	JSONObject getById(String orgId);
 
 }

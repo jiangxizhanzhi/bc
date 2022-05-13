@@ -1467,6 +1467,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		String orgName = remoteOrganizationService.orgNameById(classroom.getOrganizationId());
 		classroomBo.setOrganizationName(orgName);
 
+		String orgPath = remoteOrganizationService.getOrgPath(classroom.getOrganizationId());
+		classroomBo.setOrgPath(orgPath);
+
+		List<String> parentIds = remoteOrganizationService
+				.getParentIds(classroom.getOrganizationId());
+		classroomBo.setParentOrgIds(parentIds);
+
 		// 计划数据
 		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
 			TrainPlan trainPlan = trainPlanMapper.selectById(classroom.getTrainPlanId());

@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.constant.UploadFilePermission;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -36,14 +38,19 @@ public class CommonController {
 	@PostMapping("/image_upload")
 	public BaseRsp<AttachmentBo> imageUpload(FileCommonUploadReq fileCommonUploadReq) {
 
-		// 获取需要校验的数据
-		UploadFilePermission filePermission = EnumUtils.getEnumByCode(fileCommonUploadReq.getType(),
-				UploadFilePermission.class);
+		if (null != fileCommonUploadReq.getType()) {
+			// 获取需要校验的数据
+			UploadFilePermission filePermission = EnumUtils
+					.getEnumByCode(fileCommonUploadReq.getType(), UploadFilePermission.class);
 
-		// 校验权限和文件
-		filePermission.validatePermission(false);
-		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
-		filePermission.validateFileSuffix(fileName);
+			// 校验权限和文件
+			filePermission.validatePermission(false);
+			String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
+			filePermission.validateFileSuffix(fileName);
+		} else {
+			FileUtil.validateFileSuffix(fileCommonUploadReq.getFile().getOriginalFilename(),
+					FileTypeContant.PICTURE_TYPE);
+		}
 
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadFile(

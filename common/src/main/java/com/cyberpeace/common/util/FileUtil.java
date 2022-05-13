@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.PatternConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -521,18 +522,29 @@ public class FileUtil {
 	 */
 	public static void validateFileSuffix(String destFilePath, String fileTypeStr) {
 
-		// 文件类型为空 不校验
+		if (StringUtils.isBlank(destFilePath)) {
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+		}
+
+		// 文件后缀匹配，如果文件无后缀则可能不是文件
+		String fileSuffix = LocalStringUtil.getFirstMatchStr(destFilePath,
+				PatternConstant.FILE_SUFFIX_MATCH);
+
+		// 文件类型为空 则文件无后缀
 		if (StringUtils.isBlank(fileTypeStr)) {
-			return;
+			if (StringUtils.isBlank(fileSuffix)) {
+				return;
+			} else {
+				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+			}
 		}
 
-		int periodIndex = destFilePath.lastIndexOf(CommonConstant.PERIOD);
-		// 无文件后缀名 不做校验
-		if (periodIndex == -1) {
-			return;
+		// 如果类型不为空 但后缀为空 则校验不通过
+		if (StringUtils.isBlank(fileSuffix)) {
+			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 		}
 
-		String suffixStr = destFilePath.substring(periodIndex + 1).toUpperCase();
+		String suffixStr = fileSuffix.substring(1).toUpperCase();
 		List<String> typeList = Arrays.asList(fileTypeStr.split(CommonConstant.CODE_COMMA));
 
 		if (!typeList.contains(suffixStr)) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -11,6 +12,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
@@ -45,6 +47,7 @@ public class SkillController {
 
 	@ApiOperation("查询单条")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<SkillRes> getSkill(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		// ApiParam中的name和java参数String id的两个id必须同名
@@ -54,6 +57,7 @@ public class SkillController {
 
 	@ApiOperation("新增单条")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> addSkill(@RequestBody @Validated SkillAddReq skillAddReq) {
 		skillService.checkResourceId(skillAddReq.getResourceId());
 		Skill skill = new Skill();
@@ -75,6 +79,7 @@ public class SkillController {
 
 	@ApiOperation("修改单条")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> modifySkill(@RequestBody @Validated SkillAddReq skillAddReq) {
 		String newContent = skillAddReq.getContent();
 		Skill skill = skillService.getOr404(skillAddReq.getResourceId());
@@ -102,6 +107,7 @@ public class SkillController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteSkill(@RequestBody @Validated DeleteReq deleteReq) {
 		List<String> skillIds = deleteReq.getIds();
 		if (!skillIds.isEmpty()) {
@@ -124,6 +130,7 @@ public class SkillController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<SkillRes>> list(@Validated PageReqBase reqBase) {
 		ListRsp<SkillRes> data = skillService.page(reqBase);
 
@@ -132,6 +139,7 @@ public class SkillController {
 
 	@ApiOperation("添加技能时分页展示")
 	@GetMapping("/list/simple")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<SkillSimpleRes>> listSimple(@Validated PageReqBase reqBase) {
 		ListRsp<SkillSimpleRes> res = skillService.pageSimple(reqBase);
 		return new BaseRsp(res);

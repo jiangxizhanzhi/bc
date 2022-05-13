@@ -196,9 +196,10 @@ public class EvalSystemIndexAdminController {
 		return evalSystemRsp;
 	}
 
-	private List<EvalIndex> convertIndexReqToIndex(List<IndexContext> firstIndexes, Integer level) {
+	private List<EvalIndex> convertIndexReqToIndex(List<IndexContext> indexContextList,
+			Integer level) {
 
-		List<EvalIndex> evalIndexList = firstIndexes.stream().map(indexReq -> {
+		List<EvalIndex> evalIndexList = indexContextList.stream().map(indexReq -> {
 			EvalIndex evalIndex = BeanUtils.copy(indexReq, EvalIndex.class);
 
 			evalIndex.setResourceId(indexReq.getIndexId());
@@ -208,8 +209,12 @@ public class EvalSystemIndexAdminController {
 			evalIndex.setLevel(level);
 			// 三级指标特殊，前台传过来的是指标项，这里新建一个，并建立关联关系
 			if (EvalIndex.Level.THIRD.getCode().equals(level)) {
-				evalIndex.setResourceId(null);
-				evalIndex.setEvalIndicatorId(indexReq.getIndexId());
+
+				if (evalIndexService.getById(indexReq.getIndexId()) == null) {
+					evalIndex.setResourceId(null);
+					evalIndex.setEvalIndicatorId(indexReq.getIndexId());
+				}
+
 			}
 			return evalIndex;
 		}).collect(Collectors.toList());

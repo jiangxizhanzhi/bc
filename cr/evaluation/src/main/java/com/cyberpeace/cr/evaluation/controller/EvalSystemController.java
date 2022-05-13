@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -16,9 +17,10 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemTreeRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalSystemMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
@@ -40,7 +42,7 @@ public class EvalSystemController {
 	private EvalIndexService evalIndexService;
 
 	@Autowired
-	private EvalSystemMapper evalSystemMapper;
+	private EvalCollectionMapper evalCollectionMapper;
 
 	@Autowired
 	private EvalSystemService evalSystemService;
@@ -98,6 +100,23 @@ public class EvalSystemController {
 			List<EvalSystemTreeRsp> secondChildrens = getChildrens(secondIndex.getChildrenIds(),
 					evalSystemTreeRspMap);
 			evalSystemTreeRspMap.get(secondIndex.getIndexId()).setChildren(secondChildrens);
+		}
+
+		// 循环查询设置三级指标的采集项
+		for (IndexContext thirdIndex : thirdIndexes) {
+			List<EvalCollection> evalCollections = evalCollectionMapper
+					.selectBythirdIndexId(thirdIndex.getIndexId());
+			List<EvalSystemTreeRsp> thirdChildrens = evalCollections.stream()
+					.map(evalCollection -> {
+						EvalSystemTreeRsp systemTreeRsp = new EvalSystemTreeRsp();
+						systemTreeRsp.setName(evalCollection.getName());
+						systemTreeRsp.setLevel(5);
+						systemTreeRsp.setResourceId(evalCollection.getResourceId());
+
+						return systemTreeRsp;
+					}).collect(Collectors.toList());
+
+			evalSystemTreeRspMap.get(thirdIndex.getIndexId()).setChildren(thirdChildrens);
 		}
 
 		return evalSystemTreeRsp;

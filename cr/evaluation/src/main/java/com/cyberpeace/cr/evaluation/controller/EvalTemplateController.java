@@ -1,27 +1,19 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.List;
-
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
@@ -29,10 +21,10 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,12 +35,6 @@ import io.swagger.annotations.ApiParam;
 @RequiresAuthentication
 @RequestMapping("/cr/eval/template")
 public class EvalTemplateController {
-
-	@Autowired
-	private AttachmentService attachmentService;
-
-	@Autowired
-	private CrConstantsService crConstantsService;
 
 	@Autowired
 	private CrSceneService crSceneService;
@@ -104,8 +90,9 @@ public class EvalTemplateController {
 
 	@ApiOperation("模板查询")
 	@GetMapping("")
-	public BaseRsp<EvalTemplateRsp> getEvalTemplate(@ApiParam(name = "template_id",
-			value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId) {
+	public BaseRsp<EvalTemplateRsp> getEvalTemplate(
+			@ApiParam(name = "template_id", value = "测评靶场模板id", required = true)
+			@RequestParam("template_id") String templateId) {
 
 		// 权限校验
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
@@ -149,55 +136,24 @@ public class EvalTemplateController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("模板名称校验")
-	@PostMapping("validate_name")
-	public BaseRsp<Boolean> validateName(
-			@RequestBody @Validated EvaTemplateNameValidateReq evaTemplateNameValidateReq) {
-		Boolean result = evalTemplateService.validateName(
-				evaTemplateNameValidateReq.getTemplateName(),
-				evaTemplateNameValidateReq.getTemplateId());
+	@ApiOperation("模板基础信息校验")
+	@PostMapping("validate_info")
+	public BaseRsp<Boolean> validateBaseInfo(
+			@RequestBody @Validated EvaTemplateBaseInfoReq evaTemplateBaseInfoReq) {
+		Boolean result = evalTemplateService.validateBaseInfo(
+				BeanUtils.copy(evaTemplateBaseInfoReq, EvalTemplateBaseInfoContext.class));
 		return new BaseRsp<>(result);
 	}
 
 	private void validateReq(EvaTemplateAddReq evaTemplateAddReq) {
 
-		String templateId = null;
-		if (evaTemplateAddReq instanceof EvaTemplateModifyReq) {
-			templateId = ((EvaTemplateModifyReq) evaTemplateAddReq).getResourceId();
-		}
+		// 校验基础信息
+		EvalTemplateBaseInfoContext evalTemplateBaseInfoContext = BeanUtils.copy(evaTemplateAddReq,
+				EvalTemplateBaseInfoContext.class);
+		evalTemplateService.validateBaseInfo(evalTemplateBaseInfoContext);
 
-		// 校验名称
-		evalTemplateService.validateName(evaTemplateAddReq.getName(), templateId);
-
-		// 校验描述
-		CrCommonValidator.validateLength(evaTemplateAddReq.getDescription(),
-				CrCommonConstants.ZERO_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
-				CrBusinessErrorCode.ILLEGAL_DESC_LEN);
-
-		// 校验LOGO文件是否存在
-		if (!attachmentService.isExist(evaTemplateAddReq.getLogoId())) {
-			throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
-		}
-
-		// 校验测试靶场的类型是否存在
-		if (!crConstantsService.validateType(
-				CrConstantsConfig.ConstantsType.EVALUATION_CATEGORY.getCode(),
-				evaTemplateAddReq.getCategoryCode())) {
-			throw new BusinessException(CrBusinessErrorCode.EVAL_CATEGORY_NOT_EXIST);
-		}
-
-		// 校验测评步骤是否为空
-		List<EvalTaskStepConfig> evalTaskStepConfigList = evaTemplateAddReq.getStepConfig();
-		List<Integer> stageList = Lists.newArrayList();
-		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
-			evalTaskStepConfig.validate();
-			stageList.add(evalTaskStepConfig.getStage());
-		}
-
-		if (!evalTaskStepConfigList.isEmpty()
-				&& !ListUtil.compare2List(stageList, ListUtil.listRangeInt(1, stageList.size()))) {
-			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
-		}
+		// 校验测评步骤配置
+		evalTemplateService.validateStepConfig(evaTemplateAddReq.getStepConfig());
 
 	}
 

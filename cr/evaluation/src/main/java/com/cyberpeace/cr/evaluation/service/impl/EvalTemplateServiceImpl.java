@@ -3,10 +3,6 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.Objects;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,17 +10,26 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateListQuery;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,6 +48,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private CrConstantsService crConstantsService;
 
 	@Override
 	public IPage<EvalTemplate> list(EvalTemplateListQuery evalTemplateListQuery) {
@@ -110,16 +118,52 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	}
 
 	@Override
-	public Boolean validateName(String templateName, String templateId){
+	public Boolean validateBaseInfo(EvalTemplateBaseInfoContext evalTemplateBaseInfoContext) {
+
+		String templateName = evalTemplateBaseInfoContext.getName();
+		String templateId = evalTemplateBaseInfoContext.getResourceId();
 
 		// 校验名称长度
-		CrCommonValidator.validateNameLen(templateName,
-				CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		CrCommonValidator.validateNameLen(templateName, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 
 		// 校验名称重复
 		if (evalTemplateMapper.existByNameAndUserIdAndId(templateName,
 				UserInfoContext.getUserContext().getUserId(), templateId)) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+
+		// 校验描述
+		CrCommonValidator.validateLength(evalTemplateBaseInfoContext.getDescription(),
+				CrCommonConstants.ZERO_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
+				CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+
+		// 校验LOGO文件是否存在
+		if (!attachmentService.isExist(evalTemplateBaseInfoContext.getLogoId())) {
+			throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
+		}
+
+		// 校验测试靶场的类型是否存在
+		if (!crConstantsService.validateType(
+				CrConstantsConfig.ConstantsType.EVALUATION_CATEGORY.getCode(),
+				evalTemplateBaseInfoContext.getCategoryCode())) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_CATEGORY_NOT_EXIST);
+		}
+
+		return true;
+	}
+
+	@Override
+	public Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList) {
+		List<Integer> stageList = com.google.common.collect.Lists.newArrayList();
+
+		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
+			evalTaskStepConfig.validate();
+			stageList.add(evalTaskStepConfig.getStage());
+		}
+
+		if (!evalTaskStepConfigList.isEmpty()
+				&& !ListUtil.compare2List(stageList, ListUtil.listRangeInt(1, stageList.size()))) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}
 
 		return true;

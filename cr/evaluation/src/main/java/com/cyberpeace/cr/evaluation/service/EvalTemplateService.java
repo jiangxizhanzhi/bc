@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateListQuery;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 
 /**
  * 测试靶场-模板的处理
@@ -27,6 +29,8 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 
 	Boolean validateExistTask(String templateId, EvalTask.Status taskStatus);
 
-	Boolean validateName(String templateName, String templateId);
+	Boolean validateBaseInfo(EvalTemplateBaseInfoContext evalTemplateBaseInfoContext);
+
+	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 
 }

@@ -57,7 +57,7 @@
     </select>
     <select id="countByRoleIds" resultType="com.cyberpeace.rtks.service.bo.skill.RoleSkillRes">
         select rtks_role_skill_relation.role_id as role_id,
-        count(rtks_role_skill_relation.skill_id) as skill_count,
+        count(distinct rtks_role_skill_relation.skill_id) as skill_count,
         count(distinct rtks_skill_mission_relation.mission_template_id) as mission_count
         from rtks_role_skill_relation
         left join rtks_skill on rtks_role_skill_relation.skill_id = rtks_skill.resource_id

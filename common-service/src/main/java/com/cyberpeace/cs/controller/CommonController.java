@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.FileUtil;
@@ -42,6 +44,10 @@ public class CommonController {
 			// 获取需要校验的数据
 			UploadFilePermission filePermission = EnumUtils
 					.getEnumByCode(fileCommonUploadReq.getType(), UploadFilePermission.class);
+			if (null == filePermission) {
+				log.error("Type not found! type=[{}]", fileCommonUploadReq.getType());
+				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+			}
 
 			// 校验权限和文件
 			filePermission.validatePermission(false);

@@ -62,9 +62,8 @@ public class EvalSystemIndexAdminController {
 
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
-	public BaseRsp<String> addEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
+	public BaseRsp<EvalSystem> addEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
-		String connlist = evalSystemReq.getConnlist();
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -77,14 +76,13 @@ public class EvalSystemIndexAdminController {
 			}
 		});
 
-		return new BaseRsp(connlist);
+		return new BaseRsp(evalSystemReq);
 	}
 
 	@ApiOperation("编辑体系指标")
 	@PutMapping("")
-	public BaseRsp<String> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
+	public BaseRsp<EvalSystem> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
-		String connlist = evalSystemReq.getConnlist();
 
 		EvalSystem evalSystem = evalSystemService.getById(evalSystemReq.getEvalSystemId());
 		if (null == evalSystem) {
@@ -104,7 +102,7 @@ public class EvalSystemIndexAdminController {
 			}
 		});
 
-		return new BaseRsp(connlist);
+		return new BaseRsp(evalSystemReq);
 	}
 
 	private EvalSystem saveEvalIndex(@Validated @RequestBody EvalSystemReq evalSystemReq) {
@@ -122,16 +120,25 @@ public class EvalSystemIndexAdminController {
 		changeChildrenIds(evalSystemReq.getSecondIndexes(), thirdIndexList);
 
 		List<EvalIndex> secondIndexList = convertIndexReqToIndex(evalSystemReq.getSecondIndexes(),
-				EvalIndex.Level.SECONDE.getCode());
+				EvalIndex.Level.SECOND.getCode());
 		evalIndexService.saveBatch(secondIndexList);
 
 		EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
 		evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
+		evalSystem.setConnlist(changeConnlist(evalSystemReq.getConnlist(), thirdIndexList));
+
 		evalSystem.setThirdIndexNum(thirdIndexList.size());
 		evalSystem.setSecondIndexNum(secondIndexList.size());
 		evalSystem.setFirstIndexNum(1);
 
 		return evalSystem;
+	}
+
+	private String changeConnlist(String connlist, List<EvalIndex> thirdIndexList) {
+		for (EvalIndex evalIndex : thirdIndexList) {
+			connlist = connlist.replace(evalIndex.getEvalIndicatorId(), evalIndex.getResourceId());
+		}
+		return connlist;
 	}
 
 	private void validateReq(EvalSystemReq req) {
@@ -182,7 +189,7 @@ public class EvalSystemIndexAdminController {
 		evalSystemRsp.setFirstIndexes(evalIndexService.getIndexesByEvalSystemId(
 				evalSystem.getResourceId(), EvalIndex.Level.FIRST.getCode()));
 		evalSystemRsp.setSecondIndexes(evalIndexService.getIndexesByEvalSystemId(
-				evalSystem.getResourceId(), EvalIndex.Level.SECONDE.getCode()));
+				evalSystem.getResourceId(), EvalIndex.Level.SECOND.getCode()));
 		evalSystemRsp.setThirdIndexes(evalIndexService.getIndexesByEvalSystemId(
 				evalSystem.getResourceId(), EvalIndex.Level.THIRD.getCode()));
 

@@ -41,9 +41,9 @@ public class EvalIndex extends BaseTable {
 	private String evalSystemId;
 
 	/**
-	 * 三级指标项id
+	 * 三级指标项id,默认为空串
 	 */
-	private String evalIndicatorId;
+	private String evalIndicatorId = "";
 
 	/**
 	 * 归一化类型, 百分比:1,周期:2,延时:3
@@ -67,7 +67,7 @@ public class EvalIndex extends BaseTable {
 
 	public enum Level implements GenericEnum {
 
-		FIRST(1, "一级指标"), SECONDE(2, "二级指标"), THIRD(3, "三级指标");
+		FIRST(1, "一级指标"), SECOND(2, "二级指标"), THIRD(3, "三级指标");
 
 		@Getter
 		private Integer code;

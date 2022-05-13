@@ -25,6 +25,10 @@ public class IndexContext {
 	@NotNull
 	private String algorithmId;
 
+	@ApiModelProperty(value = "指标项id", required = true)
+	@NotNull
+	private String evalIndicatorId;
+
 	@ApiModelProperty(value = "体系id", required = true)
 	@NotNull
 	private String evalSystemId;

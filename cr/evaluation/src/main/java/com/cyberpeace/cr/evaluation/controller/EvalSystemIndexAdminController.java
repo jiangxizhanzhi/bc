@@ -54,6 +54,7 @@ public class EvalSystemIndexAdminController {
 
 	@Autowired
 	private EvalSystemMapper evalSystemMapper;
+
 	@Autowired
 	private EvalSystemService evalSystemService;
 
@@ -63,7 +64,6 @@ public class EvalSystemIndexAdminController {
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
 	public BaseRsp<EvalSystem> addEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
-
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -82,7 +82,6 @@ public class EvalSystemIndexAdminController {
 	@ApiOperation("编辑体系指标")
 	@PutMapping("")
 	public BaseRsp<EvalSystem> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
-
 
 		EvalSystem evalSystem = evalSystemService.getById(evalSystemReq.getEvalSystemId());
 		if (null == evalSystem) {
@@ -207,15 +206,18 @@ public class EvalSystemIndexAdminController {
 			evalIndex.setAggregatingAlgorithmId(indexReq.getAlgorithmId());
 			evalIndex.setAggregatingAlgorithmParams(indexReq.getParams());
 			evalIndex.setLevel(level);
-			// 三级指标特殊，前台传过来的是指标项，这里新建一个，并建立关联关系
+			// 三级指标特殊，前台传过来的是指标项，这里新建一个，并建立关联关系,修改连接线和子指标列表
 			if (EvalIndex.Level.THIRD.getCode().equals(level)) {
 
 				if (evalIndexService.getById(indexReq.getIndexId()) == null) {
 					evalIndex.setResourceId(null);
+					evalIndex.setEvalIndicatorId(indexReq.getIndexId());
+
 				}
-				evalIndex.setEvalIndicatorId(indexReq.getIndexId());
+				evalIndex.setEvalIndicatorId(indexReq.getEvalIndicatorId());
 
 			}
+
 			return evalIndex;
 		}).collect(Collectors.toList());
 

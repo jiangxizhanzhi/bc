@@ -1,7 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.List;
+
+import com.cyberpeace.common.util.ListUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -29,6 +33,7 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,7 +68,8 @@ public class EvalTemplateController {
 
 	@ApiOperation("模板新增")
 	@PostMapping("")
-	public BaseRsp<String> addEvalTemplate(@RequestBody EvaTemplateAddReq evaTemplateAddReq) {
+	public BaseRsp<String>
+			addEvalTemplate(@RequestBody @Validated EvaTemplateAddReq evaTemplateAddReq) {
 
 		EvalTemplate evalTemplate = new EvalTemplate();
 
@@ -120,7 +126,7 @@ public class EvalTemplateController {
 	@ApiOperation("模板修改")
 	@PutMapping("")
 	public BaseRsp<String>
-			modifyEvalTemplate(@RequestBody EvaTemplateModifyReq evaTemplateModifyReq) {
+			modifyEvalTemplate(@RequestBody @Validated EvaTemplateModifyReq evaTemplateModifyReq) {
 
 		String templateId = evaTemplateModifyReq.getResourceId();
 
@@ -140,7 +146,7 @@ public class EvalTemplateController {
 	@ApiOperation("模板删除")
 	@DeleteMapping("")
 	public BaseRsp<Boolean>
-			deleteEvalTemplate(@RequestBody EvalTemplateDeleteReq evalTemplateDeleteReq) {
+			deleteEvalTemplate(@RequestBody @Validated EvalTemplateDeleteReq evalTemplateDeleteReq) {
 
 		Boolean result = evalTemplateService.batchDelete(evalTemplateDeleteReq.getTemplateIds());
 
@@ -181,6 +187,19 @@ public class EvalTemplateController {
 				evaTemplateAddReq.getCategoryCode())) {
 			throw new BusinessException(CrBusinessErrorCode.EVAL_CATEGORY_NOT_EXIST);
 		}
+
+		// 校验测评步骤是否为空
+		List<EvalTaskStepConfig> evalTaskStepConfigList = evaTemplateAddReq.getStepConfig();
+		List<Integer> stageList = Lists.newArrayList();
+		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
+			evalTaskStepConfig.validate();
+			stageList.add(evalTaskStepConfig.getStage());
+		}
+
+		if (!evalTaskStepConfigList.isEmpty() && !ListUtil.compare2List(stageList, ListUtil.listRangeInt(1, stageList.size()))){
+			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
+		}
+
 	}
 
 	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq,

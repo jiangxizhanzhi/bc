@@ -19,9 +19,27 @@
         <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTask$Status@RUNNING.getCode()">
             and end_time is null
         </if>
-        <if test="status != null and status == 2">
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTask$Status@FINISHED.getCode()">
             and end_time is not null
         </if>
+    </select>
+
+    <select id="selectByIdAndStatus" resultMap="evalTask">
+        select *
+        from cr_eval_task
+        where resource_id = #{taskId}
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTask$Status@RUNNING.getCode()">
+            and end_time is null
+        </if>
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTask$Status@FINISHED.getCode()">
+            and end_time is not null
+        </if>
+    </select>
+
+    <select id="getTemplateIdByTaskId" resultType="java.lang.String">
+        select template_id
+        from cr_eval_task
+        where resource_id = #{taskId}
     </select>
 
     <select id="isNotFinished" resultType="java.lang.Boolean">

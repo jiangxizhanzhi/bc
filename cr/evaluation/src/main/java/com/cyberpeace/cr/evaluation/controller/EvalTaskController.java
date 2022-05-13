@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -57,7 +58,7 @@ public class EvalTaskController {
 
 	@ApiOperation("启动步骤")
 	@PostMapping("/step/start")
-	public BaseRsp<Boolean> startStep(@RequestBody EvalTaskStepReq evalTaskStepReq) {
+	public BaseRsp<Boolean> startStep(@RequestBody @Validated EvalTaskStepReq evalTaskStepReq) {
 
 		// 校验步骤是否存在
 		EvalTaskStep evalTaskStep = evalTaskStepService.getTaskStep(evalTaskStepReq.getStepId());
@@ -73,7 +74,7 @@ public class EvalTaskController {
 
 	@ApiOperation("完成步骤")
 	@PostMapping("/step/finish")
-	public BaseRsp<Boolean> finishStep(@RequestBody EvalTaskStepReq evalTaskStepReq) {
+	public BaseRsp<Boolean> finishStep(@RequestBody @Validated EvalTaskStepReq evalTaskStepReq) {
 
 		// 校验步骤是否存在
 		EvalTaskStep evalTaskStep = evalTaskStepService.getTaskStep(evalTaskStepReq.getStepId());
@@ -90,7 +91,7 @@ public class EvalTaskController {
 
 	@ApiOperation("启动测评任务")
 	@PostMapping("/start")
-	public BaseRsp<Boolean> startEvalTask(@RequestBody EvalTaskStartReq evalTaskStartReq) {
+	public BaseRsp<Boolean> startEvalTask(@RequestBody @Validated EvalTaskStartReq evalTaskStartReq) {
 
 		String templateId = evalTaskStartReq.getTemplateId();
 
@@ -108,7 +109,7 @@ public class EvalTaskController {
 
 	@ApiOperation("关闭测评任务")
 	@PostMapping("/stop")
-	public BaseRsp<Boolean> stopEvalTask(@RequestBody EvalTaskStopReq evalTaskStopReq) {
+	public BaseRsp<Boolean> stopEvalTask(@RequestBody @Validated EvalTaskStopReq evalTaskStopReq) {
 
 		EvalTask evalTask = evalTaskService.getTask(evalTaskStopReq.getTaskId());
 
@@ -173,7 +174,7 @@ public class EvalTaskController {
 
 	@ApiOperation("删除测评任务")
 	@DeleteMapping("")
-	public BaseRsp<Boolean> deleteEvalTask(@RequestBody EvalTaskDeleteReq evalTaskDeleteReq) {
+	public BaseRsp<Boolean> deleteEvalTask(@RequestBody @Validated EvalTaskDeleteReq evalTaskDeleteReq) {
 
 		for (String taskId : evalTaskDeleteReq.getTaskIds()) {
 			evalTaskService.deleteTask(evalTaskService.getById(taskId));

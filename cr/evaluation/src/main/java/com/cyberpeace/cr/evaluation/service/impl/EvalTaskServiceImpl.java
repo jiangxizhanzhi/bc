@@ -186,7 +186,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		}
 
 		evalTask.setEndTime(new Date());
-		evalTask.setMpSceneId(localScene.getMpSceneId());
 		evalTask.setLocalSceneId("");
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

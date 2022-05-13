@@ -270,4 +270,7 @@ public interface CrBusinessErrorCode {
 
 	/** 测试靶场步骤不存在 */
 	String EVAL_STEP_NOT_EXIST = "101087";
+
+	/** 测试靶场步骤配置错误 */
+	String EVAL_STEP_ILLEGAL = "101088";
 }

@@ -3,6 +3,7 @@ package com.cyberpeace.common.util;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -95,4 +96,15 @@ public class ListUtil {
 		set.addAll(l2);
 		return set.size() == l1.size();
 	}
+
+	/**
+	 * 返回指定起止的整数列表
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public static List<Integer> listRangeInt(Integer start, Integer end) {
+		return Lists.newArrayList(IntStream.rangeClosed(start, end).iterator());
+	}
+
 }

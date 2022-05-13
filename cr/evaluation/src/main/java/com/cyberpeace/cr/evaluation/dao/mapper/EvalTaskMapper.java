@@ -16,6 +16,10 @@ public interface EvalTaskMapper extends BaseMapper<EvalTask> {
 
 	List<EvalTask> selectByTemplateIdAndStatus(String templateId, Integer status);
 
+	EvalTask selectByIdAndStatus(String taskId, Integer status);
+
+	String getTemplateIdByTaskId(String taskId);
+
 	Boolean isNotFinished(String taskId);
 
 }

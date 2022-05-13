@@ -124,8 +124,7 @@ public class EvalSystemIndexAdminController {
 
 		EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
 		evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
-		// evalSystem.setConnlist(changeConnlist(evalSystemReq.getConnlist(),
-		// thirdIndexList));
+		evalSystem.setConnlist(changeConnlist(evalSystemReq.getConnlist(), thirdIndexList));
 
 		evalSystem.setThirdIndexNum(thirdIndexList.size());
 		evalSystem.setSecondIndexNum(secondIndexList.size());

@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "其他-测试靶场-获取整个指标体系")
+@Api(tags = "前台-测试靶场-获取树形指标体系")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/system_tree")
@@ -102,7 +102,7 @@ public class EvalSystemController {
 			evalSystemTreeRspMap.get(secondIndex.getIndexId()).setChildren(secondChildrens);
 		}
 
-		// 循环查询设置三级指标的采集项
+		// 循环查询并设置三级指标的采集项
 		for (IndexContext thirdIndex : thirdIndexes) {
 			List<EvalCollection> evalCollections = evalCollectionMapper
 					.selectBythirdIndexId(thirdIndex.getIndexId());

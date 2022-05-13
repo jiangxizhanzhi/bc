@@ -96,6 +96,13 @@ public class EvalAlgorithmAdminController {
 		CrCommonValidator.validateLength(req.getDescription(), CrCommonConstants.ZERO_STR_LEN,
 				CrCommonConstants.MAX_DESC_LEN, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 
+		List<AlgorithmParamContext> params = req.getParams();
+
+		// 校验算法参数重名
+		CrCommonValidator.checkStringListDuplicate(params.stream()
+				.map(AlgorithmParamContext::getParamName).collect(Collectors.toList()),
+				CrBusinessErrorCode.PARAM_NAME_DUPLICATE);
+
 	}
 
 	/**

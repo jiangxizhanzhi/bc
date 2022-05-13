@@ -273,4 +273,7 @@ public interface CrBusinessErrorCode {
 
 	/** 测试靶场步骤配置错误 */
 	String EVAL_STEP_ILLEGAL = "101088";
+
+	/** 算法参数重名 */
+	String PARAM_NAME_DUPLICATE = "101089";
 }

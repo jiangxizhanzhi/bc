@@ -3,7 +3,9 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.Objects;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +107,22 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		return !evalTaskList.isEmpty();
 
+	}
+
+	@Override
+	public Boolean validateName(String templateName, String templateId){
+
+		// 校验名称长度
+		CrCommonValidator.validateNameLen(templateName,
+				CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+
+		// 校验名称重复
+		if (evalTemplateMapper.existByNameAndUserIdAndId(templateName,
+				UserInfoContext.getUserContext().getUserId(), templateId)) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+
+		return true;
 	}
 
 }

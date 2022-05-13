@@ -14,12 +14,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
@@ -57,12 +59,10 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	private RemoteTopoService remoteTopoService;
 
 	@Autowired
-	private EvalTemplateMapper evalTemplateMapper;
+	private EvalTaskMapper evalTaskMapper;
 
-	@Override
-	public Boolean getStepsByTaskId(String taskId) {
-		return true;
-	}
+	@Autowired
+	private EvalTemplateMapper evalTemplateMapper;
 
 	@Override
 	public EvalTask getTask(String taskId) {
@@ -219,6 +219,20 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 				removeById(taskId);
 			}
 		});
+
+		return true;
+	}
+
+	@Override
+	public Boolean validateName(String taskName, String templateId, String taskId) {
+
+		// 校验名称长度
+		CrCommonValidator.validateNameLen(taskName, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+
+		// 校验名称重复
+		if (evalTaskMapper.existByNameAndTemplateId(taskName, templateId, taskId)) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
 
 		return true;
 	}

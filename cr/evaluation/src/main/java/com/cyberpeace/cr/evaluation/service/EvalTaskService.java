@@ -9,8 +9,6 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
  */
 public interface EvalTaskService extends IService<EvalTask> {
 
-	Boolean getStepsByTaskId(String taskId);
-
 	EvalTask getTask(String taskId);
 
 	Boolean startTask(EvalTemplate evalTemplate);
@@ -18,5 +16,7 @@ public interface EvalTaskService extends IService<EvalTask> {
 	Boolean stopTask(EvalTask evalTask);
 
 	Boolean deleteTask(EvalTask evalTask);
+
+	Boolean validateName(String taskName, String templateId, String taskId);
 
 }

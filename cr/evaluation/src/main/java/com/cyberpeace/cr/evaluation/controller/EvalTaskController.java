@@ -14,10 +14,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTaskDeleteReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTaskStartReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTaskStepReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTaskStopReq;
+import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeLineRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
@@ -91,7 +88,8 @@ public class EvalTaskController {
 
 	@ApiOperation("启动测评任务")
 	@PostMapping("/start")
-	public BaseRsp<Boolean> startEvalTask(@RequestBody @Validated EvalTaskStartReq evalTaskStartReq) {
+	public BaseRsp<Boolean>
+			startEvalTask(@RequestBody @Validated EvalTaskStartReq evalTaskStartReq) {
 
 		String templateId = evalTaskStartReq.getTemplateId();
 
@@ -121,7 +119,10 @@ public class EvalTaskController {
 		} else {
 			// 关闭场景及任务
 			CrCommonValidator.validateNameLen(taskName, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-			// 校验名称重复 todo
+
+			// 校验名称重复
+			evalTaskService.validateName(taskName, evalTask.getTemplateId(),
+					evalTask.getResourceId());
 
 			evalTask.setTaskName(taskName);
 			evalTaskService.stopTask(evalTask);
@@ -174,7 +175,8 @@ public class EvalTaskController {
 
 	@ApiOperation("删除测评任务")
 	@DeleteMapping("")
-	public BaseRsp<Boolean> deleteEvalTask(@RequestBody @Validated EvalTaskDeleteReq evalTaskDeleteReq) {
+	public BaseRsp<Boolean>
+			deleteEvalTask(@RequestBody @Validated EvalTaskDeleteReq evalTaskDeleteReq) {
 
 		for (String taskId : evalTaskDeleteReq.getTaskIds()) {
 			evalTaskService.deleteTask(evalTaskService.getById(taskId));
@@ -227,6 +229,15 @@ public class EvalTaskController {
 		evalTaskTimeLineRsp.setEndTime(evalTask.getEndTime());
 
 		return new BaseRsp<>(evalTaskTimeLineRsp);
+	}
+
+	@ApiOperation("任务名称校验")
+	@PostMapping("validate_name")
+	public BaseRsp<Boolean>
+			validateName(@RequestBody @Validated EvalTaskNameValidateReq evalTaskNameValidateReq) {
+		Boolean result = evalTaskService.validateName(evalTaskNameValidateReq.getTaskName(),
+				evalTaskNameValidateReq.getTemplateId(), evalTaskNameValidateReq.getTaskId());
+		return new BaseRsp<>(result);
 	}
 
 }

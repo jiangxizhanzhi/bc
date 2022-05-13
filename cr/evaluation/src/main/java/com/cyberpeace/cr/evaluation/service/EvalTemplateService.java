@@ -27,4 +27,6 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 
 	Boolean validateExistTask(String templateId, EvalTask.Status taskStatus);
 
+	Boolean validateName(String templateName, String templateId);
+
 }

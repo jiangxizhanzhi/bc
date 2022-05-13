@@ -2,7 +2,6 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.util.ListUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +14,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
@@ -27,7 +27,6 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -59,9 +58,6 @@ public class EvalTemplateController {
 
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
-
-	@Autowired
-	private EvalTemplateMapper evalTemplateMapper;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -145,11 +141,21 @@ public class EvalTemplateController {
 
 	@ApiOperation("模板删除")
 	@DeleteMapping("")
-	public BaseRsp<Boolean>
-			deleteEvalTemplate(@RequestBody @Validated EvalTemplateDeleteReq evalTemplateDeleteReq) {
+	public BaseRsp<Boolean> deleteEvalTemplate(
+			@RequestBody @Validated EvalTemplateDeleteReq evalTemplateDeleteReq) {
 
 		Boolean result = evalTemplateService.batchDelete(evalTemplateDeleteReq.getTemplateIds());
 
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("模板名称校验")
+	@PostMapping("validate_name")
+	public BaseRsp<Boolean> validateName(
+			@RequestBody @Validated EvaTemplateNameValidateReq evaTemplateNameValidateReq) {
+		Boolean result = evalTemplateService.validateName(
+				evaTemplateNameValidateReq.getTemplateName(),
+				evaTemplateNameValidateReq.getTemplateId());
 		return new BaseRsp<>(result);
 	}
 
@@ -160,18 +166,10 @@ public class EvalTemplateController {
 			templateId = ((EvaTemplateModifyReq) evaTemplateAddReq).getResourceId();
 		}
 
-		// 校验名称长度
-		CrCommonValidator.validateNameLen(evaTemplateAddReq.getName(),
-				CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		// 校验名称
+		evalTemplateService.validateName(evaTemplateAddReq.getName(), templateId);
 
-		// 校验名称重复
-		if (evalTemplateMapper.existByNameAndUserIdAndId(evaTemplateAddReq.getName(),
-				UserInfoContext.getUserContext().getUserId(), templateId)) {
-			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
-		}
-
-		// 校验描述长度
-
+		// 校验描述
 		CrCommonValidator.validateLength(evaTemplateAddReq.getDescription(),
 				CrCommonConstants.ZERO_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
 				CrBusinessErrorCode.ILLEGAL_DESC_LEN);
@@ -196,7 +194,8 @@ public class EvalTemplateController {
 			stageList.add(evalTaskStepConfig.getStage());
 		}
 
-		if (!evalTaskStepConfigList.isEmpty() && !ListUtil.compare2List(stageList, ListUtil.listRangeInt(1, stageList.size()))){
+		if (!evalTaskStepConfigList.isEmpty()
+				&& !ListUtil.compare2List(stageList, ListUtil.listRangeInt(1, stageList.size()))) {
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}
 

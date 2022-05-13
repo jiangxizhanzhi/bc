@@ -54,4 +54,19 @@
         as result;
     </select>
 
+    <select id="existByNameAndTemplateId" resultType="java.lang.Boolean">
+        select case
+        when exists(select 1
+        from cr_eval_task
+        where `task_name` = #{taskName}
+        and template_id = #{templateId}
+        <if test="taskId != null and taskId != ''">
+            and resource_id != #{taskId}
+        </if>)
+        then 1
+        else 0
+        end
+        as result;
+    </select>
+
 </mapper>

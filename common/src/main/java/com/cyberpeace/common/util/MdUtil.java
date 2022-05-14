@@ -1,17 +1,18 @@
 package com.cyberpeace.common.util;
 
-import java.io.*;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
-
+import com.cyberpeace.common.exception.InvalidParamException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
 
 /**
  * markdown操作工具类
@@ -87,10 +88,6 @@ public class MdUtil {
 		return titleArray[1].trim();
 	}
 
-	public static void main(String[] args) {
-		parseMarkdown("/Users/chenzhuo/home/讲义.md");
-	}
-
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
 	 * @param markdownPath
@@ -122,17 +119,12 @@ public class MdUtil {
 			}
 
 			File replaceFile = new File(currentDir, relativePath);
-			if (replaceFile.exists()) {
-				content = content.replace(imagePath, replaceFile.getAbsolutePath());
-			} else {
-				// 文件后缀匹配，如果文件无后缀则可能不是文件
-				String firstMatchStr = LocalStringUtil.getFirstMatchStr(relativePath,
-						PatternConstant.FILE_SUFFIX_MATCH);
-				if (StringUtils.isNotBlank(firstMatchStr)) {
-					log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
-					throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
-				}
+			if (!replaceFile.exists()) {
+				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
+				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
 			}
+
+			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 
 		}
 

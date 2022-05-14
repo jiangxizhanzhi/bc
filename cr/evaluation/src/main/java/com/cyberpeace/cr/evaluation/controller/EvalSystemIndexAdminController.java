@@ -124,6 +124,7 @@ public class EvalSystemIndexAdminController {
 
 		EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
 		evalSystem.setResourceId(evalSystemReq.getEvalSystemId());
+		// 修改连接线关联
 		evalSystem.setConnlist(changeConnlist(evalSystemReq.getConnlist(), thirdIndexList));
 
 		evalSystem.setThirdIndexNum(thirdIndexList.size());
@@ -206,10 +207,12 @@ public class EvalSystemIndexAdminController {
 			evalIndex.setAggregatingAlgorithmId(indexReq.getAlgorithmId());
 			evalIndex.setAggregatingAlgorithmParams(indexReq.getParams());
 			evalIndex.setLevel(level);
+
 			// 三级指标特殊，前台传过来的是指标项，这里新建一个，并建立关联关系,修改连接线和子指标列表
 			if (EvalIndex.Level.THIRD.getCode().equals(level)) {
 
-				if (evalIndexService.getById(indexReq.getIndexId()) == null) {
+				// 三级指标的id等于指标项id，说明是新增需要修改id，否则是编辑不改id
+				if (indexReq.getIndexId().equals(indexReq.getEvalIndicatorId())) {
 					evalIndex.setResourceId(null);
 					evalIndex.setEvalIndicatorId(indexReq.getIndexId());
 

@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.PatternConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
 
@@ -276,19 +276,16 @@ public class FileUtil {
 		InputStream fis = null;
 		OutputStream outputStream = null;
 		try {
-			fis = new BufferedInputStream(new FileInputStream(file));
+			fis = new FileInputStream(file);
 			byte[] buffer = new byte[fis.available()];
 			fis.read(buffer);
-			if (fis != null) {
-				fis.close();
-			}
+
 			// 清空response
 			response.reset();
 
 			// 设置返回
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			String fileName = new String(file.getName().getBytes("gb2312"), "iso8859-1");
-			response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+			response.setHeader("Content-disposition", "attachment;filename=" + file.getName());
 			outputStream = response.getOutputStream();
 			outputStream.write(buffer);
 			outputStream.flush();
@@ -305,15 +302,8 @@ public class FileUtil {
 			} catch (IOException e) {
 				log.error("setResponse error:", e);
 			}
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					log.error("setResponse error:", e);
-				}
-			}
 
-			if (delete && null != file) {
+			if (delete && null != file && file.exists()) {
 				file.delete();
 			}
 		}

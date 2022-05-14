@@ -231,10 +231,8 @@ public class ExcelDataHandler {
 
 		// 在excel表中添加表头
 		for (int i = 0; i < excelHeader.header.length; i++) {
-			// 创建HSSFCell对象
 			Cell cell = row.createCell(i);
-			HSSFRichTextString text = new HSSFRichTextString(excelHeader.header[i]);
-			cell.setCellValue(text);
+			cell.setCellValue(excelHeader.header[i]);
 		}
 
 		try {

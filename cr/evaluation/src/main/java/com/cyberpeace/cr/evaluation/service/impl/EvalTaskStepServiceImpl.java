@@ -12,6 +12,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskStepMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
@@ -26,8 +27,13 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	@Autowired
 	private EvalTaskStepMapper evalTaskStepMapper;
 
+	@Autowired
+	private EvalTaskMapper evalTaskMapper;
+
 	@Override
 	public EvalTaskStep getTaskStep(String stepId) {
+
+		// 获取步骤时校验权限 todo
 
 		EvalTaskStep evalTaskStep = getById(stepId);
 
@@ -42,7 +48,22 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	@Override
 	public Boolean startStep(EvalTaskStep evalTaskStep) {
 
-		// 校验，只有前序步骤完成才能启动此步 todo
+		// 关闭的任务步骤不允许操作
+		if (!evalTaskMapper.isNotFinished(evalTaskStep.getTaskId())) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_RUNNING);
+		}
+
+		// 校验，已启动的步骤不允许重复启动
+		if (evalTaskStep.getStartTime() != null) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_IS_STARTED);
+		}
+
+		// 校验，只有前序步骤完成才能启动此步骤
+		Integer stage = evalTaskStep.getStage();
+		String taskId = evalTaskStep.getTaskId();
+		if (stage > 1 && evalTaskStepMapper.isNotFinished(taskId, (stage - 1))) {
+			throw new BusinessException(CrBusinessErrorCode.PRECEDING_STEP_NOT_FINISHED);
+		}
 
 		evalTaskStep.setStartTime(new Date());
 		updateById(evalTaskStep);
@@ -52,7 +73,16 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	@Override
 	public Boolean stopStep(EvalTaskStep evalTaskStep) {
 
-		// 校验，未启动的步骤不允许结束 todo
+		// 关闭的任务步骤不允许操作
+		if (!evalTaskMapper.isNotFinished(evalTaskStep.getTaskId())) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_RUNNING);
+		}
+
+		// 校验，未启动的步骤不允许结束
+		if (evalTaskStep.getStartTime() == null) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_NOT_STARTED);
+		}
+
 		evalTaskStep.setEndTime(new Date());
 		updateById(evalTaskStep);
 		return true;
@@ -67,6 +97,7 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 
 	@Override
 	public List<EvalTaskStepContext> getTaskSteps(String taskId) {
+
 		List<EvalTaskStepContext> evalTaskStepContexts = Lists.newArrayList();
 
 		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectStepsByTaskId(taskId);
@@ -74,7 +105,6 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		for (EvalTaskStep evalTaskStep : evalTaskSteps) {
 			EvalTaskStepContext evalTaskStepContext = BeanUtils.copy(evalTaskStep,
 					EvalTaskStepContext.class);
-			evalTaskStepContext.setStepId(evalTaskStep.getResourceId());
 			evalTaskStepContext.setStatus();
 			evalTaskStepContexts.add(evalTaskStepContext);
 		}
@@ -91,10 +121,8 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 
 		for (EvalTaskStep evalTaskStep : evalTaskSteps) {
 			if (evalTaskStep.getEndTime() != null) {
-				EvalTimeLineContext evalTimeLineContext = BeanUtils.copy(evalTaskStep,
-						EvalTimeLineContext.class);
-				evalTimeLineContext.setStepId(evalTaskStep.getResourceId());
-				evalTimeLineContextList.add(evalTimeLineContext);
+				evalTimeLineContextList
+						.add(BeanUtils.copy(evalTaskStep, EvalTimeLineContext.class));
 			}
 		}
 

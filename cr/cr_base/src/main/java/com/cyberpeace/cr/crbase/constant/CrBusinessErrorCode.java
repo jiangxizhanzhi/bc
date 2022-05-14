@@ -253,27 +253,37 @@ public interface CrBusinessErrorCode {
 	/** LOGO文件不存在 */
 	String LOGO_NOT_EXIST = "101081";
 
-	/** 测试靶场类型不存在 */
+	/** 测评靶场类型不存在 */
 	String EVAL_CATEGORY_NOT_EXIST = "101082";
 
 	/** 算法已经使用 */
 	String ALGORITHM_ALREADY_USED = "101083";
 
-	/** 测试靶场存在运行任务 */
+	/** 测评靶场存在运行任务 */
 	String RUNNING_EVAL_TASK_EXIST = "101084";
 
-	/** 测试靶场任务不在运行 */
+	/** 测评靶场任务不在运行 */
 	String EVAL_TASK_NOT_RUNNING = "101085";
 
-	/** 测试靶场任务不存在 */
+	/** 测评靶场任务不存在 */
 	String EVAL_TASK_NOT_EXIST = "101086";
 
-	/** 测试靶场步骤不存在 */
+	/** 测评靶场步骤不存在 */
 	String EVAL_STEP_NOT_EXIST = "101087";
 
-	/** 测试靶场步骤配置错误 */
+	/** 测评靶场步骤配置错误 */
 	String EVAL_STEP_ILLEGAL = "101088";
 
 	/** 算法参数重名 */
 	String PARAM_NAME_DUPLICATE = "101089";
+
+	/** 测评靶场步骤未启动 */
+	String EVAL_STEP_NOT_STARTED = "101090";
+
+	/** 测评靶场步骤已启动 */
+	String EVAL_STEP_IS_STARTED = "101091";
+
+	/** 测评靶场步骤前序步骤未完成 */
+	String PRECEDING_STEP_NOT_FINISHED = "101092";
+
 }

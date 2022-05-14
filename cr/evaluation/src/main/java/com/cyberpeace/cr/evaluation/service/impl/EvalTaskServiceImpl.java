@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -26,10 +25,11 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
+import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskOperContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -47,12 +47,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	private EvalTaskStepService evalTaskStepService;
-
-	@Autowired
-	private EvalTaskStepMapper evalTaskStepMapper;
-
-	@Autowired
 	private LocalSceneService localSceneService;
 
 	@Autowired
@@ -62,7 +56,13 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	private EvalTaskMapper evalTaskMapper;
 
 	@Autowired
+	private EvalTaskStepService evalTaskStepService;
+
+	@Autowired
 	private EvalTemplateMapper evalTemplateMapper;
+
+	@Autowired
+	private EvalSceneService evalSceneService;
 
 	@Override
 	public EvalTask getTask(String taskId) {
@@ -79,22 +79,26 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
+	public EvalTaskOperContext getEvalTaskOperContext(String taskId) {
+
+		EvalTaskOperContext evalTaskOperContext = new EvalTaskOperContext();
+
+		EvalTask evalTask = getTask(taskId);
+
+		evalTaskOperContext.setEvalTask(evalTask);
+
+		// 判断localscene为空时 todo
+		evalTaskOperContext.setLocalScene(localSceneService.getById(evalTask.getLocalSceneId()));
+
+		return evalTaskOperContext;
+	}
+
+	@Override
 	public Boolean startTask(EvalTemplate evalTemplate) {
 
 		String templateId = evalTemplate.getResourceId();
 
-		// 校验模板下任务状态 todo 同一模板不允许启动多个场景
-		LocalScene localSceneExisted = localSceneService.getByBusinessInstanceId(templateId);
-
-		if (localSceneExisted != null && StringUtils.isNotBlank(localSceneExisted.getMpSceneId())) {
-			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
-		}
-
-		if (localSceneExisted != null) {
-			localSceneService.removeById(localSceneExisted.getResourceId());
-		}
-
-		// 构建task对象
+		// 构建任务对象
 		EvalTask evalTask = new EvalTask();
 		evalTask.setTemplateId(templateId);
 		evalTask.setCopyedTopoId(remoteTopoService.copyTopo(evalTemplate.getTopoId()));
@@ -114,10 +118,10 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 			evalTaskSteps.add(evalTaskStep);
 		}
 
-		// 3、构建本地scene对象
+		// 构建本地scene对象
 		LocalScene localScene = createLocalScene(evalTask);
 
-		// 4、启动mp场景
+		// 启动中台场景
 		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);
 		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
@@ -131,7 +135,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		evalTemplate.setCurrentTaskId(evalTask.getResourceId());
 
 		try {
-			// 5、更新本地数据库数据
+			// 更新本地数据库数据
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 				@Override
@@ -139,12 +143,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 					localSceneService.save(localScene);
 					save(evalTask);
 					evalTaskStepService.saveBatch(evalTaskSteps);
-					// evalTemplateMapper.updateById(evalTemplate);
+					evalTemplateMapper.updateById(evalTemplate);
 				}
 			});
 
-			// 5.1 本地保存数据错误，删除已启动的远程场景
 		} catch (Exception e) {
+			// 本地保存数据错误，删除已启动的远程场景
 			localSceneService.stopScene(localScene);
 			log.error("Failed to save local data:", e);
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
@@ -157,7 +161,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	private LocalScene createLocalScene(EvalTask evalTask) {
 
 		LocalScene localScene = new LocalScene();
-
 		localScene.setBusinessCode(LocalScene.BusinessCode.RANGE_EVALUATION.getCode());
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		localScene.setBusinessInstanceId(evalTask.getResourceId());
@@ -174,26 +177,53 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public Boolean stopTask(EvalTask evalTask) {
+	public Boolean stopTask(EvalTaskOperContext evalTaskOperContext) {
 
-		LocalScene localScene = localSceneService.getById(evalTask.getLocalSceneId());
-
-		Boolean stopResult = localSceneService.stopScene(localScene);
-
-		// 停止场景失败时的处理 todo
-		if (!stopResult) {
-			return false;
-		}
-
-		evalTask.setEndTime(new Date());
-		evalTask.setLocalSceneId("");
+		evalSceneService.stopScene(evalTaskOperContext.getLocalScene());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				localSceneService.removeById(localScene);
-				updateById(evalTask);
+				clearTaskScene(evalTaskOperContext);
+				clearCurrentTask(evalTaskOperContext.getEvalTask().getTemplateId());
+			}
+		});
+
+		return true;
+	}
+
+	private void clearTask(String taskId) {
+		evalTaskStepService.removeByTaskId(taskId);
+		removeById(taskId);
+	}
+
+	@Override
+	public Boolean deleteTask(EvalTaskOperContext evalTaskOperContext) {
+
+		// 关闭任务关联场景
+		if (evalTaskOperContext.getLocalScene() != null) {
+			evalSceneService.stopScene(evalTaskOperContext.getLocalScene());
+
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					localSceneService.removeById(evalTaskOperContext.getLocalScene());
+					clearCurrentTask(evalTaskOperContext.getEvalTask().getTemplateId());
+					clearTask(evalTaskOperContext.getEvalTask().getResourceId());
+				}
+			});
+
+			return true;
+
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				clearTask(evalTaskOperContext.getEvalTask().getResourceId());
 			}
 		});
 
@@ -201,26 +231,16 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public Boolean deleteTask(EvalTask evalTask) {
+	public void clearTaskScene(EvalTaskOperContext evalTaskOperContext) {
 
-		// 关闭任务关联场景
-		stopTask(evalTask);
+		EvalTask evalTask = evalTaskOperContext.getEvalTask();
 
-		String taskId = evalTask.getResourceId();
+		evalTask.setEndTime(new Date());
+		evalTask.setLocalSceneId("");
 
-		// 查询任务相关的步骤记录
-		List<String> stepList = evalTaskStepMapper.selectStepIdsByTaskId(taskId);
+		localSceneService.removeById(evalTaskOperContext.getLocalScene());
+		updateById(evalTask);
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				evalTaskStepService.removeByIds(stepList);
-				removeById(taskId);
-			}
-		});
-
-		return true;
 	}
 
 	@Override
@@ -235,6 +255,13 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		}
 
 		return true;
+	}
+
+	@Override
+	public void clearCurrentTask(String templateId) {
+		EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
+		evalTemplate.setCurrentTaskId("");
+		evalTemplateMapper.updateById(evalTemplate);
 	}
 
 }

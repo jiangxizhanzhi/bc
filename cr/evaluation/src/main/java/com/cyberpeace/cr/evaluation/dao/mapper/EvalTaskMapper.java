@@ -8,14 +8,15 @@ import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 
 @Mapper
 @Repository
 public interface EvalTaskMapper extends BaseMapper<EvalTask> {
 
-	List<String> selectResourceIdList(String templateId);
+	List<EvalTaskSlimContext> selectSlimTaskList(String templateId);
 
-	List<EvalTask> selectByTemplateIdAndStatus(String templateId, Integer status);
+	List<String> selectIdsByTemplateIdAndStatus(String templateId, Integer status);
 
 	EvalTask selectByIdAndStatus(String taskId, Integer status);
 

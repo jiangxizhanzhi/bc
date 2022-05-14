@@ -7,14 +7,15 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateListQuery;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 
 @Mapper
 @Repository
 public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 
-	IPage<EvalTemplate> listEvalTemplates(Page page, EvalTemplateListQuery evalTemplateListQuery);
+	IPage<EvalTemplate> listEvalTemplates(Page page, EvalTemplateListQuery evalTemplateListQuery,
+			String userId);
 
 	/**
 	 * 校验模板名称

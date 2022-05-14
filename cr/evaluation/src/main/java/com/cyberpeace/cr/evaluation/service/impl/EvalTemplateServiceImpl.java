@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +19,15 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateListQuery;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
+import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
@@ -38,12 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, EvalTemplate> implements EvalTemplateService {
 
 	@Autowired
-	private EvalTemplateMapper evalTemplateMapper;
-
-	@Autowired
-	private EvalTaskMapper evalTaskMapper;
-
-	@Autowired
 	private AttachmentService attachmentService;
 
 	@Autowired
@@ -52,13 +47,36 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	@Autowired
+	private EvalTemplateMapper evalTemplateMapper;
+
+	@Autowired
+	private EvalTaskService evalTaskService;
+
+	@Autowired
+	private EvalTaskMapper evalTaskMapper;
+
+	@Override
+	public EvalTemplate getTemplate(String templateId) {
+
+		EvalTemplate evalTemplate = getById(templateId);
+
+		if (evalTemplate == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		} else if (!Objects.equals(evalTemplate.getCreateUserId(),
+				UserInfoContext.getUserContext().getUserId())) {
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+		return evalTemplate;
+	}
+
 	@Override
 	public IPage<EvalTemplate> list(EvalTemplateListQuery evalTemplateListQuery) {
 
 		Page page = evalTemplateListQuery.toPageParam();
 
-		IPage<EvalTemplate> data = evalTemplateMapper.listEvalTemplates(page,
-				evalTemplateListQuery);
+		IPage<EvalTemplate> data = evalTemplateMapper.listEvalTemplates(page, evalTemplateListQuery,
+				UserInfoContext.getUserContext().getUserId());
 
 		return data;
 	}
@@ -75,42 +93,23 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	@Override
 	public Boolean batchDelete(List<String> templateIds) {
 
-		List<EvalTemplate> evalTemplateList = listTemplate(templateIds);
-
-		// 删除task及相关场景 todo
-
-		evalTemplateMapper.deleteBatchIds(templateIds);
-
+		for (String templateId : templateIds) {
+			// 删除task及相关场景
+			List<String> evalTaskList = evalTaskMapper.selectIdsByTemplateIdAndStatus(templateId,
+					null);
+			for (String taskId : evalTaskList) {
+				evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId));
+			}
+			evalTemplateMapper.deleteById(templateId);
+		}
 		return true;
 
 	}
 
 	@Override
-	public EvalTemplate getTemplate(String templateId) {
-		EvalTemplate evalTemplate = getById(templateId);
-
-		if (evalTemplate == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		} else if (!Objects.equals(evalTemplate.getCreateUserId(),
-				UserInfoContext.getUserContext().getUserId())) {
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		} else {
-			return evalTemplate;
-		}
-	}
-
-	private List<EvalTemplate> listTemplate(List<String> templateIds) {
-		List<EvalTemplate> evalTemplateList = Lists.newArrayList();
-		for (String templateId : templateIds) {
-			evalTemplateList.add(getTemplate(templateId));
-		}
-		return evalTemplateList;
-	}
-
-	@Override
 	public Boolean validateExistTask(String templateId, EvalTask.Status taskStatus) {
 
-		List<EvalTask> evalTaskList = evalTaskMapper.selectByTemplateIdAndStatus(templateId,
+		List<String> evalTaskList = evalTaskMapper.selectIdsByTemplateIdAndStatus(templateId,
 				taskStatus.getCode());
 
 		return !evalTaskList.isEmpty();
@@ -154,15 +153,23 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Override
 	public Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList) {
+
+		if (evalTaskStepConfigList.isEmpty()) {
+			return true;
+		}
+
 		List<Integer> stageList = com.google.common.collect.Lists.newArrayList();
 
+		// 校验步骤配置是否为空
 		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
 			evalTaskStepConfig.validate();
 			stageList.add(evalTaskStepConfig.getStage());
 		}
 
-		if (!evalTaskStepConfigList.isEmpty()
-				&& !ListUtil.compare2List(stageList, ListUtil.listRangeInt(1, stageList.size()))) {
+		// 校验步骤配置的stage
+		List<Integer> expectStageList = ListUtil.listRangeInt(1, stageList.size());
+		if (new HashSet<>(stageList).size() != expectStageList.size()
+				|| !ListUtil.compare2List(stageList, expectStageList)) {
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}
 

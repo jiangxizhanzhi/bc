@@ -1,9 +1,15 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
@@ -12,6 +18,8 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskOperContext;
+import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.google.common.collect.Lists;
@@ -45,11 +53,21 @@ public class EvalSceneEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 
-		EvalTask evalTask = evalTaskMapper.selectByIdAndStatus(businessId,
-				EvalTask.Status.RUNNING.getCode());
+		// 判断删除为靶场执行时，跳过后续操作
+		String operator = JSON.parseObject(context.getPassThrough(), JSONObject.class)
+				.getString(WebConstant.PASS_THROUGH_OPERATOR);
+		if (!StringUtils.isBlank(operator) && operator.equals(Operator.CR.getDesc())) {
+			return true;
+		}
+
+		EvalTaskOperContext evalTaskOperContext = evalTaskService
+				.getEvalTaskOperContext(businessId);
+
+		EvalTask evalTask = evalTaskOperContext.getEvalTask();
 
 		if (evalTask != null) {
-			evalTaskService.stopTask(evalTask);
+			evalTask.setTaskName(new Date().toString());
+			evalTaskService.stopTask(evalTaskOperContext);
 		}
 
 		return true;

@@ -104,5 +104,8 @@ public interface ErrorCode {
 	String FAILED_TO_WRITE_FILE = "100036";
 
 	/** 名称已存在 */
-	String NAME_DUPLICATE = "100037";;
+	String NAME_DUPLICATE = "100037";
+
+	/** 场景关闭失败 */
+	String FAILED_TO_STOP_SCENE = "100038";
 }

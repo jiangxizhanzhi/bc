@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.evaluation.service.EvalSceneService;
+import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 
 @Service
@@ -42,6 +45,19 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public Boolean stopScene(LocalScene localScene) {
+
+		Boolean stopResult = localSceneService.stopScene(localScene);
+
+		// 停止场景失败时的处理
+		if (!stopResult) {
+			throw new BusinessException(ErrorCode.FAILED_TO_STOP_SCENE);
+		}
+
+		return true;
 	}
 
 }

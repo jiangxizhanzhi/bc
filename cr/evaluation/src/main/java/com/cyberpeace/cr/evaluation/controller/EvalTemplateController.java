@@ -1,29 +1,31 @@
 package com.cyberpeace.cr.evaluation.controller;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
-import com.cyberpeace.cr.evaluation.controller.req.*;
+import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateModifyReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateDeleteReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
 
 import io.swagger.annotations.Api;
@@ -40,40 +42,69 @@ public class EvalTemplateController {
 	private CrSceneService crSceneService;
 
 	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
 	private EvalTemplateService evalTemplateService;
 
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
 
-	@Autowired
-	private LocalSceneService localSceneService;
-
 	@ApiOperation("模板新增")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("")
-	public BaseRsp<String>
+	public BaseRsp<EvalTemplateIdRsp>
 			addEvalTemplate(@RequestBody @Validated EvaTemplateAddReq evaTemplateAddReq) {
 
 		EvalTemplate evalTemplate = new EvalTemplate();
 
 		reqToTemplate(evaTemplateAddReq, evalTemplate);
 
-		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
-				LocalScene.BusinessCode.RANGE_EVALUATION, null));
-
 		evalTemplateService.save(evalTemplate);
 
-		return new BaseRsp<>(evalTemplate.getResourceId());
+		return new BaseRsp<>(new EvalTemplateIdRsp(evalTemplate.getResourceId()));
+	}
+
+	@ApiOperation("模板修改")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@PatchMapping("")
+	public BaseRsp<EvalTemplateIdRsp>
+			modifyEvalTemplate(@RequestBody @Validated EvaTemplateModifyReq evaTemplateModifyReq) {
+
+		String templateId = evaTemplateModifyReq.getResourceId();
+
+		// 校验用户身份并获取测评靶场模板实体
+		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
+
+		reqToTemplate(evaTemplateModifyReq, evalTemplate);
+
+		evalTemplateService.updateById(evalTemplate);
+
+		return new BaseRsp<>(new EvalTemplateIdRsp(templateId));
+	}
+
+	@ApiOperation("模板查询")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("")
+	public BaseRsp<EvalTemplateRsp> getEvalTemplate(@ApiParam(name = "template_id",
+			value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId) {
+
+		// 校验用户身份并获取测评靶场模板实体
+		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
+
+		// 构造接口返回数据
+		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
+		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
+		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
+		evalTemplateRsp.setTaskList(evalTaskMapper.selectSlimTaskList(templateId));
+		return new BaseRsp<>(evalTemplateRsp);
 	}
 
 	@ApiOperation("模板列表查询")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<EvalTemplateListRsp>>
-			getEvalTemplateList(EvalTemplateListReq queryParams) {
-
-		EvalTemplateListQuery evalTemplateListQuery = BeanUtils.copy(queryParams,
-				EvalTemplateListQuery.class);
-
-		evalTemplateListQuery.setUserId(UserInfoContext.getUserContext().getUserId());
+			getEvalTemplateList(EvalTemplateListQuery evalTemplateListQuery) {
 
 		IPage<EvalTemplate> data = evalTemplateService.list(evalTemplateListQuery);
 
@@ -83,50 +114,14 @@ public class EvalTemplateController {
 			evalTemplateListRsp
 					.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 			return evalTemplateListRsp;
+
 		});
 
 		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
-	@ApiOperation("模板查询")
-	@GetMapping("")
-	public BaseRsp<EvalTemplateRsp> getEvalTemplate(
-			@ApiParam(name = "template_id", value = "测评靶场模板id", required = true)
-			@RequestParam("template_id") String templateId) {
-
-		// 权限校验
-		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
-
-		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
-		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
-		evalTemplateRsp.setStepConfig(
-				JsonUtil.toJsonObjectArray(evalTemplate.getStepConfig(), EvalTaskStepConfig.class));
-		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
-		evalTemplateRsp.setTaskList(evalTaskMapper.selectResourceIdList(templateId));
-		return new BaseRsp<>(evalTemplateRsp);
-	}
-
-	@ApiOperation("模板修改")
-	@PutMapping("")
-	public BaseRsp<String>
-			modifyEvalTemplate(@RequestBody @Validated EvaTemplateModifyReq evaTemplateModifyReq) {
-
-		String templateId = evaTemplateModifyReq.getResourceId();
-
-		// 权限校验
-		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
-
-		reqToTemplate(evaTemplateModifyReq, evalTemplate);
-
-		crSceneService.saveTopo(evaTemplateModifyReq.getSceneConfigData(),
-				LocalScene.BusinessCode.RANGE_EVALUATION, evalTemplate.getTopoId());
-
-		evalTemplateService.updateById(evalTemplate);
-
-		return new BaseRsp<>(templateId);
-	}
-
 	@ApiOperation("模板删除")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@DeleteMapping("")
 	public BaseRsp<Boolean> deleteEvalTemplate(
 			@RequestBody @Validated EvalTemplateDeleteReq evalTemplateDeleteReq) {
@@ -137,12 +132,31 @@ public class EvalTemplateController {
 	}
 
 	@ApiOperation("模板基础信息校验")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("validate_info")
 	public BaseRsp<Boolean> validateBaseInfo(
-			@RequestBody @Validated EvaTemplateBaseInfoReq evaTemplateBaseInfoReq) {
-		Boolean result = evalTemplateService.validateBaseInfo(
-				BeanUtils.copy(evaTemplateBaseInfoReq, EvalTemplateBaseInfoContext.class));
+			@RequestBody @Validated EvalTemplateBaseInfoContext evalTemplateBaseInfoContext) {
+		Boolean result = evalTemplateService.validateBaseInfo(evalTemplateBaseInfoContext);
 		return new BaseRsp<>(result);
+	}
+
+	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq,
+			EvalTemplate evalTemplate) {
+
+		// 校验测评模板配置
+		validateReq(evaTemplateAddReq);
+
+		// 复制模板信息
+		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
+
+		// 设置模板用户
+		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+		// 设置模板拓扑
+		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
+				LocalScene.BusinessCode.RANGE_EVALUATION, evalTemplate.getTopoId()));
+
+		return evalTemplate;
 	}
 
 	private void validateReq(EvaTemplateAddReq evaTemplateAddReq) {
@@ -155,22 +169,6 @@ public class EvalTemplateController {
 		// 校验测评步骤配置
 		evalTemplateService.validateStepConfig(evaTemplateAddReq.getStepConfig());
 
-	}
-
-	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq,
-			EvalTemplate evalTemplate) {
-
-		validateReq(evaTemplateAddReq);
-
-		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
-
-		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
-
-		evalTemplate.setLogo(evaTemplateAddReq.getLogoId());
-
-		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-
-		return evalTemplate;
 	}
 
 }

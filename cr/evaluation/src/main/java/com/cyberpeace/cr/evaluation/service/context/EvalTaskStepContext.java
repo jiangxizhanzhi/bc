@@ -30,6 +30,10 @@ public class EvalTaskStepContext {
 	@ApiModelProperty("步骤状态")
 	private Integer status;
 
+	public void setResourceId(String resourceId){
+		this.stepId = resourceId;
+	}
+
 	public void setStatus() {
 
 		if (this.startTime == null) {

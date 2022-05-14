@@ -23,7 +23,14 @@ public class EvalTemplateListRsp implements Serializable {
 	@ApiModelProperty(value = "Logo文件路径")
 	private String logoPath;
 
+	@ApiModelProperty(value = "Logo文件Id")
+	private String logoId;
+
 	@ApiModelProperty(value = "测评类型")
 	private Integer categoryCode;
+
+	public void setLogo(String logo) {
+		this.logoId = logo;
+	}
 
 }

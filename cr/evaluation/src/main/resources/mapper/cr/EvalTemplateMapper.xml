@@ -14,8 +14,8 @@
             <if test="evalTemplateListQuery.categoryCode != null and evalTemplateListQuery.categoryCode != ''">
                 and category_code = #{evalTemplateListQuery.categoryCode}
             </if>
-            <if test="evalTemplateListQuery.userId != null and evalTemplateListQuery.userId != ''">
-                and create_user_id = #{evalTemplateListQuery.userId}
+            <if test="userId != null and userId != ''">
+                and create_user_id = #{userId}
             </if>
             <if test="evalTemplateListQuery.pattern != null and evalTemplateListQuery.pattern != ''">
                 <bind name="pattern" value="'%' + evalTemplateListQuery.pattern + '%'"/>

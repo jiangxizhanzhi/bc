@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -22,9 +24,13 @@ public class EvalTemplateRsp extends EvalTemplateListRsp implements Serializable
 	private List<EvalTaskStepConfig> stepConfig;
 
 	@ApiModelProperty(value = "任务列表")
-	private List<String> taskList;
+	private List<EvalTaskSlimContext> taskList;
 
 	@ApiModelProperty(value = "当前测评任务")
 	private String currentTask;
+
+	public void setStepConfig(String stepConfig) {
+		this.stepConfig = JsonUtil.toJsonObjectArray(stepConfig, EvalTaskStepConfig.class);
+	}
 
 }

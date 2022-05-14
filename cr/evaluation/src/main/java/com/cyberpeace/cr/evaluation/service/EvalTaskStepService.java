@@ -8,20 +8,44 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 
 /**
- * 测试靶场-任务步骤的处理
+ * 测评靶场-任务步骤的处理
  */
 public interface EvalTaskStepService extends IService<EvalTaskStep> {
 
+	/** 获取步骤
+	 * @param stepId
+	 * @return
+	 */
 	EvalTaskStep getTaskStep(String stepId);
 
+	/** 启动步骤
+	 * @param evalTaskStep
+	 * @return
+	 */
 	Boolean startStep(EvalTaskStep evalTaskStep);
 
+	/** 完成步骤
+	 * @param evalTaskStep
+	 * @return
+	 */
 	Boolean stopStep(EvalTaskStep evalTaskStep);
 
+	/** 删除指定任务下所有步骤
+	 * @param taskId
+	 * @return
+	 */
 	Boolean removeByTaskId(String taskId);
 
+	/** 获取任务下所有步骤
+	 * @param taskId
+	 * @return
+	 */
 	List<EvalTaskStepContext> getTaskSteps(String taskId);
 
+	/** 获取任务下所有已完成的步骤
+	 * @param taskId
+	 * @return
+	 */
 	List<EvalTimeLineContext> getFinishedSteps(String taskId);
 
 }

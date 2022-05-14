@@ -17,4 +17,8 @@ public class EvalTimeLineContext {
 	@ApiModelProperty("完成时间")
 	private Date endTime;
 
+	public void setResourceId(String resourceId) {
+		this.stepId = resourceId;
+	}
+
 }

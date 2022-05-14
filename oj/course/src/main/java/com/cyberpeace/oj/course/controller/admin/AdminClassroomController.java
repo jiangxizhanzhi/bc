@@ -330,7 +330,7 @@ public class AdminClassroomController {
 	public void exportTrainPlan(HttpServletResponse response) {
 
 		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
-				+ CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
+				+ CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 		classroomService.exportTrainPlan(UserInfoContext.getUserContext(), filePath);
 		FileUtil.setResponse(new File(filePath), true, response);
 

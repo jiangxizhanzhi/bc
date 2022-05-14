@@ -38,12 +38,7 @@ public class EvalRecord extends BaseTable {
     /**
      * 靶场测评实例ID
      */
-    private String roomId;
-
-    /**
-     * 评估任务进度标识
-     */
-    private String progressKey;
+    private String taskId;
 
     /**
      * 评估任务进行中的错误信息收集
@@ -72,6 +67,20 @@ public class EvalRecord extends BaseTable {
         private final String desc;
 
         Status(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
+
+    public enum InvokeType implements GenericEnum {
+        INDEX(1, "指标项"), VARIABLE(2, "变量项");
+
+        @Getter
+        private final Integer code;
+        @Getter
+        private final String desc;
+
+        InvokeType(Integer code, String desc) {
             this.code = code;
             this.desc = desc;
         }

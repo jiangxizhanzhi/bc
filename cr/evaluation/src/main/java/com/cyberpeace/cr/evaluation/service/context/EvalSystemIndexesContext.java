@@ -20,7 +20,7 @@ public class EvalSystemIndexesContext implements Serializable {
     private Integer score;
 
     @ApiModelProperty("下一级")
-    private List<EvalSystemIndexesContext> nextLevel;
+    private List<EvalSystemIndexesContext> children;
 
     @ApiModelProperty("评分方式")
     private Integer type;

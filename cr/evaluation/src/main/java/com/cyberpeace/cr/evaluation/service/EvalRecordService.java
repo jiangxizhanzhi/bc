@@ -7,6 +7,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 
 import java.util.List;
 
@@ -52,6 +53,8 @@ public interface EvalRecordService extends IService<EvalRecord> {
 
     void startRecord(String recordId);
 
-    void startVariables(List<String> variableIds);
+    void startIndexes(EvalRecord evalRecord, EvalTask evalTask);
+
+    void startVariables(EvalRecord evalRecord, EvalTask evalTask);
 
 }

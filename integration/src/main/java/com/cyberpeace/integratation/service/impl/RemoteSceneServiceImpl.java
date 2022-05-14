@@ -2,11 +2,13 @@ package com.cyberpeace.integratation.service.impl;
 
 import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.model.mp.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,6 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.constant.SessionType;
-import com.cyberpeace.integratation.model.mp.MpEventAggr;
-import com.cyberpeace.integratation.model.mp.MpFlowTrend;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.model.mp.MpRiskCount;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
@@ -71,6 +69,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String EVENT_AGGR_URL;
 
 	private String RISK_COUNT_URL;
+
+	private String COLLECTION_EVENT_URL;
 
 	@PostConstruct
 	public void init() {
@@ -119,6 +119,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		RISK_COUNT_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.risk.count");
+
+		COLLECTION_EVENT_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.probe.collection.event");
 
 	}
 
@@ -286,5 +289,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public MpRiskCount getRiskCount(ElementCommonContext elementCommonContext) {
 		return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL,
 				MpRiskCount.class);
+	}
+
+	@Override
+	public List<MpCollectionEvent> getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
+		String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext, COLLECTION_EVENT_URL, String.class);
+		return JsonUtil.toJsonObjectArray(mpCollectionEvents, MpCollectionEvent.class);
 	}
 }

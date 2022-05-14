@@ -44,6 +44,11 @@ public class EvalIndexRef extends BaseTable {
     private String algorithmId;
 
     /**
+     * 算法实际额外入参
+     */
+    private String algorithmParams;
+
+    /**
      * 当前指标项下一级ID, 为json字符串
      */
     private String nextIds;

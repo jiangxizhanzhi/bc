@@ -1,15 +1,14 @@
 package com.cyberpeace.integratation.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.integratation.model.mp.MpEventAggr;
-import com.cyberpeace.integratation.model.mp.MpFlowTrend;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.model.mp.MpRiskCount;
+import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
+import lombok.Data;
 
 /**
  * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2
@@ -119,5 +118,12 @@ public interface RemoteSceneService {
 	 * @return MpRiskCount
 	 */
 	MpRiskCount getRiskCount(ElementCommonContext elementCommonContext);
+
+	/**
+	 * 获取探针采集信息（分页）
+	 * @param collectionEventPageContext
+	 * @return MpCollectionEvent
+	 */
+	List<MpCollectionEvent> getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
 
 }

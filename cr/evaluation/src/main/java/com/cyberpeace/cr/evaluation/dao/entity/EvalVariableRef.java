@@ -39,9 +39,34 @@ public class EvalVariableRef extends BaseTable {
     private String recordId;
 
     /**
-     * 原变量项ID
+     * 格式化算法ID
      */
-    private String originVariableId;
+    private String formatAlgorithmId;
+
+    /**
+     * 格式化算法其它参数
+     */
+    private String formatParams;
+
+    /**
+     * 匹配算法ID
+     */
+    private String matchAlgorithmId;
+
+    /**
+     * 匹配算法其它参数
+     */
+    private String matchParams;
+
+    /**
+     * 评分算法ID
+     */
+    private String markAlgorithmId;
+
+    /**
+     * 评分算法其它参数
+     */
+    private String markParams;
 
     /**
      * 进度
@@ -83,7 +108,7 @@ public class EvalVariableRef extends BaseTable {
         START(2, "开始/数据同步中"),
         FORMATTING(3, "格式化进行中"),
         MATCHING(4, "匹配进行中"),
-        MARKING(5, "匹配进行中"),
+        MARKING(5, "评分进行中"),
         END(10, "结束");
 
         @Getter

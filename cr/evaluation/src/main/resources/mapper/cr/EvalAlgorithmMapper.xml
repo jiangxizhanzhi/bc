@@ -57,5 +57,9 @@
         end
         as result;
     </select>
+    <select id="getAll" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm">
+        select *
+        from cr_eval_algorithm
+    </select>
 
 </mapper>

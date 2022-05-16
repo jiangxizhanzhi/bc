@@ -190,6 +190,26 @@ public class EvalAlgorithmAdminController {
 		return new BaseRsp(rsp);
 	}
 
+	@ApiOperation("获取全部算法")
+	@GetMapping("/getAll")
+	public BaseRsp<List<EvalAlgorithmRsp>> getAll() {
+
+		List<EvalAlgorithm> data = evalAlgorithmMapper.getAll();
+
+		List<EvalAlgorithmRsp> evalAlgorithmRsps = data.stream().map(evalAlgorithm -> {
+			EvalAlgorithmRsp evalAlgorithmRsp = BeanUtils.copy(evalAlgorithm,
+					EvalAlgorithmRsp.class);
+			evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithm.getResourceId());
+			evalAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(),
+					AlgorithmParamContext.class));
+			evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
+
+			return evalAlgorithmRsp;
+		}).collect(Collectors.toList());
+
+		return new BaseRsp(evalAlgorithmRsps);
+	}
+
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<EvalAlgorithmRsp>> list(EvalAlgorithmListReq listReq) {

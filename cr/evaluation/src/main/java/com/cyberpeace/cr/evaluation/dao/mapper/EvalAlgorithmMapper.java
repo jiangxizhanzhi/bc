@@ -22,6 +22,8 @@ public interface EvalAlgorithmMapper extends BaseMapper<EvalAlgorithm> {
 	IPage<EvalAlgorithm> listEvalAlgorithm(Page page, EvalListQuery listQuery);
 
 	void updateStateByIds(List<String> algorithmIds);
+
+	List<EvalAlgorithm> getAll();
 }
 
 

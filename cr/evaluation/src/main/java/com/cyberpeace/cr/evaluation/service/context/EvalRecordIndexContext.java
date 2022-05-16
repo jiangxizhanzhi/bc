@@ -17,6 +17,6 @@ public class EvalRecordIndexContext implements Serializable {
     @ApiModelProperty("指标项下关联变量项")
     private List<EvalRecordVariableContext> variables;
 
-    @ApiModelProperty("指标项专家评分配置")
+    @ApiModelProperty("指标项专家评分配置（暂不支持，未明确类型、属性评分规则）")
     private EvalRecordSpecialistContext specialist;
 }

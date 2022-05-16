@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 
@@ -56,5 +57,20 @@ public interface EvalRecordService extends IService<EvalRecord> {
     void startIndexes(EvalRecord evalRecord, EvalTask evalTask);
 
     void startVariables(EvalRecord evalRecord, EvalTask evalTask);
+
+    /**
+     * 获取测评实例中场景所有节点`id`, `name`
+     * @param roomId 靶场测评实例id
+     * @return List
+     */
+    List<EvalRoomPairRsp> getNodes(String roomId);
+
+    /**
+     * 获取房间中场景某个终端使用所有探针`id`, `name`（无论是否开启探针采集）
+     * @param roomId 靶场测评实例id
+     * @param nodeId 场景节点id
+     * @return List
+     */
+    List<EvalRoomPairRsp> getProbes(String roomId, String nodeId);
 
 }

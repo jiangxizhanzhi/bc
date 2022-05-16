@@ -1,14 +1,18 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.service.*;
@@ -273,6 +277,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (!evalIndex.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
                 nextIds = evalIndex.getChildrenIds();
             } else {
+                // todo 专家评分明确后， 在此处写入专家评分分值
                 EvalIndicator evalIndicator = thirdRelationMap.get(evalIndex.getEvalIndicatorId());
                 if (evalIndicator == null) {
                     throw new BusinessException();
@@ -572,5 +577,61 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         algorithmContext.setType(type);
 
         return algorithmContext;
+    }
+
+    @Override
+    public List<EvalRoomPairRsp> getNodes(String roomId) {
+        EvalTask evalTask = evalTaskService.getTask(roomId);
+        if (evalTask == null) {
+            throw new BusinessException();
+        }
+
+        List<EvalRoomPairRsp> results = Lists.newArrayList();
+
+        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+        JSONArray nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
+        nodesProbe.forEach(item -> {
+            JSONObject nodeItem = (JSONObject) item;
+
+            EvalRoomPairRsp result = new EvalRoomPairRsp();
+            result.setId(nodeItem.getString("id"));
+            result.setLabel(nodeItem.getString("name"));
+            results.add(result);
+        });
+
+        return results;
+    }
+
+    @Override
+    public List<EvalRoomPairRsp> getProbes(String roomId, String nodeId) {
+        EvalTask evalTask = evalTaskService.getTask(roomId);
+        if (evalTask == null) {
+            throw new BusinessException();
+        }
+
+        List<EvalRoomPairRsp> results = Lists.newArrayList();
+
+        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+        JSONObject nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("elements");
+        for (Map.Entry<String, Object> entry : nodesProbe.entrySet()) {
+            if (!entry.getKey().equals(nodeId)) {
+                continue;
+            }
+
+            JSONObject itemData = (JSONObject) entry.getValue();
+            JSONArray probesData = itemData.getJSONArray("probes");
+
+            probesData.forEach(item -> {
+                JSONObject probeItem = (JSONObject) item;
+
+                EvalRoomPairRsp result = new EvalRoomPairRsp();
+                result.setId(probeItem.getString("id"));
+                result.setLabel(probeItem.getString("name"));
+                results.add(result);
+            });
+            break;
+        }
+
+        return results;
     }
 }

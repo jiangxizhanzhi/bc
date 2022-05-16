@@ -94,5 +94,35 @@ public class EvalIndexRef extends BaseTable {
         }
     }
 
+    public enum DataAttr implements GenericEnum {
+        COST(1, "成本型"), BENEFIT(2, "效益型"), FIXED(3, "固定型"), DEVIATE(4, "偏离型");
+
+        @Getter
+        private final Integer code;
+
+        @Getter
+        private final String desc;
+
+        DataAttr(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
+
+    public enum DataType implements GenericEnum {
+        PERCENT(1, "百分比"), CYCLE(2, "周期"), INTEGER(3, "整数型");
+
+        @Getter
+        private final Integer code;
+
+        @Getter
+        private final String desc;
+
+        DataType(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
+
 
 }

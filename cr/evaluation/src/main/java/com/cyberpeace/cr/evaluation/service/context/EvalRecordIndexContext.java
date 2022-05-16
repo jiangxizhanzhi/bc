@@ -11,7 +11,7 @@ public class EvalRecordIndexContext implements Serializable {
     @ApiModelProperty("指标项ID")
     private String resourceId;
 
-    @ApiModelProperty("指标项默认类型")
+    @ApiModelProperty("三级指标项评分类型")
     private Integer type;
 
     @ApiModelProperty("指标项下关联变量项")

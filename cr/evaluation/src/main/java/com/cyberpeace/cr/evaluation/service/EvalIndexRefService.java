@@ -22,4 +22,12 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
      * @return List
      */
     List<EvalRoomPairRsp> selectVariables(String indexId);
+
+    /**
+     * 三级指标专家评分分值生成
+     * @param evalIndicator
+     * @param value
+     * @return 0~100
+     */
+    Integer thirdSpecialist(EvalIndicator evalIndicator, Integer value);
 }

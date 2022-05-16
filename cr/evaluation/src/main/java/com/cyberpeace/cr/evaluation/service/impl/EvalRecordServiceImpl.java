@@ -150,12 +150,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Map<String, EvalRecordVariableContext> evalRecordVariableContextMap = Maps.newHashMap();
         // 获取"三级指标"评分类型
         Map<String, Integer> thirdIndexesTypeMap = Maps.newHashMap();
+        Map<String, Integer> thirdSpecialistMap = Maps.newHashMap();
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
             thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())) {
                 evalRecordIndexContext.getVariables().forEach(
                         evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getVariableId(), evalRecordVariableContext)
                 );
+            } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
             }
         });
 
@@ -277,12 +280,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (!evalIndex.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
                 nextIds = evalIndex.getChildrenIds();
             } else {
-                // todo 专家评分明确后， 在此处写入专家评分分值
                 EvalIndicator evalIndicator = thirdRelationMap.get(evalIndex.getEvalIndicatorId());
                 if (evalIndicator == null) {
                     throw new BusinessException();
                 }
                 nextIds = evalIndicator.getAggregationIds();
+
+                // 专家评分, 设置默认分值
+                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndicator, thirdSpecialistMap.get(evalIndex.getResourceId())));
             }
 
             evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(

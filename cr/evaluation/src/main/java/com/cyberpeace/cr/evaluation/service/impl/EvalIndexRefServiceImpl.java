@@ -9,6 +9,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
 import com.cyberpeace.integratation.service.RemotePythonService;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,5 +82,43 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
         });
 
         return results;
+    }
+
+    private final Map<Integer, Map<Integer, Integer>> CYCLE_MAP = new HashMap<Integer, Map<Integer, Integer>>() {
+        {
+            put(EvalIndexRef.DataAttr.COST.getCode(), new HashMap<Integer, Integer>() {
+                {
+                    put(1, 20);
+                    put(2, 50);
+                    put(3, 100);
+                }
+            });
+            put(EvalIndexRef.DataAttr.BENEFIT.getCode(), new HashMap<Integer, Integer>() {
+                {
+                    put(1, 100);
+                    put(2, 50);
+                    put(3, 20);
+                }
+            });
+        }
+
+    };
+
+    @Override
+    public Integer thirdSpecialist(EvalIndicator evalIndicator, Integer value) {
+        if (evalIndicator.getDatatype().equals(EvalIndexRef.DataType.PERCENT.getCode())) {
+            return value;
+        } else if (evalIndicator.getDatatype().equals(EvalIndexRef.DataType.CYCLE.getCode())) {
+            Map<Integer, Integer> attrMap = CYCLE_MAP.get(EvalIndexRef.DataAttr.COST.getCode());
+            return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
+        } else if (evalIndicator.getDatatype().equals(EvalIndexRef.DataType.INTEGER.getCode())) {
+            // todo 等待`evalIndicator`新属性
+            if (evalIndicator.getAttribute().equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
+                return 0;
+            } else if (evalIndicator.getAttribute().equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {
+                return 0;
+            }
+        }
+        return 0;
     }
 }

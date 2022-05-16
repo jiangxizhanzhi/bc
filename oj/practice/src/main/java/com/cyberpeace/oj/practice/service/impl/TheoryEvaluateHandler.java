@@ -1,8 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -77,10 +75,27 @@ public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 	private static class MultipleEvaluate implements PracticeEvaluateService {
 
 		@Override
-		public EvaluateResult evaluate(String userAnswer, String realAnswer, Double score) {
+		public EvaluateResult evaluate(String userAnswer, String realAnswer, Double totalScore) {
 
-			return evaluateMap.get(PracticeTheory.TheoryType.SINGLE.getCode()).evaluate(userAnswer,
-					realAnswer, score);
+			if (StringUtils.isBlank(userAnswer) || StringUtils.isBlank(realAnswer)) {
+				return EvaluateResult.builder().solved(CommonConstant.FALSE)
+						.score(CommonConstant.ZERO.doubleValue()).totalScore(totalScore).build();
+			}
+
+			// 处理多选答案
+			List<String> userAnswerList = Arrays.asList(userAnswer.split("\\|"));
+			Collections.sort(userAnswerList);
+			userAnswer = StringUtils.join(userAnswerList, "");
+
+			List<String> realAnswerList = Arrays.asList(realAnswer.split("\\|"));
+			Collections.sort(realAnswerList);
+			realAnswer = StringUtils.join(realAnswerList, "");
+
+			Boolean solved = userAnswer.equals(realAnswer);
+			Double score = solved ? totalScore : CommonConstant.ZERO.doubleValue();
+			return EvaluateResult.builder().solved(solved).score(score).totalScore(totalScore)
+					.build();
+
 		}
 	}
 

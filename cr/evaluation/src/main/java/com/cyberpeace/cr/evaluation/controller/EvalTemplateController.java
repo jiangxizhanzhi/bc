@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +149,7 @@ public class EvalTemplateController {
 
 		// 复制模板信息
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
+		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
 
 		// 设置模板用户
 		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());

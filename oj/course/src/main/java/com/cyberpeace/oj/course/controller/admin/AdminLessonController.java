@@ -2,28 +2,11 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.*;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.LessonSceneService;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
-import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
-import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
-import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
-import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,23 +16,40 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.course.controller.req.*;
+import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.LessonSceneService;
+import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonPracticeBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 
 import io.swagger.annotations.*;
@@ -129,7 +129,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("后台课时详情查询接口")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
 	public BaseRsp<AdminLessonBo> get(@RequestParam(value = "course_id") String courseId,
 			@RequestParam(value = "lesson_id") String lessonId) {

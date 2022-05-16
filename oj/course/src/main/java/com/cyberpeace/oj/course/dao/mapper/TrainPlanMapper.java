@@ -13,4 +13,6 @@ public interface TrainPlanMapper extends BaseMapper<TrainPlan> {
 	TrainPlan selectByName(@Param("planName") String planName, @Param("userId") String userId);
 
 	List<TrainPlan> selectByUser(@Param("userId") String userId);
+
+	List<TrainPlan> all();
 }

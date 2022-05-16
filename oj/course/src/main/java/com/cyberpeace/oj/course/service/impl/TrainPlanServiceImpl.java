@@ -20,7 +20,8 @@ public class TrainPlanServiceImpl implements TrainPlanService {
 
 	@Override
 	public List<TrainPlanBo> trainPlanList(UserInfo userInfo) {
-		List<TrainPlan> trainPlans = trainPlanMapper.selectByUser(userInfo.getUserId());
+		List<TrainPlan> trainPlans = userInfo.isSuperuser() ? trainPlanMapper.all()
+				: trainPlanMapper.selectByUser(userInfo.getUserId());
 		return StreamApiUtils.map(trainPlans, trainPlan -> entityToBo(trainPlan));
 	}
 

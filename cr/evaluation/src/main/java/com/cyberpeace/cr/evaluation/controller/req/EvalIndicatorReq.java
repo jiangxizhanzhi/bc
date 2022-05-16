@@ -30,6 +30,9 @@ public class EvalIndicatorReq {
 	@NotNull
 	private Integer attribute;
 
+	@ApiModelProperty(value = "指标属性值", required = false)
+	private Integer attributeValue;
+
 	@ApiModelProperty(value = "描述", required = false)
 	private String description;
 

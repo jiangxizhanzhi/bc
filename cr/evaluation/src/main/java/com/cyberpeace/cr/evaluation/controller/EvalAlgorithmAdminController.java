@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -58,6 +61,7 @@ public class EvalAlgorithmAdminController {
 	 */
 	@PostMapping("")
 	@ApiOperation("新增算法")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<EvalAlgorithm> addAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
 		EvalAlgorithm evalAlgorithm = convertEvalAlgorithmReqToEvalAlgorithm(req);
@@ -112,6 +116,7 @@ public class EvalAlgorithmAdminController {
 	 */
 	@PutMapping("")
 	@ApiOperation("编辑算法")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<String> editAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
 		EvalAlgorithm originEvalAlgorithm = evalAlgorithmService.getById(req.getEvalAlgorithmId());
@@ -150,6 +155,7 @@ public class EvalAlgorithmAdminController {
 
 	@DeleteMapping("")
 	@ApiOperation("批量删除")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
 		Integer useNum = evalAlgorithmService.selectUsedNum(deleteReq.getIds());
@@ -166,12 +172,36 @@ public class EvalAlgorithmAdminController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("查询算法")
+	@GetMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
+	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
+			@ApiParam(name = "resource_id", value = "id", required = true) String resource_id) {
+
+		EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(resource_id);
+		if (null == evalAlgorithm) {
+			log.info("EvalAlgorithm not found! evalAlgorithmId=[{}]", resource_id);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		EvalAlgorithmRsp evalAlgorithmRsp = BeanUtils.copy(evalAlgorithm, EvalAlgorithmRsp.class);
+		evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithm.getResourceId());
+		evalAlgorithmRsp.setParams(
+				JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(), AlgorithmParamContext.class));
+		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
+
+		return new BaseRsp(evalAlgorithmRsp);
+	}
+
 	/**
-	 * 查询算法列表
+	 * 根据类型查询算法列表
 	 * @return
 	 */
 	@GetMapping("/type")
 	@ApiOperation("根据类型查询算法列表")
+	@RequiresPermissions(value = { MenuConstant.CMS_CR_EVALUATION_ALGORITHM,
+			MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM,
+			MenuConstant.CMS_CR_EVALUATION_INDICATOR }, logical = Logical.OR)
 	public BaseRsp<List<EvalAlgorithmRsp>>
 			algorithmList(@ApiParam(name = "type", value = "算法类型", required = true) String type) {
 
@@ -192,6 +222,9 @@ public class EvalAlgorithmAdminController {
 
 	@ApiOperation("获取全部算法")
 	@GetMapping("/getAll")
+	@RequiresPermissions(value = { MenuConstant.CMS_CR_EVALUATION_ALGORITHM,
+			MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM,
+			MenuConstant.CMS_CR_EVALUATION_INDICATOR }, logical = Logical.OR)
 	public BaseRsp<List<EvalAlgorithmRsp>> getAll() {
 
 		List<EvalAlgorithm> data = evalAlgorithmMapper.getAll();
@@ -212,6 +245,7 @@ public class EvalAlgorithmAdminController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<ListRsp<EvalAlgorithmRsp>> list(EvalAlgorithmListReq listReq) {
 		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -235,62 +269,4 @@ public class EvalAlgorithmAdminController {
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
-	@ApiOperation("查询算法")
-	@GetMapping("")
-	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
-			@ApiParam(name = "resource_id", value = "id", required = true) String resource_id) {
-
-		EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(resource_id);
-		if (null == evalAlgorithm) {
-			log.info("EvalAlgorithm not found! evalAlgorithmId=[{}]", resource_id);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		EvalAlgorithmRsp evalAlgorithmRsp = BeanUtils.copy(evalAlgorithm, EvalAlgorithmRsp.class);
-		evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithm.getResourceId());
-		evalAlgorithmRsp.setParams(
-				JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(), AlgorithmParamContext.class));
-		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
-
-		return new BaseRsp(evalAlgorithmRsp);
-	}
-	/*
-	
-	@GetMapping("/list")
-	@ApiOperation("分页查询算法列表")
-	public ListRsp<EstimateAlgorithm> list(AlgorithmPageReq req) {
-	req.validate();
-	Page page = req.toPageParam();
-	ListRsp<EstimateAlgorithm> algorithms = evalAlgorithmService
-			.selectPageByType(req.getType(), page);
-	return algorithms;
-	}
-	
-	 
-	
-	*//**
-		* 根据编号查询算法信息
-		* @param algorithmId
-		* @return
-		*//*
-			@GetMapping("/create/{algorithm_id}")
-			@ApiOperation("根据编号查询算法信息")
-			public BaseRsp<EstimateAlgorithmRsp> getAlgorithm(@ApiParam(name = "algorithm_id",
-				value = "算法编号") @PathVariable("algorithm_id") String algorithmId) {
-			
-			Preconditions.checkArgument(StringUtils.isNotBlank(algorithmId), "algorithm_id null");
-			EstimateAlgorithm estimateAlgorithm = estimateAlgorithmDao.selectById(algorithmId);
-			if (null == estimateAlgorithm) {
-				return new BaseRsp<>();
-			}
-			EstimateAlgorithmRsp algorithmRsp = new EstimateAlgorithmRsp();
-			BeanUtils.copyProperties(estimateAlgorithm, algorithmRsp);
-			List<AlgorithmParam> paramList = JSONArray.parseArray(estimateAlgorithm.getParams(),
-					AlgorithmParam.class);
-			algorithmRsp.setParams(paramList);
-			BaseRsp<EstimateAlgorithmRsp> rsp = new BaseRsp<>();
-			rsp.setData(algorithmRsp);
-			return rsp;
-			}
-			*/
 }

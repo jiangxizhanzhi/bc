@@ -2,7 +2,9 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -27,7 +30,6 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
@@ -49,8 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EvalIndicatorAdminController {
 
-	@Autowired
-	private EvalIndicatorService evalIndexService;
+
 
 	@Autowired
 	private EvalIndicatorService evalIndicatorService;
@@ -69,6 +70,7 @@ public class EvalIndicatorAdminController {
 
 	@ApiOperation("新增指标项")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<String>
 			addEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
 
@@ -112,8 +114,9 @@ public class EvalIndicatorAdminController {
 				CrCommonConstants.MAX_DESC_LEN, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 	}
 
-	@ApiOperation("编辑体系指标")
+	@ApiOperation("编辑指标项")
 	@PutMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<String>
 			editEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
 
@@ -150,9 +153,10 @@ public class EvalIndicatorAdminController {
 		return new BaseRsp(evalIndicatorReq);
 	}
 
-	@ApiOperation("查询体系指标")
+	@ApiOperation("查询指标项")
 	@GetMapping("")
-	public BaseRsp<EvalSystemRsp> getEvalIndex(
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
+	public BaseRsp<EvalIndicatorRsp> getEvalIndex(
 			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
 
 		EvalIndicator evalIndicator = evalIndicatorService.getById(resource_id);
@@ -187,7 +191,9 @@ public class EvalIndicatorAdminController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<EvalIndicator>> list(EvalNameListReq listReq) {
+	@RequiresPermissions(value = { MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM,
+			MenuConstant.CMS_CR_EVALUATION_INDICATOR }, logical = Logical.OR)
+	public BaseRsp<ListRsp<EvalIndicatorRsp>> list(EvalNameListReq listReq) {
 		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 		listQuery.setName(listReq.getPattern());
@@ -212,31 +218,9 @@ public class EvalIndicatorAdminController {
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
-	/*
-	
-		
-	
-	
-		private List<EvalIndex> convertIndexReqToIndex(List<IndexContext> firstIndexes, Integer level) {
-	
-			List<EvalIndex> evalIndexList = firstIndexes.stream().map(indexReq -> {
-				EvalIndex evalIndex = BeanUtils.copy(indexReq, EvalIndex.class);
-	
-				evalIndex.setResourceId(indexReq.getIndexId());
-				evalIndex.setChildrenIds(JsonUtil.arrayToString(indexReq.getChildrenIds()));
-				evalIndex.setAggregatingAlgorithmId(indexReq.getAlgorithmId());
-				evalIndex.setAggregatingAlgorithmParams(indexReq.getParams());
-				evalIndex.setLevel(level);
-	
-				return evalIndex;
-			}).collect(Collectors.toList());
-	
-			return evalIndexList;
-		}
-	
-		*/
 	@DeleteMapping()
 	@ApiOperation("批量删除")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
 		Boolean result = evalIndicatorService.batchDelete(deleteReq.getIds());

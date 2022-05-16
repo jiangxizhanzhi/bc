@@ -37,6 +37,12 @@ public class EvalIndicator extends BaseTable {
 	 * 指标属性
 	 */
 	private Integer attribute;
+
+	/**
+	 * 指标属性值
+	 */
+	private Integer attributeValue;
+
 	/**
 	 * 连接线
 	 */

@@ -4,13 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper">
 
-    <sql id="Base_Column_List">
-        id
-        ,resource_id,name,
-        description,third_index_id,aggregation_ids,
-        collection_ids
-    </sql>
-    <select id="selectAlgorithmSum" resultType="java.lang.Integer"
+
+<select id="selectAlgorithmSum" resultType="java.lang.Integer"
             parameterType="java.util.List">
         select count(1) from cr_eval_indicator
         where aggregating_algorithm_id in

@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.io.File;
 import java.util.List;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -160,6 +161,9 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	@PostMapping("/import")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Boolean> importTheory(@Validated TheoryImportReq theoryImportReq) {
+
+		FileUtil.validateSuffix(theoryImportReq.getFile(), FileSunffixConstant.XLSX.getDesc(),
+				FileSunffixConstant.XLS.getDesc());
 
 		// 文件先上传临时目录
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),

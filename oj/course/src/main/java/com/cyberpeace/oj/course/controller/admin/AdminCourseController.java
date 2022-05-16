@@ -263,8 +263,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@PostMapping("/batch_loads")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp importCourse(@Validated LoadCourseReq loadCourseReq) {
-		FileUtil.validateFileSuffix(loadCourseReq.getFile().getOriginalFilename(),
-				FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
+		FileUtil.validateSuffix(loadCourseReq.getFile(), FileSunffixConstant.ZIP.getDesc());
 
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
 				false, loadCourseReq.getFile(), true);

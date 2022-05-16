@@ -9,7 +9,7 @@ import com.cyberpeace.common.util.FileUtil;
 
 import lombok.Getter;
 
-public enum UploadFilePermission implements GenericEnum {
+public enum UploadImagePermission implements GenericEnum {
 
 	/** 文件上传权限枚举*/
 	CMS_COURSE_LOGO(1, "后台课程", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.CMS_COURSES, MenuConstant.WEB_OJ_COURSE }),
@@ -37,7 +37,7 @@ public enum UploadFilePermission implements GenericEnum {
 
 	public String[] menuIds;
 
-	UploadFilePermission(int type, String desc, String fileSuffix, String[] menuIds) {
+	UploadImagePermission(int type, String desc, String fileSuffix, String[] menuIds) {
 		this.code = type;
 		this.desc = desc;
 		this.fileSuffix = fileSuffix;

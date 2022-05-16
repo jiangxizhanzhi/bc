@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -317,6 +318,8 @@ public class BusinessTemplateController {
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
 			throws IOException, ZipException {
+
+		FileUtil.validateSuffix(file, FileSunffixConstant.ZIP.getDesc());
 		// 1. save file to temp dir
 		File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
 		// 2. unzip file

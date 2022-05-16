@@ -969,10 +969,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			TrainPlan trainPlan = parseTrainPlan(sheetData.get(i - CommonConstant.ONE),
 					userInfo.getUserId(), cover, i, trainPlanMap);
 
+			// 训练计划是否可覆盖 任务是否存在开始的
+			validatePlanStartAndExist(trainPlan.getResourceId(), trainPlan.getName(), cover, i);
+
 			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo,
 					i);
 			Classroom existClassRoom = classroomMapper
 					.selectByOrgAndLesson(classroom.getOrganizationId(), classroom.getLessonId());
+
 			if (null != existClassRoom && (StringUtils.isBlank(existClassRoom.getTrainPlanId())
 					|| !existClassRoom.getTrainPlanId().equals(trainPlan.getResourceId()))) {
 				throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
@@ -1002,6 +1006,23 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		});
 
 		return classrooms;
+	}
+
+	/** 校验训练计划下课堂表是否开始 开始则提醒*/
+	public void validatePlanStartAndExist(String planId, String planName, boolean cover,
+			int rowIndex) {
+		List<Classroom> classroomList = classroomMapper.selectByPlan(planId);
+
+		if (!cover && CollectionUtils.isNotEmpty(classroomList)) {
+			throw new BusinessException(OjBusinessErrorCode.LINE_TRAIN_PLAN_EXIST, rowIndex);
+		}
+
+		classroomList.forEach(classroom -> {
+			if (classroom.getStartTime().before(new Date())) {
+				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_START_NOT_COVER,
+						planName);
+			}
+		});
 	}
 
 	@Override
@@ -1065,15 +1086,17 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 */
 	private List<Classroom> getCoverRoomByPlan(String planName, String userId, boolean cover) {
 		TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
-		if (!cover && null != trainPlan) {
+		List classroomList = Lists.newArrayList();
+
+		if (null == trainPlan) {
+			return classroomList;
+		}
+
+		if (!cover && CollectionUtils.isNotEmpty(
+				classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId()))) {
 			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
 		}
 
-		if (null == trainPlan) {
-			return Lists.newArrayList();
-		}
-
-		List<Classroom> classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
 		return classroomList;
 	}
 
@@ -1185,20 +1208,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		trainPlan = trainPlanMapper.selectByName(planName, userId);
-
-		// 训练计划是否可覆盖 任务是否存在开始的
-		if (null != trainPlan) {
-			classroomValidateHandler.validatePlanCover(trainPlan.getResourceId(),
-					trainPlan.getName());
-		}
-
-		if (null != trainPlan && !cover) {
-			List<Classroom> classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
-			if (CollectionUtils.isNotEmpty(classroomList)) {
-				throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST, rowIndex);
-			}
-		}
-
 		if (null != trainPlan) {
 			trainPlanMap.put(planName, trainPlan);
 			return trainPlan;

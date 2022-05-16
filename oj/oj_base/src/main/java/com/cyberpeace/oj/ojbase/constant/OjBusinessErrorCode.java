@@ -112,7 +112,7 @@ public interface OjBusinessErrorCode {
 	String TRAIN_PLAN_NAME_IS_NULL = "102035";
 
 	/** 第x行 训练计划已存在*/
-	String TRAIN_PLAN_EXIST = "102036";
+	String LINE_TRAIN_PLAN_EXIST = "102036";
 
 	/** 第x行 训练计划对应课程不存在*/
 	String PLAN_COURSE_IS_NULL = "102037";
@@ -167,5 +167,8 @@ public interface OjBusinessErrorCode {
 
 	/** 资源正在导入*/
 	String RESOURCE_IN_IMPORT = "102054";
+
+	/** 训练计划已存在*/
+	String TRAIN_PLAN_EXIST = "102055";
 
 }

@@ -55,13 +55,6 @@ public class ClassroomValidateHandler {
 	@Autowired
 	private TrainPlanMapper trainPlanMapper;
 
-	public void validatePlanExistByName(String planName, String userId) {
-		TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
-		if (null != trainPlan) {
-			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
-		}
-	}
-
 	/**
 	 * 训练计划存在性校验
 	 * @param planId
@@ -227,19 +220,5 @@ public class ClassroomValidateHandler {
 			}
 		}
 
-	}
-
-	/**
-	 * 校验训练计划下课堂表是否开始 开始则提醒
-	 * @param planId
-	 */
-	public void validatePlanCover(String planId, String planName) {
-		List<Classroom> classroomList = classroomMapper.selectByPlan(planId);
-		classroomList.forEach(classroom -> {
-			if (classroom.getStartTime().before(new Date())) {
-				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_START_NOT_COVER,
-						planName);
-			}
-		});
 	}
 }

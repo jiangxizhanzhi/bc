@@ -1193,7 +1193,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		if (null != trainPlan && !cover) {
-			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST, rowIndex);
+			List<Classroom> classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
+			if (CollectionUtils.isNotEmpty(classroomList)) {
+				throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST, rowIndex);
+			}
 		}
 
 		if (null != trainPlan) {

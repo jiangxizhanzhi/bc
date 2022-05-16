@@ -1,6 +1,5 @@
 package com.cyberpeace.oj.course.service;
 
-import java.io.File;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -80,7 +79,7 @@ public interface ClassroomService extends IService<Classroom> {
 	 */
 	ClassroomPracticeDetailBo practiceDetail(String classroomId, String lessonId, String userId);
 
-	/**S
+	/**
 	 * 课堂数据删除 课堂数据 场景数据 分组数据
 	 * @param classroomId
 	 * @param authContext

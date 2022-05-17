@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +46,10 @@ public class EvalTaskFlowController {
 	@ApiOperation("获取任务流量列表")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/list")
-	public BaseRsp<FlowRsp> getFlowList(@ApiParam(name = "task_id", value = "测评任务id",
-			required = true) @RequestParam("task_id") String taskId) {
+	public BaseRsp<FlowRsp> getFlowList(@RequestBody @Validated EvalTaskFlowListQuery evalTaskFlowListQuery) {
 
 		// 鉴权
-		EvalTask evalTask = evalTaskService.getTask(taskId);
+		EvalTask evalTask = evalTaskService.getTask(evalTaskFlowListQuery.getTaskId());
 		List<Flow> flows = evalSceneService.getFlowList(evalTask);
 
 		return new BaseRsp<>(new FlowRsp(flows));

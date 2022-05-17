@@ -305,6 +305,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalAlgorithmRef = generateAlgorithmRef(evalIndicator.getAggregatingAlgorithmId(), evalAlgorithmMap);
 
                 // 专家评分, 设置默认分值
+                evalIndexRef.setSpecialistType(evalIndicator.getDatatype());
                 evalIndexRef.setSpecialistValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
                 evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndicator, evalIndexRef.getSpecialistValue()));
             }
@@ -407,8 +408,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 } else {
                     variableIds = JsonUtil.toJsonObjectArray(evalIndexRef1.getNextIds(), String.class);
 
-                    evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
-                    evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
+                    if (evalIndexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                        evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+                        evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
+                        evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
+                    }
                 }
                 variableIds.forEach(variableId -> {
                     if (variablesMap.contains(variableId)) {

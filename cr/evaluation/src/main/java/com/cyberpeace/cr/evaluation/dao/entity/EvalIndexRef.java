@@ -49,6 +49,11 @@ public class EvalIndexRef extends BaseTable {
     private String algorithmParams;
 
     /**
+     * 专家评分设置值（三级指标包含）
+     */
+    private Integer specialistValue;
+
+    /**
      * 当前指标项下一级ID, 为json字符串
      */
     private String nextIds;

@@ -30,4 +30,7 @@ public class EvalSystemIndexesContext implements Serializable {
 
     @ApiModelProperty("探针ID")
     private String probeId;
+
+    @ApiModelProperty("指标项专家评分配置")
+    private EvalRecordSpecialistContext specialist;
 }

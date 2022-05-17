@@ -18,6 +18,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.service.*;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
 import com.cyberpeace.integratation.model.evaluation.AlgorithmContext;
@@ -304,7 +305,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalAlgorithmRef = generateAlgorithmRef(evalIndicator.getAggregatingAlgorithmId(), evalAlgorithmMap);
 
                 // 专家评分, 设置默认分值
-                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndicator, thirdSpecialistMap.get(evalIndex.getResourceId())));
+                evalIndexRef.setSpecialistValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
+                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndicator, evalIndexRef.getSpecialistValue()));
             }
 
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
@@ -404,6 +406,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     variableIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
                 } else {
                     variableIds = JsonUtil.toJsonObjectArray(evalIndexRef1.getNextIds(), String.class);
+
+                    evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+                    evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
                 }
                 variableIds.forEach(variableId -> {
                     if (variablesMap.contains(variableId)) {

@@ -238,6 +238,7 @@ public class ExcelDataHandler {
 		try {
 			if (CollectionUtils.isEmpty(dataList)) {
 				workbook.write(new FileOutputStream(filePath));
+				return;
 			}
 
 			Field[] allFields = ObjUtil.getFields(dataList.get(CommonConstant.ZERO));

@@ -6,10 +6,16 @@
 
     <resultMap id="evalTask" type="com.cyberpeace.cr.evaluation.dao.entity.EvalTask"/>
 
-    <select id="selectSlimTaskList" resultType="com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext">
+    <select id="selectSlimTaskListByTemplateIdAndStatus" resultType="com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext">
         select resource_id, task_name, mp_scene_id
         from cr_eval_task
         where template_id = #{templateId}
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTask$Status@RUNNING.getCode()">
+            and end_time is null
+        </if>
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTask$Status@FINISHED.getCode()">
+            and end_time is not null
+        </if>
     </select>
 
     <select id="selectIdsByTemplateIdAndStatus" resultType="java.lang.String">

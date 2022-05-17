@@ -54,7 +54,7 @@ public class EvalSceneEventListener extends MessageListener {
 		// 判断删除为靶场执行时，跳过后续操作
 		String operator = JSON.parseObject(context.getPassThrough(), JSONObject.class)
 				.getString(WebConstant.PASS_THROUGH_OPERATOR);
-		if (!StringUtils.isBlank(operator) && operator.equals(Operator.BC.getDesc())) {
+		if (StringUtils.isNotEmpty(operator) && operator.equals(Operator.BC.getDesc())) {
 			return true;
 		}
 

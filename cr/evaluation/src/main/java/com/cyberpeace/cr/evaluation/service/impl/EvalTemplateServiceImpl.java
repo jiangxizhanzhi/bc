@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +26,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
@@ -83,11 +84,17 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	}
 
 	@Override
-	public List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate){
+	public List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate, Boolean isFinished) {
 
-		List<EvalTaskSlimContext> evalTaskSlimContexts = evalTaskMapper.selectSlimTaskList(evalTemplate.getResourceId());
+		if (isFinished != null && isFinished) {
+			return evalTaskMapper.selectSlimTaskListByTemplateIdAndStatus(
+					evalTemplate.getResourceId(), EvalTask.Status.FINISHED.getCode());
+		}
 
-		if (evalTemplate.getCurrentTaskId().isEmpty()){
+		List<EvalTaskSlimContext> evalTaskSlimContexts = evalTaskMapper
+				.selectSlimTaskListByTemplateIdAndStatus(evalTemplate.getResourceId(), null);
+
+		if (StringUtils.isEmpty(evalTemplate.getCurrentTaskId())) {
 			evalTaskSlimContexts.add(new EvalTaskSlimContext());
 		}
 
@@ -111,7 +118,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			List<String> evalTaskList = evalTaskMapper.selectIdsByTemplateIdAndStatus(templateId,
 					null);
 			for (String taskId : evalTaskList) {
-				evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId,true));
+				evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId, true));
 			}
 			evalTemplateMapper.deleteById(templateId);
 		}

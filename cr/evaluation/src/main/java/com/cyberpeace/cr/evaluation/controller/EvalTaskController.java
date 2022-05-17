@@ -21,6 +21,7 @@ import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeLineRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeNodesRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
@@ -30,6 +31,7 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOperContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -144,7 +146,7 @@ public class EvalTaskController {
 
 		// task_id未赋值时。默认返回当前实例
 		String currentTaskId = evalTemplate.getCurrentTaskId();
-		if (StringUtils.isEmpty(taskId) && currentTaskId != null && !currentTaskId.isEmpty()) {
+		if (StringUtils.isEmpty(taskId) && StringUtils.isNotEmpty(currentTaskId)) {
 			taskId = currentTaskId;
 		}
 
@@ -240,6 +242,28 @@ public class EvalTaskController {
 		evalTaskTimeLineRsp.setEndTime(evalTask.getEndTime());
 
 		return new BaseRsp<>(evalTaskTimeLineRsp);
+	}
+
+	@ApiOperation("查询测评任务时间节点")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("/time_nodes")
+	public BaseRsp<EvalTaskTimeNodesRsp> getTimeNodes(
+			@ApiParam(name = "template_id", value = "测评靶场模板id",
+					required = true) @RequestParam("template_id") String templateId,
+			@ApiParam(name = "task_id", value = "测评任务id",
+					required = true) @RequestParam("task_id") String taskId) {
+
+		// 构建返回数据
+		EvalTaskTimeNodesRsp evalTaskTimeNodesRsp = new EvalTaskTimeNodesRsp();
+		evalTaskTimeNodesRsp.setTaskId(taskId);
+
+		EvalTask evalTask = evalTaskService.getTask(taskId);
+		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
+				.getFinishedSteps(taskId);
+		evalTimeLineContextList.add(0, new EvalTimeLineContext("场景启动", evalTask.getStartTime()));
+		evalTimeLineContextList.add(new EvalTimeLineContext("场景结束", evalTask.getEndTime()));
+		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);
+		return new BaseRsp<>(evalTaskTimeNodesRsp);
 	}
 
 	@ApiOperation("任务名称校验")

@@ -121,17 +121,21 @@ public class EvalTemplateController {
 	@ApiOperation("模板任务列表查询")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/task_list")
-	public BaseRsp<EvalTemplateTaskListRsp> getEvalTemplateTaskList(@ApiParam(name = "template_id",
-			value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId) {
+	public BaseRsp<EvalTemplateTaskListRsp> getEvalTemplateTaskList(
+			@ApiParam(name = "template_id", value = "测评靶场模板id",
+					required = true) @RequestParam("template_id") String templateId,
+			@ApiParam(name = "is_finished", value = "是否只展示已结束任务", required = false) @RequestParam(
+					value = "is_finished", required = false) Boolean isFinished) {
 
 		// 校验用户身份并获取测评靶场模板实体
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
 		EvalTemplateTaskListRsp evalTemplateTaskListRsp = new EvalTemplateTaskListRsp();
 
-		evalTemplateTaskListRsp.setTaskList(evalTemplateService.listTask(evalTemplate));;
+		evalTemplateTaskListRsp
+				.setTaskList(evalTemplateService.listTask(evalTemplate, isFinished));;
 
-		if (!StringUtils.isEmpty(evalTemplate.getCurrentTaskId())) {
+		if (StringUtils.isNotEmpty(evalTemplate.getCurrentTaskId())) {
 			evalTemplateTaskListRsp.setCurrentTaskId(evalTemplate.getCurrentTaskId());
 		}
 

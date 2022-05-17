@@ -14,7 +14,8 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 @Repository
 public interface EvalTaskMapper extends BaseMapper<EvalTask> {
 
-	List<EvalTaskSlimContext> selectSlimTaskList(String templateId);
+	List<EvalTaskSlimContext> selectSlimTaskListByTemplateIdAndStatus(String templateId,
+			Integer status);
 
 	List<String> selectIdsByTemplateIdAndStatus(String templateId, Integer status);
 

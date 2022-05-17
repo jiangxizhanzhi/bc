@@ -21,4 +21,11 @@ public class EvalTimeLineContext {
 		this.stepId = resourceId;
 	}
 
+	public EvalTimeLineContext(String title, Date endTime) {
+		this.title = title;
+		this.endTime = endTime;
+	}
+
+	public EvalTimeLineContext() {}
+
 }

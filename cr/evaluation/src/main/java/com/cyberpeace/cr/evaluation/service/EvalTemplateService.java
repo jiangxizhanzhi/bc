@@ -32,7 +32,7 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	 * @param evalTemplate
 	 * @return
 	 */
-	List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate);
+	List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate, Boolean isFinished);
 
 	/** 获取Logo文件路径
 	 * @param attachmentId

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
@@ -191,8 +192,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
     }
 
     @Override
-    public ListRsp<EvalVariableDataPageRsp> originData(String variableId) {
-        evalVariableRefProbeDataService.lambdaQuery().eq(EvalVariableRefProbeData::getVariableId, variableId).list();
-        return null;
+    public ListRsp<EvalVariableDataPageRsp> originData(Page page, String variableId) {
+        return evalVariableRefProbeDataService.variableProbeData(page, variableId);
     }
 }

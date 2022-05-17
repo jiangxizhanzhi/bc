@@ -10,5 +10,5 @@ public class EvalVariableDataPageRsp implements Serializable {
 
     private String collectionTime;
 
-    private String originData;
+    private String content;
 }

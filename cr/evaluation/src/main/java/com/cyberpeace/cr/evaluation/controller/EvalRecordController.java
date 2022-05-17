@@ -5,8 +5,8 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalVariableProbeDataReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
@@ -125,7 +125,7 @@ public class EvalRecordController {
 
     @ApiOperation("变量项采集信息（原始数据）")
     @GetMapping("/variables/data")
-    public BaseRsp<ListRsp<EvalVariableDataPageRsp>> VariableData(@RequestParam("variable_id") String variableId) {
-        return new BaseRsp<>(evalVariableRefService.originData(variableId));
+    public BaseRsp<ListRsp<EvalVariableDataPageRsp>> VariableData(EvalVariableProbeDataReq queryParams) {
+        return new BaseRsp<>(evalVariableRefService.originData(queryParams.toPageParam(), queryParams.getVariableId()));
     }
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
@@ -35,5 +36,5 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
     EvalVariableGraphRsp graph(String variableId);
 
-    ListRsp<EvalVariableDataPageRsp> originData(String variableId);
+    ListRsp<EvalVariableDataPageRsp> originData(Page page, String variableId);
 }

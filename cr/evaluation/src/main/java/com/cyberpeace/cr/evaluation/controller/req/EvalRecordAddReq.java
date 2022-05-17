@@ -16,7 +16,7 @@ public class EvalRecordAddReq implements Serializable {
     @ApiModelProperty(value = "名称", required = true)
     private String name;
 
-    @ApiModelProperty(value = "描述", required = true)
+    @ApiModelProperty("描述")
     private String description;
 
     @ApiModelProperty(value = "靶场测评实例ID", required = true)

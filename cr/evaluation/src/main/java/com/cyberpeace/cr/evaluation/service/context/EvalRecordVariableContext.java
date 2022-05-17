@@ -9,18 +9,15 @@ import java.io.Serializable;
 @Data
 public class EvalRecordVariableContext implements Serializable {
 
-    @ApiModelProperty("变量项ID")
-    @NotNull
+    @ApiModelProperty(value = "变量项ID", required = true)
     private String variableId;
 
     @ApiModelProperty("变量项名称")
     private String name;
 
-    @ApiModelProperty("场景主机节点ID")
-    @NotNull
+    @ApiModelProperty(value = "场景主机节点ID", required = true)
     private String deviceId;
 
-    @ApiModelProperty("选择主机可用探针ID")
-    @NotNull
+    @ApiModelProperty(value = "选择主机可用探针ID", required = true)
     private String probeId;
 }

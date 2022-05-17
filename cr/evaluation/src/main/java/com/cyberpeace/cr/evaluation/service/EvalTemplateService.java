@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
@@ -26,6 +27,12 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	 * @return
 	 */
 	IPage<EvalTemplate> list(EvalTemplateListQuery evalTemplateListQuery);
+
+	/** 查询测试靶场模板的任务列表
+	 * @param evalTemplate
+	 * @return
+	 */
+	List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate);
 
 	/** 获取Logo文件路径
 	 * @param attachmentId

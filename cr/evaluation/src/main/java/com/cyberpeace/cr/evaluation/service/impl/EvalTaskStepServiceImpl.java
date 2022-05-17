@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskStepMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 
@@ -32,8 +34,6 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 
 	@Override
 	public EvalTaskStep getTaskStep(String stepId) {
-
-		// 获取步骤时校验权限 todo
 
 		EvalTaskStep evalTaskStep = getById(stepId);
 
@@ -102,10 +102,37 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 
 		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectStepsByTaskId(taskId);
 
-		for (EvalTaskStep evalTaskStep : evalTaskSteps) {
+		for (int i = 0; i < evalTaskSteps.size(); i++) {
+
+			EvalTaskStep evalTaskStep = evalTaskSteps.get(i);
+
 			EvalTaskStepContext evalTaskStepContext = BeanUtils.copy(evalTaskStep,
 					EvalTaskStepContext.class);
 			evalTaskStepContext.setStatus();
+
+			if (i == 0) {
+				evalTaskStepContext.setPreStepStatus(EvalTaskStepContext.Status.FINISHED.getCode());
+			} else {
+				evalTaskStepContext.setPreStepStatus(evalTaskStepContexts.get(i - 1).getStatus());
+			}
+
+			evalTaskStepContexts.add(evalTaskStepContext);
+		}
+
+		return evalTaskStepContexts;
+	}
+
+	@Override
+	public List<EvalTaskStepContext> getTemplateSteps(String stepConfig) {
+
+		List<EvalTaskStepContext> evalTaskStepContexts = Lists.newArrayList();
+
+		List<EvalTaskStepConfig> evalTaskStepConfigList = JsonUtil.toJsonObjectArray(stepConfig,
+				EvalTaskStepConfig.class);
+
+		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
+			EvalTaskStepContext evalTaskStepContext = BeanUtils.copy(evalTaskStepConfig,
+					EvalTaskStepContext.class);
 			evalTaskStepContexts.add(evalTaskStepContext);
 		}
 

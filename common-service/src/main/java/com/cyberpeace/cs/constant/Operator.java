@@ -5,11 +5,11 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Getter;
 
 /**
- * 目录划分
+ * 操作对象
  */
 public enum Operator implements GenericEnum {
 
-	CR(1, "cr");
+	BC(1, "bc");
 
 	@Getter
 	private Integer code;

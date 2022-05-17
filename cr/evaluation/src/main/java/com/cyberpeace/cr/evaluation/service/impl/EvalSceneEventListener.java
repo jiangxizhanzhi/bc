@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.util.Date;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,18 +54,17 @@ public class EvalSceneEventListener extends MessageListener {
 		// 判断删除为靶场执行时，跳过后续操作
 		String operator = JSON.parseObject(context.getPassThrough(), JSONObject.class)
 				.getString(WebConstant.PASS_THROUGH_OPERATOR);
-		if (!StringUtils.isBlank(operator) && operator.equals(Operator.CR.getDesc())) {
+		if (!StringUtils.isBlank(operator) && operator.equals(Operator.BC.getDesc())) {
 			return true;
 		}
 
-		EvalTaskOperContext evalTaskOperContext = evalTaskService
-				.getEvalTaskOperContext(businessId);
+		EvalTaskOperContext evalTaskOperContext = evalTaskService.getEvalTaskOperContext(businessId,
+				false);
 
 		EvalTask evalTask = evalTaskOperContext.getEvalTask();
 
 		if (evalTask != null) {
-			evalTask.setTaskName(new Date().toString());
-			evalTaskService.stopTask(evalTaskOperContext);
+			evalTaskService.deleteTask(evalTaskOperContext);
 		}
 
 		return true;

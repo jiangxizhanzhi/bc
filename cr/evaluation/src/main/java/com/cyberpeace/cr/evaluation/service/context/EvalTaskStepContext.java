@@ -28,9 +28,12 @@ public class EvalTaskStepContext {
 	private Date endTime;
 
 	@ApiModelProperty("步骤状态")
-	private Integer status;
+	private Integer status = Status.INIT.getCode();
 
-	public void setResourceId(String resourceId){
+	@ApiModelProperty("前序步骤状态")
+	private Integer preStepStatus = Status.INIT.getCode();
+
+	public void setResourceId(String resourceId) {
 		this.stepId = resourceId;
 	}
 

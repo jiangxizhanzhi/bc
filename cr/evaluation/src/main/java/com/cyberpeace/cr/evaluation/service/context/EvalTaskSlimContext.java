@@ -7,7 +7,7 @@ public class EvalTaskSlimContext {
 
 	private String taskId;
 
-	private String taskName;
+	private String taskName = "当前测试实例";
 
 	private String mpSceneId;
 

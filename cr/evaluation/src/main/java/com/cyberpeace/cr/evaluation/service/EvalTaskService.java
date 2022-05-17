@@ -16,13 +16,13 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 */
 	EvalTask getTask(String taskId);
 
-	EvalTaskOperContext getEvalTaskOperContext(String taskId);
+	EvalTaskOperContext getEvalTaskOperContext(String taskId, Boolean validateUser);
 
 	/** 启动测评靶场任务
 	 * @param evalTemplate
 	 * @return
 	 */
-	Boolean startTask(EvalTemplate evalTemplate);
+	String startTask(EvalTemplate evalTemplate);
 
 	/** 停止测评靶场任务
 	 * @param evalTaskOperContext

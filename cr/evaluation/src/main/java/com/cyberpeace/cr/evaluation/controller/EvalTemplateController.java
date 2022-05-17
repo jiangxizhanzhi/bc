@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.cyberpeace.common.util.JsonUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
@@ -21,8 +21,8 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateTaskListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
@@ -47,9 +47,6 @@ public class EvalTemplateController {
 
 	@Autowired
 	private EvalTemplateService evalTemplateService;
-
-	@Autowired
-	private EvalTaskMapper evalTaskMapper;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -97,7 +94,6 @@ public class EvalTemplateController {
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
-		evalTemplateRsp.setTaskList(evalTaskMapper.selectSlimTaskList(templateId));
 		return new BaseRsp<>(evalTemplateRsp);
 	}
 
@@ -119,6 +115,26 @@ public class EvalTemplateController {
 		});
 
 		return new BaseRsp<>(PageUtil.getListResult(data));
+	}
+
+	@ApiOperation("模板任务列表查询")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("/task_list")
+	public BaseRsp<EvalTemplateTaskListRsp> getEvalTemplateTaskList(@ApiParam(name = "template_id",
+			value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId) {
+
+		// 校验用户身份并获取测评靶场模板实体
+		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
+
+		EvalTemplateTaskListRsp evalTemplateTaskListRsp = new EvalTemplateTaskListRsp();
+
+		evalTemplateTaskListRsp.setTaskList(evalTemplateService.listTask(evalTemplate));;
+
+		if (!evalTemplate.getCurrentTaskId().isEmpty()) {
+			evalTemplateTaskListRsp.setCurrentTaskId(evalTemplate.getCurrentTaskId());
+		}
+
+		return new BaseRsp<>(evalTemplateTaskListRsp);
 	}
 
 	@ApiOperation("模板删除")

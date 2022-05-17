@@ -17,7 +17,6 @@ public class EvalTaskStopReq {
 	private String taskId;
 
 	@ApiModelProperty(value = "测评任务名称", required = false)
-	@NotNull
 	private String taskName;
 
 }

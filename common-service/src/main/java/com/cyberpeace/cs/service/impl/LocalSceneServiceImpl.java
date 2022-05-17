@@ -2,6 +2,7 @@ package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
 
+import com.cyberpeace.cs.constant.Operator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -353,6 +354,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		sceneOpsContext.setId(localScene.getMpSceneId());
 		sceneOpsContext.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
 				localScene.getBusinessInstanceId());
+		sceneOpsContext.getContext().getPass_through().put(WebConstant.PASS_THROUGH_OPERATOR,
+				Operator.BC.getDesc());
 
 		return sceneOpsContext;
 	}

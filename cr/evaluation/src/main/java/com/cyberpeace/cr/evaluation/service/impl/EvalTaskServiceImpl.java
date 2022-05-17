@@ -79,22 +79,21 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public EvalTaskOperContext getEvalTaskOperContext(String taskId) {
+	public EvalTaskOperContext getEvalTaskOperContext(String taskId, Boolean validateUser) {
 
 		EvalTaskOperContext evalTaskOperContext = new EvalTaskOperContext();
 
-		EvalTask evalTask = getTask(taskId);
+		EvalTask evalTask = validateUser ? getTask(taskId) : getById(taskId);
 
 		evalTaskOperContext.setEvalTask(evalTask);
 
-		// 判断localscene为空时 todo
 		evalTaskOperContext.setLocalScene(localSceneService.getById(evalTask.getLocalSceneId()));
 
 		return evalTaskOperContext;
 	}
 
 	@Override
-	public Boolean startTask(EvalTemplate evalTemplate) {
+	public String startTask(EvalTemplate evalTemplate) {
 
 		String templateId = evalTemplate.getResourceId();
 
@@ -154,7 +153,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
 
-		return true;
+		return evalTask.getResourceId();
 
 	}
 

@@ -16,6 +16,7 @@
         select *
         from cr_eval_task_step
         where task_id = #{taskId}
+        order by stage
     </select>
 
     <select id="isNotFinished" resultType="java.lang.Boolean">

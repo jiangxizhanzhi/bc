@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,6 +83,18 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	}
 
 	@Override
+	public List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate){
+
+		List<EvalTaskSlimContext> evalTaskSlimContexts = evalTaskMapper.selectSlimTaskList(evalTemplate.getResourceId());
+
+		if (evalTemplate.getCurrentTaskId().isEmpty()){
+			evalTaskSlimContexts.add(new EvalTaskSlimContext());
+		}
+
+		return evalTaskSlimContexts;
+	}
+
+	@Override
 	public String getLogoPath(String attachmentId) {
 		Attachment attachment = attachmentService.getById(attachmentId);
 		if (attachment != null) {
@@ -98,7 +111,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			List<String> evalTaskList = evalTaskMapper.selectIdsByTemplateIdAndStatus(templateId,
 					null);
 			for (String taskId : evalTaskList) {
-				evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId));
+				evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId,true));
 			}
 			evalTemplateMapper.deleteById(templateId);
 		}

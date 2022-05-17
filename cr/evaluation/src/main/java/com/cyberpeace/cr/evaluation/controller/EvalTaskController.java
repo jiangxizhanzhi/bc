@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.controller;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -16,12 +17,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.evaluation.controller.req.*;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeLineRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
@@ -51,9 +52,6 @@ public class EvalTaskController {
 	@Autowired
 	private EvalTaskStepService evalTaskStepService;
 
-	@Autowired
-	private EvalTaskMapper evalTaskMapper;
-
 	@ApiOperation("启动步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/step/start")
@@ -61,6 +59,9 @@ public class EvalTaskController {
 
 		// 校验步骤是否存在
 		EvalTaskStep evalTaskStep = evalTaskStepService.getTaskStep(evalTaskStepReq.getStepId());
+
+		// 校验用户权限
+		evalTaskService.getTask(evalTaskStep.getTaskId());
 
 		Boolean result = evalTaskStepService.startStep(evalTaskStep);
 
@@ -75,6 +76,9 @@ public class EvalTaskController {
 		// 校验步骤是否存在
 		EvalTaskStep evalTaskStep = evalTaskStepService.getTaskStep(evalTaskStepReq.getStepId());
 
+		// 校验用户权限
+		evalTaskService.getTask(evalTaskStep.getTaskId());
+
 		Boolean result = evalTaskStepService.stopStep(evalTaskStep);
 
 		return new BaseRsp<>(result);
@@ -84,7 +88,7 @@ public class EvalTaskController {
 	@ApiOperation("启动测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/start")
-	public BaseRsp<Boolean>
+	public BaseRsp<EvalTaskIdRsp>
 			startEvalTask(@RequestBody @Validated EvalTaskStartReq evalTaskStartReq) {
 
 		String templateId = evalTaskStartReq.getTemplateId();
@@ -96,9 +100,9 @@ public class EvalTaskController {
 
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
-		Boolean result = evalTaskService.startTask(evalTemplate);
+		String taskId = evalTaskService.startTask(evalTemplate);
 
-		return new BaseRsp<>(result);
+		return new BaseRsp<>(new EvalTaskIdRsp(taskId));
 	}
 
 	@ApiOperation("关闭测评任务")
@@ -107,24 +111,23 @@ public class EvalTaskController {
 	public BaseRsp<Boolean> stopEvalTask(@RequestBody @Validated EvalTaskStopReq evalTaskStopReq) {
 
 		EvalTaskOperContext evalTaskOperContext = evalTaskService
-				.getEvalTaskOperContext(evalTaskStopReq.getTaskId());
+				.getEvalTaskOperContext(evalTaskStopReq.getTaskId(), true);
 		EvalTask evalTask = evalTaskOperContext.getEvalTask();
 		String taskName = evalTaskStopReq.getTaskName();
-		Boolean result = null;
 
-		// 删除场景及任务
-		if (taskName == null) {
-			result = evalTaskService.deleteTask(evalTaskOperContext);
+		// 没有任务名称时，删除场景及任务
+		if (taskName.isEmpty()) {
+			return new BaseRsp<>(evalTaskService.deleteTask(evalTaskOperContext));
 		}
 
-		// 关闭任务场景
+		// 存在任务名称时，关闭任务场景
 		if (evalTaskService.validateName(taskName, evalTask.getTemplateId(),
 				evalTask.getResourceId())) {
 			evalTask.setTaskName(taskName);
-			result = evalTaskService.stopTask(evalTaskOperContext);
+			return new BaseRsp<>(evalTaskService.stopTask(evalTaskOperContext));
 		}
 
-		return new BaseRsp<>(result);
+		return new BaseRsp<>(false);
 	}
 
 	@ApiOperation("查询测评任务")
@@ -140,7 +143,7 @@ public class EvalTaskController {
 
 		// task_id未赋值时。默认返回当前实例
 		String currentTaskId = evalTemplate.getCurrentTaskId();
-		if (taskId == null && currentTaskId != null && !currentTaskId.isEmpty()) {
+		if (taskId.isEmpty() && currentTaskId != null && !currentTaskId.isEmpty()) {
 			taskId = currentTaskId;
 		}
 
@@ -149,7 +152,7 @@ public class EvalTaskController {
 		evalTaskRsp.setTemplateName(evalTemplate.getName());
 		SceneViewContext sceneViewContext = null;
 
-		if (taskId == null) {
+		if (taskId.isEmpty()) {
 			sceneViewContext = evalSceneService.viewScene(null, evalTemplate.getTopoId());
 
 		} else {
@@ -172,7 +175,7 @@ public class EvalTaskController {
 			deleteEvalTask(@RequestBody @Validated EvalTaskDeleteReq evalTaskDeleteReq) {
 
 		for (String taskId : evalTaskDeleteReq.getTaskIds()) {
-			evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId));
+			evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId, true));
 		}
 
 		return new BaseRsp<>(true);
@@ -187,12 +190,21 @@ public class EvalTaskController {
 			@ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(
 					value = "task_id", required = false) String taskId) {
 
-		if (taskId == null) {
-			taskId = evalTemplateService.getById(templateId).getCurrentTaskId();
+		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
+
+		if (taskId.isEmpty()) {
+			taskId = evalTemplate.getCurrentTaskId();
 		}
 
-		List<EvalTaskStepContext> evalTaskStepContextList = evalTaskStepService
-				.getTaskSteps(taskId);
+		List<EvalTaskStepContext> evalTaskStepContextList = Lists.newArrayList();
+
+		// 处理模板下无任务的情况
+		if (taskId.isEmpty()) {
+			evalTaskStepContextList = evalTaskStepService
+					.getTemplateSteps(evalTemplate.getStepConfig());
+		} else {
+			evalTaskStepContextList = evalTaskStepService.getTaskSteps(taskId);
+		}
 
 		return new BaseRsp<>(evalTaskStepContextList);
 	}
@@ -207,8 +219,8 @@ public class EvalTaskController {
 					value = "task_id", required = false) String taskId) {
 
 		// 未传入任务Id时提取当前活动任务
-		if (taskId == null) {
-			taskId = evalTemplateService.getById(templateId).getCurrentTaskId();
+		if (taskId.isEmpty()) {
+			taskId = evalTemplateService.getTemplate(templateId).getCurrentTaskId();
 		}
 
 		// 构建返回数据
@@ -217,7 +229,7 @@ public class EvalTaskController {
 		evalTaskTimeLineRsp.setCurrentTime(new Date());
 
 		// 处理模板下无任务的情况
-		if (taskId == null) {
+		if (taskId.isEmpty()) {
 			return new BaseRsp<>(evalTaskTimeLineRsp);
 		}
 

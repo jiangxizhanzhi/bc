@@ -162,13 +162,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Map<String, Integer> thirdSpecialistMap = Maps.newHashMap();
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
             thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
-            if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())) {
-                evalRecordIndexContext.getVariables().forEach(
-                        evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext)
-                );
-            } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+            if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
             }
+            evalRecordIndexContext.getVariables().forEach(
+                    evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext)
+            );
         });
 
         // 获取一、二、三级指标

@@ -70,9 +70,9 @@ public class CrCommonValidator {
 		}
 	}
 
-	public static void validateScore(int target, int minValue, int maxValue, String errorCode) {
+	public static void validateRange(int target, int minValue, int maxValue, String errorCode) {
 		if (target < minValue || target > maxValue) {
-			throw new BusinessException(errorCode);
+			throw new BusinessException(errorCode, minValue, maxValue);
 		}
 	}
 

@@ -148,6 +148,7 @@ public class RoleController {
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
+		input.validate();
 		Role role = getEntityFromAddInput(input);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -166,6 +167,7 @@ public class RoleController {
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
+		input.validate();
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 
 		Role originEntity = getOr404(resourceId);

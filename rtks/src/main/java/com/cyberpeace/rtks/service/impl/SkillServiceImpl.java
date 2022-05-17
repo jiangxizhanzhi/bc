@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -107,7 +108,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public void addMissionRelation(String skillId, List<IdWeight> missionTemplates) {
-		if (missionTemplates.isEmpty()) {
+		if (CollectionUtils.isEmpty(missionTemplates)) {
 			return;
 		}
 		List<SkillMissionRelation> relations = Lists.newArrayList();

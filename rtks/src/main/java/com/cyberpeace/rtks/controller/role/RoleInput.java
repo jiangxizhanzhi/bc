@@ -3,6 +3,9 @@ package com.cyberpeace.rtks.controller.role;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.google.common.collect.Lists;
 
@@ -38,5 +41,18 @@ public class RoleInput implements Serializable {
 
 	@ApiModelProperty("知识点权重（百分比）")
 	private Integer knowledgeWeight;
+
+	public void validate() {
+		knowledgeIdWeights.forEach((knowledgeIdWeight) -> {
+			CrCommonValidator.validateRange(knowledgeIdWeight.getWeight(),
+					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
+					RtksBusinessErrorCode.INVALID_WEIGHT);
+		});
+		skillIdWeights.forEach((skillIdWeight) -> {
+			CrCommonValidator.validateRange(skillIdWeight.getWeight(),
+					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
+					RtksBusinessErrorCode.INVALID_WEIGHT);
+		});
+	}
 
 }

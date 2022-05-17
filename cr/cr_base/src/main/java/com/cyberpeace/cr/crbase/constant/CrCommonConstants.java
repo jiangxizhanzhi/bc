@@ -54,4 +54,13 @@ public interface CrCommonConstants {
 	Integer MAX_NAME_STR_LEN = ConfigReader.readInt("cr.str.len.name.max");
 
 	Integer MAX_DESC_LEN = ConfigReader.readInt("cr.desc.len.max");
+
+	Integer MIN_SKILL_WEIGHT = ConfigReader.readInt("rtks.skill.weight.min");
+
+	Integer MAX_SKILL_WEIGHT = ConfigReader.readInt("rtks.skill.weight.max");
+
+	Integer MIN_MISSION_WEIGHT = ConfigReader.readInt("rtks.mission.weight.min");
+
+	Integer MAX_MISSION_WEIGHT = ConfigReader.readInt("rtks.mission.weight.max");
+
 }

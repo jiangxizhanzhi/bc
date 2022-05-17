@@ -59,6 +59,7 @@ public class SkillController {
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> addSkill(@RequestBody @Validated SkillAddReq skillAddReq) {
+		skillAddReq.validate();
 		skillService.checkResourceId(skillAddReq.getResourceId());
 		Skill skill = new Skill();
 		skill.setResourceId(skillAddReq.getResourceId());
@@ -81,6 +82,7 @@ public class SkillController {
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> modifySkill(@RequestBody @Validated SkillAddReq skillAddReq) {
+		skillAddReq.validate();
 		String newContent = skillAddReq.getContent();
 		Skill skill = skillService.getOr404(skillAddReq.getResourceId());
 		// 校验 content

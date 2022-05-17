@@ -9,7 +9,10 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
@@ -124,6 +127,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalRecordRsp recordRsp = BeanUtils.copy(evalRecord, EvalRecordRsp.class);
         recordRsp.setIndexes(Lists.newArrayList());
         List<EvalIndexRef> fullIndexes = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordRsp.getResourceId()).list();
+        fullIndexes.sort(Comparator.comparing(EvalIndexRef::getLevel));
+
         Map<String, EvalIndexRef> fullIndexesMap = fullIndexes.stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
 
         Map<String, EvalVariableRef> fullVariablesMap = evalVariableRefService.lambdaQuery().eq(
@@ -160,7 +165,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())) {
                 evalRecordIndexContext.getVariables().forEach(
-                        evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getVariableId(), evalRecordVariableContext)
+                        evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext)
                 );
             } else if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
@@ -278,14 +283,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setType(thirdIndexesTypeMap.getOrDefault(evalIndex.getResourceId(), EvalIndexRef.Type.SYSTEM.getCode()));
             evalIndexRef.setLevel(evalIndex.getLevel());
 
-            EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(evalIndex.getAggregatingAlgorithmId(), evalAlgorithmMap);
-            evalIndexRef.setAlgorithmParams(evalIndex.getAggregatingAlgorithmParams());
-            evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
-            evalAlgorithmRefList.add(evalAlgorithmRef);
+//            EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(evalIndex.getAggregatingAlgorithmId(), evalAlgorithmMap);
 
             String nextIds;
+            EvalAlgorithmRef evalAlgorithmRef;
             if (!evalIndex.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
+                evalIndexRef.setAlgorithmParams(evalIndex.getAggregatingAlgorithmParams());
+
                 nextIds = evalIndex.getChildrenIds();
+                evalAlgorithmRef = generateAlgorithmRef(evalIndex.getAggregatingAlgorithmId(), evalAlgorithmMap);
             } else {
                 EvalIndicator evalIndicator = thirdRelationMap.get(evalIndex.getEvalIndicatorId());
                 // todo 暂时取消
@@ -293,10 +299,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 //                    throw new BusinessException();
 //                }
                 nextIds = evalIndicator.getAggregationIds();
+                evalAlgorithmRef = generateAlgorithmRef(evalIndicator.getAggregatingAlgorithmId(), evalAlgorithmMap);
 
                 // 专家评分, 设置默认分值
                 evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndicator, thirdSpecialistMap.get(evalIndex.getResourceId())));
             }
+
+            evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
+            evalAlgorithmRefList.add(evalAlgorithmRef);
 
             evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(
                     nextIds, String.class
@@ -333,7 +343,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     private EvalAlgorithmRef generateAlgorithmRef(String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap) {
         EvalAlgorithm originAlgorithm = originAlgorithmMap.get(algorithmId);
-        EvalAlgorithmRef newAlgorithm = BeanUtils.copy(originAlgorithm, EvalAlgorithmRef.class);
+        EvalAlgorithmRef newAlgorithm = new EvalAlgorithmRef();
+        org.springframework.beans.BeanUtils.copyProperties(originAlgorithm, newAlgorithm, "id");
         newAlgorithm.setResourceId(IDGeneratorUtil.getID());
         return newAlgorithm;
     }
@@ -354,7 +365,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         requestData.getIndexes().forEach(evalRecordIndexContext -> evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> {
             EvalVariableRef evalVariableRef = new EvalVariableRef();
             BeanUtils.copyProperties(evalRecordVariableContext, evalVariableRef);
-            evalVariableRef.setResourceId(evalRecordVariableContext.getVariableId());
+            evalVariableRef.setResourceId(evalRecordVariableContext.getResourceId());
             evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
             evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
             evalVariableRefs.add(evalVariableRef);

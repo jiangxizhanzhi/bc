@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class EvalRecordVariableContext implements Serializable {
 
     @ApiModelProperty(value = "变量项ID", required = true)
-    private String variableId;
+    private String resourceId;
 
     @ApiModelProperty("变量项名称")
     private String name;

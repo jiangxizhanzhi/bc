@@ -19,7 +19,7 @@ public class EvalRecordAddReq implements Serializable {
     private String description;
 
     @ApiModelProperty(value = "靶场测评实例ID", required = true)
-    private String roomId;
+    private String taskId;
 
     @ApiModelProperty(value = "使用指标体系ID", required = true)
     private String systemId;

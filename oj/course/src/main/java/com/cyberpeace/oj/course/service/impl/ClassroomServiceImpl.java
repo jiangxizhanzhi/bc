@@ -908,6 +908,16 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			friendUsers.add(dashboardUser);
 		}
 
+		// 如果超级管理员或者创建者不在该房间中
+		if (null == dashboardInfo.getMine() && (userContext.isSuperuser()
+				|| userContext.getUserId().equals(classroom.getCreateUserId()))) {
+			String role = userContext.getUserId().equals(classroom.getCreateUserId())
+					? ClassroomRole.TEACHER.getDesc()
+					: ClassroomRole.STUDENT.getDesc();
+			DashboardUser mine = userToDashUser(userContext, role);
+			dashboardInfo.setMine(mine);
+		}
+
 		// 好友列表组装
 		DashboardFriend dashboardFriend = new DashboardFriend();
 		dashboardFriend.setGroupname(DashboardFriend.GROUP_NAME.FRIEND_LIST.getDesc());

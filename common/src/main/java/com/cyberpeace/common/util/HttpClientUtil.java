@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -32,6 +30,7 @@ import org.slf4j.impl.TraceIdContext;
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.*;
 import com.google.common.collect.Lists;
 
 public class HttpClientUtil {

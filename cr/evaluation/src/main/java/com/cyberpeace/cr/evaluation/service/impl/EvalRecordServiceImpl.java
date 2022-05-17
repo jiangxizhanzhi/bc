@@ -16,6 +16,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomIntPairRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
@@ -680,5 +681,16 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         return result;
+    }
+
+    @Override
+    public List<EvalRoomIntPairRsp> recordStatusEnum() {
+
+        return Arrays.stream(EvalRecord.Status.values()).map(item -> {
+            EvalRoomIntPairRsp result = new EvalRoomIntPairRsp();
+            result.setLabel(item.getDesc());
+            result.setId(item.getCode());
+            return result;
+        }).collect(Collectors.toList());
     }
 }

@@ -7,6 +7,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomIntPairRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
@@ -88,5 +89,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @return EvalRecordResultRsp
      */
     EvalRecordResultRsp result(String recordId);
+
+    List<EvalRoomIntPairRsp> recordStatusEnum();
 
 }

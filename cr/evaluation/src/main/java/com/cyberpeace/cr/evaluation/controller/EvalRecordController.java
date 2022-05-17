@@ -45,6 +45,12 @@ public class EvalRecordController {
         ));
     }
 
+    @ApiOperation("评估状态枚举（查询用）")
+    @GetMapping("/status")
+    public BaseRsp<List<EvalRoomIntPairRsp>> statusEnum() {
+        return new BaseRsp<>(evalRecordService.recordStatusEnum());
+    }
+
     @ApiOperation("创建评估")
     @PostMapping("")
     public BaseRsp<EvalRecordRsp> create(@RequestBody EvalRecordAddReq requestData) {

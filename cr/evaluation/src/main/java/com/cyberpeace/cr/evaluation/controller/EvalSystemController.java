@@ -109,7 +109,8 @@ public class EvalSystemController {
 
 		// 循环查询并设置三级指标的采集项
 		for (IndexContext thirdIndex : thirdIndexes) {
-			EvalIndicator evalIndicator = evalIndicatorService.getById(thirdIndex.getIndexId());
+			EvalIndicator evalIndicator = evalIndicatorService
+					.getById(thirdIndex.getEvalIndicatorId());
 
 			List<EvalCollection> evalCollections = evalCollectionMapper
 					.selectBythirdIndexId(thirdIndex.getIndexId());

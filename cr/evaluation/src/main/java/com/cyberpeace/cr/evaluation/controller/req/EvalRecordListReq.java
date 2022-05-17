@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public class EvalRecordListReq extends PageReqBase {
     @NotNull
     @ApiModelProperty("房间Id")
-    private String roomId;
+    private String taskId;
 
     @ApiModelProperty("状态查询")
     private Integer status;

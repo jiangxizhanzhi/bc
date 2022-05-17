@@ -14,10 +14,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomIntPairRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.service.*;
@@ -117,8 +114,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     @Override
-    public ListRsp<EvalRecord> pageList(Page page, String roomId, Integer status, String pattern) {
-        return PageUtil.getListResult(this.getBaseMapper().pageList(page, roomId, status, pattern));
+    public ListRsp<EvalRecordListRsp> pageList(Page page, String taskId, Integer status, String pattern) {
+        return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern));
     }
 
     @Override

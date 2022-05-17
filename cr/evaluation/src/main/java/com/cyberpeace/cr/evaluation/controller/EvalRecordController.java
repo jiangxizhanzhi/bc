@@ -36,10 +36,10 @@ public class EvalRecordController {
 
     @ApiOperation("获取靶场测评实例评估（分页）")
     @GetMapping("/list")
-    public BaseRsp<ListRsp<EvalRecord>> list(EvalRecordListReq queryParams) {
+    public BaseRsp<ListRsp<EvalRecordListRsp>> list(EvalRecordListReq queryParams) {
         return new BaseRsp<>(evalRecordService.pageList(
                 queryParams.toPageParam(),
-                queryParams.getRoomId(),
+                queryParams.getTaskId(),
                 queryParams.getStatus(),
                 queryParams.getPattern()
         ));

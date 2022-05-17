@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomIntPairRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 
@@ -24,7 +21,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @param pattern 名称模糊查询
      * @return 分页结构数据
      */
-    ListRsp<EvalRecord> pageList(Page page, String roomId, Integer status, String pattern);
+    ListRsp<EvalRecordListRsp> pageList(Page page, String taskId, Integer status, String pattern);
 
     /**
      * 已结束测评实例创建评估任务

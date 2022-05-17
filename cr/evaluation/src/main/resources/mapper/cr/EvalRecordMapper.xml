@@ -5,18 +5,22 @@
 
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper">
 
-    <select id="pageList" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalRecord">
-        select * from cr_eval_record
+    <select id="pageList" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordListRsp">
+        select
+               T1.*,
+               T2.name as system_name
+        from cr_eval_record T1
+        left join cr_eval_index_ref T2 on T1.resource_id = T2.record_id and T2.level = 1
         <where>
-            room_id = #{room_id}
+            T1.task_id = #{task_id}
             <if test="pattern != null and pattern != ''">
                 <bind name="pattern" value="'%' + page.pattern + '%'"/>
-                name like #{pattern}
+                T1.name like #{pattern}
             </if>
             <if test="status != null and status != ''">
-                status = #{status}
+                T1.status = #{status}
             </if>
         </where>
-        order by id desc
+        order by T1.id desc
     </select>
 </mapper>

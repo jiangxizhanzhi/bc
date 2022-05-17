@@ -2,13 +2,11 @@ package com.cyberpeace.integratation.service.impl;
 
 import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.model.mp.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +22,7 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.constant.SessionType;
+import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
@@ -57,6 +56,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String FLOW_START_URL;
 
 	private String FLOW_STOP_URL;
+
+	private String FLOW_BATCH_START_URL;
+
+	private String FLOW_BATCH_STOP_URL;
 
 	private String NODE_SESSION_URL;
 
@@ -102,6 +105,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		FLOW_STOP_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.flow.stop");
+
+		FLOW_BATCH_START_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.batch.start");
+
+		FLOW_BATCH_STOP_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.batch.stop");
 
 		NODE_SESSION_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.session");
@@ -180,6 +189,16 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean stopFlow(FlowOpsContext context) {
 		return HttpClientUtil.post(FLOW_STOP_URL, context, Boolean.class);
+	}
+
+	@Override
+	public Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext) {
+		return HttpClientUtil.post(FLOW_BATCH_START_URL, flowBatchOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext) {
+		return HttpClientUtil.post(FLOW_BATCH_STOP_URL, flowBatchOpsContext, Boolean.class);
 	}
 
 	private String startScene(SceneStartContext context, String url) {
@@ -292,8 +311,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public List<MpCollectionEvent> getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
-		String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext, COLLECTION_EVENT_URL, String.class);
+	public List<MpCollectionEvent>
+			getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
+		String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext,
+				COLLECTION_EVENT_URL, String.class);
 		return JsonUtil.toJsonObjectArray(mpCollectionEvents, MpCollectionEvent.class);
 	}
 }

@@ -3,6 +3,8 @@ package com.cyberpeace.cr.evaluation.controller;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.scene.Flow;
+import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -274,6 +276,42 @@ public class EvalTaskController {
 		Boolean result = evalTaskService.validateName(evalTaskNameValidateReq.getTaskName(),
 				evalTaskNameValidateReq.getTemplateId(), evalTaskNameValidateReq.getTaskId());
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("获取任务流量列表")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("/flow/list")
+	public BaseRsp<FlowRsp> getFlowList(
+			@ApiParam(name = "task_id", value = "测评任务id",
+					required = true) @RequestParam("task_id") String taskId) {
+
+		// 鉴权
+		EvalTask evalTask = evalTaskService.getTask(taskId);
+		List<Flow> flows = evalSceneService.getFlowList(evalTask);
+
+		return new BaseRsp<>(new FlowRsp(flows));
+	}
+
+	@ApiOperation("批量启动任务流量")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@PostMapping("/flow/batch_start")
+	public BaseRsp<Boolean> startFlowList(
+			@RequestBody @Validated FlowsOpsReq flowsOpsReq) {
+
+		// 鉴权
+		EvalTask evalTask = evalTaskService.getTask(flowsOpsReq.getTaskId());
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("批量停止任务流量")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@PostMapping("/flow/batch_stop")
+	public BaseRsp<Boolean> stopFlowList(
+			@RequestBody @Validated FlowsOpsReq flowsOpsReq) {
+
+		// 鉴权
+		EvalTask evalTask = evalTaskService.getTask(flowsOpsReq.getTaskId());
+		return new BaseRsp<>(true);
 	}
 
 }

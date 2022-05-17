@@ -1,6 +1,5 @@
 package com.cyberpeace.integratation.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +7,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
-import lombok.Data;
 
 /**
  * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2
@@ -48,6 +46,16 @@ public interface RemoteSceneService {
 	 * @return
 	 */
 	Boolean stopFlow(FlowOpsContext context);
+
+	/**
+	 * 批量启动流量
+	 */
+	Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext);
+
+	/**
+	 * 批量停止流量
+	 */
+	Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext);
 
 	/**
 	 * 获取场景节点会话
@@ -124,6 +132,7 @@ public interface RemoteSceneService {
 	 * @param collectionEventPageContext
 	 * @return MpCollectionEvent
 	 */
-	List<MpCollectionEvent> getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
+	List<MpCollectionEvent>
+			getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
 
 }

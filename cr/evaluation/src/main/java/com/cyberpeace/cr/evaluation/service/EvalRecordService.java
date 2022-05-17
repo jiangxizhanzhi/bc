@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
@@ -52,11 +53,19 @@ public interface EvalRecordService extends IService<EvalRecord> {
      */
     Boolean delete(List<String> recordIds);
 
-    void startRecord(String recordId);
+    /**
+     * 评估事件开始
+     * @param recordId 评估id
+     * @return bool
+     */
+    Boolean startRecord(String recordId);
 
-    void startIndexes(EvalRecord evalRecord, EvalTask evalTask);
-
-    void startVariables(EvalRecord evalRecord, EvalTask evalTask);
+    /**
+     * 评估事件实际运行
+     * @param evalRecord
+     * @param evalTask
+     */
+    void recordRun(EvalRecord evalRecord, EvalTask evalTask);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`
@@ -72,5 +81,12 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @return List
      */
     List<EvalRoomPairRsp> getProbes(String roomId, String nodeId);
+
+    /**
+     * 获取评估结果
+     * @param recordId 评估id
+     * @return EvalRecordResultRsp
+     */
+    EvalRecordResultRsp result(String recordId);
 
 }

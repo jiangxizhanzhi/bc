@@ -6,12 +6,16 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.Date;
+
 @Data
 @TableName("cr_eval_variable_ref_probe_data")
 public class EvalVariableRefProbeData extends BaseTable {
     private String variableId;
 
     private Integer probeDataId;
+
+    private Date time;
 
     private String formattedValue;
 

@@ -3,6 +3,9 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableGraphRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalProbeDataService;
@@ -170,5 +173,25 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());
 
         return SqlHelper.retBool(getBaseMapper().updateById(evalVariableRef));
+    }
+
+    @Override
+    public EvalVariableGraphRsp graph(String variableId) {
+        EvalVariableGraphRsp result = new EvalVariableGraphRsp();
+        result.setTime(Lists.newArrayList());
+        result.setValue(Lists.newArrayList());
+        result.setIsMatched(Lists.newArrayList());
+
+        evalVariableRefProbeDataService.lambdaQuery().eq(EvalVariableRefProbeData::getVariableId, variableId).list().forEach(item -> {
+            result.getTime().add(item.getTime());
+            result.getValue().add(item.getFormattedValue());
+            result.getIsMatched().add(item.getStatus().equals(EvalVariableRefProbeData.Status.MATCHED.getCode()));
+        });
+        return result;
+    }
+
+    @Override
+    public ListRsp<EvalVariableDataPageRsp> originData(String variableId) {
+        return null;
     }
 }

@@ -13,6 +13,6 @@ public class EvalRecordSpecialistContext implements Serializable {
     @ApiModelProperty("数据属性")
     private Integer property;
 
-    @ApiModelProperty("值")
+    @ApiModelProperty(value = "值", required = true)
     private Integer value;
 }

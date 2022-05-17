@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
@@ -96,6 +97,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     /**
      * 获取实例对象, 检查返回值有效性
+     *
      * @param resourceId 评估resourceId
      * @return {@link EvalRecord}
      */
@@ -127,11 +129,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Map<String, EvalVariableRef> fullVariablesMap = evalVariableRefService.lambdaQuery().eq(
                 EvalVariableRef::getRecordId, recordRsp.getResourceId()
         ).list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
-        fullIndexes.forEach(evalIndexRef -> {
+
+        for (EvalIndexRef evalIndexRef : fullIndexes) {
             if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
                 recordRsp.getIndexes().add(generateNextIndexes(evalIndexRef, fullIndexesMap, fullVariablesMap));
+            } else {
+                break;
             }
-        });
+        }
         return recordRsp;
     }
 
@@ -429,7 +434,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     @Override
-    public void startRecord(String recordId) {
+    public Boolean startRecord(String recordId) {
         // 评估任务对象
         EvalRecord evalRecord = getEntity(recordId);
         // 评估实例对象
@@ -441,11 +446,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         recordRun(evalRecord, evalTask);
 
         evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
-        updateById(evalRecord);
+        return updateById(evalRecord);
     }
 
     @Async
-    void recordRun(EvalRecord evalRecord, EvalTask evalTask) {
+    public void recordRun(EvalRecord evalRecord, EvalTask evalTask) {
         // todo 确保可以重复运行（进行中评估任务）, 遗弃`progress_key`, 已运行完成（指标/变量）项过滤
 
         // 循环同步采集数据
@@ -459,10 +464,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         this.getBaseMapper().updateById(evalRecord);
     }
 
-    @Override
-    public void startVariables(EvalRecord evalRecord, EvalTask evalTask) {
+    private void startVariables(EvalRecord evalRecord, EvalTask evalTask) {
 
-        List<EvalVariableRef> evalVariableRefList =  evalVariableRefService.lambdaQuery()
+        List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery()
                 .eq(EvalVariableRef::getRecordId, evalRecord.getResourceId())
                 .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode())
                 .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode())
@@ -496,8 +500,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     }
 
-    @Override
-    public void startIndexes(EvalRecord evalRecord, EvalTask evalTask) {
+    private void startIndexes(EvalRecord evalRecord, EvalTask evalTask) {
 
         // 体系下指标项
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, evalRecord.getResourceId()).list();
@@ -638,5 +641,30 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         return results;
+    }
+
+    @Override
+    public EvalRecordResultRsp result(String recordId) {
+        EvalRecordResultRsp result = new EvalRecordResultRsp();
+        BeanUtils.copyProperties(getEntity(recordId), result);
+
+        List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordId).list();
+        evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel));
+
+        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefs.stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
+        Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefService.lambdaQuery()
+                .eq(EvalVariableRef::getRecordId, recordId)
+                .list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
+
+        result.setIndexes(Lists.newArrayList());
+        for (EvalIndexRef evalIndexRef : evalIndexRefs) {
+            if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
+                result.getIndexes().add(generateNextIndexes(evalIndexRef, evalIndexRefMap, evalVariableRefMap, true));
+            } else {
+                break;
+            }
+        }
+
+        return result;
     }
 }

@@ -9,6 +9,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,9 @@ public class EvalRecordController {
 
     @Autowired
     private EvalIndexRefService evalIndexRefService;
+
+    @Autowired
+    private EvalVariableRefService evalVariableRefService;
 
     @ApiOperation("获取靶场测评实例评估（分页）")
     @GetMapping("/list")
@@ -80,13 +84,13 @@ public class EvalRecordController {
     @ApiOperation("评估任务开启")
     @PostMapping("/start")
     public BaseRsp<Boolean> start(@RequestParam("resource_id") String recordId) {
-        return new BaseRsp<>(true);
+        return new BaseRsp<>(evalRecordService.startRecord(recordId));
     }
 
     @ApiOperation("评估任务结果")
     @GetMapping("/result")
     public BaseRsp<EvalRecordResultRsp> result(@RequestParam("resource_id") String recordId) {
-        return new BaseRsp<>();
+        return new BaseRsp<>(evalRecordService.result(recordId));
     }
 
     @ApiOperation("获取三级指标项下全部变量项")
@@ -110,12 +114,12 @@ public class EvalRecordController {
     @ApiOperation("变量项采集信息（折线图）")
     @GetMapping("/variables/graph")
     public BaseRsp<EvalVariableGraphRsp> VariableGraph(@RequestParam("variable_id") String variableId) {
-        return new BaseRsp<>();
+        return new BaseRsp<>(evalVariableRefService.graph(variableId));
     }
 
     @ApiOperation("变量项采集信息（原始数据）")
     @GetMapping("/variables/data")
     public BaseRsp<ListRsp<EvalVariableDataPageRsp>> VariableData(@RequestParam("variable_id") String variableId) {
-        return new BaseRsp<>();
+        return new BaseRsp<>(evalVariableRefService.originData(variableId));
     }
 }

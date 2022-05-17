@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -25,10 +26,10 @@ public class EvalRecordAddReq implements Serializable {
     private String systemId;
 
     @ApiModelProperty(value = "开始时间（评估采集数据时间范围）", required = true)
-    private String startTime;
+    private Date startTime;
 
     @ApiModelProperty(value = "结束时间（评估采集数据时间范围）", required = true)
-    private String endTime;
+    private Date endTime;
 
     @ApiModelProperty(value = "全量三级指标项", required = true)
     private List<EvalRecordIndexContext> indexes;

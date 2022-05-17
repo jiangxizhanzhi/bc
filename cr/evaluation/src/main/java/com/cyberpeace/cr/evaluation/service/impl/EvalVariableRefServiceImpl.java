@@ -164,7 +164,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         // 运行匹配算法
-        evalVariableRef.setMarkEndTime(new Date());
+        evalVariableRef.setMarkStartTime(new Date());
         Integer score = remotePythonService.markPerform(null, evalVariableRef.getMarkAlgorithmId(), evalAlgorithmRef.getCode(), data, null);
         evalVariableRef.setMarkEndTime(new Date());
 

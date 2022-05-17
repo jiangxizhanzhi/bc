@@ -182,9 +182,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalCollection> evalCollections = evalCollectionService.lambdaQuery().in(
                 EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()
         ).list();
-        if (evalCollections.size() != evalRecordVariableContextMap.keySet().size()) {
-            throw new BusinessException();
-        }
+
+        // todo 暂时取消
+//        if (evalCollections.size() != evalRecordVariableContextMap.keySet().size()) {
+//            throw new BusinessException();
+//        }
 
         // 使用指标体系内的全部算法
         Set<String> usingAlgorithmIds = Sets.newHashSet();
@@ -286,9 +288,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 nextIds = evalIndex.getChildrenIds();
             } else {
                 EvalIndicator evalIndicator = thirdRelationMap.get(evalIndex.getEvalIndicatorId());
-                if (evalIndicator == null) {
-                    throw new BusinessException();
-                }
+                // todo 暂时取消
+//                if (evalIndicator == null) {
+//                    throw new BusinessException();
+//                }
                 nextIds = evalIndicator.getAggregationIds();
 
                 // 专家评分, 设置默认分值

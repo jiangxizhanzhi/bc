@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,7 +131,7 @@ public class EvalTemplateController {
 
 		evalTemplateTaskListRsp.setTaskList(evalTemplateService.listTask(evalTemplate));;
 
-		if (!evalTemplate.getCurrentTaskId().isEmpty()) {
+		if (!StringUtils.isEmpty(evalTemplate.getCurrentTaskId())) {
 			evalTemplateTaskListRsp.setCurrentTaskId(evalTemplate.getCurrentTaskId());
 		}
 

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -116,7 +117,7 @@ public class EvalTaskController {
 		String taskName = evalTaskStopReq.getTaskName();
 
 		// 没有任务名称时，删除场景及任务
-		if (taskName.isEmpty()) {
+		if (StringUtils.isEmpty(taskName)) {
 			return new BaseRsp<>(evalTaskService.deleteTask(evalTaskOperContext));
 		}
 
@@ -143,7 +144,7 @@ public class EvalTaskController {
 
 		// task_id未赋值时。默认返回当前实例
 		String currentTaskId = evalTemplate.getCurrentTaskId();
-		if (taskId.isEmpty() && currentTaskId != null && !currentTaskId.isEmpty()) {
+		if (StringUtils.isEmpty(taskId) && currentTaskId != null && !currentTaskId.isEmpty()) {
 			taskId = currentTaskId;
 		}
 
@@ -152,7 +153,7 @@ public class EvalTaskController {
 		evalTaskRsp.setTemplateName(evalTemplate.getName());
 		SceneViewContext sceneViewContext = null;
 
-		if (taskId.isEmpty()) {
+		if (StringUtils.isEmpty(taskId)) {
 			sceneViewContext = evalSceneService.viewScene(null, evalTemplate.getTopoId());
 
 		} else {
@@ -192,14 +193,14 @@ public class EvalTaskController {
 
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
-		if (taskId.isEmpty()) {
+		if (StringUtils.isEmpty(taskId)) {
 			taskId = evalTemplate.getCurrentTaskId();
 		}
 
 		List<EvalTaskStepContext> evalTaskStepContextList = Lists.newArrayList();
 
 		// 处理模板下无任务的情况
-		if (taskId.isEmpty()) {
+		if (StringUtils.isEmpty(taskId)) {
 			evalTaskStepContextList = evalTaskStepService
 					.getTemplateSteps(evalTemplate.getStepConfig());
 		} else {
@@ -219,7 +220,7 @@ public class EvalTaskController {
 					value = "task_id", required = false) String taskId) {
 
 		// 未传入任务Id时提取当前活动任务
-		if (taskId.isEmpty()) {
+		if (StringUtils.isEmpty(taskId)) {
 			taskId = evalTemplateService.getTemplate(templateId).getCurrentTaskId();
 		}
 
@@ -229,7 +230,7 @@ public class EvalTaskController {
 		evalTaskTimeLineRsp.setCurrentTime(new Date());
 
 		// 处理模板下无任务的情况
-		if (taskId.isEmpty()) {
+		if (StringUtils.isEmpty(taskId)) {
 			return new BaseRsp<>(evalTaskTimeLineRsp);
 		}
 

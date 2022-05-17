@@ -114,9 +114,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
         } else if (evalIndicator.getDatatype().equals(EvalIndexRef.DataType.INTEGER.getCode())) {
             // todo 等待`evalIndicator`新属性
             if (evalIndicator.getAttribute().equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
-                return 0;
+                return 1 - (evalIndicator.getAttributeValue() * 100 - value * 100) / evalIndicator.getAttributeValue() * 100;
             } else if (evalIndicator.getAttribute().equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {
-                return 0;
+                return (evalIndicator.getAttributeValue() * 100 - value * 100) / evalIndicator.getAttributeValue() * 100;
             }
         }
         return 0;

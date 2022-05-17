@@ -182,9 +182,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 四级指标
         List<EvalAggregation> evalAggregations = evalAggregationService.lambdaQuery().in(EvalAggregation::getEvalIndicatorId, evalIndicatorIds).list();
         // 五级指标
-        List<EvalCollection> evalCollections = evalCollectionService.lambdaQuery().in(
-                EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()
-        ).list();
+        List<EvalCollection> evalCollections = !evalRecordVariableContextMap.isEmpty()
+                ? evalCollectionService.lambdaQuery().in(EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()).list()
+                : Lists.newArrayList();
 
         // todo 暂时取消
 //        if (evalCollections.size() != evalRecordVariableContextMap.keySet().size()) {
@@ -256,9 +256,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setType(EvalIndexRef.Type.SYSTEM.getCode());
             evalIndexRef.setLevel(EvalIndexRef.Level.AGGREGATION.getCode());
 
-            evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(
-                    evalAggregation.getCollectionIds(), String.class
-            ).stream().map(variableIdsMap::get).collect(Collectors.toList())));
+            List<String> nextIds = Lists.newArrayList();
+            JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class).forEach(item -> {
+                if (variableIdsMap.containsKey(item)) {
+                    nextIds.add(variableIdsMap.get(item));
+                }
+            });
+            evalIndexRef.setNextIds(JsonUtil.toJsonString(nextIds));
 
             EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(evalAggregation.getAggregatingAlgorithmId(), evalAlgorithmMap);
             evalIndexRef.setAlgorithmParams(evalAggregation.getAggregatingAlgorithmParams());

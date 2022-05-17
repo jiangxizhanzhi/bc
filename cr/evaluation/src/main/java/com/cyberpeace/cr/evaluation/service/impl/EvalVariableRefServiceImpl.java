@@ -192,6 +192,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
     @Override
     public ListRsp<EvalVariableDataPageRsp> originData(String variableId) {
+        evalVariableRefProbeDataService.lambdaQuery().eq(EvalVariableRefProbeData::getVariableId, variableId).list();
         return null;
     }
 }

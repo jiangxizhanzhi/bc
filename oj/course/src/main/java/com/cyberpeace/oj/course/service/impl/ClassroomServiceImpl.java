@@ -957,6 +957,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 数据解析
 		List<Classroom> classrooms = Lists.newArrayList();
 		Map<String, TrainPlan> trainPlanMap = Maps.newHashMap();
+		Map<String, String> orgMap = Maps.newHashMap();
 
 		for (int i = CommonConstant.ONE; i <= sheetData.size(); i++) {
 
@@ -972,8 +973,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			// 训练计划是否可覆盖 任务是否存在开始的
 			validatePlanStartAndExist(trainPlan.getResourceId(), trainPlan.getName(), cover, i);
 
-			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo,
-					i);
+			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo, i,
+					orgMap);
 			Classroom existClassRoom = classroomMapper
 					.selectByOrgAndLesson(classroom.getOrganizationId(), classroom.getLessonId());
 
@@ -1092,8 +1093,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			return classroomList;
 		}
 
-		if (CollectionUtils.isNotEmpty(
-				classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId())) && !cover) {
+		if (CollectionUtils
+				.isNotEmpty(classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId()))
+				&& !cover) {
 			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
 		}
 
@@ -1121,7 +1123,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @param userInfo
 	 * @return
 	 */
-	private Classroom parseClassroom(List<String> roomData, UserInfo userInfo, int rowIndex) {
+	private Classroom parseClassroom(List<String> roomData, UserInfo userInfo, int rowIndex,
+			Map<String, String> orgMap) {
 		String courseName;
 		if (StringUtils.isBlank(courseName = roomData.get(CommonConstant.ONE))) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_IS_NULL, rowIndex);
@@ -1165,9 +1168,17 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL, rowIndex);
 		}
 		// 组织数据获取
-		String orgId = remoteOrganizationService.getOrgIdByTree(orgTree);
-		if (StringUtils.isBlank(orgId)) {
-			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_NOT_EXIST, rowIndex);
+		if (StringUtils.isBlank(orgMap.get(orgTree))) {
+			String orgId = remoteOrganizationService.getOrgIdByTree(orgTree);
+			if (StringUtils.isBlank(orgId)) {
+				throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_NOT_EXIST, rowIndex);
+			} else {
+				orgMap.put(orgTree, orgId);
+				List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, false);
+				if (CollectionUtils.isEmpty(userInfos)) {
+					throw new BusinessException(OjBusinessErrorCode.ORG_UNDER_NO_USERS, orgTree);
+				}
+			}
 		}
 
 		// 基本数据填充
@@ -1179,8 +1190,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroom.setStartTime(TimeUtil.toDate1(startTime));
 		classroom.setEndTime(TimeUtil.toDate1(endTime));
 
-		classroom.setOrganizationId(orgId);
-		List<String> childrenList = remoteOrganizationService.childrenList(orgId, true);
+		classroom.setOrganizationId(orgMap.get(orgTree));
+		List<String> childrenList = remoteOrganizationService.childrenList(orgMap.get(orgTree),
+				true);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(childrenList));
 
 		return classroom;

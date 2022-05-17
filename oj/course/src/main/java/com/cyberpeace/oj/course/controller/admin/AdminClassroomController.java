@@ -312,13 +312,17 @@ public class AdminClassroomController {
 		AttachmentBo uploadFile = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(), true,
 				excelFile, true);
 		String realPath = utilService.getRealPath(uploadFile.getFilePath());
-		classroomService.importTrainPlan(realPath, UserInfoContext.getUserContext(), cover);
 
 		try {
-			FileUtil.deleteDir(realPath, CommonConstant.TRUE);
-		} catch (Exception e) {
-			// 不影响导入逻辑就行
-			log.error("Import train plan delete file failed! file_url=[{}]", realPath);
+			classroomService.importTrainPlan(realPath, UserInfoContext.getUserContext(), cover);
+		} finally {
+			try {
+				FileUtil.deleteDir(realPath, CommonConstant.TRUE);
+			} catch (Exception e) {
+				// 不影响导入逻辑就行
+				log.error("Import train plan delete file failed! file_url=[{}], catch error:",
+						realPath, e);
+			}
 		}
 
 		return new BaseRsp();

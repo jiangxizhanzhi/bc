@@ -171,4 +171,7 @@ public interface OjBusinessErrorCode {
 	/** 训练计划已存在*/
 	String TRAIN_PLAN_EXIST = "102055";
 
+	/** xxx组织下无用户*/
+	String ORG_UNDER_NO_USERS = "102056";
+
 }

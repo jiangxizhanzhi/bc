@@ -19,9 +19,11 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemTreeRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexService;
+import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
 import com.google.common.collect.Maps;
@@ -43,6 +45,9 @@ public class EvalSystemController {
 
 	@Autowired
 	private EvalCollectionMapper evalCollectionMapper;
+
+	@Autowired
+	private EvalIndicatorService evalIndicatorService;
 
 	@Autowired
 	private EvalSystemService evalSystemService;
@@ -104,6 +109,8 @@ public class EvalSystemController {
 
 		// 循环查询并设置三级指标的采集项
 		for (IndexContext thirdIndex : thirdIndexes) {
+			EvalIndicator evalIndicator = evalIndicatorService.getById(thirdIndex.getIndexId());
+
 			List<EvalCollection> evalCollections = evalCollectionMapper
 					.selectBythirdIndexId(thirdIndex.getIndexId());
 			List<EvalSystemTreeRsp> thirdChildrens = evalCollections.stream()
@@ -117,6 +124,9 @@ public class EvalSystemController {
 					}).collect(Collectors.toList());
 
 			evalSystemTreeRspMap.get(thirdIndex.getIndexId()).setChildren(thirdChildrens);
+			evalSystemTreeRspMap.get(thirdIndex.getIndexId())
+					.setThirdLevelType(evalIndicator.getDatatype());
+
 		}
 
 		return evalSystemTreeRsp;

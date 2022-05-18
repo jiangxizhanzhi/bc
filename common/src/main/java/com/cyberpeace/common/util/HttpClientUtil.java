@@ -158,6 +158,8 @@ public class HttpClientUtil {
 		HttpResponse response = null;
 		String httpResponse = null;
 		try {
+			// 设置请求头
+			httpRequest.setHeaders((Header[]) defaultHeader().toArray());
 			// 1、调用远程服务
 			response = getClient().execute(httpRequest);
 

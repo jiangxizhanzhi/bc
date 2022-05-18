@@ -3,6 +3,8 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +24,12 @@ import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.entity.RoleSkillRelation;
+import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
+import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.RoleService;
-import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.bo.Difference;
 import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
@@ -51,7 +54,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	private SkillService skillService;
+	private SkillMapper skillMapper;
 
 	@Override
 	public Role getOr404(String roleId) {
@@ -133,17 +136,32 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	@Override
 	public void addSkillRelation(String resourceId, List<IdWeight> skillIdWeights) {
-		if (skillIdWeights.isEmpty()) {
+		if (CollectionUtils.isEmpty(skillIdWeights)) {
 			return;
 		}
+		// validate skill list, if skill does exist
+		List<String> skillIds = skillIdWeights.stream().map(IdWeight::getResourceId)
+				.collect(Collectors.toList());
+		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
+		Set<String> validSkillIds = skills.stream().map(Skill::getResourceId)
+				.collect(Collectors.toSet());
+
 		List<RoleSkillRelation> relations = Lists.newArrayList();
 		for (IdWeight skill : skillIdWeights) {
+			if (!validSkillIds.contains(skill.getResourceId())) {
+				continue;
+			}
 			RoleSkillRelation relation = new RoleSkillRelation();
 			relation.setRoleId(resourceId);
 			relation.setSkillId(skill.getResourceId());
 			relation.setWeight(skill.getWeight());
 			relations.add(relation);
 		}
+		// validation before insertion
+		if (relations.isEmpty()) {
+			return;
+		}
+
 		roleSkillRelationMapper.batchInsert(relations);
 	}
 

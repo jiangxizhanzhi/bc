@@ -50,7 +50,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         // 变量项探针采集数据  todo 分页执行
         List<EvalProbeData> evalProbeDataList = evalProbeDataService.lambdaQuery()
                 .eq(EvalProbeData::getSceneId, evalTask.getMpSceneId())
-                .eq(EvalProbeData::getNodeId, evalVariableRef.getDeviceId())
+                .eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId())
                 .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
                 .ge(EvalProbeData::getCollectionTime, evalRecord.getStartTime())
                 .le(EvalProbeData::getCollectionTime, evalRecord.getEndTime())
@@ -71,10 +71,12 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = Lists.newArrayList();
         for (int i = 0; i < formatReturn.size(); i++) {
             EvalVariableRefProbeData object = new EvalVariableRefProbeData();
-            object.setProbeDataId(evalProbeDataList.get(i).getId());
+            EvalProbeData originData = evalProbeDataList.get(i);
+            object.setProbeDataId(originData.getId());
             object.setVariableId(evalVariableRef.getResourceId());
             object.setFormattedValue(formatReturn.get(i));
             object.setStatus(EvalVariableRefProbeData.Status.NONE.getCode());
+            object.setTime(originData.getCollectionTime());
 
             evalVariableRefProbeDataList.add(object);
         }
@@ -109,6 +111,8 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
             MatchItemData itemData = new MatchItemData();
             itemData.setT(variableRefProbeDataContext.getTime().getTime() - data.getBaseTime());
             itemData.setV(variableRefProbeDataContext.getFormattedValue());
+
+            data.getData().add(itemData);
         });
 
         // 运行匹配算法

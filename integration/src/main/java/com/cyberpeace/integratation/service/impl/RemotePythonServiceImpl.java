@@ -24,8 +24,10 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 
     @PostConstruct
     public void init() {
-        String PY_HOST = SystemPropUtil.getProp("PY_HOST");
-        String PY_PORT = SystemPropUtil.getProp("PY_PORT");
+//        String PY_HOST = SystemPropUtil.getProp("PY_HOST");
+//        String PY_PORT = SystemPropUtil.getProp("PY_PORT");
+        String PY_HOST = "10.100.1.28";
+        String PY_PORT = "5000";
         PY_URL = "http://" + PY_HOST + ":" + PY_PORT;
     }
 
@@ -40,7 +42,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = new JSONObject();
         json.put("context", context);
         json.put("algorithm_id", algorithmId);
-        json.put("algorithm_code", algorithmCode);
+        json.put("code", algorithmCode);
         json.put("list_data", formatData.getData());
         json.put("other_args", otherArguments);
 
@@ -53,7 +55,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = new JSONObject();
         json.put("context", context);
         json.put("algorithm_id", algorithmId);
-        json.put("algorithm_code", algorithmCode);
+        json.put("code", algorithmCode);
         json.put("data", matchData);
         json.put("other_args", otherArguments);
 
@@ -66,7 +68,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = new JSONObject();
         json.put("context", context);
         json.put("algorithm_id", algorithmId);
-        json.put("algorithm_code", algorithmCode);
+        json.put("code", algorithmCode);
         json.put("data", markData);
         json.put("other_args", otherArguments);
 
@@ -78,7 +80,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = new JSONObject();
         json.put("context", context);
         json.put("algorithm_id", algorithmId);
-        json.put("algorithm_code", algorithmCode);
+        json.put("code", algorithmCode);
         json.put("data", data);
         json.put("other_args", otherArguments);
 

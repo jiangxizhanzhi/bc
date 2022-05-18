@@ -511,7 +511,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     @Async
-    public void recordRun(EvalRecord evalRecord, EvalTask evalTask) {
+    void recordRun(EvalRecord evalRecord, EvalTask evalTask) {
         // todo 确保可以重复运行（进行中评估任务）, 遗弃`progress_key`, 已运行完成（指标/变量）项过滤
 
         // 循环同步采集数据
@@ -591,6 +591,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .eq(EvalVariableRef::getRecordId, evalRecord.getResourceId())
                 .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
                 .list();
+        if (evalVariableRefs.isEmpty()) {
+            return;
+        }
 
         CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
         collectionEventPageContext.setId(evalTask.getMpSceneId());
@@ -635,7 +638,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             // 当前探针数据是否已经被同步
             boolean isExist = SqlHelper.retBool(evalProbeDataService.lambdaQuery()
                     .eq(EvalProbeData::getSceneId, evalTask.getMpSceneId())
-                    .eq(EvalProbeData::getNodeId, evalVariableRef.getDeviceId())
+                    .eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId())
                     .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
                     .last("limit 1")
                     .count());
@@ -683,6 +686,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 if (content.getString("full_log") != null) {
                     JSONObject fullLog = JsonUtil.toJsonObject(content.getString("full_log"), JSONObject.class);
                     probeDataItem.setProbeId(fullLog.getString("sic_launch_id"));
+                    probeDataItem.setSceneId(collectionEventPageContext.getId());
+                    probeDataItem.setDeviceId(mpCollectionEvent.getNodeId());
+                    probeDataItem.setCollectionTime(mpCollectionEvent.getTime());
                     evalProbeDataList.add(probeDataItem);
                 }
 
@@ -735,6 +741,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             throw new BusinessException();
         }
 
+        // todo 修改响应数据结构, 以Map<node_id, List<EvalRoomPairRsp#{探针信息}>>的数据结构返回
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
@@ -772,7 +779,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefs.stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
         Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefService.lambdaQuery()
                 .eq(EvalVariableRef::getRecordId, recordId)
-                .list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
+                .list()
+                .stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
 
         result.setIndexes(Lists.newArrayList());
         for (EvalIndexRef evalIndexRef : evalIndexRefs) {

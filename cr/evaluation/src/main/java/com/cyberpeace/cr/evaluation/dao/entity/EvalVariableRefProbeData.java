@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
@@ -11,6 +13,9 @@ import java.util.Date;
 @Data
 @TableName("cr_eval_variable_ref_probe_data")
 public class EvalVariableRefProbeData extends BaseTable {
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
     private String variableId;
 
     private Integer probeDataId;

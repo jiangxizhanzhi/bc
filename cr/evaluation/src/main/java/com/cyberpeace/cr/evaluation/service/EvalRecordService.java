@@ -63,7 +63,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @param evalRecord
      * @param evalTask
      */
-    void recordRun(EvalRecord evalRecord, EvalTask evalTask);
+//    void recordRun(EvalRecord evalRecord, EvalTask evalTask);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`

@@ -381,32 +381,41 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode())
                 .list()
                 .stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
+        // 重复数据仅编辑一次
+        Set<String> indexesSet = Sets.newHashSet();
+        Set<String> variablesSet = Sets.newHashSet();
 
         List<EvalIndexRef> evalIndexRefs = Lists.newArrayList();
         List<EvalVariableRef> evalVariableRefs = Lists.newArrayList();
 
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
             EvalIndexRef evalIndexRef = evalIndexRefMap.get(evalRecordIndexContext.getResourceId());
-            evalIndexRef.setType(evalRecordIndexContext.getType());
-            if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
-                evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
-                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(
-                        evalIndexRef.getSpecialistType(),
-                        evalIndexRef.getSpecialistAttr(),
-                        evalIndexRef.getSpecialistAttrValue(),
-                        evalIndexRef.getSpecialistValue()
-                ));
+
+            if (!indexesSet.contains(evalIndexRef.getResourceId())) {
+                evalIndexRef.setType(evalRecordIndexContext.getType());
+                if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                    evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(
+                            evalIndexRef.getSpecialistType(),
+                            evalIndexRef.getSpecialistAttr(),
+                            evalIndexRef.getSpecialistAttrValue(),
+                            evalIndexRef.getSpecialistValue()
+                    ));
+                }
+                evalIndexRefs.add(evalIndexRef);
+                indexesSet.add(evalIndexRef.getResourceId());
             }
 
-            evalIndexRefs.add(evalIndexRef);
-
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> {
-                EvalVariableRef evalVariableRef = new EvalVariableRef();
-                BeanUtils.copyProperties(evalRecordVariableContext, evalVariableRef);
-                evalVariableRef.setResourceId(evalRecordVariableContext.getResourceId());
-                evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
-                evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
-                evalVariableRefs.add(evalVariableRef);
+                if (!variablesSet.contains(evalRecordVariableContext.getResourceId())) {
+                    EvalVariableRef evalVariableRef = new EvalVariableRef();
+                    BeanUtils.copyProperties(evalRecordVariableContext, evalVariableRef);
+                    evalVariableRef.setResourceId(evalRecordVariableContext.getResourceId());
+                    evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
+                    evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
+                    evalVariableRefs.add(evalVariableRef);
+                    variablesSet.add(evalVariableRef.getResourceId());
+                }
             });
         });
 

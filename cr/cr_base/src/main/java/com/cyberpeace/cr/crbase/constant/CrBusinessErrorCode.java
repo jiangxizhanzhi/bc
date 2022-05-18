@@ -283,9 +283,12 @@ public interface CrBusinessErrorCode {
 	/** 测评靶场步骤已启动 */
 	String EVAL_STEP_IS_STARTED = "101091";
 
+	/** 测评靶场步骤已启动 */
+	String EVAL_STEP_IS_FINISHED = "101092";
+
 	/** 测评靶场步骤前序步骤未完成 */
-	String PRECEDING_STEP_NOT_FINISHED = "101092";
+	String PRECEDING_STEP_NOT_FINISHED = "101093";
 
 	/** 未实现的方法 */
-	String NOT_IMPLEMENTED_EXCEPTION = "101093";
+	String NOT_IMPLEMENTED_EXCEPTION = "101094";
 }

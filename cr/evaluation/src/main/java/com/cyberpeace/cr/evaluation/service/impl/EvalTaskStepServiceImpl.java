@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskStepMapper;
@@ -83,6 +85,11 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_NOT_STARTED);
 		}
 
+		// 校验，已结束的步骤不允许结束
+		if (evalTaskStep.getEndTime() != null) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_IS_FINISHED);
+		}
+
 		evalTaskStep.setEndTime(new Date());
 		updateById(evalTaskStep);
 		return true;
@@ -98,6 +105,8 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	@Override
 	public List<EvalTaskStepContext> getTaskSteps(String taskId) {
 
+		EvalTask evalTask = evalTaskMapper.selectById(taskId);
+
 		List<EvalTaskStepContext> evalTaskStepContexts = Lists.newArrayList();
 
 		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectStepsByTaskId(taskId);
@@ -110,7 +119,9 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 					EvalTaskStepContext.class);
 			evalTaskStepContext.setStatus();
 
-			if (i == 0) {
+			if (StringUtils.isNotEmpty(evalTask.getTaskName())) {
+				evalTaskStepContext.setPreStepStatus(EvalTaskStepContext.Status.INIT.getCode());
+			} else if (i == 0) {
 				evalTaskStepContext.setPreStepStatus(EvalTaskStepContext.Status.FINISHED.getCode());
 			} else {
 				evalTaskStepContext.setPreStepStatus(evalTaskStepContexts.get(i - 1).getStatus());

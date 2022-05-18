@@ -20,4 +20,6 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	boolean existByName(String name, String resourceId);
 
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
+
+	Integer selectIndexUsedNum(List<String> ids);
 }

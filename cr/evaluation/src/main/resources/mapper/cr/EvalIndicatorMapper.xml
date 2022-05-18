@@ -42,4 +42,12 @@
             #{id}
         </foreach>
     </select>
+    <select id="selectIndexUsedNum" resultType="java.lang.Integer"
+            parameterType="java.util.List">
+        select count(1) from cr_eval_index
+        where eval_indicator_id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

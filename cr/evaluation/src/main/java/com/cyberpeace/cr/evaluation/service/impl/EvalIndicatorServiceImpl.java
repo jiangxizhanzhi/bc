@@ -67,6 +67,7 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		evalIndicator.setCreateUserId(userId);
 		evalIndicator.setDescription(evalIndicatorReq.getDescription());
 		evalIndicator.setDatatype(evalIndicatorReq.getDatatype());
+		evalIndicator.setAttributeValue(evalIndicatorReq.getAttributeValue());
 		evalIndicator.setAttribute(evalIndicatorReq.getAttribute());
 		evalIndicator.setConnlist(evalIndicatorReq.getConnlist());
 
@@ -125,6 +126,11 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		IPage<EvalIndicator> data = evalIndicatorMapper.listEvalIndicator(page, listQuery);
 
 		return data;
+	}
+
+	@Override
+	public Integer selectIndexUsedNum(List<String> ids) {
+		return evalIndicatorMapper.selectIndexUsedNum(ids);
 	}
 
 }

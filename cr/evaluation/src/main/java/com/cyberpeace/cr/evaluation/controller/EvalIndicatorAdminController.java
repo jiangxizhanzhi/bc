@@ -51,8 +51,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EvalIndicatorAdminController {
 
-
-
 	@Autowired
 	private EvalIndicatorService evalIndicatorService;
 
@@ -223,8 +221,16 @@ public class EvalIndicatorAdminController {
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
+		Integer useNum = evalIndicatorService.selectIndexUsedNum(deleteReq.getIds());
+
+		if (useNum > 0) {
+			log.info("Indicator Already Used! indicatorIds=[{}]",
+					JsonUtil.arrayToString(deleteReq.getIds()));
+			throw new BusinessException(CrBusinessErrorCode.INDICATOR_ALREADY_USED);
+		}
 		Boolean result = evalIndicatorService.batchDelete(deleteReq.getIds());
 
 		return new BaseRsp<>(result);
+
 	}
 }

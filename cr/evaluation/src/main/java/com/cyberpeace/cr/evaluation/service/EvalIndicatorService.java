@@ -25,4 +25,6 @@ public interface EvalIndicatorService extends IService<EvalIndicator> {
 			List<EvalIndicatorContext> evalIndicators, String userId, List<String> collectionIds);
 
 	IPage<EvalIndicator> page(EvalListQuery listQuery);
+
+	Integer selectIndexUsedNum(List<String> ids);
 }

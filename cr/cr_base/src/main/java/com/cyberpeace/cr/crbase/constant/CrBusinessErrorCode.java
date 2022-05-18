@@ -256,8 +256,8 @@ public interface CrBusinessErrorCode {
 	/** 测评靶场类型不存在 */
 	String EVAL_CATEGORY_NOT_EXIST = "101082";
 
-	/** 算法已经使用 */
-	String ALGORITHM_ALREADY_USED = "101083";
+	/** 指标项已经使用 */
+	String INDICATOR_ALREADY_USED = "101083";
 
 	/** 测评靶场存在运行任务 */
 	String RUNNING_EVAL_TASK_EXIST = "101084";

@@ -429,8 +429,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 拓扑数据修改
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
-			String topoId = localSceneService.saveTopo(ojSceneConfig, courseLesson.getTopoId());
-			courseLesson.setTopoId(topoId);
+			localSceneService.saveTopo(ojSceneConfig, lessonExist.getTopoId());
 		}
 
 		// 课时目录修改

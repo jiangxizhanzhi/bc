@@ -2,15 +2,20 @@ package com.cyberpeace.integratation.model.scene;
 
 import java.io.Serializable;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class FlowInfoContext implements Serializable {
 
-	@ApiModelProperty(value = "流量id")
-	private String flowId;
+	private String flow_id;
 
-	@ApiModelProperty(value = "源ip")
-	private String sourceIp;
+	private String source_ip;
+
+	public void setFlowId(String flowId) {
+		this.flow_id = flowId;
+	}
+
+	public void setSourceIp(String sourceIp) {
+		this.source_ip = sourceIp;
+	}
 }

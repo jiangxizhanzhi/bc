@@ -29,4 +29,6 @@ public class FlowElementFlow implements Serializable {
 
 	private String sourceIp;
 
+	private Integer commonStatus;
+
 }

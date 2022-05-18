@@ -1,13 +1,17 @@
 package com.cyberpeace.integratation.model.scene;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
 public class FlowBatchOpsContext extends NodeOpsContext {
 
-	private String flow_id;
+	private Integer run_type;
 
-	public void setFlowId(String flowId) {
-		this.flow_id = flowId;
+	private List<FlowInfoContext> flows;
+
+	public void setRunType(Integer runType) {
+		this.run_type = runType;
 	}
 }

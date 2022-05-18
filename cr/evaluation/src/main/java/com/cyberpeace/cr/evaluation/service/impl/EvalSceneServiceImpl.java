@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
@@ -17,11 +16,12 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.*;
-import com.cyberpeace.cr.evaluation.controller.rsp.ListFlowRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.service.EvalSceneService;
+import com.cyberpeace.cr.evaluation.service.context.FlowListContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.FlowInfoContext;
 import com.cyberpeace.integratation.model.scene.FlowRecordContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Lists;
@@ -78,8 +78,71 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 	}
 
 	@Override
-	public ListFlowRsp<FlowElementFlow> getFlowList(EvalTask evalTask, String nodeId, Page page,
-			Integer interactiveType) {
+	public ListRsp<FlowElementFlow> getFlowList(FlowListContext flowListContext) {
+
+		EvalTask evalTask = flowListContext.getEvalTask();
+		String nodeId = flowListContext.getNodeId();
+		Integer interactiveType = flowListContext.getInteractiveType();
+
+		List<FlowElementFlow> nodeFlows = getTaskFlows(evalTask, nodeId);
+
+		// 按照流量类型过滤数据
+		if (interactiveType != null) {
+			nodeFlows.removeIf(flowElementFlow -> !flowElementFlow.getInteractiveType()
+					.equals(interactiveType));
+		}
+
+		// 切片
+		ListRsp<FlowElementFlow> flowListRsp = PageUtil.getListResult(nodeFlows,
+				flowListContext.getPage(), nodeFlows.size());
+
+		FlowRecordContext flowRecordContext = new FlowRecordContext();
+		flowRecordContext.setId(evalTask.getMpSceneId());
+		flowRecordContext.setNodeId(nodeId);
+
+		// 逻辑优化 todo
+		Integer status;
+		try {
+			JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
+			status = jsonObject.getInteger("status");
+		} catch (Exception e) {
+			status = 4;
+		}
+
+		Integer commonStatus;
+		if (status.equals(3) || status.equals(4)) {
+			commonStatus = 0;
+		} else {
+			commonStatus = 1;
+		}
+
+		for (FlowElementFlow flowElementFlow : flowListRsp.getList()) {
+			flowElementFlow.setCommonStatus(commonStatus);
+		}
+
+		// 5. 返回流量数据列表
+		return flowListRsp;
+	}
+
+	@Override
+	public List<FlowInfoContext> getAllFlow(EvalTask evalTask, String nodeId) {
+
+		List<FlowElementFlow> nodeFlows = getTaskFlows(evalTask, nodeId);
+
+		List<FlowInfoContext> flowInfoContexts = Lists.newArrayList();
+
+		for (FlowElementFlow flowElementFlow : nodeFlows) {
+
+			FlowInfoContext flowInfoContext = BeanUtils.copy(flowElementFlow,
+					FlowInfoContext.class);
+			flowInfoContext.setFlowId(flowElementFlow.getId());
+			flowInfoContexts.add(flowInfoContext);
+		}
+
+		return flowInfoContexts;
+	}
+
+	private List<FlowElementFlow> getTaskFlows(EvalTask evalTask, String nodeId) {
 
 		// 1.创建变量
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -118,45 +181,13 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 
 		FlowElement flowElement = cpflow.getElements().get(nodeId);
 
-		if (flowElement == null) {
-			return new ListFlowRsp<>();
+		List<FlowElementFlow> nodeFlows = Lists.newArrayList();
+
+		if (flowElement != null) {
+			nodeFlows = flowElement.getFlows();
 		}
 
-		List<FlowElementFlow> nodeFlows = flowElement.getFlows();
-
-		if (interactiveType != null) {
-			nodeFlows.removeIf(flowElementFlow -> !flowElementFlow.getInteractiveType()
-					.equals(interactiveType));
-		}
-
-		// 切片
-		ListRsp<FlowElementFlow> flowListRsp = PageUtil.getListResult(nodeFlows, page,
-				nodeFlows.size());
-
-		ListFlowRsp<FlowElementFlow> flowElementFlowListFlowRsp = BeanUtils.copy(flowListRsp,
-				ListFlowRsp.class);
-
-		FlowRecordContext flowRecordContext = new FlowRecordContext();
-		flowRecordContext.setId(evalTask.getMpSceneId());
-		flowRecordContext.setNodeId(nodeId);
-
-		// 逻辑优化 todo
-		Integer status;
-		try {
-			JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
-			status = jsonObject.getInteger("status");
-		} catch (Exception e) {
-			status = 4;
-		}
-
-		if (status.equals(3) || status.equals(4)) {
-			flowElementFlowListFlowRsp.setStatus(0);
-		} else {
-			flowElementFlowListFlowRsp.setStatus(1);
-		}
-
-		// 5. 返回流量数据列表
-		return flowElementFlowListFlowRsp;
+		return nodeFlows;
 	}
 
 }

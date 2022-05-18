@@ -1,11 +1,14 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.util.List;
+
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowElementFlow;
-import com.cyberpeace.cr.evaluation.controller.rsp.ListFlowRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.service.context.FlowListContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.integratation.model.scene.FlowInfoContext;
 
 /**
  * 测试靶场-场景管理
@@ -24,6 +27,8 @@ public interface EvalSceneService {
 	 */
 	Boolean stopScene(LocalScene localScene);
 
-	ListFlowRsp<FlowElementFlow> getFlowList(EvalTask evalTask, String nodeId, Page page, Integer interactiveType);
+	ListRsp<FlowElementFlow> getFlowList(FlowListContext flowListContext);
+
+	List<FlowInfoContext> getAllFlow(EvalTask evalTask, String nodeId);
 
 }

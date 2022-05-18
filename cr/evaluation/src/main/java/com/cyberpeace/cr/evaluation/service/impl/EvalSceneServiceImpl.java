@@ -1,10 +1,14 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.checkerframework.checker.units.qual.K;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,7 +73,8 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 	}
 
 	@Override
-	public List<Flow> getFlowList(EvalTask evalTask) {
+	public ListRsp<FlowElementFlow> getFlowList(EvalTask evalTask, String nodeId, Page page) {
+
 		// 1.创建变量
 		String userId = UserInfoContext.getUserContext().getUserId();
 		List<Flow> flows = Lists.newArrayList();
@@ -104,26 +109,13 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 				elementsMap.put(element.getId(), element.getName());
 			}
 		}
-		// 3. 没有流量，返回空列表
-		if (cpflow == null) {
-			return flows;
-		}
-		// 4. 获取每个节点的流量，整合成列表
-		for (Map.Entry<String, FlowElement> entry : cpflow.getElements().entrySet()) {
-			String nodeId = entry.getKey();
-			String nodeName = elementsMap.get(nodeId);
 
-			for (FlowElementFlow flow : entry.getValue().getFlows()) {
-				Flow flowData = BeanUtils.copy(flow, Flow.class);
-				// 4.1 添加节点数据
-				flowData.setNodeId(nodeId);
-				flowData.setNodeName(nodeName);
-				flows.add(flowData);
-			}
-		}
+		List<FlowElementFlow> nodeFlows = cpflow.getElements().get(nodeId).getFlows();
+		// 切片
+		ListRsp<FlowElementFlow> flowListRsp = PageUtil.getListResult(nodeFlows, page, nodeFlows.size());
 
 		// 5. 返回流量数据列表
-		return flows;
+		return flowListRsp;
 	}
 
 }

@@ -65,6 +65,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String FLOW_LOG_URL;
 
+	private String FLOW_RETRIEVE;
+
 	private String HOST_STATE_URL;
 
 	private String FLOW_TREND_URL;
@@ -116,6 +118,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				+ ConfigUtil.getContextProperty("scene.node.session");
 
 		FLOW_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.log");
+
+		FLOW_RETRIEVE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.retrieve");
 
 		HOST_STATE_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.host.state");
@@ -179,6 +183,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
+	}
+
+	@Override
+	public MpFlow getFlow(String flowId) {
+		return HttpClientUtil.rawGet(FLOW_RETRIEVE + flowId, MpFlow.class);
 	}
 
 	@Override

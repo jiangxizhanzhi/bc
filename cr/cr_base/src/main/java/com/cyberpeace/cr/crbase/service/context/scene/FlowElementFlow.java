@@ -26,4 +26,7 @@ public class FlowElementFlow implements Serializable {
 	private Integer interactiveType;
 
 	private Integer category;
+
+	private String sourceIp;
+
 }

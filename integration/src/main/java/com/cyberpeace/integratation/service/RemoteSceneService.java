@@ -36,6 +36,11 @@ public interface RemoteSceneService {
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 
 	/**
+	 * 获取流量
+	 */
+	MpFlow getFlow(String flowId);
+
+	/**
 	 * 启动流量
 	 */
 	Boolean startFlow(FlowOpsContext flowOpsContext);

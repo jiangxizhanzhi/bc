@@ -7,6 +7,8 @@ import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class EvalTaskFlowListQuery extends PageReqBase implements Serializable {
 
@@ -14,9 +16,11 @@ public class EvalTaskFlowListQuery extends PageReqBase implements Serializable {
 	private Integer interactiveType;
 
 	@ApiModelProperty("测评靶场任务id")
+	@NotNull
 	private String taskId;
 
 	@ApiModelProperty("节点id")
+	@NotNull
 	private String nodeId;
 
 }

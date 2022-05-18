@@ -4,23 +4,39 @@ import java.io.Serializable;
 
 import com.cyberpeace.common.model.PageReqBase;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
-@Data
+@ApiModel
 public class EvalTaskFlowListQuery extends PageReqBase implements Serializable {
 
-	@ApiModelProperty("交互类型 0:背景流量， 1：攻击流量，2：全流量")
+	@ApiModelProperty(name = "interactive_type", value = "交互类型 0:背景流量， 1：攻击流量，2：全流量")
+	@Getter
+	@Setter
 	private Integer interactiveType;
 
-	@ApiModelProperty("测评靶场任务id")
-	@NotNull
+	@ApiModelProperty(name = "task_id", value = "测评靶场任务id")
+	@Getter
+	@Setter
 	private String taskId;
 
-	@ApiModelProperty("节点id")
-	@NotNull
+	@ApiModelProperty(name = "node_id", value = "节点id")
+	@Getter
+	@Setter
 	private String nodeId;
+
+	public void setInteractive_type(Integer interactiveType) {
+		this.interactiveType = interactiveType;
+	}
+
+	public void setTask_id(String taskId) {
+		this.taskId = taskId;
+	}
+
+	public void setNode_id(String nodeId) {
+		this.nodeId = nodeId;
+	}
 
 }

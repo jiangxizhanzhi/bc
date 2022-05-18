@@ -1,29 +1,29 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.service.context.scene.*;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.checkerframework.checker.units.qual.K;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.scene.*;
+import com.cyberpeace.cr.evaluation.controller.rsp.ListFlowRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
-
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 public class EvalSceneServiceImpl implements EvalSceneService {
@@ -73,7 +73,7 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 	}
 
 	@Override
-	public ListRsp<FlowElementFlow> getFlowList(EvalTask evalTask, String nodeId, Page page) {
+	public ListFlowRsp<FlowElementFlow> getFlowList(EvalTask evalTask, String nodeId, Page page) {
 
 		// 1.创建变量
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -112,10 +112,15 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 
 		List<FlowElementFlow> nodeFlows = cpflow.getElements().get(nodeId).getFlows();
 		// 切片
-		ListRsp<FlowElementFlow> flowListRsp = PageUtil.getListResult(nodeFlows, page, nodeFlows.size());
+		ListRsp<FlowElementFlow> flowListRsp = PageUtil.getListResult(nodeFlows, page,
+				nodeFlows.size());
+
+		ListFlowRsp<FlowElementFlow> flowElementFlowListFlowRsp = BeanUtils.copy(flowListRsp,
+				ListFlowRsp.class);
+		flowElementFlowListFlowRsp.setStatus(0);
 
 		// 5. 返回流量数据列表
-		return flowListRsp;
+		return flowElementFlowListFlowRsp;
 	}
 
 }

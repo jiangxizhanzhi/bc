@@ -4,13 +4,21 @@ import java.io.Serializable;
 
 import com.cyberpeace.common.model.PageReqBase;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@ApiModel
 public class EvalTemplateListQuery extends PageReqBase implements Serializable {
 
-	@ApiModelProperty("测评类型")
+	@ApiModelProperty(name = "category_code", value = "测评类型")
+	@Getter
+	@Setter
 	private Integer categoryCode;
+
+	public void setCategory_code(Integer categoryCode) {
+		this.categoryCode = categoryCode;
+	}
 
 }

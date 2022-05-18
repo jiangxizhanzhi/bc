@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -73,7 +74,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	}
 
 	@Override
-	public IPage<EvalTemplate> list(EvalTemplateListQuery evalTemplateListQuery) {
+	public IPage<EvalTemplate> list(@Validated EvalTemplateListQuery evalTemplateListQuery) {
 
 		Page page = evalTemplateListQuery.toPageParam();
 

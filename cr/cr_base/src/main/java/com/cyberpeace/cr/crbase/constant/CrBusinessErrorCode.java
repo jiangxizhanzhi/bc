@@ -286,4 +286,6 @@ public interface CrBusinessErrorCode {
 	/** 测评靶场步骤前序步骤未完成 */
 	String PRECEDING_STEP_NOT_FINISHED = "101092";
 
+	/** 未实现的方法 */
+	String NOT_IMPLEMENTED_EXCEPTION = "101093";
 }

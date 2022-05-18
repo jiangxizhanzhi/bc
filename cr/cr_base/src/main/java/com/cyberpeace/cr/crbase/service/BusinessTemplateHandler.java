@@ -15,8 +15,6 @@ import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 @Service
 public class BusinessTemplateHandler {
 
@@ -73,7 +71,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
-		throw new NotImplementedException();
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
 	public void loadBusinessResource(ResourceDumpContext resource) {
@@ -82,7 +80,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
-		throw new NotImplementedException();
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
 	/**
@@ -90,7 +88,7 @@ public class BusinessTemplateHandler {
 	 * @param businessTemplate
 	 */
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
-		throw new NotImplementedException();
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
 	/**
@@ -98,6 +96,6 @@ public class BusinessTemplateHandler {
 	 * @param templateContext
 	 */
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
-		throw new NotImplementedException();
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

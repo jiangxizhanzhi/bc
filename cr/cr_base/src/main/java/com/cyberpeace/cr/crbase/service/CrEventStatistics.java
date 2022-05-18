@@ -8,11 +8,11 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 @Service(value = "CrEventStatistics")
 public class CrEventStatistics {
@@ -29,10 +29,10 @@ public class CrEventStatistics {
 	}
 
 	public TrainingCount getTrainingCount(String userId) {
-		throw new NotImplementedException();
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
 	public List<TrainingData> getRelatedTraining(String userId) {
-		throw new NotImplementedException();
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

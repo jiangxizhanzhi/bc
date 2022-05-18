@@ -307,7 +307,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 // 专家评分, 设置默认分值
                 evalIndexRef.setSpecialistType(evalIndicator.getDatatype());
                 evalIndexRef.setSpecialistValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
-                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndicator, evalIndexRef.getSpecialistValue()));
+                if (evalIndexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndicator, evalIndexRef.getSpecialistValue()));
+                }
             }
 
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());

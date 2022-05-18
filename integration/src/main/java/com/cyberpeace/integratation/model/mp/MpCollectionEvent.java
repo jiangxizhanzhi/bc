@@ -3,12 +3,13 @@ package com.cyberpeace.integratation.model.mp;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class MpCollectionEvent implements Serializable {
     private String content;
 
-    private String time;
+    private Date time;
 
     private String probeData;
 

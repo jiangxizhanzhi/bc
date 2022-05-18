@@ -15,8 +15,10 @@ public class EvalProbeData extends BaseTable {
 
     private String probeId;
 
-    private Date time;
+    private Date collectionTime;
 
-    private String probeData;
+    private String nodeIp;
+
+    private String content;
 
 }

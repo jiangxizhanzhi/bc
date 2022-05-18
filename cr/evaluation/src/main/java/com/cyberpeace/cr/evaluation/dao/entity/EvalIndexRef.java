@@ -49,14 +49,24 @@ public class EvalIndexRef extends BaseTable {
     private String algorithmParams;
 
     /**
-     * 专家评分设置值（三级指标包含）
+     * 专家评分设置值（三级指标包含）类型输入
      */
     private Integer specialistValue;
 
     /**
-     * 专家评分设置类型（三级指标包含）
+     * 专家评分设置类型（三级指标包含）百分比/周期/整数值
      */
     private Integer specialistType;
+
+    /**
+     * 专家评分设置属性（三级指标包含）效益/成本/固定/偏离
+     */
+    private Integer specialistAttr;
+
+    /**
+     * 专家评分设置中心值（三级指标包含）固定/偏离-中心值
+     */
+    private Integer specialistAttrValue;
 
     /**
      * 当前指标项下一级ID, 为json字符串

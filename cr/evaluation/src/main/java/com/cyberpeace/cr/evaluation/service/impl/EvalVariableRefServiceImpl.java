@@ -52,13 +52,13 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
                 .eq(EvalProbeData::getSceneId, evalTask.getMpSceneId())
                 .eq(EvalProbeData::getNodeId, evalVariableRef.getDeviceId())
                 .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
-                .ge(EvalProbeData::getTime, evalRecord.getStartTime())
-                .le(EvalProbeData::getTime, evalRecord.getEndTime())
+                .ge(EvalProbeData::getCollectionTime, evalRecord.getStartTime())
+                .le(EvalProbeData::getCollectionTime, evalRecord.getEndTime())
                 .list();
 
         // 构建格式化算法数据
         FormatData data = new FormatData();
-        data.setData(evalProbeDataList.stream().map(EvalProbeData::getProbeData).collect(Collectors.toList()));
+        data.setData(evalProbeDataList.stream().map(EvalProbeData::getContent).collect(Collectors.toList()));
 
         // todo "算法其它入参"暂时为null, 无可用数据
         // 运行匹配算法

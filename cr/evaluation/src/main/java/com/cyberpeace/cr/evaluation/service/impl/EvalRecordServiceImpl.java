@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -306,9 +307,16 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
                 // 专家评分, 设置默认分值
                 evalIndexRef.setSpecialistType(evalIndicator.getDatatype());
+                evalIndexRef.setSpecialistAttr(evalIndicator.getAttribute());
+                evalIndexRef.setSpecialistAttrValue(evalIndicator.getAttributeValue());
                 evalIndexRef.setSpecialistValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndicator, evalIndexRef.getSpecialistValue()));
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(
+                            evalIndexRef.getSpecialistType(),
+                            evalIndexRef.getSpecialistAttr(),
+                            evalIndexRef.getSpecialistAttrValue(),
+                            evalIndexRef.getSpecialistValue()
+                    ));
                 }
             }
 
@@ -368,15 +376,26 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             return create(requestData);
         }
 
+        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefService.lambdaQuery()
+                .eq(EvalIndexRef::getRecordId, newEvalRecord.getResourceId())
+                .eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode())
+                .list()
+                .stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
+
         List<EvalIndexRef> evalIndexRefs = Lists.newArrayList();
         List<EvalVariableRef> evalVariableRefs = Lists.newArrayList();
 
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
-            EvalIndexRef evalIndexRef = new EvalIndexRef();
-            evalIndexRef.setResourceId(evalRecordIndexContext.getResourceId());
+            EvalIndexRef evalIndexRef = evalIndexRefMap.get(evalRecordIndexContext.getResourceId());
             evalIndexRef.setType(evalRecordIndexContext.getType());
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
+                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(
+                        evalIndexRef.getSpecialistType(),
+                        evalIndexRef.getSpecialistAttr(),
+                        evalIndexRef.getSpecialistAttrValue(),
+                        evalIndexRef.getSpecialistValue()
+                ));
             }
 
             evalIndexRefs.add(evalIndexRef);
@@ -478,8 +497,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public Boolean startRecord(String recordId) {
         // 评估任务对象
         EvalRecord evalRecord = getEntity(recordId);
-        // 评估实例对象
-        EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
+        // 评估实例对象  todo 暂时无限制
+//        EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
+        EvalTask evalTask = evalTaskService.getById(evalRecord.getTaskId());
         if (evalTask == null) {
             throw new BusinessException();
         }
@@ -574,8 +594,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
         collectionEventPageContext.setId(evalTask.getMpSceneId());
-        collectionEventPageContext.setStartTime(evalRecord.getStartTime());
-        collectionEventPageContext.setEndTime(evalRecord.getEndTime());
+//        collectionEventPageContext.setStartTime(evalRecord.getStartTime());
+//        collectionEventPageContext.setEndTime(evalRecord.getEndTime());
         collectionEventPageContext.setPage((long) 1);
         collectionEventPageContext.setPageSize((long) 100);
 
@@ -653,10 +673,25 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private void exeCollectionEvent(List<EvalProbeData> evalProbeDataList, CollectionEventPageContext collectionEventPageContext) {
 
         List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
-        collectionEventList.forEach(
-                mpCollectionEvent -> evalProbeDataList.add(BeanUtils.copy(mpCollectionEvent, EvalProbeData.class))
-        );
-        if (collectionEventPageContext.getPageSize().equals(collectionEventList.size())) {
+        collectionEventList.forEach(mpCollectionEvent -> {
+            EvalProbeData probeDataItem = new EvalProbeData();
+            probeDataItem.setCollectionTime(mpCollectionEvent.getTime());
+            probeDataItem.setContent(mpCollectionEvent.getContent());
+
+            JSONObject content = JsonUtil.toJsonObject(probeDataItem.getContent(), JSONObject.class);
+            try {
+                if (content.getString("full_log") != null) {
+                    JSONObject fullLog = JsonUtil.toJsonObject(content.getString("full_log"), JSONObject.class);
+                    probeDataItem.setProbeId(fullLog.getString("sic_launch_id"));
+                    evalProbeDataList.add(probeDataItem);
+                }
+
+            } catch (JSONException e) {
+                // todo 暂不处理
+            }
+
+        });
+        if (collectionEventPageContext.getPageSize() == collectionEventList.size()) {
             collectionEventPageContext.setPage(collectionEventPageContext.getPage() + 1);
             exeCollectionEvent(evalProbeDataList, collectionEventPageContext);
         }
@@ -729,7 +764,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Override
     public EvalRecordResultRsp result(String recordId) {
         EvalRecordResultRsp result = new EvalRecordResultRsp();
-        BeanUtils.copyProperties(getEntity(recordId), result);
+        BeanUtils.copyProperties(getById(recordId), result);
 
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordId).list();
         evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel));

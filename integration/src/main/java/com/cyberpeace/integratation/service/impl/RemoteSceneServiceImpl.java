@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import jdk.nashorn.internal.scripts.JO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -324,6 +325,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
 		String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext,
 				COLLECTION_EVENT_URL, String.class);
-		return JsonUtil.toJsonObjectArray(mpCollectionEvents, MpCollectionEvent.class);
+		JSONObject result = JsonUtil.toJsonObject(mpCollectionEvents, JSONObject.class);
+		// todo 错误响应
+		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
 	}
 }

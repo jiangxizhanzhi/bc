@@ -105,17 +105,21 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
     };
 
     @Override
-    public Integer thirdSpecialist(EvalIndicator evalIndicator, Integer value) {
-        if (evalIndicator.getDatatype().equals(EvalIndexRef.DataType.PERCENT.getCode())) {
+    public Integer thirdSpecialist(Integer datatype, Integer attribute, Integer attributeValue, Integer value) {
+        if (datatype.equals(EvalIndexRef.DataType.PERCENT.getCode())) {
             return value;
-        } else if (evalIndicator.getDatatype().equals(EvalIndexRef.DataType.CYCLE.getCode())) {
+        } else if (datatype.equals(EvalIndexRef.DataType.CYCLE.getCode())) {
             Map<Integer, Integer> attrMap = CYCLE_MAP.get(EvalIndexRef.DataAttr.COST.getCode());
             return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
-        } else if (evalIndicator.getDatatype().equals(EvalIndexRef.DataType.INTEGER.getCode())) {
-            if (evalIndicator.getAttribute().equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
-                return 1 - (evalIndicator.getAttributeValue() * 100 - value * 100) / evalIndicator.getAttributeValue() * 100;
-            } else if (evalIndicator.getAttribute().equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {
-                return (evalIndicator.getAttributeValue() * 100 - value * 100) / evalIndicator.getAttributeValue() * 100;
+        } else if (datatype.equals(EvalIndexRef.DataType.INTEGER.getCode())) {
+            if (attributeValue == null) {
+                return 100;
+            }
+            int score = (attributeValue * 100 - value * 100) / attributeValue * 100;
+            if (attribute.equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
+                return 100 - score;
+            } else if (attribute.equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {
+                return score;
             }
         }
         return 0;

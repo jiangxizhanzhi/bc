@@ -29,5 +29,5 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
      * @param value
      * @return 0~100
      */
-    Integer thirdSpecialist(EvalIndicator evalIndicator, Integer value);
+    Integer thirdSpecialist(Integer datatype, Integer attribute, Integer attributeValue, Integer value);
 }

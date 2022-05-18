@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class ListFlowRsp<T> implements Serializable {
 
 	private List<T> list = Lists.newArrayList();
 
+	@ApiModelProperty("节点下全量流量任务状态 0-无运行任务 1-有运行任务")
 	private Integer status;
 
 	private long total;

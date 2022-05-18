@@ -24,6 +24,6 @@ public interface EvalSceneService {
 	 */
 	Boolean stopScene(LocalScene localScene);
 
-	ListFlowRsp<FlowElementFlow> getFlowList(EvalTask evalTask, String nodeId, Page page);
+	ListFlowRsp<FlowElementFlow> getFlowList(EvalTask evalTask, String nodeId, Page page, Integer interactiveType);
 
 }

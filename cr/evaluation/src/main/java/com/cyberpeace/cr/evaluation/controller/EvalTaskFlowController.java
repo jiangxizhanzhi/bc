@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowElementFlow;
 import com.cyberpeace.cr.evaluation.controller.req.FlowChangeReq;
 import com.cyberpeace.cr.evaluation.controller.req.FlowsBatchOpsReq;
@@ -21,6 +22,7 @@ import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
 import com.cyberpeace.integratation.model.mp.MpFlow;
+import com.cyberpeace.integratation.model.scene.FlowParamUpdateContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import io.swagger.annotations.Api;
@@ -59,8 +61,11 @@ public class EvalTaskFlowController {
 		// 鉴权
 		EvalTask evalTask = evalTaskService.getTask(evalTaskFlowListQuery.getTaskId());
 		Page page = evalTaskFlowListQuery.toPageParam();
+
 		ListFlowRsp<FlowElementFlow> flowListRsp = evalSceneService.getFlowList(evalTask,
-				evalTaskFlowListQuery.getNodeId(), page);
+				evalTaskFlowListQuery.getNodeId(), page,
+				evalTaskFlowListQuery.getInteractiveType());
+
 		return new BaseRsp<>(flowListRsp);
 	}
 
@@ -72,7 +77,13 @@ public class EvalTaskFlowController {
 
 		// 鉴权
 		EvalTask evalTask = evalTaskService.getTask(flowChangeReq.getTaskId());
-		return new BaseRsp<>(true);
+
+		FlowParamUpdateContext flowParamUpdateContext = BeanUtils.copy(flowChangeReq,
+				FlowParamUpdateContext.class);
+		flowParamUpdateContext.setId(evalTask.getMpSceneId());
+		Boolean result = remoteSceneService.updateFlowParam(flowParamUpdateContext);
+
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("启动全部任务流量")
@@ -82,19 +93,10 @@ public class EvalTaskFlowController {
 
 		// 鉴权
 		EvalTask evalTask = evalTaskService.getTask(flowsOpsReq.getTaskId());
+
+
 		return new BaseRsp<>(true);
 	}
-
-	// @ApiOperation("停止全部任务流量")
-	// @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-	// @PostMapping("/all_stop")
-	// public BaseRsp<Boolean> stopAllFlow(@RequestBody @Validated FlowsOpsReq
-	// flowsOpsReq) {
-	//
-	// // 鉴权
-	// EvalTask evalTask = evalTaskService.getTask(flowsOpsReq.getTaskId());
-	// return new BaseRsp<>(true);
-	// }
 
 	@ApiOperation("批量启动任务流量")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -105,17 +107,6 @@ public class EvalTaskFlowController {
 		EvalTask evalTask = evalTaskService.getTask(flowsOpsReq.getTaskId());
 		return new BaseRsp<>(true);
 	}
-
-	// @ApiOperation("批量停止任务流量")
-	// @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-	// @PostMapping("/batch_stop")
-	// public BaseRsp<Boolean> stopFlowList(@RequestBody @Validated FlowsBatchOpsReq
-	// flowsOpsReq) {
-	//
-	// // 鉴权
-	// EvalTask evalTask = evalTaskService.getTask(flowsOpsReq.getTaskId());
-	// return new BaseRsp<>(true);
-	// }
 
 	@ApiOperation("下载流量")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)

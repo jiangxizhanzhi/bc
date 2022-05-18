@@ -35,6 +35,8 @@ public interface RemoteSceneService {
 
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 
+	Boolean updateFlowParam(FlowParamUpdateContext flowParamUpdateContext);
+
 	/**
 	 * 获取流量
 	 */
@@ -61,6 +63,11 @@ public interface RemoteSceneService {
 	 * 批量停止流量
 	 */
 	Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext);
+
+	/**
+	 * 查询场景下节点流量执行记录
+	 */
+	JSONObject getFlowRecords(FlowRecordContext flowRecordContext);
 
 	/**
 	 * 获取场景节点会话

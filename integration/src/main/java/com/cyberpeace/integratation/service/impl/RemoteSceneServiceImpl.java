@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import jdk.nashorn.internal.scripts.JO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,6 +77,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String COLLECTION_EVENT_URL;
 
+	private String FLOW_UPDATE_PARAM_URL;
+
+	private String FLOW_RECORD_URL;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost()
@@ -137,6 +140,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		COLLECTION_EVENT_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.probe.collection.event");
 
+		FLOW_UPDATE_PARAM_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.param.update");
+
+		FLOW_RECORD_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.flow.record");
+
 	}
 
 	@Override
@@ -187,6 +196,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
+	public Boolean updateFlowParam(FlowParamUpdateContext flowParamUpdateContext){
+		return HttpClientUtil.post(FLOW_UPDATE_PARAM_URL, flowParamUpdateContext, Boolean.class);
+	}
+
+	@Override
 	public MpFlow getFlow(String flowId) {
 		return HttpClientUtil.rawGet(FLOW_RETRIEVE + flowId, MpFlow.class);
 	}
@@ -209,6 +223,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext) {
 		return HttpClientUtil.post(FLOW_BATCH_STOP_URL, flowBatchOpsContext, Boolean.class);
+	}
+
+	@Override
+	public JSONObject getFlowRecords(FlowRecordContext flowRecordContext) {
+		return HttpClientUtil.post(FLOW_RECORD_URL, flowRecordContext, JSONObject.class);
 	}
 
 	private String startScene(SceneStartContext context, String url) {

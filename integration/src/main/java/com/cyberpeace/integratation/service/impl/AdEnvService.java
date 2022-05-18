@@ -1,7 +1,9 @@
 package com.cyberpeace.integratation.service.impl;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.util.SystemPropUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +19,9 @@ public class AdEnvService {
 	private String AD_URL;
 
 	public String getAdHost() {
+		if (StringUtils.isBlank(AD_HOST)) {
+			return CommonConstant.EMPTY_STRING;
+		}
 		return AD_URL;
 	}
 

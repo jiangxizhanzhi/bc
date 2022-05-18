@@ -33,25 +33,27 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String EXAM_USER_FINISH_COUNT_URL;
 
+	private String COMPETITION_LIST_URL;
+
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.theory_race.statistic") + "?";
+		COMPETITION_LIST_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.competition.list");
 	}
 
 	@Override
 	public List<CalendarCompetitionBo> competitionList(Date startTime, Date endTime,
 			String userId) {
-		String competitionListUrl = adEnvService.getAdHost()
-				+ ConfigUtil.getContextProperty("ad.competition.list");
 
-		// 没配返回空
-		if (StringUtils.isBlank(competitionListUrl)) {
+		// 无竞赛环境则不调用
+		if (StringUtils.isBlank(adEnvService.getAdHost())) {
 			return Lists.newArrayList();
 		}
 
 		// 接口请求
-		String formatUrl = String.format(competitionListUrl, TimeUtil.format1(startTime),
+		String formatUrl = String.format(COMPETITION_LIST_URL, TimeUtil.format1(startTime),
 				TimeUtil.format1(endTime),
 				StringUtils.isNotBlank(userId) ? userId : CommonConstant.EMPTY_STRING);
 
@@ -76,6 +78,11 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	@Override
 	public List<JSONObject> competitionListWithMinScore(String startTime, String endTime,
 			List<String> userIds, Integer minScore) {
+
+		// 未配置则返回空列表
+		if (StringUtils.isBlank(adEnvService.getAdHost())) {
+			return Lists.newArrayList();
+		}
 
 		// 获取竞赛理论赛所有百分制换算后>=80分的数据
 		StringBuilder targetUrl = new StringBuilder(EXAM_USER_FINISH_COUNT_URL);

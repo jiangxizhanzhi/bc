@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.model.scene;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,7 +9,8 @@ import java.util.List;
 
 @Data
 public class CollectionEventPageContext implements Serializable {
-    private String sceneId;
+    @ApiModelProperty("场景ID")
+    private String id;
 
     private List<String> nodeIds;
 

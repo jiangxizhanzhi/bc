@@ -112,7 +112,6 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             Map<Integer, Integer> attrMap = CYCLE_MAP.get(EvalIndexRef.DataAttr.COST.getCode());
             return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
         } else if (evalIndicator.getDatatype().equals(EvalIndexRef.DataType.INTEGER.getCode())) {
-            // todo 等待`evalIndicator`新属性
             if (evalIndicator.getAttribute().equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
                 return 1 - (evalIndicator.getAttributeValue() * 100 - value * 100) / evalIndicator.getAttributeValue() * 100;
             } else if (evalIndicator.getAttribute().equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {

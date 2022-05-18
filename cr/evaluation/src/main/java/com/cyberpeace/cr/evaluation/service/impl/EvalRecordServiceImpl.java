@@ -22,6 +22,7 @@ import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
 import com.cyberpeace.integratation.model.evaluation.AlgorithmContext;
+import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
 import com.cyberpeace.integratation.model.scene.CollectionEventPageContext;
 import com.cyberpeace.integratation.service.RemotePythonService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -365,20 +366,36 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             return create(requestData);
         }
 
+        List<EvalIndexRef> evalIndexRefs = Lists.newArrayList();
         List<EvalVariableRef> evalVariableRefs = Lists.newArrayList();
-        requestData.getIndexes().forEach(evalRecordIndexContext -> evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> {
-            EvalVariableRef evalVariableRef = new EvalVariableRef();
-            BeanUtils.copyProperties(evalRecordVariableContext, evalVariableRef);
-            evalVariableRef.setResourceId(evalRecordVariableContext.getResourceId());
-            evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
-            evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
-            evalVariableRefs.add(evalVariableRef);
-        }));
+
+        requestData.getIndexes().forEach(evalRecordIndexContext -> {
+            EvalIndexRef evalIndexRef = new EvalIndexRef();
+            evalIndexRef.setResourceId(evalRecordIndexContext.getResourceId());
+            evalIndexRef.setType(evalRecordIndexContext.getType());
+            if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
+            }
+
+            evalIndexRefs.add(evalIndexRef);
+
+            evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> {
+                EvalVariableRef evalVariableRef = new EvalVariableRef();
+                BeanUtils.copyProperties(evalRecordVariableContext, evalVariableRef);
+                evalVariableRef.setResourceId(evalRecordVariableContext.getResourceId());
+                evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
+                evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
+                evalVariableRefs.add(evalVariableRef);
+            });
+        });
+
+
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 evalVariableRefService.updateBatchById(evalVariableRefs);
+                evalIndexRefService.updateBatchById(evalIndexRefs);
                 updateById(newEvalRecord);
             }
         });
@@ -407,11 +424,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 } else {
                     variableIds = JsonUtil.toJsonObjectArray(evalIndexRef1.getNextIds(), String.class);
 
-                    if (evalIndexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
-                        evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
-                        evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
-                        evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
-                    }
+                    evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+                    evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
+                    evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
                 }
                 variableIds.forEach(variableId -> {
                     if (variablesMap.contains(variableId)) {
@@ -478,7 +493,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // todo 确保可以重复运行（进行中评估任务）, 遗弃`progress_key`, 已运行完成（指标/变量）项过滤
 
         // 循环同步采集数据
-        syncProbeData(evalRecord, evalTask);
+        syncProbeData(evalRecord, evalTask, true);
         // 执行变量项
         startVariables(evalRecord, evalTask);
         // 执行指标项
@@ -549,6 +564,36 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
+    private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask, Boolean isTmp) {
+        List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery()
+                .eq(EvalVariableRef::getRecordId, evalRecord.getResourceId())
+                .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
+                .list();
+
+        CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
+        collectionEventPageContext.setId(evalTask.getMpSceneId());
+        collectionEventPageContext.setStartTime(evalRecord.getStartTime());
+        collectionEventPageContext.setEndTime(evalRecord.getEndTime());
+        collectionEventPageContext.setPage((long) 1);
+        collectionEventPageContext.setPageSize((long) 100);
+
+        List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
+
+        exeCollectionEvent(evalProbeDataList, collectionEventPageContext);
+
+        evalVariableRefs.forEach(evalVariableRef -> evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode()));
+
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                if (!evalProbeDataList.isEmpty()) {
+                    evalProbeDataService.saveBatch(evalProbeDataList, 100);
+                }
+                evalVariableRefService.updateBatchById(evalVariableRefs);
+            }
+        });
+    }
+
     private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask) {
 
         // 循环变量项/探针id, invoke mp, 同步数据到bc数据库, 每同步一次（重复数据去重）, 更新变量项progress -> start  todo 类型为系统评估
@@ -577,7 +622,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (!isExist) {
                 CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
                 // todo 无视时间范围, 全部同步
-                collectionEventPageContext.setSceneId(evalTask.getMpSceneId());
+                collectionEventPageContext.setId(evalTask.getMpSceneId());
                 collectionEventPageContext.setNodeIds(Collections.singletonList(evalVariableRef.getDeviceId()));
                 collectionEventPageContext.setProbeId(Collections.singletonList(evalVariableRef.getProbeId()));
                 collectionEventPageContext.setStartTime(evalRecord.getStartTime());
@@ -601,6 +646,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 }
             });
         });
+    }
+
+    private void exeCollectionEvent(List<EvalProbeData> evalProbeDataList, CollectionEventPageContext collectionEventPageContext) {
+
+        List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
+        collectionEventList.forEach(
+                mpCollectionEvent -> evalProbeDataList.add(BeanUtils.copy(mpCollectionEvent, EvalProbeData.class))
+        );
+        if (collectionEventPageContext.getPageSize().equals(collectionEventList.size())) {
+            collectionEventPageContext.setPage(collectionEventPageContext.getPage() + 1);
+            exeCollectionEvent(evalProbeDataList, collectionEventPageContext);
+        }
     }
 
     private AlgorithmContext generateContext(Integer type, String id) {

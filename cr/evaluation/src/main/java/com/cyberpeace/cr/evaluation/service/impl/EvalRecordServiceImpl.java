@@ -535,6 +535,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         startIndexes(evalRecord, evalTask);
 
         evalRecord.setStatus(EvalRecord.Status.END.getCode());
+        evalRecord.setScore(evalIndexRefService.lambdaQuery()
+                .eq(EvalIndexRef::getRecordId, evalRecord.getResourceId())
+                .eq(EvalIndexRef::getLevel, 1)
+                .one().getScore()
+        );
         this.getBaseMapper().updateById(evalRecord);
     }
 
@@ -608,6 +613,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
                 .list();
         if (evalVariableRefs.isEmpty()) {
+            return;
+        }
+        // 数据已经同步
+        if (evalProbeDataService.lambdaQuery().eq(EvalProbeData::getSceneId, evalTask.getMpSceneId()).last("limit 1").one() != null) {
+            evalVariableRefs.forEach(evalVariableRef -> evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode()));
+            evalVariableRefService.updateBatchById(evalVariableRefs);
             return;
         }
 

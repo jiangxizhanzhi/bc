@@ -13,7 +13,7 @@ public class EvalVariableGraphRsp implements Serializable {
     private List<Date> time;
 
     @ApiModelProperty("格式化算法生成值")
-    private List<String> value;
+    private List<Integer> value;
 
     @ApiModelProperty("是否通过模型检测算法")
     private List<Boolean> isMatched;

@@ -72,7 +72,8 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         json.put("data", markData);
         json.put("other_args", otherArguments);
 
-        return HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, Integer.class);
+        String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
+        return JsonUtil.toJsonObject(resp, Integer.class);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         json.put("data", data);
         json.put("other_args", otherArguments);
 
-        return HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, Integer.class);
-
+        String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
+        return JsonUtil.toJsonObject(resp, Integer.class);
     }
 }

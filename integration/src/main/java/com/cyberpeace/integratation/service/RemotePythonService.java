@@ -11,6 +11,7 @@ import java.util.List;
 public interface RemotePythonService {
     String getPyHost();
 
+    // todo 算法接口统一
     List<String> formatPerform(AlgorithmContext context,
                                String algorithmId,
                                String algorithmCode,

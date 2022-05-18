@@ -17,6 +17,7 @@ import com.cyberpeace.integratation.model.evaluation.*;
 import com.cyberpeace.integratation.service.RemotePythonService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -166,6 +167,8 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
             itemData.setT(variableRefProbeDataContext.getTime().getTime() - data.getBaseTime());
             itemData.setV(variableRefProbeDataContext.getFormattedValue());
             itemData.setM(variableRefProbeDataContext.getStatus());
+
+            data.getData().add(itemData);
         });
 
         // 运行匹配算法
@@ -189,8 +192,15 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         evalVariableRefProbeDataService.lambdaQuery().eq(EvalVariableRefProbeData::getVariableId, variableId).list().forEach(item -> {
             result.getTime().add(item.getTime());
-            result.getValue().add(item.getFormattedValue());
-            result.getIsMatched().add(item.getStatus().equals(EvalVariableRefProbeData.Status.MATCHED.getCode()));
+            // todo 仅判断一次
+            if (StringUtils.isNumeric(item.getFormattedValue())) {
+                result.getValue().add(Integer.parseInt(item.getFormattedValue()));
+                result.getIsMatched().add(item.getStatus().equals(EvalVariableRefProbeData.Status.MATCHED.getCode()));
+            } else {
+                boolean isMatched = item.getStatus().equals(EvalVariableRefProbeData.Status.MATCHED.getCode());
+                result.getValue().add(isMatched ? 1 : 0);
+                result.getIsMatched().add(isMatched);
+            }
         });
         return result;
     }

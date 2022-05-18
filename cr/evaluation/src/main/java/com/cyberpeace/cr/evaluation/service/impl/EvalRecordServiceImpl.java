@@ -504,15 +504,19 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             throw new BusinessException();
         }
 
+        System.out.println(new Date());
         recordRun(evalRecord, evalTask);
+        System.out.println(new Date());
 
-        evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
+        if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
+            evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
+        }
         return updateById(evalRecord);
     }
 
     @Async
     void recordRun(EvalRecord evalRecord, EvalTask evalTask) {
-        // todo 确保可以重复运行（进行中评估任务）, 遗弃`progress_key`, 已运行完成（指标/变量）项过滤
+        // todo 异步, 确保可以重复运行（进行中评估任务）, 遗弃`progress_key`, 已运行完成（指标/变量）项过滤
 
         // 循环同步采集数据
         syncProbeData(evalRecord, evalTask, true);
@@ -532,6 +536,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode())
                 .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode())
                 .list();
+        if (evalVariableRefList.isEmpty()) {
+            return;
+        }
 
         List<String> usingAlgorithmIds = Lists.newArrayList();
         evalVariableRefList.forEach(evalVariableRef -> {
@@ -605,6 +612,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
 
         exeCollectionEvent(evalProbeDataList, collectionEventPageContext);
+        evalProbeDataList.sort(Comparator.comparing(EvalProbeData::getCollectionTime));
 
         evalVariableRefs.forEach(evalVariableRef -> evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode()));
 

@@ -16,6 +16,6 @@
     <select id="selectVariableProbeData"
             resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp">
         select * from cr_eval_probe_data
-        where probe_id in (select id from cr_eval_variable_ref_probe_data where variable_id = #{variable_id})
+        where id in (select probe_data_id from cr_eval_variable_ref_probe_data where variable_id = #{variable_id})
     </select>
 </mapper>

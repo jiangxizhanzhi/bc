@@ -10,14 +10,12 @@ import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Api(tags = "靶场测评-评估")
@@ -102,19 +100,7 @@ public class EvalRecordController {
     @ApiOperation("获取三级指标项下全部变量项")
     @GetMapping("/variables")
     public BaseRsp<List<EvalRoomPairRsp>> variables(@RequestParam("index_id") String indexId) {
-//        return new BaseRsp<>(evalIndexRefService.selectVariables(indexId));
-
-        // todo 假数据
-        List<String> ls = Arrays.asList("日志事件", "内存使用率", "硬盘使用率", "本地端口", "CPU使用率", "网络接口带宽使用率", "进程状态");
-        List<EvalRoomPairRsp> r = Lists.newArrayList();
-        for (int i = 0; i < ls.size(); i++) {
-            EvalRoomPairRsp item = new EvalRoomPairRsp();
-            item.setId(Integer.toString(i));
-            item.setLabel(ls.get(i));
-            r.add(item);
-
-        }
-        return new BaseRsp<>(r);
+        return new BaseRsp<>(evalIndexRefService.selectVariables(indexId));
     }
 
     @ApiOperation("变量项采集信息（折线图）")

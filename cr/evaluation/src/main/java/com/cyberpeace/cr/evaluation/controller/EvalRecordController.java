@@ -5,6 +5,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRecordStartReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalVariableProbeDataReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
@@ -87,8 +88,8 @@ public class EvalRecordController {
 
     @ApiOperation("评估任务开启")
     @PostMapping("/start")
-    public BaseRsp<Boolean> start(@RequestParam("resource_id") String recordId) {
-        return new BaseRsp<>(evalRecordService.startRecord(recordId));
+    public BaseRsp<Boolean> start(@RequestBody EvalRecordStartReq requestData) {
+        return new BaseRsp<>(evalRecordService.startRecord(requestData.getResourceId()));
     }
 
     @ApiOperation("评估任务结果")

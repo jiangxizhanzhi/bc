@@ -21,6 +21,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
@@ -59,6 +60,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Autowired
 	private CrTaskMapper crTaskMapper;
+
+	@Autowired
+	private MissionTemplateMapper missionTemplateMapper;
 
 	@Override
 	public ListRsp<SkillRes> page(PageReqBase skillListReq) {
@@ -111,15 +115,29 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		if (CollectionUtils.isEmpty(missionTemplates)) {
 			return;
 		}
+		// validate missionTemplateIds, make sure missionTemplate exist
+		List<String> missionTemplateIds = missionTemplates.stream().map(IdWeight::getResourceId)
+				.collect(Collectors.toList());
+		List<String> validMissionTemplateIds = missionTemplateMapper
+				.validateIds(missionTemplateIds);
+
 		List<SkillMissionRelation> relations = Lists.newArrayList();
 		for (IdWeight idWeight : missionTemplates) {
+			// validation before insertion
+			if (!validMissionTemplateIds.contains(idWeight.getResourceId())) {
+				continue;
+			}
 			SkillMissionRelation relation = new SkillMissionRelation();
 			relation.setSkillId(skillId);
 			relation.setMissionTemplateId(idWeight.getResourceId());
 			relation.setWeight(idWeight.getWeight());
 			relations.add(relation);
 		}
-		// 插入前检查是否存在任务。 todo
+
+		if (relations.isEmpty()) {
+			return;
+		}
+
 		skillMissionRelationMapper.insertBatch(relations);
 	}
 

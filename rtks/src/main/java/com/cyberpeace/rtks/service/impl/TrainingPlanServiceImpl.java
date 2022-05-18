@@ -135,8 +135,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		List<SkillWeightRes> skillDataList = roleDetailOutput.getSkillDataList();
 		List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList, SkillRes.class);
 
-		// skillService.checkSkillRes(skillResList, type);
-		// todo
 		roleDetailRes.setSkillResDataList(skillResList);
 
 		return roleDetailRes;

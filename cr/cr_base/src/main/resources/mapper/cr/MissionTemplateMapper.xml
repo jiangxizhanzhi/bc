@@ -67,4 +67,12 @@
             #{missionTemplateId}
         </foreach>
     </select>
+    <select id="validateIds" resultType="java.lang.String">
+        select resource_id
+        from cr_mission_template
+        where resource_id in
+        <foreach collection="missionTemplateIds" item="missionTemplateId" separator="," open="(" close=")">
+            #{missionTemplateId}
+        </foreach>
+    </select>
 </mapper>

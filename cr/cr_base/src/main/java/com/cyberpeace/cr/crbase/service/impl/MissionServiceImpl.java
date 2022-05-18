@@ -431,7 +431,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			missionTemplate.setCreateUserId(userId);
 			missionTemplate.setCategoryId(loadMission.getCategory());
 			missionTemplate.setResourceId(IDGeneratorUtil.getID());
-			// todo attachment
 
 			return missionTemplate;
 		}).collect(Collectors.toList());

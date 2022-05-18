@@ -707,7 +707,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		if (null == role) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
-		// todo
 		// List<String> resourceIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
 		// String.class);
 		// if (CollectionUtils.isNotEmpty(resourceIds)) {

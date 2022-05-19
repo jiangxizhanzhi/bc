@@ -1002,6 +1002,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			return Lists.newArrayList();
 		}
 
+		// 超级管理员和创建者加入
+		Map<String, String> userMap = StreamApiUtils.toMap(userInfos, UserInfo::getUserId,
+				UserInfo::getUserId);
+		if (null == userMap.get(ResourceImportConstant.SUPER_ADMIN_HASH)) {
+			UserInfo superAdmin = remoteUserService
+					.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
+			userInfos.add(superAdmin);
+		}
+		if (null == userMap.get(classroom.getCreateUserId())) {
+			UserInfo create = remoteUserService.getById(classroom.getCreateUserId());
+			userInfos.add(create);
+		}
+
 		// 数据转换
 		return StreamApiUtils.map(userInfos, userInfo -> {
 			DashboardUser dashboardUser = userToDashUser(userInfo, ClassroomRole.STUDENT.getDesc());

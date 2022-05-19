@@ -159,7 +159,7 @@ public interface OjBusinessErrorCode {
 	/** 用户未进行远程协助请求或者协助已结束*/
 	String USER_NO_NEED_HELP = "102051";
 
-	/** 未获取到远程协助地址*/
+	/** 学员未接入机器*/
 	String HELP_URL_NOT_FOUND = "102052";
 
 	/** 训练计划%s已开始，暂不支持导入*/

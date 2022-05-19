@@ -25,7 +25,6 @@ public interface RemoteUserService {
 
 	JSONObject getList(Long page, Long perPage, String pattern, String organization);
 
-
 	List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext);
 
 	List<UserInfo> getByIdList(List<String> ids);
@@ -40,6 +39,13 @@ public interface RemoteUserService {
 	 * @return
 	 */
 	List<UserInfo> ListByOrgId(String organizationId, boolean children);
+
+	/**
+	 * 获取组织下的用户编号
+	 * @param orgId
+	 * @return
+	 */
+	List<String> idsByOrgId(String orgId);
 
 	Set<String> getUserPermission(String userId);
 

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -232,6 +233,13 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfos;
 	}
 
+	@Override
+	public List<String> idsByOrgId(String orgId) {
+		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + orgId, JSONArray.class);
+		return StreamApiUtils.map(userArray,
+				user -> ((JSONObject) user).getString(JsonKeyConstant.ID));
+	}
+
 	/**
 	 * 获取用户可见的菜单
 	 * @param userId
@@ -241,8 +249,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	public Set<String> getUserPermission(String userId) {
 		String targetUrl = AUTH_PERMISSION_MENUS_URL + userId;
 		// 获取该用户下对应多个角色可看见菜单的合集
-		JSONArray objects = HttpClientUtil.rawGet(targetUrl,
-				JSONArray.class);
+		JSONArray objects = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 		List<MpAuthPermission> mpAuthPermissions = objects.toJavaList(MpAuthPermission.class);
 
 		return mpAuthPermissions.stream().map(MpAuthPermission::getIdentifier)

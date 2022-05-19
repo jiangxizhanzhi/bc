@@ -182,17 +182,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroom.setResourceId(IDGeneratorUtil.getID());
 
 		// 分组数据
-		List<String> userIds = userIdsByOrgs(orgIds);
+		List<String> userIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
 		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
 				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
 
 		// 如果课程无访问权限 把组织数据加入
-		if (course.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode()
-				&& !course.getReadAuthIds().contains(classroom.getOrganizationId())) {
-			changeCourseOrg(course, orgIds);
-		}
-
-		// 公告发布 todo
+		boolean changCourse = changeCourse(classroom.getOrganizationId(), course);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -200,110 +195,119 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				classroomMapper.insert(classroom);
 				classroomGroupInfoService.saveBatch(groupInfoList);
-				courseMapper.updateById(course);
+				if (changCourse) {
+					courseMapper.updateById(course);
+				}
 			}
 		});
+
 		return classroom;
-	}
-
-	/**
-	 * 获取用户编号列表
-	 * @param orgIds
-	 * @return
-	 */
-	private List<String> userIdsByOrgs(List<String> orgIds) {
-
-		List<String> userIds = Lists.newArrayList();
-		for (String orgId : orgIds) {
-			List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, false);
-			List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
-			userIds.addAll(orgUserIds);
-		}
-
-		return userIds;
-	}
-
-	/**
-	 * 修改课程可访问组织数据
-	 * @param course
-	 * @param orgIds
-	 */
-	private void changeCourseOrg(Course course, List<String> orgIds) {
-
-		if (StringUtils.isNotBlank(course.getReadAuthIds())) {
-			List<String> authOrgIds = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
-					String.class);
-			orgIds.addAll(authOrgIds);
-			List<String> distinctList = StreamApiUtils.distinct(orgIds);
-			course.setReadAuthIds(JsonUtil.arrayToString(distinctList));
-		}
 	}
 
 	@Override
 	public Boolean updateClassroom(Classroom classroom, AuthContext authContext) {
 
-		// 数据校验
+		// 时间校验
 		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
 				classroom.getEndTime());
 		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
 				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
+		// 课程权限校验
 		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
+		CourseLesson courseLesson = courseValidateHandler
+				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
+
+		// 课程表校验
 		Classroom existRoom = classroomValidateHandler
 				.validateClassroomExist(classroom.getResourceId());
+
+		// 训练计划校验
 		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
 			classroomValidateHandler.validatePlanExistById(classroom.getTrainPlanId());
 		}
-		validateChangeClassroom(classroom);
 
-		CourseLesson courseLesson = courseValidateHandler
-				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
+		validateChangeClassroom(classroom);
 
 		// 组织数据获取
 		List<String> orgIds = remoteOrganizationService.childrenList(classroom.getOrganizationId(),
 				true);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
-		boolean enableChange = !existRoom.getLessonId().equals(classroom.getLessonId());
-		enableChange |= !existRoom.getOrganizationId().equals(classroom.getOrganizationId());
-		enableChange &= courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
-				.getCode().intValue();
-
-		// 分组数据
-		List<ClassroomGroupInfo> groupInfos = null;
-		if (enableChange) {
-			List<String> userIdsByOrgs = userIdsByOrgs(orgIds);
-			groupInfos = classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
-					courseLesson, userIdsByOrgs, CommonConstant.ONE);
-		}
+		// 判断群组是否群组需要改变
+		boolean changeGroup = changeGroup(existRoom, classroom, courseLesson);
+		List<ClassroomGroupInfo> groupInfos = changeGroup ? reInitGroup(classroom, courseLesson)
+				: Lists.newArrayList();
 
 		// 课程修改
-		if (course.getReadAuthType().intValue() == AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode()
-				&& !course.getReadAuthIds().contains(classroom.getOrganizationId())) {
-			changeCourseOrg(course, orgIds);
-		}
+		boolean changeCourse = changeCourse(classroom.getOrganizationId(), course);
 
-		boolean finalEnableChange = enableChange;
-		List<ClassroomGroupInfo> finalGroupInfos = groupInfos;
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				if (!classroom.getOrganizationId().equals(existRoom.getOrganizationId())) {
+				classroomMapper.updateById(classroom);
+
+				if (changeCourse) {
 					courseMapper.updateById(course);
 				}
-				classroomMapper.updateById(classroom);
-				if (finalEnableChange) {
+
+				if (changeGroup) {
 					classroomGroupInfoMapper.deleteByRoom(classroom.getResourceId());
-					if (CollectionUtils.isNotEmpty(finalGroupInfos)) {
-						classroomGroupInfoService.saveBatch(finalGroupInfos);
-					}
+					classroomGroupInfoService.saveBatch(groupInfos);
 				}
 			}
 		});
 
 		return CommonConstant.TRUE;
 
+	}
+
+	/** 判断是否需要修改课程*/
+	private boolean changeCourse(String orgId, Course course) {
+
+		// 校验是否为自定义
+		if (course.getReadAuthType().intValue() == AuthTable.AuthType.ALL_SHARE_MODE.getCode()
+				.intValue()) {
+			return CommonConstant.FALSE;
+		}
+
+		// 校验组织是否改变
+		List<String> orgIds = remoteOrganizationService.childrenList(orgId, true);
+		List<String> readIds = JsonUtil.toJsonObjectArray(course.getReadAuthIds(), String.class);
+		if (readIds.containsAll(orgIds)) {
+			return CommonConstant.FALSE;
+		}
+
+		// 将不存在的组织加入到授权中
+		readIds.addAll(orgIds);
+		List<String> finalIds = StreamApiUtils.distinct(readIds);
+		course.setReadAuthIds(JsonUtil.arrayToString(finalIds));
+
+		return CommonConstant.TRUE;
+	}
+
+	/** 判断是否修改群组*/
+	private boolean changeGroup(Classroom current, Classroom update, CourseLesson courseLesson) {
+		boolean enableChange = !current.getLessonId().equals(update.getLessonId());
+		enableChange |= !current.getOrganizationId().equals(update.getOrganizationId());
+		enableChange &= courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
+				.getCode().intValue();
+
+		return enableChange;
+	}
+
+	/** 出新初始化分组数据*/
+	private List<ClassroomGroupInfo> reInitGroup(Classroom classroom, CourseLesson courseLesson) {
+
+		// 用户查询及校验
+		List<String> orgUserIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
+		if (CollectionUtils.isEmpty(orgUserIds)) {
+			throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);
+		}
+
+		return classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
+				courseLesson, orgUserIds, CommonConstant.ONE);
 	}
 
 	/**

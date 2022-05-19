@@ -28,7 +28,6 @@ import com.cyberpeace.integratation.model.mp.MpFlow;
 import com.cyberpeace.integratation.model.scene.FlowBatchOpsContext;
 import com.cyberpeace.integratation.model.scene.FlowInfoContext;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
-import com.cyberpeace.integratation.model.scene.FlowParamUpdateContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import io.swagger.annotations.Api;
@@ -87,10 +86,9 @@ public class EvalTaskFlowController {
 		// 鉴权
 		EvalTask evalTask = evalTaskService.getTask(flowChangeReq.getTaskId());
 
-		FlowParamUpdateContext flowParamUpdateContext = BeanUtils.copy(flowChangeReq,
-				FlowParamUpdateContext.class);
-		flowParamUpdateContext.setId(evalTask.getMpSceneId());
-		Boolean result = remoteSceneService.updateFlowParam(flowParamUpdateContext);
+		FlowOpsContext flowOpsContext = BeanUtils.copy(flowChangeReq, FlowOpsContext.class);
+		flowOpsContext.setId(evalTask.getMpSceneId());
+		Boolean result = remoteSceneService.updateFlowParam(flowOpsContext);
 
 		return new BaseRsp<>(result);
 	}
@@ -145,7 +143,7 @@ public class EvalTaskFlowController {
 		// 鉴权
 		evalTaskService.getTask(taskId);
 
-		MpFlow flow = remoteSceneService.getFlow(flowId);
+		MpFlow flow = remoteSceneService.getFlowById(flowId);
 		Integer resourceType = flow.getResourceType();
 		String filePath = resourceType.equals(MpFlow.resourceTypeEnum.PCAP.getCode())
 				? flow.getPcapFile()

@@ -35,12 +35,19 @@ public interface RemoteSceneService {
 
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 
-	Boolean updateFlowParam(FlowParamUpdateContext flowParamUpdateContext);
+	/**
+	 * 获取流量信息
+	 * @param flowId
+	 * @return MpFlow
+	 */
+	MpFlow getFlowById(String flowId);
 
 	/**
-	 * 获取流量
+	 * 更新节点流量的源IP
+	 * @param flowOpsContext
+	 * @return Boolean
 	 */
-	MpFlow getFlow(String flowId);
+	Boolean updateFlowParam(FlowOpsContext flowOpsContext);
 
 	/**
 	 * 启动流量
@@ -56,16 +63,22 @@ public interface RemoteSceneService {
 
 	/**
 	 * 批量启动流量
+	 * @param flowBatchOpsContext
+	 * @return Boolean
 	 */
 	Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext);
 
 	/**
 	 * 批量停止流量
+	 * @param flowBatchOpsContext
+	 * @return Boolean
 	 */
 	Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext);
 
 	/**
-	 * 查询场景下节点流量执行记录
+	 * 查询场景节点流量执行记录
+	 * @param flowRecordContext
+	 * @return JSONObject
 	 */
 	JSONObject getFlowRecords(FlowRecordContext flowRecordContext);
 

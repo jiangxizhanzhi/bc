@@ -250,14 +250,14 @@ public interface CrBusinessErrorCode {
 	/** 训练已暂停，不能删除场景 */
 	String TRAINING_PAUSED = "101080";
 
+	/** 指标项已经使用 */
+	String INDICATOR_ALREADY_USED = "101081";
+
 	/** LOGO文件不存在 */
-	String LOGO_NOT_EXIST = "101081";
+	String LOGO_NOT_EXIST = "101082";
 
 	/** 测评靶场类型不存在 */
-	String EVAL_CATEGORY_NOT_EXIST = "101082";
-
-	/** 指标项已经使用 */
-	String INDICATOR_ALREADY_USED = "101083";
+	String EVAL_CATEGORY_NOT_EXIST = "101083";
 
 	/** 测评靶场存在运行任务 */
 	String RUNNING_EVAL_TASK_EXIST = "101084";
@@ -274,20 +274,20 @@ public interface CrBusinessErrorCode {
 	/** 测评靶场步骤配置错误 */
 	String EVAL_STEP_ILLEGAL = "101088";
 
-	/** 算法参数重名 */
-	String PARAM_NAME_DUPLICATE = "101089";
-
 	/** 测评靶场步骤未启动 */
-	String EVAL_STEP_NOT_STARTED = "101090";
+	String EVAL_STEP_NOT_STARTED = "101089";
 
 	/** 测评靶场步骤已启动 */
-	String EVAL_STEP_IS_STARTED = "101091";
+	String EVAL_STEP_IS_STARTED = "101090";
 
-	/** 测评靶场步骤已启动 */
-	String EVAL_STEP_IS_FINISHED = "101092";
+	/** 测评靶场步骤已结束 */
+	String EVAL_STEP_IS_FINISHED = "101091";
 
 	/** 测评靶场步骤前序步骤未完成 */
-	String PRECEDING_STEP_NOT_FINISHED = "101093";
+	String PRECEDING_STEP_NOT_FINISHED = "101092";
+
+	/** 算法参数重名 */
+	String PARAM_NAME_DUPLICATE = "101093";
 
 	/** 未实现的方法 */
 	String NOT_IMPLEMENTED_EXCEPTION = "101094";

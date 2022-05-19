@@ -57,6 +57,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String FLOW_STOP_URL;
 
+	private String FLOW_UPDATE_PARAM_URL;
+
 	private String FLOW_BATCH_START_URL;
 
 	private String FLOW_BATCH_STOP_URL;
@@ -64,8 +66,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String NODE_SESSION_URL;
 
 	private String FLOW_LOG_URL;
-
-	private String FLOW_RETRIEVE;
 
 	private String HOST_STATE_URL;
 
@@ -77,9 +77,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String COLLECTION_EVENT_URL;
 
-	private String FLOW_UPDATE_PARAM_URL;
-
 	private String FLOW_RECORD_URL;
+
+	private String FLOW_RETRIEVE_URL;
 
 	@PostConstruct
 	public void init() {
@@ -112,6 +112,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		FLOW_STOP_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.flow.stop");
 
+		FLOW_UPDATE_PARAM_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.param.update");
+
 		FLOW_BATCH_START_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.flow.batch.start");
 
@@ -122,8 +125,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				+ ConfigUtil.getContextProperty("scene.node.session");
 
 		FLOW_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.log");
-
-		FLOW_RETRIEVE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.retrieve");
 
 		HOST_STATE_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.host.state");
@@ -140,11 +141,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		COLLECTION_EVENT_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.probe.collection.event");
 
-		FLOW_UPDATE_PARAM_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.node.flow.param.update");
-
 		FLOW_RECORD_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.flow.record");
+				+ ConfigUtil.getContextProperty("scene.node.flow.record");
+
+		FLOW_RETRIEVE_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.flow.retrieve");
 
 	}
 
@@ -196,13 +197,13 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public Boolean updateFlowParam(FlowParamUpdateContext flowParamUpdateContext){
-		return HttpClientUtil.post(FLOW_UPDATE_PARAM_URL, flowParamUpdateContext, Boolean.class);
+	public MpFlow getFlowById(String flowId) {
+		return HttpClientUtil.rawGet(FLOW_RETRIEVE_URL + flowId, MpFlow.class);
 	}
 
 	@Override
-	public MpFlow getFlow(String flowId) {
-		return HttpClientUtil.rawGet(FLOW_RETRIEVE + flowId, MpFlow.class);
+	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
+		return HttpClientUtil.post(FLOW_UPDATE_PARAM_URL, flowOpsContext, Boolean.class);
 	}
 
 	@Override

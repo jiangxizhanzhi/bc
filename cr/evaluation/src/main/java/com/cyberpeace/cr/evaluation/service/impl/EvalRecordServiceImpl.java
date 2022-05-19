@@ -14,6 +14,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
@@ -25,7 +26,6 @@ import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
 import com.cyberpeace.integratation.model.evaluation.AlgorithmContext;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
 import com.cyberpeace.integratation.model.scene.CollectionEventPageContext;
-import com.cyberpeace.integratation.service.RemotePythonService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -93,25 +93,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
-    @Autowired
-    private EvalVariableRefProbeDataService evalVariableRefProbeDataService;
-
-    @Autowired
-    private RemotePythonService remotePythonService;
-
-    /**
-     * 获取实例对象, 检查返回值有效性
-     *
-     * @param resourceId 评估resourceId
-     * @return {@link EvalRecord}
-     */
-    private EvalRecord getEntity(String resourceId) {
+    public EvalRecord getEntity(String resourceId) {
+        // todo 文本调整
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);
         if (evalRecord == null) {
-            throw new BusinessException();
+            throw new BusinessException("评估未找到");
         }
         if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
-            throw new BusinessException();
+            throw new BusinessException("评估未启动");
         }
         return evalRecord;
     }
@@ -188,10 +177,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 ? evalCollectionService.lambdaQuery().in(EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()).list()
                 : Lists.newArrayList();
 
-        // todo 暂时取消
-//        if (evalCollections.size() != evalRecordVariableContextMap.keySet().size()) {
-//            throw new BusinessException();
-//        }
+        // 请求体变量项数量与db获取体系下变量项数量一致
+        if (evalCollections.size() != evalRecordVariableContextMap.keySet().size()) {
+            throw new BusinessException(CrBusinessErrorCode.SYSTEM_INDEX_IS_FAILED);
+        }
 
         // 使用指标体系内的全部算法
         Set<String> usingAlgorithmIds = Sets.newHashSet();
@@ -217,23 +206,25 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalVariableRef.setName(evalCollection.getName());
             evalVariableRef.setProgress(EvalVariableRef.Progress.NOT_START.getCode());
 
-            // 构建变量项新的算法数据
+            // 构建变量项新的算法数据 - 格式化算法
             EvalAlgorithmRef newFormatAlgorithm = generateAlgorithmRef(evalCollection.getFormatAlgorithmId(), evalAlgorithmMap);
             evalVariableRef.setFormatAlgorithmId(newFormatAlgorithm.getResourceId());
             evalVariableRef.setFormatParams(evalCollection.getFormatAlgorithmParams());
             evalAlgorithmRefList.add(newFormatAlgorithm);
 
+            // 匹配算法
             EvalAlgorithmRef newMatchAlgorithm = generateAlgorithmRef(evalCollection.getDetectionAlgorithmId(), evalAlgorithmMap);
             evalVariableRef.setMatchAlgorithmId(newMatchAlgorithm.getResourceId());
             evalVariableRef.setMatchParams(evalCollection.getDetectionAlgorithmParams());
             evalAlgorithmRefList.add(newMatchAlgorithm);
 
+            // 评分算法
             EvalAlgorithmRef newMarkAlgorithm = generateAlgorithmRef(evalCollection.getScoreAlgorithmId(), evalAlgorithmMap);
             evalVariableRef.setMarkAlgorithmId(newMarkAlgorithm.getResourceId());
             evalVariableRef.setMarkParams(evalCollection.getScoreAlgorithmParams());
             evalAlgorithmRefList.add(newMarkAlgorithm);
 
-
+            // 设置使用节点、探针id
             EvalRecordVariableContext evalRecordVariableContext = evalRecordVariableContextMap.get(evalCollection.getResourceId());
             evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
             evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
@@ -287,8 +278,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setType(thirdIndexesTypeMap.getOrDefault(evalIndex.getResourceId(), EvalIndexRef.Type.SYSTEM.getCode()));
             evalIndexRef.setLevel(evalIndex.getLevel());
 
-//            EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(evalIndex.getAggregatingAlgorithmId(), evalAlgorithmMap);
-
+            // 设置下一级、备份算法信息
             String nextIds;
             EvalAlgorithmRef evalAlgorithmRef;
             if (!evalIndex.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
@@ -298,10 +288,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalAlgorithmRef = generateAlgorithmRef(evalIndex.getAggregatingAlgorithmId(), evalAlgorithmMap);
             } else {
                 EvalIndicator evalIndicator = thirdRelationMap.get(evalIndex.getEvalIndicatorId());
-                // todo 暂时取消
-//                if (evalIndicator == null) {
-//                    throw new BusinessException();
-//                }
+                if (evalIndicator == null) {
+                    throw new BusinessException(CrBusinessErrorCode.THIRD_INDEX_IS_FAILED, evalIndex.getName());
+                }
+
                 nextIds = evalIndicator.getAggregationIds();
                 evalAlgorithmRef = generateAlgorithmRef(evalIndicator.getAggregatingAlgorithmId(), evalAlgorithmMap);
 
@@ -506,16 +496,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public Boolean startRecord(String recordId) {
         // 评估任务对象
         EvalRecord evalRecord = getEntity(recordId);
-        // 评估实例对象  todo 暂时无限制
-//        EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
-        EvalTask evalTask = evalTaskService.getById(evalRecord.getTaskId());
-        if (evalTask == null) {
-            throw new BusinessException();
-        }
+        // 评估实例对象
+        EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
 
-        System.out.println(new Date());
         recordRun(evalRecord, evalTask);
-        System.out.println(new Date());
 
         if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
             evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
@@ -523,9 +507,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return updateById(evalRecord);
     }
 
+    @Override
     @Async
-    void recordRun(EvalRecord evalRecord, EvalTask evalTask) {
-        // todo 异步, 确保可以重复运行（进行中评估任务）, 遗弃`progress_key`, 已运行完成（指标/变量）项过滤
+    public void recordRun(EvalRecord evalRecord, EvalTask evalTask) {
+        if (StringUtils.isEmpty(evalRecord.getMessage())) {
+            evalRecord.setMessage("");
+        }
 
         // 循环同步采集数据
         syncProbeData(evalRecord, evalTask, true);
@@ -534,13 +521,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 执行指标项
         startIndexes(evalRecord, evalTask);
 
-        evalRecord.setStatus(EvalRecord.Status.END.getCode());
-        evalRecord.setScore(evalIndexRefService.lambdaQuery()
-                .eq(EvalIndexRef::getRecordId, evalRecord.getResourceId())
-                .eq(EvalIndexRef::getLevel, 1)
-                .one().getScore()
-        );
-        this.getBaseMapper().updateById(evalRecord);
     }
 
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask) {
@@ -550,6 +530,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode())
                 .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode())
                 .list();
+
+        // 运行中变量项为空, 退出执行下一步
         if (evalVariableRefList.isEmpty()) {
             return;
         }
@@ -565,19 +547,19 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .stream().collect(Collectors.toMap(EvalAlgorithmRef::getResourceId, evalAlgorithmRef -> evalAlgorithmRef));
 
         evalVariableRefList.forEach(evalVariableRef -> {
+            // 采集变量项算法依次执行
+            String result = evalVariableRefService.startVariableAlgorithm(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
 
-            // 获取变量项使用格式化算法
-            EvalAlgorithmRef formatAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
-            evalVariableRefService.startFormat(evalVariableRef, formatAlgorithmRef, evalRecord, evalTask);
-
-            // 获取变量项模型检测算法（匹配）算法
-            EvalAlgorithmRef matchAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
-            evalVariableRefService.startMatch(evalVariableRef, matchAlgorithmRef, evalRecord, evalTask);
-
-            // 获取变量项评分算法
-            EvalAlgorithmRef markAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMarkAlgorithmId());
-            evalVariableRefService.startMark(evalVariableRef, markAlgorithmRef, evalRecord, evalTask);
-
+            // 非null返回值为采集变量项运行失败
+            if (!StringUtils.isEmpty(result)) {
+                evalVariableRef.setScore(0);
+                evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());
+                evalRecord.setMessage(evalRecord.getMessage() + result + "\n");
+                transactionTemplate.execute(status -> {
+                    evalVariableRefService.updateById(evalVariableRef);
+                    return updateById(evalRecord);
+                });
+            }
         });
 
     }
@@ -586,6 +568,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 体系下指标项
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, evalRecord.getResourceId()).list();
+        // 由"level"字段倒序循环计算, 确保指标项子节点"score"一定不为null
         evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel).reversed());
         Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefs.stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
 
@@ -603,7 +586,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalIndexRefs.forEach(evalIndexRef -> {
             EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalIndexRef.getAlgorithmId());
-            evalIndexRefService.startIndex(evalIndexRef, evalAlgorithmRef, evalIndexRefMap, evalVariableRefMap);
+            evalIndexRefService.startIndex(evalIndexRef, evalAlgorithmRef, evalIndexRefMap, evalVariableRefMap, evalRecord);
+        });
+
+        evalRecord.setStatus(StringUtils.isEmpty(evalRecord.getMessage()) ? EvalRecord.Status.END.getCode() : EvalRecord.Status.EXCEPTION.getCode());
+        evalRecord.setScore(evalIndexRefs.get(evalIndexRefs.size() - 1).getScore());
+        transactionTemplate.execute(status -> {
+            evalIndexRefService.updateBatchById(evalIndexRefs);
+            return this.getBaseMapper().updateById(evalRecord);
         });
     }
 
@@ -612,10 +602,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .eq(EvalVariableRef::getRecordId, evalRecord.getResourceId())
                 .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
                 .list();
+        // 无需要同步数据变量项, 跳过
         if (evalVariableRefs.isEmpty()) {
             return;
         }
-        // 数据已经同步
+
+        // 数据已经同步, 跳过
         if (evalProbeDataService.lambdaQuery().eq(EvalProbeData::getSceneId, evalTask.getMpSceneId()).last("limit 1").one() != null) {
             evalVariableRefs.forEach(evalVariableRef -> evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode()));
             evalVariableRefService.updateBatchById(evalVariableRefs);
@@ -624,8 +616,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
         collectionEventPageContext.setId(evalTask.getMpSceneId());
-//        collectionEventPageContext.setStartTime(evalRecord.getStartTime());
-//        collectionEventPageContext.setEndTime(evalRecord.getEndTime());
+        collectionEventPageContext.setStartTime(evalRecord.getStartTime());
+        collectionEventPageContext.setEndTime(evalRecord.getEndTime());
         collectionEventPageContext.setPage((long) 1);
         collectionEventPageContext.setPageSize((long) 100);
 
@@ -793,6 +785,33 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             break;
         }
 
+        return results;
+    }
+
+    @Override
+    public Map<String, List<EvalRoomPairRsp>> getProbes(String roomId) {
+        EvalTask evalTask = evalTaskService.getTask(roomId);
+
+        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+        JSONObject nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("elements");
+
+        Map<String, List<EvalRoomPairRsp>> results = Maps.newHashMap();
+        for (Map.Entry<String, Object> entry : nodesProbe.entrySet()) {
+
+            List<EvalRoomPairRsp> probes = Lists.newArrayList();
+            JSONArray probesData = ((JSONObject) entry.getValue()).getJSONArray("probes");
+
+            probesData.forEach(item -> {
+                JSONObject probeItem = (JSONObject) item;
+
+                EvalRoomPairRsp result = new EvalRoomPairRsp();
+                result.setId(probeItem.getString("id"));
+                result.setLabel(probeItem.getString("name"));
+                probes.add(result);
+            });
+
+            results.put(entry.getKey(), probes);
+        }
         return results;
     }
 

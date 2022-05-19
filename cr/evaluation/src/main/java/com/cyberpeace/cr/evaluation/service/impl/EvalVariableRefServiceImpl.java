@@ -4,11 +4,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.exception.evaluate.RemoteException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableGraphRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import com.cyberpeace.cr.evaluation.service.EvalProbeDataService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefProbeDataService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
@@ -24,6 +28,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,11 +46,31 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    // todo 任一流程执行失败, 单个变量项目计算结束
+    @Autowired
+    private EvalAlgorithmRefService evalAlgorithmRefService;
+
     @Override
-    public Boolean startFormat(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask) {
+    public String startVariableAlgorithm(EvalVariableRef evalVariableRef,
+                                       Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
+                                       EvalRecord evalRecord,
+                                       EvalTask evalTask) {
+        return startFormat(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+    }
+
+    /**
+     * 采集变量项目执行失败, 记录
+     * @param evalVariableRef
+     * @param evalRecord
+     * @param msg
+     */
+    private String exceptionBefore(EvalVariableRef evalVariableRef, EvalRecord evalRecord, String msg) {
+        return msg;
+    }
+
+    private String startFormat(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.FORMATTING.getCode())) {
-            return true;
+            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
         }
 
         // 变量项探针采集数据  todo 分页执行
@@ -57,17 +82,32 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
                 .le(EvalProbeData::getCollectionTime, evalRecord.getEndTime())
                 .list();
 
+        // 时间范围内无采集数据情况
+        if (evalProbeDataList.isEmpty()) {
+            return exceptionBefore(evalVariableRef, evalRecord, BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_DID_NOT_GET_PROBE_DATA));
+        }
+
         // 构建格式化算法数据
         FormatData data = new FormatData();
         data.setData(evalProbeDataList.stream().map(EvalProbeData::getContent).collect(Collectors.toList()));
 
-        // todo "算法其它入参"暂时为null, 无可用数据
         // 运行匹配算法
+        List<String> formatReturn;
         evalVariableRef.setFormatStartTime(new Date());
-        List<String> formatReturn = remotePythonService.formatPerform(null, evalAlgorithmRef.getResourceId(),
-                evalAlgorithmRef.getCode(), data, null);
+        try {
+            formatReturn = remotePythonService.formatPerform(
+                    evalAlgorithmRef.getResourceId(),
+                    evalAlgorithmRef.getCode(),
+                    data,
+                    evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams())
+            );
+        } catch (RemoteServiceException e) {
+            return exceptionBefore(
+                    evalVariableRef, evalRecord,
+                    String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_FORMAT_EXECUTE_FAILED), evalVariableRef.getName())
+            );
+        }
         evalVariableRef.setFormatEndTime(new Date());
-        // todo return错误信息处理
 
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = Lists.newArrayList();
         for (int i = 0; i < formatReturn.size(); i++) {
@@ -82,28 +122,25 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
             evalVariableRefProbeDataList.add(object);
         }
 
-        // todo 执行无误, 更新进度
         evalVariableRef.setProgress(EvalVariableRef.Progress.MATCHING.getCode());
 
-        return transactionTemplate.execute(status -> {
+        transactionTemplate.execute(status -> {
             evalVariableRefProbeDataService.saveBatch(evalVariableRefProbeDataList);
             return SqlHelper.retBool(getBaseMapper().updateById(evalVariableRef));
         });
+
+        return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
     }
 
-    @Override
-    public Boolean startMatch(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask) {
+    private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.MATCHING.getCode())) {
-            return true;
+            return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
         }
 
         List<EvalVariableRefProbeDataContext> evalVariableRefProbeDataContextList = evalVariableRefProbeDataService
                 .variableProbeDataResult(evalVariableRef.getResourceId());
         MatchData data = new MatchData();
-        // todo 时间范围内无采集数据情况
-        if (evalVariableRefProbeDataContextList.isEmpty()) {
-            throw new BusinessException();
-        }
 
         // 构建匹配算法数据
         data.setBaseTime(evalVariableRefProbeDataContextList.get(1).getTime().getTime());
@@ -117,18 +154,33 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         // 运行匹配算法
+        List<Integer> matchReturn;
         evalVariableRef.setMatchStartTime(new Date());
-        List<Integer> matchReturn = remotePythonService.matchPerform(
-                null, evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, null);
+        try {
+            matchReturn = remotePythonService.matchPerform(
+                    evalAlgorithmRef.getResourceId(),
+                    evalAlgorithmRef.getCode(),
+                    data,
+                    evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams())
+            );
+        } catch (RemoteServiceException e) {
+            return exceptionBefore(
+                    evalVariableRef, evalRecord,
+                    String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MATCH_EXECUTE_FAILED), evalVariableRef.getName())
+            );
+        }
         evalVariableRef.setMatchEndTime(new Date());
 
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = evalVariableRefProbeDataService.lambdaQuery()
                 .eq(EvalVariableRefProbeData::getVariableId, evalVariableRef.getResourceId())
                 .list();
 
-        // todo 执行失败, 返回值异常
+        // 执行失败, 返回值异常
         if (matchReturn.size() != evalVariableRefProbeDataList.size()) {
-            throw new BusinessException();
+            return exceptionBefore(
+                    evalVariableRef, evalRecord,
+                    String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName())
+            );
         }
 
         for (int i = 0; i < evalVariableRefProbeDataList.size(); i++) {
@@ -139,26 +191,24 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         }
 
         evalVariableRef.setProgress(EvalVariableRef.Progress.MARKING.getCode());
-        return transactionTemplate.execute(status -> {
+        transactionTemplate.execute(status -> {
             evalVariableRefProbeDataService.updateBatchById(evalVariableRefProbeDataList);
             return SqlHelper.retBool(getBaseMapper().updateById(evalVariableRef));
         });
+
+        return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
     }
 
-    @Override
-    public Boolean startMark(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask) {
+    private String startMark(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
+
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.MARKING.getCode())) {
-            return true;
+            return null;
         }
         List<EvalVariableRefProbeDataContext> evalVariableRefProbeDataContextList = evalVariableRefProbeDataService
                 .variableProbeDataResult(evalVariableRef.getResourceId());
 
         MarkData data = new MarkData();
-        // todo 时间范围内无采集数据情况
-        if (evalVariableRefProbeDataContextList.isEmpty()) {
-            throw new BusinessException();
-        }
-
         // 构建评分算法数据
         data.setBaseTime(evalVariableRefProbeDataContextList.get(1).getTime().getTime());
         data.setData(Lists.newArrayList());
@@ -172,15 +222,29 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         // 运行匹配算法
+        Integer score;
         evalVariableRef.setMarkStartTime(new Date());
-        Integer score = remotePythonService.markPerform(null, evalVariableRef.getMarkAlgorithmId(), evalAlgorithmRef.getCode(), data, null);
+        try {
+            score = remotePythonService.markPerform(
+                    evalVariableRef.getMarkAlgorithmId(),
+                    evalAlgorithmRef.getCode(),
+                    data,
+                    evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams())
+            );
+        } catch (RemoteServiceException e) {
+            return exceptionBefore(
+                    evalVariableRef, evalRecord,
+                    String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MARK_EXECUTE_FAILED), evalVariableRef.getName())
+            );
+        }
+
         evalVariableRef.setMarkEndTime(new Date());
 
-        // todo 分值有效, 更新
         evalVariableRef.setScore(score);
         evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());
+        getBaseMapper().updateById(evalVariableRef);
 
-        return SqlHelper.retBool(getBaseMapper().updateById(evalVariableRef));
+        return null;
     }
 
     @Override

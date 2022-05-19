@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("cr_eval_record")
@@ -54,6 +55,11 @@ public class EvalRecord extends BaseTable {
      * 结束时间（评估任务采集数据时间范围）
      */
     private Date endTime;
+
+    /**
+     * 评估开始时间
+     */
+    private Date evalTime;
 
     public enum Status implements GenericEnum {
         NOT_START(1, "未开始"),

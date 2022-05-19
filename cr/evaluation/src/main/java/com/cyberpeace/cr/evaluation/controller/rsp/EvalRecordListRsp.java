@@ -29,4 +29,6 @@ public class EvalRecordListRsp implements Serializable {
     private Date startTime;
 
     private Date endTime;
+
+    private Date evalTime;
 }

@@ -115,7 +115,7 @@ public class EvalIndexRef extends BaseTable {
     }
 
     public enum DataAttr implements GenericEnum {
-        COST(1, "成本型"), BENEFIT(2, "效益型"), FIXED(3, "固定型"), DEVIATE(4, "偏离型");
+        BENEFIT(1, "效益型"), COST(2, "成本型"), FIXED(3, "固定型"), DEVIATE(4, "偏离型");
 
         @Getter
         private final Integer code;

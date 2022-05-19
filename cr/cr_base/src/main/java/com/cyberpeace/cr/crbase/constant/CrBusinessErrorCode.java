@@ -291,4 +291,43 @@ public interface CrBusinessErrorCode {
 
 	/** 未实现的方法 */
 	String NOT_IMPLEMENTED_EXCEPTION = "101094";
+
+	/**
+	 * 变量项格式化算法执行失败
+	 */
+	String VARIABLE_FORMAT_EXECUTE_FAILED = "101095";
+	/**
+	 * 变量项匹配算法执行失败
+	 */
+	String VARIABLE_MATCH_EXECUTE_FAILED = "101096";
+
+	/**
+	 * 变量项评分算法执行失败
+	 */
+	String VARIABLE_MARK_EXECUTE_FAILED = "101097";
+
+	/**
+	 * 指标项执行失败
+	 */
+	String INDEX_EXECUTE_FAILED = "101098";
+
+	/**
+	 * 三级指标项数据无效
+	 */
+	String THIRD_INDEX_IS_FAILED = "101099";
+
+	/**
+	 * 指标体系变量项数据无效
+	 */
+	String SYSTEM_INDEX_IS_FAILED = "101100";
+
+	/**
+	 * 模型检测算法返回数据不合规
+	 */
+	String MATCH_ALGORITHM_RESULT_IS_INVALID = "101101";
+
+	/**
+	 * 采集变量项未获取到相关数据
+	 */
+	String VARIABLE_DID_NOT_GET_PROBE_DATA = "101102";
 }

@@ -2,12 +2,13 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.exception.evaluate.RemoteException;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
@@ -38,22 +39,44 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
     @Autowired
     private EvalVariableRefService evalVariableRefService;
 
+    private final Map<Integer, String> int2cn = new HashMap<Integer, String>() {
+        {
+            put(1, "一");
+            put(2, "二");
+            put(3, "三");
+            put(4, "四");
+        }
+    };
+
     @Override
-    public Boolean startIndex(EvalIndexRef evalIndexRef, EvalAlgorithmRef evalAlgorithmRef, Map<String, EvalIndexRef> evalIndexRefMap, Map<String, EvalVariableRef> evalVariableRefMap) {
+    public void startIndex(EvalIndexRef evalIndexRef,
+                           EvalAlgorithmRef evalAlgorithmRef,
+                           Map<String, EvalIndexRef> evalIndexRefMap,
+                           Map<String, EvalVariableRef> evalVariableRefMap,
+                           EvalRecord evalRecord) {
         List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
         List<Integer> scoreList;
 
-        // nextId获取项目节点一定拥有score属性
         if (evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
             scoreList = nextIds.stream().map(nextId -> evalVariableRefMap.get(nextId).getScore()).collect(Collectors.toList());
         } else {
             scoreList = nextIds.stream().map(nextId -> evalIndexRefMap.get(nextId).getScore()).collect(Collectors.toList());
         }
 
-        Integer score = remotePythonService.indexPerform(null, evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), scoreList, null);
+        Integer score;
+        try {
+            score = remotePythonService.indexPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), scoreList, null);
+        } catch (RemoteServiceException e) {
+            score = 0;
+            String msg = String.format(
+                    BusinessException.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED),
+                    this.int2cn.get(evalIndexRef.getLevel()),
+                    evalIndexRef.getName()
+            );
+            evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+        }
 
         evalIndexRef.setScore(score);
-        return SqlHelper.retBool(this.getBaseMapper().updateById(evalIndexRef));
     }
 
     @Override

@@ -36,54 +36,47 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         return PY_URL;
     }
 
-    @Override
-    public List<String> formatPerform(AlgorithmContext context, String algorithmId, String algorithmCode, FormatData formatData, List<Serializable> otherArguments) {
+    private JSONObject buildRequestData(String algorithmId, String algorithmCode, List<Serializable> otherArguments) {
         // 构建传入数据
         JSONObject json = new JSONObject();
-        json.put("context", context);
         json.put("algorithm_id", algorithmId);
         json.put("code", algorithmCode);
-        json.put("list_data", formatData.getData());
         json.put("other_args", otherArguments);
+
+        return json;
+    }
+
+    @Override
+    public List<String> formatPerform(String algorithmId, String algorithmCode, FormatData formatData, List<Serializable> otherArguments) {
+        JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
+        json.put("list_data", formatData.getData());
 
         String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
         return JsonUtil.toJsonObjectArray(resp, String.class);
     }
 
     @Override
-    public List<Integer> matchPerform(AlgorithmContext context, String algorithmId, String algorithmCode, MatchData matchData, List<Serializable> otherArguments) {
-        JSONObject json = new JSONObject();
-        json.put("context", context);
-        json.put("algorithm_id", algorithmId);
-        json.put("code", algorithmCode);
+    public List<Integer> matchPerform(String algorithmId, String algorithmCode, MatchData matchData, List<Serializable> otherArguments) {
+        JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", matchData);
-        json.put("other_args", otherArguments);
 
         String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
         return JsonUtil.toJsonObjectArray(resp, Integer.class);
     }
 
     @Override
-    public Integer markPerform(AlgorithmContext context, String algorithmId, String algorithmCode, MarkData markData, List<Serializable> otherArguments) {
-        JSONObject json = new JSONObject();
-        json.put("context", context);
-        json.put("algorithm_id", algorithmId);
-        json.put("code", algorithmCode);
+    public Integer markPerform(String algorithmId, String algorithmCode, MarkData markData, List<Serializable> otherArguments) {
+        JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", markData);
-        json.put("other_args", otherArguments);
 
         String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
         return JsonUtil.toJsonObject(resp, Integer.class);
     }
 
     @Override
-    public Integer indexPerform(AlgorithmContext context, String algorithmId, String algorithmCode, List<Integer> data, List<Serializable> otherArguments) {
-        JSONObject json = new JSONObject();
-        json.put("context", context);
-        json.put("algorithm_id", algorithmId);
-        json.put("code", algorithmCode);
+    public Integer indexPerform(String algorithmId, String algorithmCode, List<Integer> data, List<Serializable> otherArguments) {
+        JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", data);
-        json.put("other_args", otherArguments);
 
         String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
         return JsonUtil.toJsonObject(resp, Integer.class);

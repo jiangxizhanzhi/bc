@@ -13,7 +13,11 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
      * 指标项计算
      * @return 是否执行成功
      */
-    Boolean startIndex(EvalIndexRef evalIndexRef, EvalAlgorithmRef evalAlgorithmRef, Map<String, EvalIndexRef> evalIndexRefMap, Map<String, EvalVariableRef> evalVariableRefMap);
+    void startIndex(EvalIndexRef evalIndexRef,
+                       EvalAlgorithmRef evalAlgorithmRef,
+                       Map<String, EvalIndexRef> evalIndexRefMap,
+                       Map<String, EvalVariableRef> evalVariableRefMap,
+                       EvalRecord evalRecord);
 
 
     /**

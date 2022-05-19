@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
@@ -8,8 +9,11 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalRecordListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordStartReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalVariableProbeDataReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,13 +21,18 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "靶场测评-评估")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/record")
 public class EvalRecordController {
+    @Autowired
+    private EvalTaskService evalTaskService;
+
     @Autowired
     private EvalRecordService evalRecordService;
 
@@ -86,10 +95,29 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getProbes(roomId, nodeId));
     }
 
+    @ApiOperation("终端使用探针信息获取")
+    @GetMapping("/probes-map")
+    public BaseRsp<Map<String, List<EvalRoomPairRsp>>> getProbes(@RequestParam("room_id") String roomId) {
+        return new BaseRsp<>(evalRecordService.getProbes(roomId));
+    }
+
     @ApiOperation("评估任务开启")
     @PostMapping("/start")
     public BaseRsp<Boolean> start(@RequestBody EvalRecordStartReq requestData) {
-        return new BaseRsp<>(evalRecordService.startRecord(requestData.getResourceId()));
+        // 评估对象
+        EvalRecord evalRecord = evalRecordService.getEntity(requestData.getResourceId());
+        // 评估实例对象
+        EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
+
+        evalRecord.setEvalTime(new Date());
+        // 开始执行
+        evalRecordService.recordRun(evalRecord, evalTask);
+
+        if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
+            evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
+        }
+
+        return new BaseRsp<>(evalRecordService.updateById(evalRecord));
     }
 
     @ApiOperation("评估任务结果")

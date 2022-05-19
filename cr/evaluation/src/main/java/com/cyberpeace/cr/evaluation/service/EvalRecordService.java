@@ -10,8 +10,17 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EvalRecordService extends IService<EvalRecord> {
+
+    /**
+     * 获取实例对象, 检查返回值有效性
+     *
+     * @param resourceId 评估resourceId
+     * @return {@link EvalRecord}
+     */
+    EvalRecord getEntity(String resourceId);
 
     /**
      * 靶场测评实例下评估分页信息
@@ -63,7 +72,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @param evalRecord
      * @param evalTask
      */
-//    void recordRun(EvalRecord evalRecord, EvalTask evalTask);
+    void recordRun(EvalRecord evalRecord, EvalTask evalTask);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`
@@ -79,6 +88,8 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @return List
      */
     List<EvalRoomPairRsp> getProbes(String roomId, String nodeId);
+
+    Map<String, List<EvalRoomPairRsp>> getProbes(String roomId);
 
     /**
      * 获取评估结果

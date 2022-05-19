@@ -10,29 +10,22 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
 
-import java.util.List;
+import java.util.Map;
 
 public interface EvalVariableRefService extends IService<EvalVariableRef> {
-    /**
-     * 格式化算法执行
-     *
-     * @return 是否成功运行
-     */
-    Boolean startFormat(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask);
 
     /**
-     * 模型检测（匹配）算法执行
+     * 采集变量项目算法执行
      *
-     * @return 是否成功运行
+     * @param evalVariableRef
+     * @param evalAlgorithmRefMap
+     * @param evalRecord
+     * @param evalTask
      */
-    Boolean startMatch(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask);
-
-    /**
-     * 评分算法执行
-     *
-     * @return 是否成功运行
-     */
-    Boolean startMark(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask);
+    String startVariableAlgorithm(EvalVariableRef evalVariableRef,
+                                  Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
+                                  EvalRecord evalRecord,
+                                  EvalTask evalTask);
 
     EvalVariableGraphRsp graph(String variableId);
 

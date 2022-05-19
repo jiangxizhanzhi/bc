@@ -525,13 +525,14 @@ public class FileUtil {
 			if (StringUtils.isBlank(fileSuffix)) {
 				return;
 			} else {
-				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+				throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE,
+						fileTypeStr.toLowerCase());
 			}
 		}
 
 		// 如果类型不为空 但后缀为空 则校验不通过
 		if (StringUtils.isBlank(fileSuffix)) {
-			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, fileTypeStr.toLowerCase());
 		}
 
 		String suffixStr = fileSuffix.substring(1).toUpperCase();
@@ -540,7 +541,7 @@ public class FileUtil {
 		if (!typeList.contains(suffixStr)) {
 			log.error("File type error! file_path=[{}], suffix=[{}], file_type_str=[{}]",
 					destFilePath, suffixStr, fileTypeStr);
-			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, fileTypeStr.toLowerCase());
 		}
 
 	}

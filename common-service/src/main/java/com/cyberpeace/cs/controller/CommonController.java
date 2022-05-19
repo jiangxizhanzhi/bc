@@ -1,5 +1,6 @@
 package com.cyberpeace.cs.controller;
 
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +48,7 @@ public class CommonController {
 					.getEnumByCode(fileCommonUploadReq.getType(), UploadImagePermission.class);
 			if (null == filePermission) {
 				log.error("Type not found! type=[{}]", fileCommonUploadReq.getType());
-				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+				throw new UnauthorizedException();
 			}
 
 			// 校验权限和文件
@@ -78,7 +79,7 @@ public class CommonController {
 				.getEnumByCode(fileCommonUploadReq.getType(), UploadAttachmentPermission.class);
 		if (null == filePermission) {
 			log.error("Type not found! type=[{}]", fileCommonUploadReq.getType());
-			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+			throw new UnauthorizedException();
 		}
 
 		// 校验权限和文件
@@ -88,8 +89,8 @@ public class CommonController {
 
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadFile(
-				AttachmentPath.UPLOAD_ATTACHMENT.getCode(),
-				true, fileCommonUploadReq.getFile(), true);
+				AttachmentPath.UPLOAD_ATTACHMENT.getCode(), true, fileCommonUploadReq.getFile(),
+				true);
 
 		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
 		attachmentBo.setFilePath(viewPath);

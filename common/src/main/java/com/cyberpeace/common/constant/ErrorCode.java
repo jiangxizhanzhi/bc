@@ -108,4 +108,7 @@ public interface ErrorCode {
 
 	/** 场景关闭失败 */
 	String FAILED_TO_STOP_SCENE = "100038";
+
+	/** 不支持的文件类型，仅支持xxx*/
+	String NOT_SUPPORT_FILE_TYPE = "100039";
 }

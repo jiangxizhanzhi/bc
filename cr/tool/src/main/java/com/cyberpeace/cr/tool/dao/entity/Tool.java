@@ -1,94 +1,99 @@
 package com.cyberpeace.cr.tool.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.constant.ModelConstant;
-import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.common.util.ConfigUtil;
-import lombok.Data;
-import lombok.Getter;
+import java.io.File;
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Date;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.util.ConfigUtil;
+
+import lombok.Data;
+import lombok.Getter;
 
 @Data
 @TableName("cr_tool_tool")
 public class Tool extends BaseTable {
 
-    // 在线
-    public static final Integer ONLINE = 1;
-    // 离线
-    public static final Integer OFFLINE = 0;
+	// 在线
+	public static final Integer ONLINE = 1;
 
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	// 离线
+	public static final Integer OFFLINE = 0;
 
-    private String name;
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    private String cover;
+	private String name;
 
-    @Deprecated
-    private String homepage;
+	private String cover;
 
-    private String category;
+	@Deprecated
+	private String homepage;
 
-    @Deprecated
-    private String manual;
+	private String category;
 
-    private String imageResourceId;
+	@Deprecated
+	private String manual;
 
-    private Boolean visible;
-    // 0 离线， 1在线
-    private Integer toolType;
+	private String imageResourceId;
 
-    private String platforms;
+	private Boolean visible;
 
-    private String language;
+	// 0 离线， 1在线
+	private Integer toolType;
 
-    private String introduction;
+	private String platforms;
 
-    @Deprecated
-    @TableField("public")
-    private Integer toolPublic;
+	private String language;
 
-    private Boolean cracked;
+	private String introduction;
 
-    @Deprecated
-    private String tag;
+	@Deprecated
+	@TableField("public")
+	private Integer toolPublic;
 
-    private Date publishTime;
+	private Boolean cracked;
 
-    private String scene;
+	@Deprecated
+	private String tag;
 
-    private String version;
+	private Date publishTime;
 
-    private String files;
+	private String scene;
 
-    @TableField(exist = false)
-    private String coverUrl;
+	private String version;
 
-    public String getCoverUrl() {
-        if (StringUtils.isBlank(cover)) {
-            return "";
-        }
-        return ConfigUtil.getContextProperty("cr.local.file.prefix") + cover;
-    }
+	private String files;
 
-    public enum Cracked {
+	@TableField(exist = false)
+	private String coverUrl;
 
-        FREE("free", "免费"),
-        TRIAL("trial", "限制"),
-        NON_FREE("non-free", "收费");
+	public String getCoverUrl() {
+		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
+		if (StringUtils.isNotBlank(cover) && !cover.startsWith(prefix)) {
+			return prefix + File.pathSeparator + cover;
+		}
+		return cover;
+	}
 
-        @Getter
-        private String code;
+	public enum Cracked {
 
-        @Getter
-        private String desc;
+		FREE("free", "免费"), TRIAL("trial", "限制"), NON_FREE("non-free", "收费");
 
-        Cracked(String code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-    }
+		@Getter
+		private String code;
+
+		@Getter
+		private String desc;
+
+		Cracked(String code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 }

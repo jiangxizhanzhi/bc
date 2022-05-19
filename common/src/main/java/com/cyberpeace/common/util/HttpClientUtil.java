@@ -159,7 +159,10 @@ public class HttpClientUtil {
 		String httpResponse = null;
 		try {
 			// 设置请求头
-			httpRequest.setHeaders((Header[]) defaultHeader().toArray());
+			for (Header header : defaultHeader()) {
+				httpRequest.addHeader(header);
+			}
+
 			// 1、调用远程服务
 			response = getClient().execute(httpRequest);
 

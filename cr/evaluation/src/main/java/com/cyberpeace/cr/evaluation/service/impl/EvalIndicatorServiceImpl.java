@@ -16,6 +16,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAggregationMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalCollectionMapper;
@@ -67,9 +68,15 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		evalIndicator.setCreateUserId(userId);
 		evalIndicator.setDescription(evalIndicatorReq.getDescription());
 		evalIndicator.setDatatype(evalIndicatorReq.getDatatype());
-		evalIndicator.setAttributeValue(evalIndicatorReq.getAttributeValue());
 		evalIndicator.setAttribute(evalIndicatorReq.getAttribute());
+		evalIndicator.setAttributeValue(evalIndicatorReq.getAttributeValue());
 		evalIndicator.setConnlist(evalIndicatorReq.getConnlist());
+
+		if (evalIndicatorReq.getAttribute().equals(EvalIndexRef.DataAttr.COST.getCode())
+				|| evalIndicatorReq.getAttribute()
+						.equals(EvalIndexRef.DataAttr.BENEFIT.getCode())) {
+			evalIndicator.setAttributeValue(null);
+		}
 
 		return evalIndicator;
 	}

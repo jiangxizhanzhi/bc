@@ -158,7 +158,6 @@ public class EvalAlgorithmAdminController {
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
-		Integer useNum = evalAlgorithmService.selectUsedNum(deleteReq.getIds());
 		List<String> selectUsedAlgorithmIds = evalAlgorithmService
 				.selectUsedAlgorithmIds(deleteReq.getIds());
 

@@ -51,6 +51,7 @@ import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import com.cyberpeace.oj.ojbase.constant.ClassroomType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -403,9 +404,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			Date endOfDay = TimeUtil.getEndOfDay(addDate);
 			Date startOfDay = TimeUtil.getStartOfDay(addDate);
 
-			// 如果结束时间刚好等于下一天天的零点 则不扩展 并且把上一个的结束时间改为课程表的结束时间
+			// 如果结束时间刚好等于下一天的零点 则不扩展 并且把上一个的结束时间改为课程表的结束时间
 			if (classroomBo.getEndTime().equals(startOfDay)
-					|| classroomBo.getEndTime().before(endOfDay)) {
+					|| classroomBo.getEndTime().before(startOfDay)) {
 				preBo.setEndTime(classroomBo.getEndTime());
 				break;
 			}
@@ -418,6 +419,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 如果多于一个，说明跨天 则将第一个课程表结束时间改为开始当日的最后一秒
 		if (classroomBos.size() > CommonConstant.ONE.intValue()) {
+			classroomBos.get(classroomBos.size() - CommonConstant.ONE)
+					.setEndTime(classroomBo.getEndTime());
 			classroomBo.setEndTime(TimeUtil.getEndOfDay(classroomBo.getStartTime()));
 		}
 
@@ -923,6 +926,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (CollectionUtils.isEmpty(userIds)) {
 			log.error("Classroom user is null! classroom_id=[{}]", roomId);
 			return null;
+		}
+
+		// 将超级管理员和创建者内置进去
+		if (!userIds.contains(ResourceImportConstant.SUPER_ADMIN_HASH)) {
+			userIds.add(ResourceImportConstant.SUPER_ADMIN_HASH);
+		}
+		if (!userIds.contains(classroom.getCreateUserId())) {
+			userIds.add(classroom.getCreateUserId());
 		}
 
 		// 获取用户组装

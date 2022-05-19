@@ -366,7 +366,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroomBos.addAll(adClassroom);
 
 		// 根据开始时间转换为map
-		Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(classroomBos,
+		List<ClassroomBo> splitTimeBos = StreamApiUtils.flatMap(classroomBos,
+				classroomBo -> splitTimeByDay(classroomBo));
+		Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(splitTimeBos,
 				classroomBo -> TimeUtil.format6(classroomBo.getStartTime()));
 
 		// 对key进行排序
@@ -379,6 +381,48 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			scheduleBo.setClassrooms(startTimeMap.get(key));
 			return scheduleBo;
 		});
+	}
+
+	/** 数据拆分，数据不能跨天，跨几天则为几条*/
+	private List<ClassroomBo> splitTimeByDay(ClassroomBo classroomBo) {
+
+		List<ClassroomBo> classroomBos = Lists.newArrayList(classroomBo);
+
+		// 不跨天则直接返回
+		long intervalDay = TimeUtil.getIntervalDay(classroomBo.getStartTime(),
+				classroomBo.getEndTime());
+		if (intervalDay == CommonConstant.ZERO) {
+			return classroomBos;
+		}
+
+		// 跨天
+		for (long i = 1; i <= intervalDay; i++) {
+
+			ClassroomBo preBo = classroomBos.get((int) (i - CommonConstant.ONE));
+			Date addDate = TimeUtil.addDates(classroomBo.getStartTime(), (int) i);
+			Date endOfDay = TimeUtil.getEndOfDay(addDate);
+			Date startOfDay = TimeUtil.getStartOfDay(addDate);
+
+			// 如果结束时间刚好等于下一天天的零点 则不扩展 并且把上一个的结束时间改为课程表的结束时间
+			if (classroomBo.getEndTime().equals(startOfDay)
+					|| classroomBo.getEndTime().before(endOfDay)) {
+				preBo.setEndTime(classroomBo.getEndTime());
+				break;
+			}
+
+			ClassroomBo copy = BeanUtils.copy(classroomBo, ClassroomBo.class);
+			copy.setStartTime(startOfDay);
+			copy.setEndTime(endOfDay);
+			classroomBos.add(copy);
+		}
+
+		// 如果多于一个，说明跨天 则将第一个课程表结束时间改为开始当日的最后一秒
+		if (classroomBos.size() > CommonConstant.ONE.intValue()) {
+			classroomBo.setEndTime(TimeUtil.getEndOfDay(classroomBo.getStartTime()));
+		}
+
+		return classroomBos;
+
 	}
 
 	/**

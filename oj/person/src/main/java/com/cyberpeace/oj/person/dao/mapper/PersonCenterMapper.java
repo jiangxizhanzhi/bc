@@ -86,6 +86,14 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
       @Param("userId") String userId, @Param("lessonIds") List<String> lessonIds);
 
   /**
+   * 获取用户解出实操题、理论题数量
+   *
+   * @param userId
+   * @return
+   */
+  StudyRecord selectSlovedPracticeByUser(@Param("userId") String userId);
+
+  /**
    * 获取distinct用户
    *
    * @return

@@ -247,6 +247,14 @@
         group by submit_user_id
     </select>
 
+    <select id="selectSlovedPracticeByUser" resultMap="studyRecord">
+        select count(p.resource_id) as operationPracticeCount, count(t.resource_id) as theoryPracticeCount
+        from oj_practice_solved s
+                 left join oj_practice_theory t on t.resource_id = s.practice_id
+                 left join oj_practice_operation p on p.resource_id = s.practice_id
+        where s.submit_user_id = #{userId}
+    </select>
+
     <select id="selectLessonByTime" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
         select create_time,course_id
         from oj_lesson_record

@@ -11,7 +11,6 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
@@ -61,11 +60,11 @@ public class EvalSceneEventListener extends MessageListener {
 		EvalTaskOperContext evalTaskOperContext = evalTaskService.getEvalTaskOperContext(businessId,
 				false);
 
-		EvalTask evalTask = evalTaskOperContext.getEvalTask();
-
-		if (evalTask != null) {
-			evalTaskService.deleteTask(evalTaskOperContext);
+		if (evalTaskOperContext.getEvalTask() == null) {
+			return true;
 		}
+
+		evalTaskService.clearTaskAndScene(evalTaskOperContext);
 
 		return true;
 	}

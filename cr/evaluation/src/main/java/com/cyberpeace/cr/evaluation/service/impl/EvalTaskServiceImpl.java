@@ -169,8 +169,9 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
 		localScene.setSceneName(evalTask.getTemplateName());
+		String appResourceId = evalTask.getTemplateId();
 		localScene.setMeta(JSON.toJSONString(
-				LocalSceneMeta.builder().appResourceId(evalTask.getResourceId()).build()));
+				LocalSceneMeta.builder().appResourceId(appResourceId).build()));
 		localScene.setRecord(evalTask.getEnableRecording());
 		return localScene;
 	}
@@ -203,17 +204,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		// 关闭任务关联场景
 		if (evalTaskOperContext.getLocalScene() != null) {
 			evalSceneService.stopScene(evalTaskOperContext.getLocalScene());
-
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					localSceneService.removeById(evalTaskOperContext.getLocalScene());
-					clearCurrentTask(evalTaskOperContext.getEvalTask().getTemplateId());
-					clearTask(evalTaskOperContext.getEvalTask().getResourceId());
-				}
-			});
-
+			clearTaskAndScene(evalTaskOperContext);
 			return true;
 
 		}
@@ -261,6 +252,21 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
 		evalTemplate.setCurrentTaskId("");
 		evalTemplateMapper.updateById(evalTemplate);
+	}
+
+	@Override
+	public void clearTaskAndScene(EvalTaskOperContext evalTaskOperContext){
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				localSceneService.removeById(evalTaskOperContext.getLocalScene());
+				clearCurrentTask(evalTaskOperContext.getEvalTask().getTemplateId());
+				clearTask(evalTaskOperContext.getEvalTask().getResourceId());
+			}
+		});
+
 	}
 
 }

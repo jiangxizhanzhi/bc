@@ -56,4 +56,6 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 */
 	void clearCurrentTask(String templateId);
 
+	void clearTaskAndScene(EvalTaskOperContext evalTaskOperContext);
+
 }

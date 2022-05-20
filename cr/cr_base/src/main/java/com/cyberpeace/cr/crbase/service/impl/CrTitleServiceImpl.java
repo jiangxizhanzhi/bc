@@ -385,7 +385,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         CrTitleDetailBo crTitleDetailBo = titleDetail(levelId, title);
         if (crTitleDetailBo == null) {
             // 非法请求
-            throw new BusinessException();
+            throw new BusinessException(CrBusinessErrorCode.INVALID_TITLE);
         }
 
         return this.getBaseMapper().listTitleStandard(page, UserInfoContext.getUserContext().getUserId(), crTitleDetailBo.getResourceId());

@@ -289,4 +289,9 @@ public interface CrBusinessErrorCode {
 	 * 留言长度非法
 	 */
 	String TRAIN_COMMENT_IS_ILLEGAL = "101088";
+
+	/**
+	 * 无效称号
+	 */
+	String INVALID_TITLE = "101089";
 }

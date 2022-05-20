@@ -104,7 +104,7 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 		Integer status;
 		try {
 			JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
-			status = jsonObject.getInteger("status");
+			status = (Integer) jsonObject.getOrDefault("status", 4);
 		} catch (Exception e) {
 			status = 4;
 		}

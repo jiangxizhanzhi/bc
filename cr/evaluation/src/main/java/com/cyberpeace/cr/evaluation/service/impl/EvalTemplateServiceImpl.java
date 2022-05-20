@@ -119,7 +119,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			List<String> evalTaskList = evalTaskMapper.selectIdsByTemplateIdAndStatus(templateId,
 					null);
 			for (String taskId : evalTaskList) {
-				evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId, true));
+				evalTaskService.deleteTask(evalTaskService.getEvalTaskOpsContext(taskId, true));
 			}
 			evalTemplateMapper.deleteById(templateId);
 		}

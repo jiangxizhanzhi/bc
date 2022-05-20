@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.List;
-
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -9,26 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.service.context.scene.FlowElementFlow;
-import com.cyberpeace.cr.evaluation.controller.req.FlowChangeReq;
-import com.cyberpeace.cr.evaluation.controller.req.FlowsOpsReq;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.context.scene.ElementFlow;
+import com.cyberpeace.cr.evaluation.controller.req.EvalFlowsOpsReq;
+import com.cyberpeace.cr.evaluation.controller.req.FlowParamUpdateReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.FlowDownloadRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
-import com.cyberpeace.cr.evaluation.service.context.FlowContext;
-import com.cyberpeace.cr.evaluation.service.context.FlowListContext;
-import com.cyberpeace.integratation.model.mp.MpFlow;
-import com.cyberpeace.integratation.model.scene.FlowBatchOpsContext;
-import com.cyberpeace.integratation.model.scene.FlowInfoContext;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,46 +45,47 @@ public class EvalTaskFlowController {
 	private EvalSceneService evalSceneService;
 
 	@Autowired
-	private RemoteSceneService remoteSceneService;
+	private CrSceneService crSceneService;
 
 	@ApiOperation("获取任务流量列表")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<FlowElementFlow>>
-			getFlowList(@Validated EvalTaskFlowListQuery evalTaskFlowListQuery) {
+	public BaseRsp<ListRsp<ElementFlow>> getFlowList(@Validated EvalTaskFlowListQuery query) {
+
+		ListRsp<ElementFlow> flowListRsp = PageUtil.getNullResult();
 
 		// 参数校验,任务id和节点id为空时返回空数据
-		if (StringUtils.isEmpty(evalTaskFlowListQuery.getTaskId())
-				|| StringUtils.isEmpty(evalTaskFlowListQuery.getNodeId())) {
-			return new BaseRsp<>(new ListRsp<FlowElementFlow>());
+		if (StringUtils.isEmpty(query.getTaskId()) || StringUtils.isEmpty(query.getNodeId())) {
+			return new BaseRsp<>(flowListRsp);
 		}
 
 		// 鉴权
-		EvalTask evalTask = evalTaskService.getTask(evalTaskFlowListQuery.getTaskId());
+		EvalTask evalTask = evalTaskService.getTask(query.getTaskId());
 
-		Page page = evalTaskFlowListQuery.toPageParam();
+		// 关闭的任务直接返回空数据
+		if (evalTask.getEndTime() != null) {
+			return new BaseRsp<>(flowListRsp);
+		}
 
-		FlowListContext flowListContext = BeanUtils.copy(evalTaskFlowListQuery,
-				FlowListContext.class);
-		flowListContext.setEvalTask(evalTask);
-		flowListContext.setPage(page);
-		ListRsp<FlowElementFlow> flowListRsp = evalSceneService.getFlowList(flowListContext);
+		flowListRsp = crSceneService
+				.getCrFlowList(evalSceneService.getElementFlowListContext(query, evalTask));
 
 		return new BaseRsp<>(flowListRsp);
 	}
 
-	@ApiOperation("修改节点流量源IP")
+	@ApiOperation("修改节点流量的源IP")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/source_ip")
 	public BaseRsp<Boolean>
-			changeFlowSourceIp(@RequestBody @Validated FlowChangeReq flowChangeReq) {
+			updateFlowParam(@RequestBody @Validated FlowParamUpdateReq flowParamUpdateReq) {
 
-		// 鉴权
-		EvalTask evalTask = evalTaskService.getTask(flowChangeReq.getTaskId());
+		// 鉴权并判断任务是否为活动状态
+		EvalTask evalTask = evalTaskService.getActiveTask(flowParamUpdateReq.getTaskId());
 
-		FlowOpsContext flowOpsContext = BeanUtils.copy(flowChangeReq, FlowOpsContext.class);
+		// 请求中台接口修改流量信息
+		FlowOpsContext flowOpsContext = BeanUtils.copy(flowParamUpdateReq, FlowOpsContext.class);
 		flowOpsContext.setId(evalTask.getMpSceneId());
-		Boolean result = remoteSceneService.updateFlowParam(flowOpsContext);
+		Boolean result = crSceneService.updateFlowParam(flowOpsContext);
 
 		return new BaseRsp<>(result);
 	}
@@ -96,42 +93,32 @@ public class EvalTaskFlowController {
 	@ApiOperation("启动全部任务流量")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/all_start")
-	public BaseRsp<Boolean> startAllFlow(@RequestBody @Validated FlowsOpsReq flowsOpsReq) {
+	public BaseRsp<Boolean> startAllFlow(@RequestBody @Validated EvalFlowsOpsReq evalFlowsOpsReq) {
 
-		// 鉴权
-		EvalTask evalTask = evalTaskService.getTask(flowsOpsReq.getTaskId());
-		List<FlowInfoContext> flowInfoContexts = evalSceneService.getAllFlow(evalTask,
-				flowsOpsReq.getNodeId());
-		FlowBatchOpsContext flowBatchOpsContext = new FlowBatchOpsContext();
-		flowBatchOpsContext.setRunType(flowsOpsReq.getRunType());
-		flowBatchOpsContext.setId(evalTask.getMpSceneId());
-		flowBatchOpsContext.setNodeId(flowsOpsReq.getNodeId());
-		flowBatchOpsContext.setFlows(flowInfoContexts);
-		Boolean result = remoteSceneService.batchStartFlow(flowBatchOpsContext);
+		// 鉴权并判断任务是否为活动状态
+		EvalTask evalTask = evalTaskService.getActiveTask(evalFlowsOpsReq.getTaskId());
+
+		Boolean result = crSceneService.startAllFlows(evalTask.getMpSceneId(),
+				evalFlowsOpsReq.getNodeId(), evalFlowsOpsReq.getRunType());
+
 		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("批量启动任务流量")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/batch_start")
-	public BaseRsp<Boolean> startFlowList(@RequestBody @Validated FlowsOpsReq flowsOpsReq) {
+	public BaseRsp<Boolean> startFlowList(@RequestBody @Validated EvalFlowsOpsReq evalFlowsOpsReq) {
 
-		// 鉴权
-		EvalTask evalTask = evalTaskService.getTask(flowsOpsReq.getTaskId());
+		// 鉴权并判断任务是否为活动状态
+		EvalTask evalTask = evalTaskService.getActiveTask(evalFlowsOpsReq.getTaskId());
 
-		List<FlowContext> flowInfoContexts = flowsOpsReq.getFlows();
-
-		for (FlowContext flowContext : flowInfoContexts) {
-			FlowOpsContext flowOpsContext = BeanUtils.copy(flowContext, FlowOpsContext.class);
-			flowOpsContext.setId(evalTask.getMpSceneId());
-			flowOpsContext.setNodeId(flowsOpsReq.getNodeId());
-			remoteSceneService.startFlow(flowOpsContext);
-		}
-
-		return new BaseRsp<>(true);
+		// 启动流量
+		Boolean result = crSceneService.startFlows(evalTask.getMpSceneId(),
+				evalFlowsOpsReq.getNodeId(), evalFlowsOpsReq.getFlows());
+		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("下载流量")
+	@ApiOperation("获取流量下载链接")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/download")
 	public BaseRsp<FlowDownloadRsp> downloadFlow(
@@ -142,13 +129,11 @@ public class EvalTaskFlowController {
 
 		// 鉴权
 		evalTaskService.getTask(taskId);
+		// 获取流量下载链接
+		FlowDownloadRsp flowDownloadRsp = new FlowDownloadRsp(
+				crSceneService.getFlowFilePath(flowId));
+		return new BaseRsp<>(flowDownloadRsp);
 
-		MpFlow flow = remoteSceneService.getFlowById(flowId);
-		Integer resourceType = flow.getResourceType();
-		String filePath = resourceType.equals(MpFlow.resourceTypeEnum.PCAP.getCode())
-				? flow.getPcapFile()
-				: flow.getScriptFile();
-		return new BaseRsp<>(new FlowDownloadRsp(filePath));
 	}
 
 }

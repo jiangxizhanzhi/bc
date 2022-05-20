@@ -3,7 +3,7 @@ package com.cyberpeace.cr.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskOperContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 
 /**
  * 测评靶场-任务的处理
@@ -16,7 +16,13 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 */
 	EvalTask getTask(String taskId);
 
-	EvalTaskOperContext getEvalTaskOperContext(String taskId, Boolean validateUser);
+	/** 获取活跃的测评靶场任务
+	 * @param taskId
+	 * @return
+	 */
+	EvalTask getActiveTask(String taskId);
+
+	EvalTaskOpsContext getEvalTaskOpsContext(String taskId, Boolean validateUser);
 
 	/** 启动测评靶场任务
 	 * @param evalTemplate
@@ -25,22 +31,22 @@ public interface EvalTaskService extends IService<EvalTask> {
 	String startTask(EvalTemplate evalTemplate);
 
 	/** 停止测评靶场任务
-	 * @param evalTaskOperContext
+	 * @param evalTaskOpsContext
 	 * @return
 	 */
-	Boolean stopTask(EvalTaskOperContext evalTaskOperContext);
+	Boolean stopTask(EvalTaskOpsContext evalTaskOpsContext);
 
 	/** 删除测评靶场任务
-	 * @param evalTaskOperContext
+	 * @param evalTaskOpsContext
 	 * @return
 	 */
-	Boolean deleteTask(EvalTaskOperContext evalTaskOperContext);
+	Boolean deleteTask(EvalTaskOpsContext evalTaskOpsContext);
 
 	/** 清除测评靶场任务场景相关信息
-	 * @param evalTaskOperContext
+	 * @param evalTaskOpsContext
 	 * @return
 	 */
-	void clearTaskScene(EvalTaskOperContext evalTaskOperContext);
+	void clearTaskScene(EvalTaskOpsContext evalTaskOpsContext);
 
 	/** 校验测评靶场任务名称
 	 * @param taskName
@@ -56,6 +62,6 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 */
 	void clearCurrentTask(String templateId);
 
-	void clearTaskAndScene(EvalTaskOperContext evalTaskOperContext);
+	void clearTaskAndScene(EvalTaskOpsContext evalTaskOpsContext);
 
 }

@@ -3,22 +3,28 @@ package com.cyberpeace.cr.evaluation.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.cr.evaluation.service.context.FlowContext;
+import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
-public class FlowsOpsReq implements Serializable {
+public class EvalFlowsOpsReq implements Serializable {
 
 	@ApiModelProperty("测评靶场任务id")
+	@NotNull
 	private String taskId;
 
 	@ApiModelProperty("节点id")
+	@NotNull
 	private String nodeId;
 
 	@ApiModelProperty(value = "执行方式：0 串行，1 并行")
+	@NotNull
 	private int runType;
 
 	@ApiModelProperty("流量列表")
-	private List<FlowContext> flows;
+	private List<FlowInfoContext> flows;
 }

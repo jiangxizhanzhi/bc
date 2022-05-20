@@ -297,7 +297,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		RbRoom room = rbRoomService.getById(roomId);
 		String userId = UserInfoContext.getUserContext().getUserId();
 		List<Flow> flows = Lists.newArrayList();
-		Cpflow cpflow;
+		CpFlow cpflow;
 		Map<String, String> elementsMap = Maps.newHashMap();
 
 		// 2. 获取topo
@@ -309,7 +309,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 			// 2.1.2 转换JsonObject为SceneData对象
 			SceneData data = sceneData.toJavaObject(SceneData.class);
 			// 2.1.3 获取流量数据
-			cpflow = data.getPlugins().getCpflow();
+			cpflow = data.getPlugins().getCpFlow();
 			// 2.1.4 生成节点数据map
 			List<SceneElement> elements = data.getTopology().getElements();
 			for (SceneElement element : elements) {
@@ -321,7 +321,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 			JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId());
 			TopoData data = topoData.getJSONObject(CrCommonConstants.TOPO_DATA_KEY)
 					.toJavaObject(TopoData.class);
-			cpflow = data.getPlugins().getCpflow();
+			cpflow = data.getPlugins().getCpFlow();
 
 			List<TopoElement> elements = data.getTopology().getElements();
 			for (TopoElement element : elements) {
@@ -333,11 +333,11 @@ public class RbSceneServiceImpl implements RbSceneService {
 			return flows;
 		}
 		// 4. 获取每个节点的流量，整合成列表
-		for (Map.Entry<String, FlowElement> entry : cpflow.getElements().entrySet()) {
+		for (Map.Entry<String, ElementFlowList> entry : cpflow.getElements().entrySet()) {
 			String nodeId = entry.getKey();
 			String nodeName = elementsMap.get(nodeId);
 
-			for (FlowElementFlow flow : entry.getValue().getFlows()) {
+			for (ElementFlow flow : entry.getValue().getFlows()) {
 				Flow flowData = BeanUtils.copy(flow, Flow.class);
 				// 4.1 添加节点数据
 				flowData.setNodeId(nodeId);

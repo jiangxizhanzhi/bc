@@ -5,15 +5,21 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class FlowElementFlow implements Serializable {
-
-	private String desc;
+public class ElementFlow implements Serializable {
 
 	private String id;
 
 	private String name;
 
+	private String desc;
+
 	private String type;
+
+	private Integer category;
+
+	private Integer interactiveType;
+
+	private Integer commonStatus;
 
 	private Integer status;
 
@@ -23,12 +29,6 @@ public class FlowElementFlow implements Serializable {
 
 	private Integer count;
 
-	private Integer interactiveType;
-
-	private Integer category;
-
 	private String sourceIp;
-
-	private Integer commonStatus;
 
 }

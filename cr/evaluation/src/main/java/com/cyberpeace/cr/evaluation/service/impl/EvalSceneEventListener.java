@@ -15,7 +15,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskOperContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
@@ -57,14 +57,14 @@ public class EvalSceneEventListener extends MessageListener {
 			return true;
 		}
 
-		EvalTaskOperContext evalTaskOperContext = evalTaskService.getEvalTaskOperContext(businessId,
+		EvalTaskOpsContext evalTaskOpsContext = evalTaskService.getEvalTaskOpsContext(businessId,
 				false);
 
-		if (evalTaskOperContext.getEvalTask() == null) {
+		if (evalTaskOpsContext.getEvalTask() == null) {
 			return true;
 		}
 
-		evalTaskService.clearTaskAndScene(evalTaskOperContext);
+		evalTaskService.clearTaskAndScene(evalTaskOpsContext);
 
 		return true;
 	}

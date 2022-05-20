@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class FlowChangeReq implements Serializable {
+public class FlowParamUpdateReq implements Serializable {
 
 	@ApiModelProperty("测评靶场任务id")
 	@NotNull

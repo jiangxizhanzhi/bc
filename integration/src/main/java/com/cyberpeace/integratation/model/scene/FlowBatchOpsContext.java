@@ -9,9 +9,21 @@ public class FlowBatchOpsContext extends NodeOpsContext {
 
 	private Integer run_type;
 
-	private List<FlowInfoContext> flows;
+	private List<FlowInfo> flows;
 
 	public void setRunType(Integer runType) {
 		this.run_type = runType;
 	}
+
+	public FlowBatchOpsContext(String mpSceneId, String nodeId, Integer runType) {
+
+		this.setRunType(runType);
+
+		this.setNodeId(nodeId);
+
+		this.setId(mpSceneId);
+
+	}
+
+	public FlowBatchOpsContext() {}
 }

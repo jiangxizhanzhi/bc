@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -37,7 +37,7 @@ public class EvalTaskSceneController {
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/node/restart")
 	public BaseRsp<Boolean> restartNode(@RequestBody @Validated EvalSceneNodeOpsReq nodeOpsReq) {
-		EvalTask evalTask = evalTaskService.getTask(nodeOpsReq.getTaskId());
+		EvalTask evalTask = evalTaskService.getActiveTask(nodeOpsReq.getTaskId());
 		Boolean result = localSceneService.restartNode(evalTask.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
@@ -50,7 +50,7 @@ public class EvalTaskSceneController {
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/node/recreate")
 	public BaseRsp<Boolean> recreateNode(@RequestBody @Validated EvalSceneNodeOpsReq nodeOpsReq) {
-		EvalTask evalTask = evalTaskService.getTask(nodeOpsReq.getTaskId());
+		EvalTask evalTask = evalTaskService.getActiveTask(nodeOpsReq.getTaskId());
 		Boolean result = localSceneService.recreateNode(evalTask.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {

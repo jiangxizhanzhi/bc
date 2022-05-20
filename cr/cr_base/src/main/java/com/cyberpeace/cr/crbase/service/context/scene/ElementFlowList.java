@@ -1,12 +1,12 @@
 package com.cyberpeace.cr.crbase.service.context.scene;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class Cpflow implements Serializable {
+public class ElementFlowList implements Serializable {
 
-	private Map<String, FlowElement> elements;
+	private List<ElementFlow> flows;
 }

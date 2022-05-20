@@ -6,7 +6,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import lombok.Data;
 
 @Data
-public class EvalTaskOperContext {
+public class EvalTaskOpsContext {
 
 	private LocalScene localScene;
 

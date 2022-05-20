@@ -16,4 +16,7 @@ public class FlowOpsContext extends NodeOpsContext {
 	public void setSourceIp(String sourceIp) {
 		this.source_ip = sourceIp;
 	}
+
+	public FlowOpsContext() {}
+
 }

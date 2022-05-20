@@ -1,12 +1,13 @@
 package com.cyberpeace.cr.crbase.service.context.scene;
 
 import java.io.Serializable;
-import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class FlowElement implements Serializable {
+public class FlowInfoContext implements Serializable {
 
-	private List<FlowElementFlow> flows;
+	private String flowId;
+
+	private String sourceIp;
 }

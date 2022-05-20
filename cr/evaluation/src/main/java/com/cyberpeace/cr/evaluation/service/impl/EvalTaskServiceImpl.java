@@ -29,7 +29,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskOperContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -79,17 +79,29 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public EvalTaskOperContext getEvalTaskOperContext(String taskId, Boolean validateUser) {
+	public EvalTask getActiveTask(String taskId) {
 
-		EvalTaskOperContext evalTaskOperContext = new EvalTaskOperContext();
+		EvalTask evalTask = getTask(taskId);
+
+		if (evalTask.getEndTime() != null) {
+			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_RUNNING);
+		}
+
+		return evalTask;
+	}
+
+	@Override
+	public EvalTaskOpsContext getEvalTaskOpsContext(String taskId, Boolean validateUser) {
+
+		EvalTaskOpsContext evalTaskOpsContext = new EvalTaskOpsContext();
 
 		EvalTask evalTask = validateUser ? getTask(taskId) : getById(taskId);
 
-		evalTaskOperContext.setEvalTask(evalTask);
+		evalTaskOpsContext.setEvalTask(evalTask);
 
-		evalTaskOperContext.setLocalScene(localSceneService.getById(evalTask.getLocalSceneId()));
+		evalTaskOpsContext.setLocalScene(localSceneService.getById(evalTask.getLocalSceneId()));
 
-		return evalTaskOperContext;
+		return evalTaskOpsContext;
 	}
 
 	@Override
@@ -170,23 +182,23 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
 		localScene.setSceneName(evalTask.getTemplateName());
 		String appResourceId = evalTask.getTemplateId();
-		localScene.setMeta(JSON.toJSONString(
-				LocalSceneMeta.builder().appResourceId(appResourceId).build()));
+		localScene.setMeta(
+				JSON.toJSONString(LocalSceneMeta.builder().appResourceId(appResourceId).build()));
 		localScene.setRecord(evalTask.getEnableRecording());
 		return localScene;
 	}
 
 	@Override
-	public Boolean stopTask(EvalTaskOperContext evalTaskOperContext) {
+	public Boolean stopTask(EvalTaskOpsContext evalTaskOpsContext) {
 
-		evalSceneService.stopScene(evalTaskOperContext.getLocalScene());
+		evalSceneService.stopScene(evalTaskOpsContext.getLocalScene());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				clearTaskScene(evalTaskOperContext);
-				clearCurrentTask(evalTaskOperContext.getEvalTask().getTemplateId());
+				clearTaskScene(evalTaskOpsContext);
+				clearCurrentTask(evalTaskOpsContext.getEvalTask().getTemplateId());
 			}
 		});
 
@@ -199,12 +211,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public Boolean deleteTask(EvalTaskOperContext evalTaskOperContext) {
+	public Boolean deleteTask(EvalTaskOpsContext evalTaskOpsContext) {
 
 		// 关闭任务关联场景
-		if (evalTaskOperContext.getLocalScene() != null) {
-			evalSceneService.stopScene(evalTaskOperContext.getLocalScene());
-			clearTaskAndScene(evalTaskOperContext);
+		if (evalTaskOpsContext.getLocalScene() != null) {
+			evalSceneService.stopScene(evalTaskOpsContext.getLocalScene());
+			clearTaskAndScene(evalTaskOpsContext);
 			return true;
 
 		}
@@ -213,7 +225,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				clearTask(evalTaskOperContext.getEvalTask().getResourceId());
+				clearTask(evalTaskOpsContext.getEvalTask().getResourceId());
 			}
 		});
 
@@ -221,14 +233,14 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public void clearTaskScene(EvalTaskOperContext evalTaskOperContext) {
+	public void clearTaskScene(EvalTaskOpsContext evalTaskOpsContext) {
 
-		EvalTask evalTask = evalTaskOperContext.getEvalTask();
+		EvalTask evalTask = evalTaskOpsContext.getEvalTask();
 
 		evalTask.setEndTime(new Date());
 		evalTask.setLocalSceneId("");
 
-		localSceneService.removeById(evalTaskOperContext.getLocalScene());
+		localSceneService.removeById(evalTaskOpsContext.getLocalScene());
 		updateById(evalTask);
 
 	}
@@ -255,15 +267,15 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public void clearTaskAndScene(EvalTaskOperContext evalTaskOperContext){
+	public void clearTaskAndScene(EvalTaskOpsContext evalTaskOpsContext) {
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				localSceneService.removeById(evalTaskOperContext.getLocalScene());
-				clearCurrentTask(evalTaskOperContext.getEvalTask().getTemplateId());
-				clearTask(evalTaskOperContext.getEvalTask().getResourceId());
+				localSceneService.removeById(evalTaskOpsContext.getLocalScene());
+				clearCurrentTask(evalTaskOpsContext.getEvalTask().getTemplateId());
+				clearTask(evalTaskOpsContext.getEvalTask().getResourceId());
 			}
 		});
 

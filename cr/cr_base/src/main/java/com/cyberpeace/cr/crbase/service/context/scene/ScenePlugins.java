@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class ScenePlugins implements Serializable {
 
-	private Cpflow cpflow;
+	private CpFlow cpFlow;
 }

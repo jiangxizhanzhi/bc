@@ -29,7 +29,7 @@ import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskOperContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 
@@ -113,21 +113,21 @@ public class EvalTaskController {
 	@PostMapping("/stop")
 	public BaseRsp<Boolean> stopEvalTask(@RequestBody @Validated EvalTaskStopReq evalTaskStopReq) {
 
-		EvalTaskOperContext evalTaskOperContext = evalTaskService
-				.getEvalTaskOperContext(evalTaskStopReq.getTaskId(), true);
-		EvalTask evalTask = evalTaskOperContext.getEvalTask();
+		EvalTaskOpsContext evalTaskOpsContext = evalTaskService
+				.getEvalTaskOpsContext(evalTaskStopReq.getTaskId(), true);
+		EvalTask evalTask = evalTaskOpsContext.getEvalTask();
 		String taskName = evalTaskStopReq.getTaskName();
 
 		// 没有任务名称时，删除场景及任务
 		if (StringUtils.isEmpty(taskName)) {
-			return new BaseRsp<>(evalTaskService.deleteTask(evalTaskOperContext));
+			return new BaseRsp<>(evalTaskService.deleteTask(evalTaskOpsContext));
 		}
 
 		// 存在任务名称时，关闭任务场景
 		if (evalTaskService.validateName(taskName, evalTask.getTemplateId(),
 				evalTask.getResourceId())) {
 			evalTask.setTaskName(taskName);
-			return new BaseRsp<>(evalTaskService.stopTask(evalTaskOperContext));
+			return new BaseRsp<>(evalTaskService.stopTask(evalTaskOpsContext));
 		}
 
 		return new BaseRsp<>(false);
@@ -178,7 +178,7 @@ public class EvalTaskController {
 			deleteEvalTask(@RequestBody @Validated EvalTaskDeleteReq evalTaskDeleteReq) {
 
 		for (String taskId : evalTaskDeleteReq.getTaskIds()) {
-			evalTaskService.deleteTask(evalTaskService.getEvalTaskOperContext(taskId, true));
+			evalTaskService.deleteTask(evalTaskService.getEvalTaskOpsContext(taskId, true));
 		}
 
 		return new BaseRsp<>(true);

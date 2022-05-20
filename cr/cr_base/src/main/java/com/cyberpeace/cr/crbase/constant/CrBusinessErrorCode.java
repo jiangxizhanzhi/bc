@@ -296,6 +296,7 @@ public interface CrBusinessErrorCode {
 	 * 变量项格式化算法执行失败
 	 */
 	String VARIABLE_FORMAT_EXECUTE_FAILED = "101095";
+
 	/**
 	 * 变量项匹配算法执行失败
 	 */
@@ -330,4 +331,16 @@ public interface CrBusinessErrorCode {
 	 * 采集变量项未获取到相关数据
 	 */
 	String VARIABLE_DID_NOT_GET_PROBE_DATA = "101102";
+
+	/** 未指定节点 */
+	String NOT_SPECIFY_NODE = "101103";
+
+	/** 指定节点下无流量数据 */
+	String NO_FLOW_EXISTS_ON_NODE = "101104";
+
+	/** 流量不存在 */
+	String FLOW_NOT_EXIST = "101105";
+
+	/** 流量修改错误 */
+	String FAILED_TO_UPDATE_FLOW = "101106";
 }

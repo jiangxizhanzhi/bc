@@ -1,14 +1,10 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import java.util.List;
-
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.scene.FlowElementFlow;
+import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.service.context.FlowListContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.integratation.model.scene.FlowInfoContext;
 
 /**
  * 测试靶场-场景管理
@@ -27,8 +23,7 @@ public interface EvalSceneService {
 	 */
 	Boolean stopScene(LocalScene localScene);
 
-	ListRsp<FlowElementFlow> getFlowList(FlowListContext flowListContext);
-
-	List<FlowInfoContext> getAllFlow(EvalTask evalTask, String nodeId);
+	ElementFlowListContext getElementFlowListContext(EvalTaskFlowListQuery evalTaskFlowListQuery,
+			EvalTask evalTask);
 
 }

@@ -21,6 +21,6 @@ public interface FileTypeContant {
 	String OPERATION_PRACTICE_ATTACHMENT = "ZIP";
 
 	/** 工具库文件上传*/
-	String TOOL_ATTACHMENT = "ZIP";
+	String TOOL_ATTACHMENT = "ZIP,RAR";
 
 }

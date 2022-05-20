@@ -76,7 +76,7 @@ public class Tool extends BaseTable {
 	public String getCoverUrl() {
 		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
 		if (StringUtils.isNotBlank(cover) && !cover.startsWith(prefix)) {
-			return prefix + File.pathSeparator + cover;
+			return prefix + cover;
 		}
 		return cover;
 	}

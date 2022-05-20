@@ -57,16 +57,6 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return startFormat(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
     }
 
-    /**
-     * 采集变量项目执行失败, 记录
-     * @param evalVariableRef
-     * @param evalRecord
-     * @param msg
-     */
-    private String exceptionBefore(EvalVariableRef evalVariableRef, EvalRecord evalRecord, String msg) {
-        return msg;
-    }
-
     private String startFormat(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.FORMATTING.getCode())) {
@@ -84,7 +74,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         // 时间范围内无采集数据情况
         if (evalProbeDataList.isEmpty()) {
-            return exceptionBefore(evalVariableRef, evalRecord, BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_DID_NOT_GET_PROBE_DATA));
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_DID_NOT_GET_PROBE_DATA), evalVariableRef.getName());
         }
 
         // 构建格式化算法数据
@@ -102,10 +92,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
                     evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams())
             );
         } catch (RemoteServiceException e) {
-            return exceptionBefore(
-                    evalVariableRef, evalRecord,
-                    String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_FORMAT_EXECUTE_FAILED), evalVariableRef.getName())
-            );
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_FORMAT_EXECUTE_FAILED), evalVariableRef.getName());
         }
         evalVariableRef.setFormatEndTime(new Date());
 
@@ -164,10 +151,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
                     evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams())
             );
         } catch (RemoteServiceException e) {
-            return exceptionBefore(
-                    evalVariableRef, evalRecord,
-                    String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MATCH_EXECUTE_FAILED), evalVariableRef.getName())
-            );
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MATCH_EXECUTE_FAILED), evalVariableRef.getName());
         }
         evalVariableRef.setMatchEndTime(new Date());
 
@@ -177,10 +161,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         // 执行失败, 返回值异常
         if (matchReturn.size() != evalVariableRefProbeDataList.size()) {
-            return exceptionBefore(
-                    evalVariableRef, evalRecord,
-                    String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName())
-            );
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
         }
 
         for (int i = 0; i < evalVariableRefProbeDataList.size(); i++) {
@@ -221,7 +202,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
             data.getData().add(itemData);
         });
 
-        // 运行匹配算法
+        // 运行评分算法
         Integer score;
         evalVariableRef.setMarkStartTime(new Date());
         try {
@@ -232,10 +213,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
                     evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams())
             );
         } catch (RemoteServiceException e) {
-            return exceptionBefore(
-                    evalVariableRef, evalRecord,
-                    String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MARK_EXECUTE_FAILED), evalVariableRef.getName())
-            );
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MARK_EXECUTE_FAILED), evalVariableRef.getName());
         }
 
         evalVariableRef.setMarkEndTime(new Date());

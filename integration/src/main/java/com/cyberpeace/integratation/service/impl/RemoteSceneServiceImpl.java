@@ -77,6 +77,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String COLLECTION_EVENT_URL;
 
+	private String COLLECTION_EVENT_DATA_URL;
+
 	private String FLOW_RECORD_URL;
 
 	private String FLOW_RETRIEVE_URL;
@@ -140,6 +142,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		COLLECTION_EVENT_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.probe.collection.event");
+
+		COLLECTION_EVENT_DATA_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.probe.collection.data");
 
 		FLOW_RECORD_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.flow.record");

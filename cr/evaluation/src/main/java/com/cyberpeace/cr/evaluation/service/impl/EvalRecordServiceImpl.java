@@ -623,7 +623,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
 
-        exeCollectionEvent(evalProbeDataList, collectionEventPageContext);
+        exeCollectionEvent(evalProbeDataList, collectionEventPageContext, new HashMap<>());
         evalProbeDataList.sort(Comparator.comparing(EvalProbeData::getCollectionTime));
 
         evalVariableRefs.forEach(evalVariableRef -> evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode()));
@@ -648,10 +648,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
                 .list();
 
+        Map<String, String> ipMap = nodeIpMap(evalTask.getMpSceneId());
+
         evalVariableRefs.forEach(evalVariableRef -> {
             // 变量项开始运算
-            evalVariableRef.setProgress(EvalVariableRef.Progress.START.getCode());
-            evalVariableRefService.updateById(evalVariableRef);
+            if (evalVariableRef.getProgress().equals(EvalVariableRef.Progress.NOT_START.getCode())) {
+                evalVariableRef.setProgress(EvalVariableRef.Progress.START.getCode());
+                evalVariableRefService.updateById(evalVariableRef);
+            }
 
             List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
 
@@ -666,14 +670,16 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             // 变量项使用同一探针, 数据已经被同步, 跳过
             if (!isExist) {
                 CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
-                // todo 无视时间范围, 全部同步
                 collectionEventPageContext.setId(evalTask.getMpSceneId());
                 collectionEventPageContext.setNodeIds(Collections.singletonList(evalVariableRef.getDeviceId()));
                 collectionEventPageContext.setProbeId(Collections.singletonList(evalVariableRef.getProbeId()));
-                collectionEventPageContext.setStartTime(evalRecord.getStartTime());
-                collectionEventPageContext.setEndTime(evalRecord.getEndTime());
-                // todo 暂未分页调用, 待调整
-                collectionEventPageContext.setPageSize((long) (10 * 10000));
+                // todo 时间范围取消, 完全同步
+//                collectionEventPageContext.setStartTime(evalRecord.getStartTime());
+//                collectionEventPageContext.setEndTime(evalRecord.getEndTime());
+                collectionEventPageContext.setPage((long) 1);
+                collectionEventPageContext.setPageSize((long) 1000);
+
+                exeCollectionEvent(evalProbeDataList, collectionEventPageContext, ipMap);
 
                 remoteSceneService.getCollectionEvent(collectionEventPageContext).forEach(
                         mpCollectionEvent -> evalProbeDataList.add(BeanUtils.copy(mpCollectionEvent, EvalProbeData.class))
@@ -684,7 +690,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     if (!evalProbeDataList.isEmpty()) {
-                        evalProbeDataService.saveBatch(evalProbeDataList, 100);
+                        evalProbeDataService.saveBatch(evalProbeDataList);
                     }
                     evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode());
                     evalVariableRefService.updateById(evalVariableRef);
@@ -693,7 +699,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
-    private void exeCollectionEvent(List<EvalProbeData> evalProbeDataList, CollectionEventPageContext collectionEventPageContext) {
+    private void exeCollectionEvent(List<EvalProbeData> evalProbeDataList, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap) {
 
         List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
         collectionEventList.forEach(mpCollectionEvent -> {
@@ -709,6 +715,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     probeDataItem.setSceneId(collectionEventPageContext.getId());
                     probeDataItem.setDeviceId(mpCollectionEvent.getNodeId());
                     probeDataItem.setCollectionTime(mpCollectionEvent.getTime());
+                    probeDataItem.setDeviceIp(ipMap.get(mpCollectionEvent.getNodeId()));
                     evalProbeDataList.add(probeDataItem);
                 }
 
@@ -719,16 +726,35 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
         if (collectionEventPageContext.getPageSize() == collectionEventList.size()) {
             collectionEventPageContext.setPage(collectionEventPageContext.getPage() + 1);
-            exeCollectionEvent(evalProbeDataList, collectionEventPageContext);
+            exeCollectionEvent(evalProbeDataList, collectionEventPageContext, ipMap);
         }
     }
 
-    private AlgorithmContext generateContext(Integer type, String id) {
-        AlgorithmContext algorithmContext = new AlgorithmContext();
-        algorithmContext.setId(id);
-        algorithmContext.setType(type);
+    /**
+     * 获取场景下节点ip
+     * @param mpSceneId MP场景id
+     * @return Map
+     */
+    private Map<String, String> nodeIpMap(String mpSceneId) {
+        JSONObject jsonObject = remoteSceneService.getById(mpSceneId, UserInfoContext.getUserContext().getUserId());
+        JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
 
-        return algorithmContext;
+        Map<String, String> results = Maps.newHashMap();
+        nodes.forEach(item -> {
+            JSONObject nodeItem = (JSONObject) item;
+
+            String nodeId = nodeItem.getString("id");
+            List<String> ips = Lists.newArrayList();
+
+            nodeItem.getJSONArray("ports").forEach(port -> {
+                JSONObject portInfo = (JSONObject) port;
+                if (!StringUtils.isEmpty(portInfo.getString("ip"))) {
+                    ips.add(portInfo.getString("ip"));
+                }
+            });
+            results.put(nodeId, StringUtils.join(ips));
+        });
+        return results;
     }
 
     @Override
@@ -741,8 +767,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
-        JSONArray nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
-        nodesProbe.forEach(item -> {
+        JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
+        nodes.forEach(item -> {
             JSONObject nodeItem = (JSONObject) item;
 
             EvalRoomPairRsp result = new EvalRoomPairRsp();

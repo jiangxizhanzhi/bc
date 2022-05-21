@@ -7,6 +7,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface EvalIndexRefService extends IService<EvalIndexRef> {
     /**
@@ -34,4 +35,11 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
      * @return 0~100
      */
     Integer thirdSpecialist(Integer datatype, Integer attribute, Integer attributeValue, Integer value);
+
+    /**
+     * 获取评估下所有系统评估使用的变量项id
+     * @param recordId 评估id
+     * @return List
+     */
+    Set<String> systemEvalVariableIds(String recordId);
 }

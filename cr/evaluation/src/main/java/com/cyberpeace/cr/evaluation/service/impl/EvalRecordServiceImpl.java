@@ -514,19 +514,25 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalRecord.setMessage("");
         }
 
+        // 需要计算变量项id集合
+        Set<String> variableIds = evalIndexRefService.systemEvalVariableIds(evalRecord.getResourceId());
+
         // 循环同步采集数据
-        syncProbeData(evalRecord, evalTask, true);
+        syncProbeData(evalRecord, evalTask, variableIds, true);
         // 执行变量项
-        startVariables(evalRecord, evalTask);
+        startVariables(evalRecord, evalTask, variableIds);
         // 执行指标项
         startIndexes(evalRecord, evalTask);
 
     }
 
-    private void startVariables(EvalRecord evalRecord, EvalTask evalTask) {
+    private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
+        if (variableIds.isEmpty()) {
+            return;
+        }
 
         List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery()
-                .eq(EvalVariableRef::getRecordId, evalRecord.getResourceId())
+                .in(EvalVariableRef::getResourceId, variableIds)
                 .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode())
                 .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode())
                 .list();
@@ -586,7 +592,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalIndexRefs.forEach(evalIndexRef -> {
             EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalIndexRef.getAlgorithmId());
-            evalIndexRefService.startIndex(evalIndexRef, evalAlgorithmRef, evalIndexRefMap, evalVariableRefMap, evalRecord);
+            // 仅执行系统评分类型, 专家评分拥有默认分值不需执行
+            if (evalIndexRef.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())) {
+                evalIndexRefService.startIndex(evalIndexRef, evalAlgorithmRef, evalIndexRefMap, evalVariableRefMap, evalRecord);
+            }
         });
 
         evalRecord.setStatus(StringUtils.isEmpty(evalRecord.getMessage()) ? EvalRecord.Status.END.getCode() : EvalRecord.Status.EXCEPTION.getCode());
@@ -597,9 +606,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
-    private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask, Boolean isTmp) {
+    private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds, Boolean isTmp) {
+        if (variableIds.isEmpty()) {
+            return;
+        }
         List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery()
-                .eq(EvalVariableRef::getRecordId, evalRecord.getResourceId())
+                .in(EvalVariableRef::getResourceId, variableIds)
                 .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
                 .list();
         // 无需要同步数据变量项, 跳过
@@ -639,12 +651,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
-    private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask) {
+    private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
+        if (variableIds.isEmpty()) {
+            return;
+        }
 
         // 循环变量项/探针id, invoke mp, 同步数据到bc数据库, 每同步一次（重复数据去重）, 更新变量项progress -> start  todo 类型为系统评估
         // todo 数据同步验证/ 避免重复
         List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery()
-                .eq(EvalVariableRef::getRecordId, evalRecord.getResourceId())
+                .in(EvalVariableRef::getResourceId, variableIds)
                 .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
                 .list();
 

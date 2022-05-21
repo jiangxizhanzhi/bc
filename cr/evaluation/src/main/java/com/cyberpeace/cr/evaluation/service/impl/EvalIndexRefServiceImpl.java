@@ -137,16 +137,35 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             Map<Integer, Integer> attrMap = CYCLE_MAP.get(EvalIndexRef.DataAttr.COST.getCode());
             return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
         } else if (datatype.equals(EvalIndexRef.DataType.INTEGER.getCode())) {
-            if (attributeValue == null) {
-                return 100;
-            }
-            int score = (attributeValue * 100 - value * 100) / attributeValue * 100;
             if (attribute.equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
-                return 100 - score;
+                return Math.min(100 - (value * 100 - attributeValue * 100) / attributeValue, 100);
             } else if (attribute.equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {
-                return score;
+                return Math.max((attributeValue * 100 - value * 100) / attributeValue, 0);
             }
         }
         return 0;
+    }
+
+    @Override
+    public Set<String> systemEvalVariableIds(String recordId) {
+        Set<String> results = Sets.newHashSet();
+        List<String> fourthIds = Lists.newArrayList();
+        lambdaQuery()
+                .eq(EvalIndexRef::getRecordId, recordId)
+                .eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode())
+                .eq(EvalIndexRef::getType, EvalIndexRef.Type.SYSTEM.getCode())
+                .list()
+                .forEach(evalIndexRef -> fourthIds.addAll(JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class)));
+
+        if (fourthIds.isEmpty()) {
+            return results;
+        }
+
+        lambdaQuery()
+                .in(EvalIndexRef::getResourceId, fourthIds)
+                .list()
+                .forEach(evalIndexRef -> results.addAll(JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class)));
+
+        return results;
     }
 }

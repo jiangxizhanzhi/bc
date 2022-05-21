@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -68,14 +69,19 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	public EvalTask getTask(String taskId) {
 
 		EvalTask evalTask = getById(taskId);
+
+		// 校验任务是否存在
 		if (evalTask == null) {
 			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
-		} else if (!Objects.equals(evalTask.getCreateUserId(),
+		}
+
+		// 校验用户权限
+		if (!Objects.equals(evalTask.getCreateUserId(),
 				UserInfoContext.getUserContext().getUserId())) {
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		} else {
-			return evalTask;
 		}
+
+		return evalTask;
 	}
 
 	@Override
@@ -84,6 +90,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		EvalTask evalTask = getTask(taskId);
 
 		if (evalTask.getEndTime() != null) {
+			// 校验任务状态
 			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_RUNNING);
 		}
 
@@ -191,36 +198,39 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	@Override
 	public Boolean stopTask(EvalTaskOpsContext evalTaskOpsContext) {
 
+		// 关闭场景
 		evalSceneService.stopScene(evalTaskOpsContext.getLocalScene());
 
+		// 处理数据库数据
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				clearTaskScene(evalTaskOpsContext);
-				clearCurrentTask(evalTaskOpsContext.getEvalTask().getTemplateId());
+				clearCurrentTask(evalTaskOpsContext.getEvalTask().getTemplateId(),
+						evalTaskOpsContext.getEvalTask().getResourceId());
 			}
 		});
 
 		return true;
 	}
 
-	private void clearTask(String taskId) {
-		evalTaskStepService.removeByTaskId(taskId);
-		removeById(taskId);
-	}
-
 	@Override
 	public Boolean deleteTask(EvalTaskOpsContext evalTaskOpsContext) {
 
-		// 关闭任务关联场景
+		// 清除未结束的任务数据
 		if (evalTaskOpsContext.getLocalScene() != null) {
+
+			// 关闭场景
 			evalSceneService.stopScene(evalTaskOpsContext.getLocalScene());
+
+			// 清除任务及其场景数据
 			clearTaskAndScene(evalTaskOpsContext);
 			return true;
 
 		}
 
+		// 清除已结束的任务数据
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -245,6 +255,38 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 	}
 
+	/** 清除任务及其步骤数据*/
+	private void clearTask(String taskId) {
+		evalTaskStepService.removeByTaskId(taskId);
+		removeById(taskId);
+	}
+
+	@Override
+	public void clearTaskAndScene(EvalTaskOpsContext evalTaskOpsContext) {
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				localSceneService.removeById(evalTaskOpsContext.getLocalScene());
+				clearTask(evalTaskOpsContext.getEvalTask().getResourceId());
+				clearCurrentTask(evalTaskOpsContext.getEvalTask().getTemplateId(),
+						evalTaskOpsContext.getEvalTask().getResourceId());
+			}
+		});
+
+	}
+
+	@Override
+	public void clearCurrentTask(String templateId, String taskId) {
+		EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
+
+		if (StringUtils.equals(taskId, evalTemplate.getCurrentTaskId())) {
+			evalTemplate.setCurrentTaskId("");
+			evalTemplateMapper.updateById(evalTemplate);
+		}
+	}
+
 	@Override
 	public Boolean validateName(String taskName, String templateId, String taskId) {
 
@@ -257,28 +299,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		}
 
 		return true;
-	}
-
-	@Override
-	public void clearCurrentTask(String templateId) {
-		EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
-		evalTemplate.setCurrentTaskId("");
-		evalTemplateMapper.updateById(evalTemplate);
-	}
-
-	@Override
-	public void clearTaskAndScene(EvalTaskOpsContext evalTaskOpsContext) {
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				localSceneService.removeById(evalTaskOpsContext.getLocalScene());
-				clearCurrentTask(evalTaskOpsContext.getEvalTask().getTemplateId());
-				clearTask(evalTaskOpsContext.getEvalTask().getResourceId());
-			}
-		});
-
 	}
 
 }

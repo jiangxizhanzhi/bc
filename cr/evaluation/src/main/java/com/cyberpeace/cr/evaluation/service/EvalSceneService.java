@@ -13,16 +13,25 @@ public interface EvalSceneService {
 
 	/**
 	 * 查看场景
+	 * @param mpSceneId
+	 * @param topoId
 	 * @return
 	 */
 	SceneViewContext viewScene(String mpSceneId, String topoId);
 
 	/**
 	 * 关闭场景
+	 * @param localScene
 	 * @return
 	 */
 	Boolean stopScene(LocalScene localScene);
 
+	/**
+	 * 构造场景流量列表查询参数
+	 * @param evalTaskFlowListQuery
+	 * @param evalTask
+	 * @return
+	 */
 	ElementFlowListContext getElementFlowListContext(EvalTaskFlowListQuery evalTaskFlowListQuery,
 			EvalTask evalTask);
 

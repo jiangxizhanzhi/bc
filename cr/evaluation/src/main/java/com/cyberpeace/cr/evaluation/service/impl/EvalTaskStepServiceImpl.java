@@ -105,20 +105,23 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	@Override
 	public List<EvalTaskStepContext> getTaskSteps(String taskId) {
 
+		// 获取任务步骤列表
 		EvalTask evalTask = evalTaskMapper.selectById(taskId);
-
 		List<EvalTaskStepContext> evalTaskStepContexts = Lists.newArrayList();
-
 		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectStepsByTaskId(taskId);
 
+		// 处理步骤信息
 		for (int i = 0; i < evalTaskSteps.size(); i++) {
 
 			EvalTaskStep evalTaskStep = evalTaskSteps.get(i);
 
 			EvalTaskStepContext evalTaskStepContext = BeanUtils.copy(evalTaskStep,
 					EvalTaskStepContext.class);
+
+			// 设置步骤状态
 			evalTaskStepContext.setStatus();
 
+			// 设置前序步骤状态
 			if (StringUtils.isNotEmpty(evalTask.getTaskName())) {
 				evalTaskStepContext.setPreStepStatus(EvalTaskStepContext.Status.INIT.getCode());
 			} else if (i == 0) {

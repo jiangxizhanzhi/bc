@@ -30,6 +30,7 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 
 	/** 查询测试靶场模板的任务列表
 	 * @param evalTemplate
+	 * @param isFinished
 	 * @return
 	 */
 	List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate, Boolean isFinished);

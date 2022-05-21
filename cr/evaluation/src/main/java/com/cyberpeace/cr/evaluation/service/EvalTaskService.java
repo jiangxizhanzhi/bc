@@ -22,6 +22,11 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 */
 	EvalTask getActiveTask(String taskId);
 
+	/** 构造任务操作context
+	 * @param taskId
+	 * @param validateUser 是否校验用户身份
+	 * @return
+	 */
 	EvalTaskOpsContext getEvalTaskOpsContext(String taskId, Boolean validateUser);
 
 	/** 启动测评靶场任务
@@ -48,6 +53,19 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 */
 	void clearTaskScene(EvalTaskOpsContext evalTaskOpsContext);
 
+	/** 清除测评靶场任务及其场景信息
+	 * @param evalTaskOpsContext
+	 * @return
+	 */
+	void clearTaskAndScene(EvalTaskOpsContext evalTaskOpsContext);
+
+	/** 清除测评靶场当前任务信息
+	 * @param templateId
+	 * @param taskId
+	 * @return
+	 */
+	void clearCurrentTask(String templateId, String taskId);
+
 	/** 校验测评靶场任务名称
 	 * @param taskName
 	 * @param templateId
@@ -55,13 +73,5 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 * @return
 	 */
 	Boolean validateName(String taskName, String templateId, String taskId);
-
-	/** 清除测评靶场当前任务信息
-	 * @param templateId
-	 * @return
-	 */
-	void clearCurrentTask(String templateId);
-
-	void clearTaskAndScene(EvalTaskOpsContext evalTaskOpsContext);
 
 }

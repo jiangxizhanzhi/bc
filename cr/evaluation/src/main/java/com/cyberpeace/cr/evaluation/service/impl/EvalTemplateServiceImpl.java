@@ -64,12 +64,17 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		EvalTemplate evalTemplate = getById(templateId);
 
+		// 校验模板是否存在
 		if (evalTemplate == null) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		} else if (!Objects.equals(evalTemplate.getCreateUserId(),
+		}
+
+		// 校验用户权限
+		if (!Objects.equals(evalTemplate.getCreateUserId(),
 				UserInfoContext.getUserContext().getUserId())) {
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
+
 		return evalTemplate;
 	}
 
@@ -78,6 +83,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		Page page = evalTemplateListQuery.toPageParam();
 
+		// 根据用户获取模板列表
 		IPage<EvalTemplate> data = evalTemplateMapper.listEvalTemplates(page, evalTemplateListQuery,
 				UserInfoContext.getUserContext().getUserId());
 

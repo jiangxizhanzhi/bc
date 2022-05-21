@@ -40,6 +40,7 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 			}
 		}
 
+		// 获取拓扑结构
 		if (topoId != null) {
 			JSONObject topoData = localSceneService.getTopoData(topoId)
 					.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);

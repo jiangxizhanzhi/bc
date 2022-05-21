@@ -17,9 +17,10 @@ public class FlowRecordContext extends NodeOpsContext {
 		this.is_batch = isBatch;
 	}
 
-	public FlowRecordContext(String mpSceneId, String nodeId) {
+	public FlowRecordContext(String mpSceneId, String nodeId, String flowId) {
 		this.setId(mpSceneId);
 		this.setNodeId(nodeId);
+		this.setFlowId(flowId);
 	}
 
 	public FlowRecordContext() {}

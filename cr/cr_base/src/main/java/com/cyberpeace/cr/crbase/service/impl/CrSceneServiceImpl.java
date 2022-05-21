@@ -2,18 +2,18 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.scene.*;
@@ -63,7 +63,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	public String getFlowFilePath(String flowId) {
 		MpFlow mpFlow = remoteSceneService.getFlowById(flowId);
 
-		if (mpFlow == null){
+		if (mpFlow == null) {
 			throw new BusinessException(CrBusinessErrorCode.FLOW_NOT_EXIST);
 		}
 
@@ -82,15 +82,19 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 	private List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
 
-		CpFlow cpFlow = getCpFlow(mpSceneId, topoId);
-
-		if (StringUtils.isEmpty(nodeId)){
+		if (StringUtils.isEmpty(nodeId)) {
 			throw new BusinessException(CrBusinessErrorCode.NOT_SPECIFY_NODE);
 		}
 
-		ElementFlowList elementFlowList = cpFlow.getElements().get(nodeId);
+		CpFlow cpFlow = getCpFlow(mpSceneId, topoId);
 
 		List<ElementFlow> nodeFlowList = Lists.newArrayList();
+
+		if (cpFlow == null) {
+			return nodeFlowList;
+		}
+
+		ElementFlowList elementFlowList = cpFlow.getElements().get(nodeId);
 
 		if (elementFlowList != null) {
 			nodeFlowList = elementFlowList.getFlows();
@@ -145,28 +149,29 @@ public class CrSceneServiceImpl implements CrSceneService {
 	private List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList,
 			String mpSceneId, String nodeId) {
 
-		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId);
-		// 逻辑优化 todo
-		Integer status;
+		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, null);
+		// 判断优化 todo
+		Integer taskStatus;
 		try {
 			JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
-			status = (Integer) jsonObject.getOrDefault("status", 4);
+			taskStatus = (Integer) jsonObject.getOrDefault("status",
+					ElementFlow.TaskStatusEnum.ZERO.getCode());
 		} catch (Exception e) {
-			status = 4;
-		}
-
-		Integer commonStatus;
-		if (status.equals(3) || status.equals(4)) {
-			commonStatus = 0;
-		} else {
-			commonStatus = 1;
+			taskStatus = ElementFlow.TaskStatusEnum.INIT.getCode();
 		}
 
 		for (ElementFlow elementFlow : elementFlowList) {
-			elementFlow.setCommonStatus(commonStatus);
+			elementFlow.setCommonStatus(taskStatus);
 		}
 
 		return elementFlowList;
+	}
+
+	/**启动流量前校验流量状态 todo*/
+	private Boolean checkElementFlowStatus(String mpSceneId, String nodeId, String flowId) {
+		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, flowId);
+		JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
+		return true;
 	}
 
 	@Override
@@ -192,7 +197,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
 		Boolean result = remoteSceneService.updateFlowParam(flowOpsContext);
 
-		if (!result){
+		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_FLOW);
 		}
 
@@ -208,7 +213,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 			flowOpsContext.setNodeId(nodeId);
 			Boolean result = remoteSceneService.startFlow(flowOpsContext);
 
-			if (!result){
+			if (!result) {
 				throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 			}
 		}
@@ -224,7 +229,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 		List<FlowInfo> flowInfoList = getNodeFlowContextList(mpSceneId, null, nodeId);
 
-		if (flowInfoList.isEmpty()){
+		if (flowInfoList.isEmpty()) {
 			throw new BusinessException(CrBusinessErrorCode.NO_FLOW_EXISTS_ON_NODE);
 		}
 
@@ -232,7 +237,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 		Boolean result = remoteSceneService.batchStartFlow(flowBatchOpsContext);
 
-		if (!result){
+		if (!result) {
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 		}
 

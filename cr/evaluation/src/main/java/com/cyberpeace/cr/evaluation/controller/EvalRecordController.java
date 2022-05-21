@@ -105,7 +105,7 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getProbes(roomId, nodeId));
     }
 
-    @ApiOperation("终端使用探针信息获取")
+    @ApiOperation("终端使用探针信息获取-批量")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/probes-map")
     public BaseRsp<Map<String, List<EvalRoomPairRsp>>> getProbes(@RequestParam("room_id") String roomId) {

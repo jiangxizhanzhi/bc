@@ -87,6 +87,10 @@ public class MdUtil {
 		return titleArray[1].trim();
 	}
 
+	public static void main(String[] args) {
+		parseMarkdown("/Users/chenzhuo/Downloads/demo/Write-up_cn.md");
+	}
+
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
 	 * @param markdownPath
@@ -147,7 +151,7 @@ public class MdUtil {
 			String content;
 
 			while ((content = br.readLine()) != null) {
-				if (content.trim().equals(CommonConstant.MD_CODING_BLOCK)
+				if (content.trim().startsWith(CommonConstant.MD_CODING_BLOCK)
 						&& CommonConstant.ONE.intValue() == type) {
 					coding = !coding;
 				} else {

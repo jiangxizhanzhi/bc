@@ -517,8 +517,7 @@ public class FileUtil {
 		}
 
 		// 文件后缀匹配，如果文件无后缀则可能不是文件
-		String fileSuffix = LocalStringUtil.getFirstMatchStr(destFilePath,
-				PatternConstant.FILE_SUFFIX_MATCH);
+		String fileSuffix = getFileSuffix(destFilePath);
 
 		// 文件类型为空 则文件无后缀
 		if (StringUtils.isBlank(fileTypeStr)) {
@@ -535,7 +534,7 @@ public class FileUtil {
 			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, fileTypeStr.toLowerCase());
 		}
 
-		String suffixStr = fileSuffix.substring(1).toUpperCase();
+		String suffixStr = fileSuffix.toUpperCase();
 		List<String> typeList = Arrays.asList(fileTypeStr.split(CommonConstant.CODE_COMMA));
 
 		if (!typeList.contains(suffixStr)) {

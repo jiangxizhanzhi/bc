@@ -38,11 +38,13 @@ public class ClassroomReq implements Serializable {
 	private String organizationId;
 
 	@ApiModelProperty("开始时间")
-	@NotNull(groups = { Create.class, Update.class })
+	@NotNull(groups = { Create.class, Update.class },
+			message = OjBusinessErrorCode.START_TIME_NOT_NULL)
 	private Date startTime;
 
 	@ApiModelProperty("结束时间")
-	@NotNull(groups = { Create.class, Update.class })
+	@NotNull(groups = { Create.class, Update.class },
+			message = OjBusinessErrorCode.END_TIME_NOT_NULL)
 	private Date endTime;
 
 	@ApiModelProperty("训练计划编号")

@@ -174,4 +174,10 @@ public interface OjBusinessErrorCode {
 	/** xxx组织下无用户*/
 	String ORG_UNDER_NO_USERS = "102056";
 
+	/** 开始时间不能为空*/
+	String START_TIME_NOT_NULL = "102057";
+
+	/** 结束时间不能为空*/
+	String END_TIME_NOT_NULL = "102058";
+
 }

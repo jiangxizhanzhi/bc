@@ -76,7 +76,6 @@
     <select id="selectAllByParent" resultMap="base">
         select * from oj_comment
         where root_id = #{parentId}
-        order by create_time asc
     </select>
 
     <select id="selectParent" resultMap="base">

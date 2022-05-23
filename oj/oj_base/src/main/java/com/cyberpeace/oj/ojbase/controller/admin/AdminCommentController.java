@@ -49,7 +49,7 @@ public class AdminCommentController {
     @ApiOperation("留言删除")
     @DeleteMapping("")
     @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
-    public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq){
+    public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
         commentService.bathDeleteComment(deleteReq.getIds());
 
@@ -59,24 +59,24 @@ public class AdminCommentController {
     @ApiOperation("分页查询一级留言")
     @GetMapping("list")
     @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
-    public BaseRsp<ListRsp<CommentBo>> parentList(@ApiParam @Validated PageCommentReq pageCommentReq){
+    public BaseRsp<ListRsp<CommentBo>> parentList(@ApiParam @Validated PageCommentReq pageCommentReq) {
         Page page = pageCommentReq.toPageParam();
         if (CollectionUtils.isEmpty(page.getOrders())) {
             PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
         }
-        ListRsp<CommentBo> listRsp = commentService.pageParentComment(pageCommentReq.toPageParam(), pageCommentReq.getBusinessType(),pageCommentReq.getPattern());
+        ListRsp<CommentBo> listRsp = commentService.pageParentComment(page, pageCommentReq.getBusinessType(), pageCommentReq.getPattern());
         return new BaseRsp(listRsp);
     }
 
     @ApiOperation("分页查询二级留言")
     @GetMapping("children_list")
     @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
-    public BaseRsp<ListRsp<CommentBo>> childrenList(@ApiParam @Validated PageChildrenCommentReq pageChildrenCommentReq){
+    public BaseRsp<ListRsp<CommentBo>> childrenList(@ApiParam @Validated PageChildrenCommentReq pageChildrenCommentReq) {
         Page page = pageChildrenCommentReq.toPageParam();
         if (CollectionUtils.isEmpty(page.getOrders())) {
             PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
         }
-        ListRsp<CommentBo> listRsp = commentService.pageChildrenComment(pageChildrenCommentReq.toPageParam(), pageChildrenCommentReq.getResourceId());
+        ListRsp<CommentBo> listRsp = commentService.pageChildrenComment(page, pageChildrenCommentReq.getResourceId());
         return new BaseRsp(listRsp);
     }
 

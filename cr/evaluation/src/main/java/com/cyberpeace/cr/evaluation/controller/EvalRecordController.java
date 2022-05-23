@@ -112,6 +112,13 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getProbes(roomId));
     }
 
+    @ApiOperation("场景使用终端/探针")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/probes/all")
+    public BaseRsp<List<EvalRecordNodeProbeReq>> getNodeProbe(@RequestParam("room_id") String roomId) {
+        return new BaseRsp<>(evalRecordService.getNodeProbe(roomId));
+    }
+
     @ApiOperation("评估任务开启")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PostMapping("/start")

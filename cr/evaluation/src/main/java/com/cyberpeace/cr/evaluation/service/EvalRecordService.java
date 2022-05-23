@@ -91,6 +91,8 @@ public interface EvalRecordService extends IService<EvalRecord> {
 
     Map<String, List<EvalRoomPairRsp>> getProbes(String roomId);
 
+    List<EvalRecordNodeProbeReq> getNodeProbe(String roomId);
+
     /**
      * 获取评估结果
      * @param recordId 评估id

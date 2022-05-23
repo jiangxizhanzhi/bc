@@ -23,7 +23,6 @@ import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
-import com.cyberpeace.integratation.model.evaluation.AlgorithmContext;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
 import com.cyberpeace.integratation.model.scene.CollectionEventPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -853,6 +852,43 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
             results.put(entry.getKey(), probes);
         }
+        return results;
+    }
+
+    @Override
+    public List<EvalRecordNodeProbeReq> getNodeProbe(String roomId) {
+        EvalTask evalTask = evalTaskService.getTask(roomId);
+
+        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+
+        JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
+        JSONObject nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("elements");
+
+        List<EvalRecordNodeProbeReq> results = Lists.newArrayList();
+        nodes.forEach(node -> {
+            JSONObject nodeItem = (JSONObject) node;
+
+            EvalRecordNodeProbeReq nodeData = new EvalRecordNodeProbeReq();
+            nodeData.setId(nodeItem.getString("id"));
+            nodeData.setLabel(nodeItem.getString("name"));
+            nodeData.setData(Lists.newArrayList());
+
+            JSONObject collectionData = nodesProbe.getJSONObject(nodeData.getId());
+            if (collectionData != null) {
+                JSONArray probes = collectionData.getJSONArray("probes");
+                probes.forEach(probe -> {
+                    JSONObject probeItem = (JSONObject) probe;
+
+                    EvalRoomPairRsp probeData = new EvalRoomPairRsp();
+                    probeData.setId(probeItem.getString("id"));
+                    probeData.setLabel(probeItem.getString("name"));
+                    nodeData.getData().add(probeData);
+                });
+            }
+
+            results.add(nodeData);
+        });
+
         return results;
     }
 

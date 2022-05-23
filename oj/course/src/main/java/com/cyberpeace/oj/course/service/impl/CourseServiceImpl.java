@@ -729,7 +729,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				return utilService.handlerFileUrl(fileUrl);
 			});
 
-			String content = LocalStringUtil.replaceAll(courseDumpLoadBo.getOutline(), matchList,
+			String content = LocalStringUtil.replaceAll(courseDumpLoadBo.getOutline(), matchPathList,
 					fileList);
 			course.setOutline(content);
 		}
@@ -793,7 +793,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		}
 
 		String courseNum;
-		for (int i = 1; courseMapper.selectByCourseNum(courseNum = MathUtils.randomStr(length)) != null; i++) {
+		for (int i = 1; courseMapper
+				.selectByCourseNum(courseNum = MathUtils.randomStr(length)) != null; i++) {
 			log.warn("Failed to obtain the course number for the {} time", i);
 		}
 		return courseNum;

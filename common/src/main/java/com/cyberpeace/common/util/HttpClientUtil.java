@@ -101,8 +101,8 @@ public class HttpClientUtil {
 		URI uri;
 		try {
 			httpUrl = new URL(url);
-			uri = new URI(httpUrl.getProtocol(), httpUrl.getHost(), httpUrl.getPath(),
-					httpUrl.getQuery(), null);
+			uri = new URI(httpUrl.getProtocol(), null, httpUrl.getHost(), httpUrl.getPort(),
+					httpUrl.getPath(), httpUrl.getQuery(), null);
 		} catch (MalformedURLException | URISyntaxException e) {
 			LOG.error("URL contains special characters, encoding conversion failed！", e);
 			throw new RemoteServiceException();
@@ -158,11 +158,6 @@ public class HttpClientUtil {
 		HttpResponse response = null;
 		String httpResponse = null;
 		try {
-			// 设置请求头
-			for (Header header : defaultHeader()) {
-				httpRequest.addHeader(header);
-			}
-
 			// 1、调用远程服务
 			response = getClient().execute(httpRequest);
 

@@ -161,9 +161,10 @@ public class EvalAlgorithmAdminController {
 		List<String> selectUsedAlgorithmIds = evalAlgorithmService
 				.selectUsedAlgorithmIds(deleteReq.getIds());
 
-		// 未使用直接删除，已使用修改状态
+		// 如果都是未使用，直接删除，存在已使用，则先修改已使用算法的状态，再删除其他所有算法
 		if (selectUsedAlgorithmIds.size() > 0) {
 			evalAlgorithmService.updateStateByIds(selectUsedAlgorithmIds);
+			evalAlgorithmMapper.deleteAll();
 		} else {
 			evalAlgorithmService.delete(deleteReq.getIds());
 		}

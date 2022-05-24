@@ -19,6 +19,11 @@
             #{id}
         </foreach>
     </update>
+    <delete id="deleteAll">
+        delete
+        from cr_eval_algorithm
+        where `state` = 0
+    </delete>
 
     <select id="selectByType" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm"
             parameterType="java.lang.String">

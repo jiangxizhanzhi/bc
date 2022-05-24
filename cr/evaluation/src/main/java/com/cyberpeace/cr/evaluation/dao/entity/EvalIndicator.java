@@ -1,8 +1,6 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
@@ -41,6 +39,7 @@ public class EvalIndicator extends BaseTable {
 	/**
 	 * 指标属性值
 	 */
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
 	private Integer attributeValue;
 
 	/**

@@ -24,6 +24,8 @@ public interface EvalAlgorithmMapper extends BaseMapper<EvalAlgorithm> {
 	void updateStateByIds(List<String> algorithmIds);
 
 	List<EvalAlgorithm> getAll();
+
+	void deleteAll();
 }
 
 

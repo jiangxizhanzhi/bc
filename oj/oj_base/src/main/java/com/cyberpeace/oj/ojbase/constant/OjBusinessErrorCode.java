@@ -180,4 +180,7 @@ public interface OjBusinessErrorCode {
 	/** 结束时间不能为空*/
 	String END_TIME_NOT_NULL = "102058";
 
+	/** 第xxx行 文件内容缺失*/
+	String FILE_CONTENT_MISSING = "102059";
+
 }

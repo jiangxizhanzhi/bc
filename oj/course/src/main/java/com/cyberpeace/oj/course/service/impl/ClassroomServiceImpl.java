@@ -1036,6 +1036,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		ExcelDataHandler dataHandler = new ExcelDataHandler(realPath, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 
+		// 基本数据校验
+		validateDataLength(sheetData);
+
 		// 数据解析
 		List<Classroom> classrooms = Lists.newArrayList();
 		Map<String, TrainPlan> trainPlanMap = Maps.newHashMap();
@@ -1091,8 +1094,26 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		return classrooms;
 	}
 
+	/** 校验数据长度*/
+	private void validateDataLength(List<List<String>> sheetData) {
+
+		// 数据长度校验
+		for (int i = 0; i < sheetData.size(); i++) {
+			if (sheetData.get(i).size() <= CommonConstant.FIVE) {
+				throw new BusinessException(OjBusinessErrorCode.FILE_CONTENT_MISSING,
+						i + CommonConstant.ONE);
+			}
+
+			if (sheetData.get(i).size() == CommonConstant.SIX
+					&& sheetData.get(i).contains(CommonConstant.EMPTY_STRING)) {
+				throw new BusinessException(OjBusinessErrorCode.FILE_CONTENT_MISSING,
+						i + CommonConstant.ONE);
+			}
+		}
+	}
+
 	/** 校验训练计划下课堂表是否开始 开始则提醒*/
-	public void validatePlanStartAndExist(String planId, String planName, boolean cover,
+	private void validatePlanStartAndExist(String planId, String planName, boolean cover,
 			int rowIndex) {
 		List<Classroom> classroomList = classroomMapper.selectByPlan(planId);
 

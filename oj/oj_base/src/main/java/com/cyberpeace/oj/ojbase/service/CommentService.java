@@ -62,4 +62,11 @@ public interface CommentService {
 	 * @return
 	 */
 	ListRsp<CommentBo> pageChildrenComment(Page page,String resourceId);
+
+	/**
+	 * 新增评论
+	 * @param comment
+	 * @return
+	 */
+	Integer adminAddNewComment(Comment comment);
 }

@@ -1,22 +1,21 @@
 package com.cyberpeace.cs.controller;
 
+import java.util.List;
+
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.cs.constant.UploadAttachmentPermission;
-import com.cyberpeace.cs.constant.UploadImagePermission;
+import com.cyberpeace.cs.constant.*;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
+import com.cyberpeace.cs.controller.rsp.PageItemRsp;
+import com.cyberpeace.cs.dao.entity.PageConfigItem;
+import com.cyberpeace.cs.dao.mapper.PageConfigItemMapper;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -37,6 +36,9 @@ public class CommonController {
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private PageConfigItemMapper pageConfigItemMapper;
 
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
@@ -96,6 +98,28 @@ public class CommonController {
 		attachmentBo.setFilePath(viewPath);
 
 		return new BaseRsp(attachmentBo);
+	}
+
+	@ApiOperation("获取前端页面配置项")
+	@GetMapping("/page/config/item")
+	public BaseRsp<List<PageItemRsp>> getPageItem(@RequestParam("type") Integer type) {
+
+		// 获取对应的枚举类型 进行权限校验
+		PageItemType enumByCode = EnumUtils.getEnumByCode(type, PageItemType.class);
+		if (null == enumByCode) {
+			throw new UnauthorizedException();
+		}
+
+		// 权限校验
+		boolean permission = enumByCode.validatePermission();
+		if (!permission) {
+			throw new UnauthorizedException();
+		}
+
+		// 数据查询
+		List<PageConfigItem> items = pageConfigItemMapper.selectByType(type);
+		List<PageItemRsp> rsps = BeanUtils.deepCopyList(items, PageItemRsp.class);
+		return new BaseRsp<>(rsps);
 	}
 
 }

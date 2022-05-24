@@ -50,8 +50,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Integer addNewComment(Comment comment) {
-        String replyCommentId = (comment.getReplyId().isEmpty() || comment.getReplyId() == null) ? comment.getRootId() : comment.getReplyId();
-        if (commentMapper.selectById(replyCommentId) == null) {
+        String replyCommentId = (comment.getReplyId() == null || comment.getReplyId().isEmpty()) ? comment.getRootId() : comment.getReplyId();
+        //被回复的评论已被删除
+        if (replyCommentId != null && replyCommentId.length() > 0 && commentMapper.selectById(replyCommentId) == null) {
             throw new BusinessException(OjBusinessErrorCode.COMMENT_NOT_EXIST);
         }
         return commentMapper.insert(comment);

@@ -172,6 +172,8 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			String createUser = data.getCreateUser();
 			UserInfo userInfo = remoteUserService.getById(createUser);
 			data.setCreateUser(userInfo.getUserName());
+			data.setName(userInfo.getName());
+			data.setUserName(userInfo.getUserName());
 			data.setOrganizationName(userInfo.getOrganizationData());
 			return data;
 		}).collect(Collectors.toList());

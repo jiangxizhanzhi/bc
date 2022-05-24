@@ -183,4 +183,6 @@ public interface OjBusinessErrorCode {
 	/** 第xxx行 文件内容缺失*/
 	String FILE_CONTENT_MISSING = "102059";
 
+	/** 评论不存在*/
+	String COMMENT_NOT_EXIST = "102060";
 }

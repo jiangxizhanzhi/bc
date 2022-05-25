@@ -150,6 +150,10 @@ public class RoleController {
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
 		input.validate();
 		Role role = getEntityFromAddInput(input);
+		// 5.3.3兼容旧数据库
+		role.setCategory("");
+		role.setSkillIdWeights("[]");
+		role.setSkillIds("[]");
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -414,8 +418,6 @@ public class RoleController {
 		role.setName(input.getName());
 		role.setDescription(input.getDescription());
 		role.setLevelId(input.getLevelId());
-		// category 兼容旧数据库
-		role.setCategory("");
 
 		String levelId = input.getLevelId();
 		if (levelId != null) {

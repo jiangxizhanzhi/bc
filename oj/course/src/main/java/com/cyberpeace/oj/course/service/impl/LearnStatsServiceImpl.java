@@ -106,6 +106,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
             userStatsBo.setName(item.getName());
             userStatsBo.setOrganizationData(item.getOrganizationData());
             userStatsBo.setRoles(item.getRoles());
+            userStatsBo.setAvatar(item.getAvatarUrl());
             Integer finishExamCount = examCount.get(item.getUserId());
             userStatsBo.setFinishExamCount(finishExamCount == null ? 0 : finishExamCount);
             userStatsBos.add(userStatsBo);

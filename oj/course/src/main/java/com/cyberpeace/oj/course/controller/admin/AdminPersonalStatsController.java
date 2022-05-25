@@ -115,7 +115,7 @@ public class AdminPersonalStatsController {
 				false, userStatsReq.getStartTime(), userStatsReq.getEndTime());
 
 		List<String> passFields = Lists.newArrayList("roles", "reportAverage", "resourceId",
-				"username");
+				"username", "avatar");
 		String sheetName = "学习数据";
 		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
 				+ CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();

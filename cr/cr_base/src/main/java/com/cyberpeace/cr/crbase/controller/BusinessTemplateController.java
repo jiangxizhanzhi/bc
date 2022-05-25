@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.FileSunffixConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -336,7 +336,8 @@ public class BusinessTemplateController {
 	@ApiOperation("职业框架-场景模板列表")
 	@GetMapping("/list/simple")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_ATTACK_FRAME,
+			MenuConstant.CMS_ENGAGE_FRAME }, logical = Logical.OR)
 	public BaseRsp<List<BusinessTemplateSimple>> pageSimple(@Validated BTPageReq btPageReq) {
 		ListRsp<BusinessTemplateSimple> res = businessTemplateService.pageSimple(btPageReq);
 

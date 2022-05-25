@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -22,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -304,7 +304,7 @@ public class MissionController {
 
 	@ApiOperation("RTKS-获取任务模板列表")
 	@GetMapping("/mission_templates")
-	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<MissionTemplateRes>>
 			listMissionTemplates(@Validated MissionTemplatePageReq pageReq) {
 		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService

@@ -38,6 +38,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -91,6 +92,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
+
+    private static final long onceProbeDataSize = 100L;
 
     public EvalRecord getEntity(String resourceId) {
         // todo 文本调整
@@ -492,32 +495,23 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     @Override
-    public Boolean startRecord(String recordId) {
-        // 评估任务对象
-        EvalRecord evalRecord = getEntity(recordId);
-        // 评估实例对象
-        EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
-
-        recordRun(evalRecord, evalTask);
-
-        if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
-            evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
-        }
-        return updateById(evalRecord);
-    }
-
-    @Override
     @Async
-    public void recordRun(EvalRecord evalRecord, EvalTask evalTask) {
+    public void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart) {
+        EvalLog.info(evalRecord, String.format("Range Test evaluation %s %s.", evalRecord.getName(), isRestart ? "RESTART" : "START"));
         if (StringUtils.isEmpty(evalRecord.getMessage())) {
             evalRecord.setMessage("");
         }
 
         // 需要计算变量项id集合
+        EvalLog.info(evalRecord, "collect wait to calculate variables id...");
         Set<String> variableIds = evalIndexRefService.systemEvalVariableIds(evalRecord.getResourceId());
+        EvalLog.info(evalRecord, String.format("collect wait to calculate variables id completed: %s", variableIds.toString()));
 
         // 循环同步采集数据
-        syncProbeData(evalRecord, evalTask, variableIds, true);
+        EvalLog.info(evalRecord, "sync remote server [MP] probe data...");
+        syncProbeData(evalRecord, evalTask, variableIds);
+        EvalLog.info(evalRecord, "sync remote server [MP] probe data completed.");
+
         // 执行变量项
         startVariables(evalRecord, evalTask, variableIds);
         // 执行指标项
@@ -615,6 +609,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 .list();
         // 无需要同步数据变量项, 跳过
         if (evalVariableRefs.isEmpty()) {
+            EvalLog.info(evalRecord, "variables data has been sync, continue.");
             return;
         }
 
@@ -622,6 +617,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         if (evalProbeDataService.lambdaQuery().eq(EvalProbeData::getSceneId, evalTask.getMpSceneId()).last("limit 1").one() != null) {
             evalVariableRefs.forEach(evalVariableRef -> evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode()));
             evalVariableRefService.updateBatchById(evalVariableRefs);
+            EvalLog.info(evalRecord, "variables data has been sync, continue.");
             return;
         }
 
@@ -630,11 +626,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         collectionEventPageContext.setStartTime(evalRecord.getStartTime());
         collectionEventPageContext.setEndTime(evalRecord.getEndTime());
         collectionEventPageContext.setPage((long) 1);
-        collectionEventPageContext.setPageSize((long) 100);
+        collectionEventPageContext.setPageSize(onceProbeDataSize);
 
         List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
 
-        exeCollectionEvent(evalProbeDataList, collectionEventPageContext, new HashMap<>());
+        exeCollectionEvent(evalRecord, evalProbeDataList, collectionEventPageContext, new HashMap<>());
         evalProbeDataList.sort(Comparator.comparing(EvalProbeData::getCollectionTime));
 
         evalVariableRefs.forEach(evalVariableRef -> evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode()));
@@ -652,84 +648,88 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
         if (variableIds.isEmpty()) {
+            EvalLog.info(evalRecord, "variables id is empty, continue.");
             return;
         }
 
-        // 循环变量项/探针id, invoke mp, 同步数据到bc数据库, 每同步一次（重复数据去重）, 更新变量项progress -> start  todo 类型为系统评估
-        // todo 数据同步验证/ 避免重复
+        // 获取需要同步数据的变量项
         List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery()
                 .in(EvalVariableRef::getResourceId, variableIds)
                 .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
                 .list();
 
+        // 没有需要同步数据变量项, 跳过
+        if (evalVariableRefs.isEmpty()) {
+            EvalLog.info(evalRecord, "variables data has been sync, continue.");
+            return;
+        }
+
+        // 终端节点IP <nodeId, nodeIp>
         Map<String, String> ipMap = nodeIpMap(evalTask.getMpSceneId());
 
+        // 循环变量项/探针id(存在变量项使用相同探针场景), invoke mp, 同步数据到bc数据库
         evalVariableRefs.forEach(evalVariableRef -> {
             // 变量项开始运算
             if (evalVariableRef.getProgress().equals(EvalVariableRef.Progress.NOT_START.getCode())) {
+                EvalLog.info(evalRecord, String.format("[%s] variable [%s] sync start.", evalVariableRef.getResourceId(), evalVariableRef.getName()));
                 evalVariableRef.setProgress(EvalVariableRef.Progress.START.getCode());
                 evalVariableRefService.updateById(evalVariableRef);
             }
+            EvalLog.info(evalRecord, String.format(
+                    "[%s] variable [%s] used nodeId %s probeId %s.",
+                    evalVariableRef.getResourceId(),
+                    evalVariableRef.getName(),
+                    evalVariableRef.getDeviceId(),
+                    evalVariableRef.getProbeId()
+            ));
 
-            List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
+            // 当前探针数据是否已经被同步  todo 不再使用"limit", 获取数量用于动态分页, 避免大批量进行saveBatch
 
-            // 当前探针数据是否已经被同步
-            boolean isExist = SqlHelper.retBool(evalProbeDataService.lambdaQuery()
+            // 变量项使用同一探针, 数据已经被同步, 跳过
+            CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
+            collectionEventPageContext.setId(evalTask.getMpSceneId());
+            collectionEventPageContext.setNodeIds(evalVariableRef.getDeviceId());
+            collectionEventPageContext.setProbeId(evalVariableRef.getProbeId());
+
+            // 查询当前已同步数据量, 生成页码
+            int probeDataCount = evalProbeDataService.lambdaQuery()
                     .eq(EvalProbeData::getSceneId, evalTask.getMpSceneId())
                     .eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId())
                     .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
-                    .last("limit 1")
-                    .count());
-
-            // 变量项使用同一探针, 数据已经被同步, 跳过
-            if (!isExist) {
-                CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
-                collectionEventPageContext.setId(evalTask.getMpSceneId());
-                collectionEventPageContext.setNodeIds(Collections.singletonList(evalVariableRef.getDeviceId()));
-                collectionEventPageContext.setProbeId(Collections.singletonList(evalVariableRef.getProbeId()));
-                // todo 时间范围取消, 完全同步
-//                collectionEventPageContext.setStartTime(evalRecord.getStartTime());
-//                collectionEventPageContext.setEndTime(evalRecord.getEndTime());
-                collectionEventPageContext.setPage((long) 1);
-                collectionEventPageContext.setPageSize((long) 1000);
-
-                exeCollectionEvent(evalProbeDataList, collectionEventPageContext, ipMap);
-
-                remoteSceneService.getCollectionEvent(collectionEventPageContext).forEach(
-                        mpCollectionEvent -> evalProbeDataList.add(BeanUtils.copy(mpCollectionEvent, EvalProbeData.class))
-                );
+                    .count();
+            if (!SqlHelper.retBool(probeDataCount)) {
+                collectionEventPageContext.setPage(1L);
+            } else {
+                // 数据量百位取整, 生成当前页码
+                int count = new BigDecimal(probeDataCount).setScale(-2, BigDecimal.ROUND_UP).intValue();
+                collectionEventPageContext.setPage((count / onceProbeDataSize) + 1);
             }
+            collectionEventPageContext.setPageSize(onceProbeDataSize);
 
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    if (!evalProbeDataList.isEmpty()) {
-                        evalProbeDataService.saveBatch(evalProbeDataList);
-                    }
-                    evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode());
-                    evalVariableRefService.updateById(evalVariableRef);
-                }
-            });
+            exeCollectionEvent(evalRecord, collectionEventPageContext, ipMap);
+
+            evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode());
+            evalVariableRefService.updateById(evalVariableRef);
+
         });
     }
 
-    private void exeCollectionEvent(List<EvalProbeData> evalProbeDataList, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap) {
+    private void exeCollectionEvent(EvalRecord evalRecord, List<EvalProbeData> evalProbeDataList, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap) {
 
         List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
         collectionEventList.forEach(mpCollectionEvent -> {
             EvalProbeData probeDataItem = new EvalProbeData();
-            probeDataItem.setCollectionTime(mpCollectionEvent.getTime());
             probeDataItem.setContent(mpCollectionEvent.getContent());
+            probeDataItem.setSceneId(collectionEventPageContext.getId());
+            probeDataItem.setDeviceId(mpCollectionEvent.getNodeId());
+            probeDataItem.setDeviceIp(ipMap.get(mpCollectionEvent.getNodeId()));
+            probeDataItem.setProbeId(mpCollectionEvent.getProbeId());
 
             JSONObject content = JsonUtil.toJsonObject(probeDataItem.getContent(), JSONObject.class);
             try {
                 if (content.getString("full_log") != null) {
                     JSONObject fullLog = JsonUtil.toJsonObject(content.getString("full_log"), JSONObject.class);
-                    probeDataItem.setProbeId(fullLog.getString("sic_launch_id"));
-                    probeDataItem.setSceneId(collectionEventPageContext.getId());
-                    probeDataItem.setDeviceId(mpCollectionEvent.getNodeId());
                     probeDataItem.setCollectionTime(mpCollectionEvent.getTime());
-                    probeDataItem.setDeviceIp(ipMap.get(mpCollectionEvent.getNodeId()));
                     evalProbeDataList.add(probeDataItem);
                 }
 
@@ -738,9 +738,48 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
 
         });
+        EvalLog.info(evalRecord, "variable [] ");
         if (collectionEventPageContext.getPageSize() == collectionEventList.size()) {
             collectionEventPageContext.setPage(collectionEventPageContext.getPage() + 1);
-            exeCollectionEvent(evalProbeDataList, collectionEventPageContext, ipMap);
+            exeCollectionEvent(evalRecord, evalProbeDataList, collectionEventPageContext, ipMap);
+        }
+    }
+
+    private void exeCollectionEvent(EvalRecord evalRecord, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap) {
+
+        List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
+        List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
+        collectionEventList.forEach(mpCollectionEvent -> {
+            EvalProbeData probeDataItem = new EvalProbeData();
+            probeDataItem.setContent(mpCollectionEvent.getContent());
+            probeDataItem.setSceneId(collectionEventPageContext.getId());
+            probeDataItem.setDeviceId(mpCollectionEvent.getNodeId());
+            probeDataItem.setDeviceIp(ipMap.get(mpCollectionEvent.getNodeId()));
+            probeDataItem.setProbeId(mpCollectionEvent.getProbeId());
+
+            JSONObject content = JsonUtil.toJsonObject(probeDataItem.getContent(), JSONObject.class);
+            if (evalVariableRefService.BASE.contains(mpCollectionEvent.getProbeId())) {
+                JSONObject scanAttr = content.getJSONObject("scan");
+                if (scanAttr == null) {
+                } else {
+                    probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
+                }
+                // 暂不处理
+            } else {
+                probeDataItem.setCollectionTime(content.getTimestamp("time"));
+            }
+
+            evalProbeDataList.add(probeDataItem);
+
+        });
+        // 数据不为空, 保存
+        if (!evalProbeDataList.isEmpty()) {
+            evalProbeDataService.saveBatch(evalProbeDataList);
+        }
+        // 实际获取数据与每页数据量大小一致, 视数据未获取完成. 页码+1, 迭代执行
+        if (collectionEventPageContext.getPageSize() == collectionEventList.size()) {
+            collectionEventPageContext.setPage(collectionEventPageContext.getPage() + 1);
+            exeCollectionEvent(evalRecord, evalProbeDataList, collectionEventPageContext, ipMap);
         }
     }
 
@@ -750,7 +789,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
      * @return Map
      */
     private Map<String, String> nodeIpMap(String mpSceneId) {
-        JSONObject jsonObject = remoteSceneService.getById(mpSceneId, UserInfoContext.getUserContext().getUserId());
+        JSONObject jsonObject = remoteSceneService.getById(mpSceneId, null);
         JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
 
         Map<String, String> results = Maps.newHashMap();

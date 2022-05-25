@@ -61,18 +61,11 @@ public interface EvalRecordService extends IService<EvalRecord> {
     Boolean delete(List<String> recordIds);
 
     /**
-     * 评估事件开始
-     * @param recordId 评估id
-     * @return bool
-     */
-    Boolean startRecord(String recordId);
-
-    /**
      * 评估事件实际运行
      * @param evalRecord
      * @param evalTask
      */
-    void recordRun(EvalRecord evalRecord, EvalTask evalTask);
+    void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`

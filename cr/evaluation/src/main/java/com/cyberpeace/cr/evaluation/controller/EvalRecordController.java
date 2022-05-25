@@ -128,15 +128,17 @@ public class EvalRecordController {
         // 评估实例对象
         EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
 
-        evalRecord.setEvalTime(new Date());
-        // 开始执行
-        evalRecordService.recordRun(evalRecord, evalTask);
-
+        // 设置评估状态、开始时间
         if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
             evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
         }
+        evalRecord.setEvalTime(new Date());
+        boolean result = evalRecordService.updateById(evalRecord);
 
-        return new BaseRsp<>(evalRecordService.updateById(evalRecord));
+        // 开始执行
+        evalRecordService.recordRun(evalRecord, evalTask, false);
+
+        return new BaseRsp<>(result);
     }
 
     @ApiOperation("评估任务结果")

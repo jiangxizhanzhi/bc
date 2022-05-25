@@ -59,17 +59,24 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
     private String startFormat(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
+        EvalLog.info(evalRecord, String.format("[%s] variable %s format algorithm start...", evalVariableRef.getResourceId(), evalVariableRef.getName()));
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.FORMATTING.getCode())) {
+            EvalLog.info(
+                    evalRecord,
+                    String.format("[%s] variable %s format algorithm has been completed, continue", evalVariableRef.getResourceId(), evalVariableRef.getName())
+            );
             return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
         }
 
         // 变量项探针采集数据  todo 分页执行
+        EvalLog.info(evalRecord, String.format("[%s] variable %s to get the collect data, ", evalVariableRef.getResourceId(), evalVariableRef.getName()));
         List<EvalProbeData> evalProbeDataList = evalProbeDataService.lambdaQuery()
                 .eq(EvalProbeData::getSceneId, evalTask.getMpSceneId())
                 .eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId())
                 .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
                 .ge(EvalProbeData::getCollectionTime, evalRecord.getStartTime())
                 .le(EvalProbeData::getCollectionTime, evalRecord.getEndTime())
+                .orderByAsc(EvalProbeData::getCollectionTime)
                 .list();
 
         // 时间范围内无采集数据情况
@@ -120,7 +127,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
     }
 
     private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
-        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
+        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.MATCHING.getCode())) {
             return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
         }
@@ -148,7 +155,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
                     evalAlgorithmRef.getResourceId(),
                     evalAlgorithmRef.getCode(),
                     data,
-                    evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams())
+                    evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMatchParams())
             );
         } catch (RemoteServiceException e) {
             return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MATCH_EXECUTE_FAILED), evalVariableRef.getName());
@@ -181,7 +188,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
     }
 
     private String startMark(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
-        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
+        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMarkAlgorithmId());
 
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.MARKING.getCode())) {
             return null;
@@ -207,10 +214,10 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         evalVariableRef.setMarkStartTime(new Date());
         try {
             score = remotePythonService.markPerform(
-                    evalVariableRef.getMarkAlgorithmId(),
+                    evalAlgorithmRef.getResourceId(),
                     evalAlgorithmRef.getCode(),
                     data,
-                    evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams())
+                    evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMarkParams())
             );
         } catch (RemoteServiceException e) {
             return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MARK_EXECUTE_FAILED), evalVariableRef.getName());

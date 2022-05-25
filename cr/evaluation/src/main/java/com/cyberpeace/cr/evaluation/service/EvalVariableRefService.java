@@ -10,9 +10,16 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public interface EvalVariableRefService extends IService<EvalVariableRef> {
+
+    /**
+     * 时间字段获取存在差异的探针
+     */
+    List<String> BASE = Arrays.asList("002", "004", "005");
 
     /**
      * 采集变量项目算法执行

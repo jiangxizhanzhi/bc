@@ -39,4 +39,6 @@ public interface RoleSkillRelationMapper extends BaseMapper<RoleSkillRelation> {
 	List<String> getMissionIdsByRoleId(@Param("roleId") String roleId);
 
 	List<MissionContext> getMissionContextsByRoleId(@Param("roleId") String roleId);
+
+	void clearRoleSkillRel();
 }

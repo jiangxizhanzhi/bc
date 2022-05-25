@@ -96,4 +96,9 @@ public interface RoleService extends IService<Role> {
 	 * @return
 	 */
 	List<String> getRelMissionIds(String roleId);
+
+	/**
+	 * 清空rtks_role表和rtks_role_skill_relation表
+	 */
+	void clearRole();
 }

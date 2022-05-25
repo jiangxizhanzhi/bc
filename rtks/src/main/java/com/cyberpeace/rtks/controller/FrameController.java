@@ -6,22 +6,24 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.frame.FrameAddInput;
 import com.cyberpeace.rtks.controller.frame.FrameModifyInput;
 import com.cyberpeace.rtks.controller.frame.FrameOutput;
@@ -64,6 +66,9 @@ public class FrameController {
 
 	@Autowired
 	private RoleService roleService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	private Boolean singleFrame;
 
@@ -223,12 +228,19 @@ public class FrameController {
 	public BaseRsp<FrameOutput> clearFrame() {
 		singleFrameOnly();
 		// 除根节点外删除所有框架、层级
-		levelService.removeAllLevels();
-		roleService.removeAll("role");
-		roleService.removeAll("task");
-		roleService.removeAll("knowledge_category");
-		roleService.removeAll("knowledge");
-		roleService.removeAll("course_related");
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				levelService.removeAllLevels();
+				roleService.clearRole();
+				roleService.removeAll("task");
+				roleService.removeAll("knowledge_category");
+				roleService.removeAll("knowledge");
+				roleService.removeAll("course_related");
+			}
+		});
+
 		return retrieve(DEFAULT_FRAME_ID);
 	}
 
@@ -237,12 +249,18 @@ public class FrameController {
 	public BaseRsp<FrameOutput> resetFrame() {
 		singleFrameOnly();
 		// 重置所有框架、层级
-		levelService.initDefaultFromPreset();
-		roleService.initDefaultFromPreset("role");
-		roleService.initDefaultFromPreset("task");
-		roleService.initDefaultFromPreset("knowledge_category");
-		roleService.initDefaultFromPreset("knowledge");
-		roleService.initDefaultFromPreset("course_related");
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				levelService.initDefaultFromPreset();
+				roleService.initDefaultFromPreset("role");
+				roleService.initDefaultFromPreset("task");
+				roleService.initDefaultFromPreset("knowledge_category");
+				roleService.initDefaultFromPreset("knowledge");
+				roleService.initDefaultFromPreset("course_related");
+			}
+		});
 
 		return retrieve(DEFAULT_FRAME_ID);
 	}

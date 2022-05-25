@@ -221,8 +221,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	@Override
 	public Map<String, RoleSkillRes> mapRoleSkillCount(List<String> roleIds) {
-		List<RoleSkillRes> resList = roleSkillRelationMapper.countByRoleIds(roleIds);
 		Map<String, RoleSkillRes> mapping = Maps.newHashMap();
+		if (roleIds.isEmpty()) {
+			return mapping;
+		}
+		List<RoleSkillRes> resList = roleSkillRelationMapper.countByRoleIds(roleIds);
 		resList.forEach((res) -> {
 			mapping.put(res.getRoleId(), res);
 		});
@@ -232,6 +235,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	@Override
 	public List<String> getRelMissionIds(String roleId) {
 		return roleSkillRelationMapper.getMissionIdsByRoleId(roleId);
+	}
+
+	@Override
+	public void clearRole() {
+		roleMapper.clearRole();
+		roleSkillRelationMapper.clearRoleSkillRel();
 	}
 
 	private String deleteIds(String Ids, List<String> ids) {

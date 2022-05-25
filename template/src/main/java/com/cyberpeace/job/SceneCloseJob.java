@@ -53,10 +53,20 @@ public class SceneCloseJob {
 			UserInfoContext.setUserContext(userInfo);
 
 			// 调用关闭接口
-			localSceneService.deleteRemoteScene(localScene);
+			log.info(
+					"Execute delete scene job start! scene_name=[{}], business_instance_id = [{}], create_user=[{}], ",
+					localScene.getSceneName(), localScene.getBusinessInstanceId(),
+					userInfo.getUserName());
+			try {
+				localSceneService.deleteRemoteScene(localScene);
+			} catch (Exception e) {
+				log.error("Execute delete scene job failed! catch error:", e);
+			} finally {
+				// 移除用户
+				log.info("Execute delete scene job end!");
+				UserInfoContext.removeUserContext();
+			}
 
-			// 移除用户
-			UserInfoContext.removeUserContext();
 		});
 	}
 

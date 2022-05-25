@@ -3,6 +3,7 @@ package com.cyberpeace.oj.ojbase.controller;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,8 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 	@PatchMapping("/batch-auth")
 	@ApiOperation("资源授权访问")
-	@RequiresPermissions({ MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES })
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
+			logical = Logical.OR)
 	public BaseRsp<Boolean> batchAuth(@RequestBody @Validated ResourceAuthReq requestData) {
 
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {
@@ -52,6 +54,8 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 	@GetMapping("/get_auth")
 	@ApiOperation("获取资源的授权访问信息")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
+			logical = Logical.OR)
 	public BaseRsp<ReadAuthInfo> getAuth(@ApiParam(name = "resource_id",
 			value = "资源编号") @RequestParam("resource_id") String resourceId) {
 
@@ -68,6 +72,8 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 	@GetMapping("/get_share")
 	@ApiOperation("获取资源的权限操作信息")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
+			logical = Logical.OR)
 	public BaseRsp<OperationAuthInfo> getOperation(@ApiParam(name = "resource_id",
 			value = "资源编号") @RequestParam("resource_id") String resourceId) {
 
@@ -102,7 +108,8 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 	@PatchMapping("/batch-share")
 	@ApiOperation("资源授权操作")
-	@RequiresPermissions({ MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES })
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
+			logical = Logical.OR)
 	public BaseRsp<Boolean> batchShare(@RequestBody ResourceShareReq requestData) {
 
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {

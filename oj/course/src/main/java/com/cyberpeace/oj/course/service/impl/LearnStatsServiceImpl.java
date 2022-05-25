@@ -88,6 +88,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
         ).stream().collect(Collectors.toMap(UserStatsBo::getResourceId, userStatsBo -> userStatsBo));
 
         // 获取竞赛的理论赛参加次数
+        if(null == organization && null == pattern){
+            userIds = new ArrayList<>();
+        }
         List<JSONObject> examUserCount = remoteAdService.competitionListWithMinScore(startTimeStr, endTimeStr, userIds, minScore);
         Map<String, Integer> examCount = getUserWithCount(examUserCount);
 

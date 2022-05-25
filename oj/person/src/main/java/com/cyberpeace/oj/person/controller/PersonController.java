@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -133,7 +134,8 @@ public class PersonController {
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
+	@RequiresPermissions(value = {MenuConstant.WEB_PERSON_CENTER, MenuConstant.CMS_COURSE_STATISTICS},
+			logical = Logical.OR)
 	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam(value = "user_id", required = false) String userId,
 															   @RequestParam(value = "isWeb", required = false) Boolean isWeb) {
 		Date endTime = new Date();

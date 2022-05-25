@@ -350,6 +350,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
 		String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext,
 				COLLECTION_EVENT_DATA_URL, String.class);
+		// todo 远程返回异常
+		if (mpCollectionEvents == null) {
+			throw new RemoteServiceException();
+		}
 		JSONObject result = JsonUtil.toJsonObject(mpCollectionEvents, JSONObject.class);
 		// todo 错误响应
 		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);

@@ -343,4 +343,9 @@ public interface CrBusinessErrorCode {
 
 	/** 流量修改错误 */
 	String FAILED_TO_UPDATE_FLOW = "101106";
+
+	/**
+	 * 靶场测评评估访问中台失败
+	 */
+	String GET_PROBE_DATA_FAILED = "101107";
 }

@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -660,15 +661,25 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
             collectionEventPageContext.setPageSize(onceProbeDataSize);
 
-            exeCollectionEvent(evalRecord, collectionEventPageContext, ipMap);
+            try {
+                exeCollectionEvent(evalRecord, collectionEventPageContext, ipMap);
 
-            evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode());
+                evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode());
+            } catch (RemoteServiceException e) {
+                // 采集数据报错, 采集变量项中止
+                String msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.GET_PROBE_DATA_FAILED), evalVariableRef.getName());
+                evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+
+                evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());
+                evalVariableRef.setScore(0);
+            }
             evalVariableRefService.updateById(evalVariableRef);
 
         });
     }
 
     private void exeCollectionEvent(EvalRecord evalRecord, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap) {
+        // todo evalRecord 入参等待用于添加日志
 
         List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
         List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
@@ -684,6 +695,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (evalVariableRefService.BASE.contains(mpCollectionEvent.getProbeId())) {
                 JSONObject scanAttr = content.getJSONObject("scan");
                 if (scanAttr == null) {
+                    // todo 执行错误
                 } else {
                     probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
                 }

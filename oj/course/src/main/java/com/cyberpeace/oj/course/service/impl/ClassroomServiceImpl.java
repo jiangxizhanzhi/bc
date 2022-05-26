@@ -539,31 +539,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<ClassroomMonitorBo> monitorBos = StreamApiUtils.map(userInfos,
 				userInfo -> userToMonitorBo(userInfo, signMap));
 
-		// 页面获取
-		List<String> nodeIds = StreamApiUtils.map(signList, ClassroomSign::getNodeId);
-		if (CollectionUtils.isNotEmpty(nodeIds)) {
-			List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper
-					.selectByRoom(classroomId);
-			List<String> sceneIds = StreamApiUtils.map(groupInfoList, groupInfo -> {
-				OjLocalScene ojLocalScene = ojLocalSceneMapper
-						.selectGroupScene(groupInfo.getResourceId());
-				if (null == ojLocalScene) {
-					return null;
-				}
-
-				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-				return localScene.getMpSceneId();
-			});
-
-			Map<String, String> userAssistanceMap = remoteSceneService.getAssistanceMap(sceneIds,
-					nodeIds, null);
-			monitorBos.forEach(classroomMonitorBo -> classroomMonitorBo
-					.setHelpUrl(classroomMonitorBo.getNeedHelp()
-							? userAssistanceMap.get(classroomMonitorBo.getUserId())
-							: null));
-
-		}
-
 		return PageUtil.getListResult(monitorBos, page, monitorBos.size());
 
 	}

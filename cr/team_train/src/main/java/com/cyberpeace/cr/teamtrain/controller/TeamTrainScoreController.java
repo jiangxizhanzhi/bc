@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -138,6 +138,7 @@ public class TeamTrainScoreController {
 		JSONObject jsonObject = new JSONObject();
 
 		TrainingReport trainingReport = getTrainingReport(roomId).getData();
+
 		List<JSONObject> userList = Lists.newArrayList();
 
 		for (UserReport user : trainingReport.getUsers()) {
@@ -348,7 +349,7 @@ public class TeamTrainScoreController {
 
 		if (TeamRoom.TrainingStatusCode.UNOPENED.getCode()
 				.equals(teamRoomdata.getTrainingStatus())) {
-			return new BaseRsp<>(new TrainingReport());
+			// return new BaseRsp<>(new TrainingReport());
 		}
 
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);

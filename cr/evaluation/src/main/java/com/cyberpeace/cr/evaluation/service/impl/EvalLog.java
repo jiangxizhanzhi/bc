@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +12,18 @@ public class EvalLog {
         LOG.info(String.format("ID %s: %s", evalRecord.getResourceId(), msg));
     }
 
+    static void info(EvalRecord evalRecord, EvalVariableRef evalVariableRef, String msg) {
+        String newMsg = String.format("variable %s [%s] %s", evalVariableRef.getResourceId(), evalVariableRef.getName(), msg);
+        info(evalRecord, newMsg);
+    }
+
     static void error(EvalRecord evalRecord, String msg) {
         LOG.error(String.format("ID %s: %s", evalRecord.getResourceId(), msg));
+    }
+
+    static void error(EvalRecord evalRecord, EvalVariableRef evalVariableRef, String msg) {
+        String newMsg = String.format("variable %s [%s] %s", evalVariableRef.getResourceId(), evalVariableRef.getName(), msg);
+        error(evalRecord, newMsg);
     }
 
 }

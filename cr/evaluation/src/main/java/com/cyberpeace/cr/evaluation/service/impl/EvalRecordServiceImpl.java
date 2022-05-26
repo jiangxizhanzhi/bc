@@ -510,19 +510,24 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalLog.info(evalRecord, String.format("collect wait to calculate variables id completed: %s", variableIds.toString()));
 
         // 循环同步采集数据
-        EvalLog.info(evalRecord, "sync remote server [MP] probe data...");
+        EvalLog.info(evalRecord, "sync remote server [MP] probe data start...");
         syncProbeData(evalRecord, evalTask, variableIds);
         EvalLog.info(evalRecord, "sync remote server [MP] probe data completed.");
 
         // 执行变量项
+        EvalLog.info(evalRecord, "calculate variables start...");
         startVariables(evalRecord, evalTask, variableIds);
-        // 执行指标项
-        startIndexes(evalRecord, evalTask);
+        EvalLog.info(evalRecord, "calculate variables completed.");
 
+        // 执行指标项
+        EvalLog.info(evalRecord, "calculate indexes start...");
+        startIndexes(evalRecord, evalTask);
+        EvalLog.info(evalRecord, "calculate indexes completed.");
     }
 
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
         if (variableIds.isEmpty()) {
+            EvalLog.info(evalRecord, "variables id is empty, continue.");
             return;
         }
 
@@ -534,6 +539,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 运行中变量项为空, 退出执行下一步
         if (evalVariableRefList.isEmpty()) {
+            EvalLog.info(evalRecord, "variables has been calculated, continue.");
             return;
         }
 
@@ -549,6 +555,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalVariableRefList.forEach(evalVariableRef -> {
             // 采集变量项算法依次执行
+            EvalLog.info(evalRecord, evalVariableRef, "start calculate...");
             String result = evalVariableRefService.startVariableAlgorithm(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
 
             // 非null返回值为采集变量项运行失败
@@ -615,30 +622,23 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 没有需要同步数据变量项, 跳过
         if (evalVariableRefs.isEmpty()) {
-            EvalLog.info(evalRecord, "variables data has been sync, continue.");
+            EvalLog.info(evalRecord, "variables probe data has been sync, continue.");
             return;
         }
 
         // 终端节点IP <nodeId, nodeIp>
         Map<String, String> ipMap = nodeIpMap(evalTask.getMpSceneId());
 
-        // 循环变量项/探针id(存在变量项使用相同探针场景), invoke mp, 同步数据到bc数据库
+        // 循环变量项, invoke mp, 同步采集数据到bc数据库
         evalVariableRefs.forEach(evalVariableRef -> {
-            // 变量项开始运算
+            // 变量项开始执行
             if (evalVariableRef.getProgress().equals(EvalVariableRef.Progress.NOT_START.getCode())) {
-                EvalLog.info(evalRecord, String.format("[%s] variable [%s] sync start.", evalVariableRef.getResourceId(), evalVariableRef.getName()));
+                EvalLog.info(evalRecord, evalVariableRef, "probe data sync start.");
                 evalVariableRef.setProgress(EvalVariableRef.Progress.START.getCode());
                 evalVariableRefService.updateById(evalVariableRef);
             }
-            EvalLog.info(evalRecord, String.format(
-                    "[%s] variable [%s] used nodeId %s probeId %s.",
-                    evalVariableRef.getResourceId(),
-                    evalVariableRef.getName(),
-                    evalVariableRef.getDeviceId(),
-                    evalVariableRef.getProbeId()
-            ));
 
-            // 当前探针数据是否已经被同步  todo 不再使用"limit", 获取数量用于动态分页, 避免大批量进行saveBatch
+            EvalLog.info(evalRecord, evalVariableRef, String.format("used nodeId %s probeId %s.", evalVariableRef.getDeviceId(), evalVariableRef.getProbeId()));
 
             // 变量项使用同一探针, 数据已经被同步, 跳过
             CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
@@ -655,20 +655,23 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (!SqlHelper.retBool(probeDataCount)) {
                 collectionEventPageContext.setPage(1L);
             } else {
-                // 数据量百位取整, 生成当前页码
+                // 数据量百位向上取整, 生成当前页码
                 int count = new BigDecimal(probeDataCount).setScale(-2, BigDecimal.ROUND_UP).intValue();
                 collectionEventPageContext.setPage((count / onceProbeDataSize) + 1);
             }
             collectionEventPageContext.setPageSize(onceProbeDataSize);
 
             try {
-                exeCollectionEvent(evalRecord, collectionEventPageContext, ipMap);
+                exeCollectionEvent(evalRecord, evalVariableRef, collectionEventPageContext, ipMap);
 
                 evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode());
+                EvalLog.info(evalRecord, evalVariableRef, "sync data completed.");
             } catch (RemoteServiceException e) {
+                EvalLog.error(evalRecord, evalVariableRef, "invoke mp probe data api Exception.");
                 // 采集数据报错, 采集变量项中止
                 String msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.GET_PROBE_DATA_FAILED), evalVariableRef.getName());
                 evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+                updateById(evalRecord);
 
                 evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());
                 evalVariableRef.setScore(0);
@@ -678,10 +681,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
-    private void exeCollectionEvent(EvalRecord evalRecord, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap) {
-        // todo evalRecord 入参等待用于添加日志
+    private void exeCollectionEvent(
+            EvalRecord evalRecord, EvalVariableRef evalVariableRef, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap) {
 
         List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
+
+        EvalLog.info(evalRecord, evalVariableRef, String.format("params: %s", collectionEventPageContext));
         List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
         collectionEventList.forEach(mpCollectionEvent -> {
             EvalProbeData probeDataItem = new EvalProbeData();
@@ -705,16 +710,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
 
             evalProbeDataList.add(probeDataItem);
-
         });
         // 数据不为空, 保存
         if (!evalProbeDataList.isEmpty()) {
             evalProbeDataService.saveBatch(evalProbeDataList);
+            long size = (collectionEventPageContext.getPage() - 1) * onceProbeDataSize + collectionEventList.size();
+            EvalLog.info(evalRecord, evalVariableRef, String.format("sync data size %s ...", size));
         }
         // 实际获取数据与每页数据量大小一致, 视数据未获取完成. 页码+1, 迭代执行
         if (collectionEventPageContext.getPageSize() == collectionEventList.size()) {
             collectionEventPageContext.setPage(collectionEventPageContext.getPage() + 1);
-            exeCollectionEvent(evalRecord, collectionEventPageContext, ipMap);
+            exeCollectionEvent(evalRecord, evalVariableRef, collectionEventPageContext, ipMap);
         }
     }
 
@@ -748,9 +754,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Override
     public List<EvalRoomPairRsp> getNodes(String roomId) {
         EvalTask evalTask = evalTaskService.getTask(roomId);
-        if (evalTask == null) {
-            throw new BusinessException();
-        }
 
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
@@ -771,11 +774,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Override
     public List<EvalRoomPairRsp> getProbes(String roomId, String nodeId) {
         EvalTask evalTask = evalTaskService.getTask(roomId);
-        if (evalTask == null) {
-            throw new BusinessException();
-        }
 
-        // todo 修改响应数据结构, 以Map<node_id, List<EvalRoomPairRsp#{探针信息}>>的数据结构返回
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());

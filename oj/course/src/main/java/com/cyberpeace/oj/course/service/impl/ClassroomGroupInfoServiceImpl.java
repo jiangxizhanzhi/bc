@@ -124,7 +124,8 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 				classroomUserIds);
 		Integer lastGroupNo = classroomGroupInfoMapper.selectLastGroupByRoom(classroomId);
 		List<ClassroomGroupInfo> groupInfoList = initClassroomGroupInfo(classroomId, courseLesson,
-				newUserIds, null != lastGroupNo ? lastGroupNo : CommonConstant.ONE);
+				newUserIds,
+				null != lastGroupNo ? lastGroupNo + CommonConstant.ONE : CommonConstant.ONE);
 
 		// 计算删除的用户 将用户从组中删除
 		List<String> deleteUserIds = (List<String>) CollectionUtils.removeAll(classroomUserIds,

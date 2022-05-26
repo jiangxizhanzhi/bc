@@ -1,3 +1,5 @@
+start transaction;
+
 ALTER TABLE oj_classroom ADD UNIQUE INDEX org_lesson_uniq(organization_id, lesson_id);
 ALTER TABLE oj_classroom ADD UNIQUE INDEX resource_uniq(resource_id);
 ALTER TABLE oj_classroom_group_info ADD UNIQUE INDEX resource_uniq(resource_id);
@@ -23,13 +25,4 @@ ALTER TABLE oj_practice_operation ADD UNIQUE set_title_uniq(practice_set_id, tit
 ALTER TABLE oj_practice_operation_ref ADD UNIQUE paper_origin_uniq(paper_id, origin_id);
 ALTER TABLE oj_practice_random_flag ADD UNIQUE prac_type_user_uniq(practice_id, type, user_id);
 
-ALTER TABLE oj_practice_solved ADD UNIQUE user_type_id_uniq(submit_user_id,practice_type,practice_id);
-
-
-
-
-
-
-
-
-
+commit;

@@ -35,4 +35,6 @@ public interface SkillMissionRelationMapper extends BaseMapper<SkillMissionRelat
 	void clearBySkillIds(@Param("skillIds") List<String> skillIds);
 
 	List<IdWeight> listBySkillId(@Param("skillId") String skillId);
+
+	void clearAll();
 }

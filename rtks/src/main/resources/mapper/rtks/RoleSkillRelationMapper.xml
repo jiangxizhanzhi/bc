@@ -34,7 +34,8 @@
         </foreach>
     </delete>
     <delete id="clearRoleSkillRel">
-        truncate rtks_role_skill_relation
+        delete
+        from rtks_role_skill_relation
     </delete>
     <select id="batchGetByRoleId" resultType="com.cyberpeace.rtks.dao.entity.RoleSkillRelation">
         select *

@@ -30,6 +30,10 @@
             #{skillId}
         </foreach>
     </delete>
+    <delete id="clearAll">
+        delete
+        from rtks_skill_mission_relation
+    </delete>
     <select id="batchSelectBySkillId" resultType="java.lang.String">
         select mission_template_id
         from rtks_skill_mission_relation

@@ -28,4 +28,6 @@ public interface SkillMapper extends BaseMapper<Skill> {
 
 	IPage<SkillSimpleRes> pageSimple(@Param("page") Page page,
 			@Param("reqBase") PageReqBase reqBase);
+
+	void clearAll();
 }

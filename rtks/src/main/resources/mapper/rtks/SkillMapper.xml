@@ -3,6 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.SkillMapper">
+    <delete id="clearAll">
+        delete
+        from rtks_skill
+    </delete>
 
     <select id="listSkill" resultType="com.cyberpeace.rtks.service.bo.skill.SkillRes">
         <if test="skillListReq.pattern != null and skillListReq.pattern != ''">

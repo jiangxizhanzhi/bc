@@ -241,6 +241,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return calculation.solve();
 	}
 
+	@Override
+	public void clearAll() {
+		skillMapper.clearAll();
+		skillMissionRelationMapper.clearAll();
+	}
+
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,
 			List<RelatedCourse> relatedCourseList) {
 		Map<String, Integer> map = Maps.newHashMap();

@@ -32,6 +32,7 @@ import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RoleService;
+import com.cyberpeace.rtks.service.SkillService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
@@ -66,6 +67,9 @@ public class FrameController {
 
 	@Autowired
 	private RoleService roleService;
+
+	@Autowired
+	private SkillService skillService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -234,6 +238,7 @@ public class FrameController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				levelService.removeAllLevels();
 				roleService.clearRole();
+				skillService.clearAll();
 				roleService.removeAll("task");
 				roleService.removeAll("knowledge_category");
 				roleService.removeAll("knowledge");
@@ -259,6 +264,7 @@ public class FrameController {
 				roleService.initDefaultFromPreset("knowledge_category");
 				roleService.initDefaultFromPreset("knowledge");
 				roleService.initDefaultFromPreset("course_related");
+				skillService.clearAll();
 			}
 		});
 

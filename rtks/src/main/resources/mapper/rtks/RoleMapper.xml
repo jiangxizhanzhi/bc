@@ -14,7 +14,8 @@
         from rtks_${table}
     </delete>
     <delete id="clearRole">
-        truncate rtks_role
+        delete
+        from rtks_role
     </delete>
 
     <select id="listRole" resultType="com.cyberpeace.rtks.dao.entity.Role">

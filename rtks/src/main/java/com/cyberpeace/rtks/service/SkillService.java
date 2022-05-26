@@ -81,4 +81,10 @@ public interface SkillService extends IService<Skill> {
 	 * @return score
 	 */
 	Double calculateScore(String skillId, String userId);
+
+	/**
+	 * 清空所有技能和技能相关
+	 */
+	void clearAll();
+
 }

@@ -45,7 +45,7 @@ public class AdminPracticeImportController {
 		} finally {
 			pathMap.remove(rmImportReq.getPath());
 		}
-		return new BaseRsp<>();
+		return new BaseRsp<>(CommonConstant.TRUE);
 
 	}
 

@@ -54,11 +54,14 @@
         where frame IS NOT NULL;
     </delete>
 
-    <delete id="truncateLevels">
-        truncate table rtks_level;
+    <delete id="clearAll">
+        delete
+        from rtks_level;
     </delete>
 
     <insert id="copyFromPreset">
-        INSERT INTO rtks_level SELECT * FROM init_rtks_level;
+        INSERT INTO rtks_level
+        SELECT *
+        FROM init_rtks_level;
     </insert>
 </mapper>

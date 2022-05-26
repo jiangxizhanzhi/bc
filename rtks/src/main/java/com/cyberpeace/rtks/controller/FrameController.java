@@ -236,9 +236,11 @@ public class FrameController {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				levelService.removeAllLevels();
+
 				roleService.clearRole();
 				skillService.clearAll();
+
+				levelService.removeAllLevels();
 				roleService.removeAll("task");
 				roleService.removeAll("knowledge_category");
 				roleService.removeAll("knowledge");
@@ -258,13 +260,16 @@ public class FrameController {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				roleService.clearRole();
+				skillService.clearAll();
+
 				levelService.initDefaultFromPreset();
 				roleService.initDefaultFromPreset("role");
 				roleService.initDefaultFromPreset("task");
 				roleService.initDefaultFromPreset("knowledge_category");
 				roleService.initDefaultFromPreset("knowledge");
 				roleService.initDefaultFromPreset("course_related");
-				skillService.clearAll();
 			}
 		});
 

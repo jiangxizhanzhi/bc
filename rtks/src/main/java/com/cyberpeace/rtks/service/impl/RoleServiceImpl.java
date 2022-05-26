@@ -72,7 +72,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	@Override
 	public void initDefaultFromPreset(String table) {
-		clearRole();
+		roleMapper.removeAll(table);
 		roleMapper.copyFromPreset(table);
 	}
 

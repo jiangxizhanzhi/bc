@@ -60,7 +60,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Override
 	public void initDefaultFromPreset() {
-		levelMapper.truncateLevels();
+		levelMapper.clearAll();
 		levelMapper.copyFromPreset();
 	}
 

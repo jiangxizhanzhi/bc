@@ -227,14 +227,6 @@ public class CrSceneServiceImpl implements CrSceneService {
 		FlowBatchOpsContext flowBatchOpsContext = new FlowBatchOpsContext(mpSceneId, nodeId,
 				runType);
 
-		List<FlowInfo> flowInfoList = getNodeFlowContextList(mpSceneId, null, nodeId);
-
-		if (flowInfoList.isEmpty()) {
-			throw new BusinessException(CrBusinessErrorCode.NO_FLOW_EXISTS_ON_NODE);
-		}
-
-		flowBatchOpsContext.setFlows(flowInfoList);
-
 		Boolean result = remoteSceneService.batchStartFlow(flowBatchOpsContext);
 
 		if (!result) {

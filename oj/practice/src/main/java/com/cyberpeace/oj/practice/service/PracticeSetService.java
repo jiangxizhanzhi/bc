@@ -68,6 +68,14 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	void enableDelete(List<String> resourceIds, AuthContext authContext);
 
 	/**
+	 * 清空前判断是否可清空
+	 *
+	 * @param resourceId
+	 * @param authContext
+	 */
+	Integer clearPractice(String resourceId, AuthContext authContext);
+
+	/**
 	 * 资管理论习题集数据导入
 	 *
 	 * @param path

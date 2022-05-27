@@ -227,6 +227,46 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
+	public Integer clearPractice(String resourceId, AuthContext authContext) {
+
+		// 权限校验
+		enableAccess(resourceId, authContext);
+
+		// 数据校验
+		List<String> practiceIds;
+		PracticeSet practiceSet = practiceSetMapper.selectById(resourceId);
+		practiceSet.setPracticeCount(CommonConstant.ZERO);
+
+		// 删除理论题
+		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.THEORY.getCode()
+				.intValue()) {
+			practiceIds = practiceTheoryMapper.selectBySetIds(
+					Arrays.asList(practiceSet.getResourceId()), null);
+
+			if (practiceIds.isEmpty()){
+				return 1;
+			}
+
+			List<String> finalPracticeIds = practiceIds;
+			transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+				@Override
+				public Integer doInTransaction(TransactionStatus status) {
+					practiceSetMapper.updateById(practiceSet);
+					return practiceTheoryMapper.deleteBatchIds(finalPracticeIds);
+				}
+			});
+
+		}
+
+		// 删除实操题
+		practiceIds = practiceOperationMapper
+				.selectBySetIds(Arrays.asList(practiceSet.getResourceId()), null);
+		return practiceOperationService.batchDelete(practiceIds, authContext);
+
+	}
+
+	@Override
 	public boolean importRmTheorySet(String path) {
 
 		// 习题集数据插入处理

@@ -133,6 +133,18 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		return new BaseRsp(result);
 	}
 
+	@ApiOperation("清空习题集")
+	@DeleteMapping("/clear")
+	public BaseRsp<Integer> clear(@RequestBody @Valid ResourceClearReq req) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+
+		Integer result = practiceSetService.clearPractice(req.getResourceId(), authContext);
+
+		return new BaseRsp(result);
+	}
+
 	@ApiOperation("分页查询习题集")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<AdminPracticeSetBo>> list(PracticeSetPageReq setPageReq) {

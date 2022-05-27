@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.cs.dao.mapper.GxTaskMapper">
+    <resultMap id="gxTask" type="com.cyberpeace.cs.dao.entity.GxTask"></resultMap>
+    <resultMap id="gxTaskListContext" type="com.cyberpeace.cs.service.context.GxTaskListContext"></resultMap>
+
+    <select id="listTasks" resultMap="gxTaskListContext">
+
+        select *
+        from sjyc_task
+        <where>
+            <if test="query.eventType != null and query.eventType != ''">
+                and event_type = #{query.eventType}
+            </if>
+            <if test="query.pattern != null and query.pattern != ''">
+                <bind name="pattern" value="'%' + query.pattern + '%'"/>
+                and name like #{pattern}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByTaskId" resultMap="gxTask">
+
+        select *
+        from sjyc_task
+        <where>
+            task_id = #{taskId}
+        </where>
+    </select>
+
+    <select id="selectByCloseTime" resultMap="gxTask">
+        select *
+        from sjyc_task
+        where end_time &lt; #{closeTime}
+        and result is null
+        and event_id is not null
+    </select>
+
+</mapper>

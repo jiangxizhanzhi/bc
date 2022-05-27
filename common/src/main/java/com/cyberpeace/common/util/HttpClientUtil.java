@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.cyberpeace.common.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -27,6 +26,7 @@ import org.slf4j.impl.TraceIdContext;
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.*;
 import com.google.common.collect.Lists;
 
 public class HttpClientUtil {
@@ -38,6 +38,8 @@ public class HttpClientUtil {
 	private static List<Header> defaultHeaders;
 
 	private static final String SUCCESS_POSTFIX = "-000000";
+
+	private static final String EXTERNAL_SUCCESS = "200";
 
 	/**
 	 * 执行post请求
@@ -101,6 +103,19 @@ public class HttpClientUtil {
 		return doHttp(httpGet, resultType);
 	}
 
+	public static <T> T rawGet(String url, String token, Class<T> resultType) {
+		// 1、设置请求线程数据
+		setContext(url);
+
+		// 2、生成get请求
+		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader(WebConstant.TOKEN, token);
+		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(httpGet, resultType);
+	}
+
 	/**
 	 * 设置请求上下文
 	 * @param url
@@ -155,8 +170,8 @@ public class HttpClientUtil {
 
 			if (!isSuccess(baseRsp)) {
 				// 只要中台的错误码不是000000，都认为是有问题的
-				LOG.error("url=[{}], result=[{}] error, code=[{}]", HttpclientContext.getContext().getUrl(),
-						httpResponse, baseRsp.getCode());
+				LOG.error("url=[{}], result=[{}] error, code=[{}]",
+						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode());
 				throw new RemoteServiceException(baseRsp.getMessage());
 			}
 			if (null == baseRsp.getData()) {
@@ -222,7 +237,8 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static boolean isSuccess(BaseRsp baseRsp) {
-		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
+		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX)
+				|| EXTERNAL_SUCCESS.equals(baseRsp.getCode());
 	}
 
 	/**

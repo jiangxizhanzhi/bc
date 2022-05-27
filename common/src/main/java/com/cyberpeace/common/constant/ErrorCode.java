@@ -103,4 +103,7 @@ public interface ErrorCode {
 	/** 写入文件失败 */
 	String FAILED_TO_WRITE_FILE = "100036";
 
+	/** 任务已结束 */
+	String TASK_IS_FINISHED = "100037";
+
 }

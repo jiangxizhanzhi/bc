@@ -307,8 +307,11 @@
     </select>
 
 
-    <select id="selectSchedules" resultType="com.cyberpeace.oj.person.dao.entity.ListSchedule">
-        select *
+    <select id="selectLessonByAdmin" resultType="java.lang.String">
+        select resource_id from oj_course_lesson
+        <if test="lessonType != null">
+            where type = #{lessonType}
+        </if>
     </select>
 
 

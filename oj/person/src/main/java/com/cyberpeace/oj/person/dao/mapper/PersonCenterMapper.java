@@ -132,6 +132,8 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
 
   List<String> selectLessonByAuth(@Param("courseIds") List<String> courseIds);
 
+  List<String> selectLessonByAdmin(@Param("lessonType") Integer lessonType);
+
   List<String> selectExpLessonByAuth(@Param("courseIds") List<String> courseIds);
 
   List<String> selectOperationPracticeByAuth();
@@ -142,5 +144,4 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
 
   List<String> selectPublicCourse(@Param("courseIds") List<String> courseIds);
 
-  List<ListSchedule> selectSchedules(String userId);
 }

@@ -4,12 +4,16 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cs.service.impl.MessageListener;
@@ -114,8 +118,8 @@ public class RabbitMQConf {
 	}
 
 	@Bean
-	public SimpleMessageListenerContainer
-			simpleMessageListenerContainer(ConnectionFactory connectionFactory) {
+	public SimpleMessageListenerContainer simpleMessageListenerContainer(
+			@Qualifier("defaultConnectionFactory") ConnectionFactory connectionFactory) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(
 				connectionFactory);
 		container.setConcurrentConsumers(2);
@@ -126,6 +130,46 @@ public class RabbitMQConf {
 		container.setMessageListener(messageListner);
 
 		return container;
+	}
+
+	@Bean("defaultConnectionFactory")
+	@Primary
+	public CachingConnectionFactory publicConnectionFactoryDefault(
+			@Value("${spring.rabbitmq.host}") String host,
+			@Value("${spring.rabbitmq.port}") Integer port,
+			@Value("${spring.rabbitmq.username}") String username,
+			@Value("${spring.rabbitmq.password}") String password,
+			@Value("${spring.rabbitmq.connectionTimeout}") Integer connectionTimeout) {
+		CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+		connectionFactory.setHost(host);
+		connectionFactory.setPort(port);
+		connectionFactory.setUsername(username);
+		connectionFactory.setPassword(password);
+		connectionFactory.setConnectionTimeout(connectionTimeout);
+		return connectionFactory;
+	}
+
+	@Bean("gxConnectionFactory")
+	public CachingConnectionFactory publicConnectionFactoryGx(
+			@Value("${gx.rabbitmq.host}") String host, @Value("${gx.rabbitmq.port}") Integer port,
+			@Value("${gx.rabbitmq.username}") String username,
+			@Value("${gx.rabbitmq.password}") String password,
+			@Value("${gx.rabbitmq.connectionTimeout}") Integer connectionTimeout) {
+		CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+		connectionFactory.setHost(host);
+		connectionFactory.setPort(port);
+		connectionFactory.setUsername(username);
+		connectionFactory.setPassword(password);
+		connectionFactory.setConnectionTimeout(connectionTimeout);
+		return connectionFactory;
+	}
+
+	@Bean(name = "gxContainerFactory")
+	public SimpleRabbitListenerContainerFactory gxMessageListenerContainer(
+			@Qualifier("gxConnectionFactory") ConnectionFactory connectionFactory) {
+		SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+		factory.setConnectionFactory(connectionFactory);
+		return factory;
 	}
 
 	private String getProjectName() {

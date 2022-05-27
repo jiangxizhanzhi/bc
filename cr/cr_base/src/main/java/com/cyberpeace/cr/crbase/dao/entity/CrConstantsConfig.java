@@ -2,7 +2,6 @@ package com.cyberpeace.cr.crbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.constant.SelectI18nName;
 
 import lombok.Data;

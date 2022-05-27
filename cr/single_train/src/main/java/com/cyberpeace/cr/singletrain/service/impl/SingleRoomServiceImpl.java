@@ -258,9 +258,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			return false;
 		}
 
-		// 关闭场景
-		localSceneService.stopScene(singleRoom.getLocalSceneId());
-
+		// 关闭场景，不应该被mp执行结果所堵塞
+		try {
+			localSceneService.stopScene(singleRoom.getLocalSceneId());
+		} catch (Exception e) {
+			log.error("Failed to delete mp scene", e);
+		}
 		// 删除单兵训练房间, 记录结束时间
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

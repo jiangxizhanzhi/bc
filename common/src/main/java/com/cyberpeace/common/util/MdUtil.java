@@ -88,7 +88,7 @@ public class MdUtil {
 	}
 
 	public static void main(String[] args) {
-		parseMarkdown("/Users/chenzhuo/home/讲义.md");
+		parseMarkdown("/Users/chenzhuo/Downloads/demo/Write-up_cn.md");
 	}
 
 	/**
@@ -122,18 +122,11 @@ public class MdUtil {
 			}
 
 			File replaceFile = new File(currentDir, relativePath);
-			if (replaceFile.exists()) {
-				content = content.replace(imagePath, replaceFile.getAbsolutePath());
-			} else {
-				// 文件后缀匹配，如果文件无后缀则可能不是文件
-				String firstMatchStr = LocalStringUtil.getFirstMatchStr(relativePath,
-						PatternConstant.FILE_SUFFIX_MATCH);
-				if (StringUtils.isNotBlank(firstMatchStr)) {
-					log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
-					throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
-				}
+			if (!replaceFile.exists()) {
+				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
+				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
 			}
-
+			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 		}
 
 		return content;
@@ -156,15 +149,27 @@ public class MdUtil {
 			String content;
 
 			while ((content = br.readLine()) != null) {
-				if (content.trim().equals(CommonConstant.MD_CODING_BLOCK)
-						&& CommonConstant.ONE.intValue() == type) {
+
+				// 如果开始和结尾在一行里 直接跳过此行
+				boolean singleLine = content.trim().length() >= CommonConstant.FOUR
+						&& content.trim().startsWith(CommonConstant.MD_CODING_BLOCK)
+						&& content.trim().endsWith(CommonConstant.MD_CODING_BLOCK)
+						&& CommonConstant.ONE.intValue() == type;
+				if (singleLine) {
+					continue;
+				}
+
+				// 如果此行开始为代码块标识符 则对下面内容进行略过
+				boolean omit = (content.trim().startsWith(CommonConstant.MD_CODING_BLOCK)
+						|| content.trim().endsWith(CommonConstant.MD_CODING_BLOCK))
+						&& CommonConstant.ONE.intValue() == type;
+				if (omit) {
 					coding = !coding;
 				} else {
 					if (!coding) {
 						builder.append(content + System.lineSeparator());
 					}
 				}
-
 			}
 
 			return builder.toString();

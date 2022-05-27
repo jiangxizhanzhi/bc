@@ -6,7 +6,7 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
-import org.checkerframework.checker.guieffect.qual.UI;
+import com.cyberpeace.integratation.model.mp.GxToken;
 
 public interface RemoteUserService {
 
@@ -25,7 +25,6 @@ public interface RemoteUserService {
 
 	JSONObject getList(Long page, Long perPage, String pattern, String organization);
 
-
 	List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext);
 
 	List<UserInfo> getByIdList(List<String> ids);
@@ -40,5 +39,12 @@ public interface RemoteUserService {
 	 * @return
 	 */
 	List<UserInfo> ListByOrgId(String organizationId, boolean children);
+
+	/**
+	 * mp 通过共性用户获取中台用户token
+	 * @param gxToken
+	 * @return
+	 */
+	String getMpUserToken(GxToken gxToken);
 
 }

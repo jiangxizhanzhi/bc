@@ -23,6 +23,7 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.UserPageContext;
+import com.cyberpeace.integratation.model.mp.GxToken;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -44,6 +45,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String ORG_INFO_LIST_URL;
 
+	private String CONVERT_TOKEN_URL;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -59,6 +62,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.list");
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
+
+		CONVERT_TOKEN_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.user.token.convert");
 	}
 
 	@Override
@@ -295,6 +301,16 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setAdmin(byId.isAdmin());
 
 		return userInfo;
+	}
+
+	@Override
+	public String getMpUserToken(GxToken gxToken) {
+
+		JSONObject data = HttpClientUtil.post(CONVERT_TOKEN_URL, gxToken, JSONObject.class);
+
+		String mpToken = data.getString("token");
+
+		return mpToken;
 	}
 
 }

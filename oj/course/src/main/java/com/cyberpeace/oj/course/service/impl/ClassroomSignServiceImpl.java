@@ -1,33 +1,35 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.GxOrgUsersMapper;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 
-import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -48,6 +50,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	@Autowired
+	private GxOrgUsersMapper gxOrgUsersMapper;
+
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
 
@@ -57,8 +62,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		if (!authContext.getIsSuperAdmin() && !classroom.getCreateUserId().equals(authContext.getUserId())
-				&& !classroom.getOrganizationIds().contains(authContext.getOrganization())) {
+		if (!authContext.getIsSuperAdmin()
+				&& !classroom.getCreateUserId().equals(authContext.getUserId())
+				&& !hasCourceAuth(classroom, authContext)) {
 			log.error("Current user is not permission! user_org_id=[{}]",
 					authContext.getOrganization());
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
@@ -67,8 +73,8 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		// 仅存储该课堂组织下的用户签到信息
 		if (classroom.getOrganizationIds().contains(authContext.getOrganization())) {
 			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
-					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID()).signInTime(new Date())
-					.userId(authContext.getUserId()).build();
+					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID())
+					.signInTime(new Date()).userId(authContext.getUserId()).build();
 			try {
 				return classroomSignMapper.insert(sign) > 0;
 			} catch (DuplicateKeyException e) {
@@ -77,6 +83,21 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 
 		return true;
+	}
+
+	private Boolean hasCourceAuth(Classroom classroom, AuthContext authContext){
+		
+		Boolean orgAuth = classroom.getOrganizationIds().contains(authContext.getOrganization());
+
+		Boolean userAuth = false;
+		// 如果当前用户存在本地组织，校验用户权限
+		List<String> userLocalOrgs = gxOrgUsersMapper.getOrgIdsByUserId(authContext.getUserId());
+		if (!userLocalOrgs.isEmpty()){
+			ClassroomGroupInfo classroomGroupInfo = classroomGroupInfoMapper.selectByRoomAndUser(classroom.getResourceId(), authContext.getUserId());
+			userAuth = classroomGroupInfo == null ? false:true;
+		}
+		
+		return orgAuth || userAuth;
 	}
 
 	@Override

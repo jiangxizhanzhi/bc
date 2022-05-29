@@ -20,9 +20,9 @@ public class GxTaskListContext extends GxTaskContext implements Serializable {
 
 	private Integer status;
 
-	private Integer eventId;
+	private String eventId;
 
-	private String eventType;
+	private Integer eventType;
 
 	private String result;
 

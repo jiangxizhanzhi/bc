@@ -240,10 +240,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 删除理论题
 		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.THEORY.getCode()
 				.intValue()) {
-			practiceIds = practiceTheoryMapper.selectBySetIds(
-					Arrays.asList(practiceSet.getResourceId()), null);
+			practiceIds = practiceTheoryMapper
+					.selectBySetIds(Arrays.asList(practiceSet.getResourceId()), null);
 
-			if (practiceIds.isEmpty()){
+			if (practiceIds.isEmpty()) {
 				return 1;
 			}
 
@@ -259,10 +259,15 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		}
 
-		// 删除实操题
-		practiceIds = practiceOperationMapper
-				.selectBySetIds(Arrays.asList(practiceSet.getResourceId()), null);
-		return practiceOperationService.batchDelete(practiceIds, authContext);
+		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION.getCode()
+				.intValue()) {
+			// 删除实操题
+			practiceIds = practiceOperationMapper
+					.selectBySetIds(Arrays.asList(practiceSet.getResourceId()), null);
+			return practiceOperationService.batchDelete(practiceIds, authContext);
+		}
+
+		return 1;
 
 	}
 

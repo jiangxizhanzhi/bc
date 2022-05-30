@@ -28,4 +28,10 @@
         delete from oj_classroom_group_info
         where classroom_id = #{roomId}
     </delete>
+
+    <select id="selectClassroomIdsByUserId" resultType="java.lang.String">
+        <bind name="groupUser" value="'%' + userId + '%'"/>
+        select classroom_id from oj_classroom_group_info
+        where group_user_ids like #{groupUser}
+    </select>
 </mapper>

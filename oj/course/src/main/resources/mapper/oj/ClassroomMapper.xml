@@ -74,6 +74,24 @@
         </where>
     </select>
 
+    <select id="selectListByLocalOrgs" resultMap="base">
+        select * from oj_classroom
+        <where>
+            <if test="courseIds != null and courseIds.size() != 0">
+                course_id in
+                <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                    #{courseId}
+                </foreach>
+            </if>
+            <if test="localOrgs != null">
+                and organization_id in
+                <foreach collection="localOrgs" separator="," open="(" close=")" item="orgId">
+                    #{orgId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
     <select id="selectByLesson" resultMap="base">
         select * from oj_classroom
         where lesson_id in
@@ -85,5 +103,21 @@
     <select id="selectByOrgId" resultMap="base">
         select * from oj_classroom
         where organization_id = #{orgId}
+    </select>
+
+    <select id="selectByOrgIds" resultMap="base">
+        select * from oj_classroom
+        where organization_id in
+        <foreach collection="orgIds" separator="," open="(" close=")" item="orgId">
+            #{orgId}
+        </foreach>
+    </select>
+
+    <select id="selectCourseIds" resultType="java.lang.String">
+        select course_id from oj_classroom
+        where resource_id in
+        <foreach collection="classroomIds" separator="," open="(" close=")" item="classroomId">
+            #{classroomId}
+        </foreach>
     </select>
 </mapper>

@@ -1,13 +1,13 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Date;
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
 
 @Mapper
 public interface ClassroomMapper extends BaseMapper<Classroom> {
@@ -37,6 +37,9 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	List<Classroom> selectListByCourse(@Param("courseIds") List<String> courseIds,
 			@Param("listQuery") ClassRoomListQuery roomListQuery);
 
+	List<Classroom> selectListByLocalOrgs(@Param("courseIds") List<String> courseIds,
+			@Param("localOrgs") List<String> localOrgs);
+
 	/**
 	 * 课程表删除
 	 * @param lessonIds
@@ -49,4 +52,13 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @return
 	 */
 	List<Classroom> selectByOrgId(@Param("orgId") String orgId);
+
+	/**
+	 * 查询各种组织下的的课堂表
+	 * @param orgIds
+	 * @return
+	 */
+	List<Classroom> selectByOrgIds(@Param("orgIds") List<String> orgIds);
+
+	List<String> selectCourseIds(@Param("classroomIds") List<String> classroomIds);
 }

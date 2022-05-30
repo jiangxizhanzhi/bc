@@ -79,7 +79,7 @@ public class GxTaskController {
 
 	@ApiOperation("绑定任务与事件")
 	@PostMapping("/bind_task")
-	public BaseRsp<Boolean> bindTask(@Validated TaskBindReq taskBindReq) {
+	public BaseRsp<Boolean> bindTask(@RequestBody @Validated TaskBindReq taskBindReq) {
 		GxTask gxTask = gxTaskMapper.getByTaskId(taskBindReq.getTaskId());
 		gxTask.setEventId(taskBindReq.getEventId());
 		gxTask.setEventType(taskBindReq.getEventType());

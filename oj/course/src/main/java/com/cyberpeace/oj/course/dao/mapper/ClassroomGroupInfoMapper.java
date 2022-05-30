@@ -1,11 +1,12 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 
 @Mapper
 public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo> {
@@ -37,5 +38,7 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 * 删除组信息
 	 * @param classroomId
 	 */
-    void deleteByRoom(@Param("roomId") String classroomId);
+	void deleteByRoom(@Param("roomId") String classroomId);
+
+	List<String> selectClassroomIdsByUserId(@Param("userId") String userId);
 }

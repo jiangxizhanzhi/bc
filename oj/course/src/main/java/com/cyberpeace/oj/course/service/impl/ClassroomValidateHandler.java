@@ -5,23 +5,23 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import org.apache.commons.collections.CollectionUtils;
-import org.omg.CORBA.ORB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cs.dao.entity.GxOrgUsers;
+import com.cyberpeace.cs.dao.mapper.GxOrgUsersMapper;
+import com.cyberpeace.cs.service.GxTaskService;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +32,12 @@ public class ClassroomValidateHandler {
 	private Integer MIN_START_TIME;
 
 	private Integer END_MAX_TIME;
+
+	@Autowired
+	private GxOrgUsersMapper gxOrgUsersMapper;
+
+	@Autowired
+	private GxTaskService gxTaskService;
 
 	@PostConstruct
 	private void init() {
@@ -81,6 +87,20 @@ public class ClassroomValidateHandler {
 	 */
 	public List<String> validateClassroomOrgHasUser(String orgId) {
 
+		// 首先校验本地组织
+		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
+		if (gxOrgUsers != null) {
+			List<String> userList = gxTaskService.getLocalUserList(gxOrgUsers);
+			if (userList.isEmpty()) {
+				throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);
+			}
+
+			// 此处组织列表作用待完善 todo
+			List<String> orgIds = Lists.newArrayList(orgId);
+			return orgIds;
+		}
+
+		// 校验远程组织
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, true);
 		if (CollectionUtils.isEmpty(userInfos)) {
 			throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);

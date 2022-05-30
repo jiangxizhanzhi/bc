@@ -1,9 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
-import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +14,10 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,6 +39,12 @@ public class CourseValidateHandler {
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
+
+	@Autowired
+	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
+	@Autowired
+	private ClassroomMapper classroomMapper;
 
 	/**
 	 * 校验课时更新时 名称是否已存在
@@ -84,6 +86,10 @@ public class CourseValidateHandler {
 
 		// 查询授权
 		List<String> authIds = courseMapper.selectByAuth(authContext);
+		List<String> localOrgClassRoomIds = classroomGroupInfoMapper
+				.selectClassroomIdsByUserId(authContext.getUserId());
+		List<String> localOrgCourseIds = classroomMapper.selectCourseIds(localOrgClassRoomIds);
+		authIds.addAll(localOrgCourseIds);
 		if (CollectionUtils.isEmpty(authIds)) {
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}

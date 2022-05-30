@@ -6,18 +6,39 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.dao.entity.GxOrgUsers;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.GxOrgUsersMapper;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.GxTaskService;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
-import com.cyberpeace.oj.course.service.ClassroomSceneService;
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -32,31 +53,9 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.service.ClassroomService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -113,6 +112,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	@Autowired
+	private GxOrgUsersMapper gxOrgUsersMapper;
+
+	@Autowired
+	private GxTaskService gxTaskService;
+
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
 
@@ -146,6 +151,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			changeCourseOrg(course, orgIds);
 		}
 
+		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(classroom.getOrganizationId());
+
 		// 公告发布 todo
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -155,6 +162,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroomMapper.insert(classroom);
 				classroomGroupInfoService.saveBatch(groupInfoList);
 				courseMapper.updateById(course);
+
+				if (gxOrgUsers != null) {
+					gxOrgUsers.setClassRoomId(classroom.getResourceId());
+					gxOrgUsersMapper.updateById(gxOrgUsers);
+				}
 			}
 		});
 		return classroom;
@@ -169,12 +181,46 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		List<String> userIds = Lists.newArrayList();
 		for (String orgId : orgIds) {
+
+			// 先判断有无本地组织
+			GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
+			if (gxOrgUsers != null) {
+				userIds.addAll(gxTaskService.getLocalUserList(gxOrgUsers));
+				continue;
+			}
+
+			// 判断远程组织
 			List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, false);
 			List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
 			userIds.addAll(orgUserIds);
 		}
 
 		return userIds;
+	}
+
+	private List<String> getOrgUserIds(String orgId) {
+
+		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
+		if (gxOrgUsers != null) {
+			return gxTaskService.getLocalUserList(gxOrgUsers);
+		}
+		return null;
+	}
+
+	@Override
+	public List<String> getOrgIds(String orgId) {
+
+		// 首先校验本地组织
+		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
+
+		if (gxOrgUsers != null) {
+			List<String> orgIds = Lists.newArrayList(orgId);
+			return orgIds;
+		}
+
+		// 校验远程组织
+		List<String> orgIds = remoteOrganizationService.childrenList(orgId, true);
+		return orgIds;
 	}
 
 	/**
@@ -211,8 +257,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
 
 		// 组织数据获取
-		List<String> orgIds = remoteOrganizationService.childrenList(classroom.getOrganizationId(),
-				true);
+		List<String> orgIds = classroomValidateHandler
+				.validateClassroomOrgHasUser(classroom.getOrganizationId());
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
 		boolean enableChange = !existRoom.getLessonId().equals(classroom.getLessonId());
@@ -283,9 +329,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 权限过滤
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (CollectionUtils.isEmpty(authCourseIds)) {
-			return Lists.newArrayList();
-		}
+		// if (CollectionUtils.isEmpty(authCourseIds)) {
+		// return Lists.newArrayList();
+		// }
 
 		// 公开过滤
 		List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
@@ -297,6 +343,15 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 查询转换数据
 		List<Classroom> classrooms = classroomMapper.selectListByCourse(authCourseIds,
 				roomListQuery);
+
+		// 如果当前用户存在本地组织，添加结果
+		List<String> userLocalOrgs = gxOrgUsersMapper.getOrgIdsByUserId(roomListQuery.getUserId());
+		List<Classroom> localClassRooms = Lists.newArrayList();
+		if (!userLocalOrgs.isEmpty()) {
+			localClassRooms = classroomMapper.selectListByLocalOrgs(null, userLocalOrgs);
+		}
+		classrooms.addAll(localClassRooms);
+
 		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
 				classroom -> entityToBo(classroom));
 
@@ -460,6 +515,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			public Integer doInTransaction(TransactionStatus status) {
 				// 课堂数据删除
 				classroomGroupInfoMapper.deleteByRoom(classroomId);
+				gxTaskService.clearClassRoomOrg(classroomId);
 				return classroomMapper.deleteById(classroomId);
 			}
 		});
@@ -702,9 +758,26 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroomBo.setLessonType(lesson.getType());
 
 		// 组织信息
-		String orgName = remoteOrganizationService.orgNameById(classroom.getOrganizationId());
+		String orgName = getOrgName(classroom.getOrganizationId());
 		classroomBo.setOrganizationName(orgName);
+
+		// 如果组织为本地组织，返回用户列表
+		classroomBo.setUserIds(getOrgUserIds(classroom.getOrganizationId()));
+
 		return classroomBo;
+	}
+
+	private String getOrgName(String orgId) {
+
+		// 首先校验本地组织
+		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
+
+		if (gxOrgUsers != null) {
+			return gxOrgUsers.getOrgName();
+		}
+
+		// 校验远程组织
+		return remoteOrganizationService.orgNameById(orgId);
 	}
 
 }

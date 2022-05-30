@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel
@@ -46,5 +47,8 @@ public class ClassroomBo implements Serializable {
 
 	@ApiModelProperty("创建人")
 	private String createUserId;
+
+	@ApiModelProperty("用户列表")
+	private List<String> userIds;
 
 }

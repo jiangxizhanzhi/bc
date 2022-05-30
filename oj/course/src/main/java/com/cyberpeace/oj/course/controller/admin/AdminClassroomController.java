@@ -1,5 +1,13 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
@@ -7,35 +15,31 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.ClassroomDeleteReq;
 import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
 import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
 import com.cyberpeace.oj.course.controller.req.ClassroomReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import io.swagger.annotations.*;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import com.cyberpeace.oj.course.service.bo.ClassroomBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomReportBo;
+import com.cyberpeace.oj.course.service.bo.ClassroomStatisticBo;
 
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台课程表api")
 @RestController
@@ -53,6 +57,9 @@ public class AdminClassroomController {
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	@Autowired
+	private GxTaskService gxTaskService;
+
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
 	public BaseRsp<List<ClassroomBo>> list(@Validated ClassroomListReq classroomListReq) {
@@ -68,8 +75,7 @@ public class AdminClassroomController {
 
 		// 查询数据组装
 		if (StringUtils.isNotBlank(classroomListReq.getOrganizationId())) {
-			List<String> orgIds = remoteOrganizationService
-					.childrenList(classroomListReq.getOrganizationId(), true);
+			List<String> orgIds = classroomService.getOrgIds(classroomListReq.getOrganizationId());
 			roomListQuery.setChildrenOrg(orgIds);
 		}
 
@@ -89,6 +95,17 @@ public class AdminClassroomController {
 	public BaseRsp
 			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
 
+		// 如果传入为用户列表，转为组id
+		if (classroomReq.getUserIds() != null && !classroomReq.getUserIds().isEmpty()) {
+			classroomReq.setOrganizationId(
+					gxTaskService.createTaskOrg(classroomReq.getUserIds(), null, "课堂组"));
+		}
+
+		// 校验组织id是否存在
+		if (StringUtils.isEmpty(classroomReq.getOrganizationId())) {
+			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+		}
+
 		// 基本数据设置
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		classroom.setCreateUserId(UserInfoContext.getUserContext().getUserId());
@@ -105,6 +122,17 @@ public class AdminClassroomController {
 	@PatchMapping("")
 	public BaseRsp<Boolean>
 			updateClassRoom(@RequestBody @Validated(Update.class) ClassroomReq classroomReq) {
+
+		// 如果传入为用户列表，转为组id
+		if (classroomReq.getUserIds() != null && !classroomReq.getUserIds().isEmpty()) {
+			classroomReq.setOrganizationId(gxTaskService.createTaskOrg(classroomReq.getUserIds(),
+					classroomReq.getResourceId(), "课堂组"));
+		}
+
+		// 校验组织id是否存在
+		if (StringUtils.isEmpty(classroomReq.getOrganizationId())) {
+			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+		}
 
 		// 基本数据设置
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);

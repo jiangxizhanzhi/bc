@@ -75,7 +75,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
                     evalIndexRef.getName()
             );
             evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
-            EvalLog.info(evalRecord, evalIndexRef, "system evaluation type index on failure.");
+            EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
         }
 
         evalIndexRef.setScore(score);

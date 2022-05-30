@@ -20,7 +20,7 @@ public class EvalLog {
 
     static void info(EvalRecord evalRecord, EvalIndexRef evalIndexRef, String msg) {
         String newMsg = String.format("index %s [%s] %s", evalIndexRef.getResourceId(), evalIndexRef.getName(), msg);
-        info(evalRecord, msg);
+        info(evalRecord, newMsg);
     }
 
     static void error(EvalRecord evalRecord, String msg) {

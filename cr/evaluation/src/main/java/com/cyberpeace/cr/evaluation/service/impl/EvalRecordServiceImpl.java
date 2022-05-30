@@ -523,6 +523,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalLog.info(evalRecord, "calculate indexes start...");
         startIndexes(evalRecord, evalTask);
         EvalLog.info(evalRecord, "calculate indexes completed.");
+
+        EvalLog.info(evalRecord, String.format("END, result: %s, cost: %s", evalRecord.getScore(), new Date().getTime() - evalRecord.getEvalTime().getTime()));
     }
 
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
@@ -596,7 +598,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalIndexRef.getAlgorithmId());
             // 仅执行系统评分类型, 专家评分拥有默认分值不需执行
             if (evalIndexRef.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())) {
+                EvalLog.info(evalRecord, evalIndexRef, "system evaluation type index start...");
                 evalIndexRefService.startIndex(evalIndexRef, evalAlgorithmRef, evalIndexRefMap, evalVariableRefMap, evalRecord);
+                EvalLog.info(evalRecord, evalIndexRef, "system evaluation type index completed.");
+            } else {
+                EvalLog.info(evalRecord, evalIndexRef, "specialist evaluation type index, continue.");
             }
         });
 
@@ -699,11 +705,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             probeDataItem.setProbeId(mpCollectionEvent.getProbeId());
 
             JSONObject content = JsonUtil.toJsonObject(probeDataItem.getContent(), JSONObject.class);
-            // todo 时区变更，当前获取数据为UTC时间
+            // 时区变更，当前获取到数据为UTC时间
             if (evalVariableRefService.BASE.contains(mpCollectionEvent.getProbeId())) {
                 JSONObject scanAttr = content.getJSONObject("scan");
                 if (scanAttr == null) {
-                    // todo 执行错误
+                    EvalLog.error(evalRecord, evalVariableRef, "collect data field [time] is invalid.");
+                    throw new RemoteServiceException();
                 } else {
                     calendar.setTime(scanAttr.getTimestamp("time"));
                 }

@@ -66,6 +66,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
         Integer score;
         try {
             score = remotePythonService.indexPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), scoreList, null);
+            EvalLog.info(evalRecord, evalIndexRef, String.format("system evaluation type index result: %s.", score));
         } catch (RemoteServiceException e) {
             score = 0;
             String msg = String.format(
@@ -74,6 +75,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
                     evalIndexRef.getName()
             );
             evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+            EvalLog.info(evalRecord, evalIndexRef, "system evaluation type index on failure.");
         }
 
         evalIndexRef.setScore(score);

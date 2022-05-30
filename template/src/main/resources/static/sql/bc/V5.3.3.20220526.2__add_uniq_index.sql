@@ -16,6 +16,7 @@ ALTER TABLE oj_practice_category ADD UNIQUE INDEX resource_uniq(resource_id);
 ALTER TABLE oj_practice_category ADD UNIQUE INDEX type_name_uniq(practice_type, name);
 
 ALTER TABLE oj_practice_set ADD UNIQUE name_uniq(name);
+ALTER TABLE oj_practice_theory MODIFY COLUMN content VARCHAR(512);
 ALTER TABLE oj_practice_theory ADD UNIQUE set_content_uniq(practice_set_id, content);
 ALTER TABLE oj_practice_theory_ref ADD UNIQUE paper_origin_uniq(paper_id, origin_id);
 

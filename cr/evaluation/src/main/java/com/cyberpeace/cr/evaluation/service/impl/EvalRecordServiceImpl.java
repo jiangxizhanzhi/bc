@@ -694,8 +694,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         EvalLog.info(evalRecord, evalVariableRef, String.format("params: %s", collectionEventPageContext));
         List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
-        // 获取日期为UTC, 用于调整为GMT时间
-        Calendar calendar = Calendar.getInstance();
+        // 获取日期为UTC, 用于调整为GMT时间 todo 暂时取消
+//        Calendar calendar = Calendar.getInstance();
         collectionEventList.forEach(mpCollectionEvent -> {
             EvalProbeData probeDataItem = new EvalProbeData();
             probeDataItem.setContent(mpCollectionEvent.getContent());
@@ -712,14 +712,16 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     EvalLog.error(evalRecord, evalVariableRef, "collect data field [time] is invalid.");
                     throw new RemoteServiceException();
                 } else {
-                    calendar.setTime(scanAttr.getTimestamp("time"));
+//                    calendar.setTime(scanAttr.getTimestamp("time"));
+                    probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
                 }
                 // 暂不处理
             } else {
-                calendar.setTime(content.getTimestamp("time"));
+//                calendar.setTime(content.getTimestamp("time"));
+                probeDataItem.setCollectionTime(content.getTimestamp("time"));
             }
-            calendar.set(Calendar.HOUR, calendar.get(Calendar.HOUR) + 8);
-            probeDataItem.setCollectionTime(calendar.getTime());
+//            calendar.set(Calendar.HOUR, calendar.get(Calendar.HOUR) + 8);
+//            probeDataItem.setCollectionTime(calendar.getTime());
 
             evalProbeDataList.add(probeDataItem);
         });

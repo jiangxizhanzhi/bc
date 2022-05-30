@@ -24,7 +24,8 @@ public interface CommentService {
 	 * @param children 是否查询评论下的回复 true=查询 false不查询
 	 * @return
 	 */
-	ListRsp<CommentBo> pageComment(Page page, String businessId, Integer businessType, boolean children);
+	ListRsp<CommentBo> pageComment(Page page, String businessId, Integer businessType,
+			boolean children);
 
 	/**
 	 * 获取子评论
@@ -53,7 +54,7 @@ public interface CommentService {
 	 * @param content
 	 * @return
 	 */
-	ListRsp<CommentBo> pageParentComment(Page page,Integer businessType,String content);
+	ListRsp<CommentBo> pageParentComment(Page page, Integer businessType, String content);
 
 	/**
 	 * 后台分页查询二级留言
@@ -61,7 +62,7 @@ public interface CommentService {
 	 * @param resourceId  一级留言的id
 	 * @return
 	 */
-	ListRsp<CommentBo> pageChildrenComment(Page page,String resourceId);
+	ListRsp<CommentBo> pageChildrenComment(Page page, String resourceId);
 
 	/**
 	 * 新增评论

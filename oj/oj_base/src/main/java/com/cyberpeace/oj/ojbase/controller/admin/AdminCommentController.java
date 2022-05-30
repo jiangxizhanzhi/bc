@@ -31,53 +31,57 @@ import org.springframework.web.bind.annotation.*;
 @RequiresAuthentication
 public class AdminCommentController {
 
-    @Autowired
-    private CommentService commentService;
+	@Autowired
+	private CommentService commentService;
 
-    @ApiOperation("留言新增")
-    @PostMapping("")
-    @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
-    public BaseRsp<Integer> addComment(@RequestBody @Validated CommentReq commentReq) {
+	@ApiOperation("留言新增")
+	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
+	public BaseRsp<Integer> addComment(@RequestBody @Validated CommentReq commentReq) {
 
-        Comment comment = BeanUtils.copy(commentReq, Comment.class);
-        comment.setUserId(UserInfoContext.getUserContext().getUserId());
+		Comment comment = BeanUtils.copy(commentReq, Comment.class);
+		comment.setUserId(UserInfoContext.getUserContext().getUserId());
 
-        Integer result = commentService.adminAddNewComment(comment);
-        return new BaseRsp<>(result);
-    }
+		Integer result = commentService.adminAddNewComment(comment);
+		return new BaseRsp<>(result);
+	}
 
-    @ApiOperation("留言删除")
-    @DeleteMapping("")
-    @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
-    public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+	@ApiOperation("留言删除")
+	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
+	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
-        commentService.bathDeleteComment(deleteReq.getIds());
+		commentService.bathDeleteComment(deleteReq.getIds());
 
-        return new BaseRsp<>();
-    }
+		return new BaseRsp<>();
+	}
 
-    @ApiOperation("分页查询一级留言")
-    @GetMapping("list")
-    @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
-    public BaseRsp<ListRsp<CommentBo>> parentList(@ApiParam @Validated PageCommentReq pageCommentReq) {
-        Page page = pageCommentReq.toPageParam();
-        if (CollectionUtils.isEmpty(page.getOrders())) {
-            PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
-        }
-        ListRsp<CommentBo> listRsp = commentService.pageParentComment(page, pageCommentReq.getBusinessType(), pageCommentReq.getPattern());
-        return new BaseRsp(listRsp);
-    }
+	@ApiOperation("分页查询一级留言")
+	@GetMapping("list")
+	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
+	public BaseRsp<ListRsp<CommentBo>>
+			parentList(@ApiParam @Validated PageCommentReq pageCommentReq) {
+		Page page = pageCommentReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
+		}
+		ListRsp<CommentBo> listRsp = commentService.pageParentComment(page,
+				pageCommentReq.getBusinessType(), pageCommentReq.getPattern());
+		return new BaseRsp(listRsp);
+	}
 
-    @ApiOperation("分页查询二级留言")
-    @GetMapping("children_list")
-    @RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
-    public BaseRsp<ListRsp<CommentBo>> childrenList(@ApiParam @Validated PageChildrenCommentReq pageChildrenCommentReq) {
-        Page page = pageChildrenCommentReq.toPageParam();
-        if (CollectionUtils.isEmpty(page.getOrders())) {
-            PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
-        }
-        ListRsp<CommentBo> listRsp = commentService.pageChildrenComment(page, pageChildrenCommentReq.getResourceId());
-        return new BaseRsp(listRsp);
-    }
+	@ApiOperation("分页查询二级留言")
+	@GetMapping("children_list")
+	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
+	public BaseRsp<ListRsp<CommentBo>>
+			childrenList(@ApiParam @Validated PageChildrenCommentReq pageChildrenCommentReq) {
+		Page page = pageChildrenCommentReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
+		}
+		ListRsp<CommentBo> listRsp = commentService.pageChildrenComment(page,
+				pageChildrenCommentReq.getResourceId());
+		return new BaseRsp(listRsp);
+	}
 
 }

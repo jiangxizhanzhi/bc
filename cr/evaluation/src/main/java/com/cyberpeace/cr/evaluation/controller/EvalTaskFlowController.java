@@ -99,7 +99,7 @@ public class EvalTaskFlowController {
 		EvalTask evalTask = evalTaskService.getActiveTask(evalFlowsOpsReq.getTaskId());
 
 		Boolean result = crSceneService.startAllFlows(evalTask.getMpSceneId(),
-				evalFlowsOpsReq.getNodeId(), evalFlowsOpsReq.getRunType());
+				evalFlowsOpsReq.getNodeId(), evalFlowsOpsReq.getRunType(), evalTask.getResourceId());
 
 		return new BaseRsp<>(result);
 	}
@@ -112,9 +112,11 @@ public class EvalTaskFlowController {
 		// 鉴权并判断任务是否为活动状态
 		EvalTask evalTask = evalTaskService.getActiveTask(evalFlowsOpsReq.getTaskId());
 
+		// 判断节点列表是否为空 todo
+
 		// 启动流量
 		Boolean result = crSceneService.startFlows(evalTask.getMpSceneId(),
-				evalFlowsOpsReq.getNodeId(), evalFlowsOpsReq.getFlows());
+				evalFlowsOpsReq.getNodeId(), evalFlowsOpsReq.getFlows(), evalTask.getResourceId());
 		return new BaseRsp<>(result);
 	}
 

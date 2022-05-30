@@ -57,7 +57,7 @@ public interface CrSceneService {
 	 * @param flows
 	 * @return
 	 */
-	Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows);
+	Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows, String businessId);
 
 	/** 启动场景节点下所有流量
 	 * @param mpSceneId
@@ -65,6 +65,6 @@ public interface CrSceneService {
 	 * @param runType
 	 * @return
 	 */
-	Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType);
+	Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType, String businessId);
 
 }

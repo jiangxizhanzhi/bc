@@ -2,6 +2,8 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.integratation.model.scene.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +23,6 @@ import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpFlow;
-import com.cyberpeace.integratation.model.scene.FlowBatchOpsContext;
-import com.cyberpeace.integratation.model.scene.FlowInfo;
-import com.cyberpeace.integratation.model.scene.FlowOpsContext;
-import com.cyberpeace.integratation.model.scene.FlowRecordContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
@@ -205,12 +203,18 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	@Override
-	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows) {
+	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows, String businessId) {
 		for (FlowInfoContext flowContext : flows) {
 			FlowOpsContext flowOpsContext = BeanUtils.copy(flowContext,
 					com.cyberpeace.integratation.model.scene.FlowOpsContext.class);
 			flowOpsContext.setId(mpSceneId);
 			flowOpsContext.setNodeId(nodeId);
+
+			// 设置实例id
+			SceneMpContext context = new SceneMpContext();
+			context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID, businessId);
+			flowOpsContext.setContext(context);
+
 			Boolean result = remoteSceneService.startFlow(flowOpsContext);
 
 			if (!result) {
@@ -222,10 +226,15 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	@Override
-	public Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType) {
+	public Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType, String businessId) {
 
 		FlowBatchOpsContext flowBatchOpsContext = new FlowBatchOpsContext(mpSceneId, nodeId,
 				runType);
+
+		// 设置实例id
+		SceneMpContext context = new SceneMpContext();
+		context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID, businessId);
+		flowBatchOpsContext.setContext(context);
 
 		Boolean result = remoteSceneService.batchStartFlow(flowBatchOpsContext);
 

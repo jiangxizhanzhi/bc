@@ -179,4 +179,16 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 		myWebSocketHandler.pushMessage(messageContext, false);
 	}
+
+	@Override
+	public void pushRoomTipsMessage(JSONObject data, String userId) {
+		WsMessageIdentifier identifier = new WsMessageIdentifier();
+		identifier.setUserId(userId);
+		identifier.setPath(WsPath.ROOM_SCENE_FIFTEEN_MIN_TIPS);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> context = WebSocketMessageContext
+				.builder().data(data).messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(context, false);
+	}
 }

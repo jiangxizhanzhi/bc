@@ -1,6 +1,7 @@
 package com.cyberpeace.cs.dao.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -27,4 +28,13 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 	 * @return
 	 */
 	List<LocalScene> selectByCloseTime(Date closeTime);
+
+	/**
+	 * 查询结束时在一定范围内的场景
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<LocalScene> selectBetweenEndTime(@Param("start_time") Date startTime,
+			@Param("end_time") Date endTime);
 }

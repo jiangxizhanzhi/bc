@@ -23,4 +23,7 @@ public interface PushMessageHandler {
 	/** 推送进行远程协助消息*/
 	void pushHelpMessage(JSONObject data, String classroomId, String userId);
 
+	/** 推送课程场景*/
+	void pushRoomTipsMessage(JSONObject data, String userId);
+
 }

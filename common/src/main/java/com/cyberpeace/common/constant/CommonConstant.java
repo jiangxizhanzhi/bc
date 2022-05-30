@@ -51,6 +51,12 @@ public interface CommonConstant {
 
 	int TEN = 10;
 
+	int FOURTEEN = 14;
+
+	int FIFTEEN = 15;
+
+	int SIXTEEN = 16;
+
 	Boolean TRUE = true;
 
 	Boolean FALSE = false;

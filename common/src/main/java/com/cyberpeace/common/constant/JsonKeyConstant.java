@@ -98,4 +98,6 @@ public interface JsonKeyConstant {
 	String ROOM_ID = "room_id";
 
 	String PARENT = "parent";
+
+	String SCENE_NAME = "scene_name";
 }

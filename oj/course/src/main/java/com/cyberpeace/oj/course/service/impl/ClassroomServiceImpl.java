@@ -35,7 +35,6 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
@@ -183,6 +182,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 分组数据
 		List<String> userIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
+
+		// 如果组织下不包含创建者则把创建者加入
+		if (!userIds.contains(authContext.getUserId())) {
+			userIds.add(authContext.getUserId());
+		}
 		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
 				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
 
@@ -306,6 +310,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);
 		}
 
+		// 如果当前组织不包含创建者
+		if (!orgUserIds.contains(classroom.getCreateUserId())) {
+			orgUserIds.add(classroom.getCreateUserId());
+		}
 		return classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
 				courseLesson, orgUserIds, CommonConstant.ONE);
 	}

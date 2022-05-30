@@ -24,7 +24,6 @@ import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
@@ -53,9 +52,6 @@ public class SceneJob {
 
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
-
-	@Autowired
-	private CourseLessonMapper courseLessonMapper;
 
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
@@ -93,10 +89,10 @@ public class SceneJob {
 		// 目前只有实训的课程表
 		for (LocalScene localScene : sceneList) {
 
-			// 如果消息已推送 不重复推送
-			if (null != sceneCache.getIfPresent(localScene.getResourceId())) {
-				continue;
-			}
+//			// 如果消息已推送 不重复推送
+//			if (null != sceneCache.getIfPresent(localScene.getResourceId())) {
+//				continue;
+//			}
 
 			// 课堂场景数据查询
 			OjLocalScene ojLocalScene = ojLocalSceneMapper
@@ -132,7 +128,7 @@ public class SceneJob {
 					String.class);
 			toUserIds.forEach(userId -> pushMessageHandler.pushRoomTipsMessage(tipMessage, userId));
 
-			sceneCache.put(localScene.getResourceId(), localScene.getMpSceneId());
+//			sceneCache.put(localScene.getResourceId(), localScene.getMpSceneId());
 		}
 	}
 

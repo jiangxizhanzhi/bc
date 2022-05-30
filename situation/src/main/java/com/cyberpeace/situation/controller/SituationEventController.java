@@ -1,15 +1,13 @@
 package com.cyberpeace.situation.controller;
 
-import com.cyberpeace.common.model.BaseRsp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.controller.req.EventMessageReq;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiAreaDynamic;
 import com.cyberpeace.situation.model.ws.WsMultiElementDynamic;
@@ -59,4 +57,14 @@ public class SituationEventController {
 		return rsp;
 	}
 
+	@ApiOperation("推送指定攻击动效信息")
+	@PostMapping("event_message")
+	public BaseRsp<Boolean> sendEventMessage(@RequestBody EventMessageReq eventMessageReq) {
+		String code = eventMessageReq.getCode();
+		String sceneId = eventMessageReq.getSceneId();
+		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(code, eventMessageReq.getData());
+		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
+		situationHandlerService.pushDataToRoom(data, sceneId);
+		return new BaseRsp<>(true);
+	}
 }

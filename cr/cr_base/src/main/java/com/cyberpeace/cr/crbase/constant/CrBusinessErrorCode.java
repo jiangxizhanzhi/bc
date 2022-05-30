@@ -348,4 +348,14 @@ public interface CrBusinessErrorCode {
 	 * 靶场测评评估访问中台失败
 	 */
 	String GET_PROBE_DATA_FAILED = "101107";
+
+	/**
+	 * 当前节点存在未完成的流量任务
+	 */
+	String FLOW_TASK_EXISTS = "101108";
+
+	/**
+	 * 无法判断流量任务状态
+	 */
+	String FAILED_TO_JUDGE_FLOW_TASK_STATUS = "101109";
 }

@@ -3,12 +3,13 @@ package com.cyberpeace.cr.evaluation.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 public class EvalFlowsOpsReq implements Serializable {
@@ -26,5 +27,7 @@ public class EvalFlowsOpsReq implements Serializable {
 	private int runType;
 
 	@ApiModelProperty("流量列表")
+	@NotNull
+	@NotEmpty
 	private List<FlowInfoContext> flows;
 }

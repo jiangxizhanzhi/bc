@@ -34,6 +34,7 @@ public class ElementFlow implements Serializable {
 
 	public enum TaskStatusEnum {
 
+		UNDEFINED(-1,"未定义"),
 		INIT(0, "初始化"),
 		RUNNING(1, "运行中"),
 		STOPPING(2, "停止中"),

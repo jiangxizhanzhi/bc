@@ -2,14 +2,13 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.integratation.model.scene.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -23,6 +22,7 @@ import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpFlow;
+import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
@@ -78,6 +78,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return BeanUtils.deepCopyList(elementFlowList, FlowInfo.class);
 	}
 
+	/**获取节点流量列表*/
 	private List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
 
 		if (StringUtils.isEmpty(nodeId)) {
@@ -101,6 +102,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return nodeFlowList;
 	}
 
+	/**获取cpFlow*/
 	private CpFlow getCpFlow(String mpSceneId, String topoId) {
 
 		// 1.创建变量
@@ -128,6 +130,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return cpFlow;
 	}
 
+	/**过滤流量列表*/
 	private ListRsp<ElementFlow> filterFlowList(List<ElementFlow> elementFlowList,
 			Integer interactiveType, Page page) {
 
@@ -144,19 +147,11 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return flowListRsp;
 	}
 
+	/**设置节点流量状态*/
 	private List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList,
 			String mpSceneId, String nodeId) {
 
-		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, null);
-		// 判断优化 todo
-		Integer taskStatus;
-		try {
-			JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
-			taskStatus = (Integer) jsonObject.getOrDefault("status",
-					ElementFlow.TaskStatusEnum.ZERO.getCode());
-		} catch (Exception e) {
-			taskStatus = ElementFlow.TaskStatusEnum.INIT.getCode();
-		}
+		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);
 
 		for (ElementFlow elementFlow : elementFlowList) {
 			elementFlow.setCommonStatus(taskStatus);
@@ -165,11 +160,39 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return elementFlowList;
 	}
 
-	/**启动流量前校验流量状态 todo*/
-	private Boolean checkElementFlowStatus(String mpSceneId, String nodeId, String flowId) {
-		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, flowId);
-		JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
+	/**启动流量前校验流量任务状态*/
+	private Boolean checkFlowTaskStatus(String mpSceneId, String nodeId) {
+
+		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);
+
+		if (taskStatus.equals(ElementFlow.TaskStatusEnum.UNDEFINED.getCode())) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_JUDGE_FLOW_TASK_STATUS);
+		}
+
+		if (!taskStatus.equals(ElementFlow.TaskStatusEnum.STOPPED.getCode())
+				&& !taskStatus.equals(ElementFlow.TaskStatusEnum.ZERO.getCode())) {
+			throw new BusinessException(CrBusinessErrorCode.FLOW_TASK_EXISTS);
+		}
+
 		return true;
+	}
+
+	/**获取节点流量任务状态*/
+	private Integer getFlowTaskStatus(String mpSceneId, String nodeId) {
+
+		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, null);
+
+		// 判断流量状态
+		Integer taskStatus;
+		try {
+			JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
+			taskStatus = (Integer) jsonObject.getOrDefault("status",
+					ElementFlow.TaskStatusEnum.ZERO.getCode());
+		} catch (Exception e) {
+			taskStatus = ElementFlow.TaskStatusEnum.UNDEFINED.getCode();
+		}
+
+		return taskStatus;
 	}
 
 	@Override
@@ -203,7 +226,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	@Override
-	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows, String businessId) {
+	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
+			String businessId) {
+
+		// 校验节点下流量任务状态
+		checkFlowTaskStatus(mpSceneId, nodeId);
+
 		for (FlowInfoContext flowContext : flows) {
 			FlowOpsContext flowOpsContext = BeanUtils.copy(flowContext,
 					com.cyberpeace.integratation.model.scene.FlowOpsContext.class);
@@ -226,7 +254,11 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	@Override
-	public Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType, String businessId) {
+	public Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType,
+			String businessId) {
+
+		// 校验节点下流量任务状态
+		checkFlowTaskStatus(mpSceneId, nodeId);
 
 		FlowBatchOpsContext flowBatchOpsContext = new FlowBatchOpsContext(mpSceneId, nodeId,
 				runType);

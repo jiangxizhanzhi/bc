@@ -263,17 +263,8 @@ public class EvalTaskController {
 		evalTimeLineContextList.add(0, new EvalTimeLineContext("场景启动", evalTask.getStartTime()));
 		evalTimeLineContextList.add(new EvalTimeLineContext("场景结束", evalTask.getEndTime()));
 		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);
-		return new BaseRsp<>(evalTaskTimeNodesRsp);
-	}
 
-	@ApiOperation("任务名称校验")
-	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-	@PostMapping("validate_name")
-	public BaseRsp<Boolean>
-			validateName(@RequestBody @Validated EvalTaskNameValidateReq evalTaskNameValidateReq) {
-		Boolean result = evalTaskService.validateName(evalTaskNameValidateReq.getTaskName(),
-				evalTaskNameValidateReq.getTemplateId(), evalTaskNameValidateReq.getTaskId());
-		return new BaseRsp<>(result);
+		return new BaseRsp<>(evalTaskTimeNodesRsp);
 	}
 
 }

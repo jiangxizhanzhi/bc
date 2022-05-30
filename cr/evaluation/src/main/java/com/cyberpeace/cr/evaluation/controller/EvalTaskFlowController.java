@@ -112,8 +112,6 @@ public class EvalTaskFlowController {
 		// 鉴权并判断任务是否为活动状态
 		EvalTask evalTask = evalTaskService.getActiveTask(evalFlowsOpsReq.getTaskId());
 
-		// 判断节点列表是否为空 todo
-
 		// 启动流量
 		Boolean result = crSceneService.startFlows(evalTask.getMpSceneId(),
 				evalFlowsOpsReq.getNodeId(), evalFlowsOpsReq.getFlows(), evalTask.getResourceId());
@@ -131,6 +129,7 @@ public class EvalTaskFlowController {
 
 		// 鉴权
 		evalTaskService.getTask(taskId);
+
 		// 获取流量下载链接
 		FlowDownloadRsp flowDownloadRsp = new FlowDownloadRsp(
 				crSceneService.getFlowFilePath(flowId));

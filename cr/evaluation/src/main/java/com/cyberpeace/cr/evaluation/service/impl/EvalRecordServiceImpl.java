@@ -2,7 +2,6 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -600,7 +599,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (evalIndexRef.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())) {
                 EvalLog.info(evalRecord, evalIndexRef, "system evaluation type index start...");
                 evalIndexRefService.startIndex(evalIndexRef, evalAlgorithmRef, evalIndexRefMap, evalVariableRefMap, evalRecord);
-                EvalLog.info(evalRecord, evalIndexRef, "system evaluation type index completed.");
             } else {
                 EvalLog.info(evalRecord, evalIndexRef, "specialist evaluation type index, continue.");
             }
@@ -705,6 +703,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             probeDataItem.setProbeId(mpCollectionEvent.getProbeId());
 
             JSONObject content = JsonUtil.toJsonObject(probeDataItem.getContent(), JSONObject.class);
+            if (content == null) {
+                EvalLog.error(evalRecord, evalVariableRef, "collect data field [content] is null.");
+                throw new RemoteServiceException();
+            }
             // 时区变更，当前获取到数据为UTC时间
             if (evalVariableRefService.BASE.contains(mpCollectionEvent.getProbeId())) {
                 JSONObject scanAttr = content.getJSONObject("scan");

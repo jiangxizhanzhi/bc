@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
@@ -23,9 +22,11 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "靶场测评-评估")
 @RestController
@@ -117,6 +118,26 @@ public class EvalRecordController {
     @GetMapping("/probes/all")
     public BaseRsp<List<EvalRecordNodeProbeReq>> getNodeProbe(@RequestParam("room_id") String roomId) {
         return new BaseRsp<>(evalRecordService.getNodeProbe(roomId));
+    }
+
+    @PostConstruct
+    public void init() {
+        List<EvalRecord> evalRecordList = evalRecordService.lambdaQuery().eq(EvalRecord::getStatus, EvalRecord.Status.RUNNING.getCode()).list();
+        if (evalRecordList.isEmpty()) {
+            return;
+        }
+        Map<String, EvalTask> evalTaskMap = evalTaskService.lambdaQuery()
+                .in(EvalTask::getResourceId, evalRecordList.stream().map(EvalRecord::getTaskId).collect(Collectors.toList()))
+                .list()
+                .stream().collect(Collectors.toMap(EvalTask::getResourceId, evalTask -> evalTask));
+
+        evalRecordList.forEach(evalRecord -> {
+            EvalTask evalTask = evalTaskMap.get(evalRecord.getTaskId());
+            if (evalRecord.getEvalTime() == null) {
+                evalRecord.setEvalTime(new Date());
+            }
+            evalRecordService.recordRun(evalRecord, evalTask, true);
+        });
     }
 
     @ApiOperation("评估任务开启")

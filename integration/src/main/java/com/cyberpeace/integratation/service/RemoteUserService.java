@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.GxToken;
+import com.cyberpeace.integratation.model.mp.RemoteUser;
 
 public interface RemoteUserService {
 
@@ -46,5 +47,11 @@ public interface RemoteUserService {
 	 * @return
 	 */
 	String getMpUserToken(GxToken gxToken);
+
+	/**
+	 * 查询共性平台用户列表
+	 * @return
+	 */
+	List<RemoteUser> getGxUserList();
 
 }

@@ -2,6 +2,9 @@ package com.cyberpeace.integratation.service.impl;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.JsonUtil;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.ConfigUtil;
@@ -11,6 +14,8 @@ import com.cyberpeace.integratation.service.RemoteTaskService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class RemoteTaskServiceImpl implements RemoteTaskService {
@@ -18,6 +23,8 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 	private String REMOTE_TASK_URL;
 
 	private String REMOTE_USER_URL;
+
+	private String REMOTE_TASK_LIST_URL;
 
 	private String CT_TASK_URL;
 
@@ -30,6 +37,7 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 		CT_TASK_URL = "http://" + SystemPropUtil.getProp("AD_TASK_SERVER_HOST") + ":"
 				+ SystemPropUtil.getProp("AD_TASK_SERVER_PORT");
 		REMOTE_USER_URL = REMOTE_TASK_URL + ConfigUtil.getContextProperty("gx.task.users");
+		REMOTE_TASK_LIST_URL = REMOTE_TASK_URL + ConfigUtil.getContextProperty("gx.task.list");
 		CT_TASK_STOP_URL = CT_TASK_URL + ConfigUtil.getContextProperty("ct.task.stop");
 	}
 
@@ -46,6 +54,13 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 				+ "&duration=" + duration;
 		Boolean result = HttpClientUtil.post(targetUrl, null, Boolean.class);
 		return result;
+	}
+
+	@Override
+	public List<JSONObject> getTasks(String userId, String softId, String token){
+		String targetUrl = REMOTE_TASK_LIST_URL + "?userId=" + userId + "&softId=" + softId;
+		String data = HttpClientUtil.rawGet(targetUrl, token, String.class);
+		return JsonUtil.toJsonObjectArray(data, JSONObject.class);
 	}
 
 }

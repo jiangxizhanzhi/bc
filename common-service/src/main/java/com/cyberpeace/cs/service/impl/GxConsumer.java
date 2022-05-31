@@ -1,7 +1,6 @@
 package com.cyberpeace.cs.service.impl;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.mapper.GxTaskMapper;
 import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.cs.service.context.GxTaskContext;
-import com.cyberpeace.integratation.service.RemoteTaskService;
 
 @Component
 @RabbitListener(queues = "oj.xlrwjs", containerFactory = "gxContainerFactory")
@@ -28,9 +25,6 @@ public class GxConsumer {
 
 	@Autowired
 	private GxTaskService gxTaskService;
-
-	@Autowired
-	private RemoteTaskService remoteTaskService;
 
 	@Autowired
 	private GxTaskMapper gxTaskMapper;
@@ -64,32 +58,10 @@ public class GxConsumer {
 			return false;
 		}
 
-		// 提取原始数据
-		String taskName = message.getString("taskName");
-		String trainContent = message.getString("trainContent");
-		String target = (String) message.getOrDefault("target", "");
-		Integer trainTime = message.getInteger("trainTime");
-		Integer trainLength = message.getInteger("trainLength");
-		String token = message.getString("token");
-
-		// 处理原始数据
-		Double duration = MathUtils.divide((double) trainLength, 60.00);
-		Date startTime = new Date(trainTime);
-
-		// 构造任务数据
-		GxTaskContext gxTaskContext = new GxTaskContext();
-		gxTaskContext.setTaskId(taskId);
-		gxTaskContext.setName(taskName);
-		gxTaskContext.setContent(trainContent);
-		gxTaskContext.setTarget(target);
-		gxTaskContext.setDuration(duration);
-		gxTaskContext.setStartTime(startTime);
-		gxTaskContext.setEndTime(TimeUtil.addMins(startTime, trainLength));
-
-		String trainees = remoteTaskService.getTaskUsers(taskId, token);
-		gxTaskContext.setTrainees(trainees);
+		GxTaskContext gxTaskContext = gxTaskService.getContextByMsg(message);
 		gxTaskService.create(gxTaskContext);
-		log.info(String.format("Successful processing of messages: %s", message.toString()));
+		log.info(String.format("Successful processing of messages: %s",
+				JsonUtil.toJsonString(message)));
 		return true;
 	}
 }

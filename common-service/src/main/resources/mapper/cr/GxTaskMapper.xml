@@ -37,4 +37,9 @@
         and event_id is not null
     </select>
 
+    <select id="listTaskId" resultType="java.lang.String">
+        select task_id
+        from sjyc_task
+    </select>
+
 </mapper>

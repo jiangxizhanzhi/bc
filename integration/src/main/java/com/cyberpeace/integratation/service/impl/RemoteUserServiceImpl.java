@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.mp.RemoteUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -47,6 +49,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String CONVERT_TOKEN_URL;
 
+	private String REMOTE_USERS_URL;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -65,6 +69,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 		CONVERT_TOKEN_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.user.token.convert");
+
+		REMOTE_USERS_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.user.remote.list");
 	}
 
 	@Override
@@ -311,6 +318,16 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		String mpToken = data.getString("token");
 
 		return mpToken;
+	}
+
+	@Override
+	public List<RemoteUser> getGxUserList(){
+
+		String data = HttpClientUtil.rawGet(REMOTE_USERS_URL, String.class);
+
+		List<RemoteUser> remoteUsers = JsonUtil.toJsonObjectArray(data, RemoteUser.class);
+
+		return remoteUsers;
 	}
 
 }

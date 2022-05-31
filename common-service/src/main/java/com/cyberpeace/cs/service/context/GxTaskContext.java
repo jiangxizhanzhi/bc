@@ -24,6 +24,9 @@ public class GxTaskContext implements Serializable {
 	@ApiModelProperty(value = "训练用户列表")
 	private String trainees;
 
+	@ApiModelProperty(value = "训练用户人数")
+	private Integer traineesCount;
+
 	@ApiModelProperty(value = "开始时间")
 	private Date startTime;
 
@@ -32,5 +35,8 @@ public class GxTaskContext implements Serializable {
 
 	@ApiModelProperty(value = "训练时长(小时)")
 	private Double duration;
+
+	@ApiModelProperty(value = "任务有效期（天）")
+	private Integer validityPeriod;
 
 }

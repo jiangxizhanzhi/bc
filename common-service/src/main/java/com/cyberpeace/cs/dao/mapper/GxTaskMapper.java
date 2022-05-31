@@ -21,4 +21,6 @@ public interface GxTaskMapper extends BaseMapper<GxTask> {
 
 	List<GxTask> selectByCloseTime(Date closeTime);
 
+	List<String> listTaskId();
+
 }

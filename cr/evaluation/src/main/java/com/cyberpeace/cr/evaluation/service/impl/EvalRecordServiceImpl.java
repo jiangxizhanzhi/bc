@@ -198,7 +198,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         ).list().stream().collect(Collectors.toMap(EvalAlgorithm::getResourceId, evalAlgorithm -> evalAlgorithm));
         Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = Maps.newHashMap();
 
-        // todo 当前算法重复拷贝， 待过滤
         // 生成变量项数据（五级）
         List<EvalVariableRef> variableRefs = Lists.newArrayList();
         Map<String, String> variableIdsMap = Maps.newHashMap();

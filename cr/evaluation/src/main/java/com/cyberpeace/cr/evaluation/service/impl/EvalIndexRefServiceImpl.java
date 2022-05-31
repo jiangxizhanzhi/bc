@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.evaluate.RemoteException;
@@ -20,10 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,6 +85,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
                 .eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode())
                 .eq(EvalIndexRef::getResourceId, indexId)
                 .one();
+        if (thirdIndex == null) {
+            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+        }
 
         List<EvalIndexRef> fourthIndexes = lambdaQuery()
                 .eq(EvalIndexRef::getLevel, EvalIndexRef.Level.AGGREGATION.getCode())

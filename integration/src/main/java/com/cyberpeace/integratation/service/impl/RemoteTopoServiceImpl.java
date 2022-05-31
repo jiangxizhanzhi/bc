@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
@@ -159,9 +159,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 			return CommonConstant.FALSE;
 		}
 
-		String topoStr = JsonUtil.toJsonString(topo);
 		JSONObject topoById = getTopoById(topoId);
-		String idDataStr = JsonUtil.toJsonString(topoById);
-		return topoStr.equals(idDataStr);
+		return JsonUtil.equalJson(topo, topoById);
 	}
 }

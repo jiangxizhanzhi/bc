@@ -19,7 +19,7 @@ CREATE TABLE `cr_eval_aggregation`  (
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE,
   INDEX `eval_indicator_id`(`eval_indicator_id`) USING BTREE,
   INDEX `aggregating_algorithm_id`(`aggregating_algorithm_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 290 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_algorithm_ref
@@ -36,7 +36,7 @@ CREATE TABLE `cr_eval_algorithm_ref`  (
   `update_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5441 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_algorithm
@@ -57,7 +57,7 @@ CREATE TABLE `cr_eval_algorithm`  (
   `update_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 161 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_collection
@@ -81,7 +81,7 @@ CREATE TABLE `cr_eval_collection`  (
   INDEX `format_algorithm_id`(`format_algorithm_id`) USING BTREE,
   INDEX `detection_algorithm_id`(`detection_algorithm_id`) USING BTREE,
   INDEX `score_algorithm_id`(`score_algorithm_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 342 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_index_ref
@@ -108,7 +108,7 @@ CREATE TABLE `cr_eval_index_ref`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE,
   INDEX `record_id`(`record_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2951 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_index
@@ -132,7 +132,7 @@ CREATE TABLE `cr_eval_index`  (
   INDEX `eval_system_id`(`eval_system_id`) USING BTREE,
   INDEX `eval_indicator_id`(`eval_indicator_id`) USING BTREE,
   INDEX `aggregating_algorithm_id`(`aggregating_algorithm_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 866 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_indicator
@@ -156,7 +156,7 @@ CREATE TABLE `cr_eval_indicator`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE,
   INDEX `aggregating_algorithm_id`(`aggregating_algorithm_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 104 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_probe_data
@@ -172,7 +172,7 @@ CREATE TABLE `cr_eval_probe_data`  (
   `collection_time` datetime NULL DEFAULT NULL,
   `device_ip` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10576 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_record
@@ -195,7 +195,7 @@ CREATE TABLE `cr_eval_record`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE,
   INDEX `room_id`(`task_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 474 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_system
@@ -214,7 +214,7 @@ CREATE TABLE `cr_eval_system`  (
   `update_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_task
@@ -236,7 +236,7 @@ CREATE TABLE `cr_eval_task`  (
   `update_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 132 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_task_step
@@ -255,7 +255,7 @@ CREATE TABLE `cr_eval_task_step`  (
   `update_time` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 194 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_template
@@ -276,7 +276,7 @@ CREATE TABLE `cr_eval_template`  (
   `create_user_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 225 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_variable_ref_probe_data
@@ -292,7 +292,7 @@ CREATE TABLE `cr_eval_variable_ref_probe_data`  (
   `time` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `variable_id`(`variable_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2624 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cr_eval_variable_ref
@@ -323,7 +323,7 @@ CREATE TABLE `cr_eval_variable_ref`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE,
   INDEX `record_id`(`record_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 895 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cr_constants_config

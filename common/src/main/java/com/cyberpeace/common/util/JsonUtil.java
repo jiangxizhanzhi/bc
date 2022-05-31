@@ -209,7 +209,7 @@ public class JsonUtil {
 		Iterator<String> iterator = jsonObject.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = iterator.next();
-			treeMap.put(iterator.next(), jsonObject.getString(key));
+			treeMap.put(key, jsonObject.getString(key));
 		}
 
 		return treeMap;

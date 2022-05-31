@@ -4,7 +4,7 @@ ALTER TABLE oj_classroom ADD UNIQUE INDEX org_lesson_uniq(organization_id, lesso
 ALTER TABLE oj_classroom ADD UNIQUE INDEX resource_uniq(resource_id);
 ALTER TABLE oj_classroom_group_info ADD UNIQUE INDEX resource_uniq(resource_id);
 ALTER TABLE oj_classroom_group_info ADD UNIQUE INDEX room_group_uniq(classroom_id, group_no);
-ALTER TABLE oj_classroom_group_archive ADD UNIQUE INDEX room_uniq(classroom_id);
+ALTER TABLE oj_classroom_group_archive ADD UNIQUE INDEX room_name_uniq(classroom_id, name);
 
 ALTER TABLE oj_course ADD UNIQUE INDEX name_uniq(name);
 ALTER TABLE oj_course_lesson ADD UNIQUE course_name_uniq(course_id, name);

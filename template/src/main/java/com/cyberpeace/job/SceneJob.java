@@ -59,7 +59,7 @@ public class SceneJob {
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
-	private Cache<String, String> sceneCache = GuavaCacheUtil.newInstance(CommonConstant.FIVE,
+	private Cache<String, String> sceneCache = GuavaCacheUtil.newInstance(CommonConstant.FIFTEEN,
 			TimeUnit.MINUTES, String.class, String.class);
 
 	@Scheduled(fixedRate = 15000)
@@ -83,16 +83,16 @@ public class SceneJob {
 	private void doCountDownFifteenMin() {
 		Date current = new Date();
 		Date fifteenMin = TimeUtil.addMins(current, CommonConstant.FIFTEEN);
-		Date fourteenMin = TimeUtil.addMins(current, CommonConstant.FOURTEEN);
+		Date fourteenMin = TimeUtil.addMins(current, CommonConstant.ONE);
 		List<LocalScene> sceneList = localSceneMapper.selectBetweenEndTime(fourteenMin, fifteenMin);
 
 		// 目前只有实训的课程表
 		for (LocalScene localScene : sceneList) {
 
-//			// 如果消息已推送 不重复推送
-//			if (null != sceneCache.getIfPresent(localScene.getResourceId())) {
-//				continue;
-//			}
+			// 如果消息已推送 不重复推送
+			if (null != sceneCache.getIfPresent(localScene.getResourceId())) {
+				continue;
+			}
 
 			// 课堂场景数据查询
 			OjLocalScene ojLocalScene = ojLocalSceneMapper
@@ -118,17 +118,19 @@ public class SceneJob {
 						ojLocalScene.getResourceId(), groupInfo.getClassroomId());
 			}
 
+			// 组织推送数据
 			JSONObject tipMessage = new JSONObject();
 			tipMessage.put(JsonKeyConstant.BUSINESS_ID, classroom.getCourseId()
 					+ CommonConstant.LEFT_OBLIQUE_LINE + classroom.getLessonId());
 			tipMessage.put(JsonKeyConstant.BUSINESS_TYPE, localScene.getBusinessCode());
 			tipMessage.put(JsonKeyConstant.SCENE_NAME, localScene.getSceneName());
 
+			// 指定用户推送
 			List<String> toUserIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
 					String.class);
 			toUserIds.forEach(userId -> pushMessageHandler.pushRoomTipsMessage(tipMessage, userId));
 
-//			sceneCache.put(localScene.getResourceId(), localScene.getMpSceneId());
+			sceneCache.put(localScene.getResourceId(), localScene.getMpSceneId());
 		}
 	}
 

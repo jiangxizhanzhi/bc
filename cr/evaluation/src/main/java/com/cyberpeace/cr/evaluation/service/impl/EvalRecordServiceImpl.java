@@ -196,9 +196,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Map<String, EvalAlgorithm> evalAlgorithmMap = evalAlgorithmService.lambdaQuery().in(
                 EvalAlgorithm::getResourceId, usingAlgorithmIds
         ).list().stream().collect(Collectors.toMap(EvalAlgorithm::getResourceId, evalAlgorithm -> evalAlgorithm));
+        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = Maps.newHashMap();
 
         // todo 当前算法重复拷贝， 待过滤
-        List<EvalAlgorithmRef> evalAlgorithmRefList = Lists.newArrayList();
         // 生成变量项数据（五级）
         List<EvalVariableRef> variableRefs = Lists.newArrayList();
         Map<String, String> variableIdsMap = Maps.newHashMap();
@@ -210,22 +210,19 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalVariableRef.setProgress(EvalVariableRef.Progress.NOT_START.getCode());
 
             // 构建变量项新的算法数据 - 格式化算法
-            EvalAlgorithmRef newFormatAlgorithm = generateAlgorithmRef(evalCollection.getFormatAlgorithmId(), evalAlgorithmMap);
+            EvalAlgorithmRef newFormatAlgorithm = generateAlgorithmRef(evalCollection.getFormatAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
             evalVariableRef.setFormatAlgorithmId(newFormatAlgorithm.getResourceId());
             evalVariableRef.setFormatParams(evalCollection.getFormatAlgorithmParams());
-            evalAlgorithmRefList.add(newFormatAlgorithm);
 
             // 匹配算法
-            EvalAlgorithmRef newMatchAlgorithm = generateAlgorithmRef(evalCollection.getDetectionAlgorithmId(), evalAlgorithmMap);
+            EvalAlgorithmRef newMatchAlgorithm = generateAlgorithmRef(evalCollection.getDetectionAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
             evalVariableRef.setMatchAlgorithmId(newMatchAlgorithm.getResourceId());
             evalVariableRef.setMatchParams(evalCollection.getDetectionAlgorithmParams());
-            evalAlgorithmRefList.add(newMatchAlgorithm);
 
             // 评分算法
-            EvalAlgorithmRef newMarkAlgorithm = generateAlgorithmRef(evalCollection.getScoreAlgorithmId(), evalAlgorithmMap);
+            EvalAlgorithmRef newMarkAlgorithm = generateAlgorithmRef(evalCollection.getScoreAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
             evalVariableRef.setMarkAlgorithmId(newMarkAlgorithm.getResourceId());
             evalVariableRef.setMarkParams(evalCollection.getScoreAlgorithmParams());
-            evalAlgorithmRefList.add(newMarkAlgorithm);
 
             // 设置使用节点、探针id
             EvalRecordVariableContext evalRecordVariableContext = evalRecordVariableContextMap.get(evalCollection.getResourceId());
@@ -260,10 +257,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             });
             evalIndexRef.setNextIds(JsonUtil.toJsonString(nextIds));
 
-            EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(evalAggregation.getAggregatingAlgorithmId(), evalAlgorithmMap);
+            EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(evalAggregation.getAggregatingAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
             evalIndexRef.setAlgorithmParams(evalAggregation.getAggregatingAlgorithmParams());
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
-            evalAlgorithmRefList.add(evalAlgorithmRef);
 
             indexRefs.add(evalIndexRef);
             evalIndexIdsMap.put(evalAggregation.getResourceId(), evalIndexRef.getResourceId());
@@ -288,7 +284,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setAlgorithmParams(evalIndex.getAggregatingAlgorithmParams());
 
                 nextIds = evalIndex.getChildrenIds();
-                evalAlgorithmRef = generateAlgorithmRef(evalIndex.getAggregatingAlgorithmId(), evalAlgorithmMap);
+                evalAlgorithmRef = generateAlgorithmRef(evalIndex.getAggregatingAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
             } else {
                 EvalIndicator evalIndicator = thirdRelationMap.get(evalIndex.getEvalIndicatorId());
                 if (evalIndicator == null) {
@@ -296,7 +292,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 }
 
                 nextIds = evalIndicator.getAggregationIds();
-                evalAlgorithmRef = generateAlgorithmRef(evalIndicator.getAggregatingAlgorithmId(), evalAlgorithmMap);
+                evalAlgorithmRef = generateAlgorithmRef(evalIndicator.getAggregatingAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
 
                 // 专家评分, 设置默认分值
                 evalIndexRef.setSpecialistType(evalIndicator.getDatatype());
@@ -314,7 +310,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
 
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
-            evalAlgorithmRefList.add(evalAlgorithmRef);
 
             evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(
                     nextIds, String.class
@@ -340,8 +335,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 if (!variableRefs.isEmpty()) {
                     evalVariableRefService.saveBatch(variableRefs);
                 }
-                if (!evalAlgorithmRefList.isEmpty()) {
-                    evalAlgorithmRefService.saveBatch(evalAlgorithmRefList);
+                if (!evalAlgorithmRefMap.values().isEmpty()) {
+                    evalAlgorithmRefService.saveBatch(evalAlgorithmRefMap.values());
                 }
             }
         });
@@ -349,11 +344,20 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return get(evalRecord.getResourceId());
     }
 
-    private EvalAlgorithmRef generateAlgorithmRef(String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap) {
+    private EvalAlgorithmRef generateAlgorithmRef(
+            String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap) {
+        // 已拷贝算法, 不再重复拷贝, evalAlgorithmRefMap获取返回
+        if (evalAlgorithmRefMap.containsKey(algorithmId)) {
+            return evalAlgorithmRefMap.get(algorithmId);
+        }
+
         EvalAlgorithm originAlgorithm = originAlgorithmMap.get(algorithmId);
         EvalAlgorithmRef newAlgorithm = new EvalAlgorithmRef();
         org.springframework.beans.BeanUtils.copyProperties(originAlgorithm, newAlgorithm, "id");
         newAlgorithm.setResourceId(IDGeneratorUtil.getID());
+
+        // 拷贝过一次算法, 放入evalAlgorithmRefMap
+        evalAlgorithmRefMap.put(algorithmId, newAlgorithm);
         return newAlgorithm;
     }
 

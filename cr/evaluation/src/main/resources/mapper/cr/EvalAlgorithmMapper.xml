@@ -23,6 +23,10 @@
         delete
         from cr_eval_algorithm
         where `state` = 0
+        and `resource_id` in
+        <foreach collection="algorithmIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
     </delete>
 
     <select id="selectByType" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm"

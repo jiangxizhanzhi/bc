@@ -1,16 +1,23 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.SystemConfigService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -18,15 +25,8 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.google.common.collect.Lists;
-import com.itextpdf.tool.xml.html.head.Title;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -49,6 +49,9 @@ public class PracticeValidateHandler {
 
 	@Autowired
 	private SystemConfigService systemConfigService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 字段数据长度校验
@@ -229,12 +232,20 @@ public class PracticeValidateHandler {
 	 * 更新时校验场景是否存在
 	 * @param operation
 	 */
-	public void validateOperationUpdateSceneExist(PracticeOperation operation) {
+	public void validateOperationUpdateSceneExist(PracticeOperation operation,
+			JSONObject topoData) {
+
+		// 场景数据查询
 		List<OjLocalScene> adminScenes = ojLocalSceneMapper
 				.selectByBusiness(operation.getResourceId(), false);
 		List<OjLocalScene> webScenes = ojLocalSceneMapper
 				.selectByBusiness(operation.getResourceId(), true);
-		if (CollectionUtils.isNotEmpty(adminScenes) || CollectionUtils.isNotEmpty(webScenes)) {
+		if (CollectionUtils.isEmpty(adminScenes) && CollectionUtils.isEmpty(webScenes)) {
+			return;
+		}
+
+		// topo结构一致性校验
+		if (!remoteTopoService.equalTopo(topoData, operation.getTopoId())) {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}

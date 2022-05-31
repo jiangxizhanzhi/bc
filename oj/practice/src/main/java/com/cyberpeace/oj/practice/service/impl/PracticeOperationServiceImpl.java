@@ -249,7 +249,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		if (operation.getDynamicEnv() && null != operation.getSceneShareMode()
 				&& StringUtils.isNotBlank(operation.getTopoId())) {
-			practiceValidateHandler.validateOperationUpdateSceneExist(operation);
+			practiceValidateHandler.validateOperationUpdateSceneExist(operation, ojSceneConfig);
 		}
 
 		// topo更新

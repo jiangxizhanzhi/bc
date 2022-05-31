@@ -121,7 +121,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 
 		// 返回给前端对展示名称
 		String displayName = ConfigUtil.getContextProperty("cr.local.file.prefix") + storeInDbName;
-		return AttachmentBo.builder().filePath(displayName).fileName(fileName).build();
+		return AttachmentBo.builder().filePath(displayName).fileName(origin.getName()).build();
 	}
 
 	@Override

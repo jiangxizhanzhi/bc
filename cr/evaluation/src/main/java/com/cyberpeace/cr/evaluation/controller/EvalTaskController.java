@@ -119,7 +119,7 @@ public class EvalTaskController {
 		String taskName = evalTaskStopReq.getTaskName();
 
 		// 没有任务名称时，删除场景及任务
-		if (StringUtils.isEmpty(taskName)) {
+		if (taskName == null) {
 			return new BaseRsp<>(evalTaskService.deleteTask(evalTaskOpsContext));
 		}
 

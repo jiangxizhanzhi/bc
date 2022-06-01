@@ -180,7 +180,7 @@ public class EvalAlgorithmAdminController {
 				@Override
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 					evalAlgorithmService.updateStateByIds(selectUsedAlgorithmIds);
-					evalAlgorithmMapper.deleteAll(selectUsedAlgorithmIds);
+					evalAlgorithmMapper.deleteAll(deleteReq.getIds());
 
 				}
 			});

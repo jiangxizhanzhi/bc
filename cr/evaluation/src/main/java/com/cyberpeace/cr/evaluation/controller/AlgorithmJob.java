@@ -37,6 +37,10 @@ public class AlgorithmJob {
 
 		List<String> allAlgorithmIds = StreamApiUtils.map(evalAlgorithms,
 				EvalAlgorithm::getResourceId);
+		// todo 数据为空, 传入"selectUsedAlgorithmIds"报错
+		if (evalAlgorithms.isEmpty()) {
+			return;
+		}
 		List<String> usedAlgorithmIds = evalAlgorithmService.selectUsedAlgorithmIds(
 				StreamApiUtils.map(evalAlgorithms, EvalAlgorithm::getResourceId));
 

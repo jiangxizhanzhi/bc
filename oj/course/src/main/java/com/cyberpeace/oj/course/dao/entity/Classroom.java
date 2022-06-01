@@ -13,21 +13,23 @@ import lombok.Data;
 @TableName("oj_classroom")
 public class Classroom extends BaseTable {
 
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    private Date startTime;
+	private Date startTime;
 
-    private Date endTime;
+	private Date endTime;
 
-    private String courseId;
+	private String courseId;
 
-    private String lessonId;
+	private String lessonId;
 
-    private String organizationId;
+	private String organizationId;
 
-    private String organizationIds;
+	private String organizationIds;
 
-    private String createUserId;
+	private String createUserId;
+
+	private String userIds;
 
 }

@@ -5,7 +5,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cs.dao.entity.GxOrgUsers;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.cs.dao.entity.GxLocalOrg;
 import com.cyberpeace.cs.dao.entity.GxTask;
 import com.cyberpeace.cs.service.context.GxTaskContext;
 import com.cyberpeace.cs.service.context.GxTaskListContext;
@@ -17,14 +18,22 @@ public interface GxTaskService extends IService<GxTask> {
 
 	IPage<GxTaskListContext> list(GxTaskListQuery query);
 
+	/**创建本地组织*/
 	String createTaskOrg(List<String> userList, String classRoomId, String orgName);
 
-	List<String> getLocalUserList(GxOrgUsers gxOrgUsers);
+	/**获取本地组织下用户列表*/
+	List<String> getLocalUserList(GxLocalOrg gxLocalOrg);
 
+	/**获取本地组织下用户信息列表*/
+	List<UserInfo> getUserInfosByOrgId(String orgId);
+
+	/**清除课程表相关的组织*/
 	Boolean clearClassRoomOrg(String classRoomId);
 
+	/**从接口消息中提取任务数据*/
 	GxTaskContext getContextByData(JSONObject userTask, String token);
 
+	/**从队列消息中提取任务数据*/
 	GxTaskContext getContextByMsg(JSONObject message);
 
 }

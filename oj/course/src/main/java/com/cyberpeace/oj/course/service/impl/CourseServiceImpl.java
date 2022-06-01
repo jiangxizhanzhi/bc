@@ -137,7 +137,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	public CourseInfoBo selectById(String courseId, AuthContext authContext) {
 		// 基本数据校验
 		Course course = courseValidateHandler.validateCourseExist(courseId);
-		courseValidateHandler.validateCoursePermission(courseId, authContext);
+		courseValidateHandler.validateCoursePermission(courseId, authContext, true);
 
 		CourseInfoBo courseInfoBo = courseToBo(course, true);
 		courseInfoBo.setLogo(utilService.handlerFileUrl(course.getLogo()));
@@ -449,7 +449,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 数据校验
 		courseIds.forEach(
-				courseId -> courseValidateHandler.validateCoursePermission(courseId, authContext));
+				courseId -> courseValidateHandler.validateCoursePermission(courseId, authContext, false));
 		List<Course> courseList = StreamApiUtils.map(courseIds,
 				courseId -> courseValidateHandler.validateCourseExist(courseId));
 

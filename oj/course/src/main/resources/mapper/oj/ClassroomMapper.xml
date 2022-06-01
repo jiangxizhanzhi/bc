@@ -120,4 +120,54 @@
             #{classroomId}
         </foreach>
     </select>
+
+    <select id="selectCourseIdsByUserId" resultType="java.lang.String">
+        select course_id from oj_classroom
+        where
+        <if test="userId != null and userId != ''">
+            <bind name="likeUserId" value="'%' + userId + '%'"/>
+            user_ids like #{likeUserId}
+        </if>
+    </select>
+
+    <select id="selectByUserIdAndNotInCourses" resultMap="base">
+        select * from oj_classroom
+        where
+        <if test="userId != null and userId != ''">
+            <bind name="likeUserId" value="'%' + userId + '%'"/>
+            user_ids like #{likeUserId}
+        </if>
+        <if test="courseIds != null and courseIds.size() != 0">
+            and course_id not in
+            <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                #{courseId}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectByUserId" resultMap="base">
+        select * from oj_classroom
+        where
+        <if test="userId != null and userId != ''">
+            <bind name="likeUserId" value="'%' + userId + '%'"/>
+            user_ids like #{likeUserId}
+        </if>
+    </select>
+
+    <select id="selectByUserIds" resultMap="base">
+        <foreach collection="userIds" item="userId" open="(" close=")" separator="union">
+            select * from oj_classroom
+            where user_ids like '%"${userId}"%'
+        </foreach>
+    </select>
+
+    <select id="selectByUserIdAndLesson" resultMap="base">
+        select * from oj_classroom
+        where
+        <if test="userId != null and userId != ''">
+            <bind name="likeUserId" value="'%' + userId + '%'"/>
+            user_ids like #{likeUserId}
+        </if>
+        and lesson_id = #{lessonId}
+    </select>
 </mapper>

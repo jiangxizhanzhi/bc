@@ -8,6 +8,7 @@ import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.cs.constant.SceneEvent;
+import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -79,6 +80,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	@Autowired
+	private GxTaskService gxTaskService;
+
 	@Override
 	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext) {
 		if (authContext.getIsWeb()) {
@@ -109,8 +113,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		Classroom classroom = validateRoom(classroomId);
 		CourseLesson courseLesson = validateLesson(classroom);
 
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-				true);
+		List<UserInfo> userInfos = gxTaskService.getUserInfosByOrgId(classroom.getOrganizationId());
 
 		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);

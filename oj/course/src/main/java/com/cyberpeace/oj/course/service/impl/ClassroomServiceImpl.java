@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,9 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.dao.entity.GxOrgUsers;
+import com.cyberpeace.cs.dao.entity.GxLocalOrg;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.GxOrgUsersMapper;
+import com.cyberpeace.cs.dao.mapper.GxLocalOrgMapper;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
@@ -113,7 +115,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	private RemoteSceneService remoteSceneService;
 
 	@Autowired
-	private GxOrgUsersMapper gxOrgUsersMapper;
+	private GxLocalOrgMapper gxLocalOrgMapper;
 
 	@Autowired
 	private GxTaskService gxTaskService;
@@ -122,7 +124,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public Classroom create(Classroom classroom, AuthContext authContext) {
 
 		// 数据校验
-		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
+		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext, false);
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
@@ -133,9 +135,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
 				classroom.getStartTime(), classroom.getEndTime());
 
+		String orgId = classroom.getOrganizationId();
+
 		// 课堂基本数据获取
 		List<String> orgIds = classroomValidateHandler
-				.validateClassroomOrgHasUser(classroom.getOrganizationId());
+				.validateClassroomOrgHasUser(orgId);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 		classroom.setResourceId(IDGeneratorUtil.getID());
 
@@ -147,11 +151,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 如果课程无访问权限 把组织数据加入
 		authContext.setIsWeb(CommonConstant.TRUE);
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!authCourseIds.contains(classroom.getCourseId())) {
+		if (!authCourseIds.contains(classroom.getCourseId()) && gxLocalOrgMapper.selectById(orgId) == null ) {
 			changeCourseOrg(course, orgIds);
 		}
 
-		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(classroom.getOrganizationId());
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(classroom.getOrganizationId());
 
 		// 公告发布 todo
 
@@ -163,9 +167,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroomGroupInfoService.saveBatch(groupInfoList);
 				courseMapper.updateById(course);
 
-				if (gxOrgUsers != null) {
-					gxOrgUsers.setClassRoomId(classroom.getResourceId());
-					gxOrgUsersMapper.updateById(gxOrgUsers);
+				if (gxLocalOrg != null) {
+					gxLocalOrg.setClassRoomId(classroom.getResourceId());
+					gxLocalOrgMapper.updateById(gxLocalOrg);
 				}
 			}
 		});
@@ -183,9 +187,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		for (String orgId : orgIds) {
 
 			// 先判断有无本地组织
-			GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
-			if (gxOrgUsers != null) {
-				userIds.addAll(gxTaskService.getLocalUserList(gxOrgUsers));
+			GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
+			if (gxLocalOrg != null) {
+				userIds.addAll(gxTaskService.getLocalUserList(gxLocalOrg));
 				continue;
 			}
 
@@ -198,11 +202,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		return userIds;
 	}
 
-	private List<String> getOrgUserIds(String orgId) {
-
-		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
-		if (gxOrgUsers != null) {
-			return gxTaskService.getLocalUserList(gxOrgUsers);
+	private List<String> getLocalOrgUserIds(String orgId) {
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
+		if (gxLocalOrg != null) {
+			return gxTaskService.getLocalUserList(gxLocalOrg);
 		}
 		return null;
 	}
@@ -211,9 +214,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public List<String> getOrgIds(String orgId) {
 
 		// 首先校验本地组织
-		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
 
-		if (gxOrgUsers != null) {
+		if (gxLocalOrg != null) {
 			List<String> orgIds = Lists.newArrayList(orgId);
 			return orgIds;
 		}
@@ -247,7 +250,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroom.getEndTime());
 		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
 				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
-		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
+		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext, false);
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
 		Classroom existRoom = classroomValidateHandler
 				.validateClassroomExist(classroom.getResourceId());
@@ -257,8 +260,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
 
 		// 组织数据获取
+		String orgId = classroom.getOrganizationId();
 		List<String> orgIds = classroomValidateHandler
-				.validateClassroomOrgHasUser(classroom.getOrganizationId());
+				.validateClassroomOrgHasUser(orgId);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
 		boolean enableChange = !existRoom.getLessonId().equals(classroom.getLessonId());
@@ -276,7 +280,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 课程修改
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!authCourseIds.contains(classroom.getCourseId())) {
+		if (!authCourseIds.contains(classroom.getCourseId()) && gxLocalOrgMapper.selectById(orgId) == null) {
 			changeCourseOrg(course, orgIds);
 		}
 
@@ -329,9 +333,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 权限过滤
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		// if (CollectionUtils.isEmpty(authCourseIds)) {
-		// return Lists.newArrayList();
-		// }
+
+//		 if (CollectionUtils.isEmpty(authCourseIds)) {
+//		 return Lists.newArrayList();
+//		 }
 
 		// 公开过滤
 		List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
@@ -344,13 +349,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<Classroom> classrooms = classroomMapper.selectListByCourse(authCourseIds,
 				roomListQuery);
 
-		// 如果当前用户存在本地组织，添加结果
-		List<String> userLocalOrgs = gxOrgUsersMapper.getOrgIdsByUserId(roomListQuery.getUserId());
-		List<Classroom> localClassRooms = Lists.newArrayList();
-		if (!userLocalOrgs.isEmpty()) {
-			localClassRooms = classroomMapper.selectListByLocalOrgs(null, userLocalOrgs);
-		}
-		classrooms.addAll(localClassRooms);
+		// 添加本地组织课程并去重
+		addLocalOrgClassRoom(classrooms, authCourseIds, authContext.getUserId());
 
 		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
 				classroom -> entityToBo(classroom));
@@ -371,6 +371,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		});
 	}
 
+	/**
+	 * 添加本地组织课程并去重
+	 */
+	private void addLocalOrgClassRoom(List<Classroom> classrooms, List<String> authCourseIds, String userId){
+		List<Classroom> localClassRooms = classroomMapper.selectByUserIdAndNotInCourses(userId, authCourseIds);
+		classrooms.addAll(localClassRooms);
+	}
+
 	@Override
 	public List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext) {
 
@@ -386,8 +394,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
 
 		// 查询组织下用户
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-				true);
+		List<UserInfo> userInfos = gxTaskService.getUserInfosByOrgId(classroom.getOrganizationId());
 
 		List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroomId);
 		Map<String, ClassroomSign> signMap = StreamApiUtils.toMap(signList,
@@ -439,18 +446,31 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), false);
 
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-				true);
+		List<UserInfo> userInfos = gxTaskService.getUserInfosByOrgId(classroom.getOrganizationId());
 
 		List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
 				userInfo -> StringUtils.isBlank(userName)
 						|| userInfo.getUserName().contains(userName)
 						|| userInfo.getName().contains(userName));
-		Map<String, String> orgMap = remoteOrganizationService
-				.childrenMap(classroom.getOrganizationId(), true);
+		Map<String, String> orgMap = getOrgMap(classroom.getOrganizationId());
 
 		return StreamApiUtils.map(filterUsers,
 				userInfo -> userToReportBo(userInfo, courseLesson, orgMap));
+	}
+
+	private Map<String, String> getOrgMap(String orgId){
+
+		// 首先校验本地组织
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
+
+		Map<String, String> orgMap = Maps.newHashMap();
+
+		if (gxLocalOrg != null) {
+			orgMap.put(orgId, gxLocalOrg.getOrgName());
+			return orgMap;
+		}
+
+		return remoteOrganizationService.childrenMap(orgId, true);
 	}
 
 	@Override
@@ -462,8 +482,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
 
 		// 查询组织用户
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-				true);
+		List<UserInfo> userInfos = gxTaskService.getUserInfosByOrgId(classroom.getOrganizationId());
 		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
 		List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroom.getResourceId());
 		List<ClassroomSign> signIns = StreamApiUtils.filter(signList, ClassroomSign::getSignIn);
@@ -670,7 +689,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 用户信息
 		ClassroomReportBo reportBo = BeanUtils.copy(userInfo, ClassroomReportBo.class);
-		reportBo.setOrganizationName(orgMap.get(userInfo.getOrganizationId()));
+
+		String orgName = orgMap.get(userInfo.getOrganizationId());
+
+		if (orgName == null){
+			orgName = userInfo.getOrganizationData();
+		}
+
+		reportBo.setOrganizationName(orgName);
 
 		// 实验报告数据
 		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
@@ -762,18 +788,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroomBo.setOrganizationName(orgName);
 
 		// 如果组织为本地组织，返回用户列表
-		classroomBo.setUserIds(getOrgUserIds(classroom.getOrganizationId()));
-
+		if (classroom.getUserIds() != null){
+			classroomBo.setUserIds(JsonUtil.toJsonObjectArray(classroom.getUserIds(), String.class));
+		}
 		return classroomBo;
 	}
 
 	private String getOrgName(String orgId) {
 
 		// 首先校验本地组织
-		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
 
-		if (gxOrgUsers != null) {
-			return gxOrgUsers.getOrgName();
+		if (gxLocalOrg != null) {
+			return gxLocalOrg.getOrgName();
 		}
 
 		// 校验远程组织

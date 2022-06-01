@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @TableName("sjyc_org_users")
-public class GxOrgUsers extends BaseTable {
+public class GxLocalOrg extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;

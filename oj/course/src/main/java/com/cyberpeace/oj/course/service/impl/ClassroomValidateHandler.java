@@ -13,8 +13,8 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.cs.dao.entity.GxOrgUsers;
-import com.cyberpeace.cs.dao.mapper.GxOrgUsersMapper;
+import com.cyberpeace.cs.dao.entity.GxLocalOrg;
+import com.cyberpeace.cs.dao.mapper.GxLocalOrgMapper;
 import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -34,7 +34,7 @@ public class ClassroomValidateHandler {
 	private Integer END_MAX_TIME;
 
 	@Autowired
-	private GxOrgUsersMapper gxOrgUsersMapper;
+	private GxLocalOrgMapper gxLocalOrgMapper;
 
 	@Autowired
 	private GxTaskService gxTaskService;
@@ -61,7 +61,23 @@ public class ClassroomValidateHandler {
 	 */
 	public Classroom validateClassroomLessonExist(String lessonId, String orgId) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
-		if (null != classroom) {
+
+		// 查询本地组织关联课程
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
+		List<Classroom> localOrgClassrooms = Lists.newArrayList();
+		if (gxLocalOrg != null) {
+			List<String> userList = gxTaskService.getLocalUserList(gxLocalOrg);
+
+			for (String userId:userList){
+				Classroom localOrgClassroom = classroomMapper.selectByUserIdAndLesson(userId, lessonId);
+				if (localOrgClassroom != null){
+					localOrgClassrooms.add(localOrgClassroom);
+				}
+			}
+
+		}
+
+		if (null != classroom || !localOrgClassrooms.isEmpty()) {
 			throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
 		}
 
@@ -88,14 +104,13 @@ public class ClassroomValidateHandler {
 	public List<String> validateClassroomOrgHasUser(String orgId) {
 
 		// 首先校验本地组织
-		GxOrgUsers gxOrgUsers = gxOrgUsersMapper.selectById(orgId);
-		if (gxOrgUsers != null) {
-			List<String> userList = gxTaskService.getLocalUserList(gxOrgUsers);
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
+		if (gxLocalOrg != null) {
+			List<String> userList = gxTaskService.getLocalUserList(gxLocalOrg);
 			if (userList.isEmpty()) {
 				throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);
 			}
 
-			// 此处组织列表作用待完善 todo
 			List<String> orgIds = Lists.newArrayList(orgId);
 			return orgIds;
 		}
@@ -135,9 +150,17 @@ public class ClassroomValidateHandler {
 	public void validateClassroomTimeOverlap(String organizationId, Date startTime, Date endTime) {
 
 		List<Classroom> classrooms = classroomMapper.selectByOrgId(organizationId);
+
+		// 查询本地组织关联课程表
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(organizationId);
+		if (gxLocalOrg != null) {
+			List<String> userList = gxTaskService.getLocalUserList(gxLocalOrg);
+			classrooms.addAll(classroomMapper.selectByUserIds(userList));
+		}
+
 		classrooms.forEach(classroom -> {
-			if ((startTime.getTime() > classroom.getStartTime().getTime()
-					&& startTime.getTime() < classroom.getEndTime().getTime())
+			if ((startTime.getTime() >= classroom.getStartTime().getTime()
+					&& startTime.getTime() <= classroom.getEndTime().getTime())
 					|| (endTime.getTime() > classroom.getStartTime().getTime()
 							&& endTime.getTime() < classroom.getEndTime().getTime())) {
 				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);

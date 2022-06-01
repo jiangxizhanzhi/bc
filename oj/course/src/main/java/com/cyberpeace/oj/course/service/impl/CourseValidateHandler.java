@@ -82,14 +82,15 @@ public class CourseValidateHandler {
 	 * @param authContext
 	 * @return
 	 */
-	public void validateCoursePermission(String courseId, AuthContext authContext) {
+	public void validateCoursePermission(String courseId, AuthContext authContext, Boolean allowLocalPermission) {
 
 		// 查询授权
 		List<String> authIds = courseMapper.selectByAuth(authContext);
-		List<String> localOrgClassRoomIds = classroomGroupInfoMapper
-				.selectClassroomIdsByUserId(authContext.getUserId());
-		List<String> localOrgCourseIds = classroomMapper.selectCourseIds(localOrgClassRoomIds);
-		authIds.addAll(localOrgCourseIds);
+
+		if (allowLocalPermission){
+			addLocalOrgAuthIds(authIds, authContext.getUserId());
+		}
+
 		if (CollectionUtils.isEmpty(authIds)) {
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
@@ -104,6 +105,14 @@ public class CourseValidateHandler {
 		if (!publicIds.contains(courseId)) {
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
+	}
+
+	/**
+	 * 添加本地组织授权的课程列表
+	 */
+	public void addLocalOrgAuthIds(List<String> authIds, String userId){
+		List<String> localOrgCourseIds = classroomMapper.selectCourseIdsByUserId(userId);
+		authIds.addAll(localOrgCourseIds);
 	}
 
 	/**
@@ -122,7 +131,7 @@ public class CourseValidateHandler {
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
-		validateCoursePermission(courseLesson.getCourseId(), authContext);
+		validateCoursePermission(courseLesson.getCourseId(), authContext, true);
 		return courseLesson;
 	}
 

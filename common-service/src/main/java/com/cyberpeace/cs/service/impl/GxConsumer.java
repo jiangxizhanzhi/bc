@@ -21,7 +21,7 @@ import com.cyberpeace.cs.service.context.GxTaskContext;
 @RabbitListener(queues = "oj.xlrwjs", containerFactory = "gxContainerFactory")
 public class GxConsumer {
 
-	private static final Logger log = LoggerFactory.getLogger("gxMq");
+	private static final Logger log = LoggerFactory.getLogger("gx");
 
 	@Autowired
 	private GxTaskService gxTaskService;

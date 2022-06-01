@@ -3,7 +3,12 @@ package com.cyberpeace.cs.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.cs.dao.entity.GxLocalOrg;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +22,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cs.dao.entity.GxOrgUsers;
 import com.cyberpeace.cs.dao.entity.GxTask;
-import com.cyberpeace.cs.dao.mapper.GxOrgUsersMapper;
+import com.cyberpeace.cs.dao.mapper.GxLocalOrgMapper;
 import com.cyberpeace.cs.dao.mapper.GxTaskMapper;
 import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.cs.service.context.GxTaskContext;
@@ -31,17 +35,21 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> implements GxTaskService {
+
+	private static final Logger log = LoggerFactory.getLogger("gx");
 
 	@Autowired
 	private GxTaskMapper gxTaskMapper;
 
 	@Autowired
-	private GxOrgUsersMapper gxOrgUsersMapper;
+	private GxLocalOrgMapper gxLocalOrgMapper;
 
 	@Autowired
 	private RemoteTaskService remoteTaskService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Override
 	public Boolean create(GxTaskContext gxTaskContext) {
@@ -72,20 +80,20 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 	@Override
 	public String createTaskOrg(List<String> userList, String classRoomId, String orgName) {
 
-		GxOrgUsers gxOrgUsers = new GxOrgUsers();
-		gxOrgUsers.setClassRoomId(classRoomId);
-		gxOrgUsers.setUserIds(JsonUtil.toJsonString(userList));
-		gxOrgUsers.setOrgName(orgName);
-		gxOrgUsersMapper.insert(gxOrgUsers);
+		GxLocalOrg gxLocalOrg = new GxLocalOrg();
+		gxLocalOrg.setClassRoomId(classRoomId);
+		gxLocalOrg.setUserIds(JsonUtil.toJsonString(userList));
+		gxLocalOrg.setOrgName(orgName);
+		gxLocalOrgMapper.insert(gxLocalOrg);
 
-		return gxOrgUsers.getResourceId();
+		return gxLocalOrg.getResourceId();
 	}
 
 	@Override
-	public List<String> getLocalUserList(GxOrgUsers gxOrgUsers) {
+	public List<String> getLocalUserList(GxLocalOrg gxLocalOrg) {
 		List<String> userList = Lists.newArrayList();
-		if (StringUtils.isNotEmpty(gxOrgUsers.getUserIds())) {
-			userList = JsonUtil.toJsonObjectArray(gxOrgUsers.getUserIds(), String.class);
+		if (StringUtils.isNotEmpty(gxLocalOrg.getUserIds())) {
+			userList = JsonUtil.toJsonObjectArray(gxLocalOrg.getUserIds(), String.class);
 		}
 		return userList;
 	}
@@ -93,10 +101,10 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 	@Override
 	public Boolean clearClassRoomOrg(String classRoomId) {
 
-		List<String> orgs = gxOrgUsersMapper.getByClassRoomId(classRoomId);
+		List<String> orgs = gxLocalOrgMapper.getByClassRoomId(classRoomId);
 
 		if (orgs != null && !orgs.isEmpty()) {
-			gxOrgUsersMapper.deleteBatchIds(orgs);
+			gxLocalOrgMapper.deleteBatchIds(orgs);
 		}
 
 		return true;
@@ -176,6 +184,20 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 		gxTaskContext.setTrainees(trainees);
 		gxTaskContext.setTraineesCount(traineesCount);
 
+	}
+
+	@Override
+	public List<UserInfo> getUserInfosByOrgId(String orgId){
+
+		// 首先校验本地组织
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
+
+		if (gxLocalOrg != null) {
+			List<String> userIds = getLocalUserList(gxLocalOrg);
+			return remoteUserService.getByIdList(userIds);
+		}
+
+		return remoteUserService.ListByOrgId(orgId, true);
 	}
 
 }

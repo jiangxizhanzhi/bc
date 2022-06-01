@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,19 +96,21 @@ public class AdminClassroomController {
 	public BaseRsp
 			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
 
+		// 基本数据设置
+		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
+
 		// 如果传入为用户列表，转为组id
 		if (classroomReq.getUserIds() != null && !classroomReq.getUserIds().isEmpty()) {
-			classroomReq.setOrganizationId(
+			classroom.setOrganizationId(
 					gxTaskService.createTaskOrg(classroomReq.getUserIds(), null, "课堂组"));
+			classroom.setUserIds(JsonUtil.toJsonString(classroomReq.getUserIds()));
 		}
 
 		// 校验组织id是否存在
-		if (StringUtils.isEmpty(classroomReq.getOrganizationId())) {
+		if (StringUtils.isEmpty(classroom.getOrganizationId())) {
 			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
 		}
 
-		// 基本数据设置
-		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		classroom.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -123,19 +126,21 @@ public class AdminClassroomController {
 	public BaseRsp<Boolean>
 			updateClassRoom(@RequestBody @Validated(Update.class) ClassroomReq classroomReq) {
 
+		// 基本数据设置
+		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
+
 		// 如果传入为用户列表，转为组id
 		if (classroomReq.getUserIds() != null && !classroomReq.getUserIds().isEmpty()) {
-			classroomReq.setOrganizationId(gxTaskService.createTaskOrg(classroomReq.getUserIds(),
+			classroom.setOrganizationId(gxTaskService.createTaskOrg(classroomReq.getUserIds(),
 					classroomReq.getResourceId(), "课堂组"));
+			classroom.setUserIds(JsonUtil.toJsonString(classroomReq.getUserIds()));
 		}
 
 		// 校验组织id是否存在
-		if (StringUtils.isEmpty(classroomReq.getOrganizationId())) {
+		if (StringUtils.isEmpty(classroom.getOrganizationId())) {
 			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
 		}
 
-		// 基本数据设置
-		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		Boolean result = classroomService.updateClassroom(classroom, authContext);

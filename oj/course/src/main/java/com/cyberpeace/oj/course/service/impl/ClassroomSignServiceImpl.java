@@ -16,7 +16,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.GxOrgUsersMapper;
+import com.cyberpeace.cs.dao.mapper.GxLocalOrgMapper;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
@@ -51,7 +51,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	private LocalSceneMapper localSceneMapper;
 
 	@Autowired
-	private GxOrgUsersMapper gxOrgUsersMapper;
+	private GxLocalOrgMapper gxLocalOrgMapper;
 
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
@@ -71,7 +71,8 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 
 		// 仅存储该课堂组织下的用户签到信息
-		if (classroom.getOrganizationIds().contains(authContext.getOrganization())) {
+		Boolean includeUser = classroom.getUserIds() != null && classroom.getUserIds().contains(authContext.getUserId());
+		if (classroom.getOrganizationIds().contains(authContext.getOrganization()) || includeUser) {
 			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
 					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID())
 					.signInTime(new Date()).userId(authContext.getUserId()).build();
@@ -91,7 +92,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 		Boolean userAuth = false;
 		// 如果当前用户存在本地组织，校验用户权限
-		List<String> userLocalOrgs = gxOrgUsersMapper.getOrgIdsByUserId(authContext.getUserId());
+		List<String> userLocalOrgs = gxLocalOrgMapper.getOrgIdsByUserId(authContext.getUserId());
 		if (!userLocalOrgs.isEmpty()){
 			ClassroomGroupInfo classroomGroupInfo = classroomGroupInfoMapper.selectByRoomAndUser(classroom.getResourceId(), authContext.getUserId());
 			userAuth = classroomGroupInfo == null ? false:true;

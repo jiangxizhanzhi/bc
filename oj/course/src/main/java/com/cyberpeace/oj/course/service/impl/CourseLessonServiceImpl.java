@@ -621,7 +621,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			List<PracticeAnswerContext> answers, AuthContext authContext) {
 
 		// 数据校验
-		courseValidateHandler.validateCoursePermission(answerContext.getCourseId(), authContext);
+		courseValidateHandler.validateCoursePermission(answerContext.getCourseId(), authContext, true);
 		CourseLesson lesson = courseValidateHandler.validateLessonExist(answerContext.getLessonId(),
 				authContext.getIsWeb());
 		Paper paper = validatePaper(lesson, CommonConstant.TRUE);
@@ -693,7 +693,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			AuthContext authContext) {
 
 		// 数据校验
-		courseValidateHandler.validateCoursePermission(courseId, authContext);
+		courseValidateHandler.validateCoursePermission(courseId, authContext, true);
 		Course course = courseMapper.selectById(courseId);
 		CourseLesson lesson = courseValidateHandler.validateLessonExist(lessonId,
 				authContext.getIsWeb());
@@ -730,7 +730,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId,
 			AuthContext authContext) {
 		// 数据校验
-		courseValidateHandler.validateCoursePermission(courseId, authContext);
+		courseValidateHandler.validateCoursePermission(courseId, authContext, false);
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId,
 				authContext.getIsWeb());
 

@@ -115,7 +115,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(fileName, storeInDbName);
+			AttachmentBo attachmentBo = create(origin.getName(), storeInDbName);
 			return attachmentBo;
 		}
 
@@ -245,12 +245,14 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(fileName, storeInDbName, renameFile);
+			AttachmentBo attachmentBo = create(file.getOriginalFilename(), storeInDbName,
+					renameFile);
 			return attachmentBo;
 		}
 
 		// 返回给前端对展示名称
-		return AttachmentBo.builder().filePath(storeInDbName).fileName(fileName).build();
+		return AttachmentBo.builder().filePath(storeInDbName).fileName(file.getOriginalFilename())
+				.build();
 	}
 
 	/**
@@ -280,8 +282,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	@Override
 	public Boolean isExist(String attachmentId) {
 		Attachment attachment = attachmentMapper.selectById(attachmentId);
-		return !(attachment == null || !new File(
-				ConfigUtil.getContextProperty("cr.local.upload.path") + "/" + attachment.getFilePath())
-						.exists());
+		return !(attachment == null
+				|| !new File(ConfigUtil.getContextProperty("cr.local.upload.path") + "/"
+						+ attachment.getFilePath()).exists());
 	}
 }

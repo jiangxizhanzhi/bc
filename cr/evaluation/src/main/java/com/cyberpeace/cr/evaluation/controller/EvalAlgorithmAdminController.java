@@ -8,6 +8,9 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +56,9 @@ public class EvalAlgorithmAdminController {
 
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 新增算法
@@ -132,11 +138,17 @@ public class EvalAlgorithmAdminController {
 				.selectUsedNum(Lists.newArrayList(req.getEvalAlgorithmId()));
 		// 如果已经使用过，需要备份原先的算法，新增一个新算法。
 		if (useNum > 0) {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-			evalAlgorithmService.updateStateById(evalAlgorithm.getResourceId());
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					evalAlgorithmService.updateStateById(evalAlgorithm.getResourceId());
 
-			evalAlgorithm.setResourceId(null);
-			evalAlgorithmService.save(evalAlgorithm);
+					evalAlgorithm.setResourceId(null);
+					evalAlgorithmService.save(evalAlgorithm);
+				}
+			});
+
 		}
 		// 如果没有使用过，更新算法。
 		else {
@@ -163,8 +175,15 @@ public class EvalAlgorithmAdminController {
 
 		// 如果都是未使用，直接删除，存在已使用，则先修改已使用算法的状态，再删除其他所有算法
 		if (selectUsedAlgorithmIds.size() > 0) {
-			evalAlgorithmService.updateStateByIds(selectUsedAlgorithmIds);
-			evalAlgorithmMapper.deleteAll(selectUsedAlgorithmIds);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					evalAlgorithmService.updateStateByIds(selectUsedAlgorithmIds);
+					evalAlgorithmMapper.deleteAll(selectUsedAlgorithmIds);
+
+				}
+			});
 		} else {
 			evalAlgorithmService.delete(deleteReq.getIds());
 		}
@@ -266,6 +285,7 @@ public class EvalAlgorithmAdminController {
 
 			return evalAlgorithmRsp;
 		});
+
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 

@@ -31,7 +31,7 @@ public class GxController {
 	@ApiOperation("单点登录跳转")
 	@PostMapping("/access")
 	public void access(
-			@ApiParam(name = "token", value = "token") @RequestParam("token") String token,
+			@ApiParam(name = "token", value = "token") @RequestParam(value = "token", required = false) String token,
 			@RequestBody @Validated GxAccessReq gxAccessReq, HttpServletResponse response)
 			throws Exception {
 

@@ -24,10 +24,8 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 
     @PostConstruct
     public void init() {
-//        String PY_HOST = SystemPropUtil.getProp("PY_HOST");
-//        String PY_PORT = SystemPropUtil.getProp("PY_PORT");
-        String PY_HOST = "10.100.1.28";
-        String PY_PORT = "5000";
+        String PY_HOST = SystemPropUtil.getProp("PY_HOST");
+        String PY_PORT = SystemPropUtil.getProp("PY_PORT");
         PY_URL = "http://" + PY_HOST + ":" + PY_PORT;
     }
 

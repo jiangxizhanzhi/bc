@@ -4,7 +4,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for sjyc_task
 -- ----------------------------
-DROP TABLE IF EXISTS `sjyc_task`;
 CREATE TABLE `sjyc_task`  (
                               `id` int NOT NULL AUTO_INCREMENT,
                               `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -30,7 +29,6 @@ CREATE TABLE `sjyc_task`  (
 -- ----------------------------
 -- Table structure for sjyc_org_users
 -- ----------------------------
-DROP TABLE IF EXISTS `sjyc_org_users`;
 CREATE TABLE `sjyc_org_users`  (
                                    `id` int NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -43,3 +41,5 @@ CREATE TABLE `sjyc_org_users`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+ALTER TABLE `oj_classroom` ADD COLUMN `user_ids` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL

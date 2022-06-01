@@ -245,7 +245,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(fileName, storeInDbName, renameFile);
+			AttachmentBo attachmentBo = create(file.getOriginalFilename(), storeInDbName,
+					renameFile);
 			return attachmentBo;
 		}
 

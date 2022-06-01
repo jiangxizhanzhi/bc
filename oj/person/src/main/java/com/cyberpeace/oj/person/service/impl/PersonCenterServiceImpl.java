@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -140,7 +141,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		// 获取用户提交的实验报告数量
 		Integer reportCount = personCenterMapper.selectReportCount(userId, expLessonIds);
 		studyRecord.setReportCount(reportCount);
-		// 获取用户完成练习的排名、得分、数量
+		// 获取用户完成课后练习的排名、得分、数量
 		List<String> users = personCenterMapper.selectDistinctUser();
 		if (users.contains(userId)) {
 			StudyRecord practiceRecord = personCenterMapper.selectPracticeByUser(userId, lessonIds);
@@ -153,6 +154,12 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 				studyRecord.setScore(score);
 			}
 		}
+		// 获取当前用户解出的实操题和理论题个数
+		StudyRecord practiceByUser = personCenterMapper.selectSlovedPracticeByUser(userId);
+		Integer operationPracticeCount = practiceByUser.getOperationPracticeCount();
+		Integer theoryPracticeCount = practiceByUser.getTheoryPracticeCount();
+		studyRecord.setOperationPracticeCount(null == operationPracticeCount ? 0 : operationPracticeCount);
+		studyRecord.setTheoryPracticeCount(null == theoryPracticeCount ? 0 : theoryPracticeCount);
 		BaseRsp<StudyRecord> rsp = new BaseRsp<>();
 		rsp.setData(studyRecord);
 		return rsp;
@@ -166,9 +173,14 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> expLessonIds = new ArrayList<>();
 		if (null != authContext) {
 			List<String> courseIds = courseMapper.selectByAuth(authContext);
-			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
-			lessonIds = personCenterMapper.selectLessonByAuth(publicCourses);
-			expLessonIds = personCenterMapper.selectExpLessonByAuth(publicCourses);
+			if(authContext.getIsWeb()){
+				List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
+				lessonIds = personCenterMapper.selectLessonByAuth(publicCourses);
+				expLessonIds = personCenterMapper.selectExpLessonByAuth(publicCourses);
+			} else {
+				lessonIds = personCenterMapper.selectLessonByAdmin(null);
+				expLessonIds = personCenterMapper.selectLessonByAdmin( CourseLesson.LessonType.EXPERIMENT.getCode());
+			}
 		}
 		List<LessonRecord> lessonRecord = personCenterMapper.selectLessonByTime(userId, startTime,
 				endTime, lessonIds);

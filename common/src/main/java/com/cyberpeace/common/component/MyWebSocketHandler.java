@@ -202,7 +202,6 @@ public class MyWebSocketHandler implements WebSocketHandler {
 			throws IOException {
 
 		// 发送chat消息
-
 		Set<CpWebSession> userSessions = getUserSession(identifierId, userId);
 		TextMessage toSendMessage = new TextMessage(JsonUtil.toJsonString(chatMessage));
 		if (userSessions == null) {

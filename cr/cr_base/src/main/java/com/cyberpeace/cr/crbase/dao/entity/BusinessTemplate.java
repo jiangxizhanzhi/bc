@@ -31,6 +31,8 @@ public class BusinessTemplate extends AuthTable {
 
 	private String createUserId;
 
+	private String logo;
+
 	/**
 	 * 用于关联后台测试场景
 	 */

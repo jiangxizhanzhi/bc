@@ -8,6 +8,7 @@ public class CommonContext {
 
 	private static final ThreadLocal<String> languageContext = new ThreadLocal();
 	private static final ThreadLocal<String> ipContext = new ThreadLocal();
+	private static final ThreadLocal<String> authorizationContext = new ThreadLocal();
 
 	private CommonContext() {
 	}
@@ -34,6 +35,18 @@ public class CommonContext {
 
 	public static void setLanguage(String language) {
 		languageContext.set(language);
+	}
+
+	public static void setAuthorization(String authorization) {
+		authorizationContext.set(authorization);
+	}
+
+	public static String getAuthorization() {
+		return authorizationContext.get();
+	}
+
+	public static void removeAuthorization() {
+		authorizationContext.remove();
 	}
 
 	public static void removeLanguage() {

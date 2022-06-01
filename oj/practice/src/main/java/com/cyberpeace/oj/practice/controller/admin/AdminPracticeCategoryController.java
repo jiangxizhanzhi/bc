@@ -1,16 +1,19 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -42,6 +45,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("分页查询练习分类")
 	@GetMapping("/list")
+	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
 	public BaseRsp<ListRsp<CategoryListBo>>
 			list(@Validated PracticeCategoryListReq categoryListReq) {
 
@@ -58,8 +62,8 @@ public class AdminPracticeCategoryController {
 	}
 
 	@ApiOperation("查询分类详情")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "分类编号"),
-			@ApiImplicitParam(name = "children", value = "是否查询子类") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "分类编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "children", value = "是否查询子类", dataTypeClass = Boolean.class) })
 	@GetMapping("")
 	public BaseRsp<CategoryListBo> get(@RequestParam("resource_id") String resourceId,
 			@RequestParam(value = "children", required = false) Boolean children) {
@@ -71,6 +75,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("修改分类信息")
 	@PatchMapping("")
+	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
 	public BaseRsp<Integer> update(@Validated CategoryUpdateReq updateReq) {
 
 		// 分类数据处理
@@ -86,6 +91,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("新增分类信息")
 	@PostMapping("")
+	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
 	public BaseRsp<Integer> add(@Validated PracticeCategoryReq categoryReq) {
 
 		// 分类数据处理
@@ -107,6 +113,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("批量删除分类信息")
 	@DeleteMapping("")
+	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
 		int result = practiceCategoryService.batchDelete(delReq.getResourceIds());

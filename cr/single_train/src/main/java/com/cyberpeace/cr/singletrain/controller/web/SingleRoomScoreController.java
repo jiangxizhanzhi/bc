@@ -7,7 +7,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +73,7 @@ public class SingleRoomScoreController {
 
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<JSONObject> getHistoryDetail(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SINGLE_ROLE_GROUP_CODE);
@@ -117,6 +120,7 @@ public class SingleRoomScoreController {
 
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId) {
 		JSONObject data = getHistoryDetail(roomId).getData();

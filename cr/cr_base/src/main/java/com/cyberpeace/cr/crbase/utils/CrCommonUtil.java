@@ -65,13 +65,35 @@ public class CrCommonUtil {
 	 * @return
 	 */
 	public static String handleTrainingTag(List<String> tags) {
-		CrCommonValidator.validateSize(tags, CrCommonConstants.MIN_TAG_COUNT, CrCommonConstants.MAX_TAG_COUNT,
-				CrBusinessErrorCode.INVALID_TAGS_NUM);
+		CrCommonValidator.validateSize(tags, CrCommonConstants.MIN_TAG_COUNT,
+				CrCommonConstants.MAX_TAG_COUNT, CrBusinessErrorCode.INVALID_TAGS_NUM);
 
 		tags.forEach(
 				tag -> CrCommonValidator.validateNameLen(tag, CrBusinessErrorCode.ILLEGAL_TAG_LEN));
 		CrCommonValidator.checkStringListDuplicate(tags, CrBusinessErrorCode.TAG_DUPLICATE);
 
 		return JsonUtil.arrayToString(tags);
+	}
+
+	/**
+	 * 原地操作，去掉两个列表中相交的元素
+	 * @param l1
+	 * @param l2
+	 * @param <T>
+	 */
+	public static <T> void differ2List(List<T> l1, List<T> l2) {
+		if (l1 == null || l1.isEmpty() || l2 == null || l2.isEmpty()) {
+			return;
+		}
+		int i = 0;
+		while (i < l1.size()) {
+			int j = l2.indexOf(l1.get(i));
+			if (j > -1) {
+				l1.remove(i);
+				l2.remove(j);
+			} else {
+				i++;
+			}
+		}
 	}
 }

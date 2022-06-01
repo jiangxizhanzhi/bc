@@ -1,9 +1,13 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,21 +16,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillTreeRes;
+import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
+import com.cyberpeace.rtks.controller.res.skill.TrainingPathRes;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
+import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
+import com.google.common.collect.Sets;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,18 +61,10 @@ public class TrainingPlanController {
 	@Autowired
 	private FrameService frameService;
 
-	@ApiOperation("技能体系")
-	@GetMapping("/skillTree")
-	public BaseRsp<List<SkillTreeRes>> skillTree(@ApiParam(name = "skillSystemId", value = "技能体系id",
-			required = false) String skillSystemId) {
-
-		List<SkillTreeRes> skillTreeRes = trainingPlanService.getSkillTree(skillSystemId);
-
-		return new BaseRsp<>(skillTreeRes);
-	}
-
 	@ApiOperation("知识体系")
 	@GetMapping("/knowledgeTree")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<List<KnowledgeTreeRes>> knowledgeTree() {
 		List<KnowledgeTreeRes> knowledgeTreeRes = trainingPlanService.getKnowledgeTree();
 
@@ -72,6 +73,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("职业框架管理")
 	@GetMapping("/tree")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<LevelTreeOutput> tree(
 			@ApiParam(name = "resource_id", value = "框架id", required = true) String resource_id) {
 		// 如果前端没有获取框架，尝试获取默认角色的框架
@@ -114,6 +117,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleDetailRes> learningPath(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
 		RoleDetailRes roleOutput = trainingPlanService.getLearningPathTree(resource_id,
@@ -124,6 +129,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
 	@GetMapping("/roleMap")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleDetailRes> getRoleOutputByRoleId() {
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
@@ -137,6 +144,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("分页获取知识点以及课程")
 	@GetMapping("/getKnowledgeCourseList")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<ListRsp<KnowledgeRes>> page(@Validated PageReqBase pageReqBase) {
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<ListRsp<KnowledgeRes>> rsp = new BaseRsp<>();
@@ -150,6 +159,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("查询技能和知识点关联的课程学习情况")
 	@GetMapping("/getRelatedCourseList")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleDetailRes> getRelatedCourseList() {// @ApiParam(name = "course_type", value =
 															// "查询课程类型(skill/knowledge)", required =
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
@@ -171,6 +182,8 @@ public class TrainingPlanController {
 
 	@ApiOperation("查询个人能力评估")
 	@GetMapping("/getRoleDetailRes")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<RoleDetailRes> getRoleDetailRes() {// @ApiParam(name = "course_type", value =
 		// "查询课程类型(skill/knowledge)", required =
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
@@ -187,4 +200,45 @@ public class TrainingPlanController {
 
 		return rsp;
 	}
+
+	@ApiOperation("训练路径")
+	@GetMapping("/training/path")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
+			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
+	public BaseRsp<TrainingPathRes> getTrainingPath() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		TrainingPathRes res = new TrainingPathRes();
+		if (StringUtils.isBlank(roleId)) {
+			res.setPath(Lists.newArrayList());
+			res.setRelated(Lists.newArrayList());
+			return new BaseRsp<>(res);
+		}
+		// get training path
+		List<MissionPathBo> trainingBoList = rtksStatisticService.getTrainingPath(userId, roleId);
+		// get all training from training path
+		res.setRelated(getAllRelatedTraining(trainingBoList));
+		res.setPath(trainingBoList);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 从训练路径中解析出全部当前岗位相关训练， 去重
+	 * @param trainingPath 
+	 * @return
+	 */
+	private List<RelatedTrainingRes> getAllRelatedTraining(List<MissionPathBo> trainingPath) {
+		Set<String> trainingIds = Sets.newHashSet();
+		List<RelatedTrainingRes> allRelated = Lists.newArrayList();
+		for (MissionPathBo missionPathBo : trainingPath) {
+			missionPathBo.getRelatedTrainings().forEach((trainingBo -> {
+				if (!trainingIds.contains(trainingBo.getTrainingId())) {
+					allRelated.add(BeanUtils.copy(trainingBo, RelatedTrainingRes.class));
+					trainingIds.add(trainingBo.getTrainingId());
+				}
+			}));
+		}
+		return allRelated;
+	}
+
 }

@@ -249,4 +249,113 @@ public interface CrBusinessErrorCode {
 
 	/** 训练已暂停，不能删除场景 */
 	String TRAINING_PAUSED = "101080";
+
+	/** 指标项已经使用 */
+	String INDICATOR_ALREADY_USED = "101081";
+
+	/** LOGO文件不存在 */
+	String LOGO_NOT_EXIST = "101082";
+
+	/** 测评靶场类型不存在 */
+	String EVAL_CATEGORY_NOT_EXIST = "101083";
+
+	/** 测评靶场存在运行任务 */
+	String RUNNING_EVAL_TASK_EXIST = "101084";
+
+	/** 测评靶场任务不在运行 */
+	String EVAL_TASK_NOT_RUNNING = "101085";
+
+	/** 测评靶场任务不存在 */
+	String EVAL_TASK_NOT_EXIST = "101086";
+
+	/** 测评靶场步骤不存在 */
+	String EVAL_STEP_NOT_EXIST = "101087";
+
+	/** 测评靶场步骤配置错误 */
+	String EVAL_STEP_ILLEGAL = "101088";
+
+	/** 测评靶场步骤未启动 */
+	String EVAL_STEP_NOT_STARTED = "101089";
+
+	/** 测评靶场步骤已启动 */
+	String EVAL_STEP_IS_STARTED = "101090";
+
+	/** 测评靶场步骤已结束 */
+	String EVAL_STEP_IS_FINISHED = "101091";
+
+	/** 测评靶场步骤前序步骤未完成 */
+	String PRECEDING_STEP_NOT_FINISHED = "101092";
+
+	/** 算法参数重名 */
+	String PARAM_NAME_DUPLICATE = "101093";
+
+	/** 未实现的方法 */
+	String NOT_IMPLEMENTED_EXCEPTION = "101094";
+
+	/**
+	 * 变量项格式化算法执行失败
+	 */
+	String VARIABLE_FORMAT_EXECUTE_FAILED = "101095";
+
+	/**
+	 * 变量项匹配算法执行失败
+	 */
+	String VARIABLE_MATCH_EXECUTE_FAILED = "101096";
+
+	/**
+	 * 变量项评分算法执行失败
+	 */
+	String VARIABLE_MARK_EXECUTE_FAILED = "101097";
+
+	/**
+	 * 指标项执行失败
+	 */
+	String INDEX_EXECUTE_FAILED = "101098";
+
+	/**
+	 * 三级指标项数据无效
+	 */
+	String THIRD_INDEX_IS_FAILED = "101099";
+
+	/**
+	 * 指标体系变量项数据无效
+	 */
+	String SYSTEM_INDEX_IS_FAILED = "101100";
+
+	/**
+	 * 模型检测算法返回数据不合规
+	 */
+	String MATCH_ALGORITHM_RESULT_IS_INVALID = "101101";
+
+	/**
+	 * 采集变量项未获取到相关数据
+	 */
+	String VARIABLE_DID_NOT_GET_PROBE_DATA = "101102";
+
+	/** 未指定节点 */
+	String NOT_SPECIFY_NODE = "101103";
+
+	/** 指定节点下无流量数据 */
+	String NO_FLOW_EXISTS_ON_NODE = "101104";
+
+	/** 流量不存在 */
+	String FLOW_NOT_EXIST = "101105";
+
+	/** 流量修改错误 */
+	String FAILED_TO_UPDATE_FLOW = "101106";
+
+	/**
+	 * 靶场测评评估访问中台失败
+	 */
+	String GET_PROBE_DATA_FAILED = "101107";
+
+	/**
+	 * 当前节点存在未完成的流量任务
+	 */
+	String FLOW_TASK_EXISTS = "101108";
+
+	/**
+	 * 无法判断流量任务状态
+	 */
+	String FAILED_TO_JUDGE_FLOW_TASK_STATUS = "101109";
 }

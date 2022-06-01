@@ -156,7 +156,8 @@ public class LocalScene extends BaseTable {
 		TACTICAL_ASSESSMENT(232, " 战术评估"),
 		COMPREHENSIVE_ASSESSMENT(233, "综合评估"),
 		TACTICAL_TRAINING(234, "战术训练"),
-		COMPREHENSIVE_TRAINING(235, "综合训练");
+		COMPREHENSIVE_TRAINING(235, "综合训练"),
+		RANGE_EVALUATION(236, "靶场测评");
 
 		@Getter
 		private final Integer code;

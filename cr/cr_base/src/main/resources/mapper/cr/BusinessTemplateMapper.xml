@@ -92,5 +92,44 @@
         end
         as result;
     </select>
+    <select id="getAttackRelatedIds" resultType="java.lang.String">
+        select business_template_id from rtks_attack_train_relation
+        where business_template_id
+        in
+        <foreach collection="businessTemplateIds" item="businessTemplateId" separator="," open="(" close=")">
+            #{businessTemplateId}
+        </foreach>
+    </select>
+    <select id="getEngageRelatedIds" resultType="java.lang.String">
+        select business_template_id from rtks_engage_train_relation
+        where business_template_id
+        in
+        <foreach collection="businessTemplateIds" item="businessTemplateId" separator="," open="(" close=")">
+            #{businessTemplateId}
+        </foreach>
+    </select>
+    <select id="listSimple"
+            resultType="com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple">
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+        </if>
+        select resource_id,
+        name,
+        business_type as type,
+        difficulty
+        from cr_business_template
+        <where>
+            <if test="type != null">
+                and business_type = #{type}
+            </if>
+            <if test="difficulty != null">
+                and difficulty = #{difficulty}
+            </if>
+            <if test="pattern != null and pattern !=''">
+                and name like #{pattern}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
 
 </mapper>

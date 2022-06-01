@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -44,6 +47,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String ORG_INFO_LIST_URL;
 
+	private String AUTH_PERMISSION_MENUS_URL;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -59,6 +64,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.list");
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
+		AUTH_PERMISSION_MENUS_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
 	}
 
 	@Override
@@ -115,6 +122,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			queryParams.add(String.format("per_page=%s", perPage));
 		}
 		if (pattern != null) {
+			// 对特殊字符转义
+			try {
+				pattern = java.net.URLEncoder.encode(pattern, "utf-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 			queryParams.add(String.format("username=%s", pattern));
 		}
 		if (organization != null) {
@@ -220,6 +233,29 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfos;
 	}
 
+	@Override
+	public List<String> idsByOrgId(String orgId) {
+		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + orgId, JSONArray.class);
+		return StreamApiUtils.map(userArray,
+				user -> ((JSONObject) user).getString(JsonKeyConstant.ID));
+	}
+
+	/**
+	 * 获取用户可见的菜单
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public Set<String> getUserPermission(String userId) {
+		String targetUrl = AUTH_PERMISSION_MENUS_URL + userId;
+		// 获取该用户下对应多个角色可看见菜单的合集
+		JSONArray objects = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+		List<MpAuthPermission> mpAuthPermissions = objects.toJavaList(MpAuthPermission.class);
+
+		return mpAuthPermissions.stream().map(MpAuthPermission::getIdentifier)
+				.collect(Collectors.toSet());
+	}
+
 	/**
 	 * 组织用户数据转
 	 * @param jsonObject
@@ -286,7 +322,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 		userInfo.setRoles(Lists.newArrayList());
 		userInfo.setAvatarUrl(mpAuthenticatedUser.getAvatar());
-		userInfo.setUserName(mpAuthenticatedUser.getName());
+		userInfo.setName(mpAuthenticatedUser.getName());
+		userInfo.setUserName(mpAuthenticatedUser.getUsername());
 		userInfo.setUserId(mpAuthenticatedUser.getId());
 
 		UserInfo byId = getById(mpAuthenticatedUser.getId());

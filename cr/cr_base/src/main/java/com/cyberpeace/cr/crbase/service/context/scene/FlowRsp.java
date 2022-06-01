@@ -12,4 +12,10 @@ import lombok.Data;
 public class FlowRsp implements Serializable {
 
 	private List<Flow> data;
+
+	public FlowRsp(List<Flow> data) {
+		this.data = data;
+	}
+
+	public FlowRsp() {}
 }

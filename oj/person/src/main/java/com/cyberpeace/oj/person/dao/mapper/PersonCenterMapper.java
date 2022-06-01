@@ -86,6 +86,14 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
       @Param("userId") String userId, @Param("lessonIds") List<String> lessonIds);
 
   /**
+   * 获取用户解出实操题、理论题数量
+   *
+   * @param userId
+   * @return
+   */
+  StudyRecord selectSlovedPracticeByUser(@Param("userId") String userId);
+
+  /**
    * 获取distinct用户
    *
    * @return
@@ -124,6 +132,8 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
 
   List<String> selectLessonByAuth(@Param("courseIds") List<String> courseIds);
 
+  List<String> selectLessonByAdmin(@Param("lessonType") Integer lessonType);
+
   List<String> selectExpLessonByAuth(@Param("courseIds") List<String> courseIds);
 
   List<String> selectOperationPracticeByAuth();
@@ -134,5 +144,4 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
 
   List<String> selectPublicCourse(@Param("courseIds") List<String> courseIds);
 
-  List<ListSchedule> selectSchedules(String userId);
 }

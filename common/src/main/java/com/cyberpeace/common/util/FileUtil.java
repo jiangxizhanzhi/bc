@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
 
@@ -23,6 +24,44 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class FileUtil {
+
+	/**
+	 * 校验允许的类型
+	 * @param file
+	 * @param fileSuffix
+	 */
+	public static void validateSuffix(MultipartFile file, String... fileSuffix) {
+		if (null == file) {
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+		}
+
+		String filename = file.getOriginalFilename();
+		for (String suffix : fileSuffix) {
+			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
+				return;
+			}
+		}
+
+		throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+	}
+
+	/**
+	 * 校验不允许的类型
+	 * @param file
+	 * @param fileSuffix
+	 */
+	public static void validateNotAccessFile(MultipartFile file, String... fileSuffix) {
+		if (null == file) {
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+		}
+
+		String filename = file.getOriginalFilename();
+		for (String suffix : fileSuffix) {
+			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
+				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+			}
+		}
+	}
 
 	public static File saveFile(MultipartFile file, String basePath) throws IOException {
 		String originalFilename = file.getOriginalFilename();
@@ -237,19 +276,16 @@ public class FileUtil {
 		InputStream fis = null;
 		OutputStream outputStream = null;
 		try {
-			fis = new BufferedInputStream(new FileInputStream(file));
+			fis = new FileInputStream(file);
 			byte[] buffer = new byte[fis.available()];
 			fis.read(buffer);
-			if (fis != null) {
-				fis.close();
-			}
+
 			// 清空response
 			response.reset();
 
 			// 设置返回
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			String fileName = new String(file.getName().getBytes("gb2312"), "iso8859-1");
-			response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+			response.setHeader("Content-disposition", "attachment;filename=" + file.getName());
 			outputStream = response.getOutputStream();
 			outputStream.write(buffer);
 			outputStream.flush();
@@ -266,15 +302,8 @@ public class FileUtil {
 			} catch (IOException e) {
 				log.error("setResponse error:", e);
 			}
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					log.error("setResponse error:", e);
-				}
-			}
 
-			if (delete && null != file) {
+			if (delete && null != file && file.exists()) {
 				file.delete();
 			}
 		}
@@ -483,24 +512,35 @@ public class FileUtil {
 	 */
 	public static void validateFileSuffix(String destFilePath, String fileTypeStr) {
 
-		// 文件类型为空 不校验
+		if (StringUtils.isBlank(destFilePath)) {
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+		}
+
+		// 文件后缀匹配，如果文件无后缀则可能不是文件
+		String fileSuffix = getFileSuffix(destFilePath);
+
+		// 文件类型为空 则文件无后缀
 		if (StringUtils.isBlank(fileTypeStr)) {
-			return;
+			if (StringUtils.isBlank(fileSuffix)) {
+				return;
+			} else {
+				throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE,
+						fileTypeStr.toLowerCase());
+			}
 		}
 
-		int periodIndex = destFilePath.lastIndexOf(CommonConstant.PERIOD);
-		// 无文件后缀名 不做校验
-		if (periodIndex == -1) {
-			return;
+		// 如果类型不为空 但后缀为空 则校验不通过
+		if (StringUtils.isBlank(fileSuffix)) {
+			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, fileTypeStr.toLowerCase());
 		}
 
-		String suffixStr = destFilePath.substring(periodIndex + 1).toUpperCase();
+		String suffixStr = fileSuffix.toUpperCase();
 		List<String> typeList = Arrays.asList(fileTypeStr.split(CommonConstant.CODE_COMMA));
 
 		if (!typeList.contains(suffixStr)) {
 			log.error("File type error! file_path=[{}], suffix=[{}], file_type_str=[{}]",
 					destFilePath, suffixStr, fileTypeStr);
-			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, fileTypeStr.toLowerCase());
 		}
 
 	}
@@ -533,6 +573,7 @@ public class FileUtil {
 		// 文件直接删除
 		if (file.isFile()) {
 			file.deleteOnExit();
+			return;
 		}
 
 		// 目录遍历删除

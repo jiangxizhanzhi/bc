@@ -3,9 +3,6 @@ package com.cyberpeace.situation.service.impl;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import com.cyberpeace.common.util.TimeUtil;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,6 +16,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.AttackType;
@@ -28,6 +26,8 @@ import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -44,8 +44,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
-	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.DAYS)
-			.build();
+	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
 	@Override
 	public SituationTopo getSituationTopo(SceneData sceneData) {
@@ -99,7 +99,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 获取区域名称
 			String areaName = area.getString("name");
-			if (areaName.isEmpty()){
+			if (areaName.isEmpty()) {
 				areaName = "区域" + (i + 1);
 			}
 
@@ -158,14 +158,14 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			String role = categorieMap.getRole().getOrDefault(roleId, "其他");
 
 			// 初次处理层级数据
-			Integer hierarchy = null;
+			Float hierarchy = null;
 			if ("外部网络".equals(role)) {
 				sceneData.getExternalNetwork().add(elementId);
-				hierarchy = 2;
+				hierarchy = 2.0f;
 			} else if ("路由器".equals(secondType)) {
-				hierarchy = 1;
+				hierarchy = 1.0f;
 			} else {
-				hierarchy = 0;
+				hierarchy = 0.0f;
 			}
 
 			// 处理坐标数据
@@ -430,6 +430,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return elementAreas;
 	}
 
+	@SneakyThrows
 	@Override
 	public List<JSONObject> getAttackEventList(List<JSONObject> flowLogs, String sceneId) {
 
@@ -442,7 +443,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Date time = TimeUtil.toDate1(flowLog.getString("time"));
 
 			// 如果时间小于缓存值，跳过不处理
-			if (lastTime != null && (lastTime.after(time) || lastTime.equals(time))){
+			if (lastTime != null && (lastTime.after(time) || lastTime.equals(time))) {
 				continue;
 			}
 
@@ -456,7 +457,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 设置基础信息
 			attackEvent.setSceneId(sceneId);
-			attackEvent.setTime(flowLog.getString("time"));
+			attackEvent.setTime(time);
 			attackEvent.setCategory("attack");
 
 			// 设置事件类型
@@ -465,7 +466,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			AttackType attackType = AttackType.getEnumByEnDesc(enDesc, AttackType.class);
 			attackEvent.setType(attackType.getActionType().getCode());
 
-			// attackEvent.setName(enDesc);
+			attackEvent.setName(enDesc);
 			attackEvent.setSourceId(flowLog.getString("source_node_id"));
 			attackEvent.setTargetId(flowLog.getString("target_node_id"));
 
@@ -522,14 +523,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		}
 
 		wsEvent.setSceneId(sceneId);
-		wsEvent.setTime((new Date()).toString());
+		wsEvent.setTime((new Date()));
 		wsEvent.setCategory("attack");
 
 		wsEvent.setType(actionType.getCode());
-		// wsEvent.setName(actionType.getDesc());
+		wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
-		wsEvent.setLineStyle(new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));
+		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()), 5,
+				LineType.getRandomValue(LineType.values())));
 		wsEvent.setLookAtTarget(new Random().nextBoolean());
 
 		// 补充动态描述

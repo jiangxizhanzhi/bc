@@ -41,4 +41,7 @@ public class Flow implements Serializable {
 	@ApiModelProperty("流量分类")
 	private Integer category;
 
+	@ApiModelProperty("源Ip")
+	private String sourceIp;
+
 }

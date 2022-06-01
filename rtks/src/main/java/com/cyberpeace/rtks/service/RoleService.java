@@ -1,12 +1,16 @@
 package com.cyberpeace.rtks.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
 
 public interface RoleService extends IService<Role> {
 
@@ -39,4 +43,62 @@ public interface RoleService extends IService<Role> {
 	 * @param type 类型
 	 * */
 	void updateBatchByDeleteRelatedIds(DeleteReq deleteReq, String type);
+
+	/**
+	 * 删除技能点时删除岗位-技能关联
+	 * @param skillIds
+	 */
+	void deleteSkillRelBySkillIds(List<String> skillIds);
+
+	/**
+	 * 建立岗位-技能关联
+	 * @param resourceId
+	 * @param skillIdWeights
+	 */
+	void addSkillRelation(String resourceId, List<IdWeight> skillIdWeights);
+
+	/**
+	 * 编辑岗位时更新岗位-技能关联
+	 * @param resourceId
+	 * @param skillIdWeights
+	 */
+	void updateSkillRel(String resourceId, List<IdWeight> skillIdWeights);
+
+	/**
+	 * 更新技能关联：先删除全部关联，再重建
+	 * @param roleId
+	 * @param skillIdWeights
+	 */
+	void updateSkillRelSimple(String roleId, List<IdWeight> skillIdWeights);
+
+	/**
+	 * 读取单个岗位下技能清单
+	 * @param roleId
+	 * @return
+	 */
+	List<SkillWeightRes> listSkillByRoleId(String roleId);
+
+	/**
+	 * 删除岗位时删除岗位-技能关联
+	 */
+	void deleteSkillRelByRoleIds(List<String> roleIds);
+
+	/**
+	 * 查询 各个 role的skill数和mission数
+	 * @param roleIds
+	 * @return
+	 */
+	Map<String, RoleSkillRes> mapRoleSkillCount(List<String> roleIds);
+
+	/**
+	 * 获取岗位关联的所有missionId，去重
+	 * @param roleId
+	 * @return
+	 */
+	List<String> getRelMissionIds(String roleId);
+
+	/**
+	 * 清空rtks_role表和rtks_role_skill_relation表
+	 */
+	void clearRole();
 }

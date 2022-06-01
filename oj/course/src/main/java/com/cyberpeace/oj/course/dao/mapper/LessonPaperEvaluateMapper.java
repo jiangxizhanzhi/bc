@@ -5,10 +5,15 @@ import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface LessonPaperEvaluateMapper extends BaseMapper<LessonPaperEvaluate> {
 
     LessonPaperEvaluate selectByUserAndLesson(@Param("userId") String userId,
                                               @Param("lessonId") String lessonId);
+
+    List<LessonPaperEvaluate> selectByLessonAndUsers(@Param("userIds")List<String> userIds,
+                                               @Param("lessonId") String lessonId);
 
 }

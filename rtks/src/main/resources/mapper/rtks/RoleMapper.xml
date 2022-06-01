@@ -13,6 +13,10 @@
         delete
         from rtks_${table}
     </delete>
+    <delete id="clearRole">
+        delete
+        from rtks_role
+    </delete>
 
     <select id="listRole" resultType="com.cyberpeace.rtks.dao.entity.Role">
         select * from rtks_role

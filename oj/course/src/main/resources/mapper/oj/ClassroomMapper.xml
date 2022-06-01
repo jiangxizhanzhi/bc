@@ -32,6 +32,9 @@
                         #{orgId}
                     </foreach>
                 </if>
+                <if test="listQuery.trainPlanId != null and listQuery.trainPlanId != ''">
+                    and train_plan_id = #{listQuery.trainPlanId}
+                </if>
             </if>
         </where>
     </select>
@@ -85,5 +88,10 @@
     <select id="selectByOrgId" resultMap="base">
         select * from oj_classroom
         where organization_id = #{orgId}
+    </select>
+
+    <select id="selectByPlan" resultMap="base">
+        select * from oj_classroom
+        where train_plan_id = #{planId}
     </select>
 </mapper>

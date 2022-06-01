@@ -2,7 +2,9 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +37,7 @@ public class TaskController {
 
 	@ApiOperation("查询单条任务")
 	@GetMapping("/task")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<Task> getTask(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		Task task = taskService.getById(resource_id);
@@ -44,6 +47,7 @@ public class TaskController {
 
 	@ApiOperation("新增单条任务")
 	@PostMapping("/task")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> addTask(@RequestBody @Validated TaskAddReq taskAddReq) {
 		Task toAddTask = new Task();
 		BeanUtils.copyProperties(taskAddReq, toAddTask);
@@ -55,6 +59,7 @@ public class TaskController {
 
 	@ApiOperation("修改单条任务")
 	@PutMapping("/task")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> modifyTask(@RequestBody @Validated TaskAddReq taskAddReq) {
 		Task toUpdateTask = new Task();
 		BeanUtils.copyProperties(taskAddReq, toUpdateTask);
@@ -66,6 +71,7 @@ public class TaskController {
 
 	@ApiOperation("删除任务")
 	@DeleteMapping("/task")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteTask(@RequestBody @Validated DeleteReq deleteReq) {
 		taskService.removeByIds(deleteReq.getIds());
 		roleService.updateBatchByDeleteRelatedIds(deleteReq, "task");
@@ -75,6 +81,7 @@ public class TaskController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/task/list")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<Task>> list(@Validated PageReqBase pageReqBase) {
 		ListRsp<Task> data = taskService.page(pageReqBase);
 

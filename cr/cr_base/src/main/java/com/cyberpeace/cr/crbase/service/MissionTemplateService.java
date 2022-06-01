@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 
 public interface MissionTemplateService extends IService<MissionTemplate> {
 
@@ -40,4 +41,24 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * @param missionTemplateIds
 	 */
 	void batchDelete(List<String> missionTemplateIds);
+
+	/**
+	 * 创建、更新BusinessTemplate时，批量更新任务的关联
+	 * @param businessTemplateId
+	 * @param missionTemplateIds
+	 */
+	void batchUpdateBusinessTemplateId(String businessTemplateId, List<String> missionTemplateIds);
+
+	/**
+	 * 从role_config json字符串中正则匹配出所有的任务模板id
+	 * @param missionSchemeJson
+	 * @return
+	 */
+	List<String> getIdsByMissionsSchemeJson(String missionSchemeJson);
+
+	/**
+	 * @param missionTemplateIds
+	 * @return
+	 */
+	Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds);
 }

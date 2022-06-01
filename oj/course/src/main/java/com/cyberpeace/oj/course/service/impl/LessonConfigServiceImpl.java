@@ -217,7 +217,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			// 子类数据
 			List<LessonConfig> childrenList = dumpBoToEntity(configDumpBo.getChildren(), courseId,
 					lessonNameMap, lessonConfig.getResourceId());
-			childrenList.addAll(childrenList);
+			configList.addAll(childrenList);
 		});
 
 		return configList;

@@ -79,4 +79,10 @@ public interface AttachmentService extends IService<Attachment> {
 	 * 资管平台导入时，图片附件插入数据库
 	 */
 	void loadZiguanImages(Map<String, String> images);
+
+	/**
+	 * 判断文件是否存在
+	 */
+	Boolean isExist(String attachmentId);
+
 }

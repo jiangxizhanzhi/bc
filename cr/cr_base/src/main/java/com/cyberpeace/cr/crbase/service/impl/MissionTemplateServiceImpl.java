@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.PatternConstant;
@@ -14,17 +17,28 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.RtksRelatedService;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author SN
+ */
 @Service
 @Slf4j
 public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMapper, MissionTemplate> implements MissionTemplateService {
 
 	@Autowired
 	MissionTemplateMapper missionTemplateMapper;
+
+	@Autowired
+	TransactionTemplate transactionTemplate;
+
+	@Autowired
+	RtksRelatedService rtksRelatedService;
 
 	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
@@ -63,12 +77,44 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		if (missionTemplateIds.isEmpty()) {
 			return;
 		}
-		missionTemplateMapper.deleteBatchIds(missionTemplateIds);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				missionTemplateMapper.deleteBatchIds(missionTemplateIds);
+				rtksRelatedService.deleteSkillMissionRelation(missionTemplateIds);
+			}
+		});
+
 	}
 
-	private List<String> getIdsByMissionsSchemeJson(String schemeJson) {
+	@Override
+	public void batchUpdateBusinessTemplateId(String businessTemplateId,
+			List<String> missionTemplateIds) {
+		if (missionTemplateIds == null || missionTemplateIds.isEmpty()) {
+			return;
+		}
+		missionTemplateMapper.batchUpdateBusinessTemplateId(businessTemplateId, missionTemplateIds);
+	}
+
+	@Override
+	public List<String> getIdsByMissionsSchemeJson(String schemeJson) {
 		String reg = String.format(PatternConstant.RESOURCE_ID,
 				CrCommonConstants.GENERATED_UUID_LENGTH);
 		return LocalStringUtil.getMatchStr(schemeJson, reg, 1);
+	}
+
+	@Override
+	public Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds) {
+		Map<String, MissionTemplateRes> mapping = Maps.newHashMap();
+		if (missionTemplateIds.isEmpty()) {
+			return mapping;
+		}
+		List<MissionTemplateRes> missionTemplateResList = missionTemplateMapper
+				.listWithBusiness(missionTemplateIds);
+		missionTemplateResList.forEach((missionTemplateRes) -> {
+			mapping.put(missionTemplateRes.getResourceId(), missionTemplateRes);
+		});
+		return mapping;
 	}
 }

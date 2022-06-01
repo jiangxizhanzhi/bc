@@ -33,7 +33,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
-import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
@@ -217,7 +217,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 				if (null == classroomSign) {
 					return null;
 				}
-				classroomSign.setNeedHelp(CommonConstant.FALSE);
+				classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.NO_HELP.getCode());
 				classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
 				return classroomSign;
 			});

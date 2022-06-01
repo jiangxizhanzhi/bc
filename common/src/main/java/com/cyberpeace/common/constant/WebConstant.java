@@ -30,6 +30,8 @@ public interface WebConstant {
 
 	String PASS_THROUGH_BUSINESS_ID = "business_id";
 
+	String PASS_THROUGH_OPERATOR = "operator";
+
 	Integer SCENE_ID_LENGTH = 32;
 
 	/** 外部接口使用*/

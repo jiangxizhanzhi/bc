@@ -2,7 +2,8 @@ package com.cyberpeace.oj.course.service.impl;
 
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
-import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.oj.course.service.bo.ClassHelpWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,5 +164,31 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		dataObj.put(JsonKeyConstant.CODE, OjEvent.SCENE_DELETE_SYNC.getCode());
 		dataObj.put(JsonKeyConstant.DATA, CommonConstant.EMPTY_STRING);
 		return dataObj;
+	}
+
+	@Override
+	public void pushHelpMessage(JSONObject data, String classroomId, String userId) {
+		ClassHelpWsMessageIdentifier identifier = new ClassHelpWsMessageIdentifier();
+		identifier.setUserId(userId);
+
+		identifier.setClassroomId(classroomId);
+		identifier.setPath(WsPath.CLASSROOM_HELP);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().messageIdentifier(identifier).data(data).build();
+
+		myWebSocketHandler.pushMessage(messageContext, false);
+	}
+
+	@Override
+	public void pushRoomTipsMessage(JSONObject data, String userId) {
+		WsMessageIdentifier identifier = new WsMessageIdentifier();
+		identifier.setUserId(userId);
+		identifier.setPath(WsPath.ROOM_SCENE_FIFTEEN_MIN_TIPS);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> context = WebSocketMessageContext
+				.builder().data(data).messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(context, false);
 	}
 }

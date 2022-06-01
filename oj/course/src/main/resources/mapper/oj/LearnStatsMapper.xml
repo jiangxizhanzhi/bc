@@ -3,6 +3,15 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.LearnStatsMapper">
 
+    <sql id="limit">
+        <if test="null != limit">
+            order by `count` desc limit #{limit}
+        </if>
+    </sql>
+    <sql id="filterDeletedLesson">
+        (select resource_id from oj_course_lesson)
+    </sql>
+
     <select id="userStatsSelect" resultType="com.cyberpeace.oj.course.service.bo.UserStatsBo">
         select
                L1.user_id as resource_id,
@@ -11,11 +20,14 @@
                avg(L3.score) as report_average,
                count(L4.id) as finish_practice_count
         from oj_lesson_record L1
-        left join oj_note L2 on L2.note_type = #{report_code} and L1.user_id = L2.user_id and L1.lesson_id = L2.business_id
+        left join (select * from oj_note where create_time &gt;= #{start_time} and create_time &lt;= #{end_time}) L2 on L2.note_type = #{report_code} and L1.user_id = L2.user_id and L1.lesson_id = L2.business_id
         left join oj_note_evaluate L3 on L2.resource_id = L3.note_id and L3.passed = 1
-        left join oj_lesson_paper_evaluate L4 on L1.lesson_id = L4.lesson_id and L1.user_id = L4.submit_user_id
+        left join (select * from oj_lesson_paper_evaluate where create_time &gt;= #{start_time} and create_time &lt;= #{end_time} and (level = 1 or level = 2)) L4 on L1.lesson_id = L4.lesson_id and L1.user_id = L4.submit_user_id
         <where>
-            L1.user_id in <foreach collection="user_ids" item="user_id" open="(" close=")" separator=",">#{user_id}</foreach>
+            L1.lesson_id in (select resource_id from oj_course_lesson)
+             and L1.user_id in
+            <foreach collection="user_ids" item="user_id" open="(" close=")" separator=",">#{user_id}</foreach>
+            and L1.create_time &gt;= #{start_time} and L1.create_time &lt;= #{end_time}
         </where>
         group by L1.user_id;
     </select>
@@ -23,21 +35,26 @@
     <select id="lessonRecordRank" resultType="com.alibaba.fastjson.JSONObject">
         select user_id, count(*) as `count` from oj_lesson_record
         where user_id in <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
-        group by user_id order by `count` desc limit 5;
+        and lesson_id in <include refid="filterDeletedLesson"/>
+        group by user_id
+        <include refid="limit"/>;
     </select>
 
     <select id="reportFinishRank" resultType="com.alibaba.fastjson.JSONObject">
         select T1.user_id, count(T2.resource_id) as `count`
         from oj_note T1 left join oj_note_evaluate T2 on T1.resource_id = T2.note_id
         where T1.note_type = #{report_code} and T2.passed = 1 and T1.user_id in <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
-        group by T1.user_id order by `count` desc;
+        group by T1.user_id
+        <include refid="limit"/>;
     </select>
     
     <select id="practiceFinishRank" resultType="com.alibaba.fastjson.JSONObject">
         select submit_user_id as user_id, count(*) as `count`
         from oj_lesson_paper_evaluate
         where submit_user_id in <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
-        group by user_id order by count desc;
+        and (level = 1 or level = 2)
+        group by user_id
+        <include refid="limit"/>;
     </select>
 
     <select id="learnNumStats" resultType="com.alibaba.fastjson.JSONObject">
@@ -87,6 +104,24 @@
         where T2.resource_id
         in (select lesson_id from oj_lesson_record where user_id = #{user_id})
         group by T1.name
+    </select>
+
+    <select id="afterClassIntegral" resultType="com.alibaba.fastjson.JSONObject">
+    select submit_user_id as user_id, sum(case when level = 1 then  1 when level = 2 then 1  else 0 ENd) as integral
+    from oj_lesson_paper_evaluate where create_time &gt;= #{start_time} and create_time &lt;= #{end_time}
+    and  submit_user_id in <foreach collection="user_ids" item="user_id" open="(" close=")" separator=",">#{user_id}</foreach>
+    GROUP BY submit_user_id
+    </select>
+
+    <select id="lessonIntegral" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT r.user_id as user_id, sum(case when l.type = 0 then 3 else 5 end) as integral
+        from oj_lesson_record r
+                 left join oj_course_lesson l on l.resource_id = r.lesson_id
+        where r.lesson_id in (select resource_id from oj_course_lesson)
+          and r.create_time &gt;= #{start_time} and r.create_time &lt;= #{end_time}
+        and r.user_id in
+        <foreach collection="user_ids" item="user_id" open="(" close=")" separator=",">#{user_id}</foreach>
+        group by r.user_id
     </select>
 
 </mapper>

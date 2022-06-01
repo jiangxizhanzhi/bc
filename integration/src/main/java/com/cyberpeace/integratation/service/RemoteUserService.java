@@ -1,12 +1,12 @@
 package com.cyberpeace.integratation.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
-import org.checkerframework.checker.guieffect.qual.UI;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface RemoteUserService {
 
@@ -25,7 +25,6 @@ public interface RemoteUserService {
 
 	JSONObject getList(Long page, Long perPage, String pattern, String organization);
 
-
 	List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext);
 
 	List<UserInfo> getByIdList(List<String> ids);
@@ -40,5 +39,14 @@ public interface RemoteUserService {
 	 * @return
 	 */
 	List<UserInfo> ListByOrgId(String organizationId, boolean children);
+
+	/**
+	 * 获取组织下的用户编号
+	 * @param orgId
+	 * @return
+	 */
+	List<String> idsByOrgId(String orgId);
+
+	Set<String> getUserPermission(String userId);
 
 }

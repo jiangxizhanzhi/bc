@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -28,6 +32,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
@@ -50,8 +55,6 @@ import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
-import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
-import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -95,8 +98,12 @@ public class RbRoomController {
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	@Autowired
+	private BusinessTemplateService businessTemplateService;
+
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
 		// 校验
 		rbRoomReq.validate();
@@ -116,6 +123,7 @@ public class RbRoomController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbRoomRsp> getRbRoom(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
@@ -141,6 +149,7 @@ public class RbRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<ListRsp<RbRoomRsp>> list(@Validated RbTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -149,6 +158,14 @@ public class RbRoomController {
 		listQuery.setSort("-cr_rb_room.create_time");
 
 		IPage<RbRoomData> data = rbRoomService.list(listQuery);
+
+		// attack engage relation
+		List<String> businessTemplateIds = data.getRecords().stream()
+				.map(RbRoomData::getBusinessTemplateId).collect(Collectors.toList());
+		List<String> attackRelatedIds = businessTemplateService
+				.getAttackRelatedIds(businessTemplateIds);
+		List<String> engageRelatedIds = businessTemplateService
+				.getEngageRelatedIds(businessTemplateIds);
 
 		// 训练场景拓扑节点数量获取
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
@@ -169,6 +186,12 @@ public class RbRoomController {
 					JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
 			rbRoomRsp.setTrainSkill(
 					JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));
+
+			// set attack engage relation
+			rbRoomRsp.setIsAttackRelated(
+					attackRelatedIds.contains(rbRoomRsp.getBusinessTemplateId()));
+			rbRoomRsp.setIsEngageRelated(
+					engageRelatedIds.contains(rbRoomRsp.getBusinessTemplateId()));
 
 			return rbRoomRsp;
 		});
@@ -255,6 +278,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取控制面板信息，好友信息")
 	@GetMapping("/dashboard_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<DashboardInfo> getDashboardInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -271,6 +295,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取群组成员列表")
 	@GetMapping("/members_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getMembersInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "id", value = "角色id", required = true) String id) {
@@ -290,6 +315,7 @@ public class RbRoomController {
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbRoomRsp> update(@RequestBody @Validated RbRoomModifyReq rbTrainRoomModifyReq) {
 		// 校验
 		rbTrainRoomModifyReq.validate();
@@ -315,6 +341,7 @@ public class RbRoomController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated SceneOpsReq opsReq) {
 		String roomId = opsReq.getRoomId();
 		if (StringUtils.isBlank(roomId)) {
@@ -339,6 +366,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取时间管理数据")
 	@GetMapping("/get_time_management")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbTimeManagementRsp> getTimeManagement(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
@@ -382,6 +410,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("创建时间管理")
 	@PostMapping("/create_time_management")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbTimeManagement>
 			addTimeManagement(@RequestBody @Validated RbTimeManagementReq rbTimeManagementReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -421,6 +450,7 @@ public class RbRoomController {
 
 	@ApiOperation("获取设备占用情况")
 	@GetMapping("/device")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbDeviceContext>> getDevices(
 			@ApiParam(value = "room_id", name = "红蓝对抗id", required = true) String room_id,
 			@ApiParam(value = "standard_device", name = "主机",

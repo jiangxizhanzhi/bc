@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.tool.controller.admin;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,10 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 import com.cyberpeace.cr.tool.service.ToolFileService;
+import com.cyberpeace.cs.constant.FileTypeContant;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,10 +32,14 @@ public class ToolFileController {
 
 	@ApiOperation("上传工具附件")
 	@PostMapping("/upload_tool_file")
+	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<ToolFile> updateToolFile(@RequestParam("file") MultipartFile file) {
 		if (file.isEmpty()) {
 			throw new BusinessException(ErrorCode.EMPTY_FILE);
 		}
+
+		// 文件类型校验
+		FileUtil.validateFileSuffix(file.getOriginalFilename(), FileTypeContant.TOOL_ATTACHMENT);
 
 		ToolFile toolFile = toolFileService.saveFile(file);
 		return new BaseRsp<>(toolFile);

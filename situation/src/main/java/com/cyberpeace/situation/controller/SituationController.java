@@ -1,7 +1,5 @@
 package com.cyberpeace.situation.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import com.cyberpeace.situation.controller.res.ElementStateRes;
@@ -54,15 +52,6 @@ public class SituationController {
 	@ApiOperation("攻击动态")
 	@GetMapping("/dynamic/attack")
 	public List<JSONObject> attackDynamic(FlowLogReq flowLogReq) {
-
-		// 处理起始时间和结束时间
-//		if (flowLogReq.getInterval() != null ) {
-//			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//			Long endTime = (new Date()).getTime();
-//			Long startTime = endTime - flowLogReq.getInterval()*1000;
-//			flowLogReq.setEndTime(dateFormat.format(endTime));
-//			flowLogReq.setStartTime(dateFormat.format(startTime));
-//		}
 
 		// 获取流量日志
 		List<JSONObject> flowLogs = topoHandlerService.getFlowLogs(flowLogReq);

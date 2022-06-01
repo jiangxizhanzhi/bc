@@ -49,7 +49,7 @@ public class ElementInfo implements Serializable {
 	private Map<String, PortInfo> ports;
 
 	@ApiModelProperty("节点层级")
-	private Integer hierarchy;
+	private Float hierarchy;
 
 	@ApiModelProperty("节点颜色")
 	private String color;
@@ -74,7 +74,7 @@ public class ElementInfo implements Serializable {
 				null);
 		if (hierarchy != null) {
 			try {
-				this.hierarchy = Integer.parseInt(hierarchy);
+				this.hierarchy = Float.parseFloat(hierarchy);
 			} catch (Exception e) {
 				log.info(String.format("Fail to get the hierarchy of %s, the original value is %s.",
 						this.elementId, hierarchy));

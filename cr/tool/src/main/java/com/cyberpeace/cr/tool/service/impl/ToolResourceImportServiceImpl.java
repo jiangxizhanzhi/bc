@@ -300,21 +300,15 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @return
 	 */
 	private ToolFile uploadFile(String string, File mdFile, boolean transferName) {
-		Pattern compile = Pattern.compile("\\((.*)\\)");
+		// 兼容 [IDA_Pro_v7.0(MacOS).zip](./zip/IDA_Pro_v7.0(MacOS).zip) 格式的数据
+		// [Eziriz.IntelliLock.v2.7.5.1.Cracked.by.yoza[UpK].rar.7z](./zip/Eziriz.IntelliLock.v2.7.5.1.Cracked.by.yoza[UpK].rar.7z)
+		Pattern compile = Pattern.compile("]\\((.*)\\)");
 		Matcher matcher = compile.matcher(string);
 		if (!matcher.find()) {
 			return null;
 		}
 
 		String group = matcher.group(1);
-
-		// 兼容 [IDA_Pro_v7.0(MacOS).zip](./zip/IDA_Pro_v7.0(MacOS).zip) 格式的数据
-		String[] ss = StringUtils.split(group, "]");
-		group = ss[ss.length - 1];
-		if (StringUtils.startsWith(group, "(")) {
-			group = group.substring(1);
-		}
-
 		String replace = group.replace("/", File.separator).replaceFirst(".", "");
 		String filePath = mdFile.getParentFile().getPath() + replace;
 

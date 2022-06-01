@@ -7,12 +7,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -71,6 +73,7 @@ public class TeamTrainScoreController {
 
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId) {
 		JSONObject data = getTrainRecordJsonObject(roomId);
@@ -106,6 +109,7 @@ public class TeamTrainScoreController {
 
 	@ApiOperation("训练记录导出为html")
 	@GetMapping("/train2html")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public void dumpTrainRecord2PDF1(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId) {
 		JSONObject data = getTrainRecordJsonObject(roomId);
@@ -134,6 +138,7 @@ public class TeamTrainScoreController {
 		JSONObject jsonObject = new JSONObject();
 
 		TrainingReport trainingReport = getTrainingReport(roomId).getData();
+
 		List<JSONObject> userList = Lists.newArrayList();
 
 		for (UserReport user : trainingReport.getUsers()) {
@@ -224,6 +229,7 @@ public class TeamTrainScoreController {
 
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<StudentScoreRsp> getStudentScore(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
@@ -237,6 +243,7 @@ public class TeamTrainScoreController {
 
 	@ApiOperation("提交学员评分")
 	@PostMapping("/student_score")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
 			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -251,6 +258,7 @@ public class TeamTrainScoreController {
 
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
 			value = "学员评分") @RequestBody SubmitEvaluationReq submitEvaluationReq) {
 		teamRoomService.checkRoomOpening(submitEvaluationReq.getRoomId());
@@ -262,6 +270,7 @@ public class TeamTrainScoreController {
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
 
@@ -278,6 +287,7 @@ public class TeamTrainScoreController {
 	 */
 	@ApiOperation("获取学员动态事件")
 	@GetMapping("/get_user_mission_dynamic")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
@@ -295,6 +305,7 @@ public class TeamTrainScoreController {
 	 */
 	@ApiOperation("获取任务信息统计")
 	@GetMapping("/get_training_mission_report")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);
@@ -313,6 +324,7 @@ public class TeamTrainScoreController {
 	 */
 	@ApiOperation("获取用户训练记录")
 	@GetMapping("/get_training_record")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<MissionSchemeObject<TrainingRecordMissionRsp>>> getTrainingRecord(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
@@ -330,13 +342,14 @@ public class TeamTrainScoreController {
 	 */
 	@ApiOperation("获取用户训练报告")
 	@GetMapping("/get_training_report")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TrainingReport> getTrainingReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		TeamRoomData teamRoomdata = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
 		if (TeamRoom.TrainingStatusCode.UNOPENED.getCode()
 				.equals(teamRoomdata.getTrainingStatus())) {
-			return new BaseRsp<>(new TrainingReport());
+			// return new BaseRsp<>(new TrainingReport());
 		}
 
 		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);

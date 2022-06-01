@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,6 +18,7 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -178,6 +181,38 @@ public class JsonUtil {
 		SerializeConfig config = new SerializeConfig();
 		config.setPropertyNamingStrategy(namingStrategy);
 		return JSONArray.toJSONString(objArr, config, SerializerFeature.WriteNullStringAsEmpty);
+	}
+
+	/**
+	 * 比较两个Json数据
+	 * @param json1
+	 * @param json2
+	 * @return
+	 */
+	public static boolean equalJson(JSONObject json1, JSONObject json2) {
+
+		if (json1 == null || json2 == null) {
+			return CommonConstant.FALSE;
+		}
+
+		TreeMap<String, String> treeMap1 = toTreeMap(json1);
+		TreeMap<String, String> treeMap2 = toTreeMap(json2);
+
+		return JsonUtil.toJsonString(treeMap1).equals(JsonUtil.toJsonString(treeMap2));
+
+	}
+
+	/** 获取有顺序的key*/
+	private static TreeMap<String, String> toTreeMap(JSONObject jsonObject) {
+
+		TreeMap<String, String> treeMap = Maps.newTreeMap();
+		Iterator<String> iterator = jsonObject.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+			treeMap.put(key, jsonObject.getString(key));
+		}
+
+		return treeMap;
 	}
 
 }

@@ -103,4 +103,12 @@ public interface ErrorCode {
 	/** 写入文件失败 */
 	String FAILED_TO_WRITE_FILE = "100036";
 
+	/** 名称已存在 */
+	String NAME_DUPLICATE = "100037";
+
+	/** 场景关闭失败 */
+	String FAILED_TO_STOP_SCENE = "100038";
+
+	/** 不支持的文件类型，仅支持xxx*/
+	String NOT_SUPPORT_FILE_TYPE = "100039";
 }

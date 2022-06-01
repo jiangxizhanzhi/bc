@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
+import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 
 @Mapper
 @Repository
@@ -33,4 +34,13 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 */
 	Boolean existByNameAndTypeAndId(@Param("templateName") String templateName,
 			@Param("type") Integer type, @Param("templateId") String templateId);
+
+	List<String>
+			getAttackRelatedIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
+
+	List<String>
+			getEngageRelatedIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
+
+	IPage<BusinessTemplateSimple> listSimple(@Param("page") Page page, @Param("type") Integer type,
+			@Param("difficulty") Integer difficulty, @Param("pattern") String pattern);
 }

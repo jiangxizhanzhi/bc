@@ -1,7 +1,10 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +32,10 @@ public class WebResourceCollectionController {
 
 	@ApiOperation("资源收藏或取消收藏")
 	@PostMapping("")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+					MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
+			logical = Logical.OR)
 	public BaseRsp<Boolean> add(@RequestBody @Validated CollectionReq collectionReq) {
 
 		CollectionContext collectionContext = BeanUtils.copy(collectionReq,

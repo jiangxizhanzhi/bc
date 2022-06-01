@@ -1,0 +1,279 @@
+package com.cyberpeace.cr.crbase.service.impl;
+
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.context.scene.*;
+import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.mp.MpFlow;
+import com.cyberpeace.integratation.model.scene.*;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.google.common.collect.Lists;
+
+/**
+ *
+ */
+@Service
+public class CrSceneServiceImpl implements CrSceneService {
+
+	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
+
+	@Override
+	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
+			String topoId) {
+		JSONObject topoJson = new JSONObject();
+		topoJson.put("scene_config", sceneConfigData.getSceneConfig());
+		topoJson.put("logo", sceneConfigData.getLogo());
+		topoJson.put("reference_type", businessCode.getCode());
+
+		if (topoId != null) {
+			topoJson.put("id", topoId);
+		}
+
+		return remoteTopoService.save(topoJson);
+	}
+
+	@Override
+	public String getFlowFilePath(String flowId) {
+		MpFlow mpFlow = remoteSceneService.getFlowById(flowId);
+
+		if (mpFlow == null) {
+			throw new BusinessException(CrBusinessErrorCode.FLOW_NOT_EXIST);
+		}
+
+		Integer resourceType = mpFlow.getResourceType();
+		String flowFilePath = resourceType.equals(MpFlow.resourceTypeEnum.PCAP.getCode())
+				? mpFlow.getPcapFile()
+				: mpFlow.getScriptFile();
+		return flowFilePath;
+	}
+
+	@Override
+	public List<FlowInfo> getNodeFlowContextList(String mpSceneId, String topoId, String nodeId) {
+		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, topoId, nodeId);
+		return BeanUtils.deepCopyList(elementFlowList, FlowInfo.class);
+	}
+
+	/**获取节点流量列表*/
+	private List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
+
+		if (StringUtils.isEmpty(nodeId)) {
+			throw new BusinessException(CrBusinessErrorCode.NOT_SPECIFY_NODE);
+		}
+
+		CpFlow cpFlow = getCpFlow(mpSceneId, topoId);
+
+		List<ElementFlow> nodeFlowList = Lists.newArrayList();
+
+		if (cpFlow == null) {
+			return nodeFlowList;
+		}
+
+		ElementFlowList elementFlowList = cpFlow.getElements().get(nodeId);
+
+		if (elementFlowList != null) {
+			nodeFlowList = elementFlowList.getFlows();
+		}
+
+		return nodeFlowList;
+	}
+
+	/**获取cpFlow*/
+	private CpFlow getCpFlow(String mpSceneId, String topoId) {
+
+		// 1.创建变量
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CpFlow cpFlow = new CpFlow();
+
+		// 2. 获取cpFlow
+		// 2.1 优先获取场景数据
+		if (StringUtils.isNotEmpty(mpSceneId)) {
+			// 2.1.1 请求sceneData
+			JSONObject data = localSceneService.getSceneData(mpSceneId, userId);
+			// 2.1.2 转换JsonObject为SceneData对象
+			SceneData sceneData = data.toJavaObject(SceneData.class);
+			// 2.1.3 获取流量数据
+			cpFlow = sceneData.getPlugins().getCpFlow();
+		} else if (StringUtils.isNotEmpty(topoId)) {
+			// 2.2 获取拓扑数据
+			// 2.2.1 请求topoData
+			JSONObject data = localSceneService.getTopoData(topoId);
+			TopoData topoData = data.getJSONObject(CrCommonConstants.TOPO_DATA_KEY)
+					.toJavaObject(TopoData.class);
+			cpFlow = topoData.getPlugins().getCpFlow();
+		}
+
+		return cpFlow;
+	}
+
+	/**过滤流量列表*/
+	private ListRsp<ElementFlow> filterFlowList(List<ElementFlow> elementFlowList,
+			Integer interactiveType, Page page) {
+
+		// 按照流量类型过滤数据
+		if (interactiveType != null) {
+			elementFlowList.removeIf(
+					elementFlow -> !elementFlow.getInteractiveType().equals(interactiveType));
+		}
+
+		// 分页
+		ListRsp<ElementFlow> flowListRsp = PageUtil.getListResult(elementFlowList, page,
+				elementFlowList.size());
+
+		return flowListRsp;
+	}
+
+	/**设置节点流量状态*/
+	private List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList,
+			String mpSceneId, String nodeId) {
+
+		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);
+
+		for (ElementFlow elementFlow : elementFlowList) {
+			elementFlow.setCommonStatus(taskStatus);
+		}
+
+		return elementFlowList;
+	}
+
+	/**启动流量前校验流量任务状态*/
+	private Boolean checkFlowTaskStatus(String mpSceneId, String nodeId) {
+
+		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);
+
+		if (taskStatus.equals(ElementFlow.TaskStatusEnum.UNDEFINED.getCode())) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_JUDGE_FLOW_TASK_STATUS);
+		}
+
+		if (!taskStatus.equals(ElementFlow.TaskStatusEnum.STOPPED.getCode())
+				&& !taskStatus.equals(ElementFlow.TaskStatusEnum.ZERO.getCode())) {
+			throw new BusinessException(CrBusinessErrorCode.FLOW_TASK_EXISTS);
+		}
+
+		return true;
+	}
+
+	/**获取节点流量任务状态*/
+	private Integer getFlowTaskStatus(String mpSceneId, String nodeId) {
+
+		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, null);
+
+		// 判断流量状态
+		Integer taskStatus;
+		try {
+			JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
+			taskStatus = (Integer) jsonObject.getOrDefault("status",
+					ElementFlow.TaskStatusEnum.ZERO.getCode());
+		} catch (Exception e) {
+			taskStatus = ElementFlow.TaskStatusEnum.UNDEFINED.getCode();
+		}
+
+		return taskStatus;
+	}
+
+	@Override
+	public ListRsp<ElementFlow> getCrFlowList(ElementFlowListContext context) {
+
+		String mpSceneId = context.getMpSceneId();
+		String nodeId = context.getNodeId();
+		Integer interactiveType = context.getInteractiveType();
+
+		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, context.getTopoId(), nodeId);
+
+		// 按照条件过滤并分页
+		ListRsp<ElementFlow> flowListRsp = filterFlowList(elementFlowList, interactiveType,
+				context.getPage());
+
+		// 设置流量状态
+		setElementFlowStatus(flowListRsp.getList(), mpSceneId, nodeId);
+
+		return flowListRsp;
+	}
+
+	@Override
+	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
+		Boolean result = remoteSceneService.updateFlowParam(flowOpsContext);
+
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_FLOW);
+		}
+
+		return result;
+	}
+
+	@Override
+	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
+			String businessId) {
+
+		// 校验节点下流量任务状态
+		checkFlowTaskStatus(mpSceneId, nodeId);
+
+		for (FlowInfoContext flowContext : flows) {
+			FlowOpsContext flowOpsContext = BeanUtils.copy(flowContext,
+					com.cyberpeace.integratation.model.scene.FlowOpsContext.class);
+			flowOpsContext.setId(mpSceneId);
+			flowOpsContext.setNodeId(nodeId);
+
+			// 设置实例id
+			SceneMpContext context = new SceneMpContext();
+			context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID, businessId);
+			flowOpsContext.setContext(context);
+
+			Boolean result = remoteSceneService.startFlow(flowOpsContext);
+
+			if (!result) {
+				throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType,
+			String businessId) {
+
+		// 校验节点下流量任务状态
+		checkFlowTaskStatus(mpSceneId, nodeId);
+
+		FlowBatchOpsContext flowBatchOpsContext = new FlowBatchOpsContext(mpSceneId, nodeId,
+				runType);
+
+		// 设置实例id
+		SceneMpContext context = new SceneMpContext();
+		context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID, businessId);
+		flowBatchOpsContext.setContext(context);
+
+		Boolean result = remoteSceneService.batchStartFlow(flowBatchOpsContext);
+
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
+		}
+
+		return true;
+	}
+}

@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service.impl;
 import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -14,14 +15,14 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.integratation.model.mp.MpEventAggr;
-import com.cyberpeace.integratation.model.mp.MpFlowTrend;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.model.mp.MpRiskCount;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.constant.SessionType;
+import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
@@ -56,6 +57,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String FLOW_STOP_URL;
 
+	private String FLOW_UPDATE_PARAM_URL;
+
+	private String FLOW_BATCH_START_URL;
+
+	private String FLOW_BATCH_STOP_URL;
+
 	private String NODE_SESSION_URL;
 
 	private String FLOW_LOG_URL;
@@ -67,6 +74,14 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String EVENT_AGGR_URL;
 
 	private String RISK_COUNT_URL;
+
+	private String COLLECTION_EVENT_URL;
+
+	private String COLLECTION_EVENT_DATA_URL;
+
+	private String FLOW_RECORD_URL;
+
+	private String FLOW_RETRIEVE_URL;
 
 	@PostConstruct
 	public void init() {
@@ -99,6 +114,15 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		FLOW_STOP_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.flow.stop");
 
+		FLOW_UPDATE_PARAM_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.param.update");
+
+		FLOW_BATCH_START_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.batch.start");
+
+		FLOW_BATCH_STOP_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.batch.stop");
+
 		NODE_SESSION_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.session");
 
@@ -115,6 +139,18 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		RISK_COUNT_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.risk.count");
+
+		COLLECTION_EVENT_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.probe.collection.event");
+
+		COLLECTION_EVENT_DATA_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.probe.collection.data");
+
+		FLOW_RECORD_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.flow.record");
+
+		FLOW_RETRIEVE_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.flow.retrieve");
 
 	}
 
@@ -166,6 +202,16 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
+	public MpFlow getFlowById(String flowId) {
+		return HttpClientUtil.rawGet(FLOW_RETRIEVE_URL + flowId, MpFlow.class);
+	}
+
+	@Override
+	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
+		return HttpClientUtil.post(FLOW_UPDATE_PARAM_URL, flowOpsContext, Boolean.class);
+	}
+
+	@Override
 	public Boolean startFlow(FlowOpsContext flowOpsContext) {
 		return HttpClientUtil.post(FLOW_START_URL, flowOpsContext, Boolean.class);
 	}
@@ -173,6 +219,21 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean stopFlow(FlowOpsContext context) {
 		return HttpClientUtil.post(FLOW_STOP_URL, context, Boolean.class);
+	}
+
+	@Override
+	public Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext) {
+		return HttpClientUtil.post(FLOW_BATCH_START_URL, flowBatchOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext) {
+		return HttpClientUtil.post(FLOW_BATCH_STOP_URL, flowBatchOpsContext, Boolean.class);
+	}
+
+	@Override
+	public JSONObject getFlowRecords(FlowRecordContext flowRecordContext) {
+		return HttpClientUtil.post(FLOW_RECORD_URL, flowRecordContext, JSONObject.class);
 	}
 
 	private String startScene(SceneStartContext context, String url) {
@@ -231,6 +292,20 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
+	public Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
+			List<String> userIds) {
+
+		JSONArray nodeSessions = getNodeSessions(sceneIds, nodeIds, userIds,
+				SessionType.ASSISTANCE.type);
+		List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
+				.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
+		Map<String, String> userAssistanceMap = StreamApiUtils.toMap(filterList,
+				object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
+				object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
+		return userAssistanceMap;
+	}
+
+	@Override
 	public JSONArray getMonitorSessions(String mpSceneId, String studentId) {
 		String url = NODE_SESSION_URL + mpSceneId;
 		if (StringUtils.isNotBlank(studentId)) {
@@ -268,5 +343,19 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public MpRiskCount getRiskCount(ElementCommonContext elementCommonContext) {
 		return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL,
 				MpRiskCount.class);
+	}
+
+	@Override
+	public List<MpCollectionEvent>
+			getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
+		String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext,
+				COLLECTION_EVENT_DATA_URL, String.class);
+		// todo 远程返回异常
+		if (mpCollectionEvents == null) {
+			throw new RemoteServiceException();
+		}
+		JSONObject result = JsonUtil.toJsonObject(mpCollectionEvents, JSONObject.class);
+		// todo 错误响应
+		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
 	}
 }

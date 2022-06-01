@@ -2,9 +2,12 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +55,8 @@ public class AdminPaperController {
 
 	@ApiOperation("获取习题库习题列表")
 	@GetMapping("/practice/list")
+	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_COURSES}, logical = Logical.OR)
 	public BaseRsp<ListRsp<LibPracticeListBo>>
 			selectPracticeInfo(LibPracticeListReq practiceListReq) {
 
@@ -76,8 +81,10 @@ public class AdminPaperController {
 
 	@ApiOperation("题库筛选条件查询")
 	@GetMapping("/select_info")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_set_id", value = "习题集编号"),
-			@ApiImplicitParam(name = "children", value = "分类是否查询子类") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_set_id", value = "习题集编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "children", value = "分类是否查询子类", dataTypeClass = Boolean.class) })
+	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_COURSES}, logical = Logical.OR)
 	public BaseRsp<LibSelectRes> get(
 			@RequestParam(value = "practice_set_id", required = false) String practiceSetId,
 			@RequestParam(value = "children", required = false) Boolean children) {
@@ -108,6 +115,8 @@ public class AdminPaperController {
 
 	@ApiOperation("获取随机数量题目")
 	@PostMapping("/random/practice")
+	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_COURSES}, logical = Logical.OR)
 	public BaseRsp<List<LibPracticeListBo>>
 			getRandomPractice(@RequestBody @Validated RandomPracticeReq randomPracticeReq) {
 

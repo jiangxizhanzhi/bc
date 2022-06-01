@@ -13,4 +13,12 @@ public interface CrConstantsService {
 	 */
 	List<CrConstantsConfig> getByType(Integer type);
 
+	/**
+	 * 校验常量配置是否存在
+	 * @param type
+	 * @param code
+	 * @return
+	 */
+	Boolean validateType(Integer type, Integer code);
+
 }

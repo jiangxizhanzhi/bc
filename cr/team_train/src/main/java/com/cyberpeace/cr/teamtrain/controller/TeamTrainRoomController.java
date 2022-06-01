@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -15,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -33,10 +35,7 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -109,8 +108,12 @@ public class TeamTrainRoomController {
 	@Autowired
 	private TrainRecordService trainRecordService;
 
+	@Autowired
+	private BusinessTemplateService businessTemplateService;
+
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -123,6 +126,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("停止场景")
 	@DeleteMapping("/scene")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
 		String roomId = sceneStopReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -135,6 +139,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查看场景")
 	@GetMapping("/scene")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
@@ -145,6 +150,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("暂停场景")
 	@PostMapping("/scene/pause")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
@@ -154,6 +160,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/scene/unpause")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
@@ -163,6 +170,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查询流量")
 	@GetMapping("flow")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<FlowRsp> getFlowList(
 			@ApiParam(name = "room_id", value = "团队训练id", required = true) String room_id) {
 
@@ -175,6 +183,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp startFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -195,6 +204,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("停止流量")
 	@PostMapping("/flow/stop")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp stopFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -215,6 +225,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("重启节点")
 	@PostMapping("/scene/node/restart")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
@@ -230,6 +241,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("重建节点")
 	@PostMapping("/scene/node/recreate")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
@@ -245,6 +257,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
 		// 校验
 		teamTrainRoomReq.validate();
@@ -264,6 +277,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamRoomRsp>
 			update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
 		// 校验
@@ -285,6 +299,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -325,6 +340,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated SceneOpsReq opsReq) {
 
 		String roomId = opsReq.getRoomId();
@@ -347,6 +363,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -363,6 +380,14 @@ public class TeamTrainRoomController {
 		ListRsp<TeamRoomRsp> teamRoomRspListRsp = new ListRsp();
 
 		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
+
+		// attack engage relation
+		List<String> businessTemplateIds = data.getRecords().stream()
+				.map(TeamRoomData::getBusinessTemplateId).collect(Collectors.toList());
+		List<String> attackRelatedIds = businessTemplateService
+				.getAttackRelatedIds(businessTemplateIds);
+		List<String> engageRelatedIds = businessTemplateService
+				.getEngageRelatedIds(businessTemplateIds);
 
 		for (TeamRoomData teamRoomData : data.getRecords()) {
 			RoleQuery roleQuery = new RoleQuery();
@@ -386,6 +411,11 @@ public class TeamTrainRoomController {
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+			// set attack engage relation
+			teamRoomRsp.setIsAttackRelated(
+					attackRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setIsEngageRelated(
+					engageRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
 
 			teamRoomRspList.add(teamRoomRsp);
 		}
@@ -400,6 +430,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("修改团队训练状态")
 	@PostMapping("/start_end_team")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<Map> changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
 
 		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
@@ -418,6 +449,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查询团队训练状态")
 	@GetMapping("/start_end_team")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<Map> getTrainingStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		Integer status = teamRoomService.getTrainingStatus(resource_id);
@@ -434,6 +466,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("查询团队训练学员用户列表")
 	@GetMapping("/get_user_list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<UserRole>> getUserList(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		List<UserRole> data = teamRoomService.getUserList(resource_id);
@@ -447,6 +480,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
@@ -461,6 +495,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("查询团队训练训练手册")
 	@GetMapping("/get_training_manual")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String> getTrainingManual(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
@@ -475,6 +510,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("修改开放题解")
 	@PostMapping("/update_show_write_up")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String> updateShowWriteUp(@RequestBody @Validated WriteUpReq writeUpReq) {
 
 		teamRoomService.checkTeacherPermission(writeUpReq.getRoomId(),
@@ -493,6 +529,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("任务下发")
 	@PostMapping("/missions")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
 			releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 

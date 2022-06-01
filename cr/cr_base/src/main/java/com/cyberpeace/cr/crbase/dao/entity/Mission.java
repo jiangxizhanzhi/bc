@@ -12,6 +12,8 @@ public class Mission extends MissionBase {
 
 	private String roomId;
 
+	private String missionTemplateId;
+
 	public Boolean isObjective() {
 		Integer type = getType();
 		if (type == null) {

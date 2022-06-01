@@ -105,7 +105,84 @@ public interface OjBusinessErrorCode {
 	/** 组织信息不能为空*/
 	String ORG_INFORMATION_NOT_NULL = "102033";
 
-	/** 对应的习题文件未找到*/
+	/**  对应的习题文件未找到*/
 	String PRACTICE_OPERATION_FILE_NOT_FOUNT = "102034";
 
+	/** 第x行 训练计划不能为空*/
+	String TRAIN_PLAN_NAME_IS_NULL = "102035";
+
+	/** 第x行 训练计划已存在*/
+	String LINE_TRAIN_PLAN_EXIST = "102036";
+
+	/** 第x行 训练计划对应课程不存在*/
+	String PLAN_COURSE_IS_NULL = "102037";
+
+	/** 第x行 检索不到对应课程*/
+	String PLAN_COURSE_NOT_EXIST = "102038";
+
+	/** 第x行 训练计划对应课时不能为空*/
+	String PLAN_LESSON_IS_NULL = "102039";
+
+	/** 第x行 检索不到对应课时*/
+	String PLAN_LESSON_NOT_EXIST = "102040";
+
+	/** 第x行 计划时间不能为空*/
+	String PLAN_TIME_IS_NULL = "102041";
+
+	/** 第x行 结束时间大于开始时间*/
+	String PLAN_END_GT_START_TIME = "102042";
+
+	/** 第x行 计划组织不能为空*/
+	String PLAN_ORG_IS_NULL = "102043";
+
+	/** 第x行 组织计划不存在*/
+	String PLAN_ORG_NOT_EXIST = "102044";
+
+	/** 第x行 课时未公开*/
+	String PLAN_LESSON_NOT_PUBLIC = "102045";
+
+	// 删除实例时没有传入resource_id字段
+	String RESOURCE_ID_MISSING = "102046";
+
+	/** 对应的课堂未找到*/
+	String CLASSROOM_NOT_FOUNT = "102047";
+
+	/** 训练计划不能为空*/
+	String TRAIN_PLAN_ID_NOT_NULL = "102048";
+
+	/** 检索不到对应的训练计划*/
+	String TRAIN_PLAN_NOT_FOUND = "102049";
+
+	/** 用户无课堂分组信息*/
+	String USER_CLASS_GROUP_NOT_FOUND = "102050";
+
+	/** 用户未进行远程协助请求或者协助已结束*/
+	String USER_NO_NEED_HELP = "102051";
+
+	/** 学员未接入机器*/
+	String HELP_URL_NOT_FOUND = "102052";
+
+	/** 训练计划%s已开始，暂不支持导入*/
+	String CLASSROOM_START_NOT_COVER = "102053";
+
+	/** 资源正在导入*/
+	String RESOURCE_IN_IMPORT = "102054";
+
+	/** 训练计划已存在*/
+	String TRAIN_PLAN_EXIST = "102055";
+
+	/** xxx组织下无用户*/
+	String ORG_UNDER_NO_USERS = "102056";
+
+	/** 开始时间不能为空*/
+	String START_TIME_NOT_NULL = "102057";
+
+	/** 结束时间不能为空*/
+	String END_TIME_NOT_NULL = "102058";
+
+	/** 第xxx行 文件内容缺失*/
+	String FILE_CONTENT_MISSING = "102059";
+
+	/** 评论不存在*/
+	String COMMENT_NOT_EXIST = "102060";
 }

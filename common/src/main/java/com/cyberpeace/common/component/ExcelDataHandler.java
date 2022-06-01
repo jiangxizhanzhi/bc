@@ -1,21 +1,30 @@
 package com.cyberpeace.common.component;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.alibaba.fastjson.JSONException;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.ExcelHeader;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +68,7 @@ public class ExcelDataHandler {
 					filePath, sheetIndex, e);
 			try {
 				fileInputStream.close();
+				workbook.close();
 			} catch (IOException ioException) {
 				// 关不掉算了
 			}
@@ -77,10 +87,10 @@ public class ExcelDataHandler {
 			fileInputStream = new FileInputStream(filePath);
 
 			String fileSuffix = FileUtil.getFileSuffix(filePath);
-			if (fileSuffix.equals("xls")) {
+			if (fileSuffix.equals(FileSunffixConstant.XLS.getDesc())) {
 				workbook = new HSSFWorkbook(fileInputStream);
 			}
-			if (fileSuffix.equals("xlsx")) {
+			if (fileSuffix.equals(FileSunffixConstant.XLSX.getDesc())) {
 				workbook = new XSSFWorkbook(fileInputStream);
 			}
 
@@ -90,11 +100,15 @@ public class ExcelDataHandler {
 			log.error(
 					"Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}], catch error:",
 					filePath, sheetName, e);
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
-		} finally {
+
 			try {
+				workbook.close();
 				fileInputStream.close();
-			} catch (IOException e) {}
+			} catch (IOException ioException) {
+				// 关不掉这个没办法了
+			}
+
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		}
 	}
 
@@ -132,6 +146,10 @@ public class ExcelDataHandler {
 			List<String> columnList = Lists.newArrayList();
 
 			Row sheetRow = sheet.getRow(rowIndex);
+			if (null == sheetRow) {
+				break;
+			}
+
 			for (int cellIndex = 0; cellIndex < sheetRow.getLastCellNum(); cellIndex++) {
 				String cellData = getExcelDateByIndex(rowIndex, cellIndex);
 				columnList.add(cellData);
@@ -155,16 +173,235 @@ public class ExcelDataHandler {
 		if (null == cell) {
 			return CommonConstant.EMPTY_STRING;
 		}
-		return cell.toString();
+
+		if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+			return TimeUtil.format1(cell.getDateCellValue());
+		}
+		return cell.toString().trim();
 	}
 
 	public void closeIO() {
 		try {
 			fileInputStream.close();
+			workbook.close();
 		} catch (IOException e) {
 			// 关不掉没办法
 			log.error("fileInputStream close fail!", e);
 		}
+	}
+
+	/**
+	 * 获取excel写对象
+	 * @return
+	 */
+	private static Workbook createWorkbook(String filePath) {
+		String fileSuffix = FileUtil.getFileSuffix(filePath);
+
+		if (StringUtils.isBlank(fileSuffix)) {
+			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+		}
+
+		if (fileSuffix.equals(FileSunffixConstant.XLSX.getDesc())) {
+			return new XSSFWorkbook();
+		}
+
+		if (fileSuffix.equals(FileSunffixConstant.XLS.getDesc())) {
+			return new HSSFWorkbook();
+		}
+
+		throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+	}
+
+	/**
+	 * @param dataList    传入对象 对象非基本数据类型
+	 * @param filePath    excel导出的文件路径
+	 * @param sheetName   
+	 * @param excelHeader 标题
+	 * @param workbook    导出格式
+	 * @param <T>
+	 * @return
+	 */
+	private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
+			ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
+
+		// 创建HSSFSheet对象
+		Sheet sheet = workbook.createSheet(sheetName);
+		// 创建HSSFRow对象
+		Row row = sheet.createRow(CommonConstant.ZERO);
+
+		// 在excel表中添加表头
+		for (int i = 0; i < excelHeader.header.length; i++) {
+			Cell cell = row.createCell(i);
+			cell.setCellValue(excelHeader.header[i]);
+		}
+
+		try {
+			if (CollectionUtils.isEmpty(dataList)) {
+				workbook.write(new FileOutputStream(filePath));
+				return;
+			}
+
+			Field[] allFields = ObjUtil.getFields(dataList.get(CommonConstant.ZERO));
+			for (int i = 1; i <= dataList.size(); i++) {
+				int cellNum = 0;
+				T t = dataList.get(i - CommonConstant.ONE);
+				Row dataRow = sheet.createRow(i);
+				for (Field field : allFields) {
+
+					// 需要过滤的字段
+					if (CollectionUtils.isNotEmpty(passFields)
+							&& passFields.contains(field.getName())) {
+						continue;
+					}
+
+					Object obj = ObjUtil.getFieldValueByName(field.getName(), t);
+
+					try {
+						if (obj instanceof Date) {
+							dataRow.createCell(cellNum).setCellValue(TimeUtil.format1((Date) obj));
+						} else {
+							dataRow.createCell(cellNum).setCellValue(JsonUtil.toJsonString(obj));
+						}
+
+					} catch (JSONException e) {
+						// 如果对象不能格式化 则认为为基本数据类型
+						log.warn("ExcelDataHandler json parse error:", e);
+
+						// 获取字段属性名称 设置单元格内容
+						if (obj instanceof Date) {
+							dataRow.createCell(cellNum).setCellValue((Date) obj);
+						} else {
+							dataRow.createCell(cellNum).setCellValue(
+									null == obj ? CommonConstant.EMPTY_STRING : obj.toString());
+						}
+					}
+
+					cellNum++;
+				}
+			}
+
+			workbook.write(new FileOutputStream(filePath));
+
+		} catch (Exception e) {
+			log.error(
+					"Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}], catch error:",
+					filePath, e);
+			try {
+				workbook.close();
+			} catch (IOException ioException) {
+				// .....
+			}
+			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
+		}
+
+	}
+
+	/**
+	 * excel文件导出
+	 * @param data
+	 * @param filePath
+	 * @param excelHeader
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> void exportExcel(List<T> data, String filePath, ExcelHeader excelHeader) {
+
+		Workbook workbook = null;
+		try {
+			workbook = createWorkbook(filePath);
+			doExportExcel(data, filePath, CommonConstant.ONE.toString(), excelHeader, workbook,
+					null);
+		} finally {
+			try {
+				workbook.close();
+			} catch (IOException e) {
+				// 关闭
+			}
+		}
+	}
+
+	/**
+	 * excel 文件导出
+	 * @param list 导出数据
+	 * @param sheetName sheet名
+	 * @param passFields 过滤字段
+	 * @param excelHeader 导出列头
+	 * @param <T> 数据bean
+	 * @return 文件流
+	 */
+	public static <T> File exportExcel(List<T> list, String filePath, String sheetName,
+			List<String> passFields, ExcelHeader excelHeader) {
+
+		File file = new File(filePath);
+		// 校验文件是否存在 不存在则新建
+		File parentFile = file.getParentFile();
+		if (!parentFile.exists()) {
+			boolean isCreated = parentFile.mkdirs();
+			if (!isCreated) {
+				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, parentFile.getPath());
+			}
+		}
+
+		// 创建HSSFWorkbook对象
+		HSSFWorkbook wb = new HSSFWorkbook();
+
+		try {
+			// 创建HSSFSheet对象
+			HSSFSheet sheet = wb.createSheet(sheetName);
+			// 创建HSSFRow对象
+			HSSFRow row = sheet.createRow(0);
+			// 在excel表中添加表头
+			for (int i = 0; i < excelHeader.header.length; i++) {
+				// 创建HSSFCell对象
+				HSSFCell cell = row.createCell(i);
+				HSSFRichTextString text = new HSSFRichTextString(excelHeader.header[i]);
+				cell.setCellValue(text);
+			}
+			int rowNum = 1;
+			if (list.size() != 0) {
+				T t = list.get(0);
+				Field[] fields = t.getClass().getDeclaredFields();
+				Field[] superClassFields = t.getClass().getSuperclass().getDeclaredFields();
+				Field[] allFields = ArrayUtils.addAll(fields, superClassFields);
+				for (T customersForm : list) {
+					int cellNum = 0;
+					HSSFRow dataRow = sheet.createRow(rowNum);
+					for (Field field : allFields) {
+						// 设置允许通过反射访问私有变量
+						field.setAccessible(true);
+						// 过滤无用字段值
+						if (passFields.contains(field.getName())) {
+							continue;
+						}
+						// 获取字段的值
+						String value = "";
+						Object obj = field.get(customersForm);
+						if (obj != null) {
+							value = obj.toString();
+						}
+						// 获取字段属性名称 设置单元格内容
+						dataRow.createCell(cellNum).setCellValue(value);
+						cellNum++;
+					}
+					rowNum++;
+				}
+			}
+			// 输出Excel文件
+			wb.write(file);
+
+		} catch (Exception e) {
+			log.error(
+					"Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}], catch error:",
+					filePath, sheetName, e);
+			try {
+				wb.close();
+			} catch (IOException ioException) {
+				// .....
+			}
+			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
+		}
+
+		return file;
 	}
 
 }

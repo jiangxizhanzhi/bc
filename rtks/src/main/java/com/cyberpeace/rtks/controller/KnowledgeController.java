@@ -2,7 +2,9 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +45,7 @@ public class KnowledgeController {
 
 	@ApiOperation("查询单条")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<KnowledgeRes> getKnowledge(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		// ApiParam中的name和java参数String id的两个id必须同名
@@ -53,6 +56,7 @@ public class KnowledgeController {
 
 	@ApiOperation("新增单条")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> addKnowledge(@RequestBody @Validated KnowledgeAddReq knowledgeAddReq) {
 
 		// 数据校验
@@ -75,6 +79,7 @@ public class KnowledgeController {
 
 	@ApiOperation("修改单条")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			modifyKnowledge(@RequestBody @Validated KnowledgeAddReq knowledgeAddReq) {
 
@@ -99,6 +104,7 @@ public class KnowledgeController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteKnowledge(@RequestBody @Validated DeleteReq deleteReq) {
 		knowledgeService.removeByIds(deleteReq.getIds());
 		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds(),
@@ -109,6 +115,7 @@ public class KnowledgeController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<KnowledgeRes>> list(@Validated KnowledgeListReq knowledgeListReq) {
 		ListRsp<KnowledgeRes> data = knowledgeService.page(knowledgeListReq);
 

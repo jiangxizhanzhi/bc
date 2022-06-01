@@ -58,7 +58,7 @@ public class MissionTemplateReq implements Serializable {
 		CrCommonValidator.validateSize(skillPoints, CrCommonConstants.SKILL_POINTS_SIZE,
 				CrBusinessErrorCode.INVALID_SKILL_POINTS_SIZE);
 		for (Integer skillPoint : skillPoints) {
-			CrCommonValidator.validateScore(skillPoint, CrCommonConstants.SKILL_POINT_MIN_VALUE,
+			CrCommonValidator.validateRange(skillPoint, CrCommonConstants.SKILL_POINT_MIN_VALUE,
 					CrCommonConstants.SKILL_POINT_MAX_VALUE,
 					CrBusinessErrorCode.INVALID_SKILL_POINT_VALUE);
 		}

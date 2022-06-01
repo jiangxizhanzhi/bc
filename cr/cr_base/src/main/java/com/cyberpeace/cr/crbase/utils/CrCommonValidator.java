@@ -70,9 +70,9 @@ public class CrCommonValidator {
 		}
 	}
 
-	public static void validateScore(int target, int minValue, int maxValue, String errorCode) {
+	public static void validateRange(int target, int minValue, int maxValue, String errorCode) {
 		if (target < minValue || target > maxValue) {
-			throw new BusinessException(errorCode);
+			throw new BusinessException(errorCode, minValue, maxValue);
 		}
 	}
 
@@ -90,5 +90,15 @@ public class CrCommonValidator {
 	public static void validateDescLen(String target, String errorCode) {
 		validateLength(target, CrCommonConstants.MIN_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
 				errorCode);
+	}
+
+	/**
+	 * id、编号长度 1~32
+	 * @param target
+	 * @param errorCode
+	 */
+	public static void validateIdLen(String target, String errorCode) {
+		validateLength(target, CrCommonConstants.MIN_STR_LEN,
+				CrCommonConstants.GENERATED_UUID_LENGTH, errorCode);
 	}
 }

@@ -3,12 +3,15 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.io.File;
 import java.util.List;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +69,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论基础习题新增")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Integer>
 			add(@RequestBody @Validated({ Create.class }) TheoryAddReq theoryAddReq) {
 
@@ -95,6 +99,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论基础习题修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Integer>
 			update(@RequestBody @Validated({ Update.class }) TheoryUpdateReq theoryUpdateReq) {
 
@@ -109,6 +114,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("获取理论基础习题详情")
 	@GetMapping("")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<AdminTheoryBo> get(@RequestParam("resource_id") String resourceId) {
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
@@ -119,6 +125,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("基础理论习题资源删除")
 	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
 		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());
@@ -127,6 +134,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("分页查询理论基础习题")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<ListRsp<PracticeTheoryListBo>> list(AdminTheoryListReq listReq) {
 
 		Page page = listReq.toPageParam();
@@ -151,7 +159,11 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论习题资源导入")
 	@PostMapping("/import")
+	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Boolean> importTheory(@Validated TheoryImportReq theoryImportReq) {
+
+		FileUtil.validateSuffix(theoryImportReq.getFile(), FileSunffixConstant.XLSX.getDesc(),
+				FileSunffixConstant.XLS.getDesc());
 
 		// 文件先上传临时目录
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),

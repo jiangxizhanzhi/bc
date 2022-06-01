@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
@@ -32,6 +33,7 @@ import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
@@ -74,11 +76,11 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id,
-				UserInfoContext.getUserContext().getUserId());
+		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
 
 		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
@@ -98,6 +100,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -115,6 +118,14 @@ public class TeamTrainStudentsController {
 
 		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
 
+		// attack engage relation
+		List<String> businessTemplateIds = data.getRecords().stream()
+				.map(TeamRoomData::getBusinessTemplateId).collect(Collectors.toList());
+		List<String> attackRelatedIds = businessTemplateService
+				.getAttackRelatedIds(businessTemplateIds);
+		List<String> engageRelatedIds = businessTemplateService
+				.getEngageRelatedIds(businessTemplateIds);
+
 		for (TeamRoomData teamRoomData : data.getRecords()) {
 			RoleQuery roleQuery = new RoleQuery();
 			roleQuery.setRoomId(teamRoomData.getResourceId());
@@ -124,7 +135,8 @@ public class TeamTrainStudentsController {
 			List<TeamRoomRoleRes> rolesData = Lists.newArrayList();
 			crRoles.forEach(crRole -> {
 				TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
-				teamRoomRoleRes.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList()));
+				teamRoomRoleRes
+						.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList()));
 			});
 
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
@@ -136,6 +148,11 @@ public class TeamTrainStudentsController {
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+			// set attack engage relation
+			teamRoomRsp.setIsAttackRelated(
+					attackRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setIsEngageRelated(
+					engageRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
 
 			teamRoomRspList.add(teamRoomRsp);
 		}
@@ -154,6 +171,7 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("获取任务列表")
 	@GetMapping("/get_mission_scheme")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<MissionSchemeObject<SchemeListMissionRsp>>> getMissionScheme(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -179,6 +197,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
 			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		CrCommonValidator.checkStringExist(submitMissionsReq.getAnswer(),
@@ -199,6 +218,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("获取任务详情")
 	@GetMapping("/get_mission_detail")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<MissionRsp> getMissionDetail(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "mission_id", value = "任务id", required = true) String mission_id) {
@@ -230,6 +250,7 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<StudentsTimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 

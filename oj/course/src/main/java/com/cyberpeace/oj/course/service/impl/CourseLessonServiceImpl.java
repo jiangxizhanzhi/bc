@@ -1,8 +1,8 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -18,14 +18,12 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -42,6 +40,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
@@ -181,6 +180,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	@Autowired
+	private RemoteOrganizationService remoteOrganizationService;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
 
@@ -208,7 +210,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 练习数据查询
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
-		infoBo.setPaperPublic(paper.getIsPublic());
+
+		String orgId = authContext.getOrganization();
+		if (null != paper.getReadAuthIds() && paper.getReadAuthIds().contains(orgId)) {
+			infoBo.setPaperPublic(true);
+		} else {
+			infoBo.setPaperPublic(false);
+		}
 		Integer countByPaper = paperService.practiceCountByPaper(lesson.getPaperId());
 		infoBo.setPracticeCount(countByPaper);
 
@@ -248,15 +256,23 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
+			ClassroomGroupInfo groupInfo = null;
 			if (authContext.getIsWeb()) {
-				ClassroomGroupInfo groupInfo = classroomGroupInfoService
-						.selectByLessonAndUser(lessonId, authContext);
+				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
 				if (null != groupInfo) {
 					// 存在课堂场景 则设置group_id用于前端简历websocket
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 					if (null != ojLocalScene) {
 						infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
 						infoBo.setGroupId(groupInfo.getResourceId());
+					}
+
+					// 设置课程表编号
+					Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
+					Date now = new Date();
+					if (null != classroom && classroom.getStartTime().before(now)
+							&& classroom.getEndTime().after(now)) {
+						infoBo.setRoomId(classroom.getResourceId());
 					}
 				}
 			}
@@ -405,7 +421,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		CourseLesson lessonExist = courseValidateHandler
 				.validateLessonExist(courseLesson.getResourceId(), false);
 		courseValidateHandler.validateLessonUpdateNameExist(lessonExist, courseLesson.getName());
-		courseValidateHandler.validateLessonUpdateSceneExist(lessonExist);
+		courseValidateHandler.validateLessonUpdateSceneExist(lessonExist, ojSceneConfig);
 
 		// 试卷数据
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
@@ -639,6 +655,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		List<PracticeSolvedBo> practiceSolvedBos = Lists.newArrayList();
 
+		AtomicInteger correctObjectNum = new AtomicInteger();
+		AtomicInteger totalObjectNum = new AtomicInteger();
+
 		// 习题数据提交评估
 		List<EvaluateResult> evaluateResultList = StreamApiUtils.map(answers, submitContext -> {
 
@@ -648,12 +667,38 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 				PracticeTheory practiceTheory = practiceTheoryRefService
 						.selectByPracticeId(paper.getResourceId(), submitContext.getPracticeId());
-				EvaluateResult evaluateResult = theoryEvaluateHandler.evaluateByBusiness(
-						authContext.getUserId(), practiceTheory, submitContext.getSubmitAnswer());
+
+				boolean isObject = practiceTheory.getTheoryType()
+						.intValue() != PracticeTheory.TheoryType.FILL_BLANK.getCode().intValue()
+						&& practiceTheory.getTheoryType()
+								.intValue() != PracticeTheory.TheoryType.SHORT_ANSWER.getCode()
+										.intValue();
+
+				EvaluateResult evaluateResult = new EvaluateResult();
+				if (isObject || submitContext.getNeedEvaluate()) {
+					evaluateResult = theoryEvaluateHandler.evaluateByBusiness(
+							authContext.getUserId(), practiceTheory,
+							submitContext.getSubmitAnswer());
+				} else {
+					// 主观题不再判题
+					evaluateResult.setResourceId(practiceTheory.getResourceId());
+					evaluateResult.setScore(CommonConstant.ZERO.doubleValue());
+					evaluateResult.setTotalScore(CommonConstant.ZERO.doubleValue());
+					evaluateResult.setSolved(false);
+				}
 
 				PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult, PracticeSolvedBo.class);
 				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
 				practiceSolvedBos.add(solvedBo);
+
+				// 客观题统计
+				if (isObject) {
+					totalObjectNum.addAndGet(1);
+					if (solvedBo.getSolved()) {
+						correctObjectNum.addAndGet(1);
+					}
+				}
+
 				return evaluateResult;
 
 			} else {
@@ -668,6 +713,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				PracticeSolvedBo solvedBo = BeanUtils.copy(evaluateResult, PracticeSolvedBo.class);
 				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
 				practiceSolvedBos.add(solvedBo);
+
+				totalObjectNum.addAndGet(1);
+				if (solvedBo.getSolved()) {
+					correctObjectNum.addAndGet(1);
+				}
 				return evaluateResult;
 			}
 		});
@@ -682,6 +732,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		evaluate.setLessonId(answerContext.getLessonId());
 		evaluate.setRecord(JsonUtil.toJsonString(practiceSolvedBos));
 		evaluate.setSubmitUserId(authContext.getUserId());
+
+		// 准确率计算
+		String accuracy = correctObjectNum + "/" + totalObjectNum;
+		evaluate.setAccuracy(accuracy);
 
 		lessonPaperEvaluateMapper.insert(evaluate);
 
@@ -714,6 +768,28 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Map<String, LessonPracticeListBo> handlerPractice = handlerPractice(paperEvaluate, paper,
 				null != paperEvaluate, authContext, lessonId);
 		lessonPracticeBo.setPracticeList(handlerPractice);
+
+		// 统计习题数据
+		PracticeBriefBo practiceBriefBo = new PracticeBriefBo();
+		if (null != paperEvaluate) {
+			practiceBriefBo.setLevel(paperEvaluate.getLevel());
+			practiceBriefBo.setAccuracy(paperEvaluate.getAccuracy());
+		}
+
+		int objectCount = 0, subjectCount = 0, totalCount = 0;
+		for (Map.Entry entry : handlerPractice.entrySet()) {
+			LessonPracticeListBo val = (LessonPracticeListBo) entry.getValue();
+			if (entry.getKey() == "fill_blank" || entry.getKey() == "short_answer") {
+				subjectCount += val.getCount();
+			} else {
+				objectCount += val.getCount();
+			}
+			totalCount += val.getCount();
+		}
+		practiceBriefBo.setObjectCount(objectCount);
+		practiceBriefBo.setSubjectCount(subjectCount);
+		practiceBriefBo.setTotalCount(totalCount);
+		lessonPracticeBo.setPracticeInfo(practiceBriefBo);
 
 		// 计算课时基本数据
 		LessonBriefBo lessonBriefBo = new LessonBriefBo();
@@ -765,6 +841,49 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
+	public Boolean markLessonPractice(String lessonId, String userId, Integer level,
+			AuthContext authContext) {
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
+
+		// 课后练习评估数据查询
+		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper.selectByUserAndLesson(userId,
+				lessonId);
+		if (null == paperEvaluate) {
+
+			return false;
+		}
+		paperEvaluate.setLevel(level);
+		paperEvaluate.setCorrector(authContext.getUserId());
+		lessonPaperEvaluateMapper.updateById(paperEvaluate);
+		return true;
+
+	}
+
+	@Override
+	public Boolean releaseLessonPractice(String lessonId, String authId, AuthContext authContext) {
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
+
+		// 下发课堂练习
+		Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+		String readAuthIds = paper.getReadAuthIds();
+		if (StringUtils.isBlank(readAuthIds)) {
+			readAuthIds = "[]";
+		}
+
+		List<String> orgIds = remoteOrganizationService.childrenList(authId, true);
+		Set<String> orgIdSet = new HashSet<>(orgIds);
+
+		JSONArray readAuthArray = JsonUtil.stringToArray(readAuthIds);
+		orgIdSet.addAll(readAuthArray.toJavaList(String.class));
+		List<String> readAuthList = Lists.newArrayList(orgIdSet);
+		paper.setReadAuthIds(JsonUtil.arrayToString(readAuthList));
+		paperMapper.updateById(paper);
+
+		return true;
+
+	}
+
+	@Override
 	public TopoSceneDataBo getTopoScene(String lessonId, AuthContext authContext) {
 
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
@@ -783,9 +902,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
+			ClassroomGroupInfo groupInfo = null;
+
 			if (authContext.getIsWeb()) {
-				ClassroomGroupInfo groupInfo = classroomGroupInfoService
-						.selectByLessonAndUser(lessonId, authContext);
+				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
 				if (null != groupInfo) {
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 				}
@@ -799,6 +919,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			if (null != ojLocalScene) {
 				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+				if (groupInfo != null) {
+					sceneData.put(JsonKeyConstant.ROOM_ID, groupInfo.getClassroomId());
+				}
 				topoSceneDataRes.setSceneData(sceneData);
 			}
 		}
@@ -879,14 +1002,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public void uploadVideo(CourseLesson courseLesson, MultipartFile video) {
 
-		if (null == video) {
-			return;
-		}
+		if (null != video) {
+			FileUtil.validateSuffix(video, FileSunffixConstant.MP4.getDesc(),
+					FileSunffixConstant.M4V.getDesc());
 
-		String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
-				courseLesson.getCourseId());
-		AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video);
-		courseLesson.setVideoUrl(attachmentBo.getFilePath());
+			String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
+					courseLesson.getCourseId());
+			AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video);
+			courseLesson.setVideoUrl(attachmentBo.getFilePath());
+		}
 	}
 
 	@Override

@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -89,6 +91,7 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
 			addExercisePaper(@RequestBody @Validated ExercisePaperReq exercisePaperReq) {
 		RoleQuery roleQuery = new RoleQuery(exercisePaperReq.getResourceId(),
@@ -105,6 +108,7 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("获取演习文书")
 	@GetMapping("/get_exercise_paper")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<ExercisePaperRsp> getExercisePapern(
 			@RequestParam("resource_id") String businessTemplateId,
 			@RequestParam("group_hash") Integer group_hash) {
@@ -126,6 +130,7 @@ public class RbRoomDirectorController {
 	 */
 	@ApiOperation("修改开放题解")
 	@PostMapping("/update_show_write_up")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> updateShowWriteUp(@RequestBody @Validated WriteUpReq writeUpReq) {
 
 		rbRoomService.checkDirectorPermission(writeUpReq.getRoomId(),
@@ -144,6 +149,7 @@ public class RbRoomDirectorController {
 	 */
 	@ApiOperation("任务下发")
 	@PostMapping("/missions")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
 			releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
@@ -169,6 +175,7 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("动态任务新增")
 	@PostMapping("/mission_info_create")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean>
 			addMissionInfo(@RequestBody @Validated RbRoomMissionReq rbRoomMissionReq) {
 		// validate
@@ -189,6 +196,7 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("任务删除")
 	@PostMapping("/mission_delete")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
 			addMissionInfo(@RequestBody @Validated RbMissionDeleteReq rbMissionDeleteReq) {
 
@@ -244,6 +252,7 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("查询角色")
 	@GetMapping("/roles")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<CrRbRoleContext> getRoles(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		CrRbRoleContext crRbRoleContext = new CrRbRoleContext();
@@ -361,6 +370,7 @@ public class RbRoomDirectorController {
 	 */
 	@ApiOperation("查询红蓝对抗导演时间线")
 	@GetMapping("/mission_timeline")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getMissionTimeline(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		RbRoom rbRoom = rbRoomService.getById(resource_id);
@@ -389,6 +399,7 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("停止演习")
 	@PostMapping("/stop")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp stop(@RequestBody SceneOpsReq opsReq) {
 		String roomId = opsReq.getRoomId();
 		if (roomId == null) {

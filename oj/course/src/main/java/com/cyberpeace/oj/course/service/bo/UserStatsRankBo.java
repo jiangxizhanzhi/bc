@@ -25,4 +25,10 @@ public class UserStatsRankBo implements Serializable {
 
     @ApiModelProperty("完成课程练习数量")
     private List<Integer> finishPracticeCount;
+
+    @ApiModelProperty("参加考试次数排名")
+    private List<String> attendExamUser;
+
+    @ApiModelProperty("参加考试次数")
+    private List<Integer> attendExamCount;
 }

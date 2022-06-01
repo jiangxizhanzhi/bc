@@ -117,6 +117,26 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	Boolean addLessonPractice(String resourceId, List<PaperPracticeContext> practiceList);
 
 	/**
+	 * 课后练习评分
+	 * @param resourceId
+	 * @param userId
+	 * @param level
+	 * @param authContext
+	 * @return
+	 */
+	Boolean markLessonPractice(String resourceId, String userId, Integer level, AuthContext authContext);
+
+
+	/**
+	 * 课后练习下发
+	 * @param resourceId
+	 * @param authId
+	 * @param authContext
+	 * @return
+	 */
+	Boolean releaseLessonPractice(String resourceId, String authId, AuthContext authContext);
+
+	/**
 	 * 查询topo和场景数据信息
 	 * @param lessonId
 	 * @param authContext

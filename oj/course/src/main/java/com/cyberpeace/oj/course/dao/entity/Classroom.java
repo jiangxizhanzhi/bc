@@ -30,4 +30,6 @@ public class Classroom extends BaseTable {
 
     private String createUserId;
 
+    private String trainPlanId;
+
 }

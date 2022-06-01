@@ -19,4 +19,6 @@ public class ClassRoomListQuery implements Serializable {
 
 	private List<String> childrenOrg;
 
+	private String trainPlanId;
+
 }

@@ -9,8 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
@@ -18,6 +17,7 @@ import com.cyberpeace.cs.service.UtilService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -82,6 +81,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	// LGD在使用 知识点和技能点绑定课程
 	@GetMapping("/all/list")
 	@ApiOperation("分页查询全部课程信息")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<List<CourseWebBo>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Valid CourseListReq courseListReq) {
 
@@ -109,6 +109,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<List<CourseInfoBo>>
 			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
 
@@ -140,6 +141,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程新增")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> add(@ApiParam(name = "addReq",
 			value = "课程基本信息") @Validated(Create.class) @RequestBody CourseAddReq addReq) {
 
@@ -165,6 +167,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程信息修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> patch(@RequestBody @Validated(Update.class) CourseUpdateReq updateReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
@@ -176,6 +179,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程信息查询")
 	@GetMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AdminCourseRes> get(@ApiParam(name = "resource_id",
 			value = "课程编号") @RequestParam("resource_id") @Valid @NotBlank String resourceId) {
 
@@ -192,6 +196,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("批量删除课程信息")
 	@DeleteMapping("/batch")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Valid BatchDeleteReq batchDeleteReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -202,8 +207,15 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("课程大纲文件上传")
 	@PostMapping("/outline/upload_attachment")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AttachmentBo>
 			upload_attachment(@RequestParam("file") MultipartFile outlineFile) {
+
+		// 文件校验
+		FileUtil.validateSuffix(outlineFile, FileSunffixConstant.JPG.getDesc(),
+				FileSunffixConstant.PNG.getDesc(), FileSunffixConstant.JPEG.getDesc());
+
+		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OUTLINE.getCode(),
 				false, outlineFile, true);
 
@@ -216,6 +228,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("查询全部课程信息")
 	@GetMapping("/all/course")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<List<SimpleDataRes>> allCourse() {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -234,6 +247,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp exportCourse(
 			@ApiParam(name = "ids",
 					value = "课程编号") @RequestParam("ids") @NotEmpty List<String> courseIds,
@@ -247,8 +261,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp importCourse(@Validated LoadCourseReq loadCourseReq) {
-		FileUtil.validateFileSuffix(loadCourseReq.getFile().getOriginalFilename(), FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);
+		FileUtil.validateSuffix(loadCourseReq.getFile(), FileSunffixConstant.ZIP.getDesc());
 
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
 				false, loadCourseReq.getFile(), true);

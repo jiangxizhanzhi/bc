@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import javax.validation.Valid;
-
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -36,6 +37,10 @@ public abstract class PublicController<T extends IService<E>, E> {
 
 	@PatchMapping("/batch-public")
 	@ApiOperation("资源公开/隐藏")
+	@RequiresPermissions(
+			value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES,
+					MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION },
+			logical = Logical.OR)
 	public BaseRsp<Boolean> batchPublic(@RequestBody @Validated ResourcePublicReq requestData) {
 
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {

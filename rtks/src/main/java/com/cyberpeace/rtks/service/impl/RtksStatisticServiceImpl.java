@@ -3,38 +3,44 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
+import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
-import com.cyberpeace.rtks.controller.res.SkillRes;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.dao.mapper.*;
 import com.cyberpeace.rtks.service.RtksStatisticService;
+import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TreeService;
 import com.cyberpeace.rtks.service.bo.*;
+import com.cyberpeace.rtks.service.bo.skill.*;
+import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class RtksStatisticServiceImpl implements RtksStatisticService {
+
+	private final Integer MAX_PERCENT = 100;
 
 	@Autowired
 	private TreeService treeService;
@@ -49,10 +55,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private RoleMapper roleMapper;
 
 	@Autowired
+	private CrTaskMapper crTaskMapper;
+
+	@Autowired
 	private SkillMapper skillMapper;
 
 	@Autowired
-	private SkillCategoryMapper skillCategoryMapper;
+	private SkillService skillService;
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
@@ -66,114 +75,34 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	@Autowired
 	private LevelMapper levelMapper;
 
-	/**
-	 * 角色评分中技能所占百分比
-	 */
-	private Integer skillWeight;
+	@Autowired
+	private RoleSkillRelationMapper roleSkillRelationMapper;
 
-	private final Integer MAX_PERCENT = 100;
-
-	@PostConstruct
-	public void init() {
-		String skillWeightString = ConfigUtil.getContextProperty("skillWeight");
-		skillWeight = Integer.parseInt(skillWeightString);
-	}
+	@Autowired
+	private SkillTrainingMapper skillTrainingMapper;
 
 	@Override
 	public String roleMatchPercent(String roleId, String userId) {
 		Integer knowledgeScore = 0;
 		Integer skillScore = 0;
+		Role role = roleMapper.selectById(roleId);
+		Integer knowledgeWeight = role.getKnowledgeWeight();
 		// 1、计算知识点得分
-		if (skillWeight.intValue() != MAX_PERCENT.intValue()) {
+		if (knowledgeWeight != 0) {
 			knowledgeScore = calculateKnowledgeScore(roleId, userId);
 		}
 
 		// 2、计算技能得分
-		if (skillWeight != 0) {
+		if (knowledgeWeight != MAX_PERCENT.intValue()) {
 			skillScore = calculateSkillScore(roleId, userId);
 		}
 
 		// 3、技能得分和知识点得分加权平均
-		Integer result = knowledgeScore * (100 - skillWeight) + skillScore * skillWeight;
+		Integer result = knowledgeScore * knowledgeWeight + skillScore * (100 - knowledgeWeight);
 
 		Integer ret = floor(result);
 
 		return ret + "";
-	}
-
-	@Override
-	public List<RtksRadarBo> calculateLgdRadar(String roleId, String userId) {
-		List<RtksRadarBo> ret = Lists.newArrayList();
-
-		// 1、获取当前岗位对应的框架数据
-		Level nearestLevel = treeService.getNearestLevelByRole(roleId);
-		String frameId = nearestLevel.getFrame();
-
-		// 2、获取当前岗位对应的第一树形结构
-		List<Level> firstLevel = treeService.getFirstLevel(frameId);
-
-		// 3、计算当前树形节点的评分
-		for (Level level : firstLevel) {
-			Integer matchPercent = calculateLgdRadarByLevel(level.getResourceId(), userId);
-
-			RtksRadarBo rtksRadarBo = new RtksRadarBo();
-
-			rtksRadarBo.setFirstTreeId(level.getResourceId());
-			rtksRadarBo.setTreeName(level.getName());
-			rtksRadarBo.setMatchPercent(matchPercent);
-
-			ret.add(rtksRadarBo);
-		}
-
-		return ret;
-	}
-
-	@Override
-	public List<RtksRadarBo> calculateLgdSkillRadar(String userId, String skillSystemId) {
-
-		List<SkillRes> skillResList = skillMapper.getAllSkillsBySkillSystemId(skillSystemId);
-		List<Skill> skillList = BeanUtils.deepCopyList(skillResList, Skill.class);
-
-		Map<String, List<Skill>> skillMap = skillList.stream()
-				.collect(Collectors.groupingBy(Skill::getCategoryId));
-
-		List<String> categoryIds = skillList.stream().map(Skill::getCategoryId).distinct()
-				.collect(Collectors.toList());
-		List<SkillCategory> categories = skillCategoryMapper.selectUsedList();
-
-		// 获取技能得分情况 转化为map
-		List<SkillScore> scores = getSkillScore(userId, skillList);
-		Map<String, String> scoreMap = scores.stream()
-				.collect(Collectors.toMap(SkillScore::getSkillId, SkillScore::getScore));
-
-		// 组装数据
-		List<RtksRadarBo> ret = categories.stream().map(skillCategory -> {
-
-			// Integer matchPercent = calculateLgdRadarByLevel(level.getResourceId(),
-			// userId);
-			List<Skill> skills = skillMap.get(skillCategory.getResourceId());
-
-			// 组装技能得分
-			Integer matchPercent = 0;
-
-			if (null != skills) {
-				matchPercent = skills.stream().collect(Collectors.averagingInt(skill -> {
-					return scoreMap.get(skill.getResourceId()) == null ? 0
-							: Integer.parseInt(scoreMap.get(skill.getResourceId()));
-				})).intValue();
-			}
-
-			RtksRadarBo rtksRadarBo = new RtksRadarBo();
-
-			rtksRadarBo.setFirstTreeId(skillCategory.getResourceId());
-			rtksRadarBo.setTreeName(skillCategory.getContent());
-
-			rtksRadarBo.setMatchPercent(matchPercent);
-
-			return rtksRadarBo;
-		}).collect(Collectors.toList());
-
-		return ret;
 	}
 
 	@Override
@@ -236,32 +165,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	}
 
 	@Override
-	public List<KnowledgeStudyPercentBo> calculateSkillPercent(String roleId, String userId) {
-		// 获取知识点
-		List<Skill> skills = getSkills(roleId);
-		if (CollectionUtils.isEmpty(skills)) {
-			return Lists.newArrayList();
-		}
-		// 计算结果
-		return calculatePercent(skills, userId);
-	}
-
-	@Override
 	public RoleStudyBo roleKnowledgeStudyRecord(String roleId, String userId) {
 		// 1、获取用户角色关联的知识点
 		List<Knowledge> knowledgeIds = getKnowledges(roleId);
 
 		// 2、返回计算结果
 		return calculateStudy(knowledgeIds, userId);
-	}
-
-	@Override
-	public RoleStudyBo roleSkillStudyRecord(String roleId, String userId) {
-		// 1、获取用户角色关联的技能点
-		List<Skill> skillIds = getSkills(roleId);
-
-		// 2、返回计算结果
-		return calculateStudy(skillIds, userId);
 	}
 
 	/**
@@ -285,76 +194,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		RoleStudyBo studyBo = getStudyBo(processBoList);
 
 		return studyBo;
-	}
-
-	@Override
-	public List<CategorySkillBo> getRoleSkillScores(String userId, String roleId) {
-
-		Role role = roleMapper.selectById(roleId);
-		if (null == role) {
-			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
-		}
-
-		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
-		if (CollectionUtils.isEmpty(skillIds)) {
-			skillIds = Lists.newArrayList();
-		}
-
-		List<Skill> skillList = skillMapper.selectBatchIds(skillIds);
-		Map<String, List<Skill>> skillMap = skillList.stream()
-				.collect(Collectors.groupingBy(Skill::getCategoryId));
-
-		List<String> categoryIds = skillList.stream().map(Skill::getCategoryId).distinct()
-				.collect(Collectors.toList());
-		List<SkillCategory> categories = skillCategoryMapper.selectBatchIds(categoryIds);
-
-		// 获取技能得分情况 转化为map
-		List<SkillScore> scores = getSkillScore(userId, skillList);
-		Map<String, String> scoreMap = scores.stream()
-				.collect(Collectors.toMap(SkillScore::getSkillId, SkillScore::getScore));
-
-		// 组装数据
-		List<CategorySkillBo> skillBos = categories.stream().map(skillCategory -> {
-			CategorySkillBo skillBo = BeanUtils.copy(skillCategory, CategorySkillBo.class);
-			List<Skill> skills = skillMap.get(skillCategory.getResourceId());
-
-			// 组装技能得分
-			List<SkillScoreBo> scoreBos = skills.stream().map(skill -> {
-				SkillScoreBo scoreBo = new SkillScoreBo();
-				scoreBo.setSkillId(skill.getResourceId());
-				scoreBo.setSkillContent(skill.getContent());
-				scoreBo.setScore(scoreMap.get(skill.getResourceId()));
-				scoreBo.setWeight(skill.getWeight());
-				return scoreBo;
-			}).collect(Collectors.toList());
-
-			skillBo.setSkills(scoreBos);
-			return skillBo;
-		}).collect(Collectors.toList());
-
-		return skillBos;
-	}
-
-	@Override
-	public List<RtksRadarBo> calculateSkillRadar(String userId, String roleId) {
-		List<CategorySkillBo> skillScores = getRoleSkillScores(userId, roleId);
-
-		List<RtksRadarBo> boList = skillScores.stream().map(categorySkillBo -> {
-			RtksRadarBo radarBo = new RtksRadarBo();
-			radarBo.setFirstTreeId(categorySkillBo.getResourceId());
-			radarBo.setTreeName(categorySkillBo.getContent());
-
-			double sum = categorySkillBo.getSkills().stream()
-					.mapToDouble(skillBo -> Double.parseDouble(skillBo.getScore())
-							* new Double(skillBo.getWeight()))
-					.sum();
-			double weightSum = categorySkillBo.getSkills().stream()
-					.mapToDouble(SkillScoreBo::getWeight).sum();
-			radarBo.setMatchPercent(MathUtils.ceilDivide(sum, weightSum));
-
-			return radarBo;
-		}).collect(Collectors.toList());
-		return boList;
 	}
 
 	@Override
@@ -414,6 +253,182 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return recordBo;
 	}
 
+	@Override
+	public List<MissionPathBo> getTrainingPath(String userId, String roleId) {
+		Role role = roleMapper.selectById(roleId);
+		if (role == null) {
+			return Lists.newArrayList();
+		}
+		// get missions and related business template ids
+		List<MissionContext> missionContextList = roleSkillRelationMapper
+				.getMissionContextsByRoleId(roleId);
+		if (missionContextList.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		// deduplicate, keep order
+		LinkedHashMap<String, MissionContext> missionMap = Maps.newLinkedHashMap();
+		Set<String> businessTemplateIds = Sets.newHashSet();
+		missionContextList.forEach((missionContext -> {
+			missionMap.put(missionContext.getMissionTemplateId(), missionContext);
+			// collect businessTemplate ids
+			businessTemplateIds.add(missionContext.getBusinessTemplateId());
+		}));
+		// collect mission-skill relations, one mission may be related to several skills
+		Map<String, List<MissionContext>> missionSkillRel = Maps.newHashMap();
+		missionContextList.forEach((missionContext) -> {
+			if (!missionSkillRel.containsKey(missionContext.getMissionTemplateId())) {
+				missionSkillRel.put(missionContext.getMissionTemplateId(), Lists.newArrayList());
+			}
+			missionSkillRel.get(missionContext.getMissionTemplateId()).add(missionContext);
+		});
+		// collect mission completion status; true or false
+		Set<String> missionTemplateIds = missionMap.keySet();
+		List<CompletionStatus> completionStatusList = crTaskMapper
+				.getCompletionStatusByUserIdAndMissionTemplateIds(userId, missionTemplateIds);
+		Map<String, Boolean> completionStatusMap = Maps.newHashMap();
+		for (CompletionStatus mission : completionStatusList) {
+			if (mission.getStatus() > 0) {
+				completionStatusMap.put(mission.getResourceId(), true);
+			}
+		}
+		// get single training
+		List<TrainingRaw> singles = skillTrainingMapper
+				.getSingleByBusinessTemplateIdsAndUserId(userId, businessTemplateIds);
+		// get team training
+		List<TrainingRaw> teams = skillTrainingMapper.getTeamByBusinessTemplateIdsAndUserId(userId,
+				businessTemplateIds);
+		// get rb training
+		List<TrainingRaw> rbs = skillTrainingMapper.getRbByBusinessTemplateIdsAndUserId(userId,
+				businessTemplateIds);
+		// unify status
+		handleRbStatus(rbs);
+		// collect trainings
+		Map<String, List<TrainingRaw>> trainingMap = Maps.newHashMap();
+		mapTrainings(trainingMap, singles, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		// get saved mission order
+		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
+		// generate new order by merge with saved order
+		List<MissionPathBo> newOrder = Lists.newArrayList();
+		for (String missionTemplateId : order) {
+			// mission does not exist or skill-mission relation deleted
+			if (!missionMap.containsKey(missionTemplateId)) {
+				continue;
+			}
+			MissionContext missionContext = missionMap.get(missionTemplateId);
+			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder,
+					completionStatusMap);
+			missionMap.remove(missionTemplateId);
+		}
+		// missions not in saved mission order
+		for (Map.Entry<String, MissionContext> entry : missionMap.entrySet()) {
+			MissionContext missionContext = entry.getValue();
+			// training template has no active training
+			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder,
+					completionStatusMap);
+		}
+		return newOrder;
+	}
+
+	/**
+	 * 将 trainingRaw 训练数据 和  missionContext 任务数据组装成前端展示的内容 trainingBo
+	 * @param trainingMap 
+	 * @param missionSkillRel
+	 * @param missionContext
+	 * @param missionPathBoList
+	 */
+	private void addMissionBoByOrder(Map<String, List<TrainingRaw>> trainingMap,
+			Map<String, List<MissionContext>> missionSkillRel, MissionContext missionContext,
+			List<MissionPathBo> missionPathBoList, Map<String, Boolean> completionStatusMap) {
+		// training template has no active training
+		if (!trainingMap.containsKey(missionContext.getBusinessTemplateId())) {
+			return;
+		}
+		// convert trainingRaw to trainingBo
+		List<TrainingBo> trainings = Lists.newArrayList();
+		for (TrainingRaw trainingRaw : trainingMap.get(missionContext.getBusinessTemplateId())) {
+			TrainingBo trainingBo = BeanUtils.copy(trainingRaw, TrainingBo.class);
+			trainingBo.setMissionTitle(missionContext.getTitle());
+			trainingBo.setMissionTemplateId(missionContext.getMissionTemplateId());
+			trainingBo.setPreSkill(
+					JsonUtil.toJsonObjectArray(trainingRaw.getPreSkill(), String.class));
+			trainingBo.setTrainSkill(
+					JsonUtil.toJsonObjectArray(trainingRaw.getTrainSkill(), String.class));
+			trainingBo.setSkills(
+					getSkillsByMission(missionSkillRel.get(trainingBo.getMissionTemplateId())));
+
+			trainings.add(trainingBo);
+		}
+		MissionPathBo missionPathBo = new MissionPathBo();
+		missionPathBo.setMissionTemplateId(missionContext.getMissionTemplateId());
+		missionPathBo.setCompletionStatus(
+				completionStatusMap.getOrDefault(missionContext.getMissionTemplateId(), false));
+		missionPathBo.setRelatedTrainings(trainings);
+
+		missionPathBoList.add(missionPathBo);
+	}
+
+	/** 获取任务对应的skill
+	 * @return
+	 */
+	private List<SkillResBase> getSkillsByMission(List<MissionContext> missionContexts) {
+		List<SkillResBase> skillResBaseList = Lists.newArrayList();
+		missionContexts.forEach((mission) -> {
+			SkillResBase skill = new SkillResBase();
+			skill.setResourceId(mission.getSkillId());
+			skill.setContent(mission.getSkillContent());
+			skillResBaseList.add(skill);
+		});
+		return skillResBaseList;
+	}
+
+	/**
+	 * 将查到的训练以businessTemplateId为键分类收集，一个businessTemplateId可能对应多个训练场景
+	 * @param map 
+	 * @param trainingRaws
+	 */
+	private void mapTrainings(Map<String, List<TrainingRaw>> map, List<TrainingRaw> trainingRaws,
+			Integer type) {
+		trainingRaws.forEach((training) -> {
+			String businessTemplateId = training.getBusinessTemplateId();
+			if (!map.containsKey(businessTemplateId)) {
+				map.put(businessTemplateId, Lists.newArrayList());
+			}
+			training.setTrainingType(type);
+			map.get(businessTemplateId).add(training);
+		});
+	}
+
+	/**
+	 * 将红蓝训练状态统一成单兵、团队的样子
+	 * UNOPENED(0, "未开始"), OPENING(1, "已开始"), ENDED(2, "已结束") PAUSE(3, "已暂停"), RECOVERY(4, "恢复");
+	 * @param rbs
+	 */
+	private void handleRbStatus(List<TrainingRaw> rbs) {
+		rbs.forEach((rb) -> {
+			Integer trainingStatus = rb.getTrainingStatus();
+			rb.setTrainingStatus(convert(trainingStatus));
+		});
+	}
+
+	private Integer convert(Integer rbStatus) {
+		switch (rbStatus) {
+			case 4:
+				return 0;
+			case 2:
+				return 1;
+			case 0:
+				return 2;
+			case 1:
+				return 3;
+			case 3:
+				return 4;
+			default:
+				return rbStatus;
+		}
+	}
+
 	/**
 	 * 根据知识点
 	 * @param knowledges
@@ -467,20 +482,16 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private Integer calculateSkillScore(String roleId, String userId) {
 		// 1、获取当前角色的所有技能点及权重
-		List<Skill> skills = getSkills(roleId);
-		// 2、计算每个技能点的得分
-		// 连接靶场数据库，没有数据点技能点算0分
-		List<SkillScore> skillScore = getSkillScore(userId, skills);
-		Map<String, String> scoreMap = skillScore.stream()
-				.collect(Collectors.toMap(SkillScore::getSkillId, SkillScore::getScore));
-
-		double sum = skills.stream().mapToDouble(skill -> new Double(skill.getWeight())
-				* Double.parseDouble(scoreMap.get(skill.getResourceId()))).sum();
-		int weightSum = skills.stream().mapToInt(Skill::getWeight).sum();
-		Integer result = MathUtils.ceilDivide(sum, new Double(weightSum));
-
-		// 3、2中的数据根据每个技能点的权重加权平均
-		return result;
+		List<IdWeight> skillWeights = roleSkillRelationMapper.listByRoleId(roleId);
+		WeightedCalculation calculation = new WeightedCalculation();
+		for (IdWeight skillWight : skillWeights) {
+			// 2、获取单个技能得分
+			Double skillScore = skillService.calculateScore(skillWight.getResourceId(), userId);
+			// 3、统计
+			calculation.feed(skillWight.getWeight(), skillScore);
+		}
+		// 4、返回向上取整的分数
+		return MathUtils.ceil(calculation.solve());
 	}
 
 	/**
@@ -547,24 +558,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		Integer percent = calculateFinishPercent(knowledges, userId);
 
 		return percent;
-	}
-
-	/**
-	 * 计算当前层级下所有技能点的完成度
-	 * @param levelId
-	 * @return
-	 */
-	private Integer calculateLgdRadarByLevel(String levelId, String userId) {
-		// 1、获取当前层级下所有role数据
-		List<Role> roles = treeService.roleUnderLevel(levelId);
-
-		// 2、获取所有知识点
-		List<Skill> skills = mergeSkillByRoles(roles);
-
-		// 3、统计所有知识点的课时完成度
-		Integer ret = calculateFinishPercent(skills, userId);
-
-		return ret;
 	}
 
 	/**
@@ -714,24 +707,24 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		if (null == role) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
-
-		List<String> resourceIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
-		if (CollectionUtils.isNotEmpty(resourceIds)) {
-			List<WeightBo> weights = JsonUtil.toJsonObjectArray(role.getSkillIdWeights(),
-					WeightBo.class);
-
-			Map<String, Integer> weightMap = weights.stream()
-					.collect(Collectors.toMap(WeightBo::getId, WeightBo::getWeight));
-			List<Skill> skills = skillMapper.selectBatchIds(resourceIds);
-
-			skills.forEach(skill -> {
-				// 无权重时 赋值为1
-				Integer weight = weightMap.get(skill.getResourceId());
-				skill.setWeight(null != weight ? weight : 1);
-			});
-
-			return skills;
-		}
+		// List<String> resourceIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
+		// String.class);
+		// if (CollectionUtils.isNotEmpty(resourceIds)) {
+		// List<WeightBo> weights = JsonUtil.toJsonObjectArray(role.getSkillIdWeights(),
+		// WeightBo.class);
+		//
+		// Map<String, Integer> weightMap = weights.stream()
+		// .collect(Collectors.toMap(WeightBo::getId, WeightBo::getWeight));
+		// List<Skill> skills = skillMapper.selectBatchIds(resourceIds);
+		//
+		// skills.forEach(skill -> {
+		// // 无权重时 赋值为1
+		// Integer weight = weightMap.get(skill.getResourceId());
+		// // skill.setWeight(null != weight ? weight : 1);
+		// });
+		//
+		// return skills;
+		// }
 		return Lists.newArrayList();
 	}
 

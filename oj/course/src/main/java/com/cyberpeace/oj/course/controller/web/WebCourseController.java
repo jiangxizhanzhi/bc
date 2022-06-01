@@ -2,12 +2,11 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.oj.course.service.impl.CourseValidateHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.controller.res.WebCourseRes;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
@@ -48,6 +50,7 @@ public class WebCourseController {
 
 	@ApiOperation("前台课程列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<List<CourseInfoBo>> getWebCourse(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
 		// 数据组装
@@ -75,6 +78,7 @@ public class WebCourseController {
 
 	@GetMapping("")
 	@ApiOperation("单条查询")
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<WebCourseRes> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") String resourceId) {
 

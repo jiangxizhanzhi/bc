@@ -1,13 +1,11 @@
 package com.cyberpeace.integratation.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.integratation.model.mp.MpEventAggr;
-import com.cyberpeace.integratation.model.mp.MpFlowTrend;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.model.mp.MpRiskCount;
+import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 
 /**
@@ -38,6 +36,20 @@ public interface RemoteSceneService {
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 
 	/**
+	 * 获取流量信息
+	 * @param flowId
+	 * @return MpFlow
+	 */
+	MpFlow getFlowById(String flowId);
+
+	/**
+	 * 更新节点流量的源IP
+	 * @param flowOpsContext
+	 * @return Boolean
+	 */
+	Boolean updateFlowParam(FlowOpsContext flowOpsContext);
+
+	/**
 	 * 启动流量
 	 */
 	Boolean startFlow(FlowOpsContext flowOpsContext);
@@ -48,6 +60,27 @@ public interface RemoteSceneService {
 	 * @return
 	 */
 	Boolean stopFlow(FlowOpsContext context);
+
+	/**
+	 * 批量启动流量
+	 * @param flowBatchOpsContext
+	 * @return Boolean
+	 */
+	Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext);
+
+	/**
+	 * 批量停止流量
+	 * @param flowBatchOpsContext
+	 * @return Boolean
+	 */
+	Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext);
+
+	/**
+	 * 查询场景节点流量执行记录
+	 * @param flowRecordContext
+	 * @return JSONObject
+	 */
+	JSONObject getFlowRecords(FlowRecordContext flowRecordContext);
 
 	/**
 	 * 获取场景节点会话
@@ -66,6 +99,15 @@ public interface RemoteSceneService {
 	 */
 	JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds, List<String> userIds,
 			String type);
+
+	/**
+	 * 获取所有远程协助列表
+	 * @param sceneIds
+	 * @param nodeIds
+	 * @return key=userId value=地址
+	 */
+	Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
+			List<String> userIds);
 
 	/**
 	 * 获取场景监控会话
@@ -109,5 +151,13 @@ public interface RemoteSceneService {
 	 * @return MpRiskCount
 	 */
 	MpRiskCount getRiskCount(ElementCommonContext elementCommonContext);
+
+	/**
+	 * 获取探针采集信息（分页）
+	 * @param collectionEventPageContext
+	 * @return MpCollectionEvent
+	 */
+	List<MpCollectionEvent>
+			getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
 
 }

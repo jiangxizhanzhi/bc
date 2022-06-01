@@ -337,6 +337,10 @@ public class MDParser {
 		// other
 		templateContext.setPeopleNumber(4);
 		templateContext.setTimeLineConfig("{}");
+		// add mission_template-business_template relation
+		for (MissionTemplate missionTemplate : missionTemplates) {
+			missionTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+		}
 
 	}
 
@@ -425,6 +429,8 @@ public class MDParser {
 		roleInfo.setName(roleName);
 		if (!new File(mdFile).isFile()) {
 			log.warn(String.format("%s does not exist.", mdFile));
+			// role md does not exist, create empty mission scheme as default
+			roleInfo.setMissionsScheme(new MissionScheme(Lists.newArrayList()));
 			return roleInfo;
 		}
 		String mdText = stripMd(mdFile);

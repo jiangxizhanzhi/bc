@@ -524,33 +524,24 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			// 课时数据处理
 			List<CourseLesson> courseLessons = StreamApiUtils.map(dumpBo.getLesson(),
 					lessonDumpLoadBo -> {
+						// 解析课时
 						CourseLesson lesson = courseLessonService.loadLesson(course.getResourceId(),
 								lessonDumpLoadBo, filePath, dumpBo.getFilePathMap());
 
-						List<PracticeTheory> practiceTheories = StreamApiUtils.map(
-								lessonDumpLoadBo.getTheoryPractice(),
-								practiceTheoryDumpLoadBo -> practiceTheoryService
-										.loadPracticeTheory(IDGeneratorUtil.getID(),
-												practiceTheoryDumpLoadBo, authContext.getUserId()));
+						// 解析习题
+						List<PracticeTheory> practiceTheories = loadPracticeTheory(lessonDumpLoadBo,
+								authContext.getUserId());
+						List<PracticeOperation> operationList = loadPracticeOperation(
+								lessonDumpLoadBo, authContext.getUserId(), filePath,
+								dumpBo.getFilePathMap());
 
-						List<PracticeOperation> operationList = StreamApiUtils.map(
-								lessonDumpLoadBo.getOperationPractice(),
-								practiceDumpLoadBo -> practiceOperationService
-										.loadPracticeOperation(IDGeneratorUtil.getID(),
-												practiceDumpLoadBo, dumpBo.getFilePathMap(),
-												filePath, authContext.getUserId()));
 						// 课后练习试卷
 						Paper paper = initPaper(lesson, practiceTheories, operationList);
-						lesson.setPaperId(paper.getResourceId());
-						paperList.add(paper);
+						paperBindLesson(lesson, paper, paperList);
 
 						// 课后练习习题数据
-						List<PracticeTheoryRef> theoryRefs = theoryEntityToRef(
-								paper.getResourceId(), practiceTheories);
-						theoryRefList.addAll(theoryRefs);
-						List<PracticeOperationRef> operationRefs = operationEntityToRef(
-								paper.getResourceId(), operationList);
-						operationRefList.addAll(operationRefs);
+						theoryBindPaper(paper.getResourceId(), practiceTheories, theoryRefList);
+						operationBindPaper(paper.getResourceId(), operationList, operationRefList);
 
 						return lesson;
 					});
@@ -590,6 +581,44 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				return saveOrUpdateBatch(courseList);
 			}
 		});
+	}
+
+	/** 实操习题绑定试卷*/
+	private void operationBindPaper(String paperId, List<PracticeOperation> operations,
+			List<PracticeOperationRef> refList) {
+		List<PracticeOperationRef> operationRefs = operationEntityToRef(paperId, operations);
+		refList.addAll(operationRefs);
+	}
+
+	/** 理论习题绑定试卷*/
+	private void theoryBindPaper(String paperId, List<PracticeTheory> theories,
+			List<PracticeTheoryRef> refList) {
+		// 课后练习习题数据
+		List<PracticeTheoryRef> theoryRefs = theoryEntityToRef(paperId, theories);
+		refList.addAll(theoryRefs);
+	}
+
+	/** 数据绑定*/
+	private void paperBindLesson(CourseLesson lesson, Paper paper, List<Paper> paperList) {
+		lesson.setPaperId(paper.getResourceId());
+		paperList.add(paper);
+	}
+
+	/** 加载实操习题*/
+	private List<PracticeOperation> loadPracticeOperation(LessonDumpLoadBo dumpLoadBo,
+			String userId, String filePath, Map<String, String> fileMap) {
+		return StreamApiUtils
+				.map(dumpLoadBo.getOperationPractice(),
+						practiceDumpLoadBo -> practiceOperationService.loadPracticeOperation(
+								IDGeneratorUtil.getID(), practiceDumpLoadBo, fileMap, filePath,
+								userId));
+	}
+
+	/** 解析理论习题*/
+	private List<PracticeTheory> loadPracticeTheory(LessonDumpLoadBo dumpLoadBo, String userId) {
+		return StreamApiUtils.map(dumpLoadBo.getTheoryPractice(),
+				practiceTheoryDumpLoadBo -> practiceTheoryService.loadPracticeTheory(
+						IDGeneratorUtil.getID(), practiceTheoryDumpLoadBo, userId));
 	}
 
 	/**
@@ -729,8 +758,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				return utilService.handlerFileUrl(fileUrl);
 			});
 
-			String content = LocalStringUtil.replaceAll(courseDumpLoadBo.getOutline(), matchList,
-					fileList);
+			String content = LocalStringUtil.replaceAll(courseDumpLoadBo.getOutline(),
+					matchPathList, fileList);
 			course.setOutline(content);
 		}
 
@@ -793,7 +822,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		}
 
 		String courseNum;
-		for (int i = 1; courseMapper.selectByCourseNum(courseNum = MathUtils.randomStr(length)) != null; i++) {
+		for (int i = 1; courseMapper
+				.selectByCourseNum(courseNum = MathUtils.randomStr(length)) != null; i++) {
 			log.warn("Failed to obtain the course number for the {} time", i);
 		}
 		return courseNum;

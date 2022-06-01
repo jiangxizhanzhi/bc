@@ -20,12 +20,13 @@ public class StudyRecord implements Serializable {
   @ApiModelProperty("学习时长")
   private String duration;
 
-  @ApiModelProperty("完成练习数")
+  @ApiModelProperty("完成课后练习数")
   private Integer practiceFinishCount;
 
   @ApiModelProperty("完成报告数")
   private Integer reportCount;
 
+  @ApiModelProperty("课后练习得分")
   private double score;
 
   @ApiModelProperty("练习排名")
@@ -34,4 +35,10 @@ public class StudyRecord implements Serializable {
   private String userId;
 
   private String record;
+
+  @ApiModelProperty("完成理论题数")
+  private Integer theoryPracticeCount;
+
+  @ApiModelProperty("完成实操题数")
+  private Integer operationPracticeCount;
 }

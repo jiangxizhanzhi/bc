@@ -51,6 +51,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			courseIds = courseMapper.selectByAuth(authContext);
 		}
 		List<Course> courses = courseLearnStatisticsMapper.selectByHeat(courseIds);
+		courses = courses.stream().filter(s -> Integer.parseInt(s.getCourseNum()) > 0).collect(Collectors.toList());
 		return getCourseHistogramRes(courses);
 	}
 
@@ -63,15 +64,13 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		List<Course> directions = courseLearnStatisticsMapper.sumHeatByDirection(courseIds);
 		directions = directions.stream().map(direction -> {
 			String directionHeats = direction.getDescription();
-			if (0 == Integer.parseInt(directionHeats)) {
-				return direction;
-			}
 			String[] heatLists = directionHeats.split("_");
 			int[] heats = Arrays.stream(heatLists).mapToInt(Integer::valueOf).toArray();
 			int heat = Arrays.stream(heats).sum();
 			direction.setHeat(heat);
 			return direction;
 		}).collect(Collectors.toList());
+		directions = directions.stream().filter(d-> d.getHeat() > 0).collect(Collectors.toList());
 		directions = directions.stream().sorted(Comparator.comparing(Course::getHeat).reversed()).limit(5).collect(Collectors.toList());
 		return getCourseHistogramRes(directions);
 	}
@@ -81,9 +80,6 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		List<Integer> yValues = new ArrayList<>();
 		for (Course course : courses) {
 			Integer heat = course.getHeat();
-			if(0 == heat){
-				continue;
-			}
 			xNames.add(course.getName());
 			yValues.add(heat);
 		}

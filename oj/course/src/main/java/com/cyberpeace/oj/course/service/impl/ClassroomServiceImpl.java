@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +54,7 @@ import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -129,7 +128,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
 		classroomValidateHandler.validateClassroomLessonExist(classroom.getLessonId(),
-				classroom.getOrganizationId());
+				classroom.getOrganizationId(), null);
 		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
 				classroom.getEndTime());
 		classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
@@ -138,8 +137,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		String orgId = classroom.getOrganizationId();
 
 		// 课堂基本数据获取
-		List<String> orgIds = classroomValidateHandler
-				.validateClassroomOrgHasUser(orgId);
+		List<String> orgIds = classroomValidateHandler.validateClassroomOrgHasUser(orgId);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 		classroom.setResourceId(IDGeneratorUtil.getID());
 
@@ -151,7 +149,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 如果课程无访问权限 把组织数据加入
 		authContext.setIsWeb(CommonConstant.TRUE);
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!authCourseIds.contains(classroom.getCourseId()) && gxLocalOrgMapper.selectById(orgId) == null ) {
+		if (!authCourseIds.contains(classroom.getCourseId())
+				&& gxLocalOrgMapper.selectById(orgId) == null) {
 			changeCourseOrg(course, orgIds);
 		}
 
@@ -250,6 +249,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroom.getEndTime());
 		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
 				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
+		classroomValidateHandler.validateClassroomLessonExist(classroom.getLessonId(),
+				classroom.getOrganizationId(), classroom.getResourceId());
 		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext, false);
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
 		Classroom existRoom = classroomValidateHandler
@@ -261,8 +262,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 组织数据获取
 		String orgId = classroom.getOrganizationId();
-		List<String> orgIds = classroomValidateHandler
-				.validateClassroomOrgHasUser(orgId);
+		List<String> orgIds = classroomValidateHandler.validateClassroomOrgHasUser(orgId);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
 		boolean enableChange = !existRoom.getLessonId().equals(classroom.getLessonId());
@@ -280,7 +280,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 课程修改
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!authCourseIds.contains(classroom.getCourseId()) && gxLocalOrgMapper.selectById(orgId) == null) {
+		if (!authCourseIds.contains(classroom.getCourseId())
+				&& gxLocalOrgMapper.selectById(orgId) == null) {
 			changeCourseOrg(course, orgIds);
 		}
 
@@ -334,9 +335,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 权限过滤
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
 
-//		 if (CollectionUtils.isEmpty(authCourseIds)) {
-//		 return Lists.newArrayList();
-//		 }
+		// if (CollectionUtils.isEmpty(authCourseIds)) {
+		// return Lists.newArrayList();
+		// }
 
 		// 公开过滤
 		List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
@@ -350,7 +351,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				roomListQuery);
 
 		// 添加本地组织课程并去重
-		addLocalOrgClassRoom(classrooms, authCourseIds, authContext.getUserId());
+		addLocalOrgClassRoom(classrooms, authCourseIds, authContext.getUserId(), roomListQuery);
 
 		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
 				classroom -> entityToBo(classroom));
@@ -374,8 +375,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	/**
 	 * 添加本地组织课程并去重
 	 */
-	private void addLocalOrgClassRoom(List<Classroom> classrooms, List<String> authCourseIds, String userId){
-		List<Classroom> localClassRooms = classroomMapper.selectByUserIdAndNotInCourses(userId, authCourseIds);
+	private void addLocalOrgClassRoom(List<Classroom> classrooms, List<String> authCourseIds,
+			String userId, ClassRoomListQuery roomListQuery) {
+		List<Classroom> localClassRooms = classroomMapper.selectByUserIdAndNotInCourses(userId,
+				authCourseIds, roomListQuery);
 		classrooms.addAll(localClassRooms);
 	}
 
@@ -458,7 +461,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				userInfo -> userToReportBo(userInfo, courseLesson, orgMap));
 	}
 
-	private Map<String, String> getOrgMap(String orgId){
+	private Map<String, String> getOrgMap(String orgId) {
 
 		// 首先校验本地组织
 		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
@@ -599,7 +602,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		signInfoBo.setFinishCount(passedList.size());
 
 		// 组织信息
-		String orgName = remoteOrganizationService.orgNameById(classroom.getOrganizationId());
+		String orgName = getOrgName(classroom.getOrganizationId());
 		signInfoBo.setOrganizationInfo(orgName);
 
 		return signInfoBo;
@@ -692,7 +695,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		String orgName = orgMap.get(userInfo.getOrganizationId());
 
-		if (orgName == null){
+		if (orgName == null) {
 			orgName = userInfo.getOrganizationData();
 		}
 
@@ -788,8 +791,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroomBo.setOrganizationName(orgName);
 
 		// 如果组织为本地组织，返回用户列表
-		if (classroom.getUserIds() != null){
-			classroomBo.setUserIds(JsonUtil.toJsonObjectArray(classroom.getUserIds(), String.class));
+		if (classroom.getUserIds() != null) {
+			classroomBo
+					.setUserIds(JsonUtil.toJsonObjectArray(classroom.getUserIds(), String.class));
 		}
 		return classroomBo;
 	}

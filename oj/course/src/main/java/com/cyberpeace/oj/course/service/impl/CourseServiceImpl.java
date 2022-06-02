@@ -224,6 +224,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<String> courseIds = null;
 		if (null != authContext) {
 			courseIds = courseMapper.selectByAuth(authContext);
+			if (authContext.getIsWeb()) {
+				courseValidateHandler.addLocalOrgAuthIds(courseIds, authContext.getUserId());
+			}
 			if (CollectionUtils.isEmpty(courseIds)) {
 				return PageUtil.getNullResult();
 			}
@@ -448,8 +451,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	public String dumpCourse(List<String> courseIds, AuthContext authContext) {
 
 		// 数据校验
-		courseIds.forEach(
-				courseId -> courseValidateHandler.validateCoursePermission(courseId, authContext, false));
+		courseIds.forEach(courseId -> courseValidateHandler.validateCoursePermission(courseId,
+				authContext, false));
 		List<Course> courseList = StreamApiUtils.map(courseIds,
 				courseId -> courseValidateHandler.validateCourseExist(courseId));
 
@@ -793,7 +796,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		}
 
 		String courseNum;
-		for (int i = 1; courseMapper.selectByCourseNum(courseNum = MathUtils.randomStr(length)) != null; i++) {
+		for (int i = 1; courseMapper
+				.selectByCourseNum(courseNum = MathUtils.randomStr(length)) != null; i++) {
 			log.warn("Failed to obtain the course number for the {} time", i);
 		}
 		return courseNum;

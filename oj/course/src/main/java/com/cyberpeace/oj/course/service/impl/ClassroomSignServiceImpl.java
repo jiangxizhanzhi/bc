@@ -13,6 +13,7 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -71,7 +72,8 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 
 		// 仅存储该课堂组织下的用户签到信息
-		Boolean includeUser = classroom.getUserIds() != null && classroom.getUserIds().contains(authContext.getUserId());
+		Boolean includeUser = classroom.getUserIds() != null
+				&& classroom.getUserIds().contains(authContext.getUserId());
 		if (classroom.getOrganizationIds().contains(authContext.getOrganization()) || includeUser) {
 			ClassroomSign sign = ClassroomSign.builder().signIn(CommonConstant.TRUE)
 					.classroomId(classroomId).resourceId(IDGeneratorUtil.getID())
@@ -86,27 +88,36 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		return true;
 	}
 
-	private Boolean hasCourceAuth(Classroom classroom, AuthContext authContext){
-		
+	private Boolean hasCourceAuth(Classroom classroom, AuthContext authContext) {
+
 		Boolean orgAuth = classroom.getOrganizationIds().contains(authContext.getOrganization());
 
 		Boolean userAuth = false;
 		// 如果当前用户存在本地组织，校验用户权限
 		List<String> userLocalOrgs = gxLocalOrgMapper.getOrgIdsByUserId(authContext.getUserId());
-		if (!userLocalOrgs.isEmpty()){
-			ClassroomGroupInfo classroomGroupInfo = classroomGroupInfoMapper.selectByRoomAndUser(classroom.getResourceId(), authContext.getUserId());
-			userAuth = classroomGroupInfo == null ? false:true;
+		if (!userLocalOrgs.isEmpty()) {
+			ClassroomGroupInfo classroomGroupInfo = classroomGroupInfoMapper
+					.selectByRoomAndUser(classroom.getResourceId(), authContext.getUserId());
+			userAuth = classroomGroupInfo == null ? false : true;
 		}
-		
+
 		return orgAuth || userAuth;
 	}
 
 	@Override
 	public void needHelp(String lessonId, String nodeId) {
 
+		UserInfo userInfo = UserInfoContext.getUserContext();
+
 		// 课堂数据校验
-		Classroom classroom = classroomMapper.selectByOrgAndLesson(
-				UserInfoContext.getUserContext().getOrganizationId(), lessonId);
+		Classroom classroom = classroomMapper.selectByOrgAndLesson(userInfo.getOrganizationId(),
+				lessonId);
+
+		// 如果组织查不到数据，通过用户查询本地组织关联数据
+		if (null == classroom) {
+			classroom = classroomMapper.selectByUserIdAndLesson(userInfo.getUserId(), lessonId);
+		}
+
 		if (classroom == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}

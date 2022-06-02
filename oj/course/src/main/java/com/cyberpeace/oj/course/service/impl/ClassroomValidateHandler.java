@@ -59,7 +59,9 @@ public class ClassroomValidateHandler {
 	 * @param lessonId
 	 * @param orgId
 	 */
-	public Classroom validateClassroomLessonExist(String lessonId, String orgId) {
+	public Classroom validateClassroomLessonExist(String lessonId, String orgId,
+			String classroomId) {
+
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
 
 		// 查询本地组织关联课程
@@ -68,16 +70,32 @@ public class ClassroomValidateHandler {
 		if (gxLocalOrg != null) {
 			List<String> userList = gxTaskService.getLocalUserList(gxLocalOrg);
 
-			for (String userId:userList){
-				Classroom localOrgClassroom = classroomMapper.selectByUserIdAndLesson(userId, lessonId);
-				if (localOrgClassroom != null){
+			for (String userId : userList) {
+				Classroom localOrgClassroom = classroomMapper.selectByUserIdAndLesson(userId,
+						lessonId);
+				if (localOrgClassroom != null) {
 					localOrgClassrooms.add(localOrgClassroom);
 				}
 			}
 
 		}
 
-		if (null != classroom || !localOrgClassrooms.isEmpty()) {
+		// 修改时校验本课程表的课时id
+		if (classroomId == null) {
+			classroomId = "";
+		}
+
+		// 校验本地组织课程表
+		if (!localOrgClassrooms.isEmpty()) {
+			for (Classroom localOrgClassroom : localOrgClassrooms) {
+				if (!localOrgClassroom.getResourceId().equals(classroomId)) {
+					throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
+				}
+			}
+		}
+
+		// 校验远程组织课程表
+		if (null != classroom && !classroom.getResourceId().equals(classroomId)) {
 			throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
 		}
 
@@ -151,16 +169,11 @@ public class ClassroomValidateHandler {
 
 		List<Classroom> classrooms = classroomMapper.selectByOrgId(organizationId);
 
-		// 查询本地组织关联课程表
-		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(organizationId);
-		if (gxLocalOrg != null) {
-			List<String> userList = gxTaskService.getLocalUserList(gxLocalOrg);
-			classrooms.addAll(classroomMapper.selectByUserIds(userList));
-		}
+		addLocalOrgClassRoom(classrooms, organizationId);
 
 		classrooms.forEach(classroom -> {
-			if ((startTime.getTime() >= classroom.getStartTime().getTime()
-					&& startTime.getTime() <= classroom.getEndTime().getTime())
+			if ((startTime.getTime() > classroom.getStartTime().getTime()
+					&& startTime.getTime() < classroom.getEndTime().getTime())
 					|| (endTime.getTime() > classroom.getStartTime().getTime()
 							&& endTime.getTime() < classroom.getEndTime().getTime())) {
 				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
@@ -179,6 +192,7 @@ public class ClassroomValidateHandler {
 			Date startTime, Date endTime) {
 
 		List<Classroom> classrooms = classroomMapper.selectByOrgId(organizationId);
+		addLocalOrgClassRoom(classrooms, organizationId);
 		for (Classroom classroom : classrooms) {
 			if (classroom.getResourceId().equals(classroomId)) {
 				continue;
@@ -189,6 +203,15 @@ public class ClassroomValidateHandler {
 							&& endTime.getTime() < classroom.getEndTime().getTime())) {
 				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
 			}
+		}
+	}
+
+	private void addLocalOrgClassRoom(List<Classroom> classrooms, String organizationId) {
+		// 查询本地组织关联课程表
+		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(organizationId);
+		if (gxLocalOrg != null) {
+			List<String> userList = gxTaskService.getLocalUserList(gxLocalOrg);
+			classrooms.addAll(classroomMapper.selectByUserIds(userList));
 		}
 	}
 }

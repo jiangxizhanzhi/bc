@@ -64,11 +64,14 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	List<String> selectCourseIdsByUserId(@Param("userId") String userId);
 
-	List<Classroom> selectByUserIdAndNotInCourses(@Param("userId") String userId, @Param("courseIds") List<String> courseIds);
+	List<Classroom> selectByUserIdAndNotInCourses(@Param("userId") String userId,
+			@Param("courseIds") List<String> courseIds,
+			@Param("listQuery") ClassRoomListQuery roomListQuery);
 
 	List<Classroom> selectByUserId(@Param("userId") String userId);
 
 	List<Classroom> selectByUserIds(@Param("userIds") List<String> userIds);
 
-	Classroom selectByUserIdAndLesson(@Param("userId") String userId, @Param("lessonId") String lessonId);
+	Classroom selectByUserIdAndLesson(@Param("userId") String userId,
+			@Param("lessonId") String lessonId);
 }

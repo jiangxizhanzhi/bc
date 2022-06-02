@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.dao.context;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class ClassRoomListQuery implements Serializable {
@@ -18,7 +18,5 @@ public class ClassRoomListQuery implements Serializable {
 	private String userId;
 
 	private List<String> childrenOrg;
-
-	private List<String> localOrgs;
 
 }

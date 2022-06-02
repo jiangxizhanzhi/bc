@@ -143,6 +143,13 @@
                 #{courseId}
             </foreach>
         </if>
+        <if test="listQuery != null">
+            <if test="listQuery.startTime != null and listQuery.endTime != null">
+                and ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
+            </if>
+        </if>
     </select>
 
     <select id="selectByUserId" resultMap="base">

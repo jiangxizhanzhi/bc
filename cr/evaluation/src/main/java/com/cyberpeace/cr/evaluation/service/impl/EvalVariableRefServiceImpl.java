@@ -235,7 +235,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         MarkData data = new MarkData();
         // 构建评分算法数据
-        data.setBaseTime(evalVariableRefProbeDataContextList.get(1).getTime().getTime());
+        data.setBaseTime(evalVariableRefProbeDataContextList.get(0).getTime().getTime());
         data.setData(Lists.newArrayList());
         evalVariableRefProbeDataContextList.forEach(variableRefProbeDataContext -> {
             MarkItemData itemData = new MarkItemData();

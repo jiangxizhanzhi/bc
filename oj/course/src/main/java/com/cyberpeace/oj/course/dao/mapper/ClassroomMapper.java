@@ -37,9 +37,6 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	List<Classroom> selectListByCourse(@Param("courseIds") List<String> courseIds,
 			@Param("listQuery") ClassRoomListQuery roomListQuery);
 
-	List<Classroom> selectListByLocalOrgs(@Param("courseIds") List<String> courseIds,
-			@Param("localOrgs") List<String> localOrgs);
-
 	/**
 	 * 课程表删除
 	 * @param lessonIds
@@ -54,24 +51,36 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	List<Classroom> selectByOrgId(@Param("orgId") String orgId);
 
 	/**
-	 * 查询各种组织下的的课堂表
-	 * @param orgIds
+	 * 查询课程表下用户关联的课程id列表
+	 * @param userId
 	 * @return
 	 */
-	List<Classroom> selectByOrgIds(@Param("orgIds") List<String> orgIds);
-
-	List<String> selectCourseIds(@Param("classroomIds") List<String> classroomIds);
-
 	List<String> selectCourseIdsByUserId(@Param("userId") String userId);
 
+	/**
+	 * 查询用户关联的且不在指定课程列表中的课程表
+	 * @param userId
+	 * @param courseIds
+	 * @param roomListQuery
+	 * @return
+	 */
 	List<Classroom> selectByUserIdAndNotInCourses(@Param("userId") String userId,
 			@Param("courseIds") List<String> courseIds,
 			@Param("listQuery") ClassRoomListQuery roomListQuery);
 
-	List<Classroom> selectByUserId(@Param("userId") String userId);
-
+	/**
+	 * 查询用户关联的所有课程表
+	 * @param userIds
+	 * @return
+	 */
 	List<Classroom> selectByUserIds(@Param("userIds") List<String> userIds);
 
+	/**
+	 * 通过用户id和课程id查询课程表
+	 * @param userId
+	 * @param lessonId
+	 * @return
+	 */
 	Classroom selectByUserIdAndLesson(@Param("userId") String userId,
 			@Param("lessonId") String lessonId);
 }

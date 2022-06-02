@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.common.constant.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -45,7 +45,10 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.constant.*;
+import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -844,7 +847,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 题解 题解文件拷贝
 		if (StringUtils.isNotBlank(operation.getWriteup())) {
-			List<String> matchList = LocalStringUtil.getMatchStr(operation.getWriteup(),
+			String content = MdUtil.filterCodeContent(operation.getWriteup());
+			List<String> matchList = LocalStringUtil.getMatchStr(content,
 					PatternConstant.MARKDOWN_IMAGE);
 			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
 					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));

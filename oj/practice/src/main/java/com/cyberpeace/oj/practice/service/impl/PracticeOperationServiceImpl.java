@@ -977,7 +977,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 题解
 		if (StringUtils.isNotBlank(dumpLoadBo.getWriteup())) {
-			List<String> matchList = LocalStringUtil.getMatchStr(dumpLoadBo.getWriteup(),
+			String filterCodeContent = MdUtil.filterCodeContent(dumpLoadBo.getWriteup());
+			List<String> matchList = LocalStringUtil.getMatchStr(filterCodeContent,
 					PatternConstant.MARKDOWN_IMAGE);
 			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
 					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));

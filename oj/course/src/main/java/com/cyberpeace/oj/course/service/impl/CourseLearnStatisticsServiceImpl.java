@@ -51,7 +51,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			courseIds = courseMapper.selectByAuth(authContext);
 		}
 		List<Course> courses = courseLearnStatisticsMapper.selectByHeat(courseIds);
-		courses = courses.stream().filter(s -> Integer.parseInt(s.getCourseNum()) > 0).collect(Collectors.toList());
+		courses = courses.stream().filter(s -> s.getHeat() > 0).collect(Collectors.toList());
 		return getCourseHistogramRes(courses);
 	}
 

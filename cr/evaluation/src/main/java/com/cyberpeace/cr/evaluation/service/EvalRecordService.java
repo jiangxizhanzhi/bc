@@ -14,6 +14,8 @@ import java.util.Map;
 
 public interface EvalRecordService extends IService<EvalRecord> {
 
+    void isExist(EvalRecordAddReq requestData);
+
     /**
      * 获取实例对象, 检查返回值有效性
      *

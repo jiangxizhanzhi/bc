@@ -3,9 +3,11 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.ListRsp;
@@ -95,6 +97,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     private static final long onceProbeDataSize = 100L;
 
+    @Override
+    public void isExist(EvalRecordAddReq requestData) {
+        LambdaQueryChainWrapper<EvalRecord> querySet = lambdaQuery()
+                .eq(EvalRecord::getTaskId, requestData.getTaskId())
+                .eq(EvalRecord::getName, requestData.getName());
+
+        if (requestData.getResourceId() != null) {
+            querySet = querySet.ne(EvalRecord::getResourceId, requestData.getResourceId());
+        }
+
+        if (SqlHelper.retBool(querySet.count())) {
+            throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+        }
+    }
+
     public EvalRecord getEntity(String resourceId) {
         // todo 文本调整
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);
@@ -102,7 +119,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             throw new BusinessException("评估未找到");
         }
         if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
-            throw new BusinessException("评估未启动");
+            throw new BusinessException("评估已启动");
         }
         return evalRecord;
     }
@@ -172,6 +189,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndicatorIds.add(item.getEvalIndicatorId());
             }
         });
+        // 三级指标关联表
+        List<EvalIndicator> thirdRelationList = evalIndicatorService.lambdaQuery().in(EvalIndicator::getResourceId, evalIndicatorIds).list();
         // 四级指标
         List<EvalAggregation> evalAggregations = evalAggregationService.lambdaQuery().in(EvalAggregation::getEvalIndicatorId, evalIndicatorIds).list();
         // 五级指标
@@ -193,6 +212,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
         usingAlgorithmIds.addAll(evalAggregations.stream().map(EvalAggregation::getAggregatingAlgorithmId).collect(Collectors.toList()));
         usingAlgorithmIds.addAll(evalIndexList.stream().map(EvalIndex::getAggregatingAlgorithmId).collect(Collectors.toList()));
+        usingAlgorithmIds.addAll(thirdRelationList.stream().map(EvalIndicator::getAggregatingAlgorithmId).collect(Collectors.toList()));
+
+        // 查询使用算法生成Map
         Map<String, EvalAlgorithm> evalAlgorithmMap = evalAlgorithmService.lambdaQuery().in(
                 EvalAlgorithm::getResourceId, usingAlgorithmIds
         ).list().stream().collect(Collectors.toMap(EvalAlgorithm::getResourceId, evalAlgorithm -> evalAlgorithm));
@@ -232,9 +254,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             variableIdsMap.put(evalCollection.getResourceId(), evalVariableRef.getResourceId());
         });
 
-        Map<String, EvalIndicator> thirdRelationMap = evalIndicatorService.lambdaQuery().in(
-                EvalIndicator::getResourceId, evalIndicatorIds
-        ).list().stream().collect(Collectors.toMap(EvalIndicator::getResourceId, evalIndicator -> evalIndicator));
+        Map<String, EvalIndicator> thirdRelationMap = thirdRelationList.stream().collect(
+                Collectors.toMap(EvalIndicator::getResourceId, evalIndicator -> evalIndicator)
+        );
 
         // 生成聚合项数据（四级）
         List<EvalIndexRef> indexRefs = Lists.newArrayList();

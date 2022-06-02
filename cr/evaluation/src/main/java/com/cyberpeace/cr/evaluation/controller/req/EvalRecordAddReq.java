@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,4 +35,13 @@ public class EvalRecordAddReq implements Serializable {
 
     @ApiModelProperty(value = "全量三级指标项", required = true)
     private List<EvalRecordIndexContext> indexes;
+
+    public void validate() {
+        if (name != null) {
+            CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+        }
+        if (description != null) {
+            CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+        }
+    }
 }

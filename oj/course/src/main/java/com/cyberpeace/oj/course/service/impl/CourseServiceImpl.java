@@ -741,7 +741,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 课程大纲数据
 		if (StringUtils.isNotBlank(courseDumpLoadBo.getOutline())) {
 			// 匹配文件路径
-			List<String> matchList = LocalStringUtil.getMatchStr(courseDumpLoadBo.getOutline(),
+			String filterCodeContent = MdUtil.filterCodeContent(courseDumpLoadBo.getOutline());
+			List<String> matchList = LocalStringUtil.getMatchStr(filterCodeContent,
 					PatternConstant.MARKDOWN_IMAGE);
 			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
 					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
@@ -796,8 +797,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 大纲文件处理
 		if (StringUtils.isNotBlank(course.getOutline())) {
 			String filterCodeContent = MdUtil.filterCodeContent(course.getOutline());
-			List<String> matchList = LocalStringUtil
-					.getMatchStr(filterCodeContent,
+			List<String> matchList = LocalStringUtil.getMatchStr(filterCodeContent,
 					PatternConstant.MARKDOWN_IMAGE);
 			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
 					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));

@@ -224,6 +224,9 @@ public class ExcelDataHandler {
 	private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
 			ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
 
+		// 先创建父级目录
+		FileUtil.createParentPath(filePath);
+
 		// 创建HSSFSheet对象
 		Sheet sheet = workbook.createSheet(sheetName);
 		// 创建HSSFRow对象
@@ -308,6 +311,7 @@ public class ExcelDataHandler {
 
 		Workbook workbook = null;
 		try {
+			FileUtil.createParentPath(filePath);
 			workbook = createWorkbook(filePath);
 			doExportExcel(data, filePath, CommonConstant.ONE.toString(), excelHeader, workbook,
 					null);

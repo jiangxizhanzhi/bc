@@ -123,7 +123,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 				.flatMap(Collection::stream).collect(Collectors.toList());
 
 		// 计算新用户 给新用户创建组
-		if (orgUserIds.contains(classroom.getCreateUserId())) {
+		if (!orgUserIds.contains(classroom.getCreateUserId())) {
 			orgUserIds.add(classroom.getCreateUserId());
 		}
 		List<String> newUserIds = (List<String>) CollectionUtils.removeAll(orgUserIds,

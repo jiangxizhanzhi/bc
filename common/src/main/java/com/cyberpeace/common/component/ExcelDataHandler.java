@@ -174,8 +174,14 @@ public class ExcelDataHandler {
 			return CommonConstant.EMPTY_STRING;
 		}
 
-		if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-			return TimeUtil.format1(cell.getDateCellValue());
+		if (cell.getCellType() == CellType.NUMERIC) {
+			if (DateUtil.isCellDateFormatted(cell)) {
+				return TimeUtil.format1(cell.getDateCellValue());
+			} else {
+				cell.setCellType(CellType.STRING);
+				return cell.getStringCellValue().trim();
+			}
+
 		}
 		return cell.toString().trim();
 	}
@@ -223,6 +229,9 @@ public class ExcelDataHandler {
 	 */
 	private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
 			ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
+
+		// 先创建父级目录
+		FileUtil.createParentPath(filePath);
 
 		// 创建HSSFSheet对象
 		Sheet sheet = workbook.createSheet(sheetName);
@@ -308,6 +317,7 @@ public class ExcelDataHandler {
 
 		Workbook workbook = null;
 		try {
+			FileUtil.createParentPath(filePath);
 			workbook = createWorkbook(filePath);
 			doExportExcel(data, filePath, CommonConstant.ONE.toString(), excelHeader, workbook,
 					null);

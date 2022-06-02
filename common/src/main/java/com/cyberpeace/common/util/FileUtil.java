@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
 
@@ -606,6 +605,18 @@ public class FileUtil {
 					org.apache.tomcat.util.codec.binary.Base64.encodeBase64(digest.digest()));
 		}
 		return value;
+	}
+
+	/**
+	 * 创建父级目录
+	 * @param filePath
+	 */
+	public static void createParentPath(String filePath) {
+
+		File file = new File(filePath);
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
 	}
 
 }

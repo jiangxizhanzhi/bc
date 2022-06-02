@@ -66,6 +66,7 @@ public class EvalRecordController {
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PostMapping("")
     public BaseRsp<EvalRecordRsp> create(@RequestBody EvalRecordAddReq requestData) {
+        evalRecordService.isExist(requestData);
         return new BaseRsp<>(evalRecordService.create(requestData));
     }
 
@@ -73,6 +74,7 @@ public class EvalRecordController {
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PatchMapping("")
     public BaseRsp<EvalRecordRsp> update(@RequestBody EvalRecordAddReq requestData) {
+        evalRecordService.isExist(requestData);
         return new BaseRsp<>(evalRecordService.update(requestData));
     }
 

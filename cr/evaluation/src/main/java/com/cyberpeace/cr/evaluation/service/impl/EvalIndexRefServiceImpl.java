@@ -76,6 +76,16 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
         }
 
+        if (score > 100 || 0 > score) {
+            String msg = String.format(
+                    BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
+                    this.int2cn.get(evalIndexRef.getLevel()),
+                    evalIndexRef.getName()
+            );
+            evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+            score = 0;
+        }
+
         evalIndexRef.setScore(score);
     }
 

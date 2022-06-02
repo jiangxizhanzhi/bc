@@ -174,8 +174,14 @@ public class ExcelDataHandler {
 			return CommonConstant.EMPTY_STRING;
 		}
 
-		if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-			return TimeUtil.format1(cell.getDateCellValue());
+		if (cell.getCellType() == CellType.NUMERIC) {
+			if (DateUtil.isCellDateFormatted(cell)) {
+				return TimeUtil.format1(cell.getDateCellValue());
+			} else {
+				cell.setCellType(CellType.STRING);
+				return cell.getStringCellValue().trim();
+			}
+
 		}
 		return cell.toString().trim();
 	}

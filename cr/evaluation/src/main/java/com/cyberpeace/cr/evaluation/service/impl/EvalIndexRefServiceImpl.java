@@ -151,7 +151,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
         } else if (datatype.equals(EvalIndexRef.DataType.INTEGER.getCode())) {
             if (attribute.equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
-                return Math.min(100 - (value * 100 - attributeValue * 100) / attributeValue, 100);
+                return Math.min(Math.max(100 - (value * 100 - attributeValue * 100) / attributeValue, 0), 100);
             } else if (attribute.equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {
                 return Math.max((attributeValue * 100 - value * 100) / attributeValue, 0);
             }

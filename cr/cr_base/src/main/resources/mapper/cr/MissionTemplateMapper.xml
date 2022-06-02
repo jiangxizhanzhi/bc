@@ -7,7 +7,7 @@
         , description, score, skill_points
         , answer, `option`, `type`
         , category_id, write_up, create_user_id
-        , create_time, update_time, template_id, attachment)
+        , create_time, update_time, template_id, attachment, business_template_id)
         values
         <foreach collection="missionTemplates" item="missionTemplate" separator=",">
             (#{missionTemplate.resourceId,jdbcType=VARCHAR} ,#{missionTemplate.title,jdbcType=VARCHAR}
@@ -18,7 +18,7 @@
             , #{missionTemplate.categoryId,jdbcType=VARCHAR}, #{missionTemplate.writeUp,jdbcType=VARCHAR},
             #{missionTemplate.createUserId,jdbcType=VARCHAR}
             , #{missionTemplate.createTime,jdbcType=TIMESTAMP}, #{missionTemplate.updateTime,jdbcType=TIMESTAMP},
-            #{missionTemplate.templateId,jdbcType=VARCHAR}, #{missionTemplate.attachment})
+            #{missionTemplate.templateId,jdbcType=VARCHAR}, #{missionTemplate.attachment}, #{missionTemplate.businessTemplateId})
         </foreach>
     </insert>
     <update id="batchUpdateBusinessTemplateId">

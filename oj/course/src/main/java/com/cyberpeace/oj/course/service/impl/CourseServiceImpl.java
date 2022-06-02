@@ -795,7 +795,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 大纲文件处理
 		if (StringUtils.isNotBlank(course.getOutline())) {
-			List<String> matchList = LocalStringUtil.getMatchStr(course.getOutline(),
+			String filterCodeContent = MdUtil.filterCodeContent(course.getOutline());
+			List<String> matchList = LocalStringUtil
+					.getMatchStr(filterCodeContent,
 					PatternConstant.MARKDOWN_IMAGE);
 			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
 					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));

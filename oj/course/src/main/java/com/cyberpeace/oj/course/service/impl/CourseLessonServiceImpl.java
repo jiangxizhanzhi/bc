@@ -1156,8 +1156,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (null != courseLesson.getHandoutType()
 				&& courseLesson.getHandoutType() == CourseLesson.HandoutType.MD.getCode().intValue()
 				&& StringUtils.isNotBlank(courseLesson.getHandoutUrl())) {
-
-			List<String> matchList = LocalStringUtil.getMatchStr(courseLesson.getHandoutUrl(),
+			String content = MdUtil.filterCodeContent(courseLesson.getHandoutUrl());
+			List<String> matchList = LocalStringUtil.getMatchStr(content,
 					PatternConstant.MARKDOWN_IMAGE);
 			List<String> matchPathList = StreamApiUtils.map(matchList, matchPath -> LocalStringUtil
 					.getFirstMatchStr(matchPath, PatternConstant.MARKDOWN_IMAGE_URL));

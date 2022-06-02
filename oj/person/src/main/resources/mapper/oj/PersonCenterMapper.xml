@@ -276,6 +276,7 @@
         select *
         from oj_note
         where user_id = #{userId} and note_type = 2 and business_type = 2
+        and resource_id in (select note_id from oj_note_evaluate where score >= 80)
         and create_time &gt; #{startTime}
         and create_time &lt; #{endTime}
         <if test="lessonIds != null and lessonIds.size() != 0">
@@ -291,6 +292,7 @@
         from oj_note_evaluate
         where
         note_id in (select resource_id from oj_note where user_id = #{userId}
+        and note_type = 2 and business_type = 2
         and oj_note.business_id in
         <if test="lessonIds != null and lessonIds.size() != 0">
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
@@ -301,6 +303,7 @@
             ('')
         </if>
         )
+        and score >= 80
         and create_time &gt; #{startTime}
         and create_time &lt; #{endTime}
 

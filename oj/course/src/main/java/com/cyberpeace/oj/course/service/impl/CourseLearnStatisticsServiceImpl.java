@@ -80,8 +80,12 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		List<String> xNames = new ArrayList<>();
 		List<Integer> yValues = new ArrayList<>();
 		for (Course course : courses) {
+			Integer heat = course.getHeat();
+			if(0 == heat){
+				continue;
+			}
 			xNames.add(course.getName());
-			yValues.add(course.getHeat());
+			yValues.add(heat);
 		}
 		HistogramRes res = new HistogramRes();
 		res.setXNames(xNames);

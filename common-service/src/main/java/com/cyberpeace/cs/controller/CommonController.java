@@ -86,9 +86,8 @@ public class CommonController {
 		filePermission.validateFileSuffix(fileName);
 
 		// 文件上传
-		AttachmentBo attachmentBo = attachmentService.uploadFile(
-				AttachmentPath.UPLOAD_ATTACHMENT.getCode(), true, fileCommonUploadReq.getFile(),
-				true);
+		AttachmentBo attachmentBo = attachmentService.uploadDest(
+				AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, fileCommonUploadReq.getFile());
 
 		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
 		attachmentBo.setFilePath(viewPath);

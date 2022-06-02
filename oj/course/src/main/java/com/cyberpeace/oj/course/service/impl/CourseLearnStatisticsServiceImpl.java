@@ -63,7 +63,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		List<Course> directions = courseLearnStatisticsMapper.sumHeatByDirection(courseIds);
 		directions = directions.stream().map(direction -> {
 			String directionHeats = direction.getDescription();
-			if (null == directionHeats) {
+			if (0 == Integer.parseInt(directionHeats)) {
 				return direction;
 			}
 			String[] heatLists = directionHeats.split("_");

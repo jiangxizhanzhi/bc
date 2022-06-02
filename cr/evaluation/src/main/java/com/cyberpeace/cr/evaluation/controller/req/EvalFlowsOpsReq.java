@@ -27,7 +27,5 @@ public class EvalFlowsOpsReq implements Serializable {
 	private int runType;
 
 	@ApiModelProperty("流量列表")
-	@NotNull
-	@NotEmpty
 	private List<FlowInfoContext> flows;
 }

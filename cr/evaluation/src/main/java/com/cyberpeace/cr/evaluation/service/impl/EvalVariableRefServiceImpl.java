@@ -123,7 +123,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
         EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-//        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
+        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
 
         // 运行匹配算法
         List<String> formatReturn;
@@ -132,7 +132,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         } catch (RemoteServiceException e) {
             return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_FORMAT_EXECUTE_FAILED), evalVariableRef.getName());
         }
-//        EvalLog.info(evalRecord, evalVariableRef, String.format("size %s format algorithm calculate result %s", perFormatSize, formatReturn));
+        EvalLog.info(evalRecord, evalVariableRef, String.format("size %s format algorithm calculate result %s", perFormatSize, formatReturn));
 
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = Lists.newArrayList();
         for (int i = 0; i < formatReturn.size(); i++) {
@@ -182,7 +182,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMatchParams());
         EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
         EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-//        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
+        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
 
         // 运行匹配算法
         List<Integer> matchReturn;
@@ -194,7 +194,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         }
         evalVariableRef.setMatchEndTime(new Date());
 
-//        EvalLog.info(evalRecord, evalVariableRef, String.format("match algorithm calculate result %s", matchReturn));
+        EvalLog.info(evalRecord, evalVariableRef, String.format("match algorithm calculate result %s", matchReturn));
 
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = evalVariableRefProbeDataService.lambdaQuery()
                 .eq(EvalVariableRefProbeData::getVariableId, evalVariableRef.getResourceId())
@@ -235,7 +235,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         MarkData data = new MarkData();
         // 构建评分算法数据
-        data.setBaseTime(evalVariableRefProbeDataContextList.get(1).getTime().getTime());
+        data.setBaseTime(evalVariableRefProbeDataContextList.get(0).getTime().getTime());
         data.setData(Lists.newArrayList());
         evalVariableRefProbeDataContextList.forEach(variableRefProbeDataContext -> {
             MarkItemData itemData = new MarkItemData();
@@ -249,7 +249,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMarkParams());
         EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
         EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-//        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
+        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
 
         // 运行评分算法
         Integer score;
@@ -259,6 +259,11 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         } catch (RemoteServiceException e) {
             return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MARK_EXECUTE_FAILED), evalVariableRef.getName());
         }
+
+        if (score > 100 || 0 > score) {
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MARK_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+        }
+
         evalVariableRef.setMarkEndTime(new Date());
 
         EvalLog.info(evalRecord, evalVariableRef, String.format("mark algorithm calculate result %s", score));

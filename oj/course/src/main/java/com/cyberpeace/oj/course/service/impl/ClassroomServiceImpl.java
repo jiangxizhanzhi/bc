@@ -586,8 +586,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				true);
 		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
 		List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroom.getResourceId());
-		List<ClassroomSign> signIns = StreamApiUtils.filter(signList, ClassroomSign::getSignIn);
+		List<ClassroomSign> signIns = StreamApiUtils.filter(signList,
+				classroomSign -> orgUserIds.contains(classroomSign.getUserId())
+						&& classroomSign.getSignIn());
 		List<String> signUsers = StreamApiUtils.map(signIns, ClassroomSign::getUserId);
+
 		// 查询所有笔记
 		List<Note> notes = new ArrayList<>();
 		// 仅统计签到过的用户

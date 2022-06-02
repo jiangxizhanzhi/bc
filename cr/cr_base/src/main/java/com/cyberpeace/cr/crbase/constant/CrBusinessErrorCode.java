@@ -358,4 +358,19 @@ public interface CrBusinessErrorCode {
 	 * 无法判断流量任务状态
 	 */
 	String FAILED_TO_JUDGE_FLOW_TASK_STATUS = "101109";
+
+	/**
+	 * 格式化算法返回数据不合规
+	 */
+	String FORMAT_ALGORITHM_RESULT_IS_INVALID = "101110";
+
+	/**
+	 * 评分算法返回数据不合规
+	 */
+	String MARK_ALGORITHM_RESULT_IS_INVALID = "101111";
+
+	/**
+	 * 聚合算法返回数据不合规
+	 */
+	String AGG_ALGORITHM_RESULT_IS_INVALID = "101112";
 }

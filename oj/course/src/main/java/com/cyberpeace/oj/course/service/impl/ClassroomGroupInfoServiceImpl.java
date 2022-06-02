@@ -121,7 +121,11 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 				.map(classroomGroupInfo -> JsonUtil
 						.toJsonObjectArray(classroomGroupInfo.getGroupUserIds(), String.class))
 				.flatMap(Collection::stream).collect(Collectors.toList());
+
 		// 计算新用户 给新用户创建组
+		if (!orgUserIds.contains(classroom.getCreateUserId())) {
+			orgUserIds.add(classroom.getCreateUserId());
+		}
 		List<String> newUserIds = (List<String>) CollectionUtils.removeAll(orgUserIds,
 				classroomUserIds);
 		Integer lastGroupNo = classroomGroupInfoMapper.selectLastGroupByRoom(classroomId);
@@ -179,6 +183,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 			return Lists.newArrayList();
 		}
 
+		if (!classroomUserIds.contains(classroom.getCreateUserId())) {
+			classroomUserIds.add(classroom.getCreateUserId());
+		}
 		int remainUser = classroomUserIds.size() % groupCount;
 		int totalGroup = remainUser == CommonConstant.ZERO ? (classroomUserIds.size() / groupCount)
 				: (classroomUserIds.size() / groupCount) + CommonConstant.ONE;

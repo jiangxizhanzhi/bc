@@ -76,6 +76,16 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
         }
 
+        if (score > 100 || 0 > score) {
+            String msg = String.format(
+                    BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
+                    this.int2cn.get(evalIndexRef.getLevel()),
+                    evalIndexRef.getName()
+            );
+            evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+            score = 0;
+        }
+
         evalIndexRef.setScore(score);
     }
 
@@ -141,7 +151,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
         } else if (datatype.equals(EvalIndexRef.DataType.INTEGER.getCode())) {
             if (attribute.equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
-                return Math.min(100 - (value * 100 - attributeValue * 100) / attributeValue, 100);
+                return Math.min(Math.max(100 - (value * 100 - attributeValue * 100) / attributeValue, 0), 100);
             } else if (attribute.equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {
                 return Math.max((attributeValue * 100 - value * 100) / attributeValue, 0);
             }

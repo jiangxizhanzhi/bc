@@ -3,12 +3,16 @@ package com.cyberpeace.job;
 import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.common.util.SystemPropUtil;
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cs.dao.entity.GxTask;
 import com.cyberpeace.cs.dao.mapper.GxTaskMapper;
 import com.cyberpeace.cs.service.GxTaskService;
@@ -17,16 +21,13 @@ import com.cyberpeace.integratation.model.mp.RemoteUser;
 import com.cyberpeace.integratation.service.RemoteTaskService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
-import lombok.extern.slf4j.Slf4j;
-
-import javax.annotation.PostConstruct;
-
 /**
  * 任务定时任务
  */
-@Slf4j
 @Component
 public class GxTaskJob {
+
+	private static final Logger log = LoggerFactory.getLogger("gx");
 
 	@Autowired
 	private GxTaskMapper gxTaskMapper;
@@ -71,7 +72,8 @@ public class GxTaskJob {
 		List<RemoteUser> remoteUsers = remoteUserService.getGxUserList();
 		for (RemoteUser remoteUser : remoteUsers) {
 			String token = remoteUser.getThirdToken();
-			List<JSONObject> userTasks = remoteTaskService.getTasks(remoteUser.getUserId(), SOFT_ID, token);
+			List<JSONObject> userTasks = remoteTaskService.getTasks(remoteUser.getUserId(), SOFT_ID,
+					token);
 			for (JSONObject userTask : userTasks) {
 
 				String taskId = userTask.getJSONObject("taskBaseData").getString("taskId");
@@ -97,8 +99,6 @@ public class GxTaskJob {
 		toCloseTasks.forEach(gxTask -> {
 			remoteTaskService.stopExamTask(gxTask.getTaskId(), gxTask.getEventId(),
 					gxTask.getDuration());
-			log.info("关闭任务成功:" + gxTask.getName());
-
 		});
 	}
 

@@ -323,11 +323,13 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Override
 	public List<RemoteUser> getGxUserList(){
 
-		String data = HttpClientUtil.rawGet(REMOTE_USERS_URL, String.class);
-
-		List<RemoteUser> remoteUsers = JsonUtil.toJsonObjectArray(data, RemoteUser.class);
-
-		return remoteUsers;
+		try {
+			String data = HttpClientUtil.rawGet(REMOTE_USERS_URL, String.class);
+			return JsonUtil.toJsonObjectArray(data, RemoteUser.class);
+		} catch (Exception e) {
+			log.error("Failed to get remote users.", e);
+			return Lists.newArrayList();
+		}
 	}
 
 }

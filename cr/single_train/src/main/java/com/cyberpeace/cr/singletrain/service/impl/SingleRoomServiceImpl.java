@@ -721,6 +721,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject topoData = localSceneService.getTopoData(businessTemplate.getTopoId())
 				.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
 		ret.setTopoData(topoData);
+		ret.setTopoId(businessTemplate.getTopoId());
 		return ret;
 	}
 

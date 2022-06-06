@@ -59,12 +59,12 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 	@Override
 	public Boolean stopExamTask(String taskId, String examId, Double duration) {
 
-		String targetUrl = CT_TASK_STOP_URL + "?taskId=" + taskId + "&exam_id=" + examId
+		String targetUrl = CT_TASK_STOP_URL + "?task_id=" + taskId + "&exam_id=" + examId
 				+ "&duration=" + duration;
 
 		log.info(String.format("Stop task, taskId: %s, examId: %s", taskId, examId));
 		try {
-			Boolean result = HttpClientUtil.post(targetUrl, null, Boolean.class);
+			Boolean result = HttpClientUtil.rawGet(targetUrl, Boolean.class);
 			log.info("Stop task successfully.");
 			return result;
 		} catch (Exception e) {

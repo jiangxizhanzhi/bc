@@ -25,6 +25,8 @@ public interface CrTitleBusinessTemplateMapper extends BaseMapper<CrTitleBusines
 
     List<CrTitleBusinessTemplate> listByTitleId(@Param("title_id") String titleId);
 
+    List<CrTitleBusinessTemplate> listByTitleIds(@Param("title_ids") List<String> titleIds);
+
     IPage<CrTitleTrainBo> listTrain(@Param("page") Page page,
                                     @Param("type") Integer businessType,
                                     @Param("search") String search,

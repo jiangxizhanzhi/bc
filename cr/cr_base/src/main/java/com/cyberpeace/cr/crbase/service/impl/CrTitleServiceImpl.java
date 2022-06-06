@@ -584,20 +584,27 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             return false;
         }
 
-        List<String> titleIdList = Lists.newArrayList();
+        // 删除训练关联称号
+        Set<String> titleIdSet = Sets.newHashSet();
         List<Integer> titleBusinessTemplateIdList = Lists.newArrayList();
-        List<String> businessTemplateIdList = Lists.newArrayList();
 
         titleBusinessTemplateList.forEach(crTitleBusinessTemplate -> {
-            titleIdList.add(crTitleBusinessTemplate.getTitleId());
+            titleIdSet.add(crTitleBusinessTemplate.getTitleId());
             titleBusinessTemplateIdList.add(crTitleBusinessTemplate.getId());
-            businessTemplateIdList.add(crTitleBusinessTemplate.getBusinessTemplateId());
         });
 
         boolean result = SqlHelper.retBool(crTitleBusinessTemplateMapper.deleteBatchIds(titleBusinessTemplateIdList));
 
+        List<String> titleIdList = new ArrayList<>(titleIdSet);
         this.getBaseMapper().deleteTitleUser(titleIdList);
-        checkFinishTitle(businessTemplateIdList);
+
+        // 称号下未被删除训练集合
+        Set<String> businessTemplateIdSet = crTitleBusinessTemplateMapper.listByTitleIds(titleIdList)
+                .stream().map(CrTitleBusinessTemplate::getBusinessTemplateId)
+                .collect(Collectors.toSet());
+        if (!businessTemplateIdSet.isEmpty()) {
+            checkFinishTitle(new ArrayList<>(businessTemplateIdSet));
+        }
 
         return result;
     }

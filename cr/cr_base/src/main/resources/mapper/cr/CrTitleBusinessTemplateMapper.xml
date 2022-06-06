@@ -26,6 +26,13 @@
     <select id="listByTitleId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate">
         select * from cr_title_business_template where title_id = #{title_id};
     </select>
+    <select id="listByTitleIds" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate">
+        select * from cr_title_business_template
+        where title_id in
+        <foreach collection="title_ids" item="title_id" separator="," open="(" close=")">
+            #{title_id}
+        </foreach>
+    </select>
 
     <select id="listTrain" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainBo">
         select *

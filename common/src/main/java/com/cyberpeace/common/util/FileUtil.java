@@ -35,6 +35,7 @@ public class FileUtil {
 		}
 
 		String filename = file.getOriginalFilename();
+		filename = filename.toLowerCase();
 		for (String suffix : fileSuffix) {
 			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
 				return;

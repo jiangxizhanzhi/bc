@@ -27,4 +27,7 @@ public class AttackEffect implements Serializable {
 
 	@ApiModelProperty("事件描述")
 	private String description;
+
+	@ApiModelProperty("线型")
+	private LineStyle lineStyle;
 }

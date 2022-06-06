@@ -68,4 +68,12 @@
             #{business_template_id}
         </foreach>
     </select>
+    <select id="selectByBusinessTemplateIds"
+            resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleBusinessTemplate">
+        select * from cr_title_business_template
+        where business_template_id in
+        <foreach collection="business_template_ids" item="business_template_id" separator="," open="(" close=")">
+            #{business_template_id}
+        </foreach>
+    </select>
 </mapper>

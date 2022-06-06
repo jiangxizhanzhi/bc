@@ -573,4 +573,32 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         return crTitleCertBo;
     }
 
+    @Override
+    public boolean deleteTitleBusinessTemplate(List<String> businessTemplateIds) {
+        if (businessTemplateIds == null || businessTemplateIds.isEmpty()) {
+            return false;
+        }
+        List<CrTitleBusinessTemplate> titleBusinessTemplateList = crTitleBusinessTemplateMapper.selectByBusinessTemplateIds(businessTemplateIds);
+        // 训练未关联称号
+        if (titleBusinessTemplateList.isEmpty()) {
+            return false;
+        }
+
+        List<String> titleIdList = Lists.newArrayList();
+        List<Integer> titleBusinessTemplateIdList = Lists.newArrayList();
+        List<String> businessTemplateIdList = Lists.newArrayList();
+
+        titleBusinessTemplateList.forEach(crTitleBusinessTemplate -> {
+            titleIdList.add(crTitleBusinessTemplate.getTitleId());
+            titleBusinessTemplateIdList.add(crTitleBusinessTemplate.getId());
+            businessTemplateIdList.add(crTitleBusinessTemplate.getBusinessTemplateId());
+        });
+
+        boolean result = SqlHelper.retBool(crTitleBusinessTemplateMapper.deleteBatchIds(titleBusinessTemplateIdList));
+
+        this.getBaseMapper().deleteTitleUser(titleIdList);
+        checkFinishTitle(businessTemplateIdList);
+
+        return result;
+    }
 }

@@ -196,4 +196,11 @@ public interface CrTitleService {
      */
     CrTitleCertBo getTitleCertInfo(String titleId);
 
+    /**
+     * 删除称号关联训练模板
+     * @param businessTemplateIds
+     * @return
+     */
+    boolean deleteTitleBusinessTemplate(List<String> businessTemplateIds);
+
 }

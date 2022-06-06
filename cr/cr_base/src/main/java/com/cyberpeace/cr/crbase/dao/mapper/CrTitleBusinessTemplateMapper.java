@@ -34,4 +34,6 @@ public interface CrTitleBusinessTemplateMapper extends BaseMapper<CrTitleBusines
                                                @Param("business_template_id") String businessTemplateId);
 
     List<CrTitleTrainProgress> selectAlreadyTrainUser(@Param("business_template_ids") List<String> businessTemplateIds);
+
+    List<CrTitleBusinessTemplate> selectByBusinessTemplateIds(@Param("business_template_ids") List<String> businessTemplateIds);
 }

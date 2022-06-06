@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cr.crbase.service.CrTitleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -87,6 +88,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Autowired
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
+
+	@Autowired
+	private CrTitleService crTitleService;
 
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
@@ -301,6 +305,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 							.getHandler(businessTemplate.getBusinessType());
 					handler.deleteTemplateRelated(businessTemplate);
 				}
+
+				// todo 删除称号关联模板使用
+				crTitleService.deleteTitleBusinessTemplate(businessTemplateIds);
+
 				// 删除模板
 				businessTemplateMapper.deleteBatchIds(businessTemplateIds);
 			}

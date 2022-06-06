@@ -306,7 +306,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 					handler.deleteTemplateRelated(businessTemplate);
 				}
 
-				// todo 删除称号关联模板使用
+				// 删除称号关联模板使用
 				crTitleService.deleteTitleBusinessTemplate(businessTemplateIds);
 
 				// 删除模板

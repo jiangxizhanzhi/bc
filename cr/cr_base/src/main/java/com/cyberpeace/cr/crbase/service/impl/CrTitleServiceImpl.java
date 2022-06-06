@@ -452,7 +452,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
             List<Integer> userSkillPointScore = Lists.newArrayList();
             for (int i = 0; i < userSkillPoint.size(); i++) {
                 userSkillPointScore.add(
-                        (int) Math.round((double) userSkillPoint.get(i) / missionSkillPoint.get(i) * 100)
+                        (int) Math.floor((double) userSkillPoint.get(i) / missionSkillPoint.get(i) * 100)
                 );
             }
 

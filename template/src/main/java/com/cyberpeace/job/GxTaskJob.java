@@ -79,11 +79,13 @@ public class GxTaskJob {
 				String taskId = userTask.getJSONObject("taskBaseData").getString("taskId");
 
 				if (existTaskIds.contains(taskId)) {
+					log.info(String.format("Skip existing task, taskId: %s", taskId));
 					continue;
 				}
 
 				GxTaskContext gxTaskContext = gxTaskService.getContextByData(userTask, token);
 				gxTaskService.create(gxTaskContext);
+				log.info(String.format("Create task successfully, taskId: %s", taskId));
 			}
 
 		}

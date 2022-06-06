@@ -12,7 +12,8 @@ public enum MessageType {
     MultiNodeDynamic(2, "multi_node_dynamic"),
 	AttackEvent(3, "attack_event"),
 	AttackEventEE(4, "attack_event_element-element"),
-	AttackEventEA(5, "attack_event_element-area");
+	AttackEventEA(5, "attack_event_element-area"),
+	AttackEffect(6, "attack_effect");
 
 	@Getter
 	private Integer code;

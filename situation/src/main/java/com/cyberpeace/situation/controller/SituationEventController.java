@@ -8,10 +8,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.EventMessageReq;
-import com.cyberpeace.situation.model.ws.WsMessage;
-import com.cyberpeace.situation.model.ws.WsMultiAreaDynamic;
-import com.cyberpeace.situation.model.ws.WsMultiElementDynamic;
-import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
+import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
@@ -63,6 +60,18 @@ public class SituationEventController {
 		String code = eventMessageReq.getCode();
 		String sceneId = eventMessageReq.getSceneId();
 		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(code, eventMessageReq.getData());
+		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
+		situationHandlerService.pushDataToRoom(data, sceneId);
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("推送指定攻击效果信息")
+	@PostMapping("event_effect")
+	public BaseRsp<Boolean>
+			sendEventEffectMessage(@RequestBody WsAttackEffectDynamic wsAttackEffectDynamic) {
+		String code = MessageType.AttackEffect.getDesc();
+		String sceneId = wsAttackEffectDynamic.getSceneId();
+		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(code, wsAttackEffectDynamic);
 		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
 		situationHandlerService.pushDataToRoom(data, sceneId);
 		return new BaseRsp<>(true);

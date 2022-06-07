@@ -1,6 +1,7 @@
 package com.cyberpeace.rtks.dao.mapper;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,14 +21,12 @@ public interface SkillMapper extends BaseMapper<Skill> {
 
 	IPage<SkillRes> listSkill(Page page, PageReqBase skillListReq);
 
-	SkillRes getSkillByResourceId(String id);
-
-	List<SkillRes> getAllSkills(String scene_category);
-
 	boolean existByResourceId(@Param("resourceId") String resourceId);
 
 	IPage<SkillSimpleRes> pageSimple(@Param("page") Page page,
 			@Param("reqBase") PageReqBase reqBase);
 
 	void clearAll();
+
+	Set<String> validateIds(List<String> skillIds);
 }

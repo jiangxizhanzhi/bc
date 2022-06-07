@@ -24,7 +24,6 @@ import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.entity.RoleSkillRelation;
-import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
@@ -142,9 +141,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		// validate skill list, if skill does exist
 		List<String> skillIds = skillIdWeights.stream().map(IdWeight::getResourceId)
 				.collect(Collectors.toList());
-		List<Skill> skills = skillMapper.selectBatchIds(skillIds);
-		Set<String> validSkillIds = skills.stream().map(Skill::getResourceId)
-				.collect(Collectors.toSet());
+		Set<String> validSkillIds = skillMapper.validateIds(skillIds);
 
 		List<RoleSkillRelation> relations = Lists.newArrayList();
 		for (IdWeight skill : skillIdWeights) {

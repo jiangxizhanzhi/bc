@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -81,6 +82,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	@Autowired
+	private ClassroomValidateHandler classroomValidateHandler;
+
 	@Override
 	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext) {
 		if (authContext.getIsWeb()) {
@@ -142,6 +146,16 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 		List<ClassroomGroupInfo> updateGroups = getUpdateAndDeleteNoneGroup(classroomId,
 				deleteUserIds);
+
+		// 更新组织信息
+		List<String> orgIds = classroomValidateHandler
+				.validateClassroomOrgHasUser(classroom.getOrganizationId());
+
+		String orgIdsString = JsonUtil.arrayToString(orgIds);
+		if (!StringUtils.equals(classroom.getOrganizationIds(), orgIdsString)) {
+			classroom.setOrganizationIds(orgIdsString);
+			classroomMapper.updateById(classroom);
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

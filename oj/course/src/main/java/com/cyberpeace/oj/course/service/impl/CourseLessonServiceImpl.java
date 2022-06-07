@@ -950,6 +950,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		FileUtil.validateFileSuffix(handout.getOriginalFilename(),
 				FileTypeContant.LESSON_HANDOUT_TYPE);
 		String suffix = FileUtil.getFileSuffix(handout.getOriginalFilename());
+		suffix = suffix.toLowerCase();
 
 		// zip可能为md 或者 html
 		if (suffix.equals(FileSunffixConstant.ZIP.getDesc())) {

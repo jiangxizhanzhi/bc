@@ -602,7 +602,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 课程数据校验
 		Course course = courseValidateHandler.validateCourseExist(courseId);
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
-		if (CollectionUtils.isNotEmpty(courseLessons)) {
+		if (CollectionUtils.isEmpty(courseLessons)) {
 			throw new BusinessException(OjBusinessErrorCode.NOT_SELECT_LESSON_INFORMATION);
 		}
 

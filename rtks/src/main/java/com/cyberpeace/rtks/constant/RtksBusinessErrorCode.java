@@ -76,4 +76,6 @@ public interface RtksBusinessErrorCode {
 	/** 层级" + levelId + "有子层级，不能绑定岗位 */
 	String LEVEL_HAS_CHILD = "103023";
 
+	/** 岗位名称已存在 */
+	String ROLE_ALREADY_EXISTS = "103024";
 }

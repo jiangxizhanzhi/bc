@@ -240,6 +240,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		roleSkillRelationMapper.clearRoleSkillRel();
 	}
 
+	@Override
+	public Boolean ifNameDuplicate(String name, String resourceId) {
+		return roleMapper.ifNameDuplicate(name, resourceId);
+	}
+
 	private String deleteIds(String Ids, List<String> ids) {
 
 		List<String> originIds = JsonUtil.toJsonObjectArray(Ids, String.class);

@@ -85,5 +85,16 @@
         </foreach>
 
     </select>
-
+    <select id="ifNameDuplicate" resultType="java.lang.Boolean">
+        select case
+        when exists(select 1
+        from rtks_role where name = #{name}
+        <if test="resourceId != null and resourceId != ''">
+            and resource_id != #{resourceId}
+        </if>
+        )then 1
+        else 0
+        end
+        as result
+    </select>
 </mapper>

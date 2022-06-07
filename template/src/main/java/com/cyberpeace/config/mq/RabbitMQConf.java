@@ -149,28 +149,28 @@ public class RabbitMQConf {
 		return connectionFactory;
 	}
 
-	@Bean("gxConnectionFactory")
-	public CachingConnectionFactory publicConnectionFactoryGx(
-			@Value("${gx.rabbitmq.host}") String host, @Value("${gx.rabbitmq.port}") Integer port,
-			@Value("${gx.rabbitmq.username}") String username,
-			@Value("${gx.rabbitmq.password}") String password,
-			@Value("${gx.rabbitmq.connectionTimeout}") Integer connectionTimeout) {
-		CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-		connectionFactory.setHost(host);
-		connectionFactory.setPort(port);
-		connectionFactory.setUsername(username);
-		connectionFactory.setPassword(password);
-		connectionFactory.setConnectionTimeout(connectionTimeout);
-		return connectionFactory;
-	}
-
-	@Bean(name = "gxContainerFactory")
-	public SimpleRabbitListenerContainerFactory gxMessageListenerContainer(
-			@Qualifier("gxConnectionFactory") ConnectionFactory connectionFactory) {
-		SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-		factory.setConnectionFactory(connectionFactory);
-		return factory;
-	}
+//	@Bean("gxConnectionFactory")
+//	public CachingConnectionFactory publicConnectionFactoryGx(
+//			@Value("${gx.rabbitmq.host}") String host, @Value("${gx.rabbitmq.port}") Integer port,
+//			@Value("${gx.rabbitmq.username}") String username,
+//			@Value("${gx.rabbitmq.password}") String password,
+//			@Value("${gx.rabbitmq.connectionTimeout}") Integer connectionTimeout) {
+//		CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+//		connectionFactory.setHost(host);
+//		connectionFactory.setPort(port);
+//		connectionFactory.setUsername(username);
+//		connectionFactory.setPassword(password);
+//		connectionFactory.setConnectionTimeout(connectionTimeout);
+//		return connectionFactory;
+//	}
+//
+//	@Bean(name = "gxContainerFactory")
+//	public SimpleRabbitListenerContainerFactory gxMessageListenerContainer(
+//			@Qualifier("gxConnectionFactory") ConnectionFactory connectionFactory) {
+//		SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+//		factory.setConnectionFactory(connectionFactory);
+//		return factory;
+//	}
 
 	private String getProjectName() {
 		String projectName = SystemPropUtil.getProp("PROJECT_NAME");

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.evaluate.RemoteException;
@@ -130,6 +131,9 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         try {
             formatReturn = remotePythonService.formatPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
         } catch (RemoteServiceException e) {
+            if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FORMAT_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+            }
             return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_FORMAT_EXECUTE_FAILED), evalVariableRef.getName());
         }
         EvalLog.info(evalRecord, evalVariableRef, String.format("size %s format algorithm calculate result %s", perFormatSize, formatReturn));
@@ -190,6 +194,9 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         try {
             matchReturn = remotePythonService.matchPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
         } catch (RemoteServiceException e) {
+            if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+            }
             return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MATCH_EXECUTE_FAILED), evalVariableRef.getName());
         }
         evalVariableRef.setMatchEndTime(new Date());
@@ -257,6 +264,9 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         try {
             score = remotePythonService.markPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
         } catch (RemoteServiceException e) {
+            if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MARK_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+            }
             return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MARK_EXECUTE_FAILED), evalVariableRef.getName());
         }
 

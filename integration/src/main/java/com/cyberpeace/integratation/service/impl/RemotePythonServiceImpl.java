@@ -1,6 +1,8 @@
 package com.cyberpeace.integratation.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
@@ -44,13 +46,27 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         return json;
     }
 
+    private String invoke(JSONObject requestData) {
+        String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", requestData, String.class);
+        if (resp == null) {
+            throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
+        }
+
+        return resp;
+    }
+
     @Override
     public List<String> formatPerform(String algorithmId, String algorithmCode, FormatData formatData, List<Serializable> otherArguments) {
         JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("list_data", formatData.getData());
 
-        String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
-        return JsonUtil.toJsonObjectArray(resp, String.class);
+        String resp = invoke(json);
+        List<String> results = JsonUtil.toJsonObjectArray(resp, String.class);
+        if (results.contains(null)) {
+            throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
+        }
+
+        return results;
     }
 
     @Override
@@ -58,7 +74,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", matchData);
 
-        String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
+        String resp = invoke(json);
         return JsonUtil.toJsonObjectArray(resp, Integer.class);
     }
 
@@ -67,7 +83,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", markData);
 
-        String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
+        String resp = invoke(json);
         return JsonUtil.toJsonObject(resp, Integer.class);
     }
 
@@ -76,7 +92,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", data);
 
-        String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", json, String.class);
+        String resp = invoke(json);
         return JsonUtil.toJsonObject(resp, Integer.class);
     }
 }

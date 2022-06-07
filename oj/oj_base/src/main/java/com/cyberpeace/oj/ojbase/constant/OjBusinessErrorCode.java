@@ -185,4 +185,7 @@ public interface OjBusinessErrorCode {
 
 	/** 评论不存在*/
 	String COMMENT_NOT_EXIST = "102060";
+
+	/** 未检索到课时信息*/
+	String NOT_SELECT_LESSON_INFORMATION = "102061";
 }

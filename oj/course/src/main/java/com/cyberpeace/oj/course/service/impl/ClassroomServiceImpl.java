@@ -1251,7 +1251,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 时间格式校验
 		if (null == TimeUtil.toDate1(endTime) || null == TimeUtil.toDate1(startTime)) {
-			throw new BusinessException(OjBusinessErrorCode.TIME_FORMAT_ERROR);
+			throw new BusinessException(OjBusinessErrorCode.TIME_FORMAT_ERROR, rowIndex);
 		}
 
 		if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(startTime))) {

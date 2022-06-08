@@ -1424,8 +1424,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 不及格
 		List<NoteEvaluate> notPassed = StreamApiUtils.filter(evaluates,
-				noteEvaluate -> !noteEvaluate.getPassed()
-						|| noteEvaluate.getScore() < new Double(CommonConstant.SIXTY));
+				noteEvaluate -> !noteEvaluate.getPassed());
 		gradeDistribution.setNotPass(notPassed.size());
 		if ((calculate += notPassed.size()) == total) {
 			return gradeDistribution;

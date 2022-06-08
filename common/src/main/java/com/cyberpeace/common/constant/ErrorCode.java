@@ -112,5 +112,8 @@ public interface ErrorCode {
 	/** 不支持的文件类型，仅支持xxx*/
 	String NOT_SUPPORT_FILE_TYPE = "100039";
 
-	String ALGORITHM_RETURN_NULL = "101113";
+	/**
+	 * 靶场测评算法脚本无返回值
+	 */
+	String ALGORITHM_RETURN_NULL = "100040";
 }

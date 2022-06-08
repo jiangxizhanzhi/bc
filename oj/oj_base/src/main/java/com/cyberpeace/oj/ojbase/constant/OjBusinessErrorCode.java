@@ -191,4 +191,7 @@ public interface OjBusinessErrorCode {
 
 	/** 留言内容不能为空*/
 	String MESSAGE_CONTENT_IS_NULL = "102062";
+
+	/** 第xxx行 文件内容缺失*/
+	String TIME_FORMAT_ERROR = "102063";
 }

@@ -1248,6 +1248,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (StringUtils.isBlank(endTime = roomData.get(CommonConstant.FOUR))) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
 		}
+
+		// 时间格式校验
+		if (null == TimeUtil.toDate1(endTime) || null == TimeUtil.toDate1(startTime)) {
+			throw new BusinessException(OjBusinessErrorCode.TIME_FORMAT_ERROR);
+		}
+
 		if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(startTime))) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_END_GT_START_TIME, rowIndex);
 		}

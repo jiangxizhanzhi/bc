@@ -11,8 +11,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
@@ -21,6 +23,7 @@ import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.FlowUpdateContext;
 import com.cyberpeace.integratation.model.mp.MpFlow;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -79,7 +82,8 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**获取节点流量列表*/
-	private List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
+	@Override
+	public List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
 
 		if (StringUtils.isEmpty(nodeId)) {
 			throw new BusinessException(CrBusinessErrorCode.NOT_SPECIFY_NODE);
@@ -106,7 +110,8 @@ public class CrSceneServiceImpl implements CrSceneService {
 	private CpFlow getCpFlow(String mpSceneId, String topoId) {
 
 		// 1.创建变量
-		String userId = UserInfoContext.getUserContext().getUserId();
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		String userId = userInfo == null ? null : userInfo.getUserId();
 		CpFlow cpFlow = new CpFlow();
 
 		// 2. 获取cpFlow
@@ -241,6 +246,10 @@ public class CrSceneServiceImpl implements CrSceneService {
 			// 设置实例id
 			SceneMpContext context = new SceneMpContext();
 			context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID, businessId);
+			FlowUpdateContext flowUpdateContext = new FlowUpdateContext(mpSceneId, nodeId,
+					Lists.newArrayList(flowContext.getFlowId()));
+			context.getPass_through().put(WebConstant.PASS_THROUGH_EXTENSION,
+					JsonUtil.toJsonString(flowUpdateContext));
 			flowOpsContext.setContext(context);
 
 			Boolean result = remoteSceneService.startFlow(flowOpsContext);
@@ -266,6 +275,9 @@ public class CrSceneServiceImpl implements CrSceneService {
 		// 设置实例id
 		SceneMpContext context = new SceneMpContext();
 		context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID, businessId);
+		FlowUpdateContext flowUpdateContext = new FlowUpdateContext(mpSceneId, nodeId, null);
+		context.getPass_through().put(WebConstant.PASS_THROUGH_EXTENSION,
+				JsonUtil.toJsonString(flowUpdateContext));
 		flowBatchOpsContext.setContext(context);
 
 		Boolean result = remoteSceneService.batchStartFlow(flowBatchOpsContext);

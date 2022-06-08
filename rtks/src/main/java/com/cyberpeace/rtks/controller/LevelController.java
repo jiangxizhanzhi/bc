@@ -7,6 +7,8 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -50,6 +52,7 @@ public class LevelController {
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> create(@RequestBody @Validated LevelAddInput input) {
+		CrCommonValidator.validateNameLen(input.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		Level entity = getEntityFromAddInput(input);
 
 		getService().save(entity);

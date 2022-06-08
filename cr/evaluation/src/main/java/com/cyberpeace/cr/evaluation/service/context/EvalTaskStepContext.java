@@ -49,11 +49,18 @@ public class EvalTaskStepContext {
 
 	}
 
+	public void mergeStatus() {
+		if (endTime == null){
+			this.status = Status.UNFINISHED.getCode();
+		}
+	}
+
 	public enum Status {
 
 		INIT(0, "未开始", ""),
 		STARTED(1, "测试中", ""),
-		FINISHED(2, "已完成", "");
+		FINISHED(2, "已完成", ""),
+		UNFINISHED(3, "未完成", "");
 
 		@Getter
 		private Integer code;

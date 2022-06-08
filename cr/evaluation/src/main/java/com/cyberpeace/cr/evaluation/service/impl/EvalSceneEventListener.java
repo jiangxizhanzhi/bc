@@ -13,6 +13,8 @@ import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.scene.MqContext;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
@@ -128,6 +130,7 @@ public class EvalSceneEventListener extends MessageListener {
 		}
 
 		// 查询涉及流量的信息
+		UserInfoContext.setUserContext(new UserInfo());
 		List<ElementFlow> elementFlowList = crSceneService.getNodeFlowList(mpSceneId, null, nodeId);
 		List<ElementFlow> updateFlows;
 		if (flowIds != null && !flowIds.isEmpty()) {
@@ -139,6 +142,7 @@ public class EvalSceneEventListener extends MessageListener {
 		}
 
 		// 构造推送消息
+		crSceneService.setElementFlowStatus(updateFlows, mpSceneId, nodeId);
 		FlowUpdate flowUpdate = new FlowUpdate(mpSceneId, nodeId, updateFlows);
 		WsMessageBO<FlowUpdate> wsMessageBO = new WsMessageBO<>("update_flow", flowUpdate);
 		pushDataToWeb(JsonUtil.toJsonString(wsMessageBO, PropertyNamingStrategy.SnakeCase),

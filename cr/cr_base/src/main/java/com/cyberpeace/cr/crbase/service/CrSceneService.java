@@ -75,4 +75,12 @@ public interface CrSceneService {
 	 */
 	List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId);
 
+	/** 设置节点流量状态
+	 * @param elementFlowList
+	 * @param mpSceneId
+	 * @param nodeId
+	 * @return
+	 */
+	List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList, String mpSceneId, String nodeId);
+
 }

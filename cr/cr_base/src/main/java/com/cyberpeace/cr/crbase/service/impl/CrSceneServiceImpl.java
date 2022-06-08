@@ -81,7 +81,6 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return BeanUtils.deepCopyList(elementFlowList, FlowInfo.class);
 	}
 
-	/**获取节点流量列表*/
 	@Override
 	public List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
 
@@ -152,8 +151,8 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return flowListRsp;
 	}
 
-	/**设置节点流量状态*/
-	private List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList,
+	@Override
+	public List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList,
 			String mpSceneId, String nodeId) {
 
 		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);

@@ -1434,7 +1434,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		int passed = StreamApiUtils
 				.filter(evaluates,
 						noteEvaluate -> noteEvaluate.getPassed()
-								&& noteEvaluate.getScore() >= new Double(CommonConstant.SIXTY)
 								&& noteEvaluate.getScore() < new Double(CommonConstant.EIGHTY))
 				.size();
 		gradeDistribution.setPass(passed);

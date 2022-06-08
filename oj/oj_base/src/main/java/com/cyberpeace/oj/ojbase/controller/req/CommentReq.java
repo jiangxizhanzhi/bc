@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,7 +15,7 @@ import lombok.Data;
 public class CommentReq implements Serializable {
 
     @ApiModelProperty(value = "评论内容")
-    @NotBlank
+    @NotBlank(message = OjBusinessErrorCode.MESSAGE_CONTENT_IS_NULL)
     private String content;
 
     @ApiModelProperty("主题信息 课时笔记=课程名称/课时名称 课程笔记=课程名称 实操习题笔记=实操题名称")

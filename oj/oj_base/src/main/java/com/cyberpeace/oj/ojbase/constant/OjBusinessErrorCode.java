@@ -188,4 +188,7 @@ public interface OjBusinessErrorCode {
 
 	/** 未检索到课时信息*/
 	String NOT_SELECT_LESSON_INFORMATION = "102061";
+
+	/** 留言内容不能为空*/
+	String MESSAGE_CONTENT_IS_NULL = "102062";
 }

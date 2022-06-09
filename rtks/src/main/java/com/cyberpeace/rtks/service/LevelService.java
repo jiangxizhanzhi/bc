@@ -62,4 +62,6 @@ public interface LevelService extends IService<Level> {
 	void ensureLessThanTwoLevel(Level parentLevel);
 
 	boolean checkHasRole(LevelTreeOutput levelTreeOutput);
+
+	void checkFull();
 }

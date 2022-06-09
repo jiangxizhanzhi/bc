@@ -146,6 +146,11 @@ public class LevelController {
 		// 迭代获取当前层级所属框架
 		level.setFrame(levelService.getFrame(parentLevel).getResourceId());
 
+		//检验二层框架是否已满
+		if(level.getParent().equals("default")){
+			levelService.checkFull();
+		}
+
 		return level;
 	}
 

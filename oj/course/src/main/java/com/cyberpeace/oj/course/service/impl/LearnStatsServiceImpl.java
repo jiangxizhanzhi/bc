@@ -517,6 +517,18 @@ public class LearnStatsServiceImpl implements LearnStatsService {
         res.setLessonRecordCount(collect.stream().mapToInt(UserStatsBo::getLessonRecordCount).sum());
         // 竞赛理论赛的时间过滤下的数据
         res.setFinishExamCount(examCount);
+        // 设置实验平均分
+        int sumReportCount = 0;
+        float sumReport = 0;
+        for(UserStatsBo userStatsBo:collect){
+            sumReportCount += userStatsBo.getFinishReportCount();
+            sumReport += userStatsBo.getFinishReportCount()*userStatsBo.getReportAverage();
+        }
+        if(sumReportCount != 0){
+            res.setReportAverage(sumReport/sumReportCount);
+        }else {
+            res.setReportAverage(0f);
+        }
 
         return res;
 

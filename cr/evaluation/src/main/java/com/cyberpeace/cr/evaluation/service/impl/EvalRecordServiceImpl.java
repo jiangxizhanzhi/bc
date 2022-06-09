@@ -96,7 +96,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
-    private static final long onceProbeDataSize = 100L;  // 10/100/1000
+    private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
     @Override
     public void isExist(EvalRecordAddReq requestData) {

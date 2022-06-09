@@ -117,11 +117,6 @@ public class ClassroomValidateHandler {
 	 */
 	public List<String> validateClassroomOrgHasUser(String orgId) {
 
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, true);
-		if (CollectionUtils.isEmpty(userInfos)) {
-			throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);
-		}
-
 		List<String> orgIds = remoteOrganizationService.childrenList(orgId, true);
 		return orgIds;
 	}

@@ -306,14 +306,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 用户查询及校验
 		List<String> orgUserIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
-		if (CollectionUtils.isEmpty(orgUserIds)) {
-			throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);
-		}
 
-		// 如果当前组织不包含创建者
-		if (!orgUserIds.contains(classroom.getCreateUserId())) {
-			orgUserIds.add(classroom.getCreateUserId());
-		}
 		return classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
 				courseLesson, orgUserIds, CommonConstant.ONE);
 	}

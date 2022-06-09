@@ -55,7 +55,13 @@ public class RoleInput implements Serializable {
 					RtksBusinessErrorCode.INVALID_WEIGHT);
 		});
 
-		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		if (description != null && description.length() > 0) {
+			CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		}
+
+		if (name != null) {
+			CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
 	}
 
 }

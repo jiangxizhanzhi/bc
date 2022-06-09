@@ -151,8 +151,6 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
 		input.validate();
-		// validate name
-		CrCommonValidator.validateNameLen(input.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		if (roleService.ifNameDuplicate(input.getName(), "")) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
 		}
@@ -180,8 +178,6 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
 		input.validate();
-		// validate name
-		CrCommonValidator.validateNameLen(input.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		if (roleService.ifNameDuplicate(input.getName(), input.getResourceId())) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
 		}

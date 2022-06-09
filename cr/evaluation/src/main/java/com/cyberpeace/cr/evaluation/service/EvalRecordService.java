@@ -63,6 +63,11 @@ public interface EvalRecordService extends IService<EvalRecord> {
     Boolean delete(List<String> recordIds);
 
     /**
+     * 测评删除, 清空评估信息
+     */
+    Boolean deleteRecord(List<String> taskIds);
+
+    /**
      * 评估事件实际运行
      * @param evalRecord
      * @param evalTask

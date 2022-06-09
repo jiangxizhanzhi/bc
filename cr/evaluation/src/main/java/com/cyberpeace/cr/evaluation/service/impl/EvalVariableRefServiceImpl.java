@@ -8,6 +8,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.evaluate.RemoteException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableGraphRsp;
@@ -23,9 +24,11 @@ import com.cyberpeace.integratation.service.RemotePythonService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.util.TextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.xhtmlrenderer.layout.TextUtil;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -124,12 +127,13 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
         EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
+        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
 
         // 运行匹配算法
         List<String> formatReturn;
         try {
             formatReturn = remotePythonService.formatPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
+            // todo formatReturn返回值长度限制
         } catch (RemoteServiceException e) {
             if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
                 return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FORMAT_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
@@ -186,7 +190,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMatchParams());
         EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
         EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
+        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
 
         // 运行匹配算法
         List<Integer> matchReturn;
@@ -256,7 +260,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMarkParams());
         EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
         EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", data));
+        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
 
         // 运行评分算法
         Integer score;

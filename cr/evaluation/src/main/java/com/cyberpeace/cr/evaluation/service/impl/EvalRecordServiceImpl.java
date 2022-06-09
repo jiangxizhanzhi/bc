@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -510,7 +511,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
+    @Override
+    public Boolean deleteRecord(List<String> taskIds) {
+        if (taskIds == null || taskIds.isEmpty()) {
+            return false;
+        }
+        List<String> recordIds = lambdaQuery().in(EvalRecord::getTaskId, taskIds).list().stream().map(EvalRecord::getResourceId).collect(Collectors.toList());
+        if (recordIds.isEmpty()) {
+            return false;
+        }
+
+        return delete(recordIds);
+    }
+
     private void deleteRelation(List<String> recordIds) {
+        // todo 算法, 同步数据, 计算结果一并删除
         evalIndexRefService.removeByIds(evalIndexRefService.lambdaQuery().in(
                 EvalIndexRef::getRecordId, recordIds
         ).list().stream().map(EvalIndexRef::getResourceId).collect(Collectors.toList()));

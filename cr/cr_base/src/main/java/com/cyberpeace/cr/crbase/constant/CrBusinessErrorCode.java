@@ -376,4 +376,10 @@ public interface CrBusinessErrorCode {
 
 	/** 二层框架已满 */
 	String SECOND_FLOOR_FRAME_IS_FULL = "101113";
+
+	/**
+	 * 标题重复
+	 */
+	String TITLE_DUPLICATE = "101114";
+
 }

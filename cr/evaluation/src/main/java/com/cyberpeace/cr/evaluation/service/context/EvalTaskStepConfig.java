@@ -23,7 +23,7 @@ public class EvalTaskStepConfig {
 		if (stage == null || title == null || process == null) {
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}
-		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
 	}
 
 }

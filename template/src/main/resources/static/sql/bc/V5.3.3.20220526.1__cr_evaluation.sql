@@ -28,7 +28,7 @@ CREATE TABLE `cr_eval_algorithm_ref`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `description` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `description` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `type` int(11) NOT NULL,
   `algorithm_language` int(11) NOT NULL,
   `code` varchar(4096) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,

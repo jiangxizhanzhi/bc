@@ -21,6 +21,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
@@ -85,9 +86,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private EvalAlgorithmService evalAlgorithmService;
 
     @Autowired
-    private EvalTaskService evalTaskService;
-
-    @Autowired
     private RemoteSceneService remoteSceneService;
 
     @Autowired
@@ -95,6 +93,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
+
+    @Autowired
+    private EvalTaskMapper evalTaskMapper;
 
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
@@ -111,6 +112,28 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         if (SqlHelper.retBool(querySet.count())) {
             throw new BusinessException(ErrorCode.NAME_DUPLICATE);
         }
+    }
+
+    /**
+     * 获取测评任务实例
+     * @param taskId 任务id(roomId)
+     * @return EvalTask
+     */
+    private EvalTask getTask(String taskId) {
+        EvalTask evalTask = evalTaskMapper.selectById(taskId);
+
+        // 校验任务是否存在
+        if (evalTask == null) {
+            throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
+        }
+
+        // 校验用户权限
+        if (!Objects.equals(evalTask.getCreateUserId(),
+                UserInfoContext.getUserContext().getUserId())) {
+            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+        }
+
+        return evalTask;
     }
 
     public EvalRecord getEntity(String resourceId) {
@@ -828,7 +851,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public List<EvalRoomPairRsp> getNodes(String roomId) {
-        EvalTask evalTask = evalTaskService.getTask(roomId);
+        EvalTask evalTask = getTask(roomId);
 
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
@@ -848,7 +871,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public List<EvalRoomPairRsp> getProbes(String roomId, String nodeId) {
-        EvalTask evalTask = evalTaskService.getTask(roomId);
+        EvalTask evalTask = getTask(roomId);
 
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
@@ -878,7 +901,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public Map<String, List<EvalRoomPairRsp>> getProbes(String roomId) {
-        EvalTask evalTask = evalTaskService.getTask(roomId);
+        EvalTask evalTask = getTask(roomId);
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
         JSONObject nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("elements");
@@ -905,7 +928,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public List<EvalRecordNodeProbeReq> getNodeProbe(String roomId) {
-        EvalTask evalTask = evalTaskService.getTask(roomId);
+        EvalTask evalTask = getTask(roomId);
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
 

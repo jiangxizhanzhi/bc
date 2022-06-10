@@ -148,7 +148,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		}).collect(Collectors.toList());
 		rsp.setRecords(res);
 		//根据完成练习次数排序
-		if(((OrderItem)page.getOrders().get(0)).getColumn().equals("practice_count")){
+		if(page.getOrders() != null && page.getOrders().size() >0 && ((OrderItem)page.getOrders().get(0)).getColumn().equals("practice_count")){
 			PageUtil.setPageOrder(page, "practiceCount", ((OrderItem)page.getOrders().get(0)).isAsc());
 			return PageUtil.getListResult(rsp.getRecords(), page, rsp.getTotal());
 		}

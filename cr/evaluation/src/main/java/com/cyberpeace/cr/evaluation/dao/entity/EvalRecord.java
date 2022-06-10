@@ -62,9 +62,9 @@ public class EvalRecord extends BaseTable {
     private Date evalTime;
 
     public enum Status implements GenericEnum {
-        NOT_START(1, "未开始"),
-        RUNNING(2, "运行中"),
-        END(3, "结束"),
+        NOT_START(1, "未评估"),
+        RUNNING(2, "评估中"),
+        END(3, "已评估"),
         EXCEPTION(4, "异常");
 
         @Getter

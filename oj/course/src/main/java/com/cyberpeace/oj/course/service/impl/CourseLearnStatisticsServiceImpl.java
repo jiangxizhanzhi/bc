@@ -3,6 +3,8 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -145,6 +147,11 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			return rspRecord;
 		}).collect(Collectors.toList());
 		rsp.setRecords(res);
+		//根据完成练习次数排序
+		if(((OrderItem)page.getOrders().get(0)).getColumn().equals("practice_count")){
+			PageUtil.setPageOrder(page, "practiceCount", ((OrderItem)page.getOrders().get(0)).isAsc());
+			return PageUtil.getListResult(rsp.getRecords(), page, rsp.getTotal());
+		}
 		return PageUtil.getListResult(rsp);
 	}
 

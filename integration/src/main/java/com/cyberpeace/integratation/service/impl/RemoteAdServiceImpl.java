@@ -38,7 +38,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
-				+ ConfigUtil.getContextProperty("ad.theory_race.statistic") + "?";
+				+ ConfigUtil.getContextProperty("ad.theory_race.statistic");
 		COMPETITION_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.competition.list");
 	}
@@ -85,22 +85,16 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		}
 
 		// 获取竞赛理论赛所有百分制换算后>=80分的数据
-		StringBuilder targetUrl = new StringBuilder(EXAM_USER_FINISH_COUNT_URL);
-		List<String> queryParams = Lists.newArrayList();
-		// 拼接请求参数
-		if (minScore != null) {
-			queryParams.add(String.format("minScore=%s", minScore));
+		JSONObject body = new JSONObject();
+		body.put("start_time",startTime);
+		body.put("end_time",endTime);
+		if(minScore != null){
+			body.put("minScore",minScore);
 		}
-		queryParams.add(String.format("start_time=%s", startTime));
-		queryParams.add(String.format("end_time=%s", endTime));
-		if (null != userIds && userIds.size() != 0) {
-			userIds.forEach(userId -> {
-				queryParams.add(String.format("user_ids=%s", userId));
-			});
+		if(userIds != null && userIds.size() !=0){
+			body.put("user_ids",userIds.toArray(new String[userIds.size()]));
 		}
-		targetUrl.append(String.join("&", queryParams));
-
-		JSONArray jsonResponse = HttpClientUtil.rawGet(targetUrl.toString(), JSONArray.class);
+		JSONArray jsonResponse = HttpClientUtil.post(EXAM_USER_FINISH_COUNT_URL,body,JSONArray.class);
 		List<JSONObject> res = new ArrayList<>();
 		for (Object object : (List) jsonResponse) {
 			JSONObject obj = (JSONObject) object;

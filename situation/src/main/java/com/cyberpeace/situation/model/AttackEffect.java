@@ -30,4 +30,7 @@ public class AttackEffect implements Serializable {
 
 	@ApiModelProperty("线型")
 	private LineStyle lineStyle;
+
+	@ApiModelProperty("展示区域 1-左上 2-左下 3-右上 4-右下")
+	private Integer direction;
 }

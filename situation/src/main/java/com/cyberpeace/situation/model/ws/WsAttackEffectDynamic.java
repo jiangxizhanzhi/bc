@@ -27,7 +27,7 @@ public class WsAttackEffectDynamic implements Serializable {
 	private String category;
 
 	@ApiModelProperty("事件类型")
-	private Integer attackType;
+	private Integer type;
 
 	@ApiModelProperty("攻击效果列表")
 	private List<AttackEffect> effectList;

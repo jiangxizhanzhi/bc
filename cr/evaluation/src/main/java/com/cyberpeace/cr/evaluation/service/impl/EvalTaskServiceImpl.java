@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.compress.utils.Lists;
+import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,9 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 	@Autowired
 	private EvalSceneService evalSceneService;
+
+	@Autowired
+	private EvalRecordService evalRecordService;
 
 	@Override
 	public EvalTask getTask(String taskId) {
@@ -231,11 +235,13 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		}
 
 		// 清除已结束的任务数据
+		String taskId = evalTaskOpsContext.getEvalTask().getResourceId();
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				clearTask(evalTaskOpsContext.getEvalTask().getResourceId());
+				clearTask(taskId);
+				evalRecordService.deleteRecord(Lists.newArrayList(taskId));
 			}
 		});
 

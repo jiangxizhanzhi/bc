@@ -136,6 +136,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalTask;
     }
 
+    @Override
     public EvalRecord getEntity(String resourceId) {
         // todo 文本调整
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);

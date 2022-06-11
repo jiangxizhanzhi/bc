@@ -61,6 +61,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             scoreList = nextIds.stream().map(nextId -> evalIndexRefMap.get(nextId).getScore()).collect(Collectors.toList());
         }
 
+        // todo 格式化算法入参、算法日志
         Integer score;
         try {
             score = remotePythonService.indexPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), scoreList, null);
@@ -159,10 +160,13 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             Map<Integer, Integer> attrMap = CYCLE_MAP.get(EvalIndexRef.DataAttr.COST.getCode());
             return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
         } else if (datatype.equals(EvalIndexRef.DataType.INTEGER.getCode())) {
+            // prd259~261页
+            // 固定型属性是指属性值越接近某个固定值 越好的属性
             if (attribute.equals(EvalIndexRef.DataAttr.FIXED.getCode())) {
                 return Math.min(Math.max(100 - (value * 100 - attributeValue * 100) / attributeValue, 0), 100);
+            // 偏离型属性是指属性值越偏离某个固定值 越好的属性
             } else if (attribute.equals(EvalIndexRef.DataAttr.DEVIATE.getCode())) {
-                return Math.max((attributeValue * 100 - value * 100) / attributeValue, 0);
+                return Math.min(Math.max(Math.abs(attributeValue * 100 - value * 100) / attributeValue, 0), 100);
             }
         }
         return 0;

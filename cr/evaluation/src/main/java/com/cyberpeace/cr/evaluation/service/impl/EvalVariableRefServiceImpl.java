@@ -177,7 +177,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         MatchData data = new MatchData();
 
         // 构建匹配算法数据
-        data.setBaseTime(evalVariableRefProbeDataContextList.get(1).getTime().getTime());
+        data.setBaseTime(evalVariableRefProbeDataContextList.get(0).getTime().getTime());
         data.setData(Lists.newArrayList());
         evalVariableRefProbeDataContextList.forEach(variableRefProbeDataContext -> {
             MatchItemData itemData = new MatchItemData();

@@ -184,9 +184,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<String> userIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
 
 		// 如果组织下不包含创建者则把创建者加入
-		if (!userIds.contains(authContext.getUserId())) {
-			userIds.add(authContext.getUserId());
-		}
 		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
 				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
 
@@ -306,7 +303,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 用户查询及校验
 		List<String> orgUserIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
-
 		return classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
 				courseLesson, orgUserIds, CommonConstant.ONE);
 	}
@@ -1262,10 +1258,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_NOT_EXIST, rowIndex);
 			} else {
 				orgMap.put(orgTree, orgId);
-				List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, false);
-				if (CollectionUtils.isEmpty(userInfos)) {
-					throw new BusinessException(OjBusinessErrorCode.ORG_UNDER_NO_USERS, orgTree);
-				}
 			}
 		}
 

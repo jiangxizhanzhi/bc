@@ -5,6 +5,12 @@ public interface PatternConstant {
 	/** 匹配markdown文件中的图片*/
 	String MARKDOWN_IMAGE = "!\\[.*?\\]\\(.+?\\)";
 
+	/** 匹配markdown文件中md的url*/
+	String MARKDOWN_IMAGE_MD_URL = "!\\[.*?\\]\\((.+?)\\)";
+
+	/** 匹配markdown文件中src的url*/
+	String MARKDOWN_IMAGE_SRC_URL = "<img src=[\'\"](.+?)[\'\"]";
+
 	/** 获取匹配到图片内容的路径*/
 	String MARKDOWN_IMAGE_URL = "(?<=\\()[^\\)]+";
 

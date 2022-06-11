@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.context;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -22,6 +23,7 @@ public class EvalTaskStepConfig {
 		if (stage == null || title == null || process == null) {
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}
+		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
 	}
 
 }

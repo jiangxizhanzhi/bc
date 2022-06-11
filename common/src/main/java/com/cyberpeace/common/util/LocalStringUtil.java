@@ -102,6 +102,24 @@ public class LocalStringUtil {
 	}
 
 	/**
+	 * 根据正则表达是获取内容中url的匹配数据
+	 * @param content
+	 * @param regex 正则表达式集合
+	 * @return
+	 */
+	public static List<String> getMatchUrlStr(String content, String regex) {
+
+		List<String> strList = Lists.newArrayList();
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			strList.add(matcher.group(1));
+		}
+		return strList;
+	}
+
+	/**
 	 * 根据正则表达是获取内容中的匹配数据
 	 * @param content 内容
 	 * @param regex 正则表达式

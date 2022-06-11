@@ -3,8 +3,11 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -185,12 +188,19 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			return true;
 		}
 
-		List<Integer> stageList = com.google.common.collect.Lists.newArrayList();
+		List<Integer> stageList = Lists.newArrayList();
+		List<String> titleList = Lists.newArrayList();
 
 		// 校验步骤配置是否为空
 		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
 			evalTaskStepConfig.validate();
 			stageList.add(evalTaskStepConfig.getStage());
+			titleList.add(evalTaskStepConfig.getTitle());
+		}
+
+		// 校验步骤标题是否重复
+		if (new HashSet<>(titleList).size() != titleList.size()){
+			throw new BusinessException(CrBusinessErrorCode.TITLE_DUPLICATE);
 		}
 
 		// 校验步骤配置的stage

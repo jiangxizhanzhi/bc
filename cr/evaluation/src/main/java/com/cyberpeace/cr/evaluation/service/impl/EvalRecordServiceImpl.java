@@ -21,6 +21,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -84,9 +86,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private EvalAlgorithmService evalAlgorithmService;
 
     @Autowired
-    private EvalTaskService evalTaskService;
-
-    @Autowired
     private RemoteSceneService remoteSceneService;
 
     @Autowired
@@ -95,7 +94,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
-    private static final long onceProbeDataSize = 100L;
+    @Autowired
+    private EvalTaskMapper evalTaskMapper;
+
+    private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
     @Override
     public void isExist(EvalRecordAddReq requestData) {
@@ -112,6 +114,29 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
+    /**
+     * 获取测评任务实例
+     * @param taskId 任务id(roomId)
+     * @return EvalTask
+     */
+    private EvalTask getTask(String taskId) {
+        EvalTask evalTask = evalTaskMapper.selectById(taskId);
+
+        // 校验任务是否存在
+        if (evalTask == null) {
+            throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
+        }
+
+        // 校验用户权限
+        if (!Objects.equals(evalTask.getCreateUserId(),
+                UserInfoContext.getUserContext().getUserId())) {
+            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+        }
+
+        return evalTask;
+    }
+
+    @Override
     public EvalRecord getEntity(String resourceId) {
         // todo 文本调整
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);
@@ -510,7 +535,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
+    @Override
+    public Boolean deleteRecord(List<String> taskIds) {
+        if (taskIds == null || taskIds.isEmpty()) {
+            return false;
+        }
+        List<String> recordIds = lambdaQuery().in(EvalRecord::getTaskId, taskIds).list().stream().map(EvalRecord::getResourceId).collect(Collectors.toList());
+        if (recordIds.isEmpty()) {
+            return false;
+        }
+
+        return delete(recordIds);
+    }
+
     private void deleteRelation(List<String> recordIds) {
+        // todo 算法, 同步数据, 计算结果一并删除
         evalIndexRefService.removeByIds(evalIndexRefService.lambdaQuery().in(
                 EvalIndexRef::getRecordId, recordIds
         ).list().stream().map(EvalIndexRef::getResourceId).collect(Collectors.toList()));
@@ -674,6 +713,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             collectionEventPageContext.setId(evalTask.getMpSceneId());
             collectionEventPageContext.setNodeIds(evalVariableRef.getDeviceId());
             collectionEventPageContext.setProbeId(evalVariableRef.getProbeId());
+            collectionEventPageContext.setRequestId(IDGeneratorUtil.getID());
 
             // 查询当前已同步数据量, 生成页码
             int probeDataCount = evalProbeDataService.lambdaQuery()
@@ -684,14 +724,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (!SqlHelper.retBool(probeDataCount)) {
                 collectionEventPageContext.setPage(1L);
             } else {
-                // 数据量百位向上取整, 生成当前页码
-                int count = new BigDecimal(probeDataCount).setScale(-2, BigDecimal.ROUND_UP).intValue();
+                int scale = - (Integer.toString(Math.toIntExact(onceProbeDataSize)).length() - 1);
+                // 数据量向上取整, 生成当前页码
+                int count = new BigDecimal(probeDataCount).setScale(scale, BigDecimal.ROUND_UP).intValue();
                 collectionEventPageContext.setPage((count / onceProbeDataSize) + 1);
             }
             collectionEventPageContext.setPageSize(onceProbeDataSize);
 
             try {
-                exeCollectionEvent(evalRecord, evalVariableRef, collectionEventPageContext, ipMap);
+                exeCollectionEvent(evalRecord, evalVariableRef, collectionEventPageContext, ipMap, true);
 
                 evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode());
                 EvalLog.info(evalRecord, evalVariableRef, "sync data completed.");
@@ -710,15 +751,36 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
-    private void exeCollectionEvent(
-            EvalRecord evalRecord, EvalVariableRef evalVariableRef, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap) {
+    private void exeCollectionEvent(EvalRecord evalRecord,
+                                    EvalVariableRef evalVariableRef,
+                                    CollectionEventPageContext collectionEventPageContext,
+                                    Map<String, String> ipMap,
+                                    Boolean isFirstCall) {
 
         List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
 
         EvalLog.info(evalRecord, evalVariableRef, String.format("params: %s", collectionEventPageContext));
-        List<MpCollectionEvent> collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
-        // 获取日期为UTC, 用于调整为GMT时间 todo 暂时取消
-//        Calendar calendar = Calendar.getInstance();
+
+        List<MpCollectionEvent> collectionEventList = Lists.newArrayList();
+        // 第一次、非迭代调用, 并且分页不为第一页. 视作数据同步过程中断
+        if (isFirstCall && !collectionEventPageContext.getPage().equals(1L)) {
+            // es需要循环数次跳过已同步数据
+            if (evalVariableRefService.ES_PROBES.contains(collectionEventPageContext.getProbeId())) {
+                EvalLog.info(evalRecord, evalVariableRef, "synced data skipping...");
+                Long currentPage = collectionEventPageContext.getPage();
+                collectionEventPageContext.setPage(1L);  // es同requestId第一次查询生成快照时传入page需要为1, 否则报错
+                for (int i = 0; i < currentPage; i++) {
+                    collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
+                }
+                collectionEventPageContext.setPage(currentPage);
+            // 非es查询的探针类型, 根据分页入参`page`、`per_page`获取数据
+            } else {
+                collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
+            }
+        } else {
+            collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
+        }
+
         collectionEventList.forEach(mpCollectionEvent -> {
             EvalProbeData probeDataItem = new EvalProbeData();
             probeDataItem.setContent(mpCollectionEvent.getContent());
@@ -739,16 +801,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     EvalLog.error(evalRecord, evalVariableRef, "collect data field [time] is invalid.");
                     throw new RemoteServiceException();
                 } else {
-//                    calendar.setTime(scanAttr.getTimestamp("time"));
                     probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
                 }
                 // 暂不处理
             } else {
-//                calendar.setTime(content.getTimestamp("time"));
                 probeDataItem.setCollectionTime(content.getTimestamp("time"));
             }
-//            calendar.set(Calendar.HOUR, calendar.get(Calendar.HOUR) + 8);
-//            probeDataItem.setCollectionTime(calendar.getTime());
 
             evalProbeDataList.add(probeDataItem);
         });
@@ -761,7 +819,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 实际获取数据与每页数据量大小一致, 视数据未获取完成. 页码+1, 迭代执行
         if (collectionEventPageContext.getPageSize() == collectionEventList.size()) {
             collectionEventPageContext.setPage(collectionEventPageContext.getPage() + 1);
-            exeCollectionEvent(evalRecord, evalVariableRef, collectionEventPageContext, ipMap);
+            exeCollectionEvent(evalRecord, evalVariableRef, collectionEventPageContext, ipMap, false);
         }
     }
 
@@ -794,7 +852,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public List<EvalRoomPairRsp> getNodes(String roomId) {
-        EvalTask evalTask = evalTaskService.getTask(roomId);
+        EvalTask evalTask = getTask(roomId);
 
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
@@ -814,7 +872,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public List<EvalRoomPairRsp> getProbes(String roomId, String nodeId) {
-        EvalTask evalTask = evalTaskService.getTask(roomId);
+        EvalTask evalTask = getTask(roomId);
 
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
@@ -844,7 +902,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public Map<String, List<EvalRoomPairRsp>> getProbes(String roomId) {
-        EvalTask evalTask = evalTaskService.getTask(roomId);
+        EvalTask evalTask = getTask(roomId);
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
         JSONObject nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("elements");
@@ -871,7 +929,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public List<EvalRecordNodeProbeReq> getNodeProbe(String roomId) {
-        EvalTask evalTask = evalTaskService.getTask(roomId);
+        EvalTask evalTask = getTask(roomId);
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
 

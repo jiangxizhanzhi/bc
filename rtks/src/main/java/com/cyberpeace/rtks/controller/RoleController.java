@@ -36,8 +36,10 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
@@ -149,6 +151,10 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
 		input.validate();
+		if (roleService.ifNameDuplicate(input.getName(), "")) {
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
+		}
+
 		Role role = getEntityFromAddInput(input);
 		// 5.3.3兼容旧数据库
 		role.setCategory("");
@@ -172,6 +178,10 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
 		input.validate();
+		if (roleService.ifNameDuplicate(input.getName(), input.getResourceId())) {
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
+		}
+
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 
 		Role originEntity = getOr404(resourceId);

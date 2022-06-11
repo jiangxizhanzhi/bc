@@ -67,4 +67,20 @@ public interface CrSceneService {
 	 */
 	Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType, String businessId);
 
+	/** 获取节点流量列表
+	 * @param mpSceneId
+	 * @param topoId
+	 * @param nodeId
+	 * @return
+	 */
+	List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId);
+
+	/** 设置节点流量状态
+	 * @param elementFlowList
+	 * @param mpSceneId
+	 * @param nodeId
+	 * @return
+	 */
+	List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList, String mpSceneId, String nodeId);
+
 }

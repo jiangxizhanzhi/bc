@@ -67,11 +67,20 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             EvalLog.info(evalRecord, evalIndexRef, String.format("system evaluation type index result: %s.", score));
         } catch (RemoteServiceException e) {
             score = 0;
-            String msg = String.format(
-                    BusinessException.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED),
-                    this.int2cn.get(evalIndexRef.getLevel()),
-                    evalIndexRef.getName()
-            );
+            String msg;
+            if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+                msg = String.format(
+                        BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
+                        this.int2cn.get(evalIndexRef.getLevel()),
+                        evalIndexRef.getName()
+                );
+            } else {
+                msg = String.format(
+                        BusinessException.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED),
+                        this.int2cn.get(evalIndexRef.getLevel()),
+                        evalIndexRef.getName()
+                );
+            }
             evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
             EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
         }

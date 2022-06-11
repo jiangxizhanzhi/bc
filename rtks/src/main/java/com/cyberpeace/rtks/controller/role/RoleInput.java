@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.controller.role;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
@@ -53,6 +54,14 @@ public class RoleInput implements Serializable {
 					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
 					RtksBusinessErrorCode.INVALID_WEIGHT);
 		});
+
+		if (description != null && description.length() > 0) {
+			CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		}
+
+		if (name != null) {
+			CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
 	}
 
 }

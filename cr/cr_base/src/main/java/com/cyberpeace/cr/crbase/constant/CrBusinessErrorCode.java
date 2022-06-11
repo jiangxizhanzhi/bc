@@ -373,4 +373,13 @@ public interface CrBusinessErrorCode {
 	 * 聚合算法返回数据不合规
 	 */
 	String AGG_ALGORITHM_RESULT_IS_INVALID = "101112";
+
+	/** 二层框架已满 */
+	String SECOND_FLOOR_FRAME_IS_FULL = "101113";
+
+	/**
+	 * 标题重复
+	 */
+	String TITLE_DUPLICATE = "101114";
+
 }

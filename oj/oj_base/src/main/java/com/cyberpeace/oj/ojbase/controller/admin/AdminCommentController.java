@@ -41,6 +41,7 @@ public class AdminCommentController {
 
 		Comment comment = BeanUtils.copy(commentReq, Comment.class);
 		comment.setUserId(UserInfoContext.getUserContext().getUserId());
+		comment.setContent(comment.getContent().trim());
 
 		Integer result = commentService.adminAddNewComment(comment);
 		return new BaseRsp<>(result);

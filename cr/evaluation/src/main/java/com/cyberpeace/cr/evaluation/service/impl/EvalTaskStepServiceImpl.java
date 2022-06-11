@@ -124,6 +124,7 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 			// 设置前序步骤状态
 			if (StringUtils.isNotEmpty(evalTask.getTaskName())) {
 				evalTaskStepContext.setPreStepStatus(EvalTaskStepContext.Status.INIT.getCode());
+				evalTaskStepContext.mergeStatus();
 			} else if (i == 0) {
 				evalTaskStepContext.setPreStepStatus(EvalTaskStepContext.Status.FINISHED.getCode());
 			} else {

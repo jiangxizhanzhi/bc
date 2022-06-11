@@ -306,14 +306,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 用户查询及校验
 		List<String> orgUserIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
-		if (CollectionUtils.isEmpty(orgUserIds)) {
-			throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);
-		}
 
-		// 如果当前组织不包含创建者
-		if (!orgUserIds.contains(classroom.getCreateUserId())) {
-			orgUserIds.add(classroom.getCreateUserId());
-		}
 		return classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
 				courseLesson, orgUserIds, CommonConstant.ONE);
 	}
@@ -1248,6 +1241,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (StringUtils.isBlank(endTime = roomData.get(CommonConstant.FOUR))) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
 		}
+
+		// 时间格式校验
+		if (null == TimeUtil.toDate1(endTime) || null == TimeUtil.toDate1(startTime)) {
+			throw new BusinessException(OjBusinessErrorCode.TIME_FORMAT_ERROR, rowIndex);
+		}
+
 		if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(startTime))) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_END_GT_START_TIME, rowIndex);
 		}
@@ -1424,8 +1423,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 不及格
 		List<NoteEvaluate> notPassed = StreamApiUtils.filter(evaluates,
-				noteEvaluate -> !noteEvaluate.getPassed()
-						|| noteEvaluate.getScore() < new Double(CommonConstant.SIXTY));
+				noteEvaluate -> !noteEvaluate.getPassed());
 		gradeDistribution.setNotPass(notPassed.size());
 		if ((calculate += notPassed.size()) == total) {
 			return gradeDistribution;
@@ -1435,7 +1433,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		int passed = StreamApiUtils
 				.filter(evaluates,
 						noteEvaluate -> noteEvaluate.getPassed()
-								&& noteEvaluate.getScore() >= new Double(CommonConstant.SIXTY)
 								&& noteEvaluate.getScore() < new Double(CommonConstant.EIGHTY))
 				.size();
 		gradeDistribution.setPass(passed);

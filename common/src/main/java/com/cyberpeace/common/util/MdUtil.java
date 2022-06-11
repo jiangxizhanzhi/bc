@@ -209,13 +209,20 @@ public class MdUtil {
 		String withOutCode = getContentWithOutCode(markdownFile, CommonConstant.ONE);
 
 		// 匹配文件路径
-		List<String> matchStrList = LocalStringUtil.getMatchStr(withOutCode,
-				PatternConstant.MARKDOWN_IMAGE);
+		List<String> matchStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
+				PatternConstant.MARKDOWN_IMAGE_MD_URL);
+
+		// 匹配文件src地址
+		List<String> matchSrcStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
+				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
+
+		matchStrList.addAll(matchSrcStrList);
+
 
 		// 文件路径替换
-		for (String matchStr : matchStrList) {
-			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
-					PatternConstant.MARKDOWN_IMAGE_URL);
+		for (String imagePath : matchStrList) {
+//			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
+//					PatternConstant.MARKDOWN_IMAGE_URL);
 			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
 			String relativePath = imagePath;
 			if (imagePath.startsWith(CommonConstant.PERIOD)) {

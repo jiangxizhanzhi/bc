@@ -22,6 +22,11 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
     List<String> BASE = Arrays.asList("002", "004", "005");
 
     /**
+     * 由es查询的探针数据, 无法使用`page`、`per_page`分页, 需要传入`requestId`、`per_page`迭代获取
+     */
+    List<String> ES_PROBES = Arrays.asList("006", "007", "008", "009", "010");
+
+    /**
      * 采集变量项目算法执行
      *
      * @param evalVariableRef

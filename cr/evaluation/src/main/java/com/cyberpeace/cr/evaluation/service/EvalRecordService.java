@@ -27,7 +27,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
     /**
      * 靶场测评实例下评估分页信息
      * @param page 分页对象
-     * @param roomId 测评实例id
+     * @param taskId 测评实例id
      * @param status 状态过滤
      * @param pattern 名称模糊查询
      * @return 分页结构数据
@@ -61,6 +61,11 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @return bool
      */
     Boolean delete(List<String> recordIds);
+
+    /**
+     * 测评删除, 清空评估信息
+     */
+    Boolean deleteRecord(List<String> taskIds);
 
     /**
      * 评估事件实际运行

@@ -101,4 +101,12 @@ public interface RoleService extends IService<Role> {
 	 * 清空rtks_role表和rtks_role_skill_relation表
 	 */
 	void clearRole();
+
+	/**
+	 * 创建和编辑岗位时，校验重名
+	 * @param name
+	 * @param resourceId
+	 * @return
+	 */
+	Boolean ifNameDuplicate(String name, String resourceId);
 }

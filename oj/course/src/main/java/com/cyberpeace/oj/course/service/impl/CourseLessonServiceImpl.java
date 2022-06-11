@@ -601,24 +601,19 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 课程数据校验
 		Course course = courseValidateHandler.validateCourseExist(courseId);
-
-		// 目录数组组装
-		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
+		if (CollectionUtils.isEmpty(courseLessons)) {
+			throw new BusinessException(OjBusinessErrorCode.NOT_SELECT_LESSON_INFORMATION);
+		}
+
+		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		for (CourseLesson courseLesson : courseLessons) {
-
-			// 校验是否存在课时名称相同的课时
+			// 课时数据校验
 			courseValidateHandler.validateLessonNameExist(courseId, courseLesson.getName());
-			courseLesson.setId(null);
-			courseLesson.setCourseId(course.getResourceId());
-			courseLesson.setResourceId(IDGeneratorUtil.getID());
-
-			AddLessonConfigContext configContext = AddLessonConfigContext.builder()
-					.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
-					.name(courseLesson.getName())
-					.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).build();
-			LessonConfig lessonConfig = lessonConfigService.packageLessonConfig(configContext);
-			lessonConfigs.add(lessonConfig);
+			// 重新初始化课时
+			reinitLesson(courseLesson, course.getResourceId());
+			// 目录数组组装
+			lessonConfigs.add(initLessonConfig(courseLesson));
 		}
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -630,6 +625,22 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			}
 		});
 
+	}
+
+	/** 初始化课程目录*/
+	private LessonConfig initLessonConfig(CourseLesson courseLesson) {
+		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
+				.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
+				.name(courseLesson.getName()).nodeType(LessonConfig.NodeType.NODE_LESSON.getCode())
+				.build();
+		return lessonConfigService.packageLessonConfig(configContext);
+	}
+
+	/** 重新初始化课时*/
+	private void reinitLesson(CourseLesson lesson, String courseId) {
+		lesson.setId(null);
+		lesson.setCourseId(courseId);
+		lesson.setResourceId(IDGeneratorUtil.getID());
 	}
 
 	@Override
@@ -939,6 +950,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		FileUtil.validateFileSuffix(handout.getOriginalFilename(),
 				FileTypeContant.LESSON_HANDOUT_TYPE);
 		String suffix = FileUtil.getFileSuffix(handout.getOriginalFilename());
+		suffix = suffix.toLowerCase();
 
 		// zip可能为md 或者 html
 		if (suffix.equals(FileSunffixConstant.ZIP.getDesc())) {

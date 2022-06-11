@@ -2,6 +2,8 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -271,7 +273,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时导入")
 	@PostMapping("/import")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp importLesson(@RequestBody ImportLessonReq importLessonReq) {
+	public BaseRsp importLesson(@RequestBody @Valid ImportLessonReq importLessonReq) {
 		Boolean result = courseLessonService.importLessons(importLessonReq.getCourseId(),
 				importLessonReq.getLessonIds());
 		return new BaseRsp(result);

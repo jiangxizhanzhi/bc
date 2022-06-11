@@ -185,4 +185,13 @@ public interface OjBusinessErrorCode {
 
 	/** 评论不存在*/
 	String COMMENT_NOT_EXIST = "102060";
+
+	/** 未检索到课时信息*/
+	String NOT_SELECT_LESSON_INFORMATION = "102061";
+
+	/** 留言内容不能为空*/
+	String MESSAGE_CONTENT_IS_NULL = "102062";
+
+	/** 第xxx行 文件内容缺失*/
+	String TIME_FORMAT_ERROR = "102063";
 }

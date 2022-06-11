@@ -999,7 +999,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				String fileUrl = utilService.handlerFileUrl(storePath);
 				return fileUrl;
 			});
-			String content = LocalStringUtil.replaceAll(dumpLoadBo.getWriteup(), matchList,
+			String content = LocalStringUtil.replaceAll(dumpLoadBo.getWriteup(), matchPathList,
 					urlList);
 			operation.setWriteup(content);
 		}

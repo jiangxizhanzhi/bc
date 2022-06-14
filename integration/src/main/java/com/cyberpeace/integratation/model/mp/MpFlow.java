@@ -42,4 +42,20 @@ public class MpFlow implements Serializable {
 			this.desc = desc;
 		}
 	}
+
+	public enum interactiveTypeEnum implements GenericEnum {
+
+		BACKGROUND(0, "背景流量"), ATTACK(1, "攻击流量");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		interactiveTypeEnum(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 }

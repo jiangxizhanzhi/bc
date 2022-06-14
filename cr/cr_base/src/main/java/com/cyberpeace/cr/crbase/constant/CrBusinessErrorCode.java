@@ -382,4 +382,7 @@ public interface CrBusinessErrorCode {
 	 */
 	String TITLE_DUPLICATE = "101114";
 
+	/** 非背景流量不允许修改源IP */
+	String NON_BACKGROUND_FLOW_NOT_ALLOWED_TO_MODIFY_SOURCE_IP = "101115";
+
 }

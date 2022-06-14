@@ -23,6 +23,5 @@ public class FlowParamUpdateReq implements Serializable {
 	private String flowId;
 
 	@ApiModelProperty(value = "源ip")
-	@NotNull
 	private String sourceIp;
 }

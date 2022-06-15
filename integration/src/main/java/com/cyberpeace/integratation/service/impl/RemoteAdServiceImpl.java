@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +88,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		// 获取竞赛理论赛所有百分制换算后>=80分的数据
 		JSONObject body = new JSONObject();
 		body.put("start_time",startTime);
-		body.put("end_time",endTime);
+		endTime = TimeUtil.format6(DateUtils.addDays(TimeUtil.toDate2(endTime), CommonConstant.ONE));
+		body.put("end_time", endTime);
 		if(minScore != null){
 			body.put("minScore",minScore);
 		}

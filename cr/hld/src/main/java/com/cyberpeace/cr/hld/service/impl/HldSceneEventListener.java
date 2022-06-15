@@ -57,6 +57,7 @@ public class HldSceneEventListener extends MessageListener {
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		HldRoom room = hldRoomService.getById(businessId);
 		if (room != null) {
+			room.setStatus(HldRoom.StatusCode.ENDED.getCode());
 			hldSceneService.clearLocal(room);
 		}
 		return true;

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.hld.dao.mapper.HldRoomSceneMapper">
+
+    <select id="listSceneIds" resultType="com.cyberpeace.cr.hld.service.context.HldRoomSceneContext">
+        select *
+        from cr_hld_room_scene
+        where hld_room_id = #{hldRoomId}
+    </select>
+
+    <select id="selectByMpSceneId" resultType="com.cyberpeace.cr.hld.dao.entity.HldRoomScene">
+        select *
+        from cr_hld_room_scene
+        where mp_scene_id = #{mpSceneId}
+    </select>
+
+</mapper>

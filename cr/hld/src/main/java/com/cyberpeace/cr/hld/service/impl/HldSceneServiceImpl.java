@@ -26,6 +26,8 @@ import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
+import com.cyberpeace.cr.hld.dao.entity.HldRoomScene;
+import com.cyberpeace.cr.hld.dao.mapper.HldRoomSceneMapper;
 import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -57,6 +59,9 @@ public class HldSceneServiceImpl implements HldSceneService {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	@Autowired
+	private HldRoomSceneMapper hldRoomSceneMapper;
+
 	@Override
 	public String startScene(String roomId, String userId) {
 
@@ -86,6 +91,12 @@ public class HldSceneServiceImpl implements HldSceneService {
 		// 4、启动mp场景
 		String sceneId = localSceneService.startScene(localScene);
 
+		// 5、写入拓扑场景映射
+		HldRoomScene hldRoomScene = new HldRoomScene();
+		hldRoomScene.setHldRoomId(roomId);
+		hldRoomScene.setMpSceneId(sceneId);
+		hldRoomScene.setStartTime(new Date());
+
 		try {
 			// 5、更新本地数据库数据
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -102,6 +113,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 					// 执行表更新
 					localSceneService.save(localScene);
 					hldRoomService.updateById(room);
+					hldRoomSceneMapper.insert(hldRoomScene);
 				}
 			});
 			// 5.1 本地保存数据错误，删除已启动的远程场景
@@ -162,12 +174,29 @@ public class HldSceneServiceImpl implements HldSceneService {
 
 		Boolean stopResult = localSceneService.stopScene(room.getLocalSceneId());
 
-		if (stopResult) {
-			// 清除localScene
-			clearLocal(room);
-			room.setStatus(HldRoom.StatusCode.ENDED.getCode());
-			hldRoomService.updateById(room);
+		if (!stopResult) {
+			return stopResult;
 		}
+
+		room.setStatus(HldRoom.StatusCode.ENDED.getCode());
+
+		LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
+
+		HldRoomScene hldRoomScene = hldRoomSceneMapper.selectByMpSceneId(localScene.getMpSceneId());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// 清除localScene
+				clearLocal(room);
+
+				if (hldRoomScene != null) {
+					hldRoomScene.setEndTime(new Date());
+					hldRoomSceneMapper.updateById(hldRoomScene);
+				}
+			}
+		});
 
 		return stopResult;
 	}

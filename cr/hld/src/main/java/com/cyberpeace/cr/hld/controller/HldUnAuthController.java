@@ -2,7 +2,6 @@ package com.cyberpeace.cr.hld.controller;
 
 import java.util.List;
 
-import com.cyberpeace.cr.hld.controller.req.HldDeleteReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +21,16 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.hld.controller.req.HldDeleteReq;
 import com.cyberpeace.cr.hld.controller.req.HldSceneOpsReq;
 import com.cyberpeace.cr.hld.controller.rsp.HldTopoAssetsRsp;
 import com.cyberpeace.cr.hld.controller.rsp.HldTopoRsp;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
+import com.cyberpeace.cr.hld.dao.mapper.HldRoomSceneMapper;
 import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
+import com.cyberpeace.cr.hld.service.context.HldRoomSceneContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,6 +54,9 @@ public class HldUnAuthController {
 
 	@Autowired
 	private HldRoomMapper hldRoomMapper;
+
+	@Autowired
+	private HldRoomSceneMapper hldRoomSceneMapper;
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
@@ -114,7 +119,8 @@ public class HldUnAuthController {
 	public BaseRsp startScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
 		setUserInfo(hldSceneOpsReq.getUserId());
-		String sceneId = hldSceneService.startScene(hldSceneOpsReq.getResourceId(), hldSceneOpsReq.getUserId());
+		String sceneId = hldSceneService.startScene(hldSceneOpsReq.getResourceId(),
+				hldSceneOpsReq.getUserId());
 
 		return new BaseRsp(new StartSceneRsp(sceneId));
 	}
@@ -159,6 +165,23 @@ public class HldUnAuthController {
 		businessTemplateService.batchDelete(businessTemplateIds);
 
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("获取SN场景id")
+	@GetMapping("/mp_scene_id")
+	public BaseRsp<List<HldRoomSceneContext>> getMpSceneId(@ApiParam(name = "resource_id",
+			value = "HLD拓扑id", required = true) String resource_id) {
+
+		HldRoom hldRoom = hldRoomService.getById(resource_id);
+
+		if (hldRoom == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		List<HldRoomSceneContext> hldRoomSceneContexts = hldRoomSceneMapper
+				.listSceneIds(resource_id);
+
+		return new BaseRsp<>(hldRoomSceneContexts);
 	}
 
 	private void setUserInfo(String userId) {

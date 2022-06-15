@@ -21,6 +21,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.FlowUpdateContext;
@@ -221,10 +222,13 @@ public class CrSceneServiceImpl implements CrSceneService {
 	@Override
 	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
 
+		CrCommonValidator.validateIp(flowOpsContext.getSourceIp());
+
 		MpFlow mpFlow = remoteSceneService.getFlowById(flowOpsContext.getFlowId());
 
-		if (!mpFlow.getInteractiveType().equals(MpFlow.interactiveTypeEnum.BACKGROUND.getCode())){
-			throw new BusinessException(CrBusinessErrorCode.NON_BACKGROUND_FLOW_NOT_ALLOWED_TO_MODIFY_SOURCE_IP);
+		if (!mpFlow.getInteractiveType().equals(MpFlow.interactiveTypeEnum.BACKGROUND.getCode())) {
+			throw new BusinessException(
+					CrBusinessErrorCode.NON_BACKGROUND_FLOW_NOT_ALLOWED_TO_MODIFY_SOURCE_IP);
 		}
 
 		Boolean result = remoteSceneService.updateFlowParam(flowOpsContext);

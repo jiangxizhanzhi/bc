@@ -18,6 +18,10 @@ public class FlowOpsContext extends NodeOpsContext {
         return this.flow_id;
     }
 
+    public String getSourceIp(){
+        return this.source_ip;
+    }
+
     public void setSourceIp(String sourceIp) {
         if (StringUtils.isEmpty(sourceIp)) {
             this.source_ip = null;

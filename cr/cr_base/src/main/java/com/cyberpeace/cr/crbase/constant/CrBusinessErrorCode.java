@@ -385,4 +385,7 @@ public interface CrBusinessErrorCode {
 	/** 非背景流量不允许修改源IP */
 	String NON_BACKGROUND_FLOW_NOT_ALLOWED_TO_MODIFY_SOURCE_IP = "101115";
 
+	/** IP格式错误 */
+	String WRONG_IP_FORMAT = "101116";
+
 }

@@ -52,12 +52,6 @@ public class UploadLog {
         JSONObject object = new JSONObject();
         object.put("list",logBos);
         object.put("log_report_type_enum","BC");
-        Integer s=1;
-        try {
-            s = HttpClientUtil.post(REPORT_LOG_URL,object, Integer.class);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        System.out.println(s);
+        HttpClientUtil.post(REPORT_LOG_URL,object, Integer.class);
     }
 }

@@ -2,7 +2,6 @@ package com.cyberpeace.cr.hld.controller;
 
 import java.util.List;
 
-import com.cyberpeace.cr.hld.controller.rsp.HldTaskRsp;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +24,7 @@ import com.cyberpeace.cr.hld.controller.req.HldRoomAddReq;
 import com.cyberpeace.cr.hld.controller.req.HldRoomModifyReq;
 import com.cyberpeace.cr.hld.controller.rsp.HldRoomIdRsp;
 import com.cyberpeace.cr.hld.controller.rsp.HldRoomRsp;
+import com.cyberpeace.cr.hld.controller.rsp.HldTaskRsp;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
 import com.cyberpeace.cr.hld.service.HldRoomService;
@@ -87,7 +87,7 @@ public class HldRoomController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole userRole = hldRoomService.getUserRole(room_id, userId);
 
-		HldRoom hldRoom = hldRoomService.getById(room_id);
+		HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
 		SceneViewContext context = hldSceneService.viewScene(room_id, userRole);
 
 		// 构造返回数据
@@ -107,7 +107,7 @@ public class HldRoomController {
 	public BaseRsp<HldRoomRsp> getTemplateId(
 			@ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
 
-		HldRoom hldRoom = hldRoomService.getById(room_id);
+		HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
 		HldRoomRsp hldRoomRsp = BeanUtils.copy(hldRoom, HldRoomRsp.class);
 		hldRoomRsp.setRoomId(hldRoom.getResourceId());
 
@@ -118,12 +118,7 @@ public class HldRoomController {
 	@PatchMapping()
 	public BaseRsp<HldRoomIdRsp> update(@RequestBody @Validated HldRoomModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
-		HldRoom hldRoom = hldRoomService.getById(resourceId);
-
-		// 不存在的训练直接抛出异常
-		if (hldRoom == null) {
-			throw new ResourceNotFoundException(resourceId);
-		}
+		HldRoom hldRoom = hldRoomService.getHldRoom(resourceId);
 
 		// 已开启的训练不允许修改
 		if (!hldRoom.isUnopened() || !"5".equals(hldRoomService.getTaskInfo(hldRoom.getTaskId())
@@ -148,6 +143,12 @@ public class HldRoomController {
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		// 校验待删除房间是否存在
+		for (String roomId : deleteReq.getIds()) {
+			hldRoomService.getHldRoom(roomId);
+		}
+
 		List<String> businessTemplateIds = hldRoomMapper
 				.listBusinessTemplateIds(deleteReq.getIds());
 		businessTemplateService.batchDelete(businessTemplateIds);
@@ -164,12 +165,7 @@ public class HldRoomController {
 		if (room_id != null && !room_id.isEmpty()) {
 
 			// 获取房间角色信息
-			HldRoom hldRoom = hldRoomService.getById(room_id);
-
-			// 未查询到相关房间报错
-			if (hldRoom == null) {
-				throw new ResourceNotFoundException(room_id);
-			}
+			HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
 
 			HldRolesConfig hldRolesConfig = JsonUtil.toJsonObject(hldRoom.getRoleConfig(),
 					HldRolesConfig.class);

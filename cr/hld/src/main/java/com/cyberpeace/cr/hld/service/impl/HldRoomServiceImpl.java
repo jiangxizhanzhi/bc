@@ -356,7 +356,7 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		// 当用户角色中不包含管理员且角色数大于2时，
 		CrRole adminRole = crRoleMapper.getCrRoleByRoomIdAndRoleName(roomId,
 				HldRoleName.ADMIN.getCrName());
-		if (adminRole != null && crRoles.remove(adminRole) && crRoles.size() == 1 ) {
+		if (adminRole != null && crRoles.remove(adminRole) && crRoles.size() == 1) {
 			return crRoles.get(0);
 		} else {
 			throw new BusinessException(CrBusinessErrorCode.TASK_ROLE_CONFLICT);
@@ -385,6 +385,18 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		} else {
 			return crRoleName;
 		}
+	}
+
+	@Override
+	public HldRoom getHldRoom(String roomId) {
+
+		HldRoom hldRoom = getById(roomId);
+
+		if (hldRoom == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		return hldRoom;
 	}
 
 }

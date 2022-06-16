@@ -105,7 +105,7 @@ public class HldUnAuthController {
 		SceneViewContext context = hldSceneService.viewScene(resource_id, userRole);
 
 		// 构造返回数据
-		HldRoom hldRoom = hldRoomService.getById(resource_id);
+		HldRoom hldRoom = hldRoomService.getHldRoom(resource_id);
 		HldTopoRsp hldTopoRsp = BeanUtils.copy(context, HldTopoRsp.class);
 		hldTopoRsp.setStatus(hldRoom.getStatus());
 		hldTopoRsp.setTaskName(hldRoom.getTaskName());
@@ -160,6 +160,12 @@ public class HldUnAuthController {
 	public BaseRsp<String> batchDelete(@RequestBody @Validated HldDeleteReq deleteReq) {
 
 		setUserInfo(deleteReq.getUserId());
+
+		// 校验待删除房间是否存在
+		for (String roomId : deleteReq.getIds()) {
+			hldRoomService.getHldRoom(roomId);
+		}
+
 		List<String> businessTemplateIds = hldRoomMapper
 				.listBusinessTemplateIds(deleteReq.getIds());
 		businessTemplateService.batchDelete(businessTemplateIds);
@@ -171,12 +177,6 @@ public class HldUnAuthController {
 	@GetMapping("/mp_scene_id")
 	public BaseRsp<List<HldRoomSceneContext>> getMpSceneId(@ApiParam(name = "resource_id",
 			value = "HLD拓扑id", required = true) String resource_id) {
-
-		HldRoom hldRoom = hldRoomService.getById(resource_id);
-
-		if (hldRoom == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		}
 
 		List<HldRoomSceneContext> hldRoomSceneContexts = hldRoomSceneMapper
 				.listSceneIds(resource_id);

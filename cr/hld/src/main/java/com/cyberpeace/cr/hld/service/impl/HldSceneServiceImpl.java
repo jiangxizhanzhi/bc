@@ -68,7 +68,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 		// 1、用户权限校验
 		hldRoomService.checkUserPermission(roomId, userId);
 
-		HldRoom room = hldRoomService.getById(roomId);
+		HldRoom room = hldRoomService.getHldRoom(roomId);
 
 		// 训练暂停状态不能启动场景
 		if (room.getStatus().equals(HldRoom.StatusCode.PAUSE.getCode())) {
@@ -130,10 +130,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 	public SceneViewContext viewScene(String roomId, CrRole role) {
 		SceneViewContext ret = new SceneViewContext();
 		ret.setRoomId(roomId);
-		HldRoom room = hldRoomService.getById(roomId);
-		if (room == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		}
+		HldRoom room = hldRoomService.getHldRoom(roomId);
 
 		// 1. 获取用户可见节点
 		CrRoleNodesData nodes = getNodes(room, role);
@@ -165,7 +162,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 			hldRoomService.checkUserPermission(roomId, userId);
 		}
 
-		HldRoom room = hldRoomService.getById(roomId);
+		HldRoom room = hldRoomService.getHldRoom(roomId);
 
 		// 2、如果场景已经停止，返回成功
 		if (StringUtils.isBlank(room.getLocalSceneId())) {
@@ -205,7 +202,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 	public Boolean pauseScene(String roomId) {
 
 		// 1. 校验场景存在和用户权限
-		HldRoom room = hldRoomService.getById(roomId);
+		HldRoom room = hldRoomService.getHldRoom(roomId);
 		checkBeforePauseOps(room, PAUSE_FLAG);
 
 		// 2、 场景开启的状态下发送mp暂停请求
@@ -223,7 +220,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 	@Override
 	public Boolean unpauseScene(String roomId) {
 		// 1. 校验场景存在和用户权限
-		HldRoom room = hldRoomService.getById(roomId);
+		HldRoom room = hldRoomService.getHldRoom(roomId);
 		checkBeforePauseOps(room, UNPAUSE_FLAG);
 
 		// 2、 如果mp场景存在，发送mp解除暂停请求
@@ -239,9 +236,6 @@ public class HldSceneServiceImpl implements HldSceneService {
 	}
 
 	private void checkBeforePauseOps(HldRoom room, Integer flag) {
-		if (room == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		}
 
 		// 权限校验
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -266,7 +260,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 	public List<Flow> getFlowList(String roomId) {
 
 		// 1.创建变量
-		HldRoom room = hldRoomService.getById(roomId);
+		HldRoom room = hldRoomService.getHldRoom(roomId);
 		String userId = UserInfoContext.getUserContext().getUserId();
 		List<Flow> flows = Lists.newArrayList();
 		Cpflow cpflow;
@@ -413,11 +407,7 @@ public class HldSceneServiceImpl implements HldSceneService {
 
 	@Override
 	public JSONObject viewSceneNoAuth(String roomId) {
-		HldRoom room = hldRoomService.getById(roomId);
-
-		if (room == null) {
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		}
+		HldRoom room = hldRoomService.getHldRoom(roomId);
 
 		return getMpSceneData(room);
 	}

@@ -32,4 +32,6 @@ public interface HldRoomService extends IService<HldRoom> {
 
 	String getHldRoleName(String crRoleName);
 
+	HldRoom getHldRoom(String roomId);
+
 }

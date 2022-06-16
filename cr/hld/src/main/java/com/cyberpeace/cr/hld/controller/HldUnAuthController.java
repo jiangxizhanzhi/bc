@@ -174,7 +174,7 @@ public class HldUnAuthController {
 	}
 
 	@ApiOperation("获取SN场景id")
-	@GetMapping("/mp_scene_id")
+	@GetMapping("/mp_scene")
 	public BaseRsp<List<HldRoomSceneContext>> getMpSceneId(@ApiParam(name = "resource_id",
 			value = "HLD拓扑id", required = true) String resource_id) {
 

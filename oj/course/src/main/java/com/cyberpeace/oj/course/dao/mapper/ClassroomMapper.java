@@ -49,4 +49,11 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @return
 	 */
 	List<Classroom> selectByOrgId(@Param("orgId") String orgId);
+
+	/**
+	 * 根据计划查询房间
+	 * @param planId
+	 * @return
+	 */
+	List<Classroom> selectByPlan(@Param("planId") String planId);
 }

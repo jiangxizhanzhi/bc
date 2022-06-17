@@ -2,8 +2,10 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,7 @@ public class TeamTrainTeacherController {
 
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<MonitorSession>> getSessions(
 			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id,
 			@ApiParam(name = "student_id", value = "学员id", required = false) String student_id) {

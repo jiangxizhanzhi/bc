@@ -4,18 +4,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
@@ -83,31 +82,6 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 
 					return knowledgeBo;
 				}).collect(Collectors.toList());
-		return boList;
-	}
-
-	@Override
-	public List<CourseKnowledgeSkillBo> getCourseSkillByRoleId(String roleId) {
-		Role role = roleMapper.selectById(roleId);
-		if (null == role) {
-			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
-		}
-
-		List<String> skillIds = JsonUtil.toJsonObjectArray(role.getSkillIds(), String.class);
-		List<String> courseIds = skillService.getCourseByIds(skillIds);
-
-		List<CourseInfoBo> courses = courseService.selectByIds(courseIds);
-
-		Map<String, List<CourseRelatedRes>> courseMap = skillService.getSkillByCourseId(courseIds);
-
-		List<CourseKnowledgeSkillBo> boList = courses.stream().map(bo -> {
-			CourseKnowledgeSkillBo knowledgeSkillBo = BeanUtils.deepCopy(bo,
-					CourseKnowledgeSkillBo.class);
-			knowledgeSkillBo.setSkills(courseMap.get(bo.getResourceId()));
-
-			return knowledgeSkillBo;
-		}).collect(Collectors.toList());
-
 		return boList;
 	}
 

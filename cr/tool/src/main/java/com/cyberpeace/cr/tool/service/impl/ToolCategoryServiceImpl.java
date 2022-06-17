@@ -1,7 +1,9 @@
 package com.cyberpeace.cr.tool.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -46,6 +48,15 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	public List<ToolCategory> selectAll() {
 		List<ToolCategory> result = toolCategoryMapper.selectList(null);
 		return result;
+	}
+
+	public List<WebToolCategoryRsp> webSelectAll() {
+		List<ToolCategory> toolCategories = selectAll();
+
+		return toolCategories.stream().map(toolCategory ->
+				WebToolCategoryRsp.builder().resourceId(toolCategory.getResourceId())
+						.categoryI18nName(toolCategory.selectI18nName()).build()
+		).collect(Collectors.toList());
 	}
 
 	@Override

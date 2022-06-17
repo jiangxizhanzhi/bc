@@ -17,9 +17,9 @@ import java.util.List;
 @Mapper
 public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 
-	List<Course> selectByHeat();
+	List<Course> selectByHeat(List<String> courseIds);
 
-	List<Course> sumHeatByDirection();
+	List<Course> sumHeatByDirection(List<String> courseIds);
 
 	IPage<AdminCourseStatisticsRes> listCourseByPage(Page page,
 			@Param("courseContext") CourseContext courseContext,

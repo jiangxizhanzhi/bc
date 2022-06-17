@@ -3,12 +3,15 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.MathUtils;
@@ -32,6 +35,7 @@ public class CourseTrainController {
 
 	@ApiOperation("课程训练-职业课程课程学习进度")
 	@GetMapping("/knowledge")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<OccupationCourseRes> courseKnowledge() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();
@@ -42,20 +46,11 @@ public class CourseTrainController {
 
 	@ApiOperation("学习路径-专业课程")
 	@GetMapping("/getCourseKnowledgeByRoleId")
+	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<OccupationCourseRes> getCourseKnowledgeByRoleId(
 			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
 		List<CourseKnowledgeSkillBo> courseKnowledges = courseTrainService
 				.getCourseKnowledgeByRoleId(resource_id);
-		return new BaseRsp<>(calculatePercent(courseKnowledges));
-	}
-
-	@ApiOperation("学习路径-技能课程")
-	@GetMapping("/getCourseSkillByRoleId")
-	public BaseRsp<OccupationCourseRes> getCourseSkillByRoleId(
-			@ApiParam(name = "resource_id", value = "岗位id", required = true) String resource_id) {
-
-		List<CourseKnowledgeSkillBo> courseKnowledges = courseTrainService
-				.getCourseSkillByRoleId(resource_id);
 		return new BaseRsp<>(calculatePercent(courseKnowledges));
 	}
 
@@ -97,6 +92,8 @@ public class CourseTrainController {
 
 	@ApiOperation("职业路径课程")
 	@GetMapping("/role/path")
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+			MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
 	public BaseRsp<List<RoleCourseBo>> getRoleCourse() {
 		String roleId = UserInfoContext.getUserContext().getRoleId();
 

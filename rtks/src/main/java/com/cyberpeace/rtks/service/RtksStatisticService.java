@@ -3,7 +3,11 @@ package com.cyberpeace.rtks.service;
 import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.rtks.service.bo.*;
+import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
+import com.cyberpeace.rtks.service.bo.RoleStudyBo;
+import com.cyberpeace.rtks.service.bo.RtksRadarBo;
+import com.cyberpeace.rtks.service.bo.StudyRecordBo;
+import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
 
 /**
  * rtks数据统计功能
@@ -35,44 +39,12 @@ public interface RtksStatisticService {
 	List<KnowledgeStudyPercentBo> calculateKnowledgePercent(String roleId, String userId);
 
 	/**
-	 * 计算制定角色的技能完成度
-	 * @param roleId
-	 * @param userId
-	 * @return
-	 */
-	List<KnowledgeStudyPercentBo> calculateSkillPercent(String roleId, String userId);
-
-	/**
 	 * 针对知识点，获取用户理论课学习记录
 	 * @param roleId
 	 * @param userId
 	 * @return
 	 */
 	RoleStudyBo roleKnowledgeStudyRecord(String roleId, String userId);
-
-	/**
-	 * 针对技能，获取用户的对应的学习记录
-	 * @param roleId
-	 * @param userId
-	 * @return
-	 */
-	RoleStudyBo roleSkillStudyRecord(String roleId, String userId);
-
-	/**
-	 * 根据用户编号和岗位编号统计岗位下技能得分
-	 * @param userId
-	 * @param roleId
-	 * @return
-	 */
-	List<CategorySkillBo> getRoleSkillScores(String userId, String roleId);
-
-	/**
-	 * 计算岗位下技能能力雷达图
-	 * @param userId
-	 * @param roleId
-	 * @return
-	 */
-    List<RtksRadarBo> calculateSkillRadar(String userId, String roleId);
 
 	/**
 	 * 统计用户岗位课程学习记录
@@ -82,14 +54,14 @@ public interface RtksStatisticService {
 	 * @param endTime
 	 * @return
 	 */
-    StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime, Date endTime);
-
-	List<RtksRadarBo> calculateLgdRadar(String existRoleId, String userId);
+	StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime, Date endTime);
 
 	/**
-	 * 计算技能能力雷达图
-	 * @param skillSystemId
+	 * 查询当前用户的训练路径
+	 * @param userId
+	 * @param roleId
 	 * @return
 	 */
-	List<RtksRadarBo> calculateLgdSkillRadar(String userId, String skillSystemId);
+	List<MissionPathBo> getTrainingPath(String userId, String roleId);
+
 }

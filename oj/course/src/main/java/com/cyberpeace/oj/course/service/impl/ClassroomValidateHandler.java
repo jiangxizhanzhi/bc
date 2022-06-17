@@ -5,22 +5,23 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import org.apache.commons.collections.CollectionUtils;
-import org.omg.CORBA.ORB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
+import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,41 @@ public class ClassroomValidateHandler {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private ClassroomSignMapper classroomSignMapper;
+
+	@Autowired
+	private TrainPlanMapper trainPlanMapper;
+
+	/**
+	 * 训练计划存在性校验
+	 * @param planId
+	 * @return
+	 */
+	public TrainPlan validatePlanExistById(String planId) {
+		TrainPlan trainPlan = trainPlanMapper.selectById(planId);
+		if (null == trainPlan) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NOT_FOUND);
+		}
+
+		return trainPlan;
+	}
+
+	/**
+	 * 课堂签到校验
+	 * @param classroomId
+	 * @param userId
+	 * @return
+	 */
+	public ClassroomSign validateSign(String classroomId, String userId) {
+		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
+		if (null == classroomSign) {
+			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
+		}
+
+		return classroomSign;
+	}
 
 	/**
 	 * 校验课时和组织相同的课时存在
@@ -81,11 +117,6 @@ public class ClassroomValidateHandler {
 	 */
 	public List<String> validateClassroomOrgHasUser(String orgId) {
 
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, true);
-		if (CollectionUtils.isEmpty(userInfos)) {
-			throw new BusinessException(OjBusinessErrorCode.ORGANIZATION_IS_NO_USERS);
-		}
-
 		List<String> orgIds = remoteOrganizationService.childrenList(orgId, true);
 		return orgIds;
 	}
@@ -107,6 +138,21 @@ public class ClassroomValidateHandler {
 	}
 
 	/**
+	 * 校验课程表是否存在
+	 * @param lessonId
+	 * @param orgId
+	 * @return
+	 */
+	public Classroom validateClassroomExist(String lessonId, String orgId) {
+		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
+		if (classroom == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		return classroom;
+	}
+
+	/**
 	 * 时间时间段是否已存在该组织的课程表
 	 * @param organizationId
 	 * @param startTime
@@ -116,12 +162,12 @@ public class ClassroomValidateHandler {
 
 		List<Classroom> classrooms = classroomMapper.selectByOrgId(organizationId);
 		classrooms.forEach(classroom -> {
-			if ((startTime.getTime() > classroom.getStartTime().getTime()
-					&& startTime.getTime() < classroom.getEndTime().getTime())
-					|| (endTime.getTime() > classroom.getStartTime().getTime()
-							&& endTime.getTime() < classroom.getEndTime().getTime())) {
+
+			if (!(startTime.getTime() >= classroom.getEndTime().getTime()
+					|| endTime.getTime() <= classroom.getStartTime().getTime())) {
 				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
 			}
+
 		});
 	}
 
@@ -147,5 +193,27 @@ public class ClassroomValidateHandler {
 				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
 			}
 		}
+	}
+
+	/**
+	 * 校验是否有权限操作课堂接口
+	 * @param classroomId
+	 * @param authContext
+	 */
+	public void validateLessonPracticeAuth(String classroomId, AuthContext authContext) {
+
+		boolean is_superuser = authContext.getIsSuperAdmin();
+		if (!is_superuser) {
+			Classroom classroom = classroomMapper.selectById(classroomId);
+			if (null == classroom) {
+				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_NOT_FOUNT);
+			}
+			if (!classroom.getCreateUserId().equals(authContext.getUserId())) {
+				log.error("User=[{}] has no permission ! classroom_id=[{}]",
+						authContext.getUserId(), classroomId);
+				throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+			}
+		}
+
 	}
 }

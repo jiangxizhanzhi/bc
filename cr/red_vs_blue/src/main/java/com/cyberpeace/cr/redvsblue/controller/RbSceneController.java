@@ -2,8 +2,10 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +55,7 @@ public class RbSceneController {
 
 	@ApiOperation("启动场景")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -63,6 +66,7 @@ public class RbSceneController {
 
 	@ApiOperation("停止场景")
 	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
 		String roomId = sceneStopReq.getRoomId();
 
@@ -72,6 +76,7 @@ public class RbSceneController {
 
 	@ApiOperation("查看场景")
 	@GetMapping("")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "room_id", value = "红蓝对抗实例id", required = true) String room_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
@@ -82,6 +87,7 @@ public class RbSceneController {
 
 	@ApiOperation("暂停场景")
 	@PostMapping("/pause")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
@@ -96,6 +102,7 @@ public class RbSceneController {
 
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/unpause")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
@@ -110,6 +117,7 @@ public class RbSceneController {
 
 	@ApiOperation("查询流量")
 	@GetMapping("flow")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<FlowRsp> getFlowList(
 			@ApiParam(name = "room_id", value = "团队训练id", required = true) String room_id) {
 
@@ -122,6 +130,7 @@ public class RbSceneController {
 
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp startFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -142,6 +151,7 @@ public class RbSceneController {
 
 	@ApiOperation("停止流量")
 	@PostMapping("/flow/stop")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp stopFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();

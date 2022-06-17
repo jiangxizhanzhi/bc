@@ -65,8 +65,13 @@ public class CourseLesson extends BaseTable {
 
 	public enum HandoutType implements GenericEnum {
 
-		NEITHER(0, "都不是"), MD(1, "markdown"), PPT(2, "ppt文件"), PDF(4, "pdf"), DOC(3,
-				"word文档"), XLS(4, "xls文件");
+		/** 讲义类型*/
+		NEITHER(0, "都不是"),
+		MD(1, "markdown"),
+		PPT(2, "ppt文件"),
+		PDF(4, "pdf"),
+		DOC(3, "word文档"),
+		XLS(5, "xls文件");
 
 		@Getter
 		private Integer code;

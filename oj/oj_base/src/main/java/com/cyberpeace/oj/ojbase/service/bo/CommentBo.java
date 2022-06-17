@@ -50,7 +50,10 @@ public class CommentBo implements Serializable {
 	@ApiModelProperty("被点赞数量")
 	private Integer likesCount;
 
-	@ApiModelProperty("被回复数量")
+	@ApiModelProperty("被回复的数量")
+	private Integer replyCount;
+
+	@ApiModelProperty("被回复的评论")
 	private List<CommentBo> commentReply;
 
 }

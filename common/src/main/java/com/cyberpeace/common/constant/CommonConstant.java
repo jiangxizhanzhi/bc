@@ -25,7 +25,13 @@ public interface CommonConstant {
 
 	int TWO = 2;
 
+	int THREE = 3;
+
 	int FOUR = 4;
+
+	int FIVE = 5;
+
+	int SIX = 6;
 
 	int NEGATIVE_ONE = -1;
 
@@ -45,6 +51,12 @@ public interface CommonConstant {
 
 	int TEN = 10;
 
+	int FOURTEEN = 14;
+
+	int FIFTEEN = 15;
+
+	int SIXTEEN = 16;
+
 	Boolean TRUE = true;
 
 	Boolean FALSE = false;
@@ -54,5 +66,15 @@ public interface CommonConstant {
 	String RIGHT = "是";
 
 	String EMPTY_STRING = "";
+
+	String MD_CODING_BLOCK = "```";
+
+	String ONLINE = "online";
+
+	Integer THIRTY = 30;
+
+	Integer TWENTY_FOUR_MONTHS = 24 * 30;
+
+	String UTF_8 = "UTF-8";
 
 }

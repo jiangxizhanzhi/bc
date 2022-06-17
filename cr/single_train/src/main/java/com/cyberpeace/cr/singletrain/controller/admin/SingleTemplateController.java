@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -9,6 +10,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -45,6 +47,7 @@ public class SingleTemplateController {
 
 	@GetMapping
 	@ApiOperation("单兵训练模板获取")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleTemplateBo> get(@RequestParam("resource_id") String businessTemplateId) {
 		businessTemplateService.checkPermission(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
@@ -54,6 +57,7 @@ public class SingleTemplateController {
 
 	@PostMapping
 	@ApiOperation("单兵训练模板创建")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`
 		SingleTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,
@@ -73,6 +77,9 @@ public class SingleTemplateController {
 				String businessTemplateId = businessTemplateService.addTemplate(baseInfo);
 				singleTemplate.setBusinessTemplateId(businessTemplateId);
 				singleTemplateService.save(singleTemplate);
+				// update missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(businessTemplateId, "",
+						singleTemplate.getMissionsScheme());
 			}
 		});
 
@@ -81,6 +88,7 @@ public class SingleTemplateController {
 
 	@PatchMapping
 	@ApiOperation("单兵训练模板更新")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleTemplateBo>
 			update(@RequestBody SingleTrainTemplateUpdateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`
@@ -94,6 +102,7 @@ public class SingleTemplateController {
 		SingleTemplate singleTemplate = singleTemplateService
 				.getByBusinessTemplateId(requestData.getResourceId());
 		// update single template
+		String oldMissionScheme = singleTemplate.getMissionsScheme();
 		reqToSingleTemplate(requestData, singleTemplate);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -101,6 +110,10 @@ public class SingleTemplateController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.updateTemplate(businessTemplate, baseInfo);
 				singleTemplateService.updateById(singleTemplate);
+				// delete&update missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(
+						businessTemplate.getResourceId(), oldMissionScheme,
+						singleTemplate.getMissionsScheme());
 			}
 		});
 		return new BaseRsp<>();

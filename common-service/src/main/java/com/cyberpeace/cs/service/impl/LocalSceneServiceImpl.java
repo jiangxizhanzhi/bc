@@ -15,6 +15,7 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
@@ -353,6 +354,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		sceneOpsContext.setId(localScene.getMpSceneId());
 		sceneOpsContext.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
 				localScene.getBusinessInstanceId());
+		sceneOpsContext.getContext().getPass_through().put(WebConstant.PASS_THROUGH_OPERATOR,
+				Operator.BC.getDesc());
 
 		return sceneOpsContext;
 	}

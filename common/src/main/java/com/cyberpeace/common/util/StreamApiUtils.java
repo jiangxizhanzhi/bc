@@ -1,18 +1,16 @@
 package com.cyberpeace.common.util;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.apache.commons.collections.CollectionUtils;
-import org.checkerframework.checker.units.qual.K;
-
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import org.apache.commons.collections.CollectionUtils;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class StreamApiUtils {
 
@@ -90,6 +88,42 @@ public class StreamApiUtils {
 			return Lists.newArrayList();
 		}
 		return collection.stream().map(mapperValue).filter(e -> null != e)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * 将对象中的某个为列表的集合收集为一个集合
+	 * @param collection
+	 * @param mapperValue
+	 * @param <E>
+	 * @param <T>
+	 * @return
+	 */
+	public static <E, T> List<T> flatMap(Collection<E> collection,
+			Function<E, List<T>> mapperValue) {
+		if (CollectionUtils.isEmpty(collection)) {
+			return Lists.newArrayList();
+		}
+
+		return collection.stream().map(mapperValue).flatMap(Collection::stream)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * 去重收集
+	 * @param collection
+	 * @param mapper
+	 * @param <E>
+	 * @param <T>
+	 * @return
+	 */
+	public static <E, T> List<T> distinctFlatMap(Collection<E> collection,
+			Function<E, List<T>> mapper) {
+		if (CollectionUtils.isEmpty(collection)) {
+			return Lists.newArrayList();
+		}
+
+		return collection.stream().map(mapper).flatMap(Collection::stream).distinct()
 				.collect(Collectors.toList());
 	}
 

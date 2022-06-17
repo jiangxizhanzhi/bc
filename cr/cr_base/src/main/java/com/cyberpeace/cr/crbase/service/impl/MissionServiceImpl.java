@@ -31,6 +31,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
@@ -161,6 +162,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			task.setRoomId(mission.getRoomId());
 			task.setRoleId(role.getResourceId());
 			task.setBusinessType(role.getBusinessType());
+			task.setMissionTemplateId(mission.getMissionTemplateId());
 
 			tasks.add(task);
 		}
@@ -197,6 +199,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			CrTask task = new CrTask();
 
 			task.setMissionId(mission.getResourceId());
+			task.setMissionTemplateId(mission.getMissionTemplateId());
 			task.setUserId(currentUserId);
 			task.setStatus(CrTask.TaskStatus.RELEASED.getCode());
 			task.setReleaseTime(new Date());
@@ -244,7 +247,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<MissionCategoryCache> missionCategories = Lists.newArrayList(categoryCache.values());
 		// return
 		return StreamApiUtils.map(missionCategories,
-				category -> new MissionCategory(category.getResourceId(), category.selectI18nName()));
+				category -> new MissionCategory(category.getResourceId(),
+						category.selectI18nName()));
 	}
 
 	@Override
@@ -288,6 +292,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 					mission.setShowWriteup(false);
 					mission.setCreateUserId(userId);
 					mission.setRoomId(roomId);
+					mission.setMissionTemplateId(missionTemplate.getResourceId());
 					mission.setResourceId(IDGeneratorUtil.getID());
 
 					missions.add(mission);
@@ -399,7 +404,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public String getTeamTrainingManual(String roomId) {
-		List<CrRole> roles = crRoleMapper.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
+		List<CrRole> roles = crRoleMapper
+				.selectCrRoleByRoomId(new RoleQuery(roomId, CrRole.TeamRoleGroup.STUDENT));
 		List<CrRoleMissionSchemeStage> allStages = Lists.newArrayList();
 		for (CrRole role : roles) {
 			List<CrRoleMissionSchemeStage> stages = JsonUtil
@@ -425,7 +431,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			missionTemplate.setCreateUserId(userId);
 			missionTemplate.setCategoryId(loadMission.getCategory());
 			missionTemplate.setResourceId(IDGeneratorUtil.getID());
-			// todo attachment
 
 			return missionTemplate;
 		}).collect(Collectors.toList());
@@ -656,6 +661,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<String> missionIds = Lists.newArrayList();
 		missionStageSchemes.forEach(stage -> missionIds.addAll(stage.getMissions()));
 		return missionIds;
+	}
+
+	@Override
+	public ListRsp<MissionTemplateRes> pageMissionTemplate(MissionTemplatePageReq pageReq) {
+		Page page = pageReq.toPageParam();
+		IPage<MissionTemplateRes> iPage = missionTemplateMapper.pageWithBusiness(page,
+				pageReq.getType(), pageReq.getDifficulty(), pageReq.getPattern());
+		return PageUtil.getListResult(iPage);
 	}
 
 	@Override

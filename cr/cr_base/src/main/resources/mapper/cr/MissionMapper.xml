@@ -4,13 +4,15 @@
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.MissionMapper">
     <insert id="batchInsert">
         insert into cr_mission
-        (resource_id, title, description, score, skill_points, answer, option,
-        type, category_id, write_up, create_user_id, show_writeup, room_id, create_time, update_time)
+        (resource_id, title, description, score, skill_points, answer, option, type,
+        category_id, write_up, create_user_id, show_writeup, room_id, mission_template_id, create_time,
+        update_time)
         values
         <foreach collection="missions" item="mission" separator=",">
             (#{mission.resourceId}, #{mission.title}, #{mission.description}, #{mission.score}, #{mission.skillPoints},
             #{mission.answer}, #{mission.option}, #{mission.type}, #{mission.categoryId}, #{mission.writeUp},
-            #{mission.createUserId}, #{mission.showWriteup}, #{mission.roomId}, now(), now())
+            #{mission.createUserId}, #{mission.showWriteup}, #{mission.roomId},#{mission.missionTemplateId}, now(),
+            now())
         </foreach>
     </insert>
     <select id="batchSelect" resultType="com.cyberpeace.cr.crbase.dao.entity.Mission">

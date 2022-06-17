@@ -51,7 +51,8 @@ public class Role extends BaseTable {
 	@TableField(value = "knowledge_courses")
 	private String knowledgeCourses;
 
-	@TableField(value = "skill_courses")
-	private String skillCourses;
+	private Integer knowledgeWeight;
+
+	private String skillMissions;
 
 }

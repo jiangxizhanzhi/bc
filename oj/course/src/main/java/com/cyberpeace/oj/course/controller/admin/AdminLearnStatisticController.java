@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,20 +50,27 @@ public class AdminLearnStatisticController {
 
 	@ApiOperation("课程统计柱状图")
 	@GetMapping("/course_histogram")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<HistogramRes> courseHistogram() {
-		HistogramRes res = courseLearnStatisticsService.courseHistogram();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		HistogramRes res = courseLearnStatisticsService.courseHistogram(authContext);
 		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("课程方向统计柱状图")
 	@GetMapping("/direction_histogram")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<HistogramRes> directionHistogram() {
-		HistogramRes res = courseLearnStatisticsService.directionHistogram();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		HistogramRes res = courseLearnStatisticsService.directionHistogram(authContext);
 		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("课程学习统计list")
 	@GetMapping("/course_statistics_list")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<List<AdminCourseStatisticsRes>> courseStatisticsList(@ApiParam(name = "listReq",
 			value = "查询条件") @Valid CourseStatisticsListReq courseStatisticsListReq) {
 		CourseContext context = BeanUtils.copy(courseStatisticsListReq, CourseContext.class);
@@ -82,6 +91,7 @@ public class AdminLearnStatisticController {
 
 	@ApiOperation("课时学习统计list")
 	@GetMapping("/lesson_statistics_list")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<AdminLessonStatisticsRes>>
 			lessonStatisticsList(@ApiParam @Validated LessonStatisticsListReq pageReq) {
 		Page page = pageReq.toPageParam();
@@ -92,6 +102,7 @@ public class AdminLearnStatisticController {
 
 	@ApiOperation("课时报告统计detail")
 	@GetMapping("/lesson_statistics_detail")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<AdminLessonStatisticsDetailRes>>
 			lessonStatisticsDetail(@ApiParam @Validated LessonStatisticsDetailReq pageReq) {
 		Page page = pageReq.toPageParam();

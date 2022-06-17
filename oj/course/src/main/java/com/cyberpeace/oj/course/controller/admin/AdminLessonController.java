@@ -2,28 +2,13 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.service.LessonSceneService;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
-import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
-import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
-import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
-import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import javax.validation.Valid;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,23 +19,39 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.course.controller.req.*;
+import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.LessonSceneService;
+import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
+import com.cyberpeace.oj.course.service.bo.AdminLessonPracticeBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
+import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 
 import io.swagger.annotations.*;
@@ -86,6 +87,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListLessonReq lessonReq) {
 
 		// 分类课程筛选 权限数据过滤
@@ -128,8 +130,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时详情查询接口")
 	@GetMapping("")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号"),
-			@ApiImplicitParam(name = "course_id", value = "课程编号") })
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
 	public BaseRsp<AdminLessonBo> get(@RequestParam(value = "course_id") String courseId,
 			@RequestParam(value = "lesson_id") String lessonId) {
 
@@ -140,6 +144,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp add(@Validated(Create.class) LessonAddReq lessonAddReq) {
 
 		// 数据转换
@@ -158,6 +163,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
 
 		// 修改数据转换 进行视频和讲义地址是否修改判断
@@ -183,6 +189,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息删除")
 	@DeleteMapping("/batch")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
 		String lessonId = batchDeleteReq.getResourceIds().get(CommonConstant.ZERO);
@@ -199,6 +206,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时附件查询")
 	@GetMapping("/attachment")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<List<AttachmentBo>> getAttachments(@ApiParam(name = "resource_id",
 			value = "课时编号") @RequestParam("resource_id") String resourceId) {
 
@@ -214,6 +222,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课后练习查询")
 	@GetMapping("/practice")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AdminLessonPracticeBo> getPracticeList(
 			@RequestParam("course_id") String courseId,
 			@RequestParam("lesson_id") String lessonId) {
@@ -229,6 +238,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课后练习修改")
 	@PatchMapping("/practice")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean>
 			updateLessonPractice(@RequestBody @Validated AddLessonPracticeReq practiceReq) {
 
@@ -239,6 +249,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时场景拓扑信息查询")
 	@GetMapping("/scene_topo")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
 			value = "资源数据编号") @RequestParam("resource_id") String lessonId) {
 
@@ -251,6 +262,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时练习公开与隐藏")
 	@PatchMapping("/practice/batch_public")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean>
 			publicPractice(@RequestBody @Validated ResourcePublicReq resourcePublicReq) {
 		Boolean result = courseLessonService.batchPublicPractice(resourcePublicReq.getResourceIds(),
@@ -260,7 +272,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时导入")
 	@PostMapping("/import")
-	public BaseRsp importLesson(@RequestBody ImportLessonReq importLessonReq) {
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
+	public BaseRsp importLesson(@RequestBody @Valid ImportLessonReq importLessonReq) {
 		Boolean result = courseLessonService.importLessons(importLessonReq.getCourseId(),
 				importLessonReq.getLessonIds());
 		return new BaseRsp(result);
@@ -268,6 +281,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时新增附件上传")
 	@PostMapping("/upload_attachment")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<String>
 			uploadAttachment(@RequestParam("attachment") MultipartFile multipartFile) {
 
@@ -278,6 +292,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景启动")
 	@PostMapping("/start_scene")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<JSONObject>
 			startScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 
@@ -290,6 +305,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景暂停与恢复")
 	@PatchMapping("/update_status")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean>
 			updateSceneStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
 
@@ -302,6 +318,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景删除")
 	@DeleteMapping("/delete_scene")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -313,6 +330,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时节点重启")
 	@PostMapping("/node_restart")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> restartNode(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -324,6 +342,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时节点重建")
 	@PostMapping("/node_recreate")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> recreateNode(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
@@ -334,6 +353,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("后台课时场景监控")
 	@GetMapping("/lesson_monitor")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<List<SceneMonitorBo>> lessonMonitor(@ApiParam(name = "resource_id",
 			value = "课时编号") @RequestParam("resource_id") String lessonId) {
 
@@ -344,6 +364,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("场景监控信息刷新时间")
 	@GetMapping("/monitor_refresh_interval")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Integer> getMonitorRefreshInterval() {
 
 		String refreshInterval = ConfigUtil.getContextProperty("oj.monitor.refresh.interval");
@@ -353,6 +374,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("查询课程下课时简易数据")
 	@GetMapping("/simple/list")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<SimpleDataRes>>
 			selectAllLesson(@RequestParam("course_id") String courseId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

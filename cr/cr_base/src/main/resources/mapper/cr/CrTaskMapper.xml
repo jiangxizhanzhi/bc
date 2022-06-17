@@ -6,11 +6,12 @@
     <insert id="batchInsert" parameterType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
         insert into cr_task
         (resource_id, `status`, mission_id, user_id,
-        release_time, room_id, role_id, business_type, create_time, update_time)
+        release_time, room_id, role_id, business_type, mission_template_id, create_time, update_time)
         values
         <foreach collection="tasks" item="task" separator=",">
             (#{task.resourceId}, #{task.status}, #{task.missionId}, #{task.userId},
-            #{task.releaseTime}, #{task.roomId},#{task.roleId}, #{task.businessType}, now(), now())
+            #{task.releaseTime}, #{task.roomId},#{task.roleId}, #{task.businessType}, #{task.missionTemplateId}, now(),
+            now())
         </foreach>
     </insert>
 
@@ -193,6 +194,37 @@
         <foreach collection="crRoleIds" item="role" separator="," open="(" close=")">
             #{role}
         </foreach>
+    </select>
+    <select id="getScoreByMissionTemplateIdAndUserId"
+            resultType="com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore">
+        select
+        a.resource_id as task_id,
+        a.score as score,
+        a.mission_template_id as mission_template_id,
+        tem.score as full
+        from cr_task as a
+        inner join
+        (select max(id) as id from cr_task where
+        user_id = #{userId} and score is not null and mission_template_id in
+        <foreach collection="missionTemplateIds" item="missionTemplateId" open="(" close=")" separator=",">
+            #{missionTemplateId}
+        </foreach>
+        group by mission_template_id ) as b
+        on a.id = b.id
+        left join cr_mission_template as tem
+        on a.mission_template_id = tem.resource_id
+    </select>
+    <select id="getCompletionStatusByUserIdAndMissionTemplateIds"
+            resultType="com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus">
+        select mission_template_id as resource_id,
+        count(user_answer) as status
+        from cr_task
+        where user_id = #{userId}
+        and mission_template_id in
+        <foreach collection="missionTemplateIds" separator="," item="missionTemplateId" open="(" close=")">
+            #{missionTemplateId}
+        </foreach>
+        group by mission_template_id
     </select>
 
 </mapper>

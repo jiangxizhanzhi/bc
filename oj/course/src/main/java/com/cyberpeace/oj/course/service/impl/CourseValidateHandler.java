@@ -1,18 +1,20 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
-import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -21,7 +23,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +46,9 @@ public class CourseValidateHandler {
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+
 	/**
 	 * 校验课时更新时 名称是否已存在
 	 * @param existLesson
@@ -62,14 +67,20 @@ public class CourseValidateHandler {
 	 * 校验课时修改是否存在场景信息
 	 * @param courseLesson
 	 */
-	public void validateLessonUpdateSceneExist(CourseLesson courseLesson) {
+	public void validateLessonUpdateSceneExist(CourseLesson courseLesson,
+			JSONObject ojSceneConfig) {
 
 		List<OjLocalScene> webScenes = ojLocalSceneMapper
 				.selectByBusiness(courseLesson.getResourceId(), true);
 		List<OjLocalScene> adminScenes = ojLocalSceneMapper
 				.selectByBusiness(courseLesson.getResourceId(), false);
 
-		if (CollectionUtils.isNotEmpty(webScenes) || CollectionUtils.isNotEmpty(adminScenes)) {
+		// 无场景 不校验
+		if (CollectionUtils.isEmpty(webScenes) && CollectionUtils.isEmpty(adminScenes)) {
+			return;
+		}
+
+		if (!remoteTopoService.equalTopo(ojSceneConfig, courseLesson.getTopoId())) {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}

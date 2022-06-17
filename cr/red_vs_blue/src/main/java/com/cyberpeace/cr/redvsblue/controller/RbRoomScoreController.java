@@ -7,7 +7,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -83,6 +85,7 @@ public class RbRoomScoreController {
 
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId,
 			@ApiParam(name = "role_group", value = "角色id", required = true) Integer role_group) {
@@ -169,6 +172,7 @@ public class RbRoomScoreController {
 
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<StudentScoreRsp> getStudentScore(
 			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
@@ -182,6 +186,7 @@ public class RbRoomScoreController {
 
 	@ApiOperation("提交学员评分")
 	@PostMapping("/student_score")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
 			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
 		rbRoomService.checkRefereePermission(studentScoreReq.getRoomId(),
@@ -195,6 +200,7 @@ public class RbRoomScoreController {
 
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
 			value = "学员评分") @RequestBody SubmitEvaluationReq submitEvaluationReq) {
 		rbRoomService.checkRefereePermission(submitEvaluationReq.getRoomId(),
@@ -209,6 +215,7 @@ public class RbRoomScoreController {
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
 
@@ -225,6 +232,7 @@ public class RbRoomScoreController {
 	 */
 	@ApiOperation("获取学员动态事件")
 	@GetMapping("/get_user_mission_dynamic")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
 			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
 			@ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
@@ -244,6 +252,7 @@ public class RbRoomScoreController {
 	 */
 	@ApiOperation("获取任务信息统计")
 	@GetMapping("/get_training_mission_report")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
 			@ApiParam(name = "role_group", value = "角色id", required = true) Integer role_group) {
@@ -266,6 +275,7 @@ public class RbRoomScoreController {
 	 */
 	@ApiOperation("获取用户训练记录")
 	@GetMapping("/get_training_record")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionSchemeObject<TrainingRecordMissionRsp>>> getTrainingRecord(
 			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
@@ -285,6 +295,7 @@ public class RbRoomScoreController {
 	 */
 	@ApiOperation("获取用户训练报告")
 	@GetMapping("/get_training_report")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TrainingReport> getTrainingReport(
 			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
 			@ApiParam(name = "role_group", value = "角色id", required = true) Integer role_group) {
@@ -326,6 +337,7 @@ public class RbRoomScoreController {
 	 */
 	@ApiOperation("查询训练角色得分信息")
 	@GetMapping("/get_role_score_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RoleScore>> getRoleScoreInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		List<RoleScore> data = rbRoomScoreService.getRoleScoreInfo(resource_id);
@@ -340,6 +352,7 @@ public class RbRoomScoreController {
 	 */
 	@ApiOperation("查询任务状态")
 	@GetMapping("/missions_statistics")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionsStatistic>> getMissionsStatistics(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		rbRoomService.checkDirectorPermission(resource_id,

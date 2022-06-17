@@ -36,10 +36,16 @@ public class AdminLessonStatisticsDetailRes implements Serializable {
     @ApiModelProperty("是否提交报告")
     private Boolean isReport;
 
-    @ApiModelProperty("姓名")
+    @ApiModelProperty("创建人")
     private String createUser;
 
     @ApiModelProperty("答题记录")
     private String record;
+
+    @ApiModelProperty("用户名")
+    private String userName;
+
+    @ApiModelProperty("姓名")
+    private String name;
 
 }

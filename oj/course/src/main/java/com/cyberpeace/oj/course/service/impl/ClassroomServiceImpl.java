@@ -1,26 +1,56 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.ExcelHeader;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.room.DashboardFriend;
+import com.cyberpeace.common.model.room.DashboardGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteAdService;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
-import com.cyberpeace.oj.course.service.ClassroomSceneService;
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.JsonKeyConstant;
+import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
+import com.cyberpeace.oj.ojbase.constant.ClassroomType;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -32,31 +62,17 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.service.ClassroomService;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
+import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
+import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -113,6 +129,33 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	@Autowired
+	private PaperMapper paperMapper;
+
+	@Autowired
+	private LessonPaperEvaluateMapper lessonPaperEvaluateMapper;
+
+	@Autowired
+	private PracticeTheoryRefService practiceTheoryRefService;
+
+	@Autowired
+	private PracticeOperationRefService practiceOperationRefService;
+
+	@Autowired
+	private TrainPlanMapper trainPlanMapper;
+
+	@Autowired
+	private RemoteAdService remoteAdService;
+
+	@Autowired
+	private CrRoleMapper crRoleMapper;
+
+	@Autowired
+	private TeamRoomMapper teamRoomMapper;
+
+	@Autowired
+	private RbRoomMapper rbRoomMapper;
+
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
 
@@ -127,6 +170,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroom.getEndTime());
 		classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
 				classroom.getStartTime(), classroom.getEndTime());
+		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+			classroomValidateHandler.validatePlanExistById(classroom.getTrainPlanId());
+		}
 
 		// 课堂基本数据获取
 		List<String> orgIds = classroomValidateHandler
@@ -135,18 +181,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroom.setResourceId(IDGeneratorUtil.getID());
 
 		// 分组数据
-		List<String> userIds = userIdsByOrgs(orgIds);
+		List<String> userIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
+
+		// 如果组织下不包含创建者则把创建者加入
 		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
 				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
 
 		// 如果课程无访问权限 把组织数据加入
-		authContext.setIsWeb(CommonConstant.TRUE);
-		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!authCourseIds.contains(classroom.getCourseId())) {
-			changeCourseOrg(course, orgIds);
-		}
-
-		// 公告发布 todo
+		boolean changCourse = changeCourse(classroom.getOrganizationId(), course);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -154,107 +196,115 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				classroomMapper.insert(classroom);
 				classroomGroupInfoService.saveBatch(groupInfoList);
-				courseMapper.updateById(course);
+				if (changCourse) {
+					courseMapper.updateById(course);
+				}
 			}
 		});
+
 		return classroom;
-	}
-
-	/**
-	 * 获取用户编号列表
-	 * @param orgIds
-	 * @return
-	 */
-	private List<String> userIdsByOrgs(List<String> orgIds) {
-
-		List<String> userIds = Lists.newArrayList();
-		for (String orgId : orgIds) {
-			List<UserInfo> userInfos = remoteUserService.ListByOrgId(orgId, false);
-			List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
-			userIds.addAll(orgUserIds);
-		}
-
-		return userIds;
-	}
-
-	/**
-	 * 修改课程可访问组织数据
-	 * @param course
-	 * @param orgIds
-	 */
-	private void changeCourseOrg(Course course, List<String> orgIds) {
-
-		if (StringUtils.isNotBlank(course.getReadAuthIds())) {
-			List<String> authOrgIds = JsonUtil.toJsonObjectArray(course.getReadAuthIds(),
-					String.class);
-			orgIds.addAll(authOrgIds);
-			List<String> distinctList = StreamApiUtils.distinct(authOrgIds);
-			course.setReadAuthIds(JsonUtil.arrayToString(distinctList));
-		}
 	}
 
 	@Override
 	public Boolean updateClassroom(Classroom classroom, AuthContext authContext) {
 
-		// 数据校验
+		// 时间校验
 		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
 				classroom.getEndTime());
 		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
 				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
+		// 课程权限校验
 		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
-		Classroom existRoom = classroomValidateHandler
-				.validateClassroomExist(classroom.getResourceId());
-		validateChangeClassroom(classroom);
-
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
+
+		// 课程表校验
+		Classroom existRoom = classroomValidateHandler
+				.validateClassroomExist(classroom.getResourceId());
+
+		// 训练计划校验
+		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+			classroomValidateHandler.validatePlanExistById(classroom.getTrainPlanId());
+		}
+
+		validateChangeClassroom(classroom);
 
 		// 组织数据获取
 		List<String> orgIds = remoteOrganizationService.childrenList(classroom.getOrganizationId(),
 				true);
 		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
-		boolean enableChange = !existRoom.getLessonId().equals(classroom.getLessonId());
-		enableChange |= !existRoom.getOrganizationId().equals(classroom.getOrganizationId());
-		enableChange &= courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
-				.getCode().intValue();
-
-		// 分组数据
-		List<ClassroomGroupInfo> groupInfos = null;
-		if (enableChange) {
-			List<String> userIdsByOrgs = userIdsByOrgs(orgIds);
-			groupInfos = classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
-					courseLesson, userIdsByOrgs, CommonConstant.ONE);
-		}
+		// 判断群组是否群组需要改变
+		boolean changeGroup = changeGroup(existRoom, classroom, courseLesson);
+		List<ClassroomGroupInfo> groupInfos = changeGroup ? reInitGroup(classroom, courseLesson)
+				: Lists.newArrayList();
 
 		// 课程修改
-		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!authCourseIds.contains(classroom.getCourseId())) {
-			changeCourseOrg(course, orgIds);
-		}
+		boolean changeCourse = changeCourse(classroom.getOrganizationId(), course);
 
-		boolean finalEnableChange = enableChange;
-		List<ClassroomGroupInfo> finalGroupInfos = groupInfos;
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				if (!classroom.getResourceId().equals(existRoom.getResourceId())) {
+				classroomMapper.updateById(classroom);
+
+				if (changeCourse) {
 					courseMapper.updateById(course);
 				}
-				classroomMapper.updateById(classroom);
-				if (finalEnableChange) {
+
+				if (changeGroup) {
 					classroomGroupInfoMapper.deleteByRoom(classroom.getResourceId());
-					if (CollectionUtils.isNotEmpty(finalGroupInfos)) {
-						classroomGroupInfoService.saveBatch(finalGroupInfos);
-					}
+					classroomGroupInfoService.saveBatch(groupInfos);
 				}
 			}
 		});
 
 		return CommonConstant.TRUE;
 
+	}
+
+	/** 判断是否需要修改课程*/
+	private boolean changeCourse(String orgId, Course course) {
+
+		// 校验是否为自定义
+		if (course.getReadAuthType().intValue() == AuthTable.AuthType.ALL_SHARE_MODE.getCode()
+				.intValue()) {
+			return CommonConstant.FALSE;
+		}
+
+		// 校验组织是否改变
+		List<String> orgIds = remoteOrganizationService.childrenList(orgId, true);
+		List<String> readIds = JsonUtil.toJsonObjectArray(course.getReadAuthIds(), String.class);
+		if (readIds.containsAll(orgIds)) {
+			return CommonConstant.FALSE;
+		}
+
+		// 将不存在的组织加入到授权中
+		readIds.addAll(orgIds);
+		List<String> finalIds = StreamApiUtils.distinct(readIds);
+		course.setReadAuthIds(JsonUtil.arrayToString(finalIds));
+
+		return CommonConstant.TRUE;
+	}
+
+	/** 判断是否修改群组*/
+	private boolean changeGroup(Classroom current, Classroom update, CourseLesson courseLesson) {
+		boolean enableChange = !current.getLessonId().equals(update.getLessonId());
+		enableChange |= !current.getOrganizationId().equals(update.getOrganizationId());
+		enableChange &= courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
+				.getCode().intValue();
+
+		return enableChange;
+	}
+
+	/** 出新初始化分组数据*/
+	private List<ClassroomGroupInfo> reInitGroup(Classroom classroom, CourseLesson courseLesson) {
+
+		// 用户查询及校验
+		List<String> orgUserIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
+		return classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
+				courseLesson, orgUserIds, CommonConstant.ONE);
 	}
 
 	/**
@@ -267,8 +317,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper
 				.selectByRoom(classroom.getResourceId());
 		List<String> groupIds = StreamApiUtils.map(groupInfos, ClassroomGroupInfo::getResourceId);
-		List<OjLocalScene> localScenes = ojLocalSceneMapper.selectByGroupIds(groupIds);
 
+		// 无群组则无场景
+		if (CollectionUtils.isEmpty(groupIds)) {
+			return;
+		}
+
+		List<OjLocalScene> localScenes = ojLocalSceneMapper.selectByGroupIds(groupIds);
 		if (CollectionUtils.isNotEmpty(localScenes)) {
 			log.error("Classroom has scene is running! classroom_id=[{}]",
 					classroom.getResourceId());
@@ -294,14 +349,28 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			return Lists.newArrayList();
 		}
 
-		// 查询转换数据
+		// 课程表数据查询
 		List<Classroom> classrooms = classroomMapper.selectListByCourse(authCourseIds,
 				roomListQuery);
 		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
 				classroom -> entityToBo(classroom));
 
+		// 单兵 团队 红蓝对抗
+		List<ClassroomBo> crClassroom = crClassroom(roomListQuery.getStartTime(),
+				roomListQuery.getEndTime(), authContext.getUserId());
+		classroomBos.addAll(crClassroom);
+
+		// 竞赛赛事
+		List<ClassroomBo> adClassroom = adClassroom(roomListQuery.getStartTime(),
+				roomListQuery.getEndTime(),
+				authContext.getSuperAdmin() ? CommonConstant.EMPTY_STRING
+						: authContext.getUserId());
+		classroomBos.addAll(adClassroom);
+
 		// 根据开始时间转换为map
-		Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(classroomBos,
+		List<ClassroomBo> splitTimeBos = StreamApiUtils.flatMap(classroomBos,
+				classroomBo -> splitTimeByDay(classroomBo));
+		Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(splitTimeBos,
 				classroomBo -> TimeUtil.format6(classroomBo.getStartTime()));
 
 		// 对key进行排序
@@ -314,6 +383,132 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			scheduleBo.setClassrooms(startTimeMap.get(key));
 			return scheduleBo;
 		});
+	}
+
+	/** 数据拆分，数据不能跨天，跨几天则为几条*/
+	private List<ClassroomBo> splitTimeByDay(ClassroomBo classroomBo) {
+
+		List<ClassroomBo> classroomBos = Lists.newArrayList(classroomBo);
+
+		// 不跨天则直接返回
+		long intervalDay = TimeUtil.getIntervalDay(classroomBo.getStartTime(),
+				classroomBo.getEndTime());
+		if (intervalDay == CommonConstant.ZERO) {
+			return classroomBos;
+		}
+
+		// 跨天
+		for (long i = 1; i <= intervalDay; i++) {
+
+			ClassroomBo preBo = classroomBos.get((int) (i - CommonConstant.ONE));
+			Date addDate = TimeUtil.addDates(classroomBo.getStartTime(), (int) i);
+			Date endOfDay = TimeUtil.getEndOfDay(addDate);
+			Date startOfDay = TimeUtil.getStartOfDay(addDate);
+
+			// 如果结束时间刚好等于下一天的零点 则不扩展 并且把上一个的结束时间改为课程表的结束时间
+			if (classroomBo.getEndTime().equals(startOfDay)
+					|| classroomBo.getEndTime().before(startOfDay)) {
+				preBo.setEndTime(classroomBo.getEndTime());
+				break;
+			}
+
+			ClassroomBo copy = BeanUtils.copy(classroomBo, ClassroomBo.class);
+			copy.setStartTime(startOfDay);
+			copy.setEndTime(endOfDay);
+			classroomBos.add(copy);
+		}
+
+		// 如果多于一个，说明跨天 则将第一个课程表结束时间改为开始当日的最后一秒
+		if (classroomBos.size() > CommonConstant.ONE.intValue()) {
+			classroomBos.get(classroomBos.size() - CommonConstant.ONE)
+					.setEndTime(classroomBo.getEndTime());
+			classroomBo.setEndTime(TimeUtil.getEndOfDay(classroomBo.getStartTime()));
+		}
+
+		return classroomBos;
+
+	}
+
+	/**
+	 * 竞赛比赛
+	 * @param startTime
+	 * @param endTime
+	 * @param userId
+	 * @return
+	 */
+	private List<ClassroomBo> adClassroom(Date startTime, Date endTime, String userId) {
+
+		List<CalendarCompetitionBo> competitionBos = remoteAdService.competitionList(startTime,
+				endTime, userId);
+		return StreamApiUtils.map(competitionBos,
+				calendar -> BeanUtils.copy(calendar, ClassroomBo.class));
+	}
+
+	/**
+	 * 团队训练 红蓝对抗
+	 * @param startTime
+	 * @param endTime
+	 * @param userId
+	 * @return
+	 */
+	private List<ClassroomBo> crClassroom(Date startTime, Date endTime, String userId) {
+
+		List<ClassroomBo> classroomBos = Lists.newArrayList();
+
+		List<String> rbIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		if (CollectionUtils.isNotEmpty(rbIds)) {
+			List<RbRoom> rbRooms = rbRoomMapper.selectBatchIds(rbIds);
+			List<RbRoom> rooms = StreamApiUtils.filter(rbRooms,
+					rbRoom -> startTime.before(rbRoom.getStartTime())
+							&& endTime.after(rbRoom.getStartTime()));
+			classroomBos.addAll(StreamApiUtils.map(rooms, rbRoom -> rbClassroom(rbRoom, userId)));
+		}
+
+		List<String> teamIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		if (CollectionUtils.isNotEmpty(teamIds)) {
+			List<TeamRoom> teamRooms = teamRoomMapper.selectBatchIds(teamIds);
+			List<TeamRoom> filter = StreamApiUtils.filter(teamRooms,
+					teamRoom -> startTime.before(teamRoom.getStartTime())
+							&& endTime.after(teamRoom.getStartTime()));
+			classroomBos.addAll(
+					StreamApiUtils.map(filter, teamRoom -> teamClassroom(teamRoom, userId)));
+		}
+
+		return classroomBos;
+	}
+
+	/** 团队训练房间数据转换*/
+	private ClassroomBo teamClassroom(TeamRoom teamRoom, String userId) {
+		ClassroomBo classroomBo = new ClassroomBo();
+		classroomBo.setName(teamRoom.getName());
+		classroomBo.setResourceId(teamRoom.getResourceId());
+		classroomBo.setClassify(ClassroomType.TEAM.getCode());
+		classroomBo.setCreateUserId(teamRoom.getCreateUserId());
+		classroomBo.setStartTime(teamRoom.getStartTime());
+		classroomBo.setEndTime(teamRoom.getEndTime());
+
+		CrRole role = crRoleMapper.getCrRoleByRoomIdAndUserId(teamRoom.getResourceId(), userId);
+		classroomBo.setRoleGroup(role.getRoleGroup());
+		return classroomBo;
+	}
+
+	/** 红蓝房间转换*/
+	private ClassroomBo rbClassroom(RbRoom rbRoom, String userId) {
+		ClassroomBo classroomBo = new ClassroomBo();
+		classroomBo.setClassify(ClassroomType.RB.getCode());
+		classroomBo.setName(rbRoom.getName());
+		classroomBo.setResourceId(rbRoom.getResourceId());
+
+		classroomBo.setCreateUserId(rbRoom.getCreateUserId());
+		classroomBo.setStartTime(rbRoom.getStartTime());
+		classroomBo.setEndTime(rbRoom.getEndTime());
+
+		CrRole role = crRoleMapper.getCrRoleByRoomIdAndUserId(rbRoom.getResourceId(), userId);
+		classroomBo.setRoleGroup(role.getRoleGroup());
+
+		return classroomBo;
 	}
 
 	@Override
@@ -340,37 +535,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		List<ClassroomMonitorBo> monitorBos = StreamApiUtils.map(userInfos,
 				userInfo -> userToMonitorBo(userInfo, signMap));
-
-		// 页面获取
-		List<String> nodeIds = StreamApiUtils.map(signList, ClassroomSign::getNodeId);
-		if (CollectionUtils.isNotEmpty(nodeIds)) {
-			List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper
-					.selectByRoom(classroomId);
-			List<String> sceneIds = StreamApiUtils.map(groupInfoList, groupInfo -> {
-				OjLocalScene ojLocalScene = ojLocalSceneMapper
-						.selectGroupScene(groupInfo.getResourceId());
-				if (null == ojLocalScene) {
-					return null;
-				}
-
-				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-				return localScene.getMpSceneId();
-			});
-
-			JSONArray nodeSessions = remoteSceneService.getNodeSessions(sceneIds, nodeIds, null,
-					ClassroomSign.SessionType.ASSISTANCE.getType());
-			List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
-					.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
-			Map<String, String> userAssistanceMap = StreamApiUtils.toMap(filterList,
-					object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
-					object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
-
-			monitorBos.forEach(classroomMonitorBo -> classroomMonitorBo
-					.setHelpUrl(classroomMonitorBo.getNeedHelp()
-							? userAssistanceMap.get(classroomMonitorBo.getUserId())
-							: null));
-
-		}
 
 		return PageUtil.getListResult(monitorBos, page, monitorBos.size());
 
@@ -411,8 +575,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				true);
 		List<String> orgUserIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
 		List<ClassroomSign> signList = classroomSignMapper.selectByRoom(classroom.getResourceId());
-		List<ClassroomSign> signIns = StreamApiUtils.filter(signList, ClassroomSign::getSignIn);
+		List<ClassroomSign> signIns = StreamApiUtils.filter(signList,
+				classroomSign -> orgUserIds.contains(classroomSign.getUserId())
+						&& classroomSign.getSignIn());
 		List<String> signUsers = StreamApiUtils.map(signIns, ClassroomSign::getUserId);
+
 		// 查询所有笔记
 		List<Note> notes = new ArrayList<>();
 		// 仅统计签到过的用户
@@ -447,6 +614,264 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		return statisticBo;
 	}
 
+	/**
+	 * 课堂习题数据处理
+	 *
+	 * @param paperEvaluate
+	 * @param paper
+	 * @return
+	 */
+	private Map<String, LessonPracticeListBo> handlerPractice(LessonPaperEvaluate paperEvaluate,
+			Paper paper, Boolean viewAnswer, AuthContext authContext, String lessonId) {
+
+		Map<String, PracticeSolvedBo> solvedBoMap = Maps.newHashMap();
+		if (null != paperEvaluate) {
+			// 获取解题记录
+			List<PracticeSolvedBo> solvedBos = JsonUtil.toJsonObjectArray(paperEvaluate.getRecord(),
+					PracticeSolvedBo.class);
+			solvedBoMap.putAll(StreamApiUtils.toMap(solvedBos, PracticeSolvedBo::getResourceId,
+					practiceSolvedBo -> practiceSolvedBo));
+		}
+
+		// 查询习题内容 转换数据类型
+		List<OperationLessonBo> operationLessonBos = practiceOperationRefService
+				.selectByPaperId(lessonId, paper.getResourceId(), viewAnswer, false, authContext);
+
+		// 实操习题转换
+		List<LessonOperationBo> lessonOperationBos = StreamApiUtils.map(operationLessonBos,
+				operationBo -> {
+					LessonOperationBo lessonOperationBo = BeanUtils.copy(operationBo,
+							LessonOperationBo.class);
+					lessonOperationBo
+							.setResolvedDetail(solvedBoMap.get(operationBo.getResourceId()));
+					return lessonOperationBo;
+				});
+
+		// 理论习题转换
+		List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService
+				.selectByPaper(paper.getResourceId(), viewAnswer);
+		List<LessonTheoryBo> theoryBoList = StreamApiUtils.map(theoryLessonBos, theoryLessonBo -> {
+			LessonTheoryBo theoryBo = BeanUtils.copy(theoryLessonBo, LessonTheoryBo.class);
+			theoryBo.setResolvedDetail(solvedBoMap.get(theoryBo.getResourceId()));
+			return theoryBo;
+		});
+
+		// 理论习题数据分组
+		Map<Integer, List<LessonTheoryBo>> practiceMap = StreamApiUtils.groupBy(theoryBoList,
+				TheoryLessonBo::getQuestionType);
+
+		// 新建map存储数据
+		Map<Integer, List<? extends TheoryLessonBo>> allMap = Maps.newHashMap();
+		allMap.putAll(practiceMap);
+		if (CollectionUtils.isNotEmpty(lessonOperationBos)) {
+			allMap.put(PracticeTheory.TheoryType.OPERATION.getCode(), lessonOperationBos);
+		}
+
+		// 组装习题数据
+		Map<String, LessonPracticeListBo> listBoMap = Maps.newHashMap();
+		allMap.forEach((key, value) -> {
+			Double totalScore = StreamApiUtils.mapToDouble(value, TheoryLessonBo::getScore);
+			LessonPracticeListBo practiceListBo = new LessonPracticeListBo();
+			practiceListBo.setPracticeBos(value);
+			practiceListBo.setCount(value.size());
+			practiceListBo.setTotalScore(totalScore);
+			listBoMap.put(EnumUtils.getEnumDescByCode(key, PracticeTheory.TheoryType.class),
+					practiceListBo);
+		});
+
+		return listBoMap;
+	}
+
+	@Override
+	public ClassroomPracticeDetailBo practiceDetail(String classroomId, String lessonId,
+			String userId) {
+		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
+
+		// 课后练习评估数据查询
+		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper.selectByUserAndLesson(userId,
+				lessonId);
+
+		if (null == paperEvaluate) {
+			return null;
+		}
+
+		Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+
+		// 提交用户处理
+		UserInfo userInfo = remoteUserService.getById(userId);
+		AuthContext authContext = new AuthContext();
+		authContext.setUserId(userInfo.getUserId());
+		authContext.setIsWeb(false);
+
+		// 处理习题数据
+		Map<String, LessonPracticeListBo> handlerPractice = handlerPractice(paperEvaluate, paper,
+				true, authContext, lessonId);
+
+		// 习题总数
+		Integer practiceCount = 0;
+		for (LessonPracticeListBo item : handlerPractice.values()) {
+			practiceCount += item.getCount();
+		}
+
+		ClassroomPracticeDetailBo classroomPracticeDetailBo = ClassroomPracticeDetailBo.builder()
+				.lessonName(courseLesson.getName()).build();
+		classroomPracticeDetailBo.setAccuracy(paperEvaluate.getAccuracy());
+		classroomPracticeDetailBo.setLevel(paperEvaluate.getLevel());
+		classroomPracticeDetailBo.setSubmitUserName(userInfo.getName());
+		classroomPracticeDetailBo.setPracticeList(handlerPractice);
+		classroomPracticeDetailBo.setPracticeCount(practiceCount);
+		return classroomPracticeDetailBo;
+	}
+
+	@Override
+	public ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext cpContext, Page page) {
+
+		// 判断练习是否下发
+		CourseLesson courseLesson = courseValidateHandler
+				.validateLessonExist(cpContext.getLessonId(), false);
+
+		Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+		String readAuthIds = paper.getReadAuthIds();
+		if (null == readAuthIds) {
+			readAuthIds = "[]";
+		}
+
+		boolean isReleased = true;
+		boolean hasPractice = true;
+		if (!readAuthIds.contains(cpContext.getOrganizationId())) {
+			isReleased = false;
+			if (paper.getPracticeCount().equals(0)) {
+				hasPractice = false;
+			}
+		}
+
+		ClassroomPracticeBo classroomPracticeBo = ClassroomPracticeBo.builder()
+				.hasPractice(hasPractice).released(isReleased).build();
+
+		if (hasPractice) {
+			List<UserInfo> userInfoList = remoteUserService
+					.ListByOrgId(cpContext.getOrganizationId(), true);
+			List<String> userIds = Lists.newArrayList();
+
+			// 姓名搜索
+			String username = cpContext.getUsername();
+			boolean searchName = StringUtils.isNotBlank(username);
+			for (UserInfo userInfo : userInfoList) {
+				if (searchName) {
+					if (!userInfo.getName().contains(username)) {
+						continue;
+					}
+				}
+				userIds.add(userInfo.getUserId());
+			}
+
+			List<PracticePaperEvaluateBo> practiceInfos = Lists.newArrayList();
+
+			if (userIds.isEmpty()) {
+				ListRsp<PracticePaperEvaluateBo> practiceInfosRsp = PageUtil
+						.getListResult(practiceInfos, page, 0);
+				classroomPracticeBo.setData(practiceInfosRsp);
+				return classroomPracticeBo;
+			}
+
+			List<LessonPaperEvaluate> lessonPaperEvaluates = lessonPaperEvaluateMapper
+					.selectByLessonAndUsers(userIds, cpContext.getLessonId());
+
+			Map<String, LessonPaperEvaluate> idToObj = StreamApiUtils.toMap(lessonPaperEvaluates,
+					LessonPaperEvaluate::getSubmitUserId,
+					lessonPaperEvaluate -> lessonPaperEvaluate);
+
+			Map<String, String> userIdToName = Maps.newHashMap();
+			Map<String, String> OrgIdToName = Maps.newHashMap();
+
+			for (UserInfo userInfo : userInfoList) {
+				if (!userIds.contains(userInfo.getUserId())) {
+					continue;
+				}
+
+				PracticePaperEvaluateBo practicePaperEvaluateBo = new PracticePaperEvaluateBo();
+
+				// 判断是否已提交
+				Boolean isCommitted = cpContext.getIsCommit();
+				// 判断是否已批改
+				Boolean isMarked = cpContext.getIsMark();
+
+				LessonPaperEvaluate lessonPaperEvaluate = idToObj.get(userInfo.getUserId());
+
+				if (null != isCommitted) {
+					if (isCommitted && null == lessonPaperEvaluate) {
+						continue;
+					}
+					if (!isCommitted && null != lessonPaperEvaluate) {
+						continue;
+					}
+				}
+
+				if (null != lessonPaperEvaluate) {
+
+					Integer level = lessonPaperEvaluate.getLevel();
+
+					if (null != isMarked) {
+						if (isMarked && null == level) {
+							continue;
+						}
+						if (!isMarked && null != level) {
+							continue;
+						}
+					}
+
+					if (level != null) {
+						practicePaperEvaluateBo.setCorrectTime(lessonPaperEvaluate.getUpdateTime());
+					}
+
+					practicePaperEvaluateBo.setSubmitState(true);
+					practicePaperEvaluateBo.setAccuracy(lessonPaperEvaluate.getAccuracy());
+					practicePaperEvaluateBo.setLevel(level);
+					practicePaperEvaluateBo.setSubmitTime(lessonPaperEvaluate.getCreateTime());
+
+					String corrector = lessonPaperEvaluate.getCorrector();
+					if (corrector != null) {
+						if (userIdToName.containsKey(corrector)) {
+							corrector = userIdToName.get(corrector);
+						} else {
+							String corrector_name = remoteUserService.getById(corrector).getName();
+							userIdToName.put(corrector, corrector_name);
+							corrector = corrector_name;
+						}
+					}
+					practicePaperEvaluateBo.setCorrector(corrector);
+
+				} else if (null != isMarked && isMarked) {
+					continue;
+				}
+
+				practicePaperEvaluateBo.setName(userInfo.getName());
+				practicePaperEvaluateBo.setUserId(userInfo.getUserId());
+				practicePaperEvaluateBo.setUsername(userInfo.getUserName());
+				// 组织信息查询
+				String organizationId = userInfo.getOrganizationId();
+				if (null != organizationId) {
+					String orgName = OrgIdToName.get(organizationId);
+					if (null == orgName) {
+						orgName = remoteOrganizationService
+								.orgNameById(userInfo.getOrganizationId());
+						OrgIdToName.put(organizationId, orgName);
+					}
+					practicePaperEvaluateBo.setOrganizationName(orgName);
+				}
+
+				practiceInfos.add(practicePaperEvaluateBo);
+
+			}
+			ListRsp<PracticePaperEvaluateBo> practiceInfosRsp = PageUtil
+					.getListResult(practiceInfos, page, practiceInfos.size());
+			classroomPracticeBo.setData(practiceInfosRsp);
+
+		}
+
+		return classroomPracticeBo;
+	}
+
 	@Override
 	public Integer deleteClassroom(String classroomId, AuthContext authContext) {
 
@@ -463,6 +888,447 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				return classroomMapper.deleteById(classroomId);
 			}
 		});
+	}
+
+	@Override
+	public DashboardInfo getChatUsers(String roomId, UserInfo userContext) {
+
+		Classroom classroom = classroomMapper.selectById(roomId);
+		if (null == classroom) {
+			log.error("classroom not found! classroom_id=[{}]", roomId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper.selectByRoom(roomId);
+		List<String> userIds = StreamApiUtils.distinctFlatMap(groupInfoList,
+				groupInfo -> JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class));
+		if (CollectionUtils.isEmpty(userIds)) {
+			log.error("Classroom user is null! classroom_id=[{}]", roomId);
+			return null;
+		}
+
+		// 将超级管理员和创建者内置进去
+		if (!userIds.contains(ResourceImportConstant.SUPER_ADMIN_HASH)) {
+			userIds.add(ResourceImportConstant.SUPER_ADMIN_HASH);
+		}
+		if (!userIds.contains(classroom.getCreateUserId())) {
+			userIds.add(classroom.getCreateUserId());
+		}
+
+		// 获取用户组装
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		DashboardInfo dashboardInfo = new DashboardInfo();
+		List<DashboardUser> friendUsers = Lists.newArrayList();
+
+		for (String userId : userIds) {
+			UserInfo userInfo = userInfoMap.get(userId);
+			if (userInfo == null) {
+				log.error("Some users are missing! user_id=[{}]", userId);
+				continue;
+			}
+			DashboardUser dashboardUser = userToDashUser(userInfo, ClassroomRole.STUDENT.getDesc());
+
+			// 如果用户为课程表创建者则为教员
+			if (userId.equals(classroom.getCreateUserId())) {
+				dashboardUser.setRole(ClassroomRole.TEACHER.getDesc());
+			}
+
+			// 如果是当前用户不加进朋友列表 进入下一次循环
+			if (userContext.getUserId().equals(userId)) {
+				dashboardInfo.setMine(dashboardUser);
+				continue;
+			}
+
+			friendUsers.add(dashboardUser);
+		}
+
+		// 如果超级管理员或者创建者不在该房间中
+		if (null == dashboardInfo.getMine() && (userContext.isSuperuser()
+				|| userContext.getUserId().equals(classroom.getCreateUserId()))) {
+			String role = userContext.getUserId().equals(classroom.getCreateUserId())
+					? ClassroomRole.TEACHER.getDesc()
+					: ClassroomRole.STUDENT.getDesc();
+			DashboardUser mine = userToDashUser(userContext, role);
+			dashboardInfo.setMine(mine);
+		}
+
+		// 好友列表组装
+		DashboardFriend dashboardFriend = new DashboardFriend();
+		dashboardFriend.setGroupname(DashboardFriend.GROUP_NAME.FRIEND_LIST.getDesc());
+		dashboardFriend.setId(CommonConstant.ONE);
+		dashboardFriend.setList(friendUsers);
+		dashboardInfo.setFriend(Lists.newArrayList(dashboardFriend));
+
+		// 群组组装
+		DashboardGroup group = new DashboardGroup(ClassroomRole.CLASSROOM.getDesc());
+		group.setId(classroom.getResourceId());
+		group.setMembers(userIds);
+		dashboardInfo.setGroup(Lists.newArrayList(group));
+
+		return dashboardInfo;
+	}
+
+	@Override
+	public List<DashboardUser> getChatGroupUsers(String roomId, String groupId) {
+
+		// 课堂数据校验
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(roomId);
+
+		// 用户信息获取
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
+				true);
+		if (CollectionUtils.isEmpty(userInfos)) {
+			return Lists.newArrayList();
+		}
+
+		// 超级管理员和创建者加入
+		Map<String, String> userMap = StreamApiUtils.toMap(userInfos, UserInfo::getUserId,
+				UserInfo::getUserId);
+		if (null == userMap.get(ResourceImportConstant.SUPER_ADMIN_HASH)) {
+			UserInfo superAdmin = remoteUserService
+					.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
+			userInfos.add(superAdmin);
+		}
+		if (null == userMap.get(classroom.getCreateUserId())) {
+			UserInfo create = remoteUserService.getById(classroom.getCreateUserId());
+			userInfos.add(create);
+		}
+
+		// 数据转换
+		return StreamApiUtils.map(userInfos, userInfo -> {
+			DashboardUser dashboardUser = userToDashUser(userInfo, ClassroomRole.STUDENT.getDesc());
+			if (userInfo.getUserId().equals(classroom.getCreateUserId())) {
+				dashboardUser.setRole(ClassroomRole.TEACHER.getDesc());
+			}
+			return dashboardUser;
+		});
+	}
+
+	@Override
+	public List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover) {
+
+		// excel数据读取
+		ExcelDataHandler dataHandler = new ExcelDataHandler(realPath, CommonConstant.ZERO);
+		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
+
+		// 基本数据校验
+		validateDataLength(sheetData);
+
+		// 数据解析
+		List<Classroom> classrooms = Lists.newArrayList();
+		Map<String, TrainPlan> trainPlanMap = Maps.newHashMap();
+		Map<String, String> orgMap = Maps.newHashMap();
+
+		for (int i = CommonConstant.ONE; i <= sheetData.size(); i++) {
+
+			// 空数据不管
+			if (!validateEmptyData(sheetData.get(i - CommonConstant.ONE), i)) {
+				continue;
+			}
+
+			// 解析行
+			TrainPlan trainPlan = parseTrainPlan(sheetData.get(i - CommonConstant.ONE),
+					userInfo.getUserId(), cover, i, trainPlanMap);
+
+			// 训练计划是否可覆盖 任务是否存在开始的
+			validatePlanStartAndExist(trainPlan.getResourceId(), trainPlan.getName(), cover, i);
+
+			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo, i,
+					orgMap);
+			Classroom existClassRoom = classroomMapper
+					.selectByOrgAndLesson(classroom.getOrganizationId(), classroom.getLessonId());
+
+			if (null != existClassRoom && (StringUtils.isBlank(existClassRoom.getTrainPlanId())
+					|| !existClassRoom.getTrainPlanId().equals(trainPlan.getResourceId()))) {
+				throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
+			}
+			classroom.setTrainPlanId(trainPlan.getResourceId());
+			classrooms.add(classroom);
+		}
+
+		// 数据库插入前 最好再次校验训练计划 防止解析时间过长
+		List<Classroom> coverRoomList = StreamApiUtils.flatMap(trainPlanMap.values(),
+				trainPlan -> getCoverRoomByPlan(trainPlan.getName(), trainPlan.getCreateUserId(),
+						cover));
+
+		List<TrainPlan> insertTrainPlan = StreamApiUtils.filter(trainPlanMap.values(),
+				trainPlan -> null == trainPlanMapper.selectById(trainPlan.getResourceId()));
+
+		// 数据库插入
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				coverRoomList.forEach(classroom -> deleteClassroom(classroom.getResourceId(),
+						AuthContextUtils.constructAuth(userInfo, false)));
+				insertTrainPlan.forEach(trainPlan -> trainPlanMapper.insert(trainPlan));
+				saveBatch(classrooms);
+			}
+		});
+
+		return classrooms;
+	}
+
+	/** 校验数据长度*/
+	private void validateDataLength(List<List<String>> sheetData) {
+
+		// 数据长度校验
+		for (int i = 0; i < sheetData.size(); i++) {
+			if (sheetData.get(i).size() <= CommonConstant.FIVE) {
+				throw new BusinessException(OjBusinessErrorCode.FILE_CONTENT_MISSING,
+						i + CommonConstant.ONE);
+			}
+
+			if (sheetData.get(i).size() == CommonConstant.SIX
+					&& sheetData.get(i).contains(CommonConstant.EMPTY_STRING)) {
+				throw new BusinessException(OjBusinessErrorCode.FILE_CONTENT_MISSING,
+						i + CommonConstant.ONE);
+			}
+		}
+	}
+
+	/** 校验训练计划下课堂表是否开始 开始则提醒*/
+	private void validatePlanStartAndExist(String planId, String planName, boolean cover,
+			int rowIndex) {
+		List<Classroom> classroomList = classroomMapper.selectByPlan(planId);
+
+		if (!cover && CollectionUtils.isNotEmpty(classroomList)) {
+			throw new BusinessException(OjBusinessErrorCode.LINE_TRAIN_PLAN_EXIST, rowIndex);
+		}
+
+		classroomList.forEach(classroom -> {
+			if (classroom.getStartTime().before(new Date())) {
+				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_START_NOT_COVER,
+						planName);
+			}
+		});
+	}
+
+	@Override
+	public void exportTrainPlan(UserInfo userInfo, String filePath) {
+		// 数据查询及转换
+		List<TrainPlan> trainPlanList = trainPlanMapper.selectByUser(userInfo.getUserId());
+		List<TrainPlanExportBo> exportBoList = StreamApiUtils.flatMap(trainPlanList,
+				trainPlan -> planToExportBo(trainPlan));
+
+		// 数据导出
+		ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.TRAIN_PLAN);
+	}
+
+	/** 数据转换*/
+	private List<TrainPlanExportBo> planToExportBo(TrainPlan trainPlan) {
+		List<Classroom> classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
+		return StreamApiUtils.map(classroomList,
+				classroom -> classRoomToExportBo(trainPlan.getName(), classroom));
+	}
+
+	/** 数据转换*/
+	private TrainPlanExportBo classRoomToExportBo(String planName, Classroom classroom) {
+		TrainPlanExportBo planExportBo = new TrainPlanExportBo();
+		planExportBo.setTrainPLanName(planName);
+
+		Course course = courseMapper.selectById(classroom.getCourseId());
+		if (course == null) {
+			log.error("Classroom lesson not found! classroom_id=[{}], lesson_id=[{}]",
+					classroom.getResourceId(), classroom.getLessonId());
+			throw new BusinessException(OjBusinessErrorCode.COURSE_INFORMATION_NOT_NULL);
+		}
+
+		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
+		if (null == lesson) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		planExportBo.setCourseName(null != course ? course.getName() : CommonConstant.EMPTY_STRING);
+		planExportBo.setLessonName(null != lesson ? lesson.getName() : CommonConstant.EMPTY_STRING);
+
+		planExportBo.setStartTime(classroom.getStartTime());
+		planExportBo.setEndTime(classroom.getEndTime());
+
+		String orgPath = remoteOrganizationService.getOrgPath(classroom.getOrganizationId());
+		if (StringUtils.isBlank(orgPath)) {
+			log.error("Classroom organization is not found! classroom_id=[{}], org_id=[{}]",
+					classroom.getResourceId(), classroom.getOrganizationId());
+			throw new BusinessException(OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL);
+		}
+		planExportBo.setOrgPath(orgPath);
+
+		return planExportBo;
+	}
+
+	/**
+	 * 获取需要覆盖的
+	 * @param planName
+	 * @param userId
+	 * @param cover
+	 * @return
+	 */
+	private List<Classroom> getCoverRoomByPlan(String planName, String userId, boolean cover) {
+		TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
+		List classroomList = Lists.newArrayList();
+
+		if (null == trainPlan) {
+			return classroomList;
+		}
+
+		if (CollectionUtils
+				.isNotEmpty(classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId()))
+				&& !cover) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
+		}
+
+		return classroomList;
+	}
+
+	/**
+	 * 校验空数据
+	 * @param rowData
+	 * @return
+	 */
+	private boolean validateEmptyData(List<String> rowData, int rowIndex) {
+		if (CollectionUtils.isEmpty(rowData)
+				|| StringUtils.isBlank(String.join(CommonConstant.EMPTY_STRING, rowData))) {
+			log.error("Row data is null! rowIndex=[{}]", rowIndex);
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * 课堂数据解析
+	 * @param roomData
+	 * @param userInfo
+	 * @return
+	 */
+	private Classroom parseClassroom(List<String> roomData, UserInfo userInfo, int rowIndex,
+			Map<String, String> orgMap) {
+		String courseName;
+		if (StringUtils.isBlank(courseName = roomData.get(CommonConstant.ONE))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_IS_NULL, rowIndex);
+		}
+
+		String courseId;
+		if (StringUtils.isBlank(courseId = courseMapper.selectByName(courseName))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
+		}
+
+		String lessonName;
+		if (StringUtils.isBlank(lessonName = roomData.get(CommonConstant.TWO))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_IS_NULL, rowIndex);
+		}
+
+		String lessonId;
+		if (StringUtils.isBlank(
+				lessonId = courseLessonMapper.selectByCourseAndName(courseId, lessonName))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_EXIST, rowIndex);
+		}
+
+		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
+		if (!courseLesson.getIsPublic()) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_PUBLIC, rowIndex);
+		}
+
+		String startTime;
+		String endTime;
+		if (StringUtils.isBlank(startTime = roomData.get(CommonConstant.THREE))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
+		}
+		if (StringUtils.isBlank(endTime = roomData.get(CommonConstant.FOUR))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
+		}
+
+		// 时间格式校验
+		if (null == TimeUtil.toDate1(endTime) || null == TimeUtil.toDate1(startTime)) {
+			throw new BusinessException(OjBusinessErrorCode.TIME_FORMAT_ERROR, rowIndex);
+		}
+
+		if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(startTime))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_END_GT_START_TIME, rowIndex);
+		}
+
+		String orgTree;
+		if (StringUtils.isBlank(orgTree = roomData.get(CommonConstant.FIVE))) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL, rowIndex);
+		}
+		// 组织数据获取
+		if (StringUtils.isBlank(orgMap.get(orgTree))) {
+			String orgId = remoteOrganizationService.getOrgIdByTree(orgTree);
+			if (StringUtils.isBlank(orgId)) {
+				throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_NOT_EXIST, rowIndex);
+			} else {
+				orgMap.put(orgTree, orgId);
+			}
+		}
+
+		// 基本数据填充
+		Classroom classroom = new Classroom();
+		classroom.setCreateUserId(userInfo.getUserId());
+		classroom.setResourceId(IDGeneratorUtil.getID());
+		classroom.setCourseId(courseId);
+		classroom.setLessonId(lessonId);
+		classroom.setStartTime(TimeUtil.toDate1(startTime));
+		classroom.setEndTime(TimeUtil.toDate1(endTime));
+
+		classroom.setOrganizationId(orgMap.get(orgTree));
+		List<String> childrenList = remoteOrganizationService.childrenList(orgMap.get(orgTree),
+				true);
+		classroom.setOrganizationIds(JsonUtil.arrayToString(childrenList));
+
+		return classroom;
+	}
+
+	/**
+	 * 训练计划解析
+	 * @param rowData
+	 * @param userId
+	 * @param cover
+	 * @return
+	 */
+	private TrainPlan parseTrainPlan(List<String> rowData, String userId, Boolean cover,
+			int rowIndex, Map<String, TrainPlan> trainPlanMap) {
+
+		// 数据校验
+		String planName;
+		if (StringUtils.isBlank(planName = rowData.get(CommonConstant.ZERO))) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NAME_IS_NULL, rowIndex);
+		}
+
+		TrainPlan trainPlan;
+		if (null != (trainPlan = trainPlanMap.get(planName))) {
+			return trainPlan;
+		}
+
+		trainPlan = trainPlanMapper.selectByName(planName, userId);
+		if (null != trainPlan) {
+			trainPlanMap.put(planName, trainPlan);
+			return trainPlan;
+		}
+
+		trainPlan = new TrainPlan();
+		trainPlan.setResourceId(IDGeneratorUtil.getID());
+		trainPlan.setName(planName);
+		trainPlan.setCreateUserId(userId);
+		trainPlanMap.put(planName, trainPlan);
+
+		return trainPlan;
+	}
+
+	/**
+	 * 用户转换为聊天用户格式
+	 * @param userInfo
+	 * @param roleName
+	 * @return
+	 */
+	private DashboardUser userToDashUser(UserInfo userInfo, String roleName) {
+		DashboardUser dashboardUser = new DashboardUser();
+		dashboardUser.setAvatar(userInfo.getAvatarUrl());
+		dashboardUser.setUsername(userInfo.getName());
+		dashboardUser.setId(userInfo.getUserId());
+		dashboardUser.setRole(roleName);
+		dashboardUser.setStatus(CommonConstant.ONLINE);
+		dashboardUser.setSign(CommonConstant.EMPTY_STRING);
+		return dashboardUser;
 	}
 
 	/**
@@ -549,8 +1415,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 不及格
 		List<NoteEvaluate> notPassed = StreamApiUtils.filter(evaluates,
-				noteEvaluate -> !noteEvaluate.getPassed()
-						|| noteEvaluate.getScore() < new Double(CommonConstant.SIXTY));
+				noteEvaluate -> !noteEvaluate.getPassed());
 		gradeDistribution.setNotPass(notPassed.size());
 		if ((calculate += notPassed.size()) == total) {
 			return gradeDistribution;
@@ -560,7 +1425,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		int passed = StreamApiUtils
 				.filter(evaluates,
 						noteEvaluate -> noteEvaluate.getPassed()
-								&& noteEvaluate.getScore() >= new Double(CommonConstant.SIXTY)
 								&& noteEvaluate.getScore() < new Double(CommonConstant.EIGHTY))
 				.size();
 		gradeDistribution.setPass(passed);
@@ -704,6 +1568,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 组织信息
 		String orgName = remoteOrganizationService.orgNameById(classroom.getOrganizationId());
 		classroomBo.setOrganizationName(orgName);
+
+		String orgPath = remoteOrganizationService.getOrgPath(classroom.getOrganizationId());
+		classroomBo.setOrgPath(orgPath);
+
+		List<String> parentIds = remoteOrganizationService
+				.getParentIds(classroom.getOrganizationId());
+		classroomBo.setParentOrgIds(parentIds);
+
+		// 计划数据
+		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+			TrainPlan trainPlan = trainPlanMapper.selectById(classroom.getTrainPlanId());
+			classroomBo.setTrainPlanName(trainPlan.getName());
+		}
+
+		// 日程类型
+		classroomBo.setClassify(ClassroomType.CLASS.getCode());
 		return classroomBo;
 	}
 

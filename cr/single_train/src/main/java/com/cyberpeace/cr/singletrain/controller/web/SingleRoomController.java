@@ -2,7 +2,9 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +50,7 @@ public class SingleRoomController {
 
 	@PostMapping
 	@ApiOperation("创建")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleRoomBo> create(@RequestBody @Validated SingleRoomOpsReq req) {
 
 		SingleRoomBo singleRoomBo = singleRoomService.createRoom(req.getResourceId());
@@ -61,12 +64,14 @@ public class SingleRoomController {
 
 	@GetMapping
 	@ApiOperation("详情")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleRoomBo> get(@RequestParam("resource_id") String businessTrainId) {
 		return new BaseRsp<>(singleRoomService.getRoomInfo(businessTrainId));
 	}
 
 	@ApiOperation("单兵场景详情")
 	@GetMapping("/scene")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "resource_id", value = "业务模板id", required = true) String resource_id) {
 		SceneViewContext context = singleRoomService.viewScene(resource_id);
@@ -76,6 +81,7 @@ public class SingleRoomController {
 
 	@DeleteMapping
 	@ApiOperation("关闭")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<Boolean> delete(@RequestBody @Validated SingleRoomOpsReq req) {
 
 		Boolean deleteRoom = singleRoomService.deleteRoom(req.getResourceId());
@@ -91,12 +97,14 @@ public class SingleRoomController {
 
 	@GetMapping("/list")
 	@ApiOperation("分页查询")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<ListRsp<SingleRoomListBo>> list(SingleTrainListReq queryParams) {
 		return new BaseRsp<>(singleRoomService.getSingleTrainPageList(queryParams));
 	}
 
 	@PostMapping("/mission_submit")
 	@ApiOperation("任务提交")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<Boolean> submitMission(@RequestBody @Validated SubmitMissionReq requestData) {
 		// todo mission refactor
 		CrCommonValidator.checkStringExist(requestData.getAnswer(),
@@ -108,6 +116,7 @@ public class SingleRoomController {
 
 	@GetMapping("/mission")
 	@ApiOperation("任务获取")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleMissionBo> mission(@RequestParam("resource_id") String businessTemplateId,
 			@RequestParam("mission_id") String missionId) {
 		// todo mission refactor
@@ -116,6 +125,7 @@ public class SingleRoomController {
 
 	@GetMapping("/train_manual")
 	@ApiOperation("训练手册")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	// todo mission refactor
 	public BaseRsp<String> trainManual(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainManual(businessTemplateId));
@@ -123,6 +133,7 @@ public class SingleRoomController {
 
 	@GetMapping("/train_record")
 	@ApiOperation("训练记录")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<List<TrainRecordBo>>
 			trainRecord(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainRecord(businessTemplateId));
@@ -130,6 +141,7 @@ public class SingleRoomController {
 
 	@GetMapping("/train_record_markdown")
 	@ApiOperation("训练记录-markdown")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<String> trainRecordMd(@RequestParam("resource_id") String businessTemplateId) {
 		// todo mission refactor
 		return new BaseRsp<>(singleRoomService.getTrainRecordMarkdown(businessTemplateId));
@@ -137,6 +149,7 @@ public class SingleRoomController {
 
 	@GetMapping("/time_line")
 	@ApiOperation("训练时间线")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<TrainTimeLineBo>
 			trainTimeLine(@RequestParam("resource_id") String businessTemplateId) {
 		// todo mission refactor
@@ -145,6 +158,7 @@ public class SingleRoomController {
 
 	@ApiOperation("重启节点")
 	@PostMapping("/scene/node/restart")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom room = singleRoomService
@@ -162,6 +176,7 @@ public class SingleRoomController {
 
 	@ApiOperation("重建节点")
 	@PostMapping("/scene/node/recreate")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom room = singleRoomService
@@ -179,6 +194,7 @@ public class SingleRoomController {
 
 	@ApiOperation("训练历史")
 	@GetMapping("/train_history")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<List<TrainHistoryBo>>
 			trainHistory(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainHistory(businessTemplateId));
@@ -186,6 +202,7 @@ public class SingleRoomController {
 
 	@ApiOperation("训练提交")
 	@PostMapping("/train_submit")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<String>
 			submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
 		return new BaseRsp<>(singleRoomService.submitTrain(requestBody.getResourceId()));

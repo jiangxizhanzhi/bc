@@ -58,4 +58,6 @@ public class TeamTrainRoomContext implements Serializable {
 	private List<RoomRole> roleConfig;
 
 	private Boolean enableRecording;
+
+	private String logo;
 }

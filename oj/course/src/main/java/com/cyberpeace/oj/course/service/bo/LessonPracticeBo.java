@@ -22,4 +22,7 @@ public class LessonPracticeBo implements Serializable {
 	@ApiModelProperty("评估结果")
 	private EvaluateResult evaluateResult;
 
+	@ApiModelProperty("课时简略信息")
+	private PracticeBriefBo practiceInfo;
+
 }

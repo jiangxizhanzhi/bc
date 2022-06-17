@@ -34,4 +34,8 @@ public interface RoleMapper extends BaseMapper<Role> {
 	void copyFromPreset(String table);
 
 	List<Role> selectRoleListByIds(List<String> ids, String type);
+
+	void clearRole();
+
+	Boolean ifNameDuplicate(@Param("name") String name, @Param("resourceId") String resourceId);
 }

@@ -21,10 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -48,7 +45,10 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.constant.*;
+import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
@@ -252,7 +252,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		if (operation.getDynamicEnv() && null != operation.getSceneShareMode()
 				&& StringUtils.isNotBlank(operation.getTopoId())) {
-			practiceValidateHandler.validateOperationUpdateSceneExist(operation);
+			practiceValidateHandler.validateOperationUpdateSceneExist(operation, ojSceneConfig);
 		}
 
 		// topo更新
@@ -847,7 +847,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 题解 题解文件拷贝
 		if (StringUtils.isNotBlank(operation.getWriteup())) {
-			List<String> matchList = LocalStringUtil.getMatchStr(operation.getWriteup(),
+			String content = MdUtil.filterCodeContent(operation.getWriteup());
+			List<String> matchList = LocalStringUtil.getMatchStr(content,
 					PatternConstant.MARKDOWN_IMAGE);
 			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
 					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
@@ -976,7 +977,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 题解
 		if (StringUtils.isNotBlank(dumpLoadBo.getWriteup())) {
-			List<String> matchList = LocalStringUtil.getMatchStr(dumpLoadBo.getWriteup(),
+			String filterCodeContent = MdUtil.filterCodeContent(dumpLoadBo.getWriteup());
+			List<String> matchList = LocalStringUtil.getMatchStr(filterCodeContent,
 					PatternConstant.MARKDOWN_IMAGE);
 			List<String> matchPathList = StreamApiUtils.map(matchList, matchStr -> LocalStringUtil
 					.getFirstMatchStr(matchStr, PatternConstant.MARKDOWN_IMAGE_URL));
@@ -997,7 +999,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				String fileUrl = utilService.handlerFileUrl(storePath);
 				return fileUrl;
 			});
-			String content = LocalStringUtil.replaceAll(dumpLoadBo.getWriteup(), matchList,
+			String content = LocalStringUtil.replaceAll(dumpLoadBo.getWriteup(), matchPathList,
 					urlList);
 			operation.setWriteup(content);
 		}
@@ -1051,15 +1053,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				StringUtils.isBlank(flag) ? PracticeOperation.DynamicFlag.DYNAMIC.getCode()
 						: PracticeOperation.DynamicFlag.STATIC.getCode());
 		// 设置场景共享类型默认值
-		operation.setSceneShareMode(SceneShare.PRIVATE.getCode());
-
 		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
+		String sceneShareMode = (String) operationData.remove("scene_share_mode");
+		operation.setSceneShareMode(StringUtils.isNotBlank(sceneShareMode)
+				&& sceneShareMode.equals(CommonConstant.RIGHT) ? SceneShare.SHARED.getCode()
+						: SceneShare.PRIVATE.getCode());
+
 		if (StringUtils.isNotBlank(topoId)) {
 			operation.setTopoId(topoId);
-			String sceneShareMode = (String) operationData.remove("scene_share_mode");
-			operation.setSceneShareMode(
-					sceneShareMode.equals(CommonConstant.RIGHT) ? SceneShare.SHARED.getCode()
-							: SceneShare.PRIVATE.getCode());
 			operation.setDestroyDelay(CommonConstant.TWO);
 		}
 

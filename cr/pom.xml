@@ -23,6 +23,7 @@
         <module>hld</module>
         <module>team_train</module>
         <module>single_train</module>
+        <module>evaluation</module>
     </modules>
 
     <properties/>
@@ -68,11 +69,6 @@
             <artifactId>common</artifactId>
             <version>${common.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace</groupId>
-            <artifactId>common-service</artifactId>
-            <version>${common.service.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace</groupId>

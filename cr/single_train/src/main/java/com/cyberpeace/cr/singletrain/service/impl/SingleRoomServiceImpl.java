@@ -134,7 +134,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);
 		try {
-			// 单兵训练不进行任务复制, 引用原模板任务方案数据
+			// 单兵训练
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 				@Override
@@ -258,9 +258,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			return false;
 		}
 
-		// 关闭场景
-		localSceneService.stopScene(singleRoom.getLocalSceneId());
-
+		// 关闭场景，不应该被mp执行结果所堵塞
+		try {
+			localSceneService.stopScene(singleRoom.getLocalSceneId());
+		} catch (Exception e) {
+			log.error("Failed to delete mp scene", e);
+		}
 		// 删除单兵训练房间, 记录结束时间
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -336,6 +339,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 						.map(singleRoomList -> singleRoomList.getBusinessTemplate().getTopoId())
 						.collect(Collectors.toList()));
 
+		// get attack engage relation
+		List<String> attackRelatedIds = businessTemplateService.getAttackRelatedIds(template_ids);
+		List<String> engageRelatedIds = businessTemplateService.getEngageRelatedIds(template_ids);
+
 		// 拓展额外数据
 		List<SingleRoomListBo> singleRoomListBoList = Lists.newArrayList();
 		for (SingleRoomList item : selectResult.getRecords()) {
@@ -369,6 +376,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			singleRoomListBo.setLastSevenDays(dateRangeForMonth);
 			singleRoomListBo.setTemplateUseCount(trainStats.getOrDefault(
 					singleRoomListBo.getResourceId(), Lists.newArrayList(0, 0, 0, 0, 0, 0, 0)));
+
+			// set attack engage relation
+			singleRoomListBo.setIsAttackRelated(
+					attackRelatedIds.contains(singleRoomListBo.getResourceId()));
+			singleRoomListBo.setIsEngageRelated(
+					engageRelatedIds.contains(singleRoomListBo.getResourceId()));
 
 			singleRoomListBoList.add(singleRoomListBo);
 		}

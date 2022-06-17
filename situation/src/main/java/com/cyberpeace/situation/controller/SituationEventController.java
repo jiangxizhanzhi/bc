@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.controller;
 
-import com.cyberpeace.common.model.BaseRsp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.model.ws.WsMessage;
@@ -30,7 +30,7 @@ public class SituationEventController {
 
 	@ApiOperation("随机推送攻击动效信息")
 	@GetMapping("attack_event")
-	public BaseRsp<WsMessage<WsMultiNodeDynamic>> sendAttackEvent(
+	public BaseRsp<String> sendAttackEvent(
 			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id",
 					required = true) String sceneId,
 			@ApiParam(name = "action_code", value = "事件类型") @RequestParam(value = "action_code",
@@ -54,7 +54,7 @@ public class SituationEventController {
 		situationHandlerService.pushDataToRoom(data, sceneId);
 
 		// 返回消息数据
-		BaseRsp<WsMessage<WsMultiNodeDynamic>> rsp = new BaseRsp<>(wsMessage);
+		BaseRsp<String> rsp = new BaseRsp<>(JsonUtil.toJsonString(wsMessage));
 		rsp.setMessage("成功推送事件");
 		return rsp;
 	}

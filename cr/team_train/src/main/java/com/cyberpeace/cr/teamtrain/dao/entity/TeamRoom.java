@@ -56,6 +56,8 @@ public class TeamRoom extends BaseTable {
 	 */
 	private Boolean enableRecording;
 
+	private String logo;
+
 	public TeamRoom() {}
 
 	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template) {
@@ -73,6 +75,7 @@ public class TeamRoom extends BaseTable {
 		this.createUserId = createUserId;
 		this.modifyUserId = modifyUserId;
 		this.localSceneId = localSceneId;
+		this.logo = input.getLogo();
 	}
 
 	public boolean isUnopened() {

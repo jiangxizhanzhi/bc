@@ -337,6 +337,10 @@ public class MDParser {
 		// other
 		templateContext.setPeopleNumber(4);
 		templateContext.setTimeLineConfig("{}");
+		// add mission_template-business_template relation
+		for (MissionTemplate missionTemplate : missionTemplates) {
+			missionTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
+		}
 
 	}
 
@@ -425,6 +429,8 @@ public class MDParser {
 		roleInfo.setName(roleName);
 		if (!new File(mdFile).isFile()) {
 			log.warn(String.format("%s does not exist.", mdFile));
+			// role md does not exist, create empty mission scheme as default
+			roleInfo.setMissionsScheme(new MissionScheme(Lists.newArrayList()));
 			return roleInfo;
 		}
 		String mdText = stripMd(mdFile);
@@ -548,7 +554,7 @@ public class MDParser {
 			template.setOption(CrCommonConstants.NULL);
 		}
 		// answer
-		template.setAnswer(missionData.get(ZiguanConstants.ANSWER));
+		template.setAnswer(missionData.get(ZiguanConstants.ANSWER).trim());
 		// judge
 		if (template.getType().equals(ZiguanConstants.JUDGEMENT_TYPE)) {
 			template.setAnswer(ZiguanConstants.JUDGEMENT_ANSWER_MAPPING.get(template.getAnswer()));
@@ -633,10 +639,13 @@ public class MDParser {
 		List<String> lines = FileUtil.listContent(new File(mdPath));
 		StringBuilder ret = new StringBuilder();
 		String tempStr;
-		for (String line : lines) {
-			tempStr = line.trim();
+		for (int i = 0; i < lines.size(); i++) {
+			tempStr = lines.get(i).trim();
 			if (!tempStr.isEmpty()) {
-				ret.append(line).append(LINE_SEP);
+				ret.append(lines.get(i));
+				if (i < lines.size() - 1) {
+					ret.append(LINE_SEP);
+				}
 			}
 		}
 		return ret.toString();

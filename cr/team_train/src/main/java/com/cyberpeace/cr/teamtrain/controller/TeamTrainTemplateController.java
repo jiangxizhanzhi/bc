@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -79,6 +81,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
 		// set type
 		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
@@ -94,6 +97,9 @@ public class TeamTrainTemplateController {
 				// save team template
 				teamTemplate.setBusinessTemplateId(businessTemplateId);
 				teamTemplateService.save(teamTemplate);
+				// update related missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(businessTemplateId, "",
+						teamTemplate.getRoleConfig());
 			}
 		});
 		return new BaseRsp<>();
@@ -101,6 +107,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("修改")
 	@PatchMapping()
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp update(@RequestBody @Validated TeamTrainTemplateModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		TeamTemplate teamTemplate = teamTemplateService.getByTemplateBusinessId(resourceId);
@@ -109,6 +116,7 @@ public class TeamTrainTemplateController {
 			throw new ResourceNotFoundException(resourceId);
 		}
 		// update
+		String oldRoleConfig = teamTemplate.getRoleConfig();
 		reqToTeamTemplate(modifyReq, teamTemplate);
 
 		// save
@@ -118,6 +126,9 @@ public class TeamTrainTemplateController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo());
 				teamTemplateService.updateById(teamTemplate);
+				// delete&update related missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(resourceId, oldRoleConfig,
+						teamTemplate.getRoleConfig());
 			}
 		});
 
@@ -126,6 +137,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
 		businessTemplateService.checkPermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());
@@ -171,6 +183,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		teamTemplateService.batchDelete(deleteReq.getIds());
 		return new BaseRsp<>();
@@ -178,6 +191,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -206,11 +220,11 @@ public class TeamTrainTemplateController {
 
 		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
 				BaseRole.class);
-		teamTrainTemplateRoleList.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT));
+		teamTrainTemplateRoleList.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT.getCode()));
 
 		BaseRole baseRole = new BaseRole();
 		baseRole.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
-		baseRole.setRoleGroup(CrRole.TeamRoleGroup.TEACHER);
+		baseRole.setRoleGroup(CrRole.TeamRoleGroup.TEACHER.getCode());
 
 		teamTrainTemplateRoleList.add(0, baseRole);
 

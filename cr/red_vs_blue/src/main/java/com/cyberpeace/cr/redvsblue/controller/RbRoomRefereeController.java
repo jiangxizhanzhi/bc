@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +58,7 @@ public class RbRoomRefereeController {
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(@Validated RbMissionEvaluationListReq missionEvaluationListReq) {
 
@@ -113,6 +116,7 @@ public class RbRoomRefereeController {
 	 */
 	@ApiOperation("查询红蓝对抗学员用户列表")
 	@GetMapping("/get_user_list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<UserRole>> getUserList(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		List<UserRole> data = rbRoomService.getUserList(resource_id);
@@ -126,6 +130,7 @@ public class RbRoomRefereeController {
 	 */
 	@ApiOperation("获取统计数据")
 	@GetMapping("/get_statistical_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getStatisticalInfo(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		MissionEvaluationQuery missionEvaluationQuery = new MissionEvaluationQuery();
@@ -171,6 +176,7 @@ public class RbRoomRefereeController {
 
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
 			value = "学员评分") @RequestBody SubmitEvaluationReq submitEvaluationReq) {
 		rbRoomService.checkRoomOpening(submitEvaluationReq.getRoomId());
@@ -189,6 +195,7 @@ public class RbRoomRefereeController {
 
 	@ApiOperation("获取监控")
 	@GetMapping("/sessions")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MonitorSession>> getSessions(
 			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id) {
 		RbRoom room = rbRoomService.getById(room_id);

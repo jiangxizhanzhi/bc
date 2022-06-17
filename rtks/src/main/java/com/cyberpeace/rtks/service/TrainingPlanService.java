@@ -8,7 +8,6 @@ import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.SkillTreeRes;
 import com.cyberpeace.rtks.dao.entity.Role;
 
 public interface TrainingPlanService {
@@ -19,14 +18,6 @@ public interface TrainingPlanService {
 	 * @param frame
 	 */
 	void parseTree(LevelTreeOutput frame);
-
-	/**
-	 * 获取按照类别分组的技能树
-	 *
-	 * @return
-	 * @param skillSystemId
-	 */
-	List<SkillTreeRes> getSkillTree(String skillSystemId);
 
 	/**
 	 * 通过角色id获取包含技能、知识点、课程列表的角色对象

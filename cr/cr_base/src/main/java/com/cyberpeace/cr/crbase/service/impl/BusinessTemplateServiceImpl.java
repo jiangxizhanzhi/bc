@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -33,11 +34,11 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
+import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
+import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
@@ -70,6 +71,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private MissionService missionService;
 
 	@Autowired
+	private MissionTemplateService missionTemplateService;
+
+	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	@Autowired
@@ -85,6 +89,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private AttachmentService attachmentService;
 
 	@Autowired
+	private RtksRelatedService rtksRelatedService;
+
+	@Autowired
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
 
@@ -98,6 +105,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
+		businessTemplate.setLogo(baseInfo.getLogo());
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(), "");
 
@@ -143,6 +151,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
+		businessTemplate.setLogo(baseInfo.getLogo());
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(),
 				businessTemplate.getResourceId());
@@ -164,6 +173,54 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			log.error("template name already exist！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
 		}
+	}
+
+	@Override
+	public void updateMissionTemplateRelation(String businessTemplateId, String before,
+			String after) {
+		List<String> oldMissionTemplateIds = missionTemplateService
+				.getIdsByMissionsSchemeJson(before);
+		List<String> newMissionTemplateIds = missionTemplateService
+				.getIdsByMissionsSchemeJson(after);
+		// remove id in both list if both list contains the id
+		int i = 0;
+		while (i < oldMissionTemplateIds.size()) {
+			if (newMissionTemplateIds.remove(oldMissionTemplateIds.get(i))) {
+				oldMissionTemplateIds.remove(i);
+			} else {
+				i++;
+			}
+		}
+		// delete
+		missionTemplateService.batchDelete(oldMissionTemplateIds);
+		// update
+		missionTemplateService.batchUpdateBusinessTemplateId(businessTemplateId,
+				newMissionTemplateIds);
+	}
+
+	@Override
+	public List<String> getAttackRelatedIds(List<String> businessTemplateIds) {
+		if (businessTemplateIds.isEmpty()) {
+			return businessTemplateIds;
+		}
+		return businessTemplateMapper.getAttackRelatedIds(businessTemplateIds);
+	}
+
+	@Override
+	public List<String> getEngageRelatedIds(List<String> businessTemplateIds) {
+		if (businessTemplateIds.isEmpty()) {
+			return businessTemplateIds;
+		}
+		return businessTemplateMapper.getEngageRelatedIds(businessTemplateIds);
+	}
+
+	@Override
+	public ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq) {
+		Page page = btPageReq.toPageParam();
+
+		IPage<BusinessTemplateSimple> result = businessTemplateMapper.listSimple(page,
+				btPageReq.getType(), btPageReq.getDifficulty(), btPageReq.getPattern());
+		return PageUtil.getListResult(result);
 	}
 
 	@Override
@@ -303,6 +360,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				}
 				// 删除模板
 				businessTemplateMapper.deleteBatchIds(businessTemplateIds);
+				// 删除attack、engage关联
+				rtksRelatedService.clearAttackRel(businessTemplateIds);
+				rtksRelatedService.clearEngageRel(businessTemplateIds);
 			}
 		});
 

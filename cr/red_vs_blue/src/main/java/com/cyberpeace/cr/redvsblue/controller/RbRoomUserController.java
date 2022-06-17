@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -65,6 +67,7 @@ public class RbRoomUserController {
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Map> getRunningStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		Integer status = rbRoomService.getTrainingStatus(resource_id);
@@ -82,6 +85,7 @@ public class RbRoomUserController {
 	 */
 	@ApiOperation("获取任务方案信息")
 	@GetMapping("/get_mission_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionInfoRsp>> getMissionInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
@@ -166,6 +170,7 @@ public class RbRoomUserController {
 
 	@ApiOperation("开始答题")
 	@PostMapping("/begin_mission")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
 			beginMission(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -189,6 +194,7 @@ public class RbRoomUserController {
 
 	@ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
 			submitMissions(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		CrCommonValidator.checkStringExist(submitMissionsReq.getAnswer(),
@@ -210,6 +216,7 @@ public class RbRoomUserController {
 
 	@ApiOperation("新增占用主机")
 	@PostMapping("/device")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> createDevice(@RequestBody @Valid RbDeviceReq req) {
 		String roomId = req.getRoomId();
 		String deviceId = req.getDeviceId();
@@ -235,6 +242,7 @@ public class RbRoomUserController {
 
 	@ApiOperation("解除主机占用")
 	@DeleteMapping("/device")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> deleteDevice(@RequestBody @Valid RbDeviceReq req) {
 		String roomId = req.getRoomId();
 		String deviceId = req.getDeviceId();

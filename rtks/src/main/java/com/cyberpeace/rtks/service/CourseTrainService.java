@@ -22,7 +22,5 @@ public interface CourseTrainService {
 	 */
 	List<RoleCourseBo> getRoleCoursePath(String roleId);
 
-	List<CourseKnowledgeSkillBo> getCourseSkillByRoleId(String roleId);
-
 	List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String resource_id);
 }

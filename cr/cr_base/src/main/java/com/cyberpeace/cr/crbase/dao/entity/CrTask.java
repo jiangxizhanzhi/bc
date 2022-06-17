@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.constant.BaseI18n;
+
 import lombok.Data;
 import lombok.Getter;
 
@@ -43,10 +44,20 @@ public class CrTask extends BaseTable {
 
 	private Integer businessType;
 
+	private String missionTemplateId;
+
+	public Boolean isFinished() {
+		boolean result = status.intValue() == TaskStatus.SUCCESS.getCode();
+		result = result || status.intValue() == TaskStatus.FAIL.getCode();
+
+		return result;
+	}
+
 	/**
 	 * task 单兵状态枚举
 	 */
 	public enum SingleTaskStatus implements GenericEnum, BaseI18n {
+
 		/***/
 		UNRELEASED(10, "未下发", "Unassigned"),
 		RELEASED(11, "未提交", "Unsubmitted"),
@@ -62,15 +73,15 @@ public class CrTask extends BaseTable {
 		@Getter
 		private final String english;
 
-		@Override
-		public String getDesc() {
-			return getMsg();
-		}
-
 		SingleTaskStatus(Integer code, String desc, String enDesc) {
 			this.code = code;
 			this.chinese = desc;
 			this.english = enDesc;
+		}
+
+		@Override
+		public String getDesc() {
+			return getMsg();
 		}
 
 	}
@@ -80,8 +91,13 @@ public class CrTask extends BaseTable {
 	 */
 	public enum TaskStatus {
 
-		UNRELEASED(10, "未下发"), RELEASED(11, "已下发"), STARTED(12, "已开始"), WAIT(0, "待评估"), SUCCESS(1,
-				"成功"), FAIL(2, "失败"), REJECT(3, "驳回");
+		UNRELEASED(10, "未下发"),
+		RELEASED(11, "已下发"),
+		STARTED(12, "已开始"),
+		WAIT(0, "待评估"),
+		SUCCESS(1, "成功"),
+		FAIL(2, "失败"),
+		REJECT(3, "驳回");
 
 		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
@@ -103,12 +119,5 @@ public class CrTask extends BaseTable {
 			this.desc = desc;
 		}
 
-	}
-
-	public Boolean isFinished() {
-		boolean result = status.intValue() == TaskStatus.SUCCESS.getCode();
-		result = result || status.intValue() == TaskStatus.FAIL.getCode();
-
-		return result;
 	}
 }

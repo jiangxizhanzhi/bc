@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +62,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Override
 	public void initDefaultFromPreset() {
-		levelMapper.truncateLevels();
+		levelMapper.clearAll();
 		levelMapper.copyFromPreset();
 	}
 
@@ -206,6 +208,15 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		}
 		return false;
 
+	}
+
+	@Override
+	public void checkFull(){
+		List<Level> childLevels = levelMapper.getChildLevels("default");
+		String maxSize = ConfigUtil.getContextProperty("rtks.level.size");
+		if(childLevels.size() >= Integer.parseInt(maxSize)){
+			throw new BusinessException(CrBusinessErrorCode.SECOND_FLOOR_FRAME_IS_FULL,maxSize);
+		}
 	}
 
 }

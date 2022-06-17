@@ -30,7 +30,7 @@ public class BaseInfo {
 	@NotNull
 	private String description;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "LOGO", required = true)
 	@NotNull
 	private String logo;
 

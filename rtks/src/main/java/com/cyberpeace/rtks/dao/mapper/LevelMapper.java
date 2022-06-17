@@ -26,7 +26,7 @@ public interface LevelMapper extends BaseMapper<Level> {
 
 	void deleteAllLevels();
 
-	void truncateLevels();
+	void clearAll();
 
 	void copyFromPreset();
 }

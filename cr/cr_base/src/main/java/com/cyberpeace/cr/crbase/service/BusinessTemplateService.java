@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
@@ -12,6 +13,8 @@ import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
+import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
+import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
@@ -118,4 +121,31 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * 创建或更新模板时校验是否重名
 	 */
 	void validateName(String name, Integer type, String resourceId);
+
+	/**
+	 * 创建或更新模板时，更新任务模板关联
+	 * 删除去除的任务，更新新增的任务
+	 */
+	void updateMissionTemplateRelation(String businessTemplateId, String before, String after);
+
+	/**
+	 * 给出一个businessTemplateId的列表，找到其中和ATT&CK关联的
+	 * @param businessTemplateIds
+	 * @return
+	 */
+	List<String> getAttackRelatedIds(List<String> businessTemplateIds);
+
+	/**
+	 * 给出一个businessTemplateId的列表，找到其中和Engage关联的
+	 * @param businessTemplateIds
+	 * @return
+	 */
+	List<String> getEngageRelatedIds(List<String> businessTemplateIds);
+
+	/**
+	 * 分页返回场景模板列表，用于关联职业框架
+	 * @param btPageReq
+	 * @return
+	 */
+	ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq);
 }

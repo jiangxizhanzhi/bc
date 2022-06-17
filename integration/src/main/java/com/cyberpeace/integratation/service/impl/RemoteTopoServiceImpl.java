@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
@@ -106,11 +108,11 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		List<MpTopoStatistic> mpTopoStatistics = JsonUtil.toJsonObjectArray(data,
 				MpTopoStatistic.class);
 
-//		if (topoIds.size() != mpTopoStatistics.size()) {
-//			log.error("batchGetTopoDigest expect {}, got {}. [{}]", topoIds.size(),
-//					mpTopoStatistics.size(), String.join(", ", topoIds));
-//			throw new RemoteServiceException();
-//		}
+		// if (topoIds.size() != mpTopoStatistics.size()) {
+		// log.error("batchGetTopoDigest expect {}, got {}. [{}]", topoIds.size(),
+		// mpTopoStatistics.size(), String.join(", ", topoIds));
+		// throw new RemoteServiceException();
+		// }
 
 		return mpTopoStatistics.stream()
 				.collect(Collectors.toMap(MpTopoStatistic::getCsceneId, mpTopoStatistic -> {
@@ -147,5 +149,17 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	public JSONObject exportTopo(String topoId) {
 		String targetUrl = TOPO_EXPORT + topoId;
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public Boolean equalTopo(JSONObject topo, String topoId) {
+
+		if (null == topo || StringUtils.isBlank(topoId)) {
+			log.warn("Topo data is null or topo_id is blank!");
+			return CommonConstant.FALSE;
+		}
+
+		JSONObject topoById = getTopoById(topoId);
+		return JsonUtil.equalJson(topo, topoById);
 	}
 }

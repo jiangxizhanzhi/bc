@@ -60,4 +60,22 @@ public interface RtksBusinessErrorCode {
 	String SINGLE_FRAME_DISABLE = "103017";
 
 	String MULTI_FRAME_DISABLE = "103018";
+
+	/** 技能编号已被占用 */
+	String SKILL_ID_OCCUPIED = "103019";
+
+	/** 技能编号过长 */
+	String INVALID_SKILL_ID = "103020";
+
+	/** 技能内容过长 */
+	String INVALID_CONTENT = "103021";
+
+	/** 只允许在二级层级关联岗位 */
+	String INVALID_ROLE_LEVEL = "103022";
+
+	/** 层级" + levelId + "有子层级，不能绑定岗位 */
+	String LEVEL_HAS_CHILD = "103023";
+
+	/** 岗位名称已存在 */
+	String ROLE_ALREADY_EXISTS = "103024";
 }

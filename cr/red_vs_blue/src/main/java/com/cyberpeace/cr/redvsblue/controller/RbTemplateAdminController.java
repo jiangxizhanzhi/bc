@@ -3,8 +3,10 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -69,6 +71,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp create(@RequestBody @Validated RbTemplateAddReq addReq) {
 
 		// set type
@@ -85,6 +88,9 @@ public class RbTemplateAdminController {
 				// save team template
 				rbTemplate.setBusinessTemplateId(businessTemplateId);
 				rbTemplateService.save(rbTemplate);
+				// update missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(businessTemplateId, "",
+						rbTemplate.getRoleConfig());
 			}
 		});
 		return new BaseRsp<>();
@@ -92,6 +98,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("修改")
 	@PatchMapping()
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp update(@RequestBody @Validated RbTemplateModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		RbTemplate rbTemplate = rbTemplateService.getRbTemplateByBusinessId(resourceId);
@@ -99,6 +106,7 @@ public class RbTemplateAdminController {
 		if (businessTemplate == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
+		String oldRoleConfig = rbTemplate.getRoleConfig();
 		// update
 		reqToRbTemplate(modifyReq, rbTemplate);
 
@@ -109,6 +117,9 @@ public class RbTemplateAdminController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo());
 				rbTemplateService.updateById(rbTemplate);
+				// delete&update missionTemplates
+				businessTemplateService.updateMissionTemplateRelation(resourceId, oldRoleConfig,
+						rbTemplate.getRoleConfig());
 			}
 		});
 		return new BaseRsp<>();
@@ -116,6 +127,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
 		rbTemplateService.batchDelete(deleteReq.getIds());
@@ -125,6 +137,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<RbTemplateRsp> getRbTemplate(String resource_id) {
 
 		businessTemplateService.checkPermission(resource_id,

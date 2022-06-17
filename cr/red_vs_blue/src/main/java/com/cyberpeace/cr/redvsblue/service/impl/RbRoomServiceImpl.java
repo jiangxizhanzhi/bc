@@ -21,6 +21,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.room.DashboardFriend;
+import com.cyberpeace.common.model.room.DashboardGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
@@ -47,10 +51,6 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.*;
-import com.cyberpeace.cr.redvsblue.service.context.room.DashboardFriend;
-import com.cyberpeace.cr.redvsblue.service.context.room.DashboardGroup;
-import com.cyberpeace.cr.redvsblue.service.context.room.DashboardInfo;
-import com.cyberpeace.cr.redvsblue.service.context.room.DashboardUser;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -386,6 +386,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 		if (rbRoomContext.getEnableRecording() != null) {
 			rbRoom.setEnableRecording(rbRoomContext.getEnableRecording());
+		}
+		if (rbRoomContext.getLogo() != null) {
+			rbRoom.setLogo(rbRoomContext.getLogo());
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

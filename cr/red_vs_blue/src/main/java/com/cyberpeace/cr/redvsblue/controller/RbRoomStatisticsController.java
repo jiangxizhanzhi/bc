@@ -3,8 +3,10 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +60,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取实例运行时间和状态")
 	@GetMapping("/rb_time_data")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeDataRsp> getRbTimeData(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		TimeData data = rbRoomScoreService.getRbTimeData(resource_id);
@@ -78,6 +81,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取实例下的角色任务分类分布数据")
 	@GetMapping("/team_mission_category")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<XYData> getRbMissionCategory(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
@@ -96,6 +100,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("指定队伍（红/蓝）排行榜 得分排名")
 	@GetMapping("/team_leader_board")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbLeaderBoard(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
@@ -115,6 +120,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取实例下的角色任务分类分布数据")
 	@GetMapping("/team_members_ranking")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMembersRanking(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
@@ -134,6 +140,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取实例下的任务评估数据统计")
 	@GetMapping("/team_mission_evaluation")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMissionEvaluation(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
@@ -153,6 +160,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("查询任务状态")
 	@GetMapping("/missions_statistics")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionsStatistic>> getMissionsStatistics(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		List<MissionsStatistic> missionsStatistics = Lists.newArrayList();
@@ -188,6 +196,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取任务下发和完成任务数进展")
 	@GetMapping("/team_mission_progress")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMissionProgress(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
@@ -207,6 +216,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("队伍得分趋势统计")
 	@GetMapping("/team_score_progress")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbScoreProgress(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {

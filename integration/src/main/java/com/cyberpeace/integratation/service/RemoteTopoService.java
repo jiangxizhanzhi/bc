@@ -49,4 +49,12 @@ public interface RemoteTopoService {
 	 * @return
 	 */
 	JSONObject exportTopo(String topoId);
+
+	/**
+	 * 比较两个topo是否相同
+	 * @param topo
+	 * @param topoId
+	 * @return
+	 */
+	Boolean equalTopo(JSONObject topo, String topoId);
 }

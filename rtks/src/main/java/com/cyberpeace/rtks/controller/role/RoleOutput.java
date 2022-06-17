@@ -21,11 +21,6 @@ public class RoleOutput {
 
 	private String levelName;
 
-	@ApiModelProperty(value = "技能体系")
-	private String category;
-
-	private String categoryName;
-
 	private List<String> taskIds;
 
 	private Integer taskCount;
@@ -42,12 +37,12 @@ public class RoleOutput {
 
 	private Integer skillCount;
 
+	private Integer skillMissionCount;
+
 	private List<String> abilityIds;
 
 	private Integer abilityCount;
 
 	private Integer knowledgeCourseCount;
-
-	private Integer skillCourseCount;
 
 }

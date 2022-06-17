@@ -1,41 +1,48 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.course.controller.req.ClassroomDeleteReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomReq;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
-import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
-import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.ClassroomSignService;
-import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
-import io.swagger.annotations.*;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.oj.course.controller.req.*;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.service.ClassroomService;
+import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台课程表api")
 @RestController
@@ -53,8 +60,21 @@ public class AdminClassroomController {
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	@Autowired
+	private ClassroomValidateHandler classroomValidateHandler;
+
+	@Autowired
+	private CourseLessonService courseLessonService;
+
+	@Autowired
+	private AttachmentService attachmentService;
+
+	@Autowired
+	private UtilService utilService;
+
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<List<ClassroomBo>> list(@Validated ClassroomListReq classroomListReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -86,6 +106,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表创建")
 	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp
 			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
 
@@ -103,6 +124,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表信息修改")
 	@PatchMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Boolean>
 			updateClassRoom(@RequestBody @Validated(Update.class) ClassroomReq classroomReq) {
 
@@ -116,6 +138,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("后台课程表信息删除")
 	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<Integer> deleteClassroom(@RequestBody @Validated ClassroomDeleteReq delReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -126,6 +149,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课堂监控获取用户签到列表")
 	@GetMapping("/classroom_monitor")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ListRsp<ClassroomMonitorBo>> classroomMonitor(ClassroomMonitorReq monitorReq) {
 
 		Page page = monitorReq.toPageParam();
@@ -137,8 +161,10 @@ public class AdminClassroomController {
 
 	@ApiOperation("进行远程协助")
 	@GetMapping("/to_help")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课堂编号"),
-			@ApiImplicitParam(name = "user_id", value = "用户编号") })
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "resource_id", value = "课堂编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "user_id", value = "用户编号", dataTypeClass = String.class) })
 	public BaseRsp toHelp(@RequestParam("resource_id") String classroomId,
 			@RequestParam("user_id") String userId) {
 
@@ -146,8 +172,34 @@ public class AdminClassroomController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("结束远程协助")
+	@GetMapping("/end_help")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "resource_id", value = "课堂编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "user_id", value = "用户编号", dataTypeClass = String.class) })
+	public BaseRsp endHelp(@RequestParam("resource_id") String classroomId,
+			@RequestParam("user_id") String userId) {
+
+		classroomSignService.endHelp(classroomId, userId);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("获取远程协助地址")
+	@GetMapping("/get_help")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "resource_id", value = "课堂编号", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "user_id", value = "用户编号", dataTypeClass = String.class) })
+	public BaseRsp<String> getHelpUrl(@RequestParam("resource_id") String classroomId,
+			@RequestParam("user_id") String userId) {
+		String helpUrl = classroomSignService.getHelpUrl(classroomId, userId);
+		return new BaseRsp<>(helpUrl);
+	}
+
 	@ApiOperation("查询课堂实验报告列表")
 	@GetMapping("/classroom_report")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ListRsp<ClassroomReportBo>> classroomReport(ClassroomMonitorReq reportReq) {
 
 		Page page = reportReq.toPageParam();
@@ -159,6 +211,7 @@ public class AdminClassroomController {
 
 	@ApiOperation("课堂学习统计")
 	@GetMapping("/classroom_statistic")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ClassroomStatisticBo>
 			classroomStatistic(@RequestParam("classroom_id") String classroomId) {
 
@@ -168,6 +221,123 @@ public class AdminClassroomController {
 		ClassroomStatisticBo statisticBo = classroomService.classroomStatistic(classroomId,
 				authContext);
 		return new BaseRsp<>(statisticBo);
+	}
+
+	@ApiOperation("课堂练习统计")
+	@GetMapping("/practice-statistic")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<ClassroomPracticeBo>
+			classroomPracticeStatistic(@Validated ClassroomPracticeReq classroomPracticeReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 操作权限校验
+		classroomValidateHandler.validateLessonPracticeAuth(classroomPracticeReq.getClassroomId(),
+				authContext);
+
+		Page page = classroomPracticeReq.toPageParam();
+
+		ClassroomPracticeContext classroomPracticeContext = BeanUtils.copy(classroomPracticeReq,
+				ClassroomPracticeContext.class);
+		ClassroomPracticeBo classroomPracticeBo = classroomService
+				.practiceStatistic(classroomPracticeContext, page);
+
+		return new BaseRsp<>(classroomPracticeBo);
+	}
+
+	@ApiOperation("课堂练习详情")
+	@GetMapping("/practice-detail")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<ClassroomPracticeDetailBo> classroomPracticeDetail(
+			@RequestParam("classroom_id") String classroomId,
+			@RequestParam("lesson_id") String lessonId, @RequestParam("user_id") String userId) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 操作权限校验
+		classroomValidateHandler.validateLessonPracticeAuth(classroomId, authContext);
+
+		ClassroomPracticeDetailBo classroomPracticeDetailBo = classroomService
+				.practiceDetail(classroomId, lessonId, userId);
+
+		return new BaseRsp<>(classroomPracticeDetailBo);
+	}
+
+	@ApiOperation("课后练习评分")
+	@PostMapping("/practice/mark")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<Boolean>
+			markLessonPractice(@RequestBody @Validated MarkLessonPracticeReq practiceReq) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 操作权限校验
+		classroomValidateHandler.validateLessonPracticeAuth(practiceReq.getClassroomId(),
+				authContext);
+
+		Boolean result = courseLessonService.markLessonPractice(practiceReq.getLessonId(),
+				practiceReq.getUserId(), practiceReq.getLevel(), authContext);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("课后练习下发")
+	@PatchMapping("/practice/batch-auth")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<Boolean> batchAuthLessonPractice(
+			@RequestBody @Validated BatchAuthLessonPracticeReq practiceReq) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 操作权限校验
+		classroomValidateHandler.validateLessonPracticeAuth(practiceReq.getClassroomId(),
+				authContext);
+
+		Boolean result = courseLessonService.releaseLessonPractice(practiceReq.getLessonId(),
+				practiceReq.getOrganizationId(), authContext);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("训练计划导入")
+	@PostMapping("/train_plan/import")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp importTrainPlan(@RequestParam("file") MultipartFile excelFile,
+			@RequestParam("cover") Boolean cover) {
+
+		FileUtil.validateSuffix(excelFile, FileSunffixConstant.XLSX.getDesc(),
+				FileSunffixConstant.XLS.getDesc());
+
+		// 文件存储
+		AttachmentBo uploadFile = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(), true,
+				excelFile, true);
+		String realPath = utilService.getRealPath(uploadFile.getFilePath());
+
+		try {
+			classroomService.importTrainPlan(realPath, UserInfoContext.getUserContext(), cover);
+		} finally {
+			try {
+				FileUtil.deleteDir(realPath, CommonConstant.TRUE);
+			} catch (Exception e) {
+				// 不影响导入逻辑就行
+				log.error("Import train plan delete file failed! file_url=[{}], catch error:",
+						realPath, e);
+			}
+		}
+
+		return new BaseRsp();
+	}
+
+	@ApiOperation("训练计划导出")
+	@GetMapping("/train_plan/export")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public void exportTrainPlan(HttpServletResponse response) {
+
+		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+				+ CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
+		classroomService.exportTrainPlan(UserInfoContext.getUserContext(), filePath);
+		FileUtil.setResponse(new File(filePath), true, response);
+
 	}
 
 }

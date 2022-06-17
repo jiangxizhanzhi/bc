@@ -14,7 +14,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
@@ -116,13 +115,13 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(fileName, storeInDbName);
+			AttachmentBo attachmentBo = create(origin.getName(), storeInDbName);
 			return attachmentBo;
 		}
 
 		// 返回给前端对展示名称
 		String displayName = ConfigUtil.getContextProperty("cr.local.file.prefix") + storeInDbName;
-		return AttachmentBo.builder().filePath(displayName).fileName(fileName).build();
+		return AttachmentBo.builder().filePath(displayName).fileName(origin.getName()).build();
 	}
 
 	@Override
@@ -251,7 +250,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		// 返回给前端对展示名称
-		return AttachmentBo.builder().filePath(storeInDbName).fileName(fileName).build();
+		return AttachmentBo.builder().filePath(storeInDbName).fileName(file.getOriginalFilename())
+				.build();
 	}
 
 	/**
@@ -276,5 +276,13 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			return attachmentBo;
 		}
 		return null;
+	}
+
+	@Override
+	public Boolean isExist(String attachmentId) {
+		Attachment attachment = attachmentMapper.selectById(attachmentId);
+		return !(attachment == null
+				|| !new File(ConfigUtil.getContextProperty("cr.local.upload.path") + "/"
+						+ attachment.getFilePath()).exists());
 	}
 }

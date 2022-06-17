@@ -132,10 +132,15 @@ public class UtilServiceImpl implements UtilService {
 
 	@Override
 	public String handlerMarkdownFile(String content, String destFilePath) {
-		List<String> matchList = LocalStringUtil.getMatchStr(content,
-				PatternConstant.MARKDOWN_IMAGE);
-		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
-				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
+		// 匹配src图片
+		List<String> matchSrcList = LocalStringUtil.getMatchUrlStr(content,
+				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
+
+		List<String> realPathList = LocalStringUtil.getMatchUrlStr(content,
+				PatternConstant.MARKDOWN_IMAGE_MD_URL);
+//		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
+//				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
+		realPathList.addAll(matchSrcList);
 
 		// 文件拷贝到nginx可转发目录 同时生成nginx转发地址
 		List<String> nginxUrlList = StreamApiUtils.map(realPathList, realPath -> {
@@ -156,10 +161,16 @@ public class UtilServiceImpl implements UtilService {
 	public String replaceMarkdownFile(String content) {
 
 		// 将文件中的绝对路径替换为nginx可访问路径
-		List<String> matchList = LocalStringUtil.getMatchStr(content,
-				PatternConstant.MARKDOWN_IMAGE);
-		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
-				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
+		List<String> realPathList = LocalStringUtil.getMatchUrlStr(content,
+				PatternConstant.MARKDOWN_IMAGE_MD_URL);
+
+		List<String> matchSrcList = LocalStringUtil.getMatchUrlStr(content,
+				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
+
+//		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
+//				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
+		realPathList.addAll(matchSrcList);
+
 		List<String> nginxUrlList = StreamApiUtils.map(realPathList, realPath -> {
 			String fileUrl = replaceFileUrl(realPath);
 			return handlerFileUrl(fileUrl);

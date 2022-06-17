@@ -8,11 +8,9 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class RemoteHelpReq implements Serializable {
 
-	@ApiModelProperty(name = "lesson_id", value = "课时编号")
 	@NotBlank
 	private String lesson_id;
 
-	@ApiModelProperty(name = "node_id", value = "虚拟机节点编号")
 	@NotBlank
 	private String node_id;
 
@@ -24,10 +22,12 @@ public class RemoteHelpReq implements Serializable {
 		this.node_id = nodeId;
 	}
 
+	@ApiModelProperty(name = "lesson_id", value = "课时编号")
 	public String getLessonId() {
 		return lesson_id;
 	}
 
+	@ApiModelProperty(name = "node_id", value = "虚拟机节点编号")
 	public String getNodeId() {
 		return node_id;
 	}

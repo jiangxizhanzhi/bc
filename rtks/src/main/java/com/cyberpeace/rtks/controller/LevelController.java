@@ -6,8 +6,12 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -46,7 +50,9 @@ public class LevelController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> create(@RequestBody @Validated LevelAddInput input) {
+		CrCommonValidator.validateNameLen(input.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		Level entity = getEntityFromAddInput(input);
 
 		getService().save(entity);
@@ -56,6 +62,7 @@ public class LevelController {
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> update(@RequestBody @Validated LevelModifyInput input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 
@@ -70,6 +77,7 @@ public class LevelController {
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> retrieve(String resource_id) {
 		Level t = getOr404(resource_id);
 		return new BaseRsp<>(getOutputFromEntity(t));
@@ -77,6 +85,7 @@ public class LevelController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		performBatchDelete(deleteReq.getIds());
 		return new BaseRsp<>();
@@ -136,6 +145,11 @@ public class LevelController {
 
 		// 迭代获取当前层级所属框架
 		level.setFrame(levelService.getFrame(parentLevel).getResourceId());
+
+		//检验二层框架是否已满
+		if(level.getParent().equals("default")){
+			levelService.checkFull();
+		}
 
 		return level;
 	}

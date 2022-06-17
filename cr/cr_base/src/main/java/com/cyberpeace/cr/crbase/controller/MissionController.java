@@ -10,7 +10,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -30,6 +33,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.*;
+import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchDumpReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionTemplateRsp;
@@ -41,6 +45,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -69,6 +74,7 @@ public class MissionController {
 
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<List<Integer>> getRadar(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
@@ -79,6 +85,7 @@ public class MissionController {
 
 	@ApiOperation("获取任务技能点")
 	@GetMapping("/missions/radar_labels")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<JSONObject> getRadarLabel() {
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 
@@ -92,6 +99,7 @@ public class MissionController {
 
 	@ApiOperation("后台更新任务技能点")
 	@PostMapping("/missions/radar_labels")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<MissionTemplate> updateRadarLabel(@RequestBody @Validated LabelReq labels) {
 		// 只有超级用户有权修改
 		UserInfo user = UserInfoContext.getUserContext();
@@ -115,6 +123,7 @@ public class MissionController {
 
 	@ApiOperation("获取任务")
 	@GetMapping("/missions")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<MissionTemplateRsp>
 			getMission(@RequestParam("resource_id") @Validated String resourceId) {
 		MissionTemplate missionTemplate = missionService.getByMissionTemplateId(resourceId);
@@ -133,6 +142,7 @@ public class MissionController {
 
 	@ApiOperation("新增任务")
 	@PostMapping("/missions")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<MissionTemplate>
 			addMission(@RequestBody @Validated MissionTemplateReq missionTemplateReq) {
 		missionTemplateReq.validate();
@@ -145,6 +155,7 @@ public class MissionController {
 
 	@ApiOperation("后台更新任务")
 	@PutMapping("/missions")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<MissionTemplate>
 			updateMissionTemplate(@RequestBody @Validated MissionTemplateModifyReq modifyReq) {
 		if (StringUtils.isBlank(modifyReq.getResourceId())) {
@@ -161,6 +172,7 @@ public class MissionController {
 
 	@ApiOperation("前台更新任务")
 	@PutMapping("/mission_update")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<Mission>
 			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		missionModifyReq.validate();
@@ -176,6 +188,7 @@ public class MissionController {
 
 	@ApiOperation("获取任务类型")
 	@GetMapping("/missions/get_category/")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
 	public BaseRsp<List<MissionCategory>> listCategories() {
 
 		List<MissionCategory> categories = missionService.listCategories();
@@ -185,6 +198,7 @@ public class MissionController {
 
 	@ApiOperation("创建任务方案")
 	@PostMapping("/combat_techs")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<?>
 			createSchemeTemplate(@RequestBody @Validated MissionSchemeTemplateReq templateReq) {
 		// validate
@@ -198,6 +212,7 @@ public class MissionController {
 
 	@ApiOperation("批量删除任务方案")
 	@DeleteMapping("/combat_techs/batch_destroy/")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<?> batchDeleteSchemeTemplate(@RequestBody @Validated BatchDeleteReq deleteReq) {
 		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
 
@@ -206,6 +221,7 @@ public class MissionController {
 
 	@ApiOperation("编辑任务方案")
 	@PutMapping("/combat_techs")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<?> editSchemeTemplate(
 			@RequestBody @Validated MissionSchemeTemplateModifyReq templateModifyReq) {
 		templateModifyReq.validate();
@@ -217,6 +233,7 @@ public class MissionController {
 
 	@ApiOperation("分页查询任务方案")
 	@GetMapping("/combat_techs/list")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<List<MissionSchemeTemplateRsp>>
 			listSchemeTemplate(@Validated PageReqBase pageReqBase) {
 		ListRsp<MissionSchemeTemplateRsp> schemeTemplateListRsp = missionService
@@ -235,6 +252,7 @@ public class MissionController {
 
 	@ApiOperation("查询单个任务方案")
 	@GetMapping("/combat_techs")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<MissionSchemeTemplateRsp> getSchemeTemplate(@ApiParam(name = "resource_id",
 			value = "任务方案编号") @RequestParam("resource_id") @Valid @NotBlank String resourceId) {
 		MissionSchemeTemplateRsp templateRsp = missionService.getSchemeTemplateRspById(resourceId);
@@ -244,6 +262,7 @@ public class MissionController {
 
 	@ApiOperation("批量导出任务方案")
 	@PostMapping("/combat_techs/dump")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public void batchDump(HttpServletResponse response, @RequestBody BatchDumpReq dumpReq) {
 
 		List<String> templateIds = dumpReq.getIds();
@@ -267,6 +286,7 @@ public class MissionController {
 
 	@ApiOperation("批量导入任务方案")
 	@PutMapping("/combat_tech/load")
+	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
 			throws IOException, ZipException {
 		// 1. save file to temp dir
@@ -280,6 +300,16 @@ public class MissionController {
 			log.error("failed to delete temp dir");
 		}
 		return new BaseRsp();
+	}
+
+	@ApiOperation("RTKS-获取任务模板列表")
+	@GetMapping("/mission_templates")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
+	public BaseRsp<List<MissionTemplateRes>>
+			listMissionTemplates(@Validated MissionTemplatePageReq pageReq) {
+		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService
+				.pageMissionTemplate(pageReq);
+		return new BaseRsp(missionTemplateRspListRsp);
 	}
 
 	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {

@@ -1,8 +1,8 @@
 package com.cyberpeace.rtks.controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -11,31 +11,46 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.apache.commons.collections.SetUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.InvalidParamException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.controller.course.CourseLayoutInput;
 import com.cyberpeace.rtks.controller.role.*;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.service.*;
+import com.cyberpeace.rtks.service.bo.skill.MissionLayout;
+import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
+import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,6 +59,13 @@ import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+interface Fields {
+
+	String KNOWLEDGE = "knowledge";
+
+	String SKILL = "skill";
+}
 
 class RoleListReq<T> extends PageReqBase {
 
@@ -75,18 +97,17 @@ class Helper {
 	}
 }
 
-interface Fields {
-
-	String KNOWLEDGE = "knowledge";
-
-	String SKILL = "skill";
-}
-
 @Api(tags = "TRKS-岗位管理")
 @RestController
 @RequestMapping("/rtks/role")
 @RequiresAuthentication
 public class RoleController {
+
+	@Autowired
+	MissionTemplateService missionTemplateService;
+
+	@Autowired
+	TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private TaskService taskService;
@@ -105,9 +126,6 @@ public class RoleController {
 
 	@Autowired
 	private RoleService roleService;
-
-	@Autowired
-	private SkillSystemService skillSystemService;
 
 	@Autowired
 	private CourseNameService courseNameService;
@@ -130,30 +148,61 @@ public class RoleController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
-		Role entity = getEntityFromAddInput(input);
+		input.validate();
+		if (roleService.ifNameDuplicate(input.getName(), "")) {
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
+		}
 
-		getService().save(entity);
+		Role role = getEntityFromAddInput(input);
+		// 5.3.3兼容旧数据库
+		role.setCategory("");
+		role.setSkillIdWeights("[]");
+		role.setSkillIds("[]");
 
-		return retrieve(entity.getResourceId());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				roleService.save(role);
+				roleService.addSkillRelation(role.getResourceId(), input.getSkillIdWeights());
+			}
+		});
+
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
+		input.validate();
+		if (roleService.ifNameDuplicate(input.getName(), input.getResourceId())) {
+			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
+		}
+
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
 
 		Role originEntity = getOr404(resourceId);
 
 		Role entity = getEntityFromModifyInput(input, originEntity);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		getService().updateById(entity);
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// update role-skill relations
+				roleService.updateSkillRelSimple(resourceId, input.getSkillIdWeights());
+				roleService.updateById(entity);
+			}
+		});
 
-		return retrieve(resourceId);
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("查询")
 	@GetMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> retrieve(String resource_id) {
 		Role t = getOr404(resource_id);
 		return new BaseRsp<>(getOutputFromEntity(t));
@@ -161,8 +210,18 @@ public class RoleController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		performBatchDelete(deleteReq.getIds());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				performBatchDelete(deleteReq.getIds());
+				// delete role-skill relations
+				roleService.deleteSkillRelByRoleIds(deleteReq.getIds());
+			}
+		});
+
 		return new BaseRsp<>();
 	}
 
@@ -172,12 +231,27 @@ public class RoleController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<ListRsp<RoleOutput>> list(RoleListReq<Role> listReq) {
 		IPage<Role> page = getPage(listReq);
+		// search skills missions
+		List<String> roleIds = page.getRecords().stream().map(Role::getResourceId)
+				.collect(Collectors.toList());
+		Map<String, RoleSkillRes> mapping = roleService.mapRoleSkillCount(roleIds);
 
 		List<RoleOutput> outputs = new ArrayList<>();
 		for (Role record : page.getRecords()) {
-			outputs.add(getListOutputFromEntity(record));
+			RoleOutput output = getListOutputFromEntity(record);
+			// fill count data
+			RoleSkillRes res = mapping.get(output.getResourceId());
+			if (res != null) {
+				output.setSkillCount(res.getSkillCount());
+				output.setSkillMissionCount(res.getMissionCount());
+			} else {
+				output.setSkillCount(0);
+				output.setSkillMissionCount(0);
+			}
+			outputs.add(output);
 		}
 
 		ListRsp<RoleOutput> listRsp = new ListRsp<>();
@@ -189,6 +263,7 @@ public class RoleController {
 
 	@ApiOperation("获取课程列表")
 	@GetMapping("/courses")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>> getSkillCourses(String resource_id,
 			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
 
@@ -203,6 +278,7 @@ public class RoleController {
 
 	@ApiOperation("编排课程列表")
 	@PostMapping("/courses")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>>
 			setSkillCourses(@RequestBody @Validated CourseLayoutInput courseLayoutInput) {
 		String roleId = courseLayoutInput.getResourceId();
@@ -230,10 +306,60 @@ public class RoleController {
 		return new BaseRsp<>(outputList);
 	}
 
-	private String getCourseText(Role role, String field) {
-		if (Fields.SKILL.equals(field)) {
-			return role.getSkillCourses();
+	@ApiOperation("获取任务列表")
+	@GetMapping("/missions")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
+	public BaseRsp<List<MissionTemplateSimple>>
+			getSkillMissions(@RequestParam("resource_id") String resource_id) {
+
+		List<String> missionIds = roleService.getRelMissionIds(resource_id);
+		Map<String, MissionTemplateRes> missionMapping = missionTemplateService
+				.mapWithBusiness(missionIds);
+		// merge with current order
+		Role role = roleService.getOr404(resource_id);
+		List<String> currentMissionIds = JsonUtil.toJsonObjectArray(role.getSkillMissions(),
+				String.class);
+		List<MissionTemplateRes> newOrder = Lists.newArrayList();
+		for (String missionId : currentMissionIds) {
+			MissionTemplateRes mission = missionMapping.get(missionId);
+			if (mission != null) {
+				newOrder.add(mission);
+				missionMapping.remove(missionId);
+			}
 		}
+		for (Map.Entry<String, MissionTemplateRes> entry : missionMapping.entrySet()) {
+			newOrder.add(entry.getValue());
+		}
+		// save new order
+		List<String> newOrderIds = newOrder.stream().map(MissionTemplateRes::getResourceId)
+				.collect(Collectors.toList());
+		String newOrderJson = JsonUtil.arrayToString(newOrderIds);
+		if (!newOrderJson.equals(role.getSkillMissions())) {
+			role.setSkillMissions(JsonUtil.arrayToString(newOrderIds));
+			roleService.updateById(role);
+		}
+		// convert
+		List<MissionTemplateSimple> result = BeanUtils.deepCopyList(newOrder,
+				MissionTemplateSimple.class);
+
+		return new BaseRsp(result);
+	}
+
+	@ApiOperation("编排任务列表")
+	@PostMapping("/missions")
+	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
+	public BaseRsp<List<CourseConfigOutput>>
+			setSkillMissions(@RequestBody @Validated MissionLayout layout) {
+
+		String roleId = layout.getRoleId();
+		Role role = roleService.getOr404(roleId);
+		role.setSkillMissions(JsonUtil.arrayToString(layout.getMissionIds()));
+		roleService.updateById(role);
+		return new BaseRsp<>();
+	}
+
+	private String getCourseText(Role role, String field) {
+
 		if (Fields.KNOWLEDGE.equals(field)) {
 			return role.getKnowledgeCourses();
 		}
@@ -246,9 +372,7 @@ public class RoleController {
 		roleToSave.setResourceId(roleId);
 
 		String toSave = JsonUtil.toJsonString(courseIds);
-		if (Fields.SKILL.equals(field)) {
-			roleToSave.setSkillCourses(toSave);
-		} else if (Fields.KNOWLEDGE.equals(field)) {
+		if (Fields.KNOWLEDGE.equals(field)) {
 			roleToSave.setKnowledgeCourses(toSave);
 		} else {
 			throw new InvalidParamException("Invalid field:" + field);
@@ -304,7 +428,6 @@ public class RoleController {
 		role.setName(input.getName());
 		role.setDescription(input.getDescription());
 		role.setLevelId(input.getLevelId());
-		role.setCategory(input.getCategory());
 
 		String levelId = input.getLevelId();
 		if (levelId != null) {
@@ -312,11 +435,11 @@ public class RoleController {
 
 			if (Objects.equals(ConfigUtil.getContextProperty("roleRelatedSecondLevel"), "true")
 					&& Objects.equals(level.getParent(), level.getFrame())) {
-				throw new InvalidParamException("只允许在二级层级关联岗位");
+				throw new BusinessException(RtksBusinessErrorCode.INVALID_ROLE_LEVEL);
 			}
 			List<Level> childLevels = levelService.getChildLevelsByLevelId(levelId);
 			if (!CollectionUtils.isEmpty(childLevels)) {
-				throw new InvalidParamException("层级" + levelId + "有子层级，不能绑定岗位");
+				throw new BusinessException(RtksBusinessErrorCode.LEVEL_HAS_CHILD, levelId);
 			}
 		}
 
@@ -346,21 +469,8 @@ public class RoleController {
 		}
 		role.setKnowledgeIdWeights(JsonUtil.toJsonString(input.getKnowledgeIdWeights()));
 
-		// 技能
-		String originSkillIdsStr = null;
-		if (originEntity != null) {
-			originSkillIdsStr = originEntity.getSkillIds();
-		}
-
-		Helper skillHelper = handlerInputWithCourse(isModify, input.getSkillIds(),
-				originSkillIdsStr, skillService::getCourseConfigs);
-
-		if (skillHelper != null) {
-			role.setSkillIds(skillHelper.getIdStr());
-			role.setSkillCourses(skillHelper.getCourseStr());
-		}
-
-		role.setSkillIdWeights(JsonUtil.toJsonString(input.getSkillIdWeights()));
+		// 技能知识权重分配
+		role.setKnowledgeWeight(input.getKnowledgeWeight());
 
 		return role;
 	}
@@ -380,16 +490,20 @@ public class RoleController {
 
 		output.setKnowledgeDataList(knowledgeList);
 
-		List<String> skillIds = output.getSkillIds();
-		List<Skill> skillList = getRoleRelatedObjects(skillIds, skillService);
+		// skill
+		List<SkillWeightRes> skillList = roleService.listSkillByRoleId(role.getResourceId());
 		output.setSkillDataList(skillList);
-		List<SkillKnowledgeWeight> skillWeights = JsonUtil
-				.toJsonObjectArray(role.getSkillIdWeights(), SkillKnowledgeWeight.class);
-		output.setSkillIdWeights(skillWeights);
+		List<String> skillIds = Lists.newArrayList();
+		for (SkillWeightRes res : skillList) {
+			skillIds.add(res.getResourceId());
+		}
+		output.setSkillIds(skillIds);
 
 		List<String> abilityIds = output.getAbilityIds();
 		List<Ability> abilityList = getRoleRelatedObjects(abilityIds, abilityService);
 		output.setAbilityDataList(abilityList);
+		// 详情返回知识-技能权重
+		output.setKnowledgeWeight(role.getKnowledgeWeight());
 
 		return output;
 	}
@@ -422,14 +536,6 @@ public class RoleController {
 		output.setLevelId(levelId);
 		output.setLevelName(fullPath);
 
-		// 技能体系
-		String categoryId = role.getCategory();
-		output.setCategory(categoryId);
-		SkillSystem skillSystem = skillSystemService.getById(categoryId);
-		if (skillSystem != null) {
-			output.setCategoryName(skillSystem.getContent());
-		}
-
 		List<String> taskIds = stringToList(role.getTaskIds());
 		output.setTaskIds(taskIds);
 		output.setTaskCount(taskIds.size());
@@ -438,19 +544,12 @@ public class RoleController {
 		output.setKnowledgeIds(knowledgeIds);
 		output.setKnowledgeCount(knowledgeIds.size());
 
-		List<String> skillIds = stringToList(role.getSkillIds());
-		output.setSkillIds(skillIds);
-		output.setSkillCount(skillIds.size());
-
 		List<String> abilityIds = stringToList(role.getAbilityIds());
 		output.setAbilityIds(abilityIds);
 		output.setAbilityCount(abilityIds.size());
 
 		List<String> knowledgeCourses = stringToList(role.getKnowledgeCourses());
 		output.setKnowledgeCourseCount(knowledgeCourses.size());
-
-		List<String> skillCourses = stringToList(role.getSkillCourses());
-		output.setSkillCourseCount(skillCourses.size());
 
 		return output;
 	}

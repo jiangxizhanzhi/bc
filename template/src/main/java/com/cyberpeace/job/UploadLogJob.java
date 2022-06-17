@@ -26,11 +26,10 @@ public class UploadLogJob {
 
     private String REPORT_LOG_URL;
 
-    @Value("${upload.log.if}")
+    @Value("${ojj.upload.log}")
     private boolean isUploadLog;
 
-    @Value("${download.log.url}")
-    private String DOWNLOAD_LOG_URL;
+    private String DOWNLOAD_LOG_URL = "/cs/admin/log/downloadLog?file_name=";
 
     private String LOG_type = "BC";
 
@@ -39,7 +38,7 @@ public class UploadLogJob {
         REPORT_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.report.log");
     }}
 
-    @Scheduled(fixedDelayString = "${upload.log.interval.time}")
+    @Scheduled(fixedDelayString = "${common.upload.log.interval.time}")
     public void uploadLog(){
         if(isUploadLog){
             String logRootPath = System.getProperty("catalina.base") + "/logs/";

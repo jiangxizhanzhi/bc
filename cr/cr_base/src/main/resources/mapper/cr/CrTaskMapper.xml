@@ -205,7 +205,7 @@
         from cr_task as a
         inner join
         (select max(id) as id from cr_task where
-        user_id = #{userId} and mission_template_id in
+        user_id = #{userId} and score is not null and mission_template_id in
         <foreach collection="missionTemplateIds" item="missionTemplateId" open="(" close=")" separator=",">
             #{missionTemplateId}
         </foreach>

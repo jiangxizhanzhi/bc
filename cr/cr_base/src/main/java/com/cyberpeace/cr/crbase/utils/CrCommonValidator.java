@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.google.common.collect.Sets;
 
@@ -100,5 +101,24 @@ public class CrCommonValidator {
 	public static void validateIdLen(String target, String errorCode) {
 		validateLength(target, CrCommonConstants.MIN_STR_LEN,
 				CrCommonConstants.GENERATED_UUID_LENGTH, errorCode);
+	}
+
+	/**
+	 * 校验字符串是否为ipv4地址
+	 */
+	public static void validateIp(String ip) {
+
+		if (ip == null) {
+			return;
+		}
+
+		String regex = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\."
+				+ "(00?\\d|1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\."
+				+ "(00?\\d|1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\."
+				+ "(00?\\d|1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
+
+		if (!ip.matches(regex)) {
+			throw new BusinessException(CrBusinessErrorCode.WRONG_IP_FORMAT);
+		}
 	}
 }

@@ -299,7 +299,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				SessionType.ASSISTANCE.type);
 		List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
 				.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
-		Map<String, String> userAssistanceMap = StreamApiUtils.toMap(filterList,
+
+		List<Object> distinct = StreamApiUtils.distinctByColumn(filterList, obj -> ((JSONObject) obj).getString(JsonKeyConstant.USER_KEY));
+
+		Map<String, String> userAssistanceMap = StreamApiUtils.toMap(distinct,
 				object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
 				object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
 		return userAssistanceMap;

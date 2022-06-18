@@ -22,7 +22,6 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
-import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.hld.constant.HldRoleName;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
@@ -311,9 +310,9 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 	}
 
 	@Override
-	public BaseInfo getHldBaseInfo(HldTaskContext hldTaskContext) {
+	public HldBaseInfo getHldBaseInfo(HldTaskContext hldTaskContext) {
 
-		BaseInfo baseInfo = new BaseInfo();
+		HldBaseInfo baseInfo = new HldBaseInfo();
 
 		baseInfo.setType(BusinessTemplate.BusinessType.HLD.getCode());
 

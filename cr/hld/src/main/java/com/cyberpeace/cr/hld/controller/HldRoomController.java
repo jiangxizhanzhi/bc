@@ -19,7 +19,6 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.hld.controller.req.HldRoomAddReq;
 import com.cyberpeace.cr.hld.controller.req.HldRoomModifyReq;
 import com.cyberpeace.cr.hld.controller.rsp.HldRoomIdRsp;
@@ -29,10 +28,7 @@ import com.cyberpeace.cr.hld.dao.entity.HldRoom;
 import com.cyberpeace.cr.hld.dao.mapper.HldRoomMapper;
 import com.cyberpeace.cr.hld.service.HldRoomService;
 import com.cyberpeace.cr.hld.service.HldSceneService;
-import com.cyberpeace.cr.hld.service.context.HldRolesConfig;
-import com.cyberpeace.cr.hld.service.context.HldRoomContext;
-import com.cyberpeace.cr.hld.service.context.HldTaskContext;
-import com.cyberpeace.cr.hld.service.context.TaskRoleConfig;
+import com.cyberpeace.cr.hld.service.context.*;
 import com.cyberpeace.integratation.service.HldTaskService;
 
 import io.swagger.annotations.Api;
@@ -202,7 +198,7 @@ public class HldRoomController {
 
 		// 提取基础信息
 		HldTaskContext hldTaskContext = getHldTaskContext(addReq.getTaskId());
-		BaseInfo baseInfo = hldRoomService.getHldBaseInfo(hldTaskContext);
+		HldBaseInfo baseInfo = hldRoomService.getHldBaseInfo(hldTaskContext);
 		baseInfo.setSceneConfigData(addReq.getSceneConfigData());
 
 		// 构造初始数据

@@ -5,12 +5,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
-import com.cyberpeace.cr.hld.service.context.HldRolesConfig;
-import com.cyberpeace.cr.hld.service.context.HldRoomContext;
-import com.cyberpeace.cr.hld.service.context.HldTaskContext;
-import com.cyberpeace.cr.hld.service.context.TaskRoleConfig;
+import com.cyberpeace.cr.hld.service.context.*;
 
 public interface HldRoomService extends IService<HldRoom> {
 
@@ -24,7 +20,7 @@ public interface HldRoomService extends IService<HldRoom> {
 
 	List<TaskRoleConfig> getRoomRoleConfig(HldRolesConfig hldRolesConfig);
 
-	BaseInfo getHldBaseInfo(HldTaskContext hldTaskContext);
+	HldBaseInfo getHldBaseInfo(HldTaskContext hldTaskContext);
 
 	CrRole getUserRole(String roomId, String userId);
 

@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.hld.service.context;
 
-import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
-
 import lombok.Data;
 
 @Data
@@ -13,6 +11,6 @@ public class HldRoomContext {
 
 	private String roleConfig;
 
-	private BaseInfo baseInfo;
+	private HldBaseInfo baseInfo;
 
 }

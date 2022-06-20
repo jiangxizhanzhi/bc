@@ -116,4 +116,7 @@ public interface ErrorCode {
 	 * 靶场测评算法脚本无返回值
 	 */
 	String ALGORITHM_RETURN_NULL = "100040";
+
+	/** shell执行失败*/
+	String LOCAL_SHELL_EXEC_FAILED = "100041";
 }

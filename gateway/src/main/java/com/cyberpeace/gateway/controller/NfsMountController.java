@@ -1,5 +1,6 @@
 package com.cyberpeace.gateway.controller;
 
+import com.cyberpeace.common.util.FileUtil;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,8 @@ import com.cyberpeace.common.util.ShellUtils;
 import com.cyberpeace.gateway.controller.req.NfsMountReq;
 import com.cyberpeace.gateway.controller.req.NfsUmountReq;
 
+import java.io.File;
+
 @RestController
 @RequestMapping("/exec/nfs/mount")
 public class NfsMountController {
@@ -18,8 +21,15 @@ public class NfsMountController {
 
 	private String UMOUNT_SHELL = "umount %s";
 
+	private String MKDIR = "mkdir -p %s";
+
 	@PostMapping("/mount")
 	public BaseRsp<Boolean> nfsMount(@RequestBody NfsMountReq nfsMountReq) {
+
+		if (!new File(nfsMountReq.getPath()).exists()) {
+			ShellUtils.execShell(String.format(MKDIR, nfsMountReq.getPath()));
+		}
+
 		ShellUtils.execShell(String.format(MOUNT_SHELL, nfsMountReq.getHost(),
 				nfsMountReq.getPath(), nfsMountReq.getPath()));
 

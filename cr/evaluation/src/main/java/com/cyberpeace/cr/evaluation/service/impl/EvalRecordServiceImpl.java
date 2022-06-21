@@ -980,6 +980,23 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 });
             }
 
+            // todo 同906行, 待删除
+            if (roomId.equals("1b57934d5309443b8b992071e065c7c9") && nodeData.getId().equals("7391e66d-bbf2-4cee-a6c8-8b77498975f5")) {
+                EvalRoomPairRsp extra1 = new EvalRoomPairRsp();
+                extra1.setId("e7f8f84ddbfe4a2791f28782cfbbbe27");
+                extra1.setLabel("Ping");
+                EvalRoomPairRsp extra2 = new EvalRoomPairRsp();
+                extra2.setId("bb297947b83b44e6a0874e3fffb6d563");
+                extra2.setLabel("checkssh");
+                EvalRoomPairRsp extra3 = new EvalRoomPairRsp();
+                extra3.setId("dc1a077ebe954f03b75a8c49f886e08b");
+                extra3.setLabel("checkcurl");
+
+                nodeData.getData().add(extra1);
+                nodeData.getData().add(extra2);
+                nodeData.getData().add(extra3);
+            }
+
             results.add(nodeData);
         });
 

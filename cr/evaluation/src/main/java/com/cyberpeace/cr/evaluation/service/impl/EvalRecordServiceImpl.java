@@ -798,8 +798,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (evalVariableRefService.BASE.contains(mpCollectionEvent.getProbeId())) {
                 JSONObject scanAttr = content.getJSONObject("scan");
                 if (scanAttr == null) {
-                    EvalLog.error(evalRecord, evalVariableRef, "collect data field [time] is invalid.");
-                    throw new RemoteServiceException();
+                    if ("005".equals(mpCollectionEvent.getProbeId())) {
+
+                        probeDataItem.setCollectionTime(content.getTimestamp("startTime"));
+                    } else {
+                        EvalLog.error(evalRecord, evalVariableRef, "collect data field [time] is invalid.");
+                        throw new RemoteServiceException();
+                    }
                 } else {
                     probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
                 }

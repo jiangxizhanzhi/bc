@@ -12,6 +12,7 @@ import com.cyberpeace.integratation.model.evaluation.MarkData;
 import com.cyberpeace.integratation.model.evaluation.MatchData;
 import com.cyberpeace.integratation.service.RemotePythonService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -60,7 +61,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("list_data", formatData.getData());
 
-        String resp = invoke(json);
+        String resp;
+        try {
+            resp = invoke(json);
+        } catch (RemoteServiceException e) {
+            throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
+        }
         List<String> results = JsonUtil.toJsonObjectArray(resp, String.class);
         if (results.contains(null)) {
             throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
@@ -74,7 +80,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", matchData);
 
-        String resp = invoke(json);
+        String resp;
+        try {
+            resp = invoke(json);
+        } catch (RemoteServiceException e) {
+            throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
+        }
         return JsonUtil.toJsonObjectArray(resp, Integer.class);
     }
 
@@ -83,7 +94,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", markData);
 
-        String resp = invoke(json);
+        String resp;
+        try {
+            resp = invoke(json);
+        } catch (RemoteServiceException e) {
+            throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
+        }
         return JsonUtil.toJsonObject(resp, Integer.class);
     }
 
@@ -92,7 +108,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
         JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
         json.put("data", data);
 
-        String resp = invoke(json);
+        String resp;
+        try {
+            resp = invoke(json);
+        } catch (RemoteServiceException e) {
+            throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
+        }
         return JsonUtil.toJsonObject(resp, Integer.class);
     }
 }

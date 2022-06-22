@@ -265,7 +265,16 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		PracticeSet practiceSet = handlerPracticeSet(path);
 
 		// 遍历习题数据处理
-		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
+		List<String> ctfPracticeDirs = Lists.newArrayList();
+		for (String name: envReqs.keySet()) {
+			File tmpFile = new File(path, name);
+			if (tmpFile.exists()){
+				ctfPracticeDirs.add(tmpFile.getAbsolutePath());
+			}
+		}
+		if (ctfPracticeDirs.size() == 0){
+			return Lists.newArrayList();
+		}
 
 		// 构建数据存储
 		List<String> existOperations = Lists.newArrayList();

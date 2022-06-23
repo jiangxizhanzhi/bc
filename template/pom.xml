@@ -21,30 +21,19 @@
 
     <profiles>
         <profile>
-            <id>rtks</id>
-
-            <properties>
-                <!-- lgd -->
-                <package.environment>rtks</package.environment>
-            </properties>
-        </profile>
-        <profile>
-            <id>rtks_v5_2</id>
-            <properties>
-                <!-- base5.2 -->
-                <package.environment>rtks_v5_2</package.environment>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>rtks_v5_3</id>
+            <id>dev</id>
             <activation>
                 <!-- 默认激活 -->
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <!-- base5.3 -->
-                <package.environment>rtks_v5_3</package.environment>
+                <package.environment>dev</package.environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <package.environment>prod</package.environment>
             </properties>
         </profile>
     </profiles>

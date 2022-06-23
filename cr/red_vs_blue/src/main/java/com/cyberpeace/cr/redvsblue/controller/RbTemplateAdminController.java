@@ -1,22 +1,9 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -26,6 +13,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
@@ -41,9 +29,24 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
-
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = "红蓝对抗模板后台")
 @RestController
@@ -69,6 +72,12 @@ public class RbTemplateAdminController {
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private BusinessTemplateMapper businessTemplateMapper;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
@@ -93,6 +102,12 @@ public class RbTemplateAdminController {
 						rbTemplate.getRoleConfig());
 			}
 		});
+
+		String rbTrainTemplateName = addReq.getBaseInfo().getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.CREATE, rbTrainTemplateName,
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
+
 		return new BaseRsp<>();
 	}
 
@@ -122,6 +137,12 @@ public class RbTemplateAdminController {
 						rbTemplate.getRoleConfig());
 			}
 		});
+
+		String rbTrainTemplateName = modifyReq.getBaseInfo().getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.UPDATE, rbTrainTemplateName,
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
+
 		return new BaseRsp<>();
 	}
 
@@ -129,6 +150,16 @@ public class RbTemplateAdminController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		for(String id:deleteReq.getIds()){
+			BusinessTemplate businessTemplate = businessTemplateMapper.selectById(id);
+			if(businessTemplate != null){
+				String rbTrainTemplateName = businessTemplate.getName();
+				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+						OperationType.DELETE, rbTrainTemplateName,
+						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
+			}
+		}
 
 		rbTemplateService.batchDelete(deleteReq.getIds());
 

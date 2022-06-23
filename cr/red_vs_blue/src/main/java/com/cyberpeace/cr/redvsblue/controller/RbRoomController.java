@@ -17,6 +17,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
@@ -31,7 +32,10 @@ import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbTimeManagementRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
@@ -40,6 +44,7 @@ import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -99,6 +104,15 @@ public class RbRoomController {
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	@Autowired
+	private RbTemplateMapper rbTemplateMapper;
+
+	@Autowired
+	private BusinessTemplateMapper businessTemplateMapper;
+
+	@Autowired
+	private RbRoomMapper rbRoomMapper;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -116,8 +130,11 @@ public class RbRoomController {
 
 		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
-				OperationType.CREATE, rbRoomReq.getName());
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoomReq.getTemplate());
+		String rbTemplateName = businessTemplateMapper.selectById(rbTemplate.getBusinessTemplateId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.CREATE, rbRoomReq.getName(),
+				LogContent.SCENE_FORMAT.format(rbTemplateName));
 
 		return getRbRoom(rbRoom.getResourceId());
 	}
@@ -337,8 +354,10 @@ public class RbRoomController {
 
 		rbRoomService.updateRbRoom(rbRoomContext, rbRoom);
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
-				OperationType.UPDATE, rbRoomService.getById(rbTrainRoomModifyReq.getResourceId()).getName());
+		String rbTemplateName = rbRoomMapper.selectById(rbTrainRoomModifyReq.getResourceId()).getTemplateName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.UPDATE, rbTrainRoomModifyReq.getName(),
+				LogContent.SCENE_FORMAT.format(rbTemplateName));
 
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}
@@ -351,6 +370,11 @@ public class RbRoomController {
 		if (StringUtils.isBlank(roomId)) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
+
+		String rbTemplateName = rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.DELETE, rbRoomService.getById(roomId).getName(),
+				LogContent.SCENE_FORMAT.format(rbTemplateName));
 
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
 				OperationType.UPDATE, rbRoomService.getById(opsReq.getRoomId()).getName());

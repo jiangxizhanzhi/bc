@@ -15,6 +15,7 @@ import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateUpdateReq
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -87,8 +88,10 @@ public class SingleTemplateController {
 			}
 		});
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
-				OperationType.CREATE, requestDataRel.getEventData().getName());
+		String singleTrainTemplateName = requestDataRel.getEventData().getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.CREATE, singleTrainTemplateName,
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.SINGLE_TRAIN_TEMPLATE.getMsg(), singleTrainTemplateName));
 
 		return new BaseRsp<>();
 	}
@@ -124,8 +127,10 @@ public class SingleTemplateController {
 			}
 		});
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
-				OperationType.UPDATE, requestDataRel.getEventData().getName());
+		String singleTrainTemplateName = requestDataRel.getEventData().getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.UPDATE, singleTrainTemplateName,
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.SINGLE_TRAIN_TEMPLATE.getMsg(), singleTrainTemplateName));
 
 		return new BaseRsp<>();
 	}

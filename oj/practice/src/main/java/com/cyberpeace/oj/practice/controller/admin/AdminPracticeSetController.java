@@ -23,6 +23,7 @@ import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -96,8 +97,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		int result = practiceSetMapper.insert(practiceSet);
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
-				OperationType.CREATE, practiceSet.getName());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
+				OperationType.CREATE, practiceSet.getName(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.PRACTICE_SET.getMsg(), practiceSet.getName()));
 
 		return new BaseRsp(result);
 	}
@@ -117,8 +119,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		Boolean result = practiceSetService.updateByAuth(practiceSet, authContext);
 
 		if (result){
-			remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
-					OperationType.UPDATE, practiceSet.getName());
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
+					OperationType.UPDATE, practiceSet.getName(),
+					LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.PRACTICE_SET.getMsg(), practiceSet.getName()));
 		}
 
 		return new BaseRsp(result);
@@ -149,8 +152,10 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		practiceSetService.enableDelete(delReq.getResourceIds(), authContext);
 
 		for(String id:delReq.getResourceIds()){
-			remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
-					OperationType.DELETE, practiceSetService.selectById(id,authContext).getName());
+			String practiceSetName = practiceSetService.selectById(id,authContext).getName();
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
+					OperationType.DELETE, practiceSetName,
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.PRACTICE_SET.getMsg(), practiceSetName));
 		}
 
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());

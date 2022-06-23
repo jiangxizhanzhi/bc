@@ -1,14 +1,5 @@
 package com.cyberpeace.oj.practice.controller.web;
 
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,23 +14,34 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebOperationListReq;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -53,6 +55,12 @@ public class PracticeOperationController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private PracticeOperationMapper practiceOperationMapper;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
@@ -132,6 +140,10 @@ public class PracticeOperationController {
 		JSONObject sceneData = practiceOperationService
 				.startScene(sceneOperationReq.getResourceId(), authContext);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+				OperationType.START, LogContent.EXERCISE.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.START, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(sceneOperationReq.getResourceId()).getTitle()));
+
 		return new BaseRsp<>(sceneData);
 	}
 
@@ -144,6 +156,10 @@ public class PracticeOperationController {
 				true);
 		Boolean result = practiceOperationService.deleteScene(sceneOperationReq.getResourceId(),
 				authContext);
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+				OperationType.STOP, LogContent.EXERCISE.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.STOP, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(sceneOperationReq.getResourceId()).getTitle()));
 
 		return new BaseRsp(result);
 	}

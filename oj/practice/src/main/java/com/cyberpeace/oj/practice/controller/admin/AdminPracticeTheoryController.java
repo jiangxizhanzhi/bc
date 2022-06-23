@@ -1,38 +1,29 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
-import java.io.File;
-import java.util.List;
-
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.oj.practice.service.PracticeSetService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
@@ -42,9 +33,17 @@ import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.AdminTheoryBo;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.util.List;
 
 @Api(tags = "oj-后台基础理论习题相关api")
 @RestController
@@ -67,6 +66,9 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	@Autowired
 	private UtilService utilService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@ApiOperation("理论基础习题新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
@@ -82,6 +84,10 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		replaceAnswer(practiceTheory);
 
 		Integer result = practiceTheoryService.create(practiceTheory, authContext);
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
+				OperationType.CREATE, LogContent.THEORY.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.THEORY.getMsg(), theoryAddReq.getContent()));
 
 		return new BaseRsp(result);
 	}
@@ -109,6 +115,10 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		int result = practiceTheoryService.updateTheory(practiceTheory, authContext);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
+				OperationType.UPDATE, LogContent.THEORY.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.THEORY.getMsg(), theoryUpdateReq.getContent()));
+
 		return new BaseRsp(result);
 	}
 
@@ -127,6 +137,12 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
+
+		for(String id:delReq.getResourceIds()){
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
+					OperationType.DELETE, LogContent.THEORY.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.THEORY.getMsg(), practiceTheoryMapper.selectById(id).getContent()));
+		}
 
 		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());
 		return new BaseRsp<>(result);

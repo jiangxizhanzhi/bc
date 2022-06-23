@@ -1,20 +1,5 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -61,11 +46,24 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "红蓝对抗实例")
 @Slf4j
@@ -117,6 +115,9 @@ public class RbRoomController {
 				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
 
 		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.CREATE, rbRoomReq.getName());
 
 		return getRbRoom(rbRoom.getResourceId());
 	}
@@ -336,6 +337,9 @@ public class RbRoomController {
 
 		rbRoomService.updateRbRoom(rbRoomContext, rbRoom);
 
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.UPDATE, rbRoomService.getById(rbTrainRoomModifyReq.getResourceId()).getName());
+
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}
 
@@ -347,6 +351,10 @@ public class RbRoomController {
 		if (StringUtils.isBlank(roomId)) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.UPDATE, rbRoomService.getById(opsReq.getRoomId()).getName());
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

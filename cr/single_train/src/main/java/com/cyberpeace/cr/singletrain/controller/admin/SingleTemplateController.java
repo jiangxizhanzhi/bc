@@ -1,14 +1,6 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
 import com.cyberpeace.common.constant.MenuConstant;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -23,9 +15,18 @@ import com.cyberpeace.cr.singletrain.controller.req.SingleTrainTemplateUpdateReq
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
-
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "单兵训练模板")
 @RestController
@@ -44,6 +45,9 @@ public class SingleTemplateController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@GetMapping
 	@ApiOperation("单兵训练模板获取")
@@ -83,6 +87,9 @@ public class SingleTemplateController {
 			}
 		});
 
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.CREATE, requestDataRel.getEventData().getName());
+
 		return new BaseRsp<>();
 	}
 
@@ -116,6 +123,10 @@ public class SingleTemplateController {
 						singleTemplate.getMissionsScheme());
 			}
 		});
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.UPDATE, requestDataRel.getEventData().getName());
+
 		return new BaseRsp<>();
 	}
 

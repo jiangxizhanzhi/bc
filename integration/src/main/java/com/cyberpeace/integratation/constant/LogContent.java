@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.constant;
 
 import com.cyberpeace.constant.BaseI18n;
+
 import lombok.Getter;
 
 public enum LogContent implements BaseI18n {
@@ -19,6 +20,11 @@ public enum LogContent implements BaseI18n {
 	SINGLE_TRAIN_TEMPLATE("Single train template","单兵训练模板"),
 	TEAM_TRAIN_TEMPLATE("Team train template","团队训练模板"),
 	RB_ROOM_TEMPLATE("Cyber Wargame template","红蓝对抗模板"),
+
+	RTKS_FRAME("%s %s", "%s%s"), LEVEL("Level", "岗位层级"), FRAME("Network Security Frame",
+			"网络安全框架"), KNOWLEDGE_CATEGORY("Knowledge Category", "知识类别"), KNOWLEDGE("Knowledge",
+					"知识"), ROLE("Role", "岗位"), SKILL("Skill", "技能"), TASK("Task", "岗位职责"),
+
 	CORRECT("correctly", "正确"),
 	INCORRECT("incorrectly", "错误");
 

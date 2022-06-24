@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.constant;
 
 import com.cyberpeace.constant.BaseI18n;
+
 import lombok.Getter;
 
 public enum OperationType implements BaseI18n {
@@ -22,7 +23,7 @@ public enum OperationType implements BaseI18n {
 	STOP(11, "停止", "Stop"),
 	PAUSE(12, "暂停", "Suspend"),
 	START(13, "启动", "Start"),
-	UNPAUSE(14, "恢复", "Resume");
+	UNPAUSE(14, "恢复", "Resume"), RESET(15, "重置", "Reset"), EMPTY(16, "清空", "Empty");
 
 	@Getter
 	private final Integer code;

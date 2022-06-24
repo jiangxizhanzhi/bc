@@ -6,9 +6,6 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -17,11 +14,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.frame.*;
 import com.cyberpeace.rtks.dao.entity.Level;
@@ -48,6 +53,9 @@ public class LevelController {
 	@Autowired
 	private FrameService frameService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -56,6 +64,10 @@ public class LevelController {
 		Level entity = getEntityFromAddInput(input);
 
 		getService().save(entity);
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.CREATE, entity.getName(), LogContent.CR_FORMAT
+						.format(OperationType.CREATE, LogContent.LEVEL.getMsg(), entity.getName()));
 
 		return retrieve(entity.getResourceId());
 	}
@@ -72,6 +84,10 @@ public class LevelController {
 
 		getService().updateById(entity);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.UPDATE, entity.getName(), LogContent.CR_FORMAT
+						.format(OperationType.UPDATE, LogContent.LEVEL.getMsg(), entity.getName()));
+
 		return retrieve(resourceId);
 	}
 
@@ -87,7 +103,17 @@ public class LevelController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		List<Level> levelList = levelService.listByIds(deleteReq.getIds());
+
 		performBatchDelete(deleteReq.getIds());
+
+		for (Level level : levelList) {
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+					OperationType.DELETE, level.getName(), LogContent.CR_FORMAT.format(
+							OperationType.DELETE, LogContent.LEVEL.getMsg(), level.getName()));
+		}
+
 		return new BaseRsp<>();
 	}
 

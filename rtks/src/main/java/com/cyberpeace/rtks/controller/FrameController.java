@@ -256,9 +256,9 @@ public class FrameController {
 			}
 		});
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-				OperationType.EMPTY, LogContent.FRAME.getMsg(),
-				LogContent.RTKS_FRAME.format(OperationType.EMPTY, LogContent.FRAME.getMsg()));
+//		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+//				OperationType.EMPTY, LogContent.FRAME.getMsg(),
+//				LogContent.RTKS_FRAME.format(OperationType.EMPTY, LogContent.FRAME.getMsg()));
 
 		return retrieve(DEFAULT_FRAME_ID);
 	}
@@ -285,9 +285,9 @@ public class FrameController {
 			}
 		});
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-				OperationType.RESET, LogContent.FRAME.getMsg(),
-				LogContent.RTKS_FRAME.format(OperationType.RESET, LogContent.FRAME.getMsg()));
+//		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+//				OperationType.RESET, LogContent.FRAME.getMsg(),
+//				LogContent.RTKS_FRAME.format(OperationType.RESET, LogContent.FRAME.getMsg()));
 
 		return retrieve(DEFAULT_FRAME_ID);
 	}

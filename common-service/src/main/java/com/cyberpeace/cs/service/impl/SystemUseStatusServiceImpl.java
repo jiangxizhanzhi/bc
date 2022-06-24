@@ -48,9 +48,7 @@ public class SystemUseStatusServiceImpl extends ServiceImpl<SystemUseStatusMappe
 
 	@Override
 	public void delete() {
-		Map<String, Object> queryParams = new HashMap<>();
-		queryParams.put("alter_time"," <= date_sub(now(), interval 36 hour)");
-		systemUseStatusMapper.deleteByMap(queryParams);
+		systemUseStatusMapper.deleteOverdueData();
 	}
 
 

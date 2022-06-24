@@ -1,20 +1,5 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -35,6 +20,7 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
@@ -51,6 +37,9 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
@@ -58,6 +47,7 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -65,11 +55,24 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例")
 @RestController
@@ -110,6 +113,15 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private TeamTemplateMapper teamTemplateMapper;
+
+	@Autowired
+	private BusinessTemplateMapper businessTemplateMapper;
+
+	@Autowired
+	private TeamRoomMapper teamRoomMapper;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -272,6 +284,12 @@ public class TeamTrainRoomController {
 		// 重命名mp场景模板为房间名称
 		// localSceneService.renameTopo(teamRoom.getCopyedTopoId(), teamRoom.getName());
 
+		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
+		String teamTemplateName = businessTemplateMapper.selectById(teamTemplate.getBusinessTemplateId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+				OperationType.CREATE, teamTrainRoomReq.getName(),
+				LogContent.SCENE_FORMAT.format(teamTemplateName));
+
 		return getTeamRoom(teamRoom.getResourceId());
 	}
 
@@ -293,6 +311,11 @@ public class TeamTrainRoomController {
 				.toJsonObjectArray(teamTrainRoomModifyReq.getRoleConfig(), RoomRole.class);
 		teamTrainRoomContext.setRoleConfig(roomRoleList);
 		teamRoomService.updateTeamRoom(teamTrainRoomContext, teamRoom);
+
+		String teamTemplateName = teamRoomMapper.selectById(teamTrainRoomModifyReq.getResourceId()).getTeamTemplateName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+				OperationType.UPDATE, teamTrainRoomModifyReq.getName(),
+				LogContent.SCENE_FORMAT.format(teamTemplateName));
 
 		return getTeamRoom(teamTrainRoomModifyReq.getResourceId());
 	}
@@ -344,6 +367,11 @@ public class TeamTrainRoomController {
 	public BaseRsp<String> batchDelete(@RequestBody @Validated SceneOpsReq opsReq) {
 
 		String roomId = opsReq.getRoomId();
+
+		String teamTemplateName = teamRoomMapper.selectById(opsReq.getRoomId()).getTeamTemplateName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+				OperationType.DELETE, teamRoomService.getById(roomId).getName(),
+				LogContent.SCENE_FORMAT.format(teamTemplateName));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

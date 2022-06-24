@@ -236,8 +236,6 @@ public class MDParser {
 
 	private static final String TASK_DIR = "task";
 
-	private static final String ADMIN_ID = "3f655d87112f4ae094bbaf70830e20aa";
-
 	private final String dirPath;
 
 	private final String topoId;
@@ -312,7 +310,8 @@ public class MDParser {
 		businessTemplate.setTopoId(topoId);
 		businessTemplate.setResourceId(IDGeneratorUtil.getID());
 		templateContext.setBusinessTemplateId(businessTemplate.getResourceId());
-		businessTemplate.setCreateUserId(ADMIN_ID);
+		businessTemplate.setCreateUserId(CommonConstant.ADMIN_ID);
+
 		// 设为全部可见
 		businessTemplate.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		businessTemplate.setOperationAuthIds("[]");
@@ -568,7 +567,7 @@ public class MDParser {
 		handleWriteup(template, missionDir, missionTitle);
 		// return
 		template.setResourceId(IDGeneratorUtil.getID());
-		template.setCreateUserId(ADMIN_ID);
+		template.setCreateUserId(CommonConstant.ADMIN_ID);
 		missionTemplates.add(template);
 		return template.getResourceId();
 	}

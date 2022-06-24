@@ -9,11 +9,16 @@ public enum LogContent implements BaseI18n {
 	 */
 
 	CR_FORMAT("%s %s \"%s\"", "%s%s \"%s\""),
+	SCENE_FORMAT("Scene temple = %s","场景模板 = %s"),
 	COURSE_FORMAT("Name of course: %s, Name of lesson: %s.", "课程名：%s，课时名：%s。"),
 	PRACTICE_FORMAT("Exercise: \"%s\", the user answered %s.", "实操题：\"%s\"，用户回答%s。"),
 	THEORY_FORMAT("Theory: \"%s\", the user answered %s.", "理论题：\"%s\"，用户回答%s。"),
 	EXERCISE("Exercise", "实操题"),
 	THEORY("Theory", "理论题"),
+	PRACTICE_SET("Practice set","习题集"),
+	SINGLE_TRAIN_TEMPLATE("Single train template","单兵训练模板"),
+	TEAM_TRAIN_TEMPLATE("Team train template","团队训练模板"),
+	RB_ROOM_TEMPLATE("Cyber Wargame template","红蓝对抗模板"),
 	CORRECT("correctly", "正确"),
 	INCORRECT("incorrectly", "错误");
 

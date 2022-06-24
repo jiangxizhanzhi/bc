@@ -1,18 +1,5 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,6 +19,10 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
@@ -53,9 +44,19 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
-
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Api(tags = "oj-后台课时相关api")
 @RestController
@@ -84,6 +85,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
@@ -158,6 +162,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson lesson = courseLessonService.addLesson(courseLesson, sceneConfig,
 				practiceContextList);
 
+		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
+		String operationTarget = courseName + "-" + lesson.getName();
+		String content = LogContent.COURSE_FORMAT.format(courseName, lesson.getName());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.CREATE, operationTarget, content);
+
 		return new BaseRsp(lesson);
 	}
 
@@ -183,6 +193,13 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		// 执行数据更新
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson, topoConfig,
 				contextList);
+
+		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
+		String operationTarget = courseName + "-" + lesson.getName();
+		String content = LogContent.COURSE_FORMAT.format(courseName, lesson.getName());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.UPDATE, operationTarget, content);
+
 		return new BaseRsp(lesson);
 
 	}
@@ -194,6 +211,15 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		String lessonId = batchDeleteReq.getResourceIds().get(CommonConstant.ZERO);
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
+
+		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
+		for(String id:batchDeleteReq.getResourceIds()){
+			CourseLesson courseLesson = courseLessonMapper.selectById(id);
+			String operationTarget = courseName + "-" + courseLesson.getName();
+			String content = LogContent.COURSE_FORMAT.format(courseName, courseLesson.getName());
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+					OperationType.DELETE, operationTarget, content);
+		}
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

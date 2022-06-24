@@ -1,20 +1,5 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -32,6 +17,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
@@ -46,7 +32,10 @@ import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbTimeManagementRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
@@ -55,17 +44,31 @@ import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "红蓝对抗实例")
 @Slf4j
@@ -101,6 +104,15 @@ public class RbRoomController {
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	@Autowired
+	private RbTemplateMapper rbTemplateMapper;
+
+	@Autowired
+	private BusinessTemplateMapper businessTemplateMapper;
+
+	@Autowired
+	private RbRoomMapper rbRoomMapper;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -117,6 +129,12 @@ public class RbRoomController {
 				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
 
 		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
+
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoomReq.getTemplate());
+		String rbTemplateName = businessTemplateMapper.selectById(rbTemplate.getBusinessTemplateId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.CREATE, rbRoomReq.getName(),
+				LogContent.SCENE_FORMAT.format(rbTemplateName));
 
 		return getRbRoom(rbRoom.getResourceId());
 	}
@@ -336,6 +354,11 @@ public class RbRoomController {
 
 		rbRoomService.updateRbRoom(rbRoomContext, rbRoom);
 
+		String rbTemplateName = rbRoomMapper.selectById(rbTrainRoomModifyReq.getResourceId()).getTemplateName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.UPDATE, rbTrainRoomModifyReq.getName(),
+				LogContent.SCENE_FORMAT.format(rbTemplateName));
+
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}
 
@@ -347,6 +370,15 @@ public class RbRoomController {
 		if (StringUtils.isBlank(roomId)) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
+
+		String rbTemplateName = rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.DELETE, rbRoomService.getById(roomId).getName(),
+				LogContent.SCENE_FORMAT.format(rbTemplateName));
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.UPDATE, rbRoomService.getById(opsReq.getRoomId()).getName());
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

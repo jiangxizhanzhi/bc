@@ -1,20 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -25,6 +12,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionService;
@@ -46,11 +34,26 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "团队训练模板")
 @RestController
@@ -79,6 +82,12 @@ public class TeamTrainTemplateController {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private BusinessTemplateMapper businessTemplateMapper;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
@@ -102,6 +111,12 @@ public class TeamTrainTemplateController {
 						teamTemplate.getRoleConfig());
 			}
 		});
+
+		String teamTrainTemplateName = addReq.getBaseInfo().getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+				OperationType.CREATE, teamTrainTemplateName,
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
+
 		return new BaseRsp<>();
 	}
 
@@ -131,6 +146,11 @@ public class TeamTrainTemplateController {
 						teamTemplate.getRoleConfig());
 			}
 		});
+
+		String teamTrainTemplateName = modifyReq.getBaseInfo().getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+				OperationType.UPDATE, teamTrainTemplateName,
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
 
 		return new BaseRsp<>();
 	}
@@ -185,6 +205,17 @@ public class TeamTrainTemplateController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		for(String id:deleteReq.getIds()){
+			BusinessTemplate businessTemplate = businessTemplateMapper.selectById(id);
+			if(businessTemplate != null){
+				String teamTrainTemplateName = businessTemplate.getName();
+				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+						OperationType.DELETE, teamTrainTemplateName,
+						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
+			}
+		}
+
 		teamTemplateService.batchDelete(deleteReq.getIds());
 		return new BaseRsp<>();
 	}

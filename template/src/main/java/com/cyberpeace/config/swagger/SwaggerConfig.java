@@ -2,7 +2,7 @@ package com.cyberpeace.config.swagger;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.cyberpeace.common.util.ConfigUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,9 +22,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 @EnableOpenApi
 public class SwaggerConfig {
-
-	@Value("${ojj.apiDoc}")
-	private String apiDoc;
 
 	@Bean
 	public Docket apiRtks() {
@@ -83,6 +80,8 @@ public class SwaggerConfig {
 	}
 
 	private ApiSelectorBuilder getDocket() {
+		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
+
 		return new Docket(DocumentationType.OAS_30).apiInfo(apiInfo())
 				.enable(Boolean.parseBoolean(apiDoc))
 				.securityContexts(Arrays.asList(SecurityContext.builder()

@@ -83,8 +83,8 @@ public class SystemUseStatusJob {
 		return map;
 	}
 
-	@Scheduled(fixedRate =  60 * 1000)
-	public void insertSystemUseStatus() throws Exception {
+	@Scheduled(fixedRate =  5 * 60 * 1000)
+	public void insertSystemUseStatus() {
 		log.info("system use status start----------");
 		String diskCmd = "df -h /";
 		String memoryCmd = "cat /proc/meminfo";

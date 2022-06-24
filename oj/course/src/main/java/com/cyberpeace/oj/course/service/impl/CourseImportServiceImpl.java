@@ -638,11 +638,19 @@ public class CourseImportServiceImpl implements CourseImportService {
 				chapterMap.put(chapterName, chapterConfig);
 			}
 
+			String[] lessonNameList = courseInfo.getLessonName().split("_", 2);
+			String lessonName;
+			if (lessonNameList.length == 2){
+				lessonName = lessonNameList[1];
+			}else{
+				lessonName = lessonNameList[0];
+			}
+
 			// 处理课时
 			LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 					.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
-					.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(courseInfo.getLessonName())
-					.lessonId(lessonNameMap.get(courseInfo.getLessonName())).index(index).build();
+					.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(lessonName)
+					.lessonId(lessonNameMap.get(lessonName)).index(index).build();
 			lessonConfigs.add(lessonConfig);
 
 			// 索引加一
@@ -658,7 +666,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	public Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos, AuthContext authContext) {
 
-		if (courseInfos.size() == 0){
+		log.info("Combined-Lesson-Import's request is: [{}]", JsonUtil.toJsonString(courseInfos));
+
+		if (null == courseInfos || courseInfos.size() == 0){
 			log.info("The request body is empty!");
 			return true;
 		}
@@ -679,10 +689,18 @@ public class CourseImportServiceImpl implements CourseImportService {
 				continue;
 			}
 
+			String[] lessonNameList = courseInfo.getLessonName().split("_", 2);
+			String lessonName;
+			if (lessonNameList.length == 2){
+				lessonName = lessonNameList[1];
+			}else{
+				lessonName = lessonNameList[0];
+			}
+
 			// 该课时已存在，不再处理
-			String lessonId =  courseLessonMapper.selectByCourseAndName(course.getResourceId(), courseInfo.getLessonName());
+			String lessonId =  courseLessonMapper.selectByCourseAndName(course.getResourceId(), lessonName);
 			if (null != lessonId) {
-				lessonNameMap.putIfAbsent(courseInfo.getLessonName(),lessonId);
+				lessonNameMap.putIfAbsent(lessonName,lessonId);
 				continue;
 			}
 
@@ -691,7 +709,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 			CourseLesson courseLesson = parseLesson(courseInfo.getPath(), course, envReqs);
 
 			if (null != courseLesson) {
-				if (null != lessonNameMap.putIfAbsent(courseLesson.getName(),
+				if (null != lessonNameMap.putIfAbsent(lessonName,
 						courseLesson.getResourceId())) {
 					log.error("Lesson name exist! course_name=[{}], lesson_path=[{}]", courseInfo.getCourseName(),
 							courseInfo.getPath());

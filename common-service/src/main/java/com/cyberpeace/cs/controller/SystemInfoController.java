@@ -26,7 +26,6 @@ public class SystemInfoController {
 	@GetMapping("/app_running_info")
 	public BaseRsp<SystemUseStatusRes> appRunningInfo() {
 		SystemUseStatusRes res = systemUseStatusService.showAll();
-		systemUseStatusService.delete();
 		return new BaseRsp<>(res);
 	}
 

@@ -65,7 +65,7 @@ public class KnowledgeCategoryController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			addKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
-		validate(knowledgeCategoryAddReq.getContent());
+		validate(knowledgeCategoryAddReq.getContent(), "");
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
 
 		BeanUtils.copyProperties(knowledgeCategoryAddReq, knowledgeCategory);
@@ -79,13 +79,20 @@ public class KnowledgeCategoryController {
 		return new BaseRsp<>();
 	}
 
-	private void validate(String content) {
-		List<KnowledgeCategory> knowledgeCategory = knowledgeCategoryService.getByContent(content.trim());
-
-		if (knowledgeCategory.size() > 0) {
-			log.error("knowledgeCategory already exist,knowledgeCategory is [{}]", content);
-			throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_CATEGORY_NAME_DUPLICATE);
+	private void validate(String content, String resourceId) {
+		List<KnowledgeCategory> knowledgeCategories = knowledgeCategoryService
+				.getByContent(content.trim());
+		if (knowledgeCategories.isEmpty()) {
+			return;
 		}
+		if (knowledgeCategories.size() == 1
+				&& knowledgeCategories.get(0).getResourceId().equals(resourceId)) {
+			return;
+		}
+
+		log.error("knowledgeCategory already exist,knowledgeCategory is [{}]", content);
+		throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_CATEGORY_NAME_DUPLICATE);
+
 	}
 
 	@ApiOperation("修改单条")
@@ -93,7 +100,8 @@ public class KnowledgeCategoryController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			modifyKnowledge(@RequestBody @Validated AbilityAddReq knowledgeCategoryOrSystemAddReq) {
-		validate(knowledgeCategoryOrSystemAddReq.getContent());
+		validate(knowledgeCategoryOrSystemAddReq.getContent(),
+				knowledgeCategoryOrSystemAddReq.getResourceId());
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
 		BeanUtils.copyProperties(knowledgeCategoryOrSystemAddReq, knowledgeCategory);
 		knowledgeCategoryService.updateById(knowledgeCategory);

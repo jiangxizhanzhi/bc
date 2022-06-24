@@ -32,14 +32,17 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
@@ -130,7 +133,11 @@ public class RoleController {
 	@Autowired
 	private CourseNameService courseNameService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	private Boolean singleFrame;
+
 
 	@PostConstruct
 	public void init() {
@@ -170,6 +177,10 @@ public class RoleController {
 			}
 		});
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.CREATE, role.getName(), LogContent.CR_FORMAT
+						.format(OperationType.CREATE, LogContent.ROLE.getMsg(), role.getName()));
+
 		return new BaseRsp<>();
 	}
 
@@ -197,6 +208,10 @@ public class RoleController {
 			}
 		});
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.UPDATE, entity.getName(), LogContent.CR_FORMAT
+						.format(OperationType.UPDATE, LogContent.ROLE.getMsg(), entity.getName()));
+
 		return new BaseRsp<>();
 	}
 
@@ -212,6 +227,9 @@ public class RoleController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		List<Role> roles = roleService.listByIds(deleteReq.getIds());
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -220,6 +238,12 @@ public class RoleController {
 				// delete role-skill relations
 				roleService.deleteSkillRelByRoleIds(deleteReq.getIds());
 			}
+		});
+
+		roles.forEach(role -> {
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+					OperationType.DELETE, role.getName(), LogContent.CR_FORMAT.format(
+							OperationType.DELETE, LogContent.ROLE.getMsg(), role.getName()));
 		});
 
 		return new BaseRsp<>();

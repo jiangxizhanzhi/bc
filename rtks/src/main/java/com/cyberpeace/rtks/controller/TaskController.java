@@ -2,7 +2,6 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -10,10 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.controller.req.TaskAddReq;
 import com.cyberpeace.rtks.dao.entity.Task;
 import com.cyberpeace.rtks.service.RoleService;
@@ -35,6 +40,9 @@ public class TaskController {
 	@Autowired
 	private RoleService roleService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@ApiOperation("查询单条任务")
 	@GetMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -54,6 +62,10 @@ public class TaskController {
 
 		taskService.save(toAddTask);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.CREATE, toAddTask.getResourceId(), LogContent.CR_FORMAT.format(
+						OperationType.CREATE, LogContent.TASK.getMsg(), toAddTask.getResourceId()));
+
 		return new BaseRsp<>();
 	}
 
@@ -66,6 +78,11 @@ public class TaskController {
 
 		taskService.updateById(toUpdateTask);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.UPDATE, toUpdateTask.getResourceId(),
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TASK.getMsg(),
+						toUpdateTask.getResourceId()));
+
 		return new BaseRsp<>();
 	}
 
@@ -73,8 +90,17 @@ public class TaskController {
 	@DeleteMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteTask(@RequestBody @Validated DeleteReq deleteReq) {
+
+		List<Task> taskList = taskService.listByIds(deleteReq.getIds());
+
 		taskService.removeByIds(deleteReq.getIds());
 		roleService.updateBatchByDeleteRelatedIds(deleteReq, "task");
+
+		taskList.forEach(task -> {
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+					OperationType.DELETE, task.getResourceId(), LogContent.CR_FORMAT.format(
+							OperationType.DELETE, LogContent.TASK.getMsg(), task.getResourceId()));
+		});
 
 		return new BaseRsp<>();
 	}

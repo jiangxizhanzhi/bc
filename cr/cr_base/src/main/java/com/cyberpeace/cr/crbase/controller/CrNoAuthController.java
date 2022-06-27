@@ -129,8 +129,8 @@ public class CrNoAuthController {
 	 */
 	@ApiOperation("批量导入资管模板")
 	@PostMapping("/drm/check_template_name")
-	public BaseRsp<Boolean> batchLoadMd(@RequestBody @Valid List<String> template_names) {
-		Boolean res = businessTemplateService.existByNames(template_names);
+	public BaseRsp<List<String>> batchLoadMd(@RequestBody @Valid List<String> template_names) {
+		List<String> res = businessTemplateService.getExistedNames(template_names);
 
 		return new BaseRsp<>(res);
 	}

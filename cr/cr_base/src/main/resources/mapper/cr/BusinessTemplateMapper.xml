@@ -79,18 +79,12 @@
                    as result;
     </select>
 
-    <select id="existByNames" resultType="java.lang.Boolean">
-        select case
-        when exists(select 1
-        from cr_business_template
+    <select id="getExistedNames" resultType="java.lang.String">
+        select name from cr_business_template
         where name in
         <foreach collection="templateNames" separator="," open="(" close=")" item="templateName">
             #{templateName}
-        </foreach>)
-        then 1
-        else 0
-        end
-        as result;
+        </foreach>
     </select>
 
     <select id="existByNameAndTypeAndId" resultType="java.lang.Boolean">

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchLoadMdReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
@@ -72,13 +73,20 @@ public class CrNoAuthController {
 			String dir = basePath + File.separator + templateDirName;
 			// 读取
 			MDParser mdParser = new MDParser(dir, topoId);
-			// 跳过已存在
+			// 资管导入的模板不同类型没有重名，只需要用name验证是否已导入
 			String templateName = mdParser.getName();
-			if (businessTemplateService.existByName(templateName)) {
-				log.info(String.format("template [%s] already exists.", templateName));
-				continue;
+			boolean overWritten;
+			String businessTemplateId = businessTemplateService.getIdByName(templateName);
+			// 已存在则覆盖更新训练模板
+			if (businessTemplateId == null) {
+				businessTemplateId = IDGeneratorUtil.getID();
+				overWritten = false;
+			} else {
+				log.info(String.format("Template [%s] already exists. Gonna overwrite it.",
+						templateName));
+				overWritten = true;
 			}
-			mdParser.load();
+			mdParser.load(businessTemplateId);
 			BusinessTemplate template = mdParser.getBusinessTemplate();
 			List<MissionTemplate> missionTemplateList = mdParser.getMissionTemplates();
 			Map<String, String> attachments = mdParser.getImages();
@@ -96,7 +104,14 @@ public class CrNoAuthController {
 				@Override
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
-					businessTemplateService.save(template);
+					if (overWritten) {
+						// 覆盖，删除任务和旧训练模板，更新businessTemplate
+						handler.deleteTemplateRelated(template);
+						businessTemplateService.updateById(template);
+					} else {
+						// 新增，保存businessTemplate
+						businessTemplateService.save(template);
+					}
 					missionTemplateService.batchInsert(missionTemplateList);
 					handler.loadTrainTemplate(mdParser.getTemplateContext());
 					attachmentService.loadZiguanImages(attachments);
@@ -107,4 +122,16 @@ public class CrNoAuthController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 检查是否已存在同名模板
+	 * @param template_names 
+	 * @return true: 存在 
+	 */
+	@ApiOperation("批量导入资管模板")
+	@PostMapping("/drm/check_template_name")
+	public BaseRsp<Boolean> batchLoadMd(@RequestBody @Valid List<String> template_names) {
+		Boolean res = businessTemplateService.existByNames(template_names);
+
+		return new BaseRsp<>(res);
+	}
 }

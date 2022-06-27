@@ -144,11 +144,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public Boolean existByNames(List<String> names) {
+	public List<String> getExistedNames(List<String> names) {
 		if (names == null || names.isEmpty()) {
-			return false;
+			return Lists.newArrayList();
 		}
-		return businessTemplateMapper.existByNames(names);
+		return businessTemplateMapper.getExistedNames(names);
 	}
 
 	@Override

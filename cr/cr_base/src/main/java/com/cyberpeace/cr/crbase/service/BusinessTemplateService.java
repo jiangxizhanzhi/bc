@@ -114,7 +114,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param names
 	 * @return
 	 */
-	Boolean existByNames(List<String> names);
+	List<String> getExistedNames(List<String> names);
 
 	/**
 	 * 用于资管：读取某名称的模板id

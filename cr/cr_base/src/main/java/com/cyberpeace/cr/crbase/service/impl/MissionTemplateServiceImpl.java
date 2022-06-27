@@ -117,4 +117,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		});
 		return mapping;
 	}
+
+	@Override
+	public List<String> getIdsByBusinessTemplateId(String businessTemplateId) {
+		return missionTemplateMapper.selectByBusinessTemplateId(businessTemplateId);
+	}
 }

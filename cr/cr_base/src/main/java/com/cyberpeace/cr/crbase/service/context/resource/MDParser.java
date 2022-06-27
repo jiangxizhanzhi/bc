@@ -267,7 +267,7 @@ public class MDParser {
 	/**
 	 * 解析入口
 	 */
-	public void load() {
+	public void load(String businessTemplateId) {
 		String mdPath = dirPath + SEP + BASE_MD_FILE;
 		String baseText = stripMd(mdPath);
 		Map<String, String> data = parseText(baseText, LINE_SEP + H3,
@@ -308,7 +308,7 @@ public class MDParser {
 		businessTemplate.setName(data.get(ZiguanConstants.TEMPLATE_NAME));
 		businessTemplate.setDescription(data.get(ZiguanConstants.DESCRIPTION));
 		businessTemplate.setTopoId(topoId);
-		businessTemplate.setResourceId(IDGeneratorUtil.getID());
+		businessTemplate.setResourceId(businessTemplateId);
 		templateContext.setBusinessTemplateId(businessTemplate.getResourceId());
 		businessTemplate.setCreateUserId(CommonConstant.ADMIN_ID);
 

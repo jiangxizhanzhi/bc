@@ -61,4 +61,11 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * @return
 	 */
 	Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds);
+
+	/**
+	 * 查出businessTemplate关联的所有任务
+	 * @param businessTemplateId
+	 * @return
+	 */
+	List<String> getIdsByBusinessTemplateId(String businessTemplateId);
 }

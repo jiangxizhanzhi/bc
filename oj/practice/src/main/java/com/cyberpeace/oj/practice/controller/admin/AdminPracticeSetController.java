@@ -119,6 +119,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		Boolean result = practiceSetService.updateByAuth(practiceSet, authContext);
 
 		if (result){
+			practiceSet = practiceSetMapper.selectById(updateReq.getResourceId());
 			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
 					OperationType.UPDATE, practiceSet.getName(),
 					LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.PRACTICE_SET.getMsg(), practiceSet.getName()));

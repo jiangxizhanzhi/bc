@@ -354,10 +354,10 @@ public class RbRoomController {
 
 		rbRoomService.updateRbRoom(rbRoomContext, rbRoom);
 
-		String rbTemplateName = rbRoomMapper.selectById(rbTrainRoomModifyReq.getResourceId()).getTemplateName();
+		rbRoom = rbRoomMapper.selectById(rbTrainRoomModifyReq.getResourceId());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-				OperationType.UPDATE, rbTrainRoomModifyReq.getName(),
-				LogContent.SCENE_FORMAT.format(rbTemplateName));
+				OperationType.UPDATE, rbRoom.getName(),
+				LogContent.SCENE_FORMAT.format(rbRoom.getTemplateName()));
 
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}
@@ -375,9 +375,6 @@ public class RbRoomController {
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.DELETE, rbRoomService.getById(roomId).getName(),
 				LogContent.SCENE_FORMAT.format(rbTemplateName));
-
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
-				OperationType.UPDATE, rbRoomService.getById(opsReq.getRoomId()).getName());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

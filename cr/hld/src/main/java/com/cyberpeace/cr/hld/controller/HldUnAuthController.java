@@ -2,6 +2,12 @@ package com.cyberpeace.cr.hld.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.FtpUploadUtil;
+import com.cyberpeace.integratation.model.mp.MpLogFile;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -43,150 +49,160 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/hld/")
 public class HldUnAuthController {
 
-	@Autowired
-	private CrRoleService crRoleService;
+    @Autowired
+    private CrRoleService crRoleService;
 
-	@Autowired
-	private HldSceneService hldSceneService;
+    @Autowired
+    private HldSceneService hldSceneService;
 
-	@Autowired
-	private HldRoomService hldRoomService;
+    @Autowired
+    private HldRoomService hldRoomService;
 
-	@Autowired
-	private HldRoomMapper hldRoomMapper;
+    @Autowired
+    private HldRoomMapper hldRoomMapper;
 
-	@Autowired
-	private HldRoomSceneMapper hldRoomSceneMapper;
+    @Autowired
+    private HldRoomSceneMapper hldRoomSceneMapper;
 
-	@Autowired
-	private BusinessTemplateService businessTemplateService;
+    @Autowired
+    private RemoteSceneService remoteSceneService;
 
-	@ApiOperation("读取topo和角色资产")
-	@GetMapping("/topoAssets")
-	public BaseRsp<HldTopoAssetsRsp> getTopoAssets(@ApiParam(name = "resource_id",
-			value = "HLD拓扑id", required = true) String resource_id) {
+    @Autowired
+    private BusinessTemplateService businessTemplateService;
 
-		// read scene data
-		JSONObject sceneData = hldSceneService.viewSceneNoAuth(resource_id);
-		if (sceneData == null) {
-			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
-		}
-		HldTopoAssetsRsp rsp = new HldTopoAssetsRsp();
-		rsp.setSceneData(sceneData);
+    @ApiOperation("读取topo和角色资产")
+    @GetMapping("/topoAssets")
+    public BaseRsp<HldTopoAssetsRsp> getTopoAssets(@ApiParam(name = "resource_id", value = "HLD拓扑id", required = true) String resource_id) {
 
-		// read role assets
-		RoleQuery roleQuery = new RoleQuery();
-		roleQuery.setRoomId(resource_id);
-		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
-		for (CrRole role : crRoles) {
-			if (role.isHldStudent()) {
-				CrRoleConfig config = JsonUtil.toJsonObject(role.getNodes(), CrRoleConfig.class);
-				config.setName(role.getName());
-				config.setId(role.getResourceId());
+        // read scene data
+        JSONObject sceneData = hldSceneService.viewSceneNoAuth(resource_id);
+        if (sceneData == null) {
+            throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+        }
+        HldTopoAssetsRsp rsp = new HldTopoAssetsRsp();
+        rsp.setSceneData(sceneData);
 
-				if (role.isHldBlueStudent()) {
-					rsp.getBlueRole().add(config);
-				} else {
-					rsp.getRedRoles().add(config);
-				}
-			}
-		}
-		return new BaseRsp<>(rsp);
-	}
+        // read role assets
+        RoleQuery roleQuery = new RoleQuery();
+        roleQuery.setRoomId(resource_id);
+        List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+        for (CrRole role : crRoles) {
+            if (role.isHldStudent()) {
+                CrRoleConfig config = JsonUtil.toJsonObject(role.getNodes(), CrRoleConfig.class);
+                config.setName(role.getName());
+                config.setId(role.getResourceId());
 
-	@ApiOperation("查询")
-	@GetMapping()
-	public BaseRsp<HldTopoRsp> get(
-			@ApiParam(name = "resource_id", value = "HLD拓扑id", required = true) String resource_id,
-			@ApiParam(name = "user_id", value = "用户id", required = false) String user_id) {
+                if (role.isHldBlueStudent()) {
+                    rsp.getBlueRole().add(config);
+                } else {
+                    rsp.getRedRoles().add(config);
+                }
+            }
+        }
+        return new BaseRsp<>(rsp);
+    }
 
-		// 获取当前用户角色
-		CrRole userRole = hldRoomService.getUserRole(resource_id, user_id);
-		SceneViewContext context = hldSceneService.viewScene(resource_id, userRole);
+    @ApiOperation("查询")
+    @GetMapping()
+    public BaseRsp<HldTopoRsp> get(@ApiParam(name = "resource_id", value = "HLD拓扑id", required = true) String resource_id, @ApiParam(name = "user_id", value = "用户id", required = false) String user_id) {
 
-		// 构造返回数据
-		HldRoom hldRoom = hldRoomService.getHldRoom(resource_id);
-		HldTopoRsp hldTopoRsp = BeanUtils.copy(context, HldTopoRsp.class);
-		hldTopoRsp.setStatus(hldRoom.getStatus());
-		hldTopoRsp.setTaskName(hldRoom.getTaskName());
-		hldTopoRsp.setUserRole(hldRoomService.getHldRoleName(userRole.getName()));
+        // 获取当前用户角色
+        CrRole userRole = hldRoomService.getUserRole(resource_id, user_id);
+        SceneViewContext context = hldSceneService.viewScene(resource_id, userRole);
 
-		return new BaseRsp<>(hldTopoRsp);
-	}
+        // 构造返回数据
+        HldRoom hldRoom = hldRoomService.getHldRoom(resource_id);
+        HldTopoRsp hldTopoRsp = BeanUtils.copy(context, HldTopoRsp.class);
+        hldTopoRsp.setStatus(hldRoom.getStatus());
+        hldTopoRsp.setTaskName(hldRoom.getTaskName());
+        hldTopoRsp.setUserRole(hldRoomService.getHldRoleName(userRole.getName()));
 
-	@ApiOperation("启动场景")
-	@PostMapping("")
-	public BaseRsp startScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
+        return new BaseRsp<>(hldTopoRsp);
+    }
 
-		setUserInfo(hldSceneOpsReq.getUserId());
-		String sceneId = hldSceneService.startScene(hldSceneOpsReq.getResourceId(),
-				hldSceneOpsReq.getUserId());
+    @ApiOperation("启动场景")
+    @PostMapping("")
+    public BaseRsp startScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
-		return new BaseRsp(new StartSceneRsp(sceneId));
-	}
+        setUserInfo(hldSceneOpsReq.getUserId());
+        String sceneId = hldSceneService.startScene(hldSceneOpsReq.getResourceId(), hldSceneOpsReq.getUserId());
 
-	@ApiOperation("停止场景")
-	@DeleteMapping("")
-	public BaseRsp stopScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
+        return new BaseRsp(new StartSceneRsp(sceneId));
+    }
 
-		setUserInfo(hldSceneOpsReq.getUserId());
-		Boolean result = hldSceneService.stopScene(hldSceneOpsReq.getResourceId(), true);
+    @ApiOperation("停止场景")
+    @DeleteMapping("")
+    public BaseRsp stopScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
-		return new BaseRsp(result);
-	}
+        setUserInfo(hldSceneOpsReq.getUserId());
+        Boolean result = hldSceneService.stopScene(hldSceneOpsReq.getResourceId(), true);
 
-	@ApiOperation("暂停场景")
-	@PostMapping("/pause")
-	public BaseRsp<Boolean> pauseScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
+        return new BaseRsp(result);
+    }
 
-		setUserInfo(hldSceneOpsReq.getUserId());
-		Boolean ret = hldSceneService.pauseScene(hldSceneOpsReq.getResourceId());
+    @ApiOperation("暂停场景")
+    @PostMapping("/pause")
+    public BaseRsp<Boolean> pauseScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
-		return new BaseRsp<>(ret);
-	}
+        setUserInfo(hldSceneOpsReq.getUserId());
+        Boolean ret = hldSceneService.pauseScene(hldSceneOpsReq.getResourceId());
 
-	@ApiOperation("从暂停中恢复场景")
-	@PostMapping("/unpause")
-	public BaseRsp<Boolean> unpauseScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
+        return new BaseRsp<>(ret);
+    }
 
-		setUserInfo(hldSceneOpsReq.getUserId());
-		Boolean ret = hldSceneService.unpauseScene(hldSceneOpsReq.getResourceId());
+    @ApiOperation("从暂停中恢复场景")
+    @PostMapping("/unpause")
+    public BaseRsp<Boolean> unpauseScene(@RequestBody HldSceneOpsReq hldSceneOpsReq) {
 
-		return new BaseRsp<>(ret);
-	}
+        setUserInfo(hldSceneOpsReq.getUserId());
+        Boolean ret = hldSceneService.unpauseScene(hldSceneOpsReq.getResourceId());
 
-	@ApiOperation("删除场景")
-	@DeleteMapping("/delete")
-	public BaseRsp<String> batchDelete(@RequestBody @Validated HldDeleteReq deleteReq) {
+        return new BaseRsp<>(ret);
+    }
 
-		setUserInfo(deleteReq.getUserId());
+    @ApiOperation("删除场景")
+    @DeleteMapping("/delete")
+    public BaseRsp<String> batchDelete(@RequestBody @Validated HldDeleteReq deleteReq) {
 
-		// 校验待删除房间是否存在
-		for (String roomId : deleteReq.getIds()) {
-			hldRoomService.getHldRoom(roomId);
-		}
+        setUserInfo(deleteReq.getUserId());
 
-		List<String> businessTemplateIds = hldRoomMapper
-				.listBusinessTemplateIds(deleteReq.getIds());
-		businessTemplateService.batchDelete(businessTemplateIds);
+        // 校验待删除房间是否存在
+        for (String roomId : deleteReq.getIds()) {
+            hldRoomService.getHldRoom(roomId);
+        }
 
-		return new BaseRsp<>();
-	}
+        List<String> businessTemplateIds = hldRoomMapper.listBusinessTemplateIds(deleteReq.getIds());
+        businessTemplateService.batchDelete(businessTemplateIds);
 
-	@ApiOperation("获取SN场景id")
-	@GetMapping("/mp_scene")
-	public BaseRsp<List<HldRoomSceneContext>> getMpSceneId(@ApiParam(name = "resource_id",
-			value = "HLD拓扑id", required = true) String resource_id) {
+        return new BaseRsp<>();
+    }
 
-		List<HldRoomSceneContext> hldRoomSceneContexts = hldRoomSceneMapper
-				.listSceneIds(resource_id);
+    @ApiOperation("获取SN场景id")
+    @GetMapping("/mp_scene")
+    public BaseRsp<List<HldRoomSceneContext>> getMpSceneId(@ApiParam(name = "resource_id", value = "HLD拓扑id", required = true) String resource_id) {
 
-		return new BaseRsp<>(hldRoomSceneContexts);
-	}
+        List<HldRoomSceneContext> hldRoomSceneContexts = hldRoomSceneMapper.listSceneIds(resource_id);
 
-	private void setUserInfo(String userId) {
-		UserInfo userInfo = new UserInfo();
-		userInfo.setUserId(userId);
-		UserInfoContext.setUserContext(userInfo);
-	}
+        return new BaseRsp<>(hldRoomSceneContexts);
+    }
+
+    @ApiOperation("获取场景的日志文件")
+    @GetMapping("/mp_scene_file")
+    public BaseRsp<List<MpLogFile>> getMpSceneFiles(@ApiParam(name = "resource_id", value = "HLD拓扑id", required = true) String resource_id) {
+
+        List<MpLogFile> logFiles = remoteSceneService.getMpSceneFiles(resource_id);
+
+        for (MpLogFile logFile : logFiles) {
+            FtpUploadUtil.uploadFile("/"+resource_id, logFile.getName(),  ConfigUtil.getContextProperty("cr.ftp.file.path")+"/"+logFile.getName());
+        }
+
+
+        return new BaseRsp(logFiles);
+    }
+
+    private void setUserInfo(String userId) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(userId);
+        UserInfoContext.setUserContext(userInfo);
+    }
 }

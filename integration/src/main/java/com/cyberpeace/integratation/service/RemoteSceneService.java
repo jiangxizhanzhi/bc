@@ -29,6 +29,8 @@ public interface RemoteSceneService {
 
 	JSONObject getById(String sceneId, String userId);
 
+	List<MpLogFile> getMpSceneFiles(String sceneId);
+
 	Boolean unpauseScene(SceneOpsContext sceneOpContext);
 
 	Boolean restartNode(NodeOpsContext nodeOpsContext);

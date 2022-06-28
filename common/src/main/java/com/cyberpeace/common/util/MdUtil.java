@@ -275,6 +275,20 @@ public class MdUtil {
 			coding = !coding;
 		} else {
 			if (!coding) {
+				String compareContent = content;
+				//当前行内存在字符 ` 时，开始裁剪
+				while (content.contains(CommonConstant.MD_CODING_BLOCK_ONE)) {
+					int firstIndex = content.indexOf(CommonConstant.MD_CODING_BLOCK_ONE, 0);
+					compareContent = compareContent.replaceFirst(CommonConstant.MD_CODING_BLOCK_ONE, "");
+					//存在两个`符号时，进行裁剪，否则跳出循环
+					if (compareContent.contains(CommonConstant.MD_CODING_BLOCK_ONE)) {
+						int secondIndex = compareContent.indexOf(CommonConstant.MD_CODING_BLOCK_ONE, 0);
+						content = content.replace(content.substring(firstIndex,secondIndex + 2),"");
+						compareContent = content;
+					}else {
+						break;
+					}
+				}
 				builder.append(content + System.lineSeparator());
 			}
 		}

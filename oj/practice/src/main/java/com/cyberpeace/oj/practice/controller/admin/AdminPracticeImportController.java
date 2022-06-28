@@ -2,13 +2,11 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import java.util.List;
 
+import com.cyberpeace.oj.practice.controller.req.DuplicatePracticeSetInspectReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.BaseRsp;
@@ -58,6 +56,17 @@ public class AdminPracticeImportController {
 		}
 
 		return baseRsp;
+	}
+
+
+	@ApiOperation("习题集重复校验")
+	@PostMapping("/inspect_duplication")
+	public BaseRsp duplicatePracticeSetInspect(@RequestBody @Validated DuplicatePracticeSetInspectReq practiceSetsReq) {
+
+		List<String> result = practiceSetService.duplicatePracticeSetInspect(practiceSetsReq.getFileNames());
+
+		return new BaseRsp<>(result);
+
 	}
 
 }

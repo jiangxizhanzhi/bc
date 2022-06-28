@@ -96,4 +96,10 @@ public interface CourseService extends IService<Course> {
 	 * @return
 	 */
 	String getRandomCourseNum(int length);
+
+	/**
+	 * 检查课程是否重复
+	 * @return
+	 */
+	List<String> duplicateCourseInspect(List<String> courseNames);
 }

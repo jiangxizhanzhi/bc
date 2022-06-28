@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import java.io.File;
+import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -8,13 +9,13 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.controller.req.DuplicateCourseInspectReq;
 import com.cyberpeace.oj.course.controller.req.RMCombinedCourseImportReq;
+import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.course.controller.req.RMCourseImportReq;
@@ -35,6 +36,9 @@ public class AdminCourseImportController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private CourseService courseService;
 
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/import")
@@ -68,6 +72,16 @@ public class AdminCourseImportController {
 		Boolean result = courseImportService.rMCombinedCourseImport(courseImportReq.getCourseInfos(), authContext);
 
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("课程重复校验")
+	@PostMapping("/import/inspect_duplication")
+	public BaseRsp<List<String>> duplicateCourseInspect(@RequestBody @Validated DuplicateCourseInspectReq courseNamesReq) {
+
+		List<String> result = courseService.duplicateCourseInspect(courseNamesReq.getFileNames());
+
+		return new BaseRsp<>(result);
+
 	}
 
 }

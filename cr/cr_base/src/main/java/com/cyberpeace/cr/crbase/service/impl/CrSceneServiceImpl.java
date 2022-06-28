@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
+import java.util.concurrent.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,8 +190,14 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 		// 判断流量状态
 		Integer taskStatus;
+
+		// 设置流量任务查询接口5秒超时
+		ExecutorService executor = Executors.newCachedThreadPool();
+		Callable<JSONObject> task = () -> remoteSceneService.getFlowRecords(flowRecordContext);
+		Future<JSONObject> future = executor.submit(task);
+
 		try {
-			JSONObject jsonObject = remoteSceneService.getFlowRecords(flowRecordContext);
+			JSONObject jsonObject = future.get(5, TimeUnit.SECONDS);
 			taskStatus = (Integer) jsonObject.getOrDefault("status",
 					ElementFlow.TaskStatusEnum.ZERO.getCode());
 		} catch (Exception e) {

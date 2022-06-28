@@ -1,21 +1,5 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
-import java.io.File;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
@@ -39,6 +23,10 @@ import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
@@ -46,11 +34,24 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import java.io.File;
+import java.util.List;
 
 @Api(tags = "oj-后台习题集相关api")
 @RestController
@@ -70,6 +71,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("习题集新增")
 	@PostMapping("")
@@ -93,6 +97,10 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		int result = practiceSetMapper.insert(practiceSet);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
+				OperationType.CREATE, practiceSet.getName(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.PRACTICE_SET.getMsg(), practiceSet.getName()));
+
 		return new BaseRsp(result);
 	}
 
@@ -109,6 +117,13 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		practiceSet.setLogo(utilService.replaceFileUrl(updateReq.getLogo()));
 
 		Boolean result = practiceSetService.updateByAuth(practiceSet, authContext);
+
+		if (result){
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
+					OperationType.UPDATE, practiceSet.getName(),
+					LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.PRACTICE_SET.getMsg(), practiceSet.getName()));
+		}
+
 		return new BaseRsp(result);
 	}
 
@@ -135,6 +150,13 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		// 删除之前校验
 		practiceSetService.enableDelete(delReq.getResourceIds(), authContext);
+
+		for(String id:delReq.getResourceIds()){
+			String practiceSetName = practiceSetService.selectById(id,authContext).getName();
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
+					OperationType.DELETE, practiceSetName,
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.PRACTICE_SET.getMsg(), practiceSetName));
+		}
 
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());
 		return new BaseRsp(result);

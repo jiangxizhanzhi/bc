@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -72,7 +73,10 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		// 兼容mp在url中传递参数的问题
 		String targetUrl = COPY_TOPO_URL + "?id=" + originTopoId;
 
-		JSONObject jsonObject = HttpClientUtil.post(targetUrl, null, JSONObject.class);
+		JSONObject body = new JSONObject();
+		setUserContext(body);
+
+		JSONObject jsonObject = HttpClientUtil.post(targetUrl, body, JSONObject.class);
 
 		String result = jsonObject.getString("id");
 
@@ -125,6 +129,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	@Override
 	public String save(JSONObject json) {
+		// set userId
+		setUserContext(json);
+
 		String targetUrl = TOPO_SYNC;
 		JSONObject jsonObject = HttpClientUtil.post(targetUrl, json, JSONObject.class);
 		return jsonObject.getString("id");
@@ -138,10 +145,11 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	@Override
 	public Boolean deleteById(String topoId) {
-		String targetUrl = TOPO_DELETE;
 		JSONObject body = new JSONObject();
 		body.put("id", topoId);
+		setUserContext(body);
 
+		String targetUrl = TOPO_DELETE;
 		return HttpClientUtil.delete(targetUrl, body, Boolean.class);
 	}
 
@@ -161,5 +169,22 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		JSONObject topoById = getTopoById(topoId);
 		return JsonUtil.equalJson(topo, topoById);
+	}
+
+	/**
+	 * 审计需求：sync、copy、delete topo的接口，增加context.accessUserId
+	 * @return 
+	 */
+	private void setUserContext(JSONObject json) {
+		String currentUserId;
+		try {
+			currentUserId = UserInfoContext.getUserContext().getUserId();
+		} catch (NullPointerException e) {
+			currentUserId = CommonConstant.ADMIN_ID;
+		}
+
+		JSONObject userContext = new JSONObject();
+		userContext.put("access_user_id", currentUserId);
+		json.put("context", userContext);
 	}
 }

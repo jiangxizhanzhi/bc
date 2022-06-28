@@ -1,22 +1,5 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -65,8 +48,22 @@ import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author chenz
@@ -685,8 +682,18 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
 		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
+
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+					OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.PAUSE, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(resourceId).getTitle()));
+
 			return localSceneService.pauseScene(localScene.getResourceId());
 		} else {
+
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+					OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(resourceId).getTitle()));
+
 			return localSceneService.unpauseScene(localScene.getResourceId());
 		}
 	}

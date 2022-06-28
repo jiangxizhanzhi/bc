@@ -2,7 +2,6 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -10,10 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.controller.req.KnowledgeAddReq;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
@@ -42,6 +47,9 @@ public class KnowledgeController {
 
 	@Autowired
 	private RoleService roleService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("查询单条")
 	@GetMapping()
@@ -74,6 +82,11 @@ public class KnowledgeController {
 		knowledge.setCourses(courses);
 		knowledgeService.save(knowledge);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.CREATE, knowledge.getResourceId(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.KNOWLEDGE.getMsg(),
+						knowledge.getResourceId()));
+
 		return new BaseRsp<>();
 	}
 
@@ -99,6 +112,11 @@ public class KnowledgeController {
 
 		knowledgeService.updateById(knowledge);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.UPDATE, knowledge.getResourceId(),
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.KNOWLEDGE.getMsg(),
+						knowledge.getResourceId()));
+
 		return new BaseRsp<>();
 	}
 
@@ -106,10 +124,21 @@ public class KnowledgeController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteKnowledge(@RequestBody @Validated DeleteReq deleteReq) {
+
+		List<Knowledge> knowledgeList = knowledgeService.listByIds(deleteReq.getIds());
+
 		knowledgeService.removeByIds(deleteReq.getIds());
 		courseRelatedService.deleteCourseRelatedByRelatedIds(deleteReq.getIds(),
 				CourseRelated.RELATED_TYPE_KNOWLEDGE);
 		roleService.updateBatchByDeleteRelatedIds(deleteReq, "knowledge");
+
+		knowledgeList.forEach(knowledge -> {
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+					OperationType.DELETE, knowledge.getResourceId(),
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.KNOWLEDGE.getMsg(),
+							knowledge.getResourceId()));
+		});
+
 		return new BaseRsp<>();
 	}
 

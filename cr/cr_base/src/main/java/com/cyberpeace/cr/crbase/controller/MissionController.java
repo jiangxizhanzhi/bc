@@ -1,23 +1,5 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -41,20 +23,39 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = "任务相关接口")
 @RestController
@@ -67,10 +68,16 @@ public class MissionController {
 	private MissionService missionService;
 
 	@Autowired
+	private MissionMapper missionMapper;
+
+	@Autowired
 	private CrRoleService crRoleService;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
@@ -150,6 +157,9 @@ public class MissionController {
 
 		MissionTemplate missionTemplate = missionService.addMissionTemplate(toAddMissionTemplate);
 
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.CREATE, missionTemplateReq.getTitle());
+
 		return new BaseRsp(missionTemplate);
 	}
 
@@ -167,6 +177,9 @@ public class MissionController {
 		MissionTemplate ret = missionService
 				.getByMissionTemplateId(toUpdateMissionTemplate.getResourceId());
 
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.UPDATE, modifyReq.getTitle());
+
 		return new BaseRsp(ret);
 	}
 
@@ -182,6 +195,9 @@ public class MissionController {
 
 		Mission toUpdateMission = requestToMission(missionModifyReq);
 		missionService.updateById(toUpdateMission);
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.UPDATE, missionModifyReq.getTitle());
 
 		return new BaseRsp();
 	}
@@ -207,6 +223,10 @@ public class MissionController {
 
 		MissionSchemeTemplate schemeTemplate = requestToSchemeTemplate(templateReq);
 		missionService.addSchemeTemplate(schemeTemplate);
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.CREATE, templateReq.getTitle());
+
 		return new BaseRsp<>();
 	}
 
@@ -214,6 +234,12 @@ public class MissionController {
 	@DeleteMapping("/combat_techs/batch_destroy/")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<?> batchDeleteSchemeTemplate(@RequestBody @Validated BatchDeleteReq deleteReq) {
+
+		for(String id:deleteReq.getIds()){
+			remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+					OperationType.DELETE, missionMapper.selectById(id).getTitle());
+		}
+
 		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
 
 		return new BaseRsp<>();
@@ -227,6 +253,9 @@ public class MissionController {
 		templateModifyReq.validate();
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.UPDATE, templateModifyReq.getTitle());
 
 		return new BaseRsp<>();
 	}

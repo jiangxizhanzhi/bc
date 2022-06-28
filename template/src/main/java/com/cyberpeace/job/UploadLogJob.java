@@ -8,7 +8,6 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
@@ -26,20 +25,19 @@ public class UploadLogJob {
 
     private String REPORT_LOG_URL;
 
-    @Value("${upload.log.if}")
     private boolean isUploadLog;
 
-    @Value("${download.log.url}")
-    private String DOWNLOAD_LOG_URL;
+    private String DOWNLOAD_LOG_URL = "/cs/admin/log/downloadLog?file_name=";
 
     private String LOG_type = "BC";
 
     @PostConstruct
     public void init() {{
         REPORT_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.report.log");
+        isUploadLog = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.upload.log"));
     }}
 
-    @Scheduled(fixedDelayString = "${upload.log.interval.time}")
+    @Scheduled(fixedDelayString = "${common.upload.log.interval.time}")
     public void uploadLog(){
         if(isUploadLog){
             String logRootPath = System.getProperty("catalina.base") + "/logs/";

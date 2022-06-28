@@ -2,7 +2,6 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -10,11 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.AbilityAddReq;
 import com.cyberpeace.rtks.controller.req.KnowledgeCategoryAddReq;
@@ -41,6 +46,9 @@ public class KnowledgeCategoryController {
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	@Autowired
+	private RemoteLogService remoteLogService;
+
 	@ApiOperation("查询单条")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -57,33 +65,51 @@ public class KnowledgeCategoryController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			addKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
-		validate(knowledgeCategoryAddReq.getContent());
+		validate(knowledgeCategoryAddReq.getContent(), "");
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
 
 		BeanUtils.copyProperties(knowledgeCategoryAddReq, knowledgeCategory);
 		knowledgeCategoryService.save(knowledgeCategory);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.CREATE, knowledgeCategory.getContent(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE,
+						LogContent.KNOWLEDGE_CATEGORY.getMsg(), knowledgeCategory.getContent()));
+
 		return new BaseRsp<>();
 	}
 
-	private void validate(String content) {
-		List<KnowledgeCategory> knowledgeCategory = knowledgeCategoryService.getByContent(content.trim());
-
-		if (knowledgeCategory.size() > 0) {
-			log.error("knowledgeCategory already exist,knowledgeCategory is [{}]", content);
-			throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_CATEGORY_NAME_DUPLICATE);
+	private void validate(String content, String resourceId) {
+		List<KnowledgeCategory> knowledgeCategories = knowledgeCategoryService
+				.getByContent(content.trim());
+		if (knowledgeCategories.isEmpty()) {
+			return;
 		}
+		if (knowledgeCategories.size() == 1
+				&& knowledgeCategories.get(0).getResourceId().equals(resourceId)) {
+			return;
+		}
+
+		log.error("knowledgeCategory already exist,knowledgeCategory is [{}]", content);
+		throw new BusinessException(RtksBusinessErrorCode.KNOWLEDGE_CATEGORY_NAME_DUPLICATE);
+
 	}
 
 	@ApiOperation("修改单条")
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
-			modifyKnowledge(@RequestBody @Validated AbilityAddReq knowledgeCatagaryOrSystemAddReq) {
-		validate(knowledgeCatagaryOrSystemAddReq.getContent());
+			modifyKnowledge(@RequestBody @Validated AbilityAddReq knowledgeCategoryOrSystemAddReq) {
+		validate(knowledgeCategoryOrSystemAddReq.getContent(),
+				knowledgeCategoryOrSystemAddReq.getResourceId());
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();
-		BeanUtils.copyProperties(knowledgeCatagaryOrSystemAddReq, knowledgeCategory);
+		BeanUtils.copyProperties(knowledgeCategoryOrSystemAddReq, knowledgeCategory);
 		knowledgeCategoryService.updateById(knowledgeCategory);
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.UPDATE, knowledgeCategory.getContent(),
+				LogContent.CR_FORMAT.format(OperationType.UPDATE,
+						LogContent.KNOWLEDGE_CATEGORY.getMsg(), knowledgeCategory.getContent()));
 
 		return new BaseRsp<>();
 	}
@@ -98,7 +124,19 @@ public class KnowledgeCategoryController {
 				throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_KNOWLEDGE);
 			}
 		}
+
+		List<KnowledgeCategory> knowledgeCategories = knowledgeCategoryService.getBaseMapper()
+				.selectBatchIds(deleteReq.getIds());
 		knowledgeCategoryService.removeByIds(deleteReq.getIds());
+
+		knowledgeCategories.forEach(knowledgeCategory -> {
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+					OperationType.DELETE, knowledgeCategory.getContent(),
+					LogContent.CR_FORMAT.format(OperationType.DELETE,
+							LogContent.KNOWLEDGE_CATEGORY.getMsg(),
+							knowledgeCategory.getContent()));
+
+		});
 
 		return new BaseRsp<>();
 	}

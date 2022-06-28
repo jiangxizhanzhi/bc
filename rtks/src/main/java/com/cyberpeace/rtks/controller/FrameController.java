@@ -21,8 +21,13 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.frame.FrameAddInput;
 import com.cyberpeace.rtks.controller.frame.FrameModifyInput;
@@ -73,6 +78,9 @@ public class FrameController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	private Boolean singleFrame;
 
@@ -248,6 +256,10 @@ public class FrameController {
 			}
 		});
 
+//		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+//				OperationType.EMPTY, LogContent.FRAME.getMsg(),
+//				LogContent.RTKS_FRAME.format(OperationType.EMPTY, LogContent.FRAME.getMsg()));
+
 		return retrieve(DEFAULT_FRAME_ID);
 	}
 
@@ -272,6 +284,10 @@ public class FrameController {
 				roleService.initDefaultFromPreset("course_related");
 			}
 		});
+
+//		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+//				OperationType.RESET, LogContent.FRAME.getMsg(),
+//				LogContent.RTKS_FRAME.format(OperationType.RESET, LogContent.FRAME.getMsg()));
 
 		return retrieve(DEFAULT_FRAME_ID);
 	}

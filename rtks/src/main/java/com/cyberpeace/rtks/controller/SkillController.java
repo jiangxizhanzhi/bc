@@ -17,7 +17,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.SkillAddReq;
 import com.cyberpeace.rtks.dao.entity.Skill;
@@ -44,6 +49,9 @@ public class SkillController {
 
 	@Autowired
 	private RoleService roleService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("查询单条")
 	@GetMapping()
@@ -75,6 +83,11 @@ public class SkillController {
 				skillService.addMissionRelation(skill.getResourceId(), skillAddReq.getMissions());
 			}
 		});
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.CREATE, skill.getResourceId(), LogContent.CR_FORMAT.format(
+						OperationType.CREATE, LogContent.SKILL.getMsg(), skill.getResourceId()));
+
 		return new BaseRsp<>();
 	}
 
@@ -104,6 +117,11 @@ public class SkillController {
 
 			}
 		});
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.UPDATE, skill.getResourceId(), LogContent.CR_FORMAT.format(
+						OperationType.UPDATE, LogContent.SKILL.getMsg(), skill.getResourceId()));
+
 		return new BaseRsp<>();
 	}
 
@@ -112,6 +130,9 @@ public class SkillController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteSkill(@RequestBody @Validated DeleteReq deleteReq) {
 		List<String> skillIds = deleteReq.getIds();
+
+		List<Skill> skillList = skillService.listByIds(skillIds);
+
 		if (!skillIds.isEmpty()) {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -126,6 +147,13 @@ public class SkillController {
 				}
 			});
 		}
+
+		skillList.forEach(skill -> {
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+					OperationType.DELETE, skill.getResourceId(),
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.SKILL.getMsg(),
+							skill.getResourceId()));
+		});
 
 		return new BaseRsp<>();
 	}

@@ -1,39 +1,27 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import java.io.File;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.cyberpeace.common.constant.*;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
-import com.cyberpeace.cs.service.UtilService;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.controller.res.AdminCourseRes;
+import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
@@ -43,15 +31,26 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
-import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.io.File;
+import java.util.List;
 
 @Slf4j
 @Api(tags = "oj-后台课程相关api")
@@ -77,6 +76,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	// LGD在使用 知识点和技能点绑定课程
 	@GetMapping("/all/list")
@@ -162,6 +164,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		}
 
 		Course courseRsp = courseService.addCourse(userId, course);
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.CREATE, courseRsp.getName());
+
 		return new BaseRsp<>(courseRsp);
 	}
 
@@ -174,6 +180,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		Course course = BeanUtils.copy(updateReq, Course.class);
 
 		Course courseRsp = courseService.updateCourse(userId, course);
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.UPDATE, courseRsp.getName());
+
 		return new BaseRsp<>(courseRsp);
 	}
 
@@ -201,6 +211,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
+
+		for(String id:batchDeleteReq.getResourceIds()){
+			remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+					OperationType.DELETE, courseService.selectById(id,authContext).getName());
+		}
+
 		Boolean result = courseService.batchDelete(batchDeleteReq.getResourceIds(), authContext);
 		return new BaseRsp<>(result);
 	}

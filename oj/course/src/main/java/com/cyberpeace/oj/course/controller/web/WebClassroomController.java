@@ -46,8 +46,8 @@ public class WebClassroomController {
 
 	@ApiOperation("前台课程表信息查询")
 	@GetMapping("/list")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
-			logical = Logical.OR)
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+			MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
 	public BaseRsp<List<TimeScheduleBo>> listCourseSchedule(
 			@ApiParam(name = "month", value = "月份 格式xxxx-xx") @RequestParam("month") String month) {
 

@@ -1,16 +1,5 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -27,6 +16,10 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
@@ -40,10 +33,19 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.OperationBo;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Api(tags = "oj-后台实践操作练习相关api")
 @RestController
@@ -62,6 +64,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private RemoteLogService remoteLogService;
 
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
@@ -88,6 +93,10 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		Integer result = practiceOperationService.addPracticeOperation(addOperation,
 				JsonUtil.toJsonObject(addReq.getSceneConfigData(), JSONObject.class), authContext);
 
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+				OperationType.CREATE, LogContent.EXERCISE.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.EXERCISE.getMsg(), addReq.getTitle()));
+
 		return new BaseRsp(result);
 	}
 
@@ -111,6 +120,11 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		Integer result = practiceOperationService.updateOperation(updateOperation,
 				JsonUtil.toJsonObject(updateReq.getSceneConfigData(), JSONObject.class));
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+				OperationType.UPDATE, LogContent.EXERCISE.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.EXERCISE.getMsg(), updateReq.getTitle()));
+
 		return new BaseRsp(result);
 	}
 
@@ -118,6 +132,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
+
+		for(String id:delReq.getResourceIds()){
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+					OperationType.DELETE, LogContent.EXERCISE.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(id).getTitle()));
+		}
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
@@ -205,6 +225,11 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 				false);
 		JSONObject scene = practiceOperationService.startScene(operationReq.getResourceId(),
 				authContext);
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+				OperationType.START, LogContent.EXERCISE.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.START, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(operationReq.getResourceId()).getTitle()));
+
 		return new BaseRsp<>(scene);
 
 	}
@@ -218,6 +243,11 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 				false);
 		Boolean result = practiceOperationService.deleteScene(sceneOperationReq.getResourceId(),
 				authContext);
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+				OperationType.STOP, LogContent.EXERCISE.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.STOP, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(sceneOperationReq.getResourceId()).getTitle()));
+
 		return new BaseRsp<>(result);
 	}
 

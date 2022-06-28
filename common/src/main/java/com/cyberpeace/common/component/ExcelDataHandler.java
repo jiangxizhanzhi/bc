@@ -69,8 +69,9 @@ public class ExcelDataHandler {
 			try {
 				fileInputStream.close();
 				workbook.close();
-			} catch (IOException ioException) {
+			} catch (Exception e2) {
 				// 关不掉算了
+				log.error("excel fileInputStream close failed!  catch error:", e2);
 			}
 			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		}

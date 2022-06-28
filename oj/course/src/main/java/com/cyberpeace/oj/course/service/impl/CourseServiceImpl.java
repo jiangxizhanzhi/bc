@@ -583,6 +583,23 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		});
 	}
 
+    /**查询课程名称是否重复 */
+	@Override
+	public List<String> duplicateCourseInspect(List<String> courseNames) {
+		List<String> duplicateName = Lists.newArrayList();
+		if (null == courseNames || courseNames.size() == 0){
+			return duplicateName;
+		}
+
+		List<Course> courses = courseMapper.selectIdsByCourseName(courseNames);
+		for (Course course: courses){
+			duplicateName.add(course.getName());
+		}
+
+		return duplicateName;
+
+	}
+
 	/** 实操习题绑定试卷*/
 	private void operationBindPaper(String paperId, List<PracticeOperation> operations,
 			List<PracticeOperationRef> refList) {

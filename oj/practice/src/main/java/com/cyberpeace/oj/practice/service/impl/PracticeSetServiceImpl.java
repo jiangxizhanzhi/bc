@@ -434,6 +434,21 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		});
 	}
 
+	@Override
+	public List<String> duplicatePracticeSetInspect(List<String> practiceSets) {
+		List<String> duplicateName = Lists.newArrayList();
+		if (null == practiceSets || practiceSets.size() == 0){
+			return duplicateName;
+		}
+
+		List<PracticeSet> practiceSetList = practiceSetMapper.selectByNames(practiceSets);
+		for (PracticeSet practiceSet: practiceSetList){
+			duplicateName.add(practiceSet.getName());
+		}
+
+		return duplicateName;
+	}
+
 	/**
 	 * 加载实操习题
 	 * @param practiceSetId

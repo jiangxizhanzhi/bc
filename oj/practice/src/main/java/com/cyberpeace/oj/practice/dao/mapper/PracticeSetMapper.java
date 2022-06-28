@@ -48,4 +48,11 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 * @return
 	 */
 	String selectByName(@Param("name") String name);
+
+	/**
+	 * 根据习题集名称查询
+	 * @param name
+	 * @return
+	 */
+	List<PracticeSet> selectByNames(@Param("names") List<String> name);
 }

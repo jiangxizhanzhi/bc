@@ -141,4 +141,13 @@
         select * from oj_course
         where `course_num` = #{courseNum}
     </select>
+
+
+    <select id="selectIdsByCourseName" resultType="com.cyberpeace.oj.course.dao.entity.Course">
+        select resource_id, name from oj_course
+        where `name` in
+        <foreach collection="courseNames" item="courseName" open="(" close=")" separator=",">
+            #{courseName}
+        </foreach>
+    </select>
 </mapper>

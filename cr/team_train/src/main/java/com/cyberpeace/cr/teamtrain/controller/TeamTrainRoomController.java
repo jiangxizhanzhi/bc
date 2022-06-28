@@ -312,10 +312,10 @@ public class TeamTrainRoomController {
 		teamTrainRoomContext.setRoleConfig(roomRoleList);
 		teamRoomService.updateTeamRoom(teamTrainRoomContext, teamRoom);
 
-		String teamTemplateName = teamRoomMapper.selectById(teamTrainRoomModifyReq.getResourceId()).getTeamTemplateName();
+		teamRoom = teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-				OperationType.UPDATE, teamTrainRoomModifyReq.getName(),
-				LogContent.SCENE_FORMAT.format(teamTemplateName));
+				OperationType.UPDATE, teamRoom.getName(),
+				LogContent.SCENE_FORMAT.format(teamRoom.getTeamTemplateName()));
 
 		return getTeamRoom(teamTrainRoomModifyReq.getResourceId());
 	}

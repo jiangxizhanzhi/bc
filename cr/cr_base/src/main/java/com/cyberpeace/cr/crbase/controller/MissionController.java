@@ -254,8 +254,9 @@ public class MissionController {
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
 
+		MissionSchemeTemplate missionSchemeTemplate = missionSchemeTemplateMapper.selectById(templateModifyReq.getResourceId());
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-				OperationType.UPDATE, templateModifyReq.getTitle());
+				OperationType.UPDATE, missionSchemeTemplate.getTitle());
 
 		return new BaseRsp<>();
 	}

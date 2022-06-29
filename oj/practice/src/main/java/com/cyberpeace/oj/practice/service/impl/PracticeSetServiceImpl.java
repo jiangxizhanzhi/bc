@@ -645,25 +645,22 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 名称数据校验
 		String existSetId = practiceSetMapper.selectByName(practiceSet.getName());
 
-		// 不存在则创建 存在则直接返回
-		if (StringUtils.isBlank(existSetId)) {
-			practiceSet.setBuiltin(CommonConstant.TRUE);
-			practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
-			practiceSet.setIsPublic(CommonConstant.FALSE);
-			practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-			practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-			practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-			practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-			practiceSet.setPracticeCount(CommonConstant.ZERO);
-			practiceSet.setResourceId(IDGeneratorUtil.getID());
+		practiceSet.setBuiltin(CommonConstant.TRUE);
+		practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+		practiceSet.setIsPublic(CommonConstant.FALSE);
+		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+		practiceSet.setPracticeCount(CommonConstant.ZERO);
 
-			return practiceSet;
+		if (StringUtils.isBlank(existSetId)) {
+			practiceSet.setResourceId(IDGeneratorUtil.getID());
+		}else {
+			practiceSet.setResourceId(existSetId);
 		}
 
-		log.warn("Practice set exist! practice_set_id=[{}], practice_set_name=[{}]", existSetId,
-				practiceSet.getName());
-
-		return practiceSetMapper.selectById(existSetId);
+		return practiceSet;
 	}
 
 	/**

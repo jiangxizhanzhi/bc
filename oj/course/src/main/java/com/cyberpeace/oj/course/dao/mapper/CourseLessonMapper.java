@@ -39,4 +39,6 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	List<String> selectIdsByCourse(@Param("courseIds") List<String> courseIds);
 
 	String selectByCourseAndName(@Param("courseId") String courseId, @Param("name") String name);
+
+	CourseLesson selectCourseByCourseAndName(@Param("courseId") String courseId, @Param("name") String name);
 }

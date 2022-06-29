@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,6 +136,13 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 
 		FileUtil.mkdirs(destDir);
 		String reName = reFileName(file.getOriginalFilename());
+		//获取文件名称
+		String fileSuffix = FileUtil.getFileSuffix(reName);
+		String lowerCaseSuffix = fileSuffix.toLowerCase();
+		//pptx文件格式转换文件后缀名
+		if (lowerCaseSuffix.equals(FileSunffixConstant.PPTX.getDesc())) {
+			reName = reName.replace(fileSuffix,lowerCaseSuffix);
+		}
 		String destFileName = destDir + reName;
 
 		try {
@@ -148,7 +156,6 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		String viewUrl = utilService.replaceFileUrl(destFileName);
 		Attachment attachment = Attachment.builder().fileName(file.getOriginalFilename())
 				.filePath(viewUrl).isPublic(true).build();
-
 		// 插入数据库
 		if (insert) {
 			attachment.setResourceId(IDGeneratorUtil.getID());

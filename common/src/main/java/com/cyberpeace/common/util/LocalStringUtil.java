@@ -114,7 +114,7 @@ public class LocalStringUtil {
 		Matcher matcher = pattern.matcher(content);
 
 		while (matcher.find()) {
-			strList.add(matcher.group(1));
+			strList.add(matcher.group(1).trim());
 		}
 		return strList;
 	}
@@ -133,7 +133,7 @@ public class LocalStringUtil {
 		Matcher matcher = pattern.matcher(content);
 
 		while (matcher.find()) {
-			strList.add(matcher.group(index));
+			strList.add(matcher.group(index).trim());
 		}
 		return strList;
 	}
@@ -151,7 +151,7 @@ public class LocalStringUtil {
 		if (CollectionUtils.isEmpty(matchStr)) {
 			return "";
 		}
-		return matchStr.get(CommonConstant.ZERO);
+		return matchStr.get(CommonConstant.ZERO).trim();
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class LocalStringUtil {
 		if (CollectionUtils.isEmpty(matchStr)) {
 			return CommonConstant.EMPTY_STRING;
 		}
-		return matchStr.get(CommonConstant.ZERO);
+		return matchStr.get(CommonConstant.ZERO).trim();
 	}
 
 	/**

@@ -63,5 +63,5 @@ public interface LearnStatsService {
      * @param endTime 截止时间
      * @return 用户学习统计
      */
-    ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String startTime, String endTime);
+    ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String startTime, String endTime, boolean isPage);
 }

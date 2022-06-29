@@ -104,7 +104,7 @@ public class AdminPersonalStatsController {
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<OrgStatsBo>> orgStatsData(UserStatsReq userStatsReq) {
         return new BaseRsp<>(learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), userStatsReq.getPattern(), userStatsReq.getOrganization(),
-                userStatsReq.getStartTime(), userStatsReq.getEndTime()));
+                userStatsReq.getStartTime(), userStatsReq.getEndTime(), true));
 	}
 
 	@ApiOperation("学习数据-全部数据-导出")
@@ -128,7 +128,7 @@ public class AdminPersonalStatsController {
     @GetMapping(value = "/org-stats-data-export")
     public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
         ListRsp<OrgStatsBo> orgStatsData = learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), null, null,
-                userStatsReq.getStartTime(), userStatsReq.getEndTime());
+                userStatsReq.getStartTime(), userStatsReq.getEndTime(), false);
         List<String> passFields = Lists.newArrayList( "resourceId", "reportAverage");
         String sheetName = "学习数据";
         String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()

@@ -139,10 +139,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		//获取文件名称
 		String fileSuffix = FileUtil.getFileSuffix(reName);
 		String lowerCaseSuffix = fileSuffix.toLowerCase();
-		//pptx文件格式转换文件后缀名
-		if (lowerCaseSuffix.equals(FileSunffixConstant.PPTX.getDesc())) {
-			reName = reName.replace(fileSuffix,lowerCaseSuffix);
-		}
+		//转换文件后缀名
+		reName = reName.replace(fileSuffix,lowerCaseSuffix);
 		String destFileName = destDir + reName;
 
 		try {

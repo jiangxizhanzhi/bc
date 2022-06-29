@@ -160,11 +160,14 @@ public class UtilServiceImpl implements UtilService {
 	@Override
 	public String replaceMarkdownFile(String content) {
 
+		//获取过滤掉代码块的markdown内容
+		String filterCodeContent = MdUtil.filterCodeContent(content);
+
 		// 将文件中的绝对路径替换为nginx可访问路径
-		List<String> realPathList = LocalStringUtil.getMatchUrlStr(content,
+		List<String> realPathList = LocalStringUtil.getMatchUrlStr(filterCodeContent,
 				PatternConstant.MARKDOWN_IMAGE_MD_URL);
 
-		List<String> matchSrcList = LocalStringUtil.getMatchUrlStr(content,
+		List<String> matchSrcList = LocalStringUtil.getMatchUrlStr(filterCodeContent,
 				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
 
 //		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
@@ -175,6 +178,7 @@ public class UtilServiceImpl implements UtilService {
 			String fileUrl = replaceFileUrl(realPath);
 			return handlerFileUrl(fileUrl);
 		});
+		//比对内容为过滤代码块后的内容，实际替换是未过滤的内容
 		return LocalStringUtil.replaceAll(content, realPathList, nginxUrlList);
 	}
 }

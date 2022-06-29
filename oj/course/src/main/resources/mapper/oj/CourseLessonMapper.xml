@@ -81,4 +81,10 @@
         where course_id = #{courseId}
         and name = #{name}
     </select>
+
+    <select id="selectCourseByCourseAndName" resultMap="lesson">
+        select * from oj_course_lesson
+        where course_id = #{courseId}
+        and name = #{name}
+    </select>
 </mapper>

@@ -105,8 +105,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 		Course course = jsonParseCourse(convertValue);
 
 		// 课程存在性校验
-		courseValidateHandler.validateCourseNameExist(course.getName());
-		courseValidateHandler.validateCourseNumExist(course.getCourseNum());
+//		courseValidateHandler.validateCourseNameExist(course.getName());
+//		courseValidateHandler.validateCourseNumExist(course.getCourseNum());
+		courseValidateHandler.validateCourseName2NumExist(course);
 
 		// 用户修改
 		course.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
@@ -200,6 +201,22 @@ public class CourseImportServiceImpl implements CourseImportService {
 			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths, lessonPath -> {
 				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
 				if (null != courseLesson) {
+					// 如果存在该课时，则替换resource_id
+					CourseLesson existLesson = courseLessonMapper.selectCourseByCourseAndName(course.getResourceId(), courseLesson.getName());
+					if (null != existLesson){
+						courseLesson.setResourceId(existLesson.getResourceId());
+						courseLesson.setPaperId(existLesson.getPaperId());
+
+
+						if (courseLesson.getType() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
+								&& null == courseLesson.getTopoId()){
+							courseLesson.setSceneShareMode(existLesson.getSceneShareMode());
+							courseLesson.setDestroyDelay(existLesson.getDestroyDelay());
+							courseLesson.setTopoId(existLesson.getTopoId());
+						}
+					}
+
+
 					if (null != nameMap.putIfAbsent(courseLesson.getName(),
 							courseLesson.getResourceId())) {
 						log.error("Lesson name exist! course_path=[{}], lesson_path=[{}]", path,
@@ -525,11 +542,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 				}
 
 				// 课程相关数据存储
-				courseMapper.insert(course);
+				courseService.saveOrUpdate(course);
 				// 试卷数据初始化存储
 				StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
 				// 课时和课时目录数据存储
-				courseLessonService.saveBatch(lessons);
+				courseLessonService.saveOrUpdateBatch(lessons);
+
+                //先删除旧的编排
+                lessonConfigMapper.deleteByCourse(course.getResourceId());
 				lessonConfigService.saveBatch(lessonConfigs);
 
 			}
@@ -546,6 +566,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 */
 	private Paper initPaper(CourseLesson courseLesson) {
 
+		if (courseLesson.getPaperId() != null){
+			return null;
+		}
 		PaperContext paperContext = PaperContext.builder().resourceId(courseLesson.getResourceId())
 				.type(Paper.PaperType.LESSON.getCode()).name(courseLesson.getName())
 				.description(courseLesson.getName()).isPublic(CommonConstant.TRUE).build();

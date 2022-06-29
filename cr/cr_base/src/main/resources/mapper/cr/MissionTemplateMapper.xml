@@ -75,4 +75,9 @@
             #{missionTemplateId}
         </foreach>
     </select>
+    <select id="selectByBusinessTemplateId" resultType="java.lang.String">
+        select resource_id
+        from cr_mission_template
+        where business_template_id = #{businessTemplateId}
+    </select>
 </mapper>

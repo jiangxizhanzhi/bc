@@ -144,6 +144,19 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
+	public List<String> getExistedNames(List<String> names) {
+		if (names == null || names.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		return businessTemplateMapper.getExistedNames(names);
+	}
+
+	@Override
+	public String getIdByName(String templateName) {
+		return businessTemplateMapper.getIdByName(templateName);
+	}
+
+	@Override
 	public void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo) {
 		// validate length
 		baseInfo.validate();
@@ -324,6 +337,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				for (BusinessTemplate businessTemplate : businessTemplates) {
+					// 校验是否符合删除条件
+					BusinessTemplateHandler handler = businessTemplateHandler
+							.getHandler(businessTemplate.getBusinessType());
+					handler.checkBeforeDel(businessTemplate);
 					// 先删除测试场景
 					if (StringUtils.isNotBlank(businessTemplate.getLocalSceneId())) {
 						LocalScene localScene = localSceneService
@@ -354,8 +371,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 						// do nothing
 					}
 					// 删除模板相关其他
-					BusinessTemplateHandler handler = businessTemplateHandler
-							.getHandler(businessTemplate.getBusinessType());
 					handler.deleteTemplateRelated(businessTemplate);
 				}
 				// 删除模板

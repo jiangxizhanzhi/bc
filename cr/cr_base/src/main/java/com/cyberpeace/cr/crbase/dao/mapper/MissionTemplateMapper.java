@@ -29,4 +29,6 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 			listWithBusiness(@Param("missionTemplateIds") List<String> missionTemplateIds);
 
 	List<String> validateIds(@Param("missionTemplateIds") List<String> missionTemplateIds);
+
+	List<String> selectByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
 }

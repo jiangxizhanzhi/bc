@@ -201,6 +201,30 @@ public class CourseValidateHandler {
 	}
 
 	/**
+	 * 课程编号存在性校验
+	 * @param course
+	 * @return
+	 */
+	public Course validateCourseName2NumExist(Course course) {
+		String courseId = courseMapper.selectByName(course.getName());
+		if (!StringUtils.isEmpty(courseId) && !StringUtils.equals(course.getResourceId(), courseId)){
+			log.error(
+					"The course name=[{}] already exists! import course num=[{}], exists course num=[{}]",
+					course.getName(), course.getResourceId(), courseId);
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+
+		Course courseExist = courseMapper.selectByCourseNum(course.getCourseNum());
+
+		if (null != courseExist && !StringUtils.equals(course.getName(), courseExist.getName())) {
+			log.error("Course num=[{}] exists! import course name=[{}], exists course name=[{}]",
+					course.getCourseNum(), course.getName(), courseExist.getName());
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NUM_IS_EXIST);
+		}
+		return courseExist;
+	}
+
+	/**
 	 * 课时名称重复性校验
 	 * @param courseId
 	 * @param name

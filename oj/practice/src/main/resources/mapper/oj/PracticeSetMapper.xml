@@ -83,4 +83,13 @@
         select resource_id from oj_practice_set
         WHERE `name` = #{name}
     </select>
+
+
+    <select id="selectByNames" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSet">
+        select resource_id, name from oj_practice_set
+        where `name` in
+        <foreach collection="names" item="name" open="(" close=")" separator=",">
+            #{name}
+        </foreach>
+    </select>
 </mapper>

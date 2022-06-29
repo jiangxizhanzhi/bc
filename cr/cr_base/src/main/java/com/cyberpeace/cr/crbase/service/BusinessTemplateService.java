@@ -111,6 +111,20 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	Boolean existByName(String templateName);
 
 	/**
+	 * @param names
+	 * @return
+	 */
+	List<String> getExistedNames(List<String> names);
+
+	/**
+	 * 用于资管：读取某名称的模板id
+	 * 结果为null代表不存在
+	 * @param templateName
+	 * @return
+	 */
+	String getIdByName(String templateName);
+
+	/**
 	 * 更新模板
 	 * @param businessTemplate
 	 * @param baseInfo

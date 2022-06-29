@@ -13,7 +13,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
@@ -25,7 +24,6 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
-import com.cyberpeace.cs.service.LocalSceneService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,16 +41,10 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	private SingleTemplateService singleTemplateService;
 
 	@Autowired
-	private MissionService missionService;
-
-	@Autowired
 	private SingleRoomService singleRoomService;
 
 	@Autowired
 	private MissionTemplateService missionTemplateService;
-
-	@Autowired
-	private LocalSceneService localSceneService;
 
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -113,16 +105,6 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		SingleTemplate singleTemplate = singleTemplateService
 				.getByBusinessTemplateId(businessTemplate.getResourceId());
-		List<SingleRoom> roomList = singleRoomService
-				.getByBusinessTemplateId(businessTemplate.getResourceId());
-
-		if (!roomList.isEmpty()) {
-			String errorMsg = String.format(
-					"Failed to delete single training template in use, template's name is [%s].",
-					businessTemplate.getName());
-			log.error(errorMsg);
-			throw new BusinessException(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE);
-		}
 		// 删除任务, 但不删除图片
 		List<String> missionTemplateIds = singleTemplateService
 				.getMissionTemplateIdsByMissionsScheme(singleTemplate.getMissionsScheme());
@@ -135,5 +117,19 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		SingleTemplate template = BeanUtils.copy(templateContext, SingleTemplate.class);
 		singleTemplateService.save(template);
+	}
+
+	@Override
+	public void checkBeforeDel(BusinessTemplate businessTemplate) {
+		List<SingleRoom> roomList = singleRoomService
+				.getByBusinessTemplateId(businessTemplate.getResourceId());
+
+		if (!roomList.isEmpty()) {
+			String errorMsg = String.format(
+					"Failed to delete single training template in use, template's name is [%s].",
+					businessTemplate.getName());
+			log.error(errorMsg);
+			throw new BusinessException(CrBusinessErrorCode.SINGLE_TRAIN_TEMPLATE_IN_USE);
+		}
 	}
 }

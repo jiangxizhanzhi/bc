@@ -1,6 +1,5 @@
 package com.cyberpeace.gateway.controller;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +29,10 @@ public class GxController {
 
 	@ApiOperation("单点登录跳转")
 	@PostMapping("/access")
-	public void access(
-			@ApiParam(name = "token", value = "token") @RequestParam(value = "token", required = false) String token,
-			@RequestBody @Validated GxAccessReq gxAccessReq, HttpServletResponse response)
-			throws Exception {
+	public void
+			access(@ApiParam(name = "token", value = "token") @RequestParam(value = "token",
+					required = false) String token, @RequestBody @Validated GxAccessReq gxAccessReq,
+					HttpServletResponse response) throws Exception {
 
 		// 提取远程用户token
 		String gxToken;
@@ -57,7 +56,9 @@ public class GxController {
 
 	}
 
-	/** 设置重定向返回体 */
+	/**
+	 * 设置重定向返回体
+	 */
 	private void setResponse(HttpServletResponse response, String gxToken) {
 
 		// 校验token是否为空
@@ -71,9 +72,10 @@ public class GxController {
 
 		// 构造返回体
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+		response.setHeader("Cache-Control", "no-cache");
 		response.setHeader("Location", "/page/mg/");
-		Cookie cookie = new Cookie("cr_jwttoken", mpToken);
-		response.addCookie(cookie);
+		response.setHeader("Set-Cookie",
+				"cr_jwttoken=" + mpToken + "; SameSite=Lax; Path=/page/mg/");
 
 	}
 

@@ -57,8 +57,5 @@ public interface PatternConstant {
 	 */
 	String VERTICAL_LINE = "\\|";
 
-	/**
-	 * 文件后缀匹配
-	 */
-	String FILE_SUFFIX_MATCH = "(\\..[^\\/]{0,6})$";
+	String CODING_BLOCK = "`(?:(.*$)\\n)?([\\s\\S]*)`";
 }

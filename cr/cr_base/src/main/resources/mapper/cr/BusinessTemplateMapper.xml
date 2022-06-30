@@ -78,6 +78,15 @@
                    end
                    as result;
     </select>
+
+    <select id="getExistedNames" resultType="java.lang.String">
+        select name from cr_business_template
+        where name in
+        <foreach collection="templateNames" separator="," open="(" close=")" item="templateName">
+            #{templateName}
+        </foreach>
+    </select>
+
     <select id="existByNameAndTypeAndId" resultType="java.lang.Boolean">
         select case
         when exists(select 1
@@ -131,5 +140,11 @@
         </where>
         order by update_time desc
     </select>
+    <select id="getIdByName" resultType="java.lang.String">
+        select resource_id
+        from cr_business_template
+        where name = #{templateName}
+    </select>
+
 
 </mapper>

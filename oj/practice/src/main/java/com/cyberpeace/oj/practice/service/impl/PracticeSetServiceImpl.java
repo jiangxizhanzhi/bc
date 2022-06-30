@@ -265,7 +265,16 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		PracticeSet practiceSet = handlerPracticeSet(path);
 
 		// 遍历习题数据处理
-		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
+		List<String> ctfPracticeDirs = Lists.newArrayList();
+		for (String name: envReqs.keySet()) {
+			File tmpFile = new File(path, name);
+			if (tmpFile.exists()){
+				ctfPracticeDirs.add(tmpFile.getAbsolutePath());
+			}
+		}
+		if (ctfPracticeDirs.size() == 0){
+			return Lists.newArrayList();
+		}
 
 		// 构建数据存储
 		List<String> existOperations = Lists.newArrayList();
@@ -423,6 +432,21 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				return CommonConstant.TRUE;
 			}
 		});
+	}
+
+	@Override
+	public List<String> duplicatePracticeSetInspect(List<String> practiceSets) {
+		List<String> duplicateName = Lists.newArrayList();
+		if (null == practiceSets || practiceSets.size() == 0){
+			return duplicateName;
+		}
+
+		List<PracticeSet> practiceSetList = practiceSetMapper.selectByNames(practiceSets);
+		for (PracticeSet practiceSet: practiceSetList){
+			duplicateName.add(practiceSet.getName());
+		}
+
+		return duplicateName;
 	}
 
 	/**
@@ -621,25 +645,22 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 名称数据校验
 		String existSetId = practiceSetMapper.selectByName(practiceSet.getName());
 
-		// 不存在则创建 存在则直接返回
-		if (StringUtils.isBlank(existSetId)) {
-			practiceSet.setBuiltin(CommonConstant.TRUE);
-			practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
-			practiceSet.setIsPublic(CommonConstant.FALSE);
-			practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-			practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-			practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-			practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-			practiceSet.setPracticeCount(CommonConstant.ZERO);
-			practiceSet.setResourceId(IDGeneratorUtil.getID());
+		practiceSet.setBuiltin(CommonConstant.TRUE);
+		practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+		practiceSet.setIsPublic(CommonConstant.FALSE);
+		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
+		practiceSet.setPracticeCount(CommonConstant.ZERO);
 
-			return practiceSet;
+		if (StringUtils.isBlank(existSetId)) {
+			practiceSet.setResourceId(IDGeneratorUtil.getID());
+		}else {
+			practiceSet.setResourceId(existSetId);
 		}
 
-		log.warn("Practice set exist! practice_set_id=[{}], practice_set_name=[{}]", existSetId,
-				practiceSet.getName());
-
-		return practiceSetMapper.selectById(existSetId);
+		return practiceSet;
 	}
 
 	/**

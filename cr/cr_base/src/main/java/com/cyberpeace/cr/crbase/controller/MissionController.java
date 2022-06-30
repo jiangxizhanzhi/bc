@@ -23,7 +23,7 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionSchemeTemplateMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
@@ -68,7 +68,7 @@ public class MissionController {
 	private MissionService missionService;
 
 	@Autowired
-	private MissionMapper missionMapper;
+	private MissionSchemeTemplateMapper missionSchemeTemplateMapper;
 
 	@Autowired
 	private CrRoleService crRoleService;
@@ -237,7 +237,7 @@ public class MissionController {
 
 		for(String id:deleteReq.getIds()){
 			remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-					OperationType.DELETE, missionMapper.selectById(id).getTitle());
+					OperationType.DELETE, missionSchemeTemplateMapper.selectById(id).getTitle());
 		}
 
 		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
@@ -254,8 +254,9 @@ public class MissionController {
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
 
+		MissionSchemeTemplate missionSchemeTemplate = missionSchemeTemplateMapper.selectById(templateModifyReq.getResourceId());
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-				OperationType.UPDATE, templateModifyReq.getTitle());
+				OperationType.UPDATE, missionSchemeTemplate.getTitle());
 
 		return new BaseRsp<>();
 	}

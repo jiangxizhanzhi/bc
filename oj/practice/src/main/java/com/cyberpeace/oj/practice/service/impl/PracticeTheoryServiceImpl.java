@@ -444,12 +444,21 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			return null;
 		}
 
-		//
 		PracticeTheory practiceTheory = BeanUtils.copy(dumpBo, PracticeTheory.class);
 		practiceTheory.setPracticeSetId(practiceSetId);
 		practiceTheory.setBuiltin(CommonConstant.TRUE);
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
 		practiceTheory.setCreateUserId(userId);
+		// 增加判断 添加默认值 防止前端无法格式化数据
+		if (StringUtils.isBlank(dumpBo.getKeyword())) {
+			practiceTheory.setKeyword(CommonConstant.EMPTY_LIST_JSON);
+		}
+		if (StringUtils.isBlank(dumpBo.getKnowledge())) {
+			practiceTheory.setKnowledge(CommonConstant.EMPTY_LIST_JSON);
+		}
+		if (StringUtils.isBlank(dumpBo.getOption())) {
+			practiceTheory.setOption(CommonConstant.EMPTY_OBJECT);
+		}
 
 		// 分类数据
 		String categoryId = practiceCategoryService.selectCategoryOrCreate(dumpBo.getCategoryName(),

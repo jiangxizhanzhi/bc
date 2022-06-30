@@ -235,6 +235,7 @@ public class TeamTrainStudentsController {
 				missionService.getCategoryById(taskContext.getMission().getCategoryId()).getName());
 		missionRsp.setShowWriteup(taskContext.getMission().getShowWriteup());
 		missionRsp.setWriteUp(taskContext.getMission().getWriteUp());
+		missionRsp.setDescription(taskContext.getMission().getDescription());
 
 		missionRsp.setUserAnswer(taskContext.getUserAnswer());
 		if (!taskContext.getMission().getShowWriteup()) {

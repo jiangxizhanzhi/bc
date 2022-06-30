@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
+import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +85,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	@Autowired
+	private LessonConfigMapper lessonConfigMapper;
+
 	@Override
 	public Course parseRmCourse(String path) {
 
@@ -102,8 +105,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 		Course course = jsonParseCourse(convertValue);
 
 		// 课程存在性校验
-		courseValidateHandler.validateCourseNameExist(course.getName());
-		courseValidateHandler.validateCourseNumExist(course.getCourseNum());
+//		courseValidateHandler.validateCourseNameExist(course.getName());
+//		courseValidateHandler.validateCourseNumExist(course.getCourseNum());
+		courseValidateHandler.validateCourseName2NumExist(course);
 
 		// 用户修改
 		course.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
@@ -197,6 +201,22 @@ public class CourseImportServiceImpl implements CourseImportService {
 			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths, lessonPath -> {
 				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
 				if (null != courseLesson) {
+					// 如果存在该课时，则替换resource_id
+					CourseLesson existLesson = courseLessonMapper.selectCourseByCourseAndName(course.getResourceId(), courseLesson.getName());
+					if (null != existLesson){
+						courseLesson.setResourceId(existLesson.getResourceId());
+						courseLesson.setPaperId(existLesson.getPaperId());
+
+
+						if (courseLesson.getType() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
+								&& null == courseLesson.getTopoId()){
+							courseLesson.setSceneShareMode(existLesson.getSceneShareMode());
+							courseLesson.setDestroyDelay(existLesson.getDestroyDelay());
+							courseLesson.setTopoId(existLesson.getTopoId());
+						}
+					}
+
+
 					if (null != nameMap.putIfAbsent(courseLesson.getName(),
 							courseLesson.getResourceId())) {
 						log.error("Lesson name exist! course_path=[{}], lesson_path=[{}]", path,
@@ -522,11 +542,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 				}
 
 				// 课程相关数据存储
-				courseMapper.insert(course);
+				courseService.saveOrUpdate(course);
 				// 试卷数据初始化存储
 				StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
 				// 课时和课时目录数据存储
-				courseLessonService.saveBatch(lessons);
+				courseLessonService.saveOrUpdateBatch(lessons);
+
+                //先删除旧的编排
+                lessonConfigMapper.deleteByCourse(course.getResourceId());
 				lessonConfigService.saveBatch(lessonConfigs);
 
 			}
@@ -543,6 +566,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 */
 	private Paper initPaper(CourseLesson courseLesson) {
 
+		if (courseLesson.getPaperId() != null){
+			return null;
+		}
 		PaperContext paperContext = PaperContext.builder().resourceId(courseLesson.getResourceId())
 				.type(Paper.PaperType.LESSON.getCode()).name(courseLesson.getName())
 				.description(courseLesson.getName()).isPublic(CommonConstant.TRUE).build();
@@ -550,5 +576,205 @@ public class CourseImportServiceImpl implements CourseImportService {
 		courseLesson.setPaperId(paper.getResourceId());
 
 		return paper;
+	}
+
+
+	public Course generateCombineCourse(CombinedCourseImportContext courseInfo, List<String> existConfig) {
+
+		// 增量更新
+		Course courseExist = courseMapper.selectByCourseNum(courseInfo.getCourseNum());
+		if (null != courseExist) {
+			if (!StringUtils.equals(courseExist.getName(), courseInfo.getCourseName())) {
+				log.error(
+						"The courseNum=[{}] already exists! import course name=[{}], exists course name=[{}]",
+						courseInfo.getCourseNum(), courseInfo.getCourseName(), courseExist.getName());
+				throw new BusinessException(OjBusinessErrorCode.COURSE_NUM_IS_EXIST);
+			}
+
+			List<LessonConfig> configs = lessonConfigMapper.selectByCourse(courseInfo.getCourseNum());
+			for (LessonConfig config: configs) {
+				existConfig.add(config.getResourceId());
+			}
+			return courseExist;
+		}
+
+		Course course = new Course();
+		course.setCourseNum(courseInfo.getCourseNum());
+		course.setResourceId(courseInfo.getCourseNum());
+		course.setName(courseInfo.getCourseName());
+		course.setCategoryId(courseInfo.getCategoryName());
+
+
+		// 用户修改
+		course.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+		course.setModifyUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+
+		// 课程分类数据查询或创建
+		CourseCategory category = courseCategoryService.getOrCreate(course.getCategoryId());
+		course.setCategoryId(category.getResourceId());
+
+		// 课程其他数据初始化
+		course.setBuiltin(CommonConstant.TRUE);
+		course.setCourseType(CourseCategory.CourseType.BASE.getCode());
+		course.setHeat(CommonConstant.ZERO);
+		course.setScore(CommonConstant.ZERO);
+		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setReadAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
+		course.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setOperationAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
+		course.setIsPublic(CommonConstant.FALSE);
+
+		course.setDifficulty(Course.Difficulty.PRIMARY.getCode());
+
+
+		return course;
+	}
+
+	public List<LessonConfig> generateLessonConfig(Course course, List<CombinedCourseImportContext> courseInfos, Map<String, String> lessonNameMap) {
+
+		List<LessonConfig> lessonConfigs = Lists.newArrayList();
+		HashMap<String, LessonConfig> chapterMap = Maps.newHashMap();
+		// 设置根目录
+		LessonConfig courseConfig = LessonConfig.builder().name(course.getName())
+				.courseId(course.getResourceId()).index(CommonConstant.ZERO)
+				.nodeType(LessonConfig.NodeType.NODE_COURSE.getCode())
+				.resourceId(IDGeneratorUtil.getID()).build();
+		lessonConfigs.add(courseConfig);
+
+		int index = CommonConstant.ONE;
+
+		for (CombinedCourseImportContext courseInfo: courseInfos) {
+
+			// 处理章节
+			String chapterName = courseInfo.getChapterName();
+			LessonConfig chapterConfig = chapterMap.get(chapterName);
+
+			if (null == chapterConfig) {
+				chapterConfig = LessonConfig.builder().courseId(course.getResourceId())
+						.parentId(courseConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
+						.nodeType(LessonConfig.NodeType.NODE_CHAPTER.getCode()).name(chapterName)
+						.index(index).build();
+				lessonConfigs.add(chapterConfig);
+
+				index ++;
+
+				chapterMap.put(chapterName, chapterConfig);
+			}
+
+			String[] lessonNameList = courseInfo.getLessonName().split("_", 2);
+			String lessonName;
+			if (lessonNameList.length == 2){
+				lessonName = lessonNameList[1];
+			}else{
+				lessonName = lessonNameList[0];
+			}
+
+			// 处理课时
+			LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
+					.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
+					.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(lessonName)
+					.lessonId(lessonNameMap.get(lessonName)).index(index).build();
+			lessonConfigs.add(lessonConfig);
+
+			// 索引加一
+			index++;
+
+		}
+
+
+		return lessonConfigs;
+	}
+
+	@Override
+
+	public Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos, AuthContext authContext) {
+
+		log.info("Combined-Lesson-Import's request is: [{}]", JsonUtil.toJsonString(courseInfos));
+
+		if (null == courseInfos || courseInfos.size() == 0){
+			log.info("The request body is empty!");
+			return true;
+		}
+
+		// 增量更新时，删除原课程编排数据
+		List<String> existConfig = Lists.newArrayList();
+
+		// 课程信息组装
+		Course course = generateCombineCourse(courseInfos.get(0), existConfig);
+
+		// 课时信息组装
+		List<CourseLesson> lessons = Lists.newArrayList();
+
+		Map<String, String> lessonNameMap = Maps.newHashMap();
+
+		for (CombinedCourseImportContext courseInfo: courseInfos) {
+			if (null == courseInfo.getPath()){
+				continue;
+			}
+
+			String[] lessonNameList = courseInfo.getLessonName().split("_", 2);
+			String lessonName;
+			if (lessonNameList.length == 2){
+				lessonName = lessonNameList[1];
+			}else{
+				lessonName = lessonNameList[0];
+			}
+
+			// 该课时已存在，不再处理
+			String lessonId =  courseLessonMapper.selectByCourseAndName(course.getResourceId(), lessonName);
+			if (null != lessonId) {
+				lessonNameMap.putIfAbsent(lessonName,lessonId);
+				continue;
+			}
+
+			Map<String, String> envReqs = Maps.newHashMap();
+			envReqs.put(courseInfo.getLessonName(), courseInfo.getTopoId());
+			CourseLesson courseLesson = parseLesson(courseInfo.getPath(), course, envReqs);
+
+			if (null != courseLesson) {
+				if (null != lessonNameMap.putIfAbsent(lessonName,
+						courseLesson.getResourceId())) {
+					log.error("Lesson name exist! course_name=[{}], lesson_path=[{}]", courseInfo.getCourseName(),
+							courseInfo.getPath());
+					throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+				}
+				lessons.add(courseLesson);
+			}
+
+		}
+
+
+		List<LessonConfig> lessonConfigs = generateLessonConfig(course, courseInfos, lessonNameMap);
+
+
+		// 数据入库
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+
+				if (lessons.size() == 0){
+					log.info("All lessons have already imported");
+
+				} else {
+					if (existConfig.size() == 0) {
+						// 课程相关数据存储
+						courseMapper.insert(course);
+					}
+
+
+					// 试卷数据初始化存储
+					StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
+					// 课时和课时目录数据存储
+					courseLessonService.saveBatch(lessons);
+				}
+
+				lessonConfigMapper.deleteByCourse(course.getResourceId());
+				lessonConfigService.saveBatch(lessonConfigs);
+
+			}
+		});
+
+		return true;
 	}
 }

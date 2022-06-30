@@ -29,6 +29,10 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 	Boolean existByName(@Param("templateName") String templateName);
 
+	List<String> getExistedNames(@Param("templateNames") List<String> templateNames);
+
+	String getIdByName(@Param("templateName") String templateName);
+
 	/**
 	 * 校验模板名称
 	 */

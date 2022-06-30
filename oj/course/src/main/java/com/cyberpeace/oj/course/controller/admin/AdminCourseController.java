@@ -181,8 +181,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		Course courseRsp = courseService.updateCourse(userId, course);
 
+		course = courseService.getById(updateReq.getResourceId());
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
-				OperationType.UPDATE, courseRsp.getName());
+				OperationType.UPDATE, course.getName());
 
 		return new BaseRsp<>(courseRsp);
 	}

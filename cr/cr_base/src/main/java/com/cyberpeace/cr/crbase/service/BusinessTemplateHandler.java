@@ -98,4 +98,6 @@ public class BusinessTemplateHandler {
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
+
+	public void checkBeforeDel(BusinessTemplate businessTemplate) {}
 }

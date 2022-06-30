@@ -457,7 +457,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
     }
 
     @Override
-    public ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String startTimeStr, String endTimeStr) {
+    public ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String startTimeStr, String endTimeStr, boolean isPage) {
         // 获取并校验时间参数有起止时间时校验格式 否则默认取month date_type对应两个类型 1.month取当月起往前两年的时间区间 2.day取当日起往前30天的时间区间
         Date endTime = new Date();
         Date startTime;
@@ -503,7 +503,11 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
         }
         OrderItem orderField = page.getOrders().isEmpty() ? new OrderItem() : (OrderItem) page.getOrders().get(0);
-
+        if (!isPage) {
+            ListRsp<OrgStatsBo> res = new ListRsp<>();
+            res.setList(result);
+            return res;
+        }
         return pagedData(page, result.size(), orderField, result);
     }
 

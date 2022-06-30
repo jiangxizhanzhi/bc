@@ -4,6 +4,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
 
 import java.util.List;
 import java.util.Map;
@@ -43,4 +44,11 @@ public interface CourseImportService {
 	 * @return
 	 */
 	Boolean rMCourseImport(String path, Map<String, String> envReqs, AuthContext authContext);
+
+	/**
+	 * 组合课程数据导入
+	 * @param courseInfos 课时资源所在地址
+	 * @return
+	 */
+	Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos, AuthContext authContext);
 }

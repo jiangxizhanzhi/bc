@@ -22,7 +22,7 @@
                count(L4.id) as finish_practice_count
         from oj_lesson_record L1
         left join (select * from oj_note where create_time &gt;= #{start_time} and create_time &lt;= #{end_time}) L2 on L2.note_type = #{report_code} and L1.user_id = L2.user_id and L1.lesson_id = L2.business_id
-        left join oj_note_evaluate L3 on L2.resource_id = L3.note_id and L3.passed = 1
+        left join oj_note_evaluate L3 on L2.resource_id = L3.note_id and L3.passed = 1 and L3.score >= 80
         left join (select * from oj_lesson_paper_evaluate where create_time &gt;= #{start_time} and create_time &lt;= #{end_time} and (level = 1 or level = 2)) L4 on L1.lesson_id = L4.lesson_id and L1.user_id = L4.submit_user_id
         <where>
             L1.lesson_id in (select resource_id from oj_course_lesson)

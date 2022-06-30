@@ -99,4 +99,10 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 * @return
 	 */
 	Boolean loadPracticeSet(String realPath, String userId);
+
+	/**
+	 * 检查习题集是否重复
+	 * @return
+	 */
+	List<String> duplicatePracticeSetInspect(List<String> practiceSets);
 }

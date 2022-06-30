@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,12 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.FileDownloadUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.constant.SessionType;
+import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -74,6 +77,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String EVENT_AGGR_URL;
 
 	private String RISK_COUNT_URL;
+
+	private String SCENE_LOGFILE;
+
+	private String SCENE_LOGFILE_DOWNLOAD_URLS;
 
 	private String COLLECTION_EVENT_URL;
 
@@ -140,6 +147,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		RISK_COUNT_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.risk.count");
 
+		SCENE_LOGFILE = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.cscene.logfile");
+
+		SCENE_LOGFILE_DOWNLOAD_URLS = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.cscene.logfile.download.urls");
 		COLLECTION_EVENT_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.probe.collection.event");
 
@@ -271,7 +283,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds,
-			List<String> userIds, String type) {
+									 List<String> userIds, String type) {
 		if (CollectionUtils.isEmpty(sceneIds)) {
 			return new JSONArray();
 		}
@@ -293,7 +305,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
-			List<String> userIds) {
+												List<String> userIds) {
 
 		JSONArray nodeSessions = getNodeSessions(sceneIds, nodeIds, userIds,
 				SessionType.ASSISTANCE.type);
@@ -350,7 +362,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public List<MpCollectionEvent>
-			getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
+	getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
 		String mpCollectionEvents = HttpClientUtil.rawGetByParam(collectionEventPageContext,
 				COLLECTION_EVENT_DATA_URL, String.class);
 		// todo 远程返回异常
@@ -361,4 +373,59 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		// todo 错误响应
 		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
 	}
+
+	@Override
+	public List<MpLogFile> getMpSceneFiles(String sceneId) {
+		String targetUrl = SCENE_LOGFILE + "?sceneId=" + sceneId;
+
+		JSONObject data = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		List<MpLogFile> mpLogFiles = Lists.newArrayList();
+
+		List jsonArray = (List) data.get("list");
+
+		for (Object object : jsonArray) {
+			MpLogFile mpLogFile = JsonUtil.toJsonObject(object.toString(), MpLogFile.class);
+			if (ConfigUtil.getContextProperty("cr.ftp.file.names").contains(mpLogFile.getName())) {
+				mpLogFiles.add(mpLogFile);
+
+			}
+		}
+
+		if (null != mpLogFiles || mpLogFiles.size() > 0) {
+			log.error("LogFile exist, sceneId=[{}]", sceneId);
+
+			getLogFile(mpLogFiles);
+		}
+
+		JSONObject topoDigest = new JSONObject();
+		topoDigest.put("file", mpLogFiles);
+
+		return mpLogFiles;
+	}
+
+	public void getLogFile(List<MpLogFile> mpLogFiles) {
+		if (null != mpLogFiles || mpLogFiles.size() > 0) {
+			for (MpLogFile mpLogFile : mpLogFiles) {
+				String targetUrl = SCENE_LOGFILE_DOWNLOAD_URLS + "?agentName="
+						+ mpLogFile.getAgentName() + "&osType=" + mpLogFile.getOsType() + "&paths="
+						+ mpLogFile.getPath();
+
+				JSONObject data = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+				for (Object fileUrl : (List) data.get("list")) {
+					String downloadUrl = JsonUtil.toJsonObject(fileUrl.toString(), JSONObject.class)
+							.getString("download_url");
+					String fileName = JsonUtil.toJsonObject(fileUrl.toString(), JSONObject.class)
+							.getString("name");
+					mpLogFile.setUrl(downloadUrl);
+					FileDownloadUtil.downloadFile("http://10.100.1.28" + downloadUrl, fileName,
+							ConfigUtil.getContextProperty("cr.ftp.file.path"));
+
+					// FtpUtil.downloadFile("http://"+SystemPropUtil.getProp("MP_HOST")+downloadUrl,
+					// fileName, ConfigUtil.getContextProperty("cr.ftp.file.path") );
+				}
+			}
+		}
+
+	}
+
 }

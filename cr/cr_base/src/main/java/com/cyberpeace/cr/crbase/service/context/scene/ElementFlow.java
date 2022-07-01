@@ -20,7 +20,7 @@ public class ElementFlow implements Serializable {
 
 	private Integer interactiveType;
 
-	private Integer commonStatus;
+	private Integer commonStatus = 0 ;
 
 	private Integer status;
 

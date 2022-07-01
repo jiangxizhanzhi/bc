@@ -142,7 +142,6 @@ public class EvalSceneEventListener extends MessageListener {
 		}
 
 		// 构造推送消息
-		crSceneService.setElementFlowStatus(updateFlows, mpSceneId, nodeId);
 		FlowUpdate flowUpdate = new FlowUpdate(mpSceneId, nodeId, updateFlows);
 		WsMessageBO<FlowUpdate> wsMessageBO = new WsMessageBO<>("update_flow", flowUpdate);
 		pushDataToWeb(JsonUtil.toJsonString(wsMessageBO, PropertyNamingStrategy.SnakeCase),

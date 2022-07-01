@@ -197,7 +197,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		Future<JSONObject> future = executor.submit(task);
 
 		try {
-			JSONObject jsonObject = future.get(5, TimeUnit.SECONDS);
+			JSONObject jsonObject = future.get(20, TimeUnit.SECONDS);
 			taskStatus = (Integer) jsonObject.getOrDefault("status",
 					ElementFlow.TaskStatusEnum.ZERO.getCode());
 		} catch (Exception e) {
@@ -219,9 +219,6 @@ public class CrSceneServiceImpl implements CrSceneService {
 		// 按照条件过滤并分页
 		ListRsp<ElementFlow> flowListRsp = filterFlowList(elementFlowList, interactiveType,
 				context.getPage());
-
-		// 设置流量状态
-		setElementFlowStatus(flowListRsp.getList(), mpSceneId, nodeId);
 
 		return flowListRsp;
 	}
@@ -252,7 +249,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 			String businessId) {
 
 		// 校验节点下流量任务状态
-		checkFlowTaskStatus(mpSceneId, nodeId);
+		// checkFlowTaskStatus(mpSceneId, nodeId);
 
 		for (FlowInfoContext flowContext : flows) {
 			FlowOpsContext flowOpsContext = BeanUtils.copy(flowContext,
@@ -284,7 +281,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 			String businessId) {
 
 		// 校验节点下流量任务状态
-		checkFlowTaskStatus(mpSceneId, nodeId);
+		// checkFlowTaskStatus(mpSceneId, nodeId);
 
 		FlowBatchOpsContext flowBatchOpsContext = new FlowBatchOpsContext(mpSceneId, nodeId,
 				runType);

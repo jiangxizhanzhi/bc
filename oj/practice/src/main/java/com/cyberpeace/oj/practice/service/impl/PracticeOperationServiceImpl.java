@@ -1068,8 +1068,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		if (StringUtils.isNotBlank(topoId)) {
 			operation.setTopoId(topoId);
-			operation.setDestroyDelay(CommonConstant.TWO);
 		}
+		// 销毁时间默认设置
+		operation.setDestroyDelay(CommonConstant.TWO);
 
 		// 难度处理
 		String difficultyStr = (String) operationData.remove("difficulty");

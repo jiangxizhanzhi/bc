@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -371,7 +372,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		// 数据去重
 		List<PracticeTheory> distinctList = StreamApiUtils.distinctByColumn(theoryList,
-				PracticeTheory::getContent);
+				practiceTheory -> practiceTheory.getContent().toUpperCase(Locale.ROOT));
 		return distinctList;
 	}
 

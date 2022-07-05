@@ -4,6 +4,7 @@ import ch.ethz.ssh2.ChannelCondition;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cs.service.SystemUseStatusService;
 import com.google.common.collect.Lists;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,6 +32,12 @@ public class SystemUseStatusJob {
 
 	private static final int TIME_OUT = 1000 * 5 * 60;
 
+	private boolean insertSystemUseStatus;
+
+	@PostConstruct
+	public void init() {{
+		insertSystemUseStatus = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.insertSystemUseStatus"));
+	}}
 
 	private static String processStream(InputStream in, String charset) throws Exception {
 		byte[] buf = new byte[1024];
@@ -89,18 +97,19 @@ public class SystemUseStatusJob {
 		String diskCmd = "df -h /";
 		String memoryCmd = "cat /proc/meminfo";
 		String cpuCmd = " top -b -n 1";
-
-		List<String> cpuInfo = execShell(cpuCmd);
-		log.info("cpuInfo:{}",cpuInfo);
-		List<String> disk = execShell(diskCmd);
-		log.info("disk:{}",disk);
-		List<String> ram = execShell(memoryCmd);
-		log.info("ram:{}",ram);
-		double cpu = getCpuUsage(cpuInfo);
-		double unixDickUsage = getUnixDiskUsage(disk);
-		double memoryUsage = getMemoryUsage(ram);
-		systemUseStatusService.insert(String.valueOf(cpu), String.valueOf(memoryUsage), String.valueOf(unixDickUsage));
-		log.info("system use status end--------");
+		if (insertSystemUseStatus) {
+			List<String> cpuInfo = execShell(cpuCmd);
+			log.info("cpuInfo:{}", cpuInfo);
+			List<String> disk = execShell(diskCmd);
+			log.info("disk:{}", disk);
+			List<String> ram = execShell(memoryCmd);
+			log.info("ram:{}", ram);
+			double cpu = getCpuUsage(cpuInfo);
+			double unixDickUsage = getUnixDiskUsage(disk);
+			double memoryUsage = getMemoryUsage(ram);
+			systemUseStatusService.insert(String.valueOf(cpu), String.valueOf(memoryUsage), String.valueOf(unixDickUsage));
+			log.info("system use status end--------");
+		}
 	}
 
 	/**
@@ -137,8 +146,6 @@ public class SystemUseStatusJob {
 	 * @return CPU使用率 0.36
 	 */
 	public static Double getCpuUsage(List<String> cpuInfo) {
-//		List<String> cpu = Arrays.asList(cpuInfo.get(2).split(","));
-		log.info("cpu:{}",cpuInfo.get(1).split("\\s+"));
 		return Double.valueOf(Arrays.asList(cpuInfo.get(1).split("\\s+")).get(1));
 
 	}
@@ -149,8 +156,6 @@ public class SystemUseStatusJob {
 	 * @return 处理后获得的硬盘使用率
 	 */
 	public static double getUnixDiskUsage(List<String> resultInfo) {
-		log.info("disk1:{}",resultInfo.get(1));
-		log.info("disk:{}",resultInfo.get(1).split("\\s+")[4]);
 		return Double.parseDouble(resultInfo.get(1).split("\\s+")[4].replace("%", ""));
 	}
 

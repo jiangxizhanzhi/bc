@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -183,6 +184,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		List<String> pageByIds = StreamApiUtils.pageByList(theoryIds,
 				page.getCurrent(), page.getSize());
 
+		if (CollectionUtils.isEmpty(pageByIds)) {
+			return page;
+		}
 		// 查询理论习题
 		List<PracticeTheory> theoryList = practiceTheoryMapper.selectBatchIds(pageByIds);
 		List<LibPracticeListBo> theoryBoList = StreamApiUtils.map(theoryList,

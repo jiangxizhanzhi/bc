@@ -15,7 +15,7 @@ public interface MenuConstant {
     String WEB_OJ_COURSE = "oj-course";
 
     // 全部课程
-    String WEB_OJ_ALL_COURSE = "oj-all-course";
+    String WEB_OJ_ALL_COURSE = "course-folder";
 
     //知识课程
     String WEB_OJ_KNOWLEDGE_COURSE = "oj-knowledge-course";

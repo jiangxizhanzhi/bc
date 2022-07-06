@@ -957,6 +957,8 @@
   font-family  : PingFangSC-Regular;
   white-space  : normal;
   line-height  : 22px;
+  max-width: 780px;
+  margin-right: 80px;
 }
 
 .word46 {

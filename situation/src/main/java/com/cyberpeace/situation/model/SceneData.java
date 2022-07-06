@@ -32,6 +32,9 @@ public class SceneData implements Serializable {
 	@ApiModelProperty("连线")
 	private JSONArray connections;
 
+	@ApiModelProperty("部件")
+	private JSONArray pieces;
+
 	@ApiModelProperty("场景补充信息")
 	private JSONObject extendElementInfo;
 

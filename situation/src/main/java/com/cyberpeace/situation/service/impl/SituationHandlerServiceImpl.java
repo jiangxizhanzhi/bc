@@ -3,9 +3,6 @@ package com.cyberpeace.situation.service.impl;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import com.cyberpeace.common.util.TimeUtil;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,6 +16,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.AttackType;
@@ -28,6 +26,8 @@ import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -44,8 +44,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
-	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.DAYS)
-			.build();
+	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
 	@Override
 	public SituationTopo getSituationTopo(SceneData sceneData) {
@@ -62,8 +62,23 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		situationTopo.setElements(elementsInfo);
 		situationTopo.setConnections(connectionsInfo);
 		situationTopo.setScene(sceneInfo);
+		situationTopo.setPieces(getPieces(sceneData));
 
 		return situationTopo;
+	}
+
+	private Map<String, PieceInfo> getPieces(SceneData sceneData) {
+
+		List<PieceInfo> pieces = JsonUtil.toJsonObjectArray(sceneData.getPieces().toString(),
+				PieceInfo.class);
+
+		Map<String, PieceInfo> piecesInfo = Maps.newHashMap();
+
+		for (PieceInfo pieceInfo : pieces) {
+			piecesInfo.put(pieceInfo.getPieceId(), pieceInfo);
+		}
+
+		return piecesInfo;
 	}
 
 	private Map<String, AreaInfo> getAreas(SceneData sceneData) {
@@ -99,7 +114,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 获取区域名称
 			String areaName = area.getString("name");
-			if (areaName.isEmpty()){
+			if (areaName.isEmpty()) {
 				areaName = "区域" + (i + 1);
 			}
 
@@ -442,7 +457,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Date time = TimeUtil.toDate1(flowLog.getString("time"));
 
 			// 如果时间小于缓存值，跳过不处理
-			if (lastTime != null && (lastTime.after(time) || lastTime.equals(time))){
+			if (lastTime != null && (lastTime.after(time) || lastTime.equals(time))) {
 				continue;
 			}
 
@@ -529,8 +544,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		// wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
-		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()),
-				5, LineType.getRandomValue(LineType.values())));
+		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()), 5,
+				LineType.getRandomValue(LineType.values())));
 		wsEvent.setLookAtTarget(new Random().nextBoolean());
 
 		// 补充动态描述

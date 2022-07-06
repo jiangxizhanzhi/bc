@@ -91,6 +91,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 				JSONArray.parseArray(Lists.newArrayList().toString())));
 		sceneData.setConnections((JSONArray) topology.getOrDefault("connections",
 				JSONArray.parseArray(Lists.newArrayList().toString())));
+		sceneData.setPieces((JSONArray) topology.getOrDefault("pieces",
+				JSONArray.parseArray(Lists.newArrayList().toString())));
 		sceneData.setExtendElementInfo(extendElementInfo);
 		sceneData.setXList(Lists.newArrayList());
 		sceneData.setYList(Lists.newArrayList());

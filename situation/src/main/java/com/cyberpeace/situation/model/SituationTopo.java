@@ -22,4 +22,7 @@ public class SituationTopo implements Serializable {
 	@ApiModelProperty("连线信息")
 	private List<ConnectionInfo> connections;
 
+	@ApiModelProperty("部件信息")
+	private Map<String, PieceInfo> pieces;
+
 }

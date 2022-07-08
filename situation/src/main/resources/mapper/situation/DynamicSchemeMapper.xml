@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper">
+
+    <select id="getAllNames" resultType="java.lang.String">
+        select resource_id,name from situation_dynamic_scheme
+    </select>
+</mapper>

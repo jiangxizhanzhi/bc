@@ -49,7 +49,8 @@ public enum AttackType {
     UNSUCCESSFUL_USER(ActionType.TRY_ATTACK, "提权攻击失败", "Unsuccessful User Privilege Gain", "unsuccessful-user"),
     UNUSUAL_CLIENT_PORT_CONNECTION(ActionType.NORMAL, "异常客户端攻击", "A client was using an unusual port", "unusual-client-port-connection"),
     WEB_APPLICATION_ACTIVITY(ActionType.TRY_ATTACK, "web漏洞尝试利用", "access to a potentially vulnerable web application", "web-application-activity"),
-    WEB_APPLICATION_ATTACK(ActionType.NORMAL, "Web应用攻击", "Web Application Attack", "web-application-attack");
+    WEB_APPLICATION_ATTACK(ActionType.NORMAL, "Web应用攻击", "Web Application Attack", "web-application-attack"),
+    MEDIA_ANIMATION(ActionType.NONE,"多媒体动效","Media animation","media-animation");
 
     @Getter
     private ActionType actionType;
@@ -77,6 +78,5 @@ public enum AttackType {
         return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getEnDesc().equals(enDesc))
                 .findFirst().orElse(null);
     }
-
 
 }

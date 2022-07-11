@@ -3,6 +3,7 @@ package com.cyberpeace.situation.service.impl;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -159,7 +160,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Integer category2 = elementExtendedInfo.getInteger("category2");
 			String firstType = categorieMap.getFirstCategorie().getOrDefault(category, "其他");
 			String secondType = categorieMap.getSecondCategorie().getOrDefault(category2, "其他");
-			String type = firstType + "-" + secondType;
+
+			String icon3 = (String) element.getOrDefault("icon3", "");
+			String type = StringUtils.isEmpty(icon3) ? firstType + "-" + secondType : "定制-" + icon3;
 
 			// 处理角色数据
 			Integer roleId = elementExtendedInfo.getInteger("role");

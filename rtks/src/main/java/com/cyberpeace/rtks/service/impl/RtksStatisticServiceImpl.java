@@ -294,19 +294,38 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// get single training
 		List<TrainingRaw> singles = skillTrainingMapper
 				.getSingleByBusinessTemplateIdsAndUserId(userId, businessTemplateIds);
-		// get team training
+		// get available team training
 		List<TrainingRaw> teams = skillTrainingMapper.getTeamByBusinessTemplateIdsAndUserId(userId,
 				businessTemplateIds);
-		// get rb training
+		// get available rb training
 		List<TrainingRaw> rbs = skillTrainingMapper.getRbByBusinessTemplateIdsAndUserId(userId,
 				businessTemplateIds);
 		// unify status
 		handleRbStatus(rbs);
-		// collect trainings
+		// collect available trainings
 		Map<String, List<TrainingRaw>> trainingMap = Maps.newHashMap();
-		mapTrainings(trainingMap, singles, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
-		mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-		mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		mapTrainings(trainingMap, singles, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+				true);
+		mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
+				true);
+		mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), true);
+		// 获取未创建与用户相关实例的团队和红蓝的BT id
+		Set<String> unAvailableBtIds = Sets.newHashSet();
+		for (String businessTemplateId : businessTemplateIds) {
+			if (!trainingMap.containsKey(businessTemplateId)) {
+				unAvailableBtIds.add(businessTemplateId);
+			}
+		}
+		if (!unAvailableBtIds.isEmpty()) {
+			// 5.3.4：未创建相关实例的团队、红蓝也要展示在训练路径里
+			teams = skillTrainingMapper.getTeamTemplateByBTIds(unAvailableBtIds);
+			rbs = skillTrainingMapper.getRbTemplateByBTIds(unAvailableBtIds);
+			mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
+					false);
+			mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
+					false);
+		}
+
 		// get saved mission order
 		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
 		// generate new order by merge with saved order
@@ -389,13 +408,18 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param trainingRaws
 	 */
 	private void mapTrainings(Map<String, List<TrainingRaw>> map, List<TrainingRaw> trainingRaws,
-			Integer type) {
+			Integer type, Boolean available) {
 		trainingRaws.forEach((training) -> {
 			String businessTemplateId = training.getBusinessTemplateId();
 			if (!map.containsKey(businessTemplateId)) {
 				map.put(businessTemplateId, Lists.newArrayList());
 			}
 			training.setTrainingType(type);
+			training.setAvailable(available);
+			if (!available) {
+				// 5 代表“不可用”， 此枚举值仅在训练路径中用到
+				training.setTrainingStatus(5);
+			}
 			map.get(businessTemplateId).add(training);
 		});
 	}

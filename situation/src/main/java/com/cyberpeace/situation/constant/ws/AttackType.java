@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.constant.ws;
 
+import com.cyberpeace.common.model.CommonContext;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -77,6 +78,10 @@ public enum AttackType {
     public static <T extends AttackType> T getEnumByEnDesc(String enDesc, Class<T> enumClass) {
         return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getEnDesc().equals(enDesc))
                 .findFirst().orElse(null);
+    }
+
+    public String getMsg() {
+        return CommonContext.isChinese() ? cnDesc : enDesc;
     }
 
 }

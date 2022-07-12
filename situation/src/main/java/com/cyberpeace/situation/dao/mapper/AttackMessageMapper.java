@@ -9,4 +9,6 @@ public interface AttackMessageMapper extends BaseMapper<AttackMessage> {
 
     void add(AttackMessage attackMessage);
 
+    void deleteBySceneId(String sceneId);
+
 }

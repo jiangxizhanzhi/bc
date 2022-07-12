@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.constant;
 
+import com.cyberpeace.common.model.CommonContext;
 import lombok.Getter;
 
 public enum LineType {
@@ -28,6 +29,10 @@ public enum LineType {
 
 		return values[(int) (Math.random() * values.length)].code;
 
+	}
+
+	public String getMsg() {
+		return CommonContext.isChinese() ? desc : code;
 	}
 
 }

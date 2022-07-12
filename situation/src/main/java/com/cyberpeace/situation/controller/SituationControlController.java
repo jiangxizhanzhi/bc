@@ -1,6 +1,10 @@
 package com.cyberpeace.situation.controller;
 
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
@@ -8,6 +12,7 @@ import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.service.AttackMessageService;
 import com.cyberpeace.situation.service.DynamicSchemeService;
+import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +22,7 @@ import com.cyberpeace.common.model.BaseRsp;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,13 +36,13 @@ public class SituationControlController {
     private DynamicSchemeService dynamicSchemeService;
 
     @Autowired
-    private AttackMessageService attackMessageService;
+    private AttachmentService attachmentService;
 
-    @ApiOperation("保存动效方案")
+    @ApiOperation("新增动效方案")
     @PostMapping("/scheme")
-    public BaseRsp<String> addDynamicEffectScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
-        dynamicSchemeService.addDynamicScheme(dynamicSchemeReq);
-        return new BaseRsp<>();
+    public BaseRsp<String> addDynamicEffectScheme(@RequestBody @Validated AddDynamicSchemeReq addDynamicSchemeReq){
+        String resourceId = dynamicSchemeService.addDynamicScheme(addDynamicSchemeReq);
+        return new BaseRsp<>(resourceId);
     }
 
     @ApiOperation("查看动效方案")
@@ -48,9 +54,9 @@ public class SituationControlController {
 
     @ApiOperation("更新动效方案")
     @PatchMapping("/scheme")
-    public BaseRsp<String> updateDynamicEffectScheme(@RequestBody @Validated UpdateDynamicSchemeReq dynamicSchemeReq){
-        dynamicSchemeService.updateDynamicScheme(dynamicSchemeReq);
-        return new BaseRsp<>();
+    public BaseRsp<DynamicSchemeReq> updateDynamicEffectScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
+        DynamicSchemeReq dynamicSchemeReq1 = dynamicSchemeService.updateDynamicScheme(dynamicSchemeReq);
+        return new BaseRsp<>(dynamicSchemeReq1);
     }
 
     @ApiOperation("删除动效方案")
@@ -60,28 +66,47 @@ public class SituationControlController {
         return new BaseRsp<>();
     }
 
-    @ApiOperation("动效方案名称")
+    @ApiOperation("所有动效方案名称")
     @GetMapping("/schemeNames")
-    public BaseRsp<List<DynamicSchemeNameRes>> getAllDynamicName(){
-        List<DynamicSchemeNameRes> names = dynamicSchemeService.getAllDynamicName();
+    public BaseRsp<List<DynamicSchemeNameRes>> getAllDynamicName(@ApiParam("scene_id")String sceneId){
+        List<DynamicSchemeNameRes> names = dynamicSchemeService.getAllDynamicName(sceneId);
         return new BaseRsp<>(names);
     }
 
-    @ApiOperation("保存单条动效")
-    @PostMapping("/attackMessage")
-    public BaseRsp<String> addAttackMessage(@RequestBody @Validated AttackMessageReq attackMessageReq){
-        String resourceId = attackMessageService.addAttackMessage(attackMessageReq);
-        return new BaseRsp<>(resourceId);
+    @ApiOperation("返回所有选择项")
+    @GetMapping("/option")
+    public BaseRsp<OptionsRes> getAllOption(String sceneId){
+        OptionsRes optionsRes = new OptionsRes();
+        dynamicSchemeService.getLocalOption(optionsRes);
+        dynamicSchemeService.getRemoteOption(optionsRes,sceneId);
+        return new BaseRsp<>(optionsRes);
     }
 
-    @ApiOperation("更新单条动效")
-    @PatchMapping("/attackMessage")
-    public BaseRsp<?> updateAttackMessage(@RequestBody @Validated UpdateAttackMessageReq updateAttackMessageReq){
-        attackMessageService.updateAttackMessage(updateAttackMessageReq);
+    @ApiOperation("运行单个动效")
+    @PostMapping("/runAttackMessage")
+    public BaseRsp<?> runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq){
+        AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq, AttackMessageReq.class);
+        if(runAttackMessageReq.getName().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+            dynamicSchemeService.pushMediaToRoom(attackMessageBo);
+        }else{
+            dynamicSchemeService.pushAttackToRoom(attackMessageBo);
+        }
         return new BaseRsp<>();
     }
 
+    @ApiOperation("运行动效方案")
+    @PostMapping("/runDynamicScheme")
+    public BaseRsp<?> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
+        dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq);
+        return new BaseRsp<>();
+    }
 
-
-
+    @ApiOperation("上传媒体文件")
+    @PostMapping("/uploadMedia")
+    public BaseRsp<String> uploadMedia(@ApiParam(value = "上传文件",required = true) @RequestPart("file") MultipartFile multipartFile)throws Exception{
+        String fileName = multipartFile.getName();
+        FileUtil.validateFileSuffix(fileName, DynamicSchemeServiceImpl.PICTURE_TYPE+DynamicSchemeServiceImpl.VIDEO_TYPE);
+        AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.UPLOAD_SITUATION.getCode(), false, multipartFile, false);
+        return new BaseRsp<>(attachmentBo.getFilePath());
+    }
 }

@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
@@ -12,6 +11,8 @@ public class AttackMessage extends BaseTable {
 
     @TableId(value = "resource_id")
     private String resourceId;
+
+    private String sceneId;
 
     private String name;
 
@@ -32,5 +33,7 @@ public class AttackMessage extends BaseTable {
     private String lineStyle;
 
     private String mediaAnimation;
+
+    private String durationTime;
 
 }

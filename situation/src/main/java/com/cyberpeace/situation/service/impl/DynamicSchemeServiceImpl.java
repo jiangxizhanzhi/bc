@@ -3,6 +3,8 @@ package com.cyberpeace.situation.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.constant.Color;
 import com.cyberpeace.situation.constant.LineType;
@@ -10,11 +12,10 @@ import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
+import com.cyberpeace.situation.controller.req.AddDynamicSchemeReq;
 import com.cyberpeace.situation.controller.req.DynamicSchemeReq;
-import com.cyberpeace.situation.controller.req.UpdateDynamicSchemeReq;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
-import com.cyberpeace.situation.controller.res.DynamicStageRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.dao.entity.AttackMessage;
 import com.cyberpeace.situation.dao.entity.DynamicScheme;
@@ -23,19 +24,21 @@ import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsAttackEffectDynamic;
 import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
+import com.cyberpeace.situation.service.AttackMessageService;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.TopoHandlerService;
 import lombok.SneakyThrows;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.lang.management.OperatingSystemMXBean;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DynamicSchemeServiceImpl implements DynamicSchemeService {
@@ -52,31 +55,44 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    String PICTURE_TYPE = "PNG,JPG,BMP,GIF";
+    @Autowired
+    private TopoHandlerService topoHandlerService;
+
+    @Autowired
+    private AttackMessageService attackMessageService;
+
+    public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
+
+    public static String VIDEO_TYPE = "MP4";
 
     @Override
-    public void addDynamicScheme(DynamicSchemeReq dynamicSchemeReq) {
-        DynamicScheme dynamicScheme = dynamicSchemeReqToDynamicScheme(dynamicSchemeReq);
+    public String addDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
+        DynamicScheme dynamicScheme = addDynamicSchemeReqToDynamicScheme(addDynamicSchemeReq);
+        dynamicScheme.setResourceId(IDGeneratorUtil.getID());
         dynamicSchemeMapper.insert(dynamicScheme);
+        return dynamicScheme.getResourceId();
     }
 
     @Override
     public DynamicSchemeRes getDynamicSchemeById(String resourceId) {
         DynamicScheme dynamicScheme = dynamicSchemeMapper.selectById(resourceId);
-        DynamicSchemeRes dynamicSchemeRes = BeanUtils.copy(dynamicScheme,DynamicSchemeRes.class);
-        List<DynamicStage> dynamicStageList = JsonUtil.toJsonObjectArray(dynamicScheme.getSchemeData(),DynamicStage.class);
-        List<DynamicStageRes> dynamicStageResList = new ArrayList<>();
-        for (DynamicStage dynamicStage:dynamicStageList){
-            DynamicStageRes dynamicStageRes = new DynamicStageRes();
-            dynamicStageRes.setName(dynamicStage.getName());
+        if(dynamicScheme == null){
+            throw new BusinessException();
+        }
+        DynamicSchemeRes dynamicSchemeRes = BeanUtils.copy(dynamicScheme, DynamicSchemeRes.class);
+        List<DynamicStageBo> dynamicStageBoList = JsonUtil.toJsonObjectArray(dynamicScheme.getSchemeData(), DynamicStageBo.class);
+        List<DynamicStage> dynamicStageResList = new ArrayList<>();
+        for (DynamicStageBo dynamicStageBo : dynamicStageBoList) {
+            DynamicStage dynamicStageRes = new DynamicStage();
+            dynamicStageRes.setName(dynamicStageBo.getName());
             List<AttackMessageReq> attackMessageBoList = new ArrayList<>();
-            List<AttackMessage> attackMessageList = attackMessageMapper.selectBatchIds(dynamicStage.getAttackMessageIds());
-            for (AttackMessage attackMessage:attackMessageList){
+            List<AttackMessage> attackMessageList = attackMessageMapper.selectBatchIds(dynamicStageBo.getAttackMessageIds());
+            for (AttackMessage attackMessage : attackMessageList) {
                 AttackMessageReq attackMessageBo = BeanUtils.copy(attackMessage, AttackMessageReq.class);
                 attackMessageBo.setLineStyle(JSON.parseObject(attackMessage.getLineStyle(), LineStyle.class));
                 attackMessageBo.setMediaAnimationList(JsonUtil.toJsonObjectArray(attackMessage.getMediaAnimation(), MediaAnimation.class));
                 attackMessageBoList.add(attackMessageBo);
-                dynamicStageRes.setAttackMessageList(attackMessageBoList);
+                dynamicStageRes.setAttackMessageReqList(attackMessageBoList);
             }
             dynamicStageResList.add(dynamicStageRes);
             dynamicSchemeRes.setSchemeData(dynamicStageResList);
@@ -85,18 +101,39 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
     }
 
     @Override
-    public void updateDynamicScheme(UpdateDynamicSchemeReq updateDynamicSchemeReq) {
-        DynamicScheme dynamicScheme = dynamicSchemeReqToDynamicScheme(updateDynamicSchemeReq);
-        dynamicSchemeMapper.updateById(dynamicScheme);
+    public DynamicSchemeReq updateDynamicScheme(DynamicSchemeReq dynamicSchemeReq) {
+        DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeReq,DynamicScheme.class);
+        List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                for(DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()){
+                    for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+                        if(attackMessageReq.getResourceId() == null || attackMessageReq.getResourceId().equals("")){
+                            attackMessageReq.setResourceId(attackMessageService.addAttackMessage(attackMessageReq));
+                        }else {
+                            attackMessageService.updateAttackMessage(attackMessageReq);
+                        }
+                    }
+                    DynamicStageBo dynamicStageBo = new DynamicStageBo();
+                    dynamicStageBo.setName(dynamicStage.getName());
+                    dynamicStageBo.setAttackMessageIds(dynamicStage.getAttackMessageReqList().stream().map(AttackMessageReq::getResourceId).collect(Collectors.toList()));
+                    dynamicStageBoList.add(dynamicStageBo);
+                }
+                dynamicScheme.setSchemeData(JSON.toJSONString(dynamicStageBoList));
+                dynamicSchemeMapper.updateById(dynamicScheme);
+            }
+        });
+        return dynamicSchemeReq;
     }
 
     @Override
     public void deleteDynamicScheme(String resourceId) {
         List<String> attackMessageIds = new ArrayList<>();
         DynamicScheme dynamicScheme = dynamicSchemeMapper.selectById(resourceId);
-        List<DynamicStage> dynamicStageBoList = JsonUtil.toJsonObjectArray(dynamicScheme.getSchemeData(),DynamicStage.class);
-        for (DynamicStage dynamicStage:dynamicStageBoList){
-            attackMessageIds.addAll(dynamicStage.getAttackMessageIds());
+        List<DynamicStageBo> dynamicStageBoList = JsonUtil.toJsonObjectArray(dynamicScheme.getSchemeData(), DynamicStageBo.class);
+        for (DynamicStageBo dynamicStageBo : dynamicStageBoList) {
+            attackMessageIds.addAll(dynamicStageBo.getAttackMessageIds());
         }
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -110,21 +147,141 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
     }
 
     @Override
-    public List<DynamicSchemeNameRes> getAllDynamicName() {
-        return dynamicSchemeMapper.getAllNames();
+    public List<DynamicSchemeNameRes> getAllDynamicName(String sceneId) {
+        return dynamicSchemeMapper.getAllNamesBySceneId(sceneId);
     }
 
-    public DynamicScheme dynamicSchemeReqToDynamicScheme(DynamicSchemeReq dynamicSchemeReq){
-        DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeReq,DynamicScheme.class);
-        List<DynamicStage> dynamicStageList = new ArrayList<>();
-        for(DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
-            //阶段
-            DynamicStage dynamicStageBo = new DynamicStage();
-            dynamicStage.setName(dynamicStage.getName());
-            dynamicStage.setAttackMessageIds(dynamicStage.getAttackMessageIds());
-            dynamicStageList.add(dynamicStageBo);
-        }
+    @Override
+    public void getLocalOption(OptionsRes optionsRes) {
+        optionsRes.setAttackTypeList(StreamApiUtils.map(Lists.newArrayList(AttackType.values()), attackType -> new LocalType(attackType.getKeyWord(),attackType.getMsg())));
+        optionsRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),lineType -> new LocalType(lineType.getCode(),lineType.getMsg())));
+        optionsRes.setColorList(StreamApiUtils.map(Lists.newArrayList(Color.values()),color -> new LocalType(color.getCode(),color.getMsg())));
+    }
+
+    @Override
+    public void getRemoteOption(OptionsRes optionsRes, String sceneId) {
+        SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
+        SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+        List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas().values());
+        List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
+        optionsRes.setAreaList(StreamApiUtils.map(areaInfoList, areaInfo -> new ElementType(areaInfo.getAreaId(),"area-"+areaInfo.getAreaId().substring(0,8))));
+        optionsRes.setElementList(StreamApiUtils.map(elementInfoList,elementInfo -> new ElementType(elementInfo.getElementId(),elementInfo.getName())));
+    }
+
+    public DynamicScheme addDynamicSchemeReqToDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
+        DynamicScheme dynamicScheme = BeanUtils.copy(addDynamicSchemeReq, DynamicScheme.class);
+        List<DynamicStageBo> dynamicStageList = new ArrayList<>();
         dynamicScheme.setSchemeData(JSON.toJSONString(dynamicStageList));
-        return  dynamicScheme;
+        return dynamicScheme;
+    }
+
+    @Override
+    public void pushMediaToRoom(AttackMessageReq attackMessageBo) {
+        WsAttackEffectDynamic wsAttackEffectDynamic = new WsAttackEffectDynamic();
+        wsAttackEffectDynamic.setSceneId(attackMessageBo.getSceneId());
+        wsAttackEffectDynamic.setCategory("attack");
+        wsAttackEffectDynamic.setDescription(attackMessageBo.getDescription());
+        wsAttackEffectDynamic.setName("攻击效果");
+        wsAttackEffectDynamic.setType(ActionType.NONE.getCode());
+        List<AttackEffect> attackEffectList = new ArrayList<>();
+        for(MediaAnimation mediaAnimation:attackMessageBo.getMediaAnimationList()){
+            AttackEffect attackEffect = BeanUtils.copy(mediaAnimation,AttackEffect.class);
+            attackEffect.setElementId(mediaAnimation.getSourceId());
+            //判断是图片还是视频
+            String fileSuffix = FileUtil.getFileSuffix(mediaAnimation.getUrl()).toLowerCase();
+            List<String> pictureTypeList = Arrays.asList(PICTURE_TYPE.toLowerCase().split(CommonConstant.CODE_COMMA));
+            List<String> videoTypeList = Arrays.asList(VIDEO_TYPE.toLowerCase().split(CommonConstant.CODE_COMMA));
+            if(pictureTypeList.contains(fileSuffix)){
+                attackEffect.setMediaType(1);
+            }else if(videoTypeList.contains(fileSuffix)){
+                attackEffect.setMediaType(2);
+            }else {
+                throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+            }
+
+            attackEffect.setMediaUrl(mediaAnimation.getUrl());
+            attackEffect.setLineStyle(new LineStyle("#FFFFFF",3,"straight"));
+            attackEffectList.add(attackEffect);
+        }
+        wsAttackEffectDynamic.setEffectList(attackEffectList);
+
+        WsAttackEffectDynamic wsAttackEffectDynamicBlank = new WsAttackEffectDynamic();
+        wsAttackEffectDynamicBlank.setName("攻击效果");
+        wsAttackEffectDynamicBlank.setType(ActionType.NONE.getCode());
+        wsAttackEffectDynamicBlank.setCategory("attack");
+        wsAttackEffectDynamicBlank.setEffectList(new ArrayList<>());
+
+        WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(MessageType.AttackEffect.getDesc(), wsAttackEffectDynamic);
+        JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
+        situationHandlerService.pushDataToRoom(data, attackMessageBo.getSceneId());
+
+        Thread thread = new Thread(new Runnable() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(MessageType.AttackEffect.getDesc(), wsAttackEffectDynamicBlank);
+                JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
+                Thread.sleep(attackMessageBo.getIntervalTime() * 1000);
+                situationHandlerService.pushDataToRoom(data, attackMessageBo.getSceneId());
+            }
+        });
+        thread.start();
+
+    }
+
+    @Override
+    public void pushAttackToRoom(AttackMessageReq attackMessageBo) {
+        WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageBo,WsMultiNodeDynamic.class);
+        wsMultiNodeDynamic.setCategory("attack");
+        for(AttackType attackType:AttackType.values()){
+            if(attackType.getKeyWord().equals(attackMessageBo.getName())){
+                wsMultiNodeDynamic.setType(attackType.getActionType().getCode());
+            }
+        }
+        if (wsMultiNodeDynamic.getType() == null){
+            wsMultiNodeDynamic.setType(ActionType.NONE.getCode());
+        }
+        wsMultiNodeDynamic.setName(null);
+        WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(wsMultiNodeDynamic.getName(), wsMultiNodeDynamic);
+        JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
+        situationHandlerService.pushDataToRoom(data, wsMultiNodeDynamic.getSceneId());
+    }
+
+    @Override
+    public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq) {
+        String code = IDGeneratorUtil.getID();
+        dynamicSchemeMapper.updateCodeById(code,dynamicSchemeReq.getResourceId());
+
+        Thread thread = new Thread(new Runnable() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                List<DynamicStage> dynamicStageList = new ArrayList<>();
+                for(DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
+                    DynamicStage dynamicStageMessage = new DynamicStage();
+                    dynamicStageMessage.setName(dynamicStage.getName());
+                    List<AttackMessageReq> attackMessageReqMessageList = new ArrayList<>();
+                    dynamicStageMessage.setAttackMessageReqList(attackMessageReqMessageList);
+                    dynamicStageList.add(dynamicStageMessage);
+                    List<AttackMessageReq> attackMessageReqList = dynamicStage.getAttackMessageReqList();
+                    for(AttackMessageReq attackMessageReq:attackMessageReqList){
+                        DynamicScheme dynamicScheme = dynamicSchemeMapper.selectById(dynamicSchemeReq.getResourceId());
+                        if(!dynamicScheme.getCode().equals(code)){
+                            break;
+                        }
+                        if(attackMessageReq.getName().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+                            attackMessageReqMessageList.add(attackMessageReq);
+                            pushMediaToRoom(attackMessageReq);
+                        }else{
+                            attackMessageReqMessageList.add(attackMessageReq);
+                            pushAttackToRoom(attackMessageReq);
+                        }
+                        Thread.sleep(attackMessageReq.getIntervalTime()*1000);
+                    }
+                }
+            }
+        });
+        thread.start();
+
     }
 }

@@ -4,7 +4,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper">
 
-    <select id="getAllNames" resultType="java.lang.String">
+    <update id="updateCodeById">
+        update situation_dynamic_scheme
+        set code = #{code}
+        where resourceId = #{resourceId}
+    </update>
+
+    <delete id="deleteBySceneId">
+        delete
+        from situation_dynamic_scheme
+        where scene_id = #{sceneId}
+    </delete>
+
+    <select id="getAllNamesBySceneId" resultType="com.cyberpeace.situation.controller.res.DynamicSchemeNameRes">
         select resource_id,name from situation_dynamic_scheme
+        <where>
+            <if test="sceneId != null and sceneId != ''">
+                scene_id = #{sceneId}
+            </if>
+        </where>
     </select>
 </mapper>

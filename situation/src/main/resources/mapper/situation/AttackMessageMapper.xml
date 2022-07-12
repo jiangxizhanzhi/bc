@@ -11,4 +11,9 @@
         insert into situation_attack_message (name,description,source_id,source_name,target_id,target_name,interval_time,look_at_target,line_style,media_animation)
         value (#{name},#{description},#{sourceId},#{sourceName},#{targetId},#{targetName},#{intervalTime},#{lookAtTarget},#{lineStyle},#{mediaAnimation})
     </insert>
+    <delete id="deleteBySceneId">
+        delete
+        from situation_attack_message
+        where scene_id = #{sceneId}
+    </delete>
 </mapper>

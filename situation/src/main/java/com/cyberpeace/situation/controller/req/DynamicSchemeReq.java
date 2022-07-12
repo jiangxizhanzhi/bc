@@ -11,6 +11,10 @@ import java.util.List;
 @Data
 public class DynamicSchemeReq implements Serializable {
 
+    @ApiModelProperty(value = "资源id",required = true)
+    @NotBlank
+    private String resourceId;
+
     @ApiModelProperty("场景id")
     private String sceneId;
 
@@ -20,5 +24,4 @@ public class DynamicSchemeReq implements Serializable {
 
     @ApiModelProperty("动效方案数据")
     private List<DynamicStage> schemeData;
-
 }

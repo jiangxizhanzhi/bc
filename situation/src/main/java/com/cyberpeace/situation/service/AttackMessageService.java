@@ -7,5 +7,5 @@ public interface AttackMessageService {
 
     String addAttackMessage(AttackMessageReq attackMessageReq);
 
-    void updateAttackMessage(UpdateAttackMessageReq updateAttackMessageReq);
+    void updateAttackMessage(AttackMessageReq attackMessageReq);
 }

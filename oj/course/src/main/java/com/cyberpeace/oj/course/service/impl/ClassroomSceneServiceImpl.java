@@ -12,6 +12,8 @@ import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;
+import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -106,6 +108,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	@Autowired
+	private AttackMessageMapper attackMessageMapper;
+
+	@Autowired
+	private DynamicSchemeMapper dynamicSchemeMapper;
+
 	@Override
 	public JSONObject startScene(String groupId, AuthContext authContext) {
 
@@ -182,6 +190,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				attackMessageMapper.deleteBySceneId(localScene.getMpSceneId());
+				dynamicSchemeMapper.deleteBySceneId(localScene.getMpSceneId());
 				ojLocalSceneMapper.deleteById(ojLocalScene);
 				localSceneMapper.deleteById(localScene);
 				classroomSignService.updateBatchById(signList);

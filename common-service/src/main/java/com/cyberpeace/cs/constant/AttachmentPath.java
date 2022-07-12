@@ -33,6 +33,7 @@ public enum AttachmentPath implements GenericEnum {
 	SINGLE_HTML_TEMPLATE(13, "html_template/RussiaCopy/Individual/"),
 	TEAM_HTML_TEMPLATE(13, "html_template/RussiaCopy/Team/"),
 	RED_BLUE_HTML_TEMPLATE(13, "html_template/RussiaCopy/RedBlue/"),
+	UPLOAD_SITUATION(14,"upload/situation"),
 	OTHER(99, "other/");
 
 	@Getter

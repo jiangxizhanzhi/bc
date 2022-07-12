@@ -19,5 +19,5 @@ public class DynamicSchemeRes implements Serializable {
     private String name;
 
     @ApiModelProperty("动效方案数据")
-    private List<DynamicStageRes> schemeData;
+    private List<DynamicStage> schemeData;
 }

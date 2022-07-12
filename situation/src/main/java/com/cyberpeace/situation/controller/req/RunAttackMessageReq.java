@@ -12,7 +12,7 @@ import java.util.List;
 public class RunAttackMessageReq implements Serializable {
 
     @ApiModelProperty("场景id")
-    private String scene_id;
+    private String sceneId;
 
     @ApiModelProperty("动效名称")
     private String name;
@@ -34,6 +34,9 @@ public class RunAttackMessageReq implements Serializable {
 
     @ApiModelProperty("间隔时间")
     private Integer intervalTime;
+
+    @ApiModelProperty("持续时间（预留）")
+    private Integer durationTime;
 
     @ApiModelProperty("是否聚焦")
     private Boolean lookAtTarget;

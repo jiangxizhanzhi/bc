@@ -1,7 +1,6 @@
-package com.cyberpeace.situation.controller.res;
+package com.cyberpeace.situation.model;
 
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
-import com.cyberpeace.situation.dao.entity.AttackMessage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,12 +8,11 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class DynamicStageRes implements Serializable {
+public class DynamicStageBo implements Serializable {
 
     @ApiModelProperty("阶段名称")
     private String name;
 
-    @ApiModelProperty("动效列表")
-    private List<AttackMessageReq> attackMessageList;
-
+    @ApiModelProperty("动效id")
+    private List<String> attackMessageIds;
 }

@@ -26,8 +26,8 @@ public class AttackMessageServiceImpl implements AttackMessageService {
     }
 
     @Override
-    public void updateAttackMessage(UpdateAttackMessageReq updateAttackMessageReq) {
-        AttackMessage attackMessage = attackMessageBoToAttackMessage(updateAttackMessageReq);
+    public void updateAttackMessage(AttackMessageReq attackMessageReq) {
+        AttackMessage attackMessage = attackMessageBoToAttackMessage(attackMessageReq);
         attackMessageMapper.updateById(attackMessage);
     }
 

@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;
+import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +75,12 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private AttackMessageMapper attackMessageMapper;
+
+	@Autowired
+	private DynamicSchemeMapper dynamicSchemeMapper;
 
 	@Override
 	public OjLocalScene selectOjLocalScene(String businessId, Integer shared,
@@ -225,6 +233,9 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+				attackMessageMapper.deleteBySceneId(localScene.getMpSceneId());
+				dynamicSchemeMapper.deleteBySceneId(localScene.getMpSceneId());
 				ojLocalSceneMapper.deleteById(ojLocalScene.getResourceId());
 				localSceneMapper.deleteById(ojLocalScene.getLocalSceneId());
 			}
@@ -248,6 +259,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				attackMessageMapper.deleteBySceneId(localScene.getMpSceneId());
+				dynamicSchemeMapper.deleteBySceneId(localScene.getMpSceneId());
 				localSceneMapper.deleteById(localScene.getResourceId());
 				ojLocalSceneMapper.deleteById(ojLocalScene.getResourceId());
 			}

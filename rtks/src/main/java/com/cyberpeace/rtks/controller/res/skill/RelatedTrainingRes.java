@@ -29,6 +29,6 @@ public class RelatedTrainingRes implements Serializable {
 	@ApiModelProperty(value = "当前用户在训练里的角色")
 	private Integer roleGroup;
 
-	@ApiModelProperty(value = "是否可用")
-	private Boolean available;
+//	@ApiModelProperty(value = "是否可用")
+//	private Boolean available;
 }

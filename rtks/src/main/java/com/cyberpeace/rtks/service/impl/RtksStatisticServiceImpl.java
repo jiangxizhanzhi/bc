@@ -304,27 +304,27 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		handleRbStatus(rbs);
 		// collect available trainings
 		Map<String, List<TrainingRaw>> trainingMap = Maps.newHashMap();
-		mapTrainings(trainingMap, singles, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
-				true);
-		mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
-				true);
-		mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), true);
+		mapTrainings(trainingMap, singles, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		// 获取未创建与用户相关实例的团队和红蓝的BT id
-		Set<String> unAvailableBtIds = Sets.newHashSet();
-		for (String businessTemplateId : businessTemplateIds) {
-			if (!trainingMap.containsKey(businessTemplateId)) {
-				unAvailableBtIds.add(businessTemplateId);
-			}
-		}
-		if (!unAvailableBtIds.isEmpty()) {
-			// 5.3.4：未创建相关实例的团队、红蓝也要展示在训练路径里
-			teams = skillTrainingMapper.getTeamTemplateByBTIds(unAvailableBtIds);
-			rbs = skillTrainingMapper.getRbTemplateByBTIds(unAvailableBtIds);
-			mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
-					false);
-			mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
-					false);
-		}
+		// Set<String> unAvailableBtIds = Sets.newHashSet();
+		// for (String businessTemplateId : businessTemplateIds) {
+		// if (!trainingMap.containsKey(businessTemplateId)) {
+		// unAvailableBtIds.add(businessTemplateId);
+		// }
+		// }
+		// if (!unAvailableBtIds.isEmpty()) {
+		// // 5.3.4：未创建相关实例的团队、红蓝也要展示在训练路径里
+		// teams = skillTrainingMapper.getTeamTemplateByBTIds(unAvailableBtIds);
+		// rbs = skillTrainingMapper.getRbTemplateByBTIds(unAvailableBtIds);
+		// mapTrainings(trainingMap, teams,
+		// BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
+		// false);
+		// mapTrainings(trainingMap, rbs,
+		// BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
+		// false);
+		// }
 
 		// get saved mission order
 		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
@@ -360,30 +360,35 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private void addMissionBoByOrder(Map<String, List<TrainingRaw>> trainingMap,
 			Map<String, List<MissionContext>> missionSkillRel, MissionContext missionContext,
 			List<MissionPathBo> missionPathBoList, Map<String, Boolean> completionStatusMap) {
-		// training template has no active training
-		if (!trainingMap.containsKey(missionContext.getBusinessTemplateId())) {
-			return;
-		}
-		// convert trainingRaw to trainingBo
-		List<TrainingBo> trainings = Lists.newArrayList();
-		for (TrainingRaw trainingRaw : trainingMap.get(missionContext.getBusinessTemplateId())) {
-			TrainingBo trainingBo = BeanUtils.copy(trainingRaw, TrainingBo.class);
-			trainingBo.setMissionTitle(missionContext.getTitle());
-			trainingBo.setMissionTemplateId(missionContext.getMissionTemplateId());
-			trainingBo.setPreSkill(
-					JsonUtil.toJsonObjectArray(trainingRaw.getPreSkill(), String.class));
-			trainingBo.setTrainSkill(
-					JsonUtil.toJsonObjectArray(trainingRaw.getTrainSkill(), String.class));
-			trainingBo.setSkills(
-					getSkillsByMission(missionSkillRel.get(trainingBo.getMissionTemplateId())));
-
-			trainings.add(trainingBo);
-		}
 		MissionPathBo missionPathBo = new MissionPathBo();
+		List<TrainingBo> trainings = Lists.newArrayList();
+		// training template has no active training
+		if (trainingMap.containsKey(missionContext.getBusinessTemplateId())) {
+			// convert trainingRaw to trainingBo
+			for (TrainingRaw trainingRaw : trainingMap
+					.get(missionContext.getBusinessTemplateId())) {
+				TrainingBo trainingBo = BeanUtils.copy(trainingRaw, TrainingBo.class);
+				trainingBo.setMissionTitle(missionContext.getTitle());
+				trainingBo.setMissionTemplateId(missionContext.getMissionTemplateId());
+				trainingBo.setPreSkill(
+						JsonUtil.toJsonObjectArray(trainingRaw.getPreSkill(), String.class));
+				trainingBo.setTrainSkill(
+						JsonUtil.toJsonObjectArray(trainingRaw.getTrainSkill(), String.class));
+				trainingBo.setSkills(
+						getSkillsByMission(missionSkillRel.get(trainingBo.getMissionTemplateId())));
+
+				trainings.add(trainingBo);
+			}
+			missionPathBo.setAvailable(true);
+		} else {
+			missionPathBo.setAvailable(false);
+		}
+
 		missionPathBo.setMissionTemplateId(missionContext.getMissionTemplateId());
 		missionPathBo.setCompletionStatus(
 				completionStatusMap.getOrDefault(missionContext.getMissionTemplateId(), false));
 		missionPathBo.setRelatedTrainings(trainings);
+		missionPathBo.setTitle(missionContext.getTitle());
 
 		missionPathBoList.add(missionPathBo);
 	}
@@ -408,18 +413,18 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param trainingRaws
 	 */
 	private void mapTrainings(Map<String, List<TrainingRaw>> map, List<TrainingRaw> trainingRaws,
-			Integer type, Boolean available) {
+			Integer type) {
 		trainingRaws.forEach((training) -> {
 			String businessTemplateId = training.getBusinessTemplateId();
 			if (!map.containsKey(businessTemplateId)) {
 				map.put(businessTemplateId, Lists.newArrayList());
 			}
 			training.setTrainingType(type);
-			training.setAvailable(available);
-			if (!available) {
-				// 5 代表“不可用”， 此枚举值仅在训练路径中用到
-				training.setTrainingStatus(5);
-			}
+			// training.setAvailable(available);
+			// if (!available) {
+			// // 5 代表“不可用”， 此枚举值仅在训练路径中用到
+			// training.setTrainingStatus(5);
+			// }
 			map.get(businessTemplateId).add(training);
 		});
 	}

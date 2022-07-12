@@ -115,6 +115,7 @@ public class TrainingPlanController {
 		return new BaseRsp<>(frame);
 	}
 
+	// 对应页面：岗位简介树状图
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,

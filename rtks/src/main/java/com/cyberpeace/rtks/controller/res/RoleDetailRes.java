@@ -8,6 +8,7 @@ import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.Task;
+import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -83,4 +84,7 @@ public class RoleDetailRes implements Serializable {
 
 	@ApiModelProperty("技能课程")
 	private List<RelatedCourse> skillCourseList;
+
+	@ApiModelProperty("训练任务")
+	private List<MissionTemplateSimple> missions;
 }

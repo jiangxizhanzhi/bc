@@ -15,7 +15,7 @@ public class WsAttackEffectDynamic implements Serializable {
 	private String sceneId;
 
 	@ApiModelProperty("事件时间")
-	private String time;
+	private Long time;
 
 	@ApiModelProperty("事件名称")
 	private String name;

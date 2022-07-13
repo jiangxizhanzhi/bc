@@ -4,10 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.integratation.model.mp.MpEventAggr;
-import com.cyberpeace.integratation.model.mp.MpFlowTrend;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.model.mp.MpRiskCount;
+import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 
 /**
@@ -109,5 +106,12 @@ public interface RemoteSceneService {
 	 * @return MpRiskCount
 	 */
 	MpRiskCount getRiskCount(ElementCommonContext elementCommonContext);
+
+	/**
+	 * 获取场景下节点及链路状态
+	 * @param mpSceneId
+	 * @return JSONObject
+	 */
+	List<MpNodeStatus> getConnectionStatus(String mpSceneId);
 
 }

@@ -13,7 +13,8 @@ public enum MessageType {
 	AttackEvent(3, "attack_event"),
 	AttackEventEE(4, "attack_event_element-element"),
 	AttackEventEA(5, "attack_event_element-area"),
-	AttackEffect(6, "attack_effect");
+	AttackEffect(6, "attack_effect"),
+	NodeStatus(7, "link_status");
 
 	@Getter
 	private Integer code;

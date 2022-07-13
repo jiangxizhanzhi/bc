@@ -3,9 +3,7 @@ package com.cyberpeace.situation.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.EventMessageReq;
 import com.cyberpeace.situation.model.ws.*;
@@ -45,8 +43,7 @@ public class SituationEventController {
 
 		// 推送ws消息
 		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(messageType, wsEvent);
-		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
-		situationHandlerService.pushDataToRoom(data, sceneId);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 
 		// 返回消息数据
 		BaseRsp<WsMessage<WsMultiNodeDynamic>> rsp = new BaseRsp<>(wsMessage);
@@ -60,8 +57,7 @@ public class SituationEventController {
 		String code = eventMessageReq.getCode();
 		String sceneId = eventMessageReq.getSceneId();
 		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(code, eventMessageReq.getData());
-		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
-		situationHandlerService.pushDataToRoom(data, sceneId);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 		return new BaseRsp<>(true);
 	}
 
@@ -72,8 +68,7 @@ public class SituationEventController {
 		String code = MessageType.AttackEffect.getDesc();
 		String sceneId = wsAttackEffectDynamic.getSceneId();
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(code, wsAttackEffectDynamic);
-		JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
-		situationHandlerService.pushDataToRoom(data, sceneId);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 		return new BaseRsp<>(true);
 	}
 }

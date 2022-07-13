@@ -18,12 +18,10 @@ import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.integratation.model.mp.MpEventAggr;
-import com.cyberpeace.integratation.model.mp.MpFlowTrend;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.model.mp.MpRiskCount;
+import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,6 +65,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String EVENT_AGGR_URL;
 
 	private String RISK_COUNT_URL;
+
+	private String CONNECTION_STATUS_URL;
 
 	@PostConstruct
 	public void init() {
@@ -115,6 +115,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		RISK_COUNT_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.risk.count");
+
+		CONNECTION_STATUS_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.connection.status");
 
 	}
 
@@ -268,5 +271,18 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public MpRiskCount getRiskCount(ElementCommonContext elementCommonContext) {
 		return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL,
 				MpRiskCount.class);
+	}
+
+	@Override
+	public List<MpNodeStatus> getConnectionStatus(String mpSceneId) {
+		String url = CONNECTION_STATUS_URL + mpSceneId;
+
+		JSONObject jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
+		String mpNodeStatus = JsonUtil.toJsonString(
+				jsonObject.getOrDefault("node_link_status_list", Lists.newArrayList()));
+		List<MpNodeStatus> nodeStatusList = JsonUtil.toJsonObjectArray(mpNodeStatus,
+				MpNodeStatus.class);
+
+		return nodeStatusList;
 	}
 }

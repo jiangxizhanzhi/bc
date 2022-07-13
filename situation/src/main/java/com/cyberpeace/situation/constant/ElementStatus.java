@@ -12,7 +12,8 @@ public enum ElementStatus {
     CREATING("creating", "创建中"),
     STARTING("starting", "启动中"),
     ABNORMAL("abnormal", "异常"),
-    RUNNING("running", "运行中");
+    RUNNING("running", "运行中"),
+	OFFLINE("offline","离线");
 
 	@Getter
 	private String code;

@@ -21,4 +21,7 @@ public class ConnectionInfo implements Serializable {
 	@ApiModelProperty("连线动效")
 	private List<String> effect;
 
+	@ApiModelProperty("连线状态")
+	private String status;
+
 }

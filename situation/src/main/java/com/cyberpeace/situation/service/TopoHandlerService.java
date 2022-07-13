@@ -8,6 +8,7 @@ import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.model.CategorieMap;
 import com.cyberpeace.situation.model.SceneData;
+import com.cyberpeace.situation.model.ws.WsNodeStatus;
 
 /**
  * 场景拓扑数据处理
@@ -28,7 +29,7 @@ public interface TopoHandlerService {
 	 * @param sceneId
 	 * @return JSONObject
 	 */
-	JSONObject getsceneTopoBySceneId(String sceneId);
+	JSONObject getSceneTopoBySceneId(String sceneId);
 
 	/**
 	 * 获取靶标类型映射
@@ -53,5 +54,12 @@ public interface TopoHandlerService {
 	 * @return ElementStateRes
 	 */
 	ElementStateRes getElementState(String sceneId, String elementId);
+
+	/**
+	 * 获取节点状态信息
+	 * @param sceneId
+	 * @return WsNodeStatus
+	 */
+	WsNodeStatus getNodeStatusMessage(String sceneId);
 
 }

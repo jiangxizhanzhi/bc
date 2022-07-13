@@ -1,21 +1,22 @@
 package com.cyberpeace.situation.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.situation.controller.res.ElementStateRes;
-import com.cyberpeace.situation.service.TopoHandlerService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
+import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.model.ws.WsNodeStatus;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.TopoHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,22 +54,22 @@ public class SituationController {
 
 	@ApiOperation("攻击动态")
 	@GetMapping("/dynamic/attack")
-	public List<JSONObject> attackDynamic(FlowLogReq flowLogReq) {
+	public List<WsMessage> attackDynamic(FlowLogReq flowLogReq) {
 
 		// 处理起始时间和结束时间
-//		if (flowLogReq.getInterval() != null ) {
-//			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//			Long endTime = (new Date()).getTime();
-//			Long startTime = endTime - flowLogReq.getInterval()*1000;
-//			flowLogReq.setEndTime(dateFormat.format(endTime));
-//			flowLogReq.setStartTime(dateFormat.format(startTime));
-//		}
+		// if (flowLogReq.getInterval() != null ) {
+		// SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		// Long endTime = (new Date()).getTime();
+		// Long startTime = endTime - flowLogReq.getInterval()*1000;
+		// flowLogReq.setEndTime(dateFormat.format(endTime));
+		// flowLogReq.setStartTime(dateFormat.format(startTime));
+		// }
 
 		// 获取流量日志
 		List<JSONObject> flowLogs = topoHandlerService.getFlowLogs(flowLogReq);
 
 		// 处理流量日志
-		List<JSONObject> wsMultiNodeDynamics = situationHandlerService.getAttackEventList(flowLogs,
+		List<WsMessage> wsMultiNodeDynamics = situationHandlerService.getAttackEventList(flowLogs,
 				flowLogReq.getSceneId());
 
 		// 分批推送消息
@@ -80,12 +81,28 @@ public class SituationController {
 
 	@ApiOperation("节点信息")
 	@GetMapping("element")
-	public BaseRsp<ElementStateRes> element(
-			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id") String sceneId,
-			@ApiParam(name = "element_id", value = "节点编号") @RequestParam(value = "element_id") String elementId) {
+	public BaseRsp<ElementStateRes>
+			element(@ApiParam(name = "scene_id",
+					value = "场景编号") @RequestParam(value = "scene_id") String sceneId,
+					@ApiParam(name = "element_id",
+							value = "节点编号") @RequestParam(value = "element_id") String elementId) {
 
 		ElementStateRes elementStateRes = topoHandlerService.getElementState(sceneId, elementId);
 
 		return new BaseRsp<>(elementStateRes);
+	}
+
+	@ApiOperation("节点状态")
+	@GetMapping("node_status")
+	public BaseRsp<WsMessage> nodeStatus(@ApiParam(name = "scene_id",
+			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
+
+		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
+
+		// 推送ws消息
+		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),
+				wsNodeStatus);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		return new BaseRsp<>(wsMessage);
 	}
 }

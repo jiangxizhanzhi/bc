@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
@@ -442,9 +443,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	}
 
 	@Override
-	public List<JSONObject> getAttackEventList(List<JSONObject> flowLogs, String sceneId) {
+	public List<WsMessage> getAttackEventList(List<JSONObject> flowLogs, String sceneId) {
 
-		List<JSONObject> arrayObjects = Lists.newArrayList();
+		List<WsMessage> arrayObjects = Lists.newArrayList();
 
 		Date lastTime = lastTimeCache.getIfPresent(sceneId);
 
@@ -496,9 +497,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// ws推送消息
 			WsMessage<WsMultiElementDynamic> wsMessage = new WsMessage<>(
 					MessageType.AttackEventEE.getDesc(), attackEvent);
-			JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage),
-					JSONObject.class);
-			arrayObjects.add(data);
+			arrayObjects.add(wsMessage);
 		}
 
 		return arrayObjects;
@@ -515,7 +514,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			actionType = ActionType.getRandom(ActionType.values());
 		}
 
-		JSONObject sceneTopo = topoHandlerService.getsceneTopoBySceneId(sceneId);
+		JSONObject sceneTopo = topoHandlerService.getSceneTopoBySceneId(sceneId);
 		JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
 		JSONArray elements = (JSONArray) topology.getOrDefault("elements",
 				JSONArray.parseArray(Lists.newArrayList().toString()));
@@ -580,13 +579,14 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	}
 
 	@Override
-	public void pushDataToRoom(JSONObject data, String sceneId) {
+	public <T> void pushDataToRoom(T data, String sceneId) {
 
 		SituationWsMessageIdentifier identifier = new SituationWsMessageIdentifier();
 		identifier.setPath(WsPath.SITUATION);
 		identifier.setSceneId(sceneId);
 
-		WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+				.data(JsonUtil.toJsonString(data, PropertyNamingStrategy.SnakeCase))
 				.messageIdentifier(identifier).build();
 
 		myWebSocketHandler.pushMessage(messageContext, true);
@@ -595,7 +595,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@SneakyThrows
 	@Async
 	@Override
-	public void batchPushDataToRoom(String sceneId, List<JSONObject> datas, Integer number,
+	public void batchPushDataToRoom(String sceneId, List<WsMessage> datas, Integer number,
 			Integer interval) {
 
 		Integer circle = (int) Math.ceil((double) datas.size() / number);

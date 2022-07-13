@@ -59,7 +59,7 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 24, 'BSD', 'BSD');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 24, 'Other', 'Other');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 25, '未开始', 'Not Started');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 25, '进行中', 'In Progress');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 25, '已结束', 'Ended');//参赛方式
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 25, '已结束', 'Ended');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 26, '个人参赛', 'Personal');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 26, '团队参赛', 'Group');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 27, '理论赛', 'Theoretical Competition');

@@ -468,7 +468,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 设置基础信息
 			attackEvent.setSceneId(sceneId);
-			attackEvent.setTime(flowLog.getString("time"));
+			attackEvent.setTime(time.getTime());
 			attackEvent.setCategory("attack");
 
 			// 设置事件类型
@@ -532,7 +532,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		}
 
 		wsEvent.setSceneId(sceneId);
-		wsEvent.setTime((new Date()).toString());
+		wsEvent.setTime(System.currentTimeMillis());
 		wsEvent.setCategory("attack");
 
 		wsEvent.setType(actionType.getCode());

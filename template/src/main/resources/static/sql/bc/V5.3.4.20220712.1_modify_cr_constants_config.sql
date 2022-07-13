@@ -1,1 +1,0 @@
-ALTER TABLE `cr_constants_config` CHANGE `code` `code` SMALLINT(4) NULL;

@@ -87,4 +87,6 @@ public interface CommonConstant {
 
 	String ADMIN_ID = "3f655d87112f4ae094bbaf70830e20aa";
 
+	String SPACE = " ";
+
 }

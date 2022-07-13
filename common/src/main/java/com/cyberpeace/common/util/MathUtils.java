@@ -1,10 +1,10 @@
 package com.cyberpeace.common.util;
 
-import com.cyberpeace.common.constant.CommonConstant;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
+
+import com.cyberpeace.common.constant.CommonConstant;
 
 public class MathUtils {
 
@@ -202,4 +202,25 @@ public class MathUtils {
 		double ceil = Math.ceil(num);
 		return Double.valueOf(ceil).intValue();
 	}
+
+	/**
+	 * 正整数， 四舍五入除法
+	 * @param dividend
+	 * @param divisor
+	 * @return
+	 */
+	public static Integer roundDivide(Integer dividend, Integer divisor) {
+		if (null == divisor || divisor == 0) {
+			return 0;
+		}
+		int ret = dividend / divisor;
+		int mod = dividend % divisor;
+
+		if (mod * 2 >= divisor) {
+			ret++;
+		}
+
+		return ret;
+	}
+
 }

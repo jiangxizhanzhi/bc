@@ -30,11 +30,9 @@ import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
 import com.cyberpeace.rtks.controller.res.skill.TrainingPathRes;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.service.FrameService;
-import com.cyberpeace.rtks.service.LevelService;
-import com.cyberpeace.rtks.service.RtksStatisticService;
-import com.cyberpeace.rtks.service.TrainingPlanService;
+import com.cyberpeace.rtks.service.*;
 import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
+import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
 import com.google.common.collect.Sets;
 
 import io.swagger.annotations.Api;
@@ -60,6 +58,9 @@ public class TrainingPlanController {
 
 	@Autowired
 	private FrameService frameService;
+
+	@Autowired
+	private SkillService skillService;
 
 	@ApiOperation("知识体系")
 	@GetMapping("/knowledgeTree")
@@ -143,6 +144,7 @@ public class TrainingPlanController {
 		return rsp;
 	}
 
+	// 岗位评估-技能体系清单
 	@ApiOperation("分页获取知识点以及课程")
 	@GetMapping("/getKnowledgeCourseList")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -221,6 +223,22 @@ public class TrainingPlanController {
 		res.setRelated(getAllRelatedTraining(trainingBoList));
 		res.setPath(trainingBoList);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("岗位评估-技能体系清单")
+	@GetMapping("/role_evaluation/skill_list")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
+					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_PERSON_CENTER },
+			logical = Logical.OR)
+	public BaseRsp<ListRsp<SkillProcessRes>> pageSkillProcess(@Validated PageReqBase pageReqBase) {
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		if (StringUtils.isBlank(roleId)) {
+			return new BaseRsp<>(new ListRsp<SkillProcessRes>());
+		}
+		ListRsp<SkillProcessRes> result = skillService.pageByRoleId(pageReqBase, roleId);
+
+		return new BaseRsp<>(result);
 	}
 
 	/**

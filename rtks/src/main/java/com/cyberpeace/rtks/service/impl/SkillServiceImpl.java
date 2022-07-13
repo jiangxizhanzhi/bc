@@ -17,12 +17,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
@@ -32,10 +34,7 @@ import com.cyberpeace.rtks.dao.entity.SkillMissionRelation;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMissionRelationMapper;
 import com.cyberpeace.rtks.service.SkillService;
-import com.cyberpeace.rtks.service.bo.skill.IdWeight;
-import com.cyberpeace.rtks.service.bo.skill.MissionRes;
-import com.cyberpeace.rtks.service.bo.skill.SkillRes;
-import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
+import com.cyberpeace.rtks.service.bo.skill.*;
 import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -63,6 +62,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Autowired
 	private MissionTemplateMapper missionTemplateMapper;
+
+	private static final Integer UNSUBMITTED = 0;
+
+	private static final Integer FINISHED = 50;
+
+	private static final Integer FULL_MARKS = 100;
 
 	@Override
 	public ListRsp<SkillRes> page(PageReqBase skillListReq) {
@@ -245,6 +250,92 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	public void clearAll() {
 		skillMapper.clearAll();
 		skillMissionRelationMapper.clearAll();
+	}
+
+	@Override
+	public ListRsp<SkillProcessRes> pageByRoleId(PageReqBase pageReqBase, String roleId) {
+
+		// page skill
+		Page page = pageReqBase.toPageParam();
+		IPage<SkillProcessRes> result = skillMapper.pageByRoleId(page, roleId);
+		List<String> skillIds = result.getRecords().stream().map(SkillProcessRes::getResourceId)
+				.collect(Collectors.toList());
+		if (skillIds.isEmpty()) {
+			return PageUtil.getListResult(result);
+		}
+		// get skill-mission rel
+		List<SkillAndMission> skillAndMissions = skillMissionRelationMapper
+				.batchSelectBySkillIds(skillIds);
+		List<String> missionIds = skillAndMissions.stream().map(SkillAndMission::getMissionId)
+				.distinct().collect(Collectors.toList());
+
+		// get mission score, scene name, mission title
+		Map<String, MissionTemplateRes> missionMap = Maps.newHashMap();
+		Map<String, CrTaskScore> scoreMap = Maps.newHashMap();
+		if (!missionIds.isEmpty()) {
+			List<MissionTemplateRes> missionResList = missionTemplateMapper
+					.listWithBusiness(missionIds);
+			String userId = UserInfoContext.getUserContext().getUserId();
+			List<CrTaskScore> crTaskScoreList = crTaskMapper
+					.getScoreByMissionTemplateIdAndUserId(userId, missionIds);
+			for (MissionTemplateRes missionTemplateRes : missionResList) {
+				missionMap.put(missionTemplateRes.getResourceId(), missionTemplateRes);
+			}
+			for (CrTaskScore crTaskScore : crTaskScoreList) {
+				scoreMap.put(crTaskScore.getMissionTemplateId(), crTaskScore);
+			}
+		}
+		// map skill - mission
+		Map<String, List<String>> skillMissionMap = Maps.newHashMap();
+		String skillId;
+		for (SkillAndMission skillAndMission : skillAndMissions) {
+			skillId = skillAndMission.getSkillId();
+			if (!skillMissionMap.containsKey(skillId)) {
+				skillMissionMap.put(skillId, Lists.newArrayList());
+			}
+			skillMissionMap.get(skillId).add(skillAndMission.getMissionId());
+		}
+		// fill result
+		for (SkillProcessRes record : result.getRecords()) {
+			skillId = record.getResourceId();
+			if (!skillMissionMap.containsKey(skillId)) {
+				continue;
+			}
+			Integer sum = 0;
+			for (String missionId : skillMissionMap.get(skillId)) {
+				MissionProcessBo missionProcessBo = createMissionProcessBo(missionId, missionMap,
+						scoreMap);
+				record.getMissions().add(missionProcessBo);
+				sum += missionProcessBo.getProcess();
+			}
+			record.setProcess(MathUtils.roundDivide(sum, record.getMissions().size()));
+
+		}
+
+		return PageUtil.getListResult(result);
+	}
+
+	private MissionProcessBo createMissionProcessBo(String missionId,
+			Map<String, MissionTemplateRes> missionMap, Map<String, CrTaskScore> scoreMap) {
+		MissionTemplateRes mission = missionMap.get(missionId);
+		// if (mission == null){
+		// return null;
+		// }
+		CrTaskScore score = scoreMap.get(missionId);
+		MissionProcessBo missionProcessBo = new MissionProcessBo();
+		missionProcessBo.setResourceId(missionId);
+		missionProcessBo.setTitle(mission.getTitle());
+		missionProcessBo.setSceneName(mission.getSceneName());
+		Integer process;
+		if (score == null) {
+			process = UNSUBMITTED;
+		} else if (score.getScore() >= score.getFull()) {
+			process = FULL_MARKS;
+		} else {
+			process = FINISHED;
+		}
+		missionProcessBo.setProcess(process);
+		return missionProcessBo;
 	}
 
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,

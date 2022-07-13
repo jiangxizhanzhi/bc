@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
 
@@ -87,4 +88,11 @@ public interface SkillService extends IService<Skill> {
 	 */
 	void clearAll();
 
+	/**
+	 * 给特定岗位关联的skill分页
+	 * @param pageReqBase
+	 * @param roleId
+	 * @return
+	 */
+	ListRsp<SkillProcessRes> pageByRoleId(PageReqBase pageReqBase, String roleId);
 }

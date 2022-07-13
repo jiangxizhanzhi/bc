@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.rtks.dao.entity.SkillMissionRelation;
 import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.cyberpeace.rtks.service.bo.skill.MissionRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillAndMission;
 
 @Mapper
 @Repository
@@ -37,4 +38,6 @@ public interface SkillMissionRelationMapper extends BaseMapper<SkillMissionRelat
 	List<IdWeight> listBySkillId(@Param("skillId") String skillId);
 
 	void clearAll();
+
+	List<SkillAndMission> batchSelectBySkillIds(@Param("skillIds") List<String> skillIds);
 }

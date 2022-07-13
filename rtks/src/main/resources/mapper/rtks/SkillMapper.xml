@@ -61,4 +61,11 @@
             #{skillId}
         </foreach>
     </select>
+    <select id="pageByRoleId" resultType="com.cyberpeace.rtks.service.bo.skill.SkillProcessRes">
+        select rtks_skill.resource_id,
+               rtks_skill.content
+        from rtks_role_skill_relation
+                 inner join rtks_skill on rtks_role_skill_relation.skill_id = rtks_skill.resource_id
+        where rtks_role_skill_relation.role_id = #{roleId}
+    </select>
 </mapper>

@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionWithBT;
 
 @Mapper
 @Repository
@@ -31,4 +32,7 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	List<String> validateIds(@Param("missionTemplateIds") List<String> missionTemplateIds);
 
 	List<String> selectByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
+
+	List<MissionWithBT>
+			batchGetWithBusiness(@Param("missionTemplateIds") List<String> missionTemplateIds);
 }

@@ -8,10 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.dao.entity.Skill;
-import com.cyberpeace.rtks.service.bo.skill.IdWeight;
-import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
-import com.cyberpeace.rtks.service.bo.skill.SkillRes;
-import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
+import com.cyberpeace.rtks.service.bo.skill.*;
 
 /**
  *
@@ -89,10 +86,18 @@ public interface SkillService extends IService<Skill> {
 	void clearAll();
 
 	/**
-	 * 给特定岗位关联的skill分页
+	 * 给特定岗位关联的skill分页，并训练进度
 	 * @param pageReqBase
 	 * @param roleId
 	 * @return
 	 */
-	ListRsp<SkillProcessRes> pageByRoleId(PageReqBase pageReqBase, String roleId);
+	ListRsp<SkillProcessRes> pageSkillListByRoleId(PageReqBase pageReqBase, String roleId);
+
+	/**
+	 * 分页获取岗位的技能，并训练路径
+	 * @param pageReqBase
+	 * @param roleId
+	 * @return
+	 */
+	ListRsp<SkillPagePath> pageSkillPathByRoleId(PageReqBase pageReqBase, String roleId);
 }

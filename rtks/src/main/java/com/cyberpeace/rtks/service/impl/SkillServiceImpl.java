@@ -2,6 +2,7 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -21,10 +22,12 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionWithBT;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
@@ -33,6 +36,7 @@ import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.SkillMissionRelation;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMissionRelationMapper;
+import com.cyberpeace.rtks.dao.mapper.SkillTrainingMapper;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.bo.skill.*;
 import com.cyberpeace.rtks.util.WeightedCalculation;
@@ -59,6 +63,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Autowired
 	private CrTaskMapper crTaskMapper;
+
+	@Autowired
+	private SkillTrainingMapper skillTrainingMapper;
 
 	@Autowired
 	private MissionTemplateMapper missionTemplateMapper;
@@ -253,11 +260,13 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	@Override
-	public ListRsp<SkillProcessRes> pageByRoleId(PageReqBase pageReqBase, String roleId) {
+	public ListRsp<SkillProcessRes> pageSkillListByRoleId(PageReqBase pageReqBase, String roleId) {
 
 		// page skill
 		Page page = pageReqBase.toPageParam();
-		IPage<SkillProcessRes> result = skillMapper.pageByRoleId(page, roleId);
+		IPage<SkillResBase> pageRes = skillMapper.pageByRoleId(page, roleId);
+		IPage<SkillProcessRes> result = pageRes
+				.convert(skillResBase -> BeanUtils.copy(skillResBase, SkillProcessRes.class));
 		List<String> skillIds = result.getRecords().stream().map(SkillProcessRes::getResourceId)
 				.collect(Collectors.toList());
 		if (skillIds.isEmpty()) {
@@ -286,15 +295,8 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			}
 		}
 		// map skill - mission
-		Map<String, List<String>> skillMissionMap = Maps.newHashMap();
+		Map<String, List<String>> skillMissionMap = createSkillMissionMap(skillAndMissions);
 		String skillId;
-		for (SkillAndMission skillAndMission : skillAndMissions) {
-			skillId = skillAndMission.getSkillId();
-			if (!skillMissionMap.containsKey(skillId)) {
-				skillMissionMap.put(skillId, Lists.newArrayList());
-			}
-			skillMissionMap.get(skillId).add(skillAndMission.getMissionId());
-		}
 		// fill result
 		for (SkillProcessRes record : result.getRecords()) {
 			skillId = record.getResourceId();
@@ -313,6 +315,112 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		}
 
 		return PageUtil.getListResult(result);
+	}
+
+	@Override
+	public ListRsp<SkillPagePath> pageSkillPathByRoleId(PageReqBase pageReqBase, String roleId) {
+		// page skill
+		Page page = pageReqBase.toPageParam();
+		IPage<SkillResBase> pageRes = skillMapper.pageByRoleId(page, roleId);
+		IPage<SkillPagePath> result = pageRes
+				.convert(skillResBase -> BeanUtils.copy(skillResBase, SkillPagePath.class));
+		List<String> skillIds = result.getRecords().stream().map(SkillPagePath::getResourceId)
+				.collect(Collectors.toList());
+		if (skillIds.isEmpty()) {
+			return PageUtil.getListResult(result);
+		}
+		// get skill-mission rel
+		List<SkillAndMission> skillAndMissions = skillMissionRelationMapper
+				.batchSelectBySkillIds(skillIds);
+		List<String> missionIds = skillAndMissions.stream().map(SkillAndMission::getMissionId)
+				.distinct().collect(Collectors.toList());
+		Map<String, List<String>> skillMissionMap = createSkillMissionMap(skillAndMissions);
+		// get missions and template_ids
+		if (missionIds.isEmpty()) {
+			return PageUtil.getListResult(result);
+		}
+		List<MissionWithBT> missionWithBts = missionTemplateMapper.batchGetWithBusiness(missionIds);
+		Set<String> businessTemplateIds = missionWithBts.stream()
+				.map(MissionWithBT::getBusinessTemplateId).collect(Collectors.toSet());
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// get single training
+		List<TrainingRaw> singles = skillTrainingMapper
+				.getSingleByBusinessTemplateIdsAndUserId(userId, businessTemplateIds);
+		// get available team training
+		List<TrainingRaw> teams = skillTrainingMapper.getTeamByBusinessTemplateIdsAndUserId(userId,
+				businessTemplateIds);
+		// get available rb training
+		List<TrainingRaw> rbs = skillTrainingMapper.getRbByBusinessTemplateIdsAndUserId(userId,
+				businessTemplateIds);
+		// map mission-training(random one)
+		Map<String, MissionWithBT> missionBtMap = Maps.newHashMap();
+		missionWithBts.forEach(missionWithBt -> {
+			missionBtMap.put(missionWithBt.getResourceId(), missionWithBt);
+		});
+		Map<String, TrainingRaw> btTrainingMap = Maps.newHashMap();
+		mapTrainings(btTrainingMap, singles,
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		mapTrainings(btTrainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		mapTrainings(btTrainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		String skillId;
+		for (SkillPagePath skill : result.getRecords()) {
+			skillId = skill.getResourceId();
+			skillMissionMap.get(skillId).forEach(missionId -> {
+				MissionPathPageBo missionPathPageBo = createMissionPathPageBo(missionId,
+						missionBtMap, btTrainingMap);
+				skill.getMissions().add(missionPathPageBo);
+			});
+		}
+
+		return PageUtil.getListResult(result);
+	}
+
+	private MissionPathPageBo createMissionPathPageBo(String missionId,
+			Map<String, MissionWithBT> missionBtMap, Map<String, TrainingRaw> btTrainingMap) {
+		MissionPathPageBo missionPathPageBo = new MissionPathPageBo();
+		missionPathPageBo.setResourceId(missionId);
+		MissionWithBT mission = missionBtMap.get(missionId);
+		if (mission == null) {
+			return missionPathPageBo;
+		}
+		missionPathPageBo.setTitle(mission.getTitle());
+		missionPathPageBo.setSceneName(mission.getSceneName());
+		missionPathPageBo.setType(mission.getType());
+		missionPathPageBo.setScore(mission.getScore());
+
+		TrainingRaw training = btTrainingMap.get(mission.getBusinessTemplateId());
+		if (training == null) {
+			missionPathPageBo.setAvailable(false);
+		} else {
+			missionPathPageBo.setAvailable(true);
+			missionPathPageBo.setRoleGroup(training.getRoleGroup());
+			missionPathPageBo.setTrainingId(training.getTrainingId());
+			missionPathPageBo.setTrainingType(training.getTrainingType());
+		}
+		return missionPathPageBo;
+	}
+
+	private void mapTrainings(Map<String, TrainingRaw> map, List<TrainingRaw> trainingRaws,
+			Integer type) {
+		trainingRaws.forEach((training) -> {
+			training.setTrainingType(type);
+			map.put(training.getBusinessTemplateId(), training);
+		});
+	}
+
+	private Map<String, List<String>>
+			createSkillMissionMap(List<SkillAndMission> skillAndMissions) {
+		Map<String, List<String>> skillMissionMap = Maps.newHashMap();
+		String skillId;
+		for (SkillAndMission skillAndMission : skillAndMissions) {
+			skillId = skillAndMission.getSkillId();
+			if (!skillMissionMap.containsKey(skillId)) {
+				skillMissionMap.put(skillId, Lists.newArrayList());
+			}
+			skillMissionMap.get(skillId).add(skillAndMission.getMissionId());
+		}
+		return skillMissionMap;
 	}
 
 	private MissionProcessBo createMissionProcessBo(String missionId,

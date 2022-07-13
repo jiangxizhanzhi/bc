@@ -12,8 +12,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.dao.entity.Skill;
-import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillResBase;
 import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
 
 @Mapper
@@ -31,5 +31,5 @@ public interface SkillMapper extends BaseMapper<Skill> {
 
 	Set<String> validateIds(List<String> skillIds);
 
-	IPage<SkillProcessRes> pageByRoleId(@Param("page") Page page, @Param("roleId") String roleId);
+	IPage<SkillResBase> pageByRoleId(@Param("page") Page page, @Param("roleId") String roleId);
 }

@@ -32,6 +32,7 @@ import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.service.*;
 import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
+import com.cyberpeace.rtks.service.bo.skill.SkillPagePath;
 import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
 import com.google.common.collect.Sets;
 
@@ -145,6 +146,7 @@ public class TrainingPlanController {
 	}
 
 	// 岗位评估-技能体系清单
+	// 岗位简介-岗位学习路径
 	@ApiOperation("分页获取知识点以及课程")
 	@GetMapping("/getKnowledgeCourseList")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -204,7 +206,7 @@ public class TrainingPlanController {
 		return rsp;
 	}
 
-	@ApiOperation("训练路径")
+	@ApiOperation("我的职业-技能训练路径")
 	@GetMapping("/training/path")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
 			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -236,7 +238,23 @@ public class TrainingPlanController {
 		if (StringUtils.isBlank(roleId)) {
 			return new BaseRsp<>(new ListRsp<SkillProcessRes>());
 		}
-		ListRsp<SkillProcessRes> result = skillService.pageByRoleId(pageReqBase, roleId);
+		ListRsp<SkillProcessRes> result = skillService.pageSkillListByRoleId(pageReqBase, roleId);
+
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("岗位简介-岗位训练路径")
+	@GetMapping("/role_desc/training_path")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
+					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_PERSON_CENTER },
+			logical = Logical.OR)
+	public BaseRsp<ListRsp<SkillPagePath>> pageSkillPath(@Validated PageReqBase pageReqBase) {
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		if (StringUtils.isBlank(roleId)) {
+			return new BaseRsp<>(new ListRsp<SkillPagePath>());
+		}
+		ListRsp<SkillPagePath> result = skillService.pageSkillPathByRoleId(pageReqBase, roleId);
 
 		return new BaseRsp<>(result);
 	}

@@ -9,6 +9,9 @@ import lombok.Data;
 @Data
 public class ConnectionInfo implements Serializable {
 
+	@ApiModelProperty("链路id")
+	private String connectionId;
+
 	@ApiModelProperty("源节点id")
 	private String source;
 

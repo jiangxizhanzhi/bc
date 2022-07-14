@@ -4,15 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper">
 
-    <update id="updateCodeById">
-        update situation_dynamic_scheme
-        set code = #{code}
-        where resourceId = #{resourceId}
-    </update>
     <update id="updateScheduleById">
         update situation_dynamic_scheme
-        set schedule #{schedule}
-        where resourceId = #{resourceId}
+        set schedule = #{schedule}
+        where resource_id = #{resourceId}
     </update>
 
     <delete id="deleteBySceneId">

@@ -1,21 +1,30 @@
 package com.cyberpeace.cs.controller;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cs.controller.req.NodeSnapshotDeleteReq;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import javax.validation.Valid;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cs.controller.req.NodeSnapShotReq;
+import com.cyberpeace.cs.controller.req.NodeSnapshotDeleteReq;
+import com.cyberpeace.cs.controller.res.SnapshotPathRes;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.LocalSceneService;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "场景操作相关api")
 @Slf4j
@@ -32,7 +41,10 @@ public class SceneController {
 
 	@PostMapping("/node/snapshot")
 	@ApiOperation("场景节点打快照")
-	public BaseRsp<Boolean> nodeSnapshot(@RequestBody NodeSnapShotReq snapShotReq) {
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Boolean> nodeSnapshot(@Valid @RequestBody NodeSnapShotReq snapShotReq) {
 
 		LocalScene localScene = localSceneMapper.selectBySceneId(snapShotReq.getSceneId());
 		if (null == localScene) {
@@ -47,8 +59,33 @@ public class SceneController {
 
 	@DeleteMapping("/node/snapshot")
 	@ApiOperation("场景节点快照删除")
-	public BaseRsp<Boolean> snapshotDelete(@RequestBody NodeSnapshotDeleteReq deleteReq) {
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Boolean> snapshotDelete(@Valid @RequestBody NodeSnapshotDeleteReq deleteReq) {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	@GetMapping("/node/snapshot")
+	@ApiOperation("场景节点快照路径")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "scene_id", value = "场景编号", required = true),
+			@ApiImplicitParam(name = "node_id", value = "节点编号", required = true) })
+	public BaseRsp<SnapshotPathRes> snapshotPath(@RequestParam("scene_id") String sceneId,
+			@Param("node_id") String nodeId) {
+
+		return new BaseRsp<>();
+	}
+
+	@PutMapping("/node/snapshot")
+	@ApiOperation("场景节点快照合并")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Boolean> mergeSnapshot(@Valid @RequestBody NodeSnapShotReq nodeSnapShotReq) {
+
+		return new BaseRsp<>(true);
+	}
 }

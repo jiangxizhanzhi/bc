@@ -372,4 +372,11 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
         situationHandlerService.pushDataToRoom(data, sceneId);
     }
 
+    @Override
+    public void clearSceneData(String sceneId){
+        sceneConfigMapper.deleteBySceneId(sceneId);
+        dynamicSchemeMapper.deleteBySceneId(sceneId);
+        attackMessageMapper.deleteBySceneId(sceneId);
+    }
+
 }

@@ -36,4 +36,6 @@ public interface DynamicSchemeService {
     void validDynamicSchemeName(AddDynamicSchemeReq addDynamicSchemeReq);
 
     List<WsAttackSchedule> getSchedule(String sceneId);
+
+    void clearSceneData(String sceneId);
 }

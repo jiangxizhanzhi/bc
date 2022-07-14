@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -280,6 +281,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public Boolean nodeSnapshot(NodeSnapshotContext snapshotContext) {
-		return HttpClientUtil.post(NODE_SNAPSHOT_URL, snapshotContext, Boolean.class);
+		return HttpClientUtil.post(NODE_SNAPSHOT_URL,
+				JsonUtil.toJsonString(snapshotContext, PropertyNamingStrategy.SnakeCase),
+				Boolean.class);
 	}
 }

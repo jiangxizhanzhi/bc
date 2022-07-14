@@ -13,7 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "态势事件")
+@Api(tags = "推送态势事件")
 @RestController
 @RequestMapping("/situation/simulation")
 public class SituationEventController {
@@ -21,9 +21,9 @@ public class SituationEventController {
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
-	@ApiOperation("随机推送攻击动效信息")
+	@ApiOperation("获取随机普通动效")
 	@GetMapping("attack_event")
-	public BaseRsp<WsMessage<WsMultiNodeDynamic>> sendAttackEvent(
+	public BaseRsp<WsMessage<WsMultiNodeDynamic>> randomEvent(
 			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id",
 					required = true) String sceneId,
 			@ApiParam(name = "action_code", value = "事件类型") @RequestParam(value = "action_code",
@@ -51,24 +51,36 @@ public class SituationEventController {
 		return rsp;
 	}
 
-	@ApiOperation("推送指定攻击动效信息")
-	@PostMapping("event_message")
-	public BaseRsp<Boolean> sendEventMessage(@RequestBody EventMessageReq eventMessageReq) {
+	@ApiOperation("推送多节点动效")
+	@PostMapping("multi_event")
+	public BaseRsp<WsMessage<WsMultiNodeDynamic>>
+			multiEvent(@RequestBody EventMessageReq eventMessageReq) {
 		String code = eventMessageReq.getCode();
 		String sceneId = eventMessageReq.getSceneId();
 		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(code, eventMessageReq.getData());
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
-		return new BaseRsp<>(true);
+		return new BaseRsp<>(wsMessage);
 	}
 
-	@ApiOperation("推送指定攻击效果信息")
-	@PostMapping("event_effect")
-	public BaseRsp<Boolean>
-			sendEventEffectMessage(@RequestBody WsAttackEffectDynamic wsAttackEffectDynamic) {
+	@ApiOperation("推送单节点动效")
+	@PostMapping("single_event")
+	public BaseRsp<WsMessage<WsSingleNodeDynamic>>
+			singleEvent(@RequestBody WsSingleNodeDynamic eventMessageReq) {
+		String code = MessageType.SingleNodeDynamic.getDesc();
+		String sceneId = eventMessageReq.getSceneId();
+		WsMessage<WsSingleNodeDynamic> wsMessage = new WsMessage<>(code, eventMessageReq);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		return new BaseRsp<>(wsMessage);
+	}
+
+	@ApiOperation("推送多媒体动效")
+	@PostMapping("media_event")
+	public BaseRsp<WsMessage<WsAttackEffectDynamic>>
+			mediaEvent(@RequestBody WsAttackEffectDynamic wsAttackEffectDynamic) {
 		String code = MessageType.AttackEffect.getDesc();
 		String sceneId = wsAttackEffectDynamic.getSceneId();
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(code, wsAttackEffectDynamic);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
-		return new BaseRsp<>(true);
+		return new BaseRsp<>(wsMessage);
 	}
 }

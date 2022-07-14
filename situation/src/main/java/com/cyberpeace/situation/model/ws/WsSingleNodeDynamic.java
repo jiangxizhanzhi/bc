@@ -11,7 +11,7 @@ public class WsSingleNodeDynamic implements Serializable {
 	@ApiModelProperty("场景id")
 	private String sceneId;
 
-	@ApiModelProperty("事件时间")
+	@ApiModelProperty("事件时间（毫秒时间戳）")
 	private Long time;
 
 	@ApiModelProperty("持续时间")
@@ -23,14 +23,8 @@ public class WsSingleNodeDynamic implements Serializable {
 	@ApiModelProperty("事件描述")
 	private String description;
 
-	@ApiModelProperty("事件类别")
-	private String category;
-
-	@ApiModelProperty("事件类型")
+	@ApiModelProperty("事件类型 11-区域高亮")
 	private Integer type;
-
-	@ApiModelProperty("节点队伍名称")
-	private String groupName;
 
 	@ApiModelProperty("目标id")
 	private String targetId;

@@ -35,7 +35,7 @@ public class SituationController {
 	private TopoHandlerService topoHandlerService;
 
 	@CrossOrigin("*")
-	@ApiOperation("拓扑解析")
+	@ApiOperation("获取场景拓扑")
 	@GetMapping("topology")
 	public BaseRsp<SituationTopo> topology(
 			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id",
@@ -52,7 +52,7 @@ public class SituationController {
 		return new BaseRsp<>(situationTopo);
 	}
 
-	@ApiOperation("攻击动态")
+	@ApiOperation("获取流量攻击事件")
 	@GetMapping("/dynamic/attack")
 	public List<WsMessage> attackDynamic(FlowLogReq flowLogReq) {
 
@@ -70,7 +70,7 @@ public class SituationController {
 		return wsMultiNodeDynamics;
 	}
 
-	@ApiOperation("节点信息")
+	@ApiOperation("获取节点监控信息")
 	@GetMapping("element")
 	public BaseRsp<ElementStateRes>
 			element(@ApiParam(name = "scene_id",
@@ -83,9 +83,9 @@ public class SituationController {
 		return new BaseRsp<>(elementStateRes);
 	}
 
-	@ApiOperation("节点状态")
-	@GetMapping("node_status")
-	public BaseRsp<WsMessage> nodeStatus(@ApiParam(name = "scene_id",
+	@ApiOperation("获取节点链路状态")
+	@GetMapping("link_status")
+	public BaseRsp<WsMessage> linkStatus(@ApiParam(name = "scene_id",
 			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
 
 		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);

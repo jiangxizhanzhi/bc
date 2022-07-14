@@ -275,6 +275,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 构造返回连线数据
 			ConnectionInfo connectionInfo = new ConnectionInfo();
+			connectionInfo.setConnectionId(connection.getString("id"));
 			connectionInfo.setSource(source);
 			connectionInfo.setTarget(target);
 			connectionInfo.setStyle(getLineStyle());

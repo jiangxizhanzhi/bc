@@ -1,6 +1,7 @@
 package com.cyberpeace.cs.dao.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -27,4 +28,6 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 	 * @return
 	 */
 	List<LocalScene> selectByCloseTime(Date closeTime);
+
+	LocalScene selectBySceneId(@Param("sceneId") String sceneId);
 }

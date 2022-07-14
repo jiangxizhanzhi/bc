@@ -68,57 +68,49 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String CONNECTION_STATUS_URL;
 
+	private String NODE_SNAPSHOT_URL;
+
 	@PostConstruct
 	public void init() {
-		SCENE_START_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.start.app");
+		String MP_HOST = mpEnvService.getMpHost();
+		SCENE_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.app");
 
-		SCENE_START_TEST_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.start.test");
+		SCENE_START_TEST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.test");
 
-		SCENE_DELETE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.delete");
+		SCENE_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.delete");
 
-		SCENE_CLEAR_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.clear");
+		SCENE_CLEAR_URL = MP_HOST + ConfigUtil.getContextProperty("scene.clear");
 
-		SCENE_RETRIEVE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.retrieve");
+		SCENE_RETRIEVE = MP_HOST + ConfigUtil.getContextProperty("scene.retrieve");
 
-		SCENE_PAUSE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.pause");
+		SCENE_PAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.pause");
 
-		SCENE_UNPAUSE_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.unpause");
+		SCENE_UNPAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.unpause");
 
-		NODE_RESTART_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.node.restart");
+		NODE_RESTART_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.restart");
 
-		NODE_RECREATE_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.node.recreate");
+		NODE_RECREATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.recreate");
 
-		FLOW_START_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.node.flow.start");
+		FLOW_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.start");
 
-		FLOW_STOP_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.node.flow.stop");
+		FLOW_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.stop");
 
-		NODE_SESSION_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.node.session");
+		NODE_SESSION_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.session");
 
-		FLOW_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.flow.log");
+		FLOW_LOG_URL = MP_HOST + ConfigUtil.getContextProperty("scene.flow.log");
 
-		HOST_STATE_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.host.state");
+		HOST_STATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.host.state");
 
-		FLOW_TREND_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.flow.trend");
+		FLOW_TREND_URL = MP_HOST + ConfigUtil.getContextProperty("scene.flow.trend");
 
-		EVENT_AGGR_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.event.aggr");
+		EVENT_AGGR_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.aggr");
 
-		RISK_COUNT_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("scene.risk.count");
+		RISK_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.risk.count");
 
-		CONNECTION_STATUS_URL = mpEnvService.getMpHost()
+		CONNECTION_STATUS_URL = MP_HOST
 				+ ConfigUtil.getContextProperty("scene.node.connection.status");
 
+		NODE_SNAPSHOT_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot");
 	}
 
 	@Override
@@ -284,5 +276,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				MpNodeStatus.class);
 
 		return nodeStatusList;
+	}
+
+	@Override
+	public Boolean nodeSnapshot(NodeSnapshotContext snapshotContext) {
+		return HttpClientUtil.post(NODE_SNAPSHOT_URL, snapshotContext, Boolean.class);
 	}
 }

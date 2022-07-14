@@ -60,6 +60,11 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
         } else {
             scoreList = nextIds.stream().map(nextId -> evalIndexRefMap.get(nextId).getScore()).collect(Collectors.toList());
         }
+        // 正常情况下, scoreList应均为0~100整数，包含`null`为专家评分下未进行计算变量项(五级指标)，无法进行下一步聚合计算，设置score为0，跳过
+        if (scoreList.contains(null)) {
+            evalIndexRef.setScore(0);
+            return;
+        }
 
         // todo 格式化算法入参、算法日志
         Integer score;

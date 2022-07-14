@@ -26,4 +26,9 @@
         where end_time &lt; #{closeTime}
         and scene_status != 1
     </select>
+
+    <select id="selectBySceneId" resultMap="baseResultMap">
+        select * from local_scene
+        where mp_scene_id = #{sceneId}
+    </select>
 </mapper>

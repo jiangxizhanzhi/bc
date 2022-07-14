@@ -103,4 +103,10 @@ public interface ErrorCode {
 	/** 写入文件失败 */
 	String FAILED_TO_WRITE_FILE = "100036";
 
+	/** 场景未启动*/
+	String SCENE_NOT_RUNNING = "100037";
+
+	/** 新建快照失败*/
+	String NODE_SNAPSHOT_FAILED = "100038";
+
 }

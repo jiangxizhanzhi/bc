@@ -2,6 +2,7 @@ package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
 
+import com.cyberpeace.common.util.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -346,6 +347,24 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return new JSONArray();
 		}
 		return remoteSceneService.getMonitorSessions(localScene.getMpSceneId(), studentId);
+	}
+
+	@Override
+	public Boolean nodeSnapshot(LocalScene localScene, String nodeId, String snapshotName) {
+		NodeSnapshotContext snapshotContext = getNodeSnapshotContext(localScene, nodeId,
+				snapshotName);
+
+		return remoteSceneService.nodeSnapshot(snapshotContext);
+	}
+
+	private NodeSnapshotContext getNodeSnapshotContext(LocalScene localScene, String nodeId,
+			String snapshotName) {
+		SceneOpsContext opsContext = getSceneOpsContext(localScene);
+		NodeSnapshotContext snapshotContext = BeanUtils.copy(opsContext, NodeSnapshotContext.class);
+		snapshotContext.setSnapshotName(snapshotName);
+		snapshotContext.setNodeId(nodeId);
+
+		return snapshotContext;
 	}
 
 	private SceneOpsContext getSceneOpsContext(LocalScene localScene) {

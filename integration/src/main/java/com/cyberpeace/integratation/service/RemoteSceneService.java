@@ -114,4 +114,10 @@ public interface RemoteSceneService {
 	 */
 	List<MpNodeStatus> getConnectionStatus(String mpSceneId);
 
+	/**
+	 * 场景节点打快照
+	 * @param snapshotContext
+	 * @return
+	 */
+	Boolean nodeSnapshot(NodeSnapshotContext snapshotContext);
 }

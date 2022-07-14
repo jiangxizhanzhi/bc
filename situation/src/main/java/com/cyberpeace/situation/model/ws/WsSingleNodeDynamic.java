@@ -2,8 +2,6 @@ package com.cyberpeace.situation.model.ws;
 
 import java.io.Serializable;
 
-import com.cyberpeace.situation.model.ElementInfo;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,6 +13,9 @@ public class WsSingleNodeDynamic implements Serializable {
 
 	@ApiModelProperty("事件时间")
 	private Long time;
+
+	@ApiModelProperty("持续时间")
+	private Integer duration;
 
 	@ApiModelProperty("事件名称")
 	private String name;
@@ -28,13 +29,9 @@ public class WsSingleNodeDynamic implements Serializable {
 	@ApiModelProperty("事件类型")
 	private Integer type;
 
-	@ApiModelProperty("节点id")
-	private String elementId;
-
 	@ApiModelProperty("节点队伍名称")
 	private String groupName;
 
-	@ApiModelProperty("节点信息（更新部分）")
-	private ElementInfo elementInfo;
-
+	@ApiModelProperty("目标id")
+	private String targetId;
 }

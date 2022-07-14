@@ -58,7 +58,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private CrTaskMapper crTaskMapper;
 
 	@Autowired
-	private SkillMapper skillMapper;
+	private TrainingEvaluationMapper trainingEvaluationMapper;
 
 	@Autowired
 	private SkillService skillService;
@@ -274,13 +274,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			businessTemplateIds.add(missionContext.getBusinessTemplateId());
 		}));
 		// collect mission-skill relations, one mission may be related to several skills
-		Map<String, List<MissionContext>> missionSkillRel = Maps.newHashMap();
-		missionContextList.forEach((missionContext) -> {
-			if (!missionSkillRel.containsKey(missionContext.getMissionTemplateId())) {
-				missionSkillRel.put(missionContext.getMissionTemplateId(), Lists.newArrayList());
-			}
-			missionSkillRel.get(missionContext.getMissionTemplateId()).add(missionContext);
-		});
+		Map<String, List<MissionContext>> missionSkillRel = StreamApiUtils
+				.groupBy(missionContextList, MissionContext::getMissionTemplateId);
 		// collect mission completion status; true or false
 		Set<String> missionTemplateIds = missionMap.keySet();
 		List<CompletionStatus> completionStatusList = crTaskMapper
@@ -348,6 +343,50 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 					completionStatusMap);
 		}
 		return newOrder;
+	}
+
+	@Override
+	public SkillTrainingRecordBo calculateTrainingRecord(String userId, String roleId,
+			Date startTime, Date endTime) {
+		SkillTrainingRecordBo result = new SkillTrainingRecordBo();
+		// get all related missions
+		List<MissionContext> missionContextList = roleSkillRelationMapper
+				.getMissionContextsByRoleId(roleId);
+		if (missionContextList.isEmpty()) {
+			return result;
+		}
+		// get mission-skill rel
+		Map<String, List<MissionContext>> missionSkillRel = StreamApiUtils
+				.groupBy(missionContextList, MissionContext::getMissionTemplateId);
+		// get records
+		Set<String> missionTemplateIds = missionContextList.stream()
+				.map(MissionContext::getMissionTemplateId).collect(Collectors.toSet());
+		List<MissionRecordBo> missionRecordBoList = trainingEvaluationMapper
+				.getTrainingRecordByMissionTemplateIdsAndUserId(missionTemplateIds, userId);
+		// fill skill_id
+		for (MissionRecordBo missionRecordBo : missionRecordBoList) {
+			missionSkillRel.get(missionRecordBo.getResourceId()).forEach(missionContext -> {
+				missionRecordBo.getSkillIds().add(missionContext.getSkillId());
+			});
+		}
+		result.setRecords(missionRecordBoList);
+		// group by date
+		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
+				TimeUtil.getStartOfDay(endTime));
+		Map<String, List<MissionRecordBo>> recordMap = missionRecordBoList.stream().collect(
+				Collectors.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getTime())));
+
+		for (int i = 0; i < daysBetween; i++) {
+			Date date = TimeUtil.addDates(startTime, i);
+			String format8 = TimeUtil.format8(date);
+			result.getXDates().add(format8);
+			if (recordMap.containsKey(format8)) {
+				result.getYMissions().add(recordMap.get(format8).size());
+			} else {
+				result.getYMissions().add(0);
+			}
+		}
+		return result;
 	}
 
 	/**

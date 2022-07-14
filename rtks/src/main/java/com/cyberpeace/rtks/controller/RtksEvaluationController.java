@@ -3,7 +3,6 @@ package com.cyberpeace.rtks.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -25,6 +25,7 @@ import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.RtksRadarBo;
 import com.cyberpeace.rtks.service.bo.StudyRecordBo;
+import com.cyberpeace.rtks.service.bo.skill.SkillTrainingRecordBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -140,6 +141,28 @@ public class RtksEvaluationController {
 			rsp.setData(studyRecordBo);
 		}
 		return rsp;
+	}
+
+	@ApiOperation("岗位评估-岗位技能训练记录")
+	@GetMapping("/role/mission/study")
+	@RequiresPermissions(value = MenuConstant.WEB_PERSON_CENTER)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "start_time", value = "开始时间", dataTypeClass = String.class),
+			@ApiImplicitParam(name = "end_time", value = "结束时间", dataTypeClass = String.class) })
+	public BaseRsp<SkillTrainingRecordBo> getMissionTrainingRecord(
+			@RequestParam("start_time") String startTime,
+			@RequestParam("end_time") String endTime) {
+		if (!TimeUtil.isValidDate(startTime) || !TimeUtil.isValidDate(endTime)) {
+			throw new BusinessException(RtksBusinessErrorCode.TIME_FORMAT_ERROR);
+		}
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		if (StringUtils.isBlank(roleId)) {
+			return new BaseRsp<>();
+		}
+		SkillTrainingRecordBo recordBo = rtksStatisticService.calculateTrainingRecord(userId,
+				roleId, TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
+		return new BaseRsp<>(recordBo);
 	}
 
 }

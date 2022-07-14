@@ -170,14 +170,14 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			String role = categorieMap.getRole().getOrDefault(roleId, "其他");
 
 			// 初次处理层级数据
-			Integer hierarchy = null;
+			Float hierarchy = null;
 			if ("外部网络".equals(role)) {
 				sceneData.getExternalNetwork().add(elementId);
-				hierarchy = 2;
+				hierarchy = 2.0f;
 			} else if ("路由器".equals(secondType)) {
-				hierarchy = 1;
+				hierarchy = 1.0f;
 			} else {
-				hierarchy = 0;
+				hierarchy = 0.0f;
 			}
 
 			// 处理坐标数据
@@ -443,6 +443,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return elementAreas;
 	}
 
+	@SneakyThrows
 	@Override
 	public List<WsMessage> getAttackEventList(List<JSONObject> flowLogs, String sceneId) {
 

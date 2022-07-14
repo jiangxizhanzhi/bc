@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import org.apache.tomcat.jni.Local;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -85,5 +86,14 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return
 	 */
 	JSONArray getMonitorSessions(LocalScene localScene, String studentId);
+
+	/**
+	 * 节点快照
+	 * @param localScene
+	 * @param nodeId
+	 * @param snapshotName
+	 * @return
+	 */
+	Boolean nodeSnapshot(LocalScene localScene, String nodeId, String snapshotName);
 
 }

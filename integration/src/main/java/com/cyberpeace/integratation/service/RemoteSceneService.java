@@ -160,4 +160,10 @@ public interface RemoteSceneService {
 	List<MpCollectionEvent>
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
 
+	/**
+	 * 场景节点打快照
+	 * @param snapshotContext
+	 * @return
+	 */
+	Boolean nodeSnapshot(NodeSnapshotContext snapshotContext);
 }

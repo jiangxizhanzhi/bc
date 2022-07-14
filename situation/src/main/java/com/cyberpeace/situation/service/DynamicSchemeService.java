@@ -7,6 +7,7 @@ import com.cyberpeace.situation.controller.req.DynamicSchemeReq;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
+import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 
 import java.util.List;
 
@@ -33,4 +34,6 @@ public interface DynamicSchemeService {
     void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq);
 
     void validDynamicSchemeName(AddDynamicSchemeReq addDynamicSchemeReq);
+
+    List<WsAttackSchedule> getSchedule(String sceneId);
 }

@@ -25,4 +25,6 @@ public interface DynamicSchemeMapper extends BaseMapper<DynamicScheme> {
     DynamicScheme selectByResourceId(String resourceId);
 
     void updateScheduleById(@Param("schedule") String schedule,@Param("resourceId")String resourceId);
+
+    String getScheduleBySceneId(String sceneId);
 }

@@ -38,7 +38,7 @@ public class RunAttackMessageReq implements Serializable {
     @ApiModelProperty("间隔时间")
     private Integer intervalTime;
 
-    @ApiModelProperty("持续时间（预留）")
+    @ApiModelProperty("持续时间")
     private Integer durationTime;
 
     @ApiModelProperty("是否聚焦")

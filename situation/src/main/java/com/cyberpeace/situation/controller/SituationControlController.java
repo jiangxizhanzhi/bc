@@ -11,6 +11,7 @@ import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
+import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.service.AttackMessageService;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
@@ -111,6 +112,13 @@ public class SituationControlController {
         FileUtil.validateFileSuffix(fileName, DynamicSchemeServiceImpl.PICTURE_TYPE+","+DynamicSchemeServiceImpl.VIDEO_TYPE);
         AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.UPLOAD_SITUATION.getCode(), false, multipartFile, false);
         return new BaseRsp<>(ConfigUtil.getContextProperty("cr.local.file.prefix")+attachmentBo.getFilePath());
+    }
+
+    @ApiOperation("获取当前进程")
+    @GetMapping("/schedule")
+    public BaseRsp<List<WsAttackSchedule>> getSchedule(@ApiParam("场景id")String sceneId){
+        List<WsAttackSchedule> schedule = dynamicSchemeService.getSchedule(sceneId);
+        return new BaseRsp<>(schedule);
     }
 
 }

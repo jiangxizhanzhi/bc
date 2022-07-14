@@ -42,4 +42,10 @@
             resource_id = #{resourceId}
         </where>
     </select>
+    <select id="getScheduleBySceneId" resultType="java.lang.String">
+        select schedule from situation_dynamic_scheme
+        <where>
+            scene_id = #{sceneId} and schedule != null
+        </where>
+    </select>
 </mapper>

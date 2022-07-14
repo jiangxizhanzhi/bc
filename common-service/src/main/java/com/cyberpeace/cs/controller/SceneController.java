@@ -5,6 +5,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class SceneController {
 	private LocalSceneService localSceneService;
 
 	@PostMapping("/node/snapshot")
+	@ApiOperation("场景节点打快照")
 	public BaseRsp nodeSnapshot(@RequestBody NodeSnapShotReq snapShotReq) {
 
 		LocalScene localScene = localSceneMapper.selectBySceneId(snapShotReq.getSceneId());
